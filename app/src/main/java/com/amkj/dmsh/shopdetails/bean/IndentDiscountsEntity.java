@@ -4,9 +4,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.amkj.dmsh.base.BaseEntity;
-import com.amkj.dmsh.constant.CommunalDetailBean;
-import com.google.gson.annotations.SerializedName;
+import com.amkj.dmsh.mine.bean.ActivityInfoBean;
 import com.amkj.dmsh.mine.bean.CartProductInfoBean;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -387,86 +387,6 @@ public class IndentDiscountsEntity extends BaseEntity{
             }
         }
 
-        public static class PriceInfoBean implements Parcelable {
-            /**
-             * color : #000000
-             * totalPrice : 725.6
-             * name : 商品总额
-             * totalPriceName : ¥725.60
-             */
-
-            private String color;
-            private double totalPrice;
-            private String name;
-            private String totalPriceName;
-
-            public String getColor() {
-                return color;
-            }
-
-            public void setColor(String color) {
-                this.color = color;
-            }
-
-            public double getTotalPrice() {
-                return totalPrice;
-            }
-
-            public void setTotalPrice(double totalPrice) {
-                this.totalPrice = totalPrice;
-            }
-
-            public String getName() {
-                return name;
-            }
-
-            public void setName(String name) {
-                this.name = name;
-            }
-
-            public String getTotalPriceName() {
-                return totalPriceName;
-            }
-
-            public void setTotalPriceName(String totalPriceName) {
-                this.totalPriceName = totalPriceName;
-            }
-
-            @Override
-            public int describeContents() {
-                return 0;
-            }
-
-            @Override
-            public void writeToParcel(Parcel dest, int flags) {
-                dest.writeString(this.color);
-                dest.writeDouble(this.totalPrice);
-                dest.writeString(this.name);
-                dest.writeString(this.totalPriceName);
-            }
-
-            public PriceInfoBean() {
-            }
-
-            protected PriceInfoBean(Parcel in) {
-                this.color = in.readString();
-                this.totalPrice = in.readDouble();
-                this.name = in.readString();
-                this.totalPriceName = in.readString();
-            }
-
-            public static final Creator<PriceInfoBean> CREATOR = new Creator<PriceInfoBean>() {
-                @Override
-                public PriceInfoBean createFromParcel(Parcel source) {
-                    return new PriceInfoBean(source);
-                }
-
-                @Override
-                public PriceInfoBean[] newArray(int size) {
-                    return new PriceInfoBean[size];
-                }
-            };
-        }
 
         public static class ProductInfoBean implements Parcelable {
             /**
@@ -491,100 +411,6 @@ public class IndentDiscountsEntity extends BaseEntity{
 
             public void setActivityProductInfo(List<ActivityProductInfoBean> activityProductInfo) {
                 this.activityProductInfo = activityProductInfo;
-            }
-
-            public static class ActivityInfoBean implements Parcelable {
-                /**
-                 * activityCode : MJ1507773048
-                 * activityRuleDetail : 1、双11爆炸来袭
-                 * 2、双11爆炸来袭
-                 * 3、双11爆炸来袭
-                 * activityTag : 满减
-                 * activityType : 0
-                 * activityRule : 满10.0减2.0;满20.0减4.0;满30.0减5.0;满200.0减8.0
-                 */
-
-                private String activityCode;
-                @SerializedName("activityRuleDetail")
-                private List<CommunalDetailBean> activityRuleDetailList;
-                private String activityTag;
-                private int activityType;
-                private String activityRule;
-
-                public String getActivityCode() {
-                    return activityCode;
-                }
-
-                public void setActivityCode(String activityCode) {
-                    this.activityCode = activityCode;
-                }
-
-                public List<CommunalDetailBean> getActivityRuleDetailList() {
-                    return activityRuleDetailList;
-                }
-
-                public void setActivityRuleDetailList(List<CommunalDetailBean> activityRuleDetailList) {
-                    this.activityRuleDetailList = activityRuleDetailList;
-                }
-
-                public String getActivityTag() {
-                    return activityTag;
-                }
-
-                public void setActivityTag(String activityTag) {
-                    this.activityTag = activityTag;
-                }
-
-                public int getActivityType() {
-                    return activityType;
-                }
-
-                public void setActivityType(int activityType) {
-                    this.activityType = activityType;
-                }
-
-                public String getActivityRule() {
-                    return activityRule;
-                }
-
-                public void setActivityRule(String activityRule) {
-                    this.activityRule = activityRule;
-                }
-
-                @Override
-                public int describeContents() {
-                    return 0;
-                }
-
-                @Override
-                public void writeToParcel(Parcel dest, int flags) {
-                    dest.writeString(this.activityCode);
-                    dest.writeString(this.activityTag);
-                    dest.writeInt(this.activityType);
-                    dest.writeString(this.activityRule);
-                }
-
-                public ActivityInfoBean() {
-                }
-
-                protected ActivityInfoBean(Parcel in) {
-                    this.activityCode = in.readString();
-                    this.activityTag = in.readString();
-                    this.activityType = in.readInt();
-                    this.activityRule = in.readString();
-                }
-
-                public static final Creator<ActivityInfoBean> CREATOR = new Creator<ActivityInfoBean>() {
-                    @Override
-                    public ActivityInfoBean createFromParcel(Parcel source) {
-                        return new ActivityInfoBean(source);
-                    }
-
-                    @Override
-                    public ActivityInfoBean[] newArray(int size) {
-                        return new ActivityInfoBean[size];
-                    }
-                };
             }
 
             public static class ActivityProductInfoBean implements Parcelable {

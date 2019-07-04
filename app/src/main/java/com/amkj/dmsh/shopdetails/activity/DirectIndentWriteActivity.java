@@ -35,6 +35,7 @@ import com.amkj.dmsh.dominant.activity.QualityGroupShopMineActivity;
 import com.amkj.dmsh.dominant.activity.QualityProductActActivity;
 import com.amkj.dmsh.dominant.bean.GroupShopDetailsEntity.GroupShopDetailsBean;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
+import com.amkj.dmsh.mine.bean.ActivityInfoBean;
 import com.amkj.dmsh.mine.bean.CartProductInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean.CartBean.CartInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean.CartBean.CartInfoBean.SaleSkuBean;
@@ -47,13 +48,13 @@ import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.shopdetails.bean.DirectCouponEntity.DirectCouponBean;
 import com.amkj.dmsh.shopdetails.bean.DirectReBuyGoods;
 import com.amkj.dmsh.shopdetails.bean.DirectReBuyGoods.ReBuyGoodsBean;
-import com.amkj.dmsh.shopdetails.bean.IndentDiscountsEntity;
-import com.amkj.dmsh.shopdetails.bean.IndentDiscountsEntity.IndentDiscountsBean;
-import com.amkj.dmsh.shopdetails.bean.IndentDiscountsEntity.IndentDiscountsBean.PriceInfoBean;
-import com.amkj.dmsh.shopdetails.bean.IndentDiscountsEntity.IndentDiscountsBean.ProductInfoBean;
-import com.amkj.dmsh.shopdetails.bean.IndentDiscountsEntity.IndentDiscountsBean.ProductInfoBean.ActivityInfoBean;
-import com.amkj.dmsh.shopdetails.bean.IndentDiscountsEntity.IndentDiscountsBean.ProductInfoBean.ActivityProductInfoBean;
 import com.amkj.dmsh.shopdetails.bean.IndentProDiscountBean;
+import com.amkj.dmsh.shopdetails.bean.IndentWriteEntity;
+import com.amkj.dmsh.shopdetails.bean.IndentWriteEntity.IndentWriteBean;
+import com.amkj.dmsh.shopdetails.bean.IndentWriteEntity.IndentWriteBean.ProductsBean;
+import com.amkj.dmsh.shopdetails.bean.IndentWriteEntity.IndentWriteBean.ProductsBean.ProductInfoBean;
+import com.amkj.dmsh.shopdetails.bean.IndentWriteEntity.IndentWriteBean.UserCouponInfoBean;
+import com.amkj.dmsh.shopdetails.bean.PriceInfoBean;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateAliPayIndentBean;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateUnionPayIndentEntity;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateWeChatPayIndentBean;
@@ -168,16 +169,16 @@ public class DirectIndentWriteActivity extends BaseActivity {
     private List<PriceInfoBean> priceInfoList = new ArrayList<>();
     private String invoiceNum;
     private IndentDiscountAdapter indentDiscountAdapter;
-    private IndentDiscountsEntity indentDiscountsEntity;
-    private List<ActivityProductInfoBean> productInfoList = new ArrayList<>();
+    private IndentWriteEntity identWriteEntity;
+    private List<ProductInfoBean> productInfoList = new ArrayList<>();
     private AlertDialog alertDialog;
     private RuleDialogView ruleDialog;
-    private boolean isOversea = false;
+    private boolean isReal = false;
     private Date createIndentTime;
     private ConstantMethod constantMethod;
     private Date current;
     private CharSequence payErrorMsg;
-    private IndentDiscountsBean indentDiscountsBean;
+    private IndentWriteBean indentWriteBean;
     private AlertDialogHelper payErrorDialogHelper;
     private AlertDialogHelper payCancelDialogHelper;
     private QualityCreateUnionPayIndentEntity qualityUnionIndent;
@@ -194,7 +195,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
         if (loadHud != null) {
             loadHud.setCancellable(false);
         }
-        isOversea = false;
+        isReal = false;
         constantMethod = new ConstantMethod();
         tv_header_titleAll.setText("订单填写");
         header_shared.setVisibility(View.INVISIBLE);
@@ -257,11 +258,11 @@ public class DirectIndentWriteActivity extends BaseActivity {
         directProductAdapter.setOnItemChildClickListener((adapter, view, position) -> {
             switch (view.getId()) {
                 case R.id.ll_communal_activity_topic_tag:
-                    ActivityProductInfoBean productInfoBean = (ActivityProductInfoBean) view.getTag();
+                    ProductInfoBean productInfoBean = (ProductInfoBean) view.getTag();
                     setDialogRule(productInfoBean);
                     break;
                 case R.id.iv_indent_product_del:
-                    productInfoBean = (ActivityProductInfoBean) view.getTag();
+                    productInfoBean = (ProductInfoBean) view.getTag();
                     for (IndentProDiscountBean discountBean : discountBeanList) {
                         if (productInfoBean.getId() == discountBean.getId()) {
                             discountBeanList.remove(discountBean);
@@ -409,7 +410,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
     }
 
     private void setCreateIndent() {
-        if (isOversea) {
+        if (isReal) {
             if (pullHeaderView.et_oversea_name.getText().toString().length() > 0
                     && pullHeaderView.et_oversea_card.getText().toString().length() > 0) {
                 createIndent(payWay, productInfoList);
@@ -536,7 +537,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
      * @param payType         支付方式
      * @param productInfoList 购买商品信息
      */
-    private void createIndent(final String payType, final List<ActivityProductInfoBean> productInfoList) {
+    private void createIndent(final String payType, final List<ProductInfoBean> productInfoList) {
         if (loadHud != null) {
             loadHud.show();
         }
@@ -551,18 +552,15 @@ public class DirectIndentWriteActivity extends BaseActivity {
         JSONArray jsonArray = new JSONArray();
         try {
             for (int i = 0; i < productInfoList.size(); i++) {
-                ActivityProductInfoBean activityProductInfoBean = productInfoList.get(i);
+                ProductInfoBean productInfoBean = productInfoList.get(i);
                 JSONObject jsonObject = new JSONObject();
-                jsonObject.put("saleSkuId", activityProductInfoBean.getSaleSkuId());
-                jsonObject.put("id", activityProductInfoBean.getId());
-                jsonObject.put("count", activityProductInfoBean.getCount());
-                if (activityProductInfoBean.getCartId() > 0) {
-                    jsonObject.put("cartId", activityProductInfoBean.getCartId());
-                }
-                if (activityProductInfoBean.getPresentProductInfoList() != null
-                        && activityProductInfoBean.getPresentProductInfoList().size() > 0) {
+                jsonObject.put("saleSkuId", productInfoBean.getSaleSkuId());
+                jsonObject.put("id", productInfoBean.getId());
+                jsonObject.put("count", productInfoBean.getCount());
+                if (productInfoBean.getPresentProductInfoList() != null
+                        && productInfoBean.getPresentProductInfoList().size() > 0) {
                     StringBuilder stringBuilder = new StringBuilder();
-                    for (CartProductInfoBean cartProductInfoBean : activityProductInfoBean.getPresentProductInfoList()) {
+                    for (CartProductInfoBean cartProductInfoBean : productInfoBean.getPresentProductInfoList()) {
                         stringBuilder.append(!TextUtils.isEmpty(stringBuilder) ?
                                 ("," + getStrings(cartProductInfoBean.getSaleSkuId()))
                                 : getStrings(cartProductInfoBean.getSaleSkuId()));
@@ -571,8 +569,8 @@ public class DirectIndentWriteActivity extends BaseActivity {
                 } else {
                     jsonObject.put("presentSkuIds", "");
                 }
-                if (!TextUtils.isEmpty(activityProductInfoBean.getActivityCode())) {
-                    jsonObject.put("activityCode", activityProductInfoBean.getActivityCode());
+                if (!TextUtils.isEmpty(productInfoBean.getActivityCode())) {
+                    jsonObject.put("activityCode", productInfoBean.getActivityCode());
                 }
                 jsonArray.put(jsonObject);
             }
@@ -601,7 +599,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
             params.put("isApp", true);
         }
         params.put("isWeb", false);
-        if (isOversea) {
+        if (isReal) {
             params.put("isOverseasGo", true);
             params.put("realName", pullHeaderView.et_oversea_name.getText().toString().trim());
             String idCard = pullHeaderView.et_oversea_card.getText().toString().trim();
@@ -1127,8 +1125,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
      */
     private void getIndentDiscounts(boolean disuseCoupon) {
         if (discountBeanList.size() > 0 || combineGoods.size() > 0) {
-            //优惠详情信息
-            String url = Url.INDENT_DISCOUNTS_NEW_INFO;
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
             if (addressId > 0) {
@@ -1147,21 +1143,21 @@ public class DirectIndentWriteActivity extends BaseActivity {
             if (combineGoods != null && combineGoods.size() > 0) {
                 params.put("combineGoods", new Gson().toJson(combineGoods));
             }
-            NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.INDENT_DISCOUNTS_NEW_INFO, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     if (loadHud != null) {
                         loadHud.dismiss();
                     }
                     Gson gson = new Gson();
-                    indentDiscountsEntity = gson.fromJson(result, IndentDiscountsEntity.class);
-                    if (indentDiscountsEntity != null) {
-                        if (indentDiscountsEntity.getCode().equals(SUCCESS_CODE)) {
-                            indentDiscountsBean = indentDiscountsEntity.getIndentDiscountsBean();
-                            setDiscountsInfo(indentDiscountsBean);
+                    identWriteEntity = gson.fromJson(result, IndentWriteEntity.class);
+                    if (identWriteEntity != null) {
+                        if (identWriteEntity.getCode().equals(SUCCESS_CODE)) {
+                            indentWriteBean = identWriteEntity.getIndentWriteBean();
+                            setDiscountsInfo(indentWriteBean);
                         }
                     }
-                    NetLoadUtils.getNetInstance().showLoadSir(loadService, indentDiscountsEntity);
+                    NetLoadUtils.getNetInstance().showLoadSir(loadService, identWriteEntity);
                 }
 
                 @Override
@@ -1169,64 +1165,64 @@ public class DirectIndentWriteActivity extends BaseActivity {
                     if (loadHud != null) {
                         loadHud.dismiss();
                     }
-                    NetLoadUtils.getNetInstance().showLoadSir(loadService, indentDiscountsEntity);
+                    NetLoadUtils.getNetInstance().showLoadSir(loadService, identWriteEntity);
                 }
             });
         } else {
             if (loadHud != null) {
                 loadHud.dismiss();
             }
-            NetLoadUtils.getNetInstance().showLoadSir(loadService, indentDiscountsEntity);
+            NetLoadUtils.getNetInstance().showLoadSir(loadService, identWriteEntity);
         }
     }
 
-    private void setDiscountsInfo(IndentDiscountsBean indentDiscountsBean) {
-        isOversea = indentDiscountsBean.isOverseasGo();
-        tv_indent_write_commit.setEnabled(indentDiscountsBean.getHideCreate() == 0);
-        setOverseaData(indentDiscountsBean);
-        setDiscounts(indentDiscountsBean.getPriceInfoList());
-        if (indentDiscountsBean.getUserCouponInfo() != null) {
-            IndentDiscountsBean.UserCouponInfoBean userCouponInfo = indentDiscountsBean.getUserCouponInfo();
-            pullFootView.tv_direct_product_favorable.setText(("-¥" + userCouponInfo.getAmount()));
+    private void setDiscountsInfo(IndentWriteBean indentWriteBean) {
+        isReal = indentWriteBean.getReal() == 1;
+        tv_indent_write_commit.setEnabled(indentWriteBean.getAllProductNotBuy() == 0);
+        setOverseaData(indentWriteBean);
+        setDiscounts(indentWriteBean.getPriceInfos());
+        if (indentWriteBean.getUserCouponInfo() != null) {
+            UserCouponInfoBean userCouponInfo = indentWriteBean.getUserCouponInfo();
+            pullFootView.tv_direct_product_favorable.setText(("-¥" + userCouponInfo.getPrice()));
             couponId = userCouponInfo.getId();
             pullFootView.tv_direct_product_favorable.setSelected(true);
         } else {
             pullFootView.tv_direct_product_favorable.setSelected(false);
 //                暂无可用优惠券
-            if (!TextUtils.isEmpty(indentDiscountsBean.getUserCouponMsg())) {
-                pullFootView.tv_direct_product_favorable.setText(indentDiscountsBean.getUserCouponMsg());
-            } else {
-                pullFootView.tv_direct_product_favorable.setText(R.string.unavailable_ticket);
-            }
+//            if (!TextUtils.isEmpty(indentWriteBean.getUserCouponMsg())) {
+//                pullFootView.tv_direct_product_favorable.setText(indentWriteBean.getUserCouponMsg());
+//            } else {
+            pullFootView.tv_direct_product_favorable.setText(R.string.unavailable_ticket);
+//            }
         }
         productInfoList.clear();
-        for (int i = 0; i < indentDiscountsBean.getProductInfoList().size(); i++) {
-            ProductInfoBean productInfoBean = indentDiscountsBean.getProductInfoList().get(i);
-            for (int j = 0; j < productInfoBean.getActivityProductInfo().size(); j++) {
-                ActivityProductInfoBean activityProductInfoBean = productInfoBean.getActivityProductInfo().get(j);
-                if (productInfoBean.getActivityInfo() != null && j == 0) {
-                    activityProductInfoBean.setShowActInfo(1);
+        for (int i = 0; i < indentWriteBean.getProducts().size(); i++) {
+            ProductsBean productsBean = indentWriteBean.getProducts().get(i);
+            for (int j = 0; j < productsBean.getProductInfos().size(); j++) {
+                ProductInfoBean productInfoBean = productsBean.getProductInfos().get(j);
+                if (productsBean.getActivityInfo() != null && j == 0) {
+                    productInfoBean.setShowActInfo(1);
                 }
-                activityProductInfoBean.setActivityInfoBean(productInfoBean.getActivityInfo());
-                activityProductInfoBean.setShowDel(indentDiscountsBean.getShowDel() == 1);
-                productInfoList.add(activityProductInfoBean);
+                productInfoBean.setActivityInfoBean(productsBean.getActivityInfo());
+                productInfoBean.setShowDel(indentWriteBean.getShowDel() == 1);
+                productInfoList.add(productInfoBean);
             }
-            if (productInfoBean.getActivityInfo() != null && productInfoList.size() > 0
-                    && indentDiscountsBean.getProductInfoList().size() > i + 1) {
-                ActivityProductInfoBean activityProductInfoBean = productInfoList.get(productInfoList.size() - 1);
-                activityProductInfoBean.setShowLine(1);
-                productInfoList.set(productInfoList.size() - 1, activityProductInfoBean);
+            if (productsBean.getActivityInfo() != null && productInfoList.size() > 0
+                    && indentWriteBean.getProductInfoList().size() > i + 1) {
+                ProductInfoBean productInfoBean = productInfoList.get(productInfoList.size() - 1);
+                productInfoBean.setShowLine(1);
+                productInfoList.set(productInfoList.size() - 1, productInfoBean);
             }
         }
         if (!INDENT_GROUP_SHOP.equals(type)
                 && productInfoList.size() > 0 && productInfoList.size() < 2) {
-            ActivityProductInfoBean activityProductInfoBean = productInfoList.get(0);
+            ProductInfoBean productInfoBean = productInfoList.get(0);
             pullFootView.rect_indent_number.setVisibility(VISIBLE);
-            pullFootView.rect_indent_number.setNum(activityProductInfoBean.getCount());
+            pullFootView.rect_indent_number.setNum(productInfoBean.getCount());
             if (passGoods != null) {
                 for (CartInfoBean cartInfoBean : passGoods) {
                     SaleSkuBean saleSku = cartInfoBean.getSaleSku();
-                    if (saleSku != null && saleSku.getId() == activityProductInfoBean.getSaleSkuId()) {
+                    if (saleSku != null && saleSku.getId() == productInfoBean.getSaleSkuId()) {
                         pullFootView.rect_indent_number.setMaxNum(saleSku.getQuantity());
                     }
                 }
@@ -1237,18 +1233,18 @@ public class DirectIndentWriteActivity extends BaseActivity {
         directProductAdapter.notifyDataSetChanged();
     }
 
-    private void setOverseaData(IndentDiscountsBean indentDiscountsBean) {
-        if (indentDiscountsBean.isOverseasGo()) {
+    private void setOverseaData(IndentWriteBean indentWriteBean) {
+        if (indentWriteBean.getReal() == 1) {
             pullHeaderView.ll_oversea_info.setVisibility(VISIBLE);
-            pullHeaderView.et_oversea_name.setText(getStringFilter(indentDiscountsBean.getRealName()));
-            pullHeaderView.et_oversea_name.setSelection(getStrings(indentDiscountsBean.getRealName()).length());
-            pullHeaderView.et_oversea_card.setText(getStringFilter(indentDiscountsBean.getShowIdcard()));
-            pullHeaderView.et_oversea_card.setSelection(getStrings(indentDiscountsBean.getShowIdcard()).length());
-            pullHeaderView.et_oversea_card.setTag(R.id.id_tag, getStrings(indentDiscountsBean.getIdcard()));
-            pullHeaderView.et_oversea_card.setTag(getStrings(indentDiscountsBean.getShowIdcard()));
-            if (!TextUtils.isEmpty(indentDiscountsBean.getPrompt())) {
+            pullHeaderView.et_oversea_name.setText(getStringFilter(indentWriteBean.getRealName()));
+            pullHeaderView.et_oversea_name.setSelection(getStrings(indentWriteBean.getRealName()).length());
+            pullHeaderView.et_oversea_card.setText(getStringFilter(indentWriteBean.getIdCard()));
+            pullHeaderView.et_oversea_card.setSelection(getStrings(indentWriteBean.getIdCard()).length());
+            pullHeaderView.et_oversea_card.setTag(R.id.id_tag, getStrings(indentWriteBean.getIdCard()));
+            pullHeaderView.et_oversea_card.setTag(getStrings(indentWriteBean.getIdCard()));
+            if (!TextUtils.isEmpty(indentWriteBean.getPrompt())) {
                 pullHeaderView.tv_oversea_buy_tint.setVisibility(VISIBLE);
-                pullHeaderView.tv_oversea_buy_tint.setText(getStrings(indentDiscountsBean.getPrompt()));
+                pullHeaderView.tv_oversea_buy_tint.setText(getStrings(indentWriteBean.getPrompt()));
             } else {
                 pullHeaderView.tv_oversea_buy_tint.setVisibility(View.GONE);
             }
@@ -1392,7 +1388,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
      *
      * @param productInfoBean
      */
-    private void setDialogRule(ActivityProductInfoBean productInfoBean) {
+    private void setDialogRule(ProductInfoBean productInfoBean) {
         if (productInfoBean.getActivityInfoBean() != null) {
             if (alertDialog == null) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(DirectIndentWriteActivity.this, R.style.CustomTransDialog);
@@ -1578,10 +1574,10 @@ public class DirectIndentWriteActivity extends BaseActivity {
         //        优惠券选择
         @OnClick(R.id.ll_layout_coupon)
         void selectFavorable() {
-            if (indentDiscountsBean != null) {
-                if (indentDiscountsBean.getProductIsUsable() == 0) {
+            if (indentWriteBean != null) {
+                if (indentWriteBean.getProductIsUsable() == 0) {
                     constantMethod.showImportantToast(DirectIndentWriteActivity.this, "该商品不支持使用优惠券！");
-                } else if (indentDiscountsBean.getProductIsUsable() == 1) {
+                } else if (indentWriteBean.getProductIsUsable() == 1) {
                     if (TextUtils.isEmpty(orderCreateNo)) {
                         Intent intent = new Intent(DirectIndentWriteActivity.this, DirectCouponGetActivity.class);
                         Bundle bundle = new Bundle();

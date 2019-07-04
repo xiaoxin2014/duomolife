@@ -295,7 +295,7 @@ public class ShopCarDao {
                 ActivityInfoBean activityInfoBean = cartBean.getActivityInfo();
                 if (cartInfoList != null && cartInfoList.size() > 0) {
                     for (CartInfoBean bean : cartInfoList) {
-                        ActivityInfoBean parent = (ActivityInfoBean) shopCarGoodsAdapter.getData().get(cartInfoBean.getParentPosition());
+                        ActivityInfoBean parent = (ActivityInfoBean) shopCarGoodsAdapter.getData().get(shopCarGoodsAdapter.getParentPosition(cartInfoBean));
                         String activityCode = parent.getActivityCode();
                         //判断是否是活动商品(如果是，更新活动规则)
                         if (!TextUtils.isEmpty(activityCode) && activityInfoBean != null && activityInfoBean.getActivityCode().equals(activityCode)) {

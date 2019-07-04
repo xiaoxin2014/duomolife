@@ -187,8 +187,6 @@ public class ShopCarActivity extends BaseActivity {
                 if (cartInfoBean == null) {
                     cartInfoBean = (CartInfoBean) view.getTag(R.id.shop_car_cb);
                 }
-                cartInfoBean.setPosition(position);
-                cartInfoBean.setParentPosition(adapter.getParentPosition(cartInfoBean));
             }
 
             switch (view.getId()) {

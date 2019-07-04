@@ -164,16 +164,10 @@ public class ShopCarEntity extends BaseTimeEntity {
                 private boolean isSelected;
                 //是否被选中删除
                 private boolean isDelete;
-                //记录位置
-                private int position;
-                //记录父级位置
-                private int parentPosition;
                 //是否是组合搭配主商品
                 private boolean isMainProduct;
                 //是否是组合搭配的搭配商品
                 private boolean isCombineProduct;
-                //存储搭配商品
-                private List<CartInfoBean> combineMatchProducts;
                 //针对失效商品特殊字段
                 private boolean isValid;
 
@@ -185,14 +179,6 @@ public class ShopCarEntity extends BaseTimeEntity {
                     isValid = valid;
                 }
 
-                public int getParentPosition() {
-                    return parentPosition;
-                }
-
-                public void setParentPosition(int parentPosition) {
-                    this.parentPosition = parentPosition;
-                }
-
                 //更新
                 public void update(CartInfoBean cartInfoBean) {
                     setSaleSku(cartInfoBean.getSaleSku());
@@ -201,19 +187,8 @@ public class ShopCarEntity extends BaseTimeEntity {
                     setPicUrl(cartInfoBean.getPicUrl());
                     setActivitypriceDesc(cartInfoBean.getActivityPriceDesc());
                     setHasNewUserPrice(cartInfoBean.isHasNewUserPrice());
-                    //setForSale(cartInfoBean.isForSale);
-                    //setPriceTag(cartInfoBean.priceTag);
-                    //setIsMore(cartInfoBean.isMore);
-                    //setStatus(cartInfoBean.getStatus());
                 }
 
-                public List<CartInfoBean> getCombineMatchProducts() {
-                    return combineMatchProducts;
-                }
-
-                public void setCombineMatchProducts(List<CartInfoBean> combineMatchProducts) {
-                    this.combineMatchProducts = combineMatchProducts;
-                }
 
                 public boolean isCombineProduct() {
                     return isCombineProduct;
@@ -229,14 +204,6 @@ public class ShopCarEntity extends BaseTimeEntity {
 
                 public void setMainProduct(boolean mainProduct) {
                     isMainProduct = mainProduct;
-                }
-
-                public int getPosition() {
-                    return position;
-                }
-
-                public void setPosition(int position) {
-                    this.position = position;
                 }
 
                 public CartInfoBean(CombineCommonBean combineCommonBean) {

@@ -29,6 +29,15 @@ public class ActivityInfoBean extends AbstractExpandableItem<CartInfoBean> imple
     private int activityType;
     private String activityRule;
     private String preActivityRule;
+    private int allowCoupon;
+
+    public int getAllowCoupon() {
+        return allowCoupon;
+    }
+
+    public void setAllowCoupon(int allowCoupon) {
+        this.allowCoupon = allowCoupon;
+    }
 
     public String getPreActivityRule() {
         return preActivityRule;
