@@ -159,23 +159,15 @@ public class ShopCarEntity extends BaseTimeEntity {
                 private int status = 1;
                 private boolean hasNewUserPrice;
                 private String updated;
-                //是否加间距
-                private int showLine;
-                //存储活动内容
-                private ActivityInfoBean activityInfoData;
                 //是否被选中结算
                 @SerializedName(value = "isSelected", alternate = "checked")
                 private boolean isSelected;
                 //是否被选中删除
                 private boolean isDelete;
-                //自定义属性
-                private int cartId;
                 //记录位置
                 private int position;
                 //记录父级位置
                 private int parentPosition;
-                //是否是活动商品数组第一条(如果是，显示活动信息)
-                private int showActInfo;
                 //是否是组合搭配主商品
                 private boolean isMainProduct;
                 //是否是组合搭配的搭配商品
@@ -210,7 +202,7 @@ public class ShopCarEntity extends BaseTimeEntity {
                     setActivitypriceDesc(cartInfoBean.getActivityPriceDesc());
                     setHasNewUserPrice(cartInfoBean.isHasNewUserPrice());
                     //setForSale(cartInfoBean.isForSale);
-                    //setPriceTag(cartInfoBean.priceTag);s
+                    //setPriceTag(cartInfoBean.priceTag);
                     //setIsMore(cartInfoBean.isMore);
                     //setStatus(cartInfoBean.getStatus());
                 }
@@ -239,14 +231,6 @@ public class ShopCarEntity extends BaseTimeEntity {
                     isMainProduct = mainProduct;
                 }
 
-                public int getShowActInfo() {
-                    return showActInfo;
-                }
-
-                public void setShowActInfo(int showActInfo) {
-                    this.showActInfo = showActInfo;
-                }
-
                 public int getPosition() {
                     return position;
                 }
@@ -260,30 +244,6 @@ public class ShopCarEntity extends BaseTimeEntity {
                     setId(combineCommonBean.getSkuId());
                     setCount(combineCommonBean.getCount());
                     setSaleSku(new SaleSkuBean(combineCommonBean.getQuantity(), combineCommonBean.getMinPrice(), combineCommonBean.getSkuId()));
-                }
-
-                public int getCartId() {
-                    return cartId;
-                }
-
-                public void setCartId(int cartId) {
-                    this.cartId = cartId;
-                }
-
-                public int getShowLine() {
-                    return showLine;
-                }
-
-                public void setShowLine(int showLine) {
-                    this.showLine = showLine;
-                }
-
-                public ActivityInfoBean getActivityInfoData() {
-                    return activityInfoData;
-                }
-
-                public void setActivityInfoData(ActivityInfoBean activityInfoData) {
-                    this.activityInfoData = activityInfoData;
                 }
 
                 public boolean isMore() {
@@ -536,11 +496,8 @@ public class ShopCarEntity extends BaseTimeEntity {
                     dest.writeInt(this.status);
                     dest.writeByte(this.hasNewUserPrice ? (byte) 1 : (byte) 0);
                     dest.writeString(this.updated);
-                    dest.writeInt(this.showLine);
-                    dest.writeParcelable(this.activityInfoData, flags);
                     dest.writeByte(this.isSelected ? (byte) 1 : (byte) 0);
                     dest.writeByte(this.isDelete ? (byte) 1 : (byte) 0);
-                    dest.writeInt(this.cartId);
                 }
 
                 public CartInfoBean() {
@@ -561,11 +518,8 @@ public class ShopCarEntity extends BaseTimeEntity {
                     this.status = in.readInt();
                     this.hasNewUserPrice = in.readByte() != 0;
                     this.updated = in.readString();
-                    this.showLine = in.readInt();
-                    this.activityInfoData = in.readParcelable(ActivityInfoBean.class.getClassLoader());
                     this.isSelected = in.readByte() != 0;
                     this.isDelete = in.readByte() != 0;
-                    this.cartId = in.readInt();
                 }
 
                 public static final Parcelable.Creator<CartInfoBean> CREATOR = new Parcelable.Creator<CartInfoBean>() {

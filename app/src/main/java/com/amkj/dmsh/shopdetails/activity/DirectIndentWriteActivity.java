@@ -42,6 +42,7 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.adapter.DirectProductListAdapter;
 import com.amkj.dmsh.shopdetails.adapter.IndentDiscountAdapter;
+import com.amkj.dmsh.shopdetails.bean.CombineGoodsBean;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.shopdetails.bean.DirectCouponEntity.DirectCouponBean;
 import com.amkj.dmsh.shopdetails.bean.DirectReBuyGoods;
@@ -71,7 +72,6 @@ import com.klinker.android.link_builder.LinkBuilder;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -142,6 +142,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
     private final int SEL_ADDRESS_REQ = 102;
     //    订单数据
     private List<CartInfoBean> passGoods = new ArrayList<>();
+    private List<CombineGoodsBean> combineGoods = new ArrayList<>();
     private final int DIRECT_COUPON_REQ = 105;
     private QualityCreateWeChatPayIndentBean qualityWeChatIndent;
     private QualityCreateAliPayIndentBean qualityAliPayIndent;
@@ -198,7 +199,8 @@ public class DirectIndentWriteActivity extends BaseActivity {
         tv_header_titleAll.setText("订单填写");
         header_shared.setVisibility(View.INVISIBLE);
         Intent intent = getIntent();
-        passGoods = intent.getParcelableArrayListExtra("productDate");
+        passGoods = intent.getParcelableArrayListExtra("goods");
+        combineGoods = intent.getParcelableArrayListExtra("combineGoods");
         groupShopDetailsBean = intent.getParcelableExtra("gpShopInfo");
         orderNo = intent.getStringExtra("orderNo");
 //        地址栏
@@ -211,7 +213,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
         View footView = LayoutInflater.from(this).inflate(R.layout.layout_direct_indent_write_foot, (ViewGroup) communal_recycler.getParent(), false);
         pullFootView = new PullFootView();
         ButterKnife.bind(pullFootView, footView);
-        if (passGoods != null || orderNo != null) {
+        if (passGoods != null || combineGoods != null || orderNo != null) {
             if (passGoods != null) {
                 discountBeanList.clear();
                 for (int i = 0; i < passGoods.size(); i++) {
@@ -221,7 +223,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                     indentProBean.setId(cartInfoBean.getProductId());
                     indentProBean.setSaleSkuId(cartInfoBean.getSaleSku().getId());
                     indentProBean.setCount(cartInfoBean.getCount());
-                    indentProBean.setCartId(cartInfoBean.getCartId());
+                    indentProBean.setCartId(cartInfoBean.getId());
                     discountBeanList.add(indentProBean);
                 }
             }
@@ -240,6 +242,9 @@ public class DirectIndentWriteActivity extends BaseActivity {
                 discountBeanList.add(indentProBean);
             }
             directProductAdapter = new DirectProductListAdapter(DirectIndentWriteActivity.this, groupShopDetailsBeanList, type);
+        } else {
+            showToast(this, "商品信息有误，请重试");
+            finish();
         }
         pullFootView.rect_indent_number.setFontColor(Color.parseColor("#333333"));
         communal_recycler.setLayoutManager(new LinearLayoutManager(DirectIndentWriteActivity.this));
@@ -1121,9 +1126,9 @@ public class DirectIndentWriteActivity extends BaseActivity {
      * 结算金额 不带优惠券
      */
     private void getIndentDiscounts(boolean disuseCoupon) {
-        if (discountBeanList.size() > 0) {
+        if (discountBeanList.size() > 0 || combineGoods.size() > 0) {
             //优惠详情信息
-            String url = Url.BASE_URL + Url.INDENT_DISCOUNTS_INFO;
+            String url = Url.INDENT_DISCOUNTS_NEW_INFO;
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
             if (addressId > 0) {
@@ -1134,24 +1139,14 @@ public class DirectIndentWriteActivity extends BaseActivity {
             }
             if (type.equals(INDENT_GROUP_SHOP)) {
                 params.put("gpInfoId", groupShopDetailsBean.getGpInfoId());
+                params.put("gpRecordId", groupShopDetailsBean.getGpRecordId());
             }
-            JSONArray jsonArray = new JSONArray();
-            for (IndentProDiscountBean indentProDiscountBean : discountBeanList) {
-                try {
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("id", indentProDiscountBean.getId());
-                    jsonObject.put("saleSkuId", indentProDiscountBean.getSaleSkuId());
-                    jsonObject.put("count", indentProDiscountBean.getCount());
-                    if (indentProDiscountBean.getCartId() > 0) {
-                        jsonObject.put("cartId", indentProDiscountBean.getCartId());
-                    }
-                    jsonArray.put(jsonObject);
-                    params.put("goods", jsonArray.toString());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+            if (discountBeanList != null && discountBeanList.size() > 0) {
+                params.put("goods", new Gson().toJson(discountBeanList));
             }
-            params.put("version", "v3.1.5");
+            if (combineGoods != null && combineGoods.size() > 0) {
+                params.put("combineGoods", new Gson().toJson(combineGoods));
+            }
             NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {

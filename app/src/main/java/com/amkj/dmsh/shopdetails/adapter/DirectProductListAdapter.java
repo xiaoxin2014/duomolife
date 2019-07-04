@@ -69,7 +69,6 @@ import static com.amkj.dmsh.shopdetails.activity.DirectIndentWriteActivity.INDEN
 import static com.amkj.dmsh.shopdetails.activity.DirectIndentWriteActivity.INDENT_W_TYPE;
 import static com.amkj.dmsh.shopdetails.activity.DoMoIndentAllActivity.INDENT_TYPE;
 
-;
 
 /**
  * Created by atd48 on 2016/8/17.

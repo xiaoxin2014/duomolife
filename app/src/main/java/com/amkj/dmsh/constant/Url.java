@@ -501,6 +501,8 @@ public class Url {
     public static final String Q_SELF_SHOP_DETAILS_COUPON = "api/my/coupon/choiceSelfCouponV2";
     //    订单优惠信息 新版
     public static final String INDENT_DISCOUNTS_INFO = "api/goods/order/getOrderSettleInfoNew";
+    //    订单优惠信息 大营销中心新版
+    public static final String INDENT_DISCOUNTS_NEW_INFO = "api/goods/order/getOrderSettleInfoNewV2";
     //    订单结算价格 新
     public static final String INDENT_SETTLE_PRICE = "api/goods/order/getTotalPriceByCouponNew";
     //    订单搜索

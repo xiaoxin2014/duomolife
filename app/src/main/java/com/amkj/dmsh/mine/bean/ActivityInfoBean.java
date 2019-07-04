@@ -2,6 +2,7 @@ package com.amkj.dmsh.mine.bean;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean.CartBean.CartInfoBean;
@@ -28,15 +29,6 @@ public class ActivityInfoBean extends AbstractExpandableItem<CartInfoBean> imple
     private int activityType;
     private String activityRule;
     private String preActivityRule;
-    private int position;
-
-    public int getPosition() {
-        return position;
-    }
-
-    public void setPosition(int position) {
-        this.position = position;
-    }
 
     public String getPreActivityRule() {
         return preActivityRule;
@@ -133,5 +125,23 @@ public class ActivityInfoBean extends AbstractExpandableItem<CartInfoBean> imple
     @Override
     public int getItemType() {
         return ConstantVariable.TITLE;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ActivityInfoBean that = (ActivityInfoBean) o;
+        if (!TextUtils.isEmpty(activityCode)) {
+            return activityCode.equals(that.getActivityCode());
+        } else {
+            return TextUtils.isEmpty(that.getActivityCode());
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return activityCode.hashCode();
     }
 }

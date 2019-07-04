@@ -2,7 +2,6 @@ package com.amkj.dmsh.mine.adapter;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
@@ -11,6 +10,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.mine.bean.ActivityInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean.CartBean.CartInfoBean;
+import com.amkj.dmsh.mine.biz.ShopCarDao;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.views.RectAddAndSubViewCommunal;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
@@ -18,6 +18,8 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 
 import java.util.List;
+
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
@@ -54,7 +56,7 @@ public class ShopCarGoodsAdapter extends BaseMultiItemQuickAdapter<MultiItemEnti
                 final RectAddAndSubViewCommunal rect_shop_car_item = helper.getView(R.id.communal_rect_add_sub);
                 helper.setChecked(R.id.cb_shop_car_sel, isEditStatus ? cartInfoBean.isDelete() : cartInfoBean.isSelected());
                 //商品有效或者在编辑状态时(编辑状态搭配商品单独选中)
-                if (cartInfoBean.isValid() || (isEditStatus && !cartInfoBean.isCombineProduct())) {
+                if ((cartInfoBean.isValid() || isEditStatus) && !cartInfoBean.isCombineProduct()) {
                     cb_shop_car_sel.setEnabled(true);
                 } else {
                     cb_shop_car_sel.setEnabled(false);
@@ -63,17 +65,29 @@ public class ShopCarGoodsAdapter extends BaseMultiItemQuickAdapter<MultiItemEnti
 
                 GlideImageLoaderUtil.loadCenterCrop(context, helper.getView(R.id.img_shop_car_product), cartInfoBean.getPicUrl());
                 //        "activityType": { "0": "满减", "1": "折扣", "2": "立减", "3": "限时购", "4": "满赠", "5": "首单赠", "6": "组合商品", "7": "赠品", "8": "第二件半价" }
-                helper//是否选中商品
-                        .addOnClickListener(R.id.cb_shop_car_sel).setTag(R.id.cb_shop_car_sel, R.id.shop_car_cb, cartInfoBean)
+                helper.addOnClickListener(R.id.cb_shop_car_sel).setTag(R.id.cb_shop_car_sel, R.id.shop_car_cb, cartInfoBean)//是否选中商品
                         .setText(R.id.tv_shop_car_name, getStrings(cartInfoBean.getName()))
                         .setText(R.id.tv_shop_car_product_sku, getStrings(cartInfoBean.getSaleSkuValue()))
                         .addOnClickListener(R.id.tv_shop_car_product_sku).setTag(R.id.tv_shop_car_product_sku, cartInfoBean)
                         .setGone(R.id.tv_w_buy_tag, cartInfoBean.isForSale())// 待售状态
                         .setText(R.id.tv_shop_car_pro_discount, getStrings(cartInfoBean.getPriceTag())).setTag(R.id.communal_rect_add_sub, cartInfoBean)//降价优惠
-                        .setGone(R.id.tv_line_ten, cartInfoBean.getShowLine() == 1)
                         .addOnClickListener(R.id.img_integration_details_credits_add).setTag(R.id.img_integration_details_credits_add, cartInfoBean)
                         .addOnClickListener(R.id.img_integration_details_credits_minus).setTag(R.id.img_integration_details_credits_minus, cartInfoBean);
 
+                //设置间距
+                TextView dividerView = helper.getView(R.id.tv_line_ten);
+                ViewGroup.LayoutParams dividerLayoutParams = dividerView.getLayoutParams();
+                int parentPosition = getParentPosition(multiItemEntity);
+                ActivityInfoBean activityInfoBean = (ActivityInfoBean) getData().get(parentPosition);
+                List<CartInfoBean> subItems = activityInfoBean.getSubItems();
+                if (!TextUtils.isEmpty(activityInfoBean.getActivityCode()) && subItems.get(subItems.size() - 1) == cartInfoBean) {
+                    dividerLayoutParams.height = AutoSizeUtils.dp2px(context, 10);
+                    dividerLayoutParams.width = MATCH_PARENT;
+                } else {
+                    dividerLayoutParams.height = AutoSizeUtils.dp2px(context, 0.5f);
+                    dividerLayoutParams.width = MATCH_PARENT;
+                }
+                dividerView.setLayoutParams(dividerLayoutParams);
                 //商品状态
                 if (cartInfoBean.getStatus() == 1 && cartInfoBean.getSaleSku() != null) {
                     if (cartInfoBean.getSaleSku().getQuantity() > 0) {
@@ -122,6 +136,9 @@ public class ShopCarGoodsAdapter extends BaseMultiItemQuickAdapter<MultiItemEnti
 //        }
                 break;
             case ConstantVariable.TITLE:
+                helper.setGone(R.id.ll_communal_activity_topic_tag, true)
+                        .setGone(R.id.blank, true);
+
                 ActivityInfoBean activityInfoData = (ActivityInfoBean) multiItemEntity;
                 ViewGroup.LayoutParams layoutParams = helper.itemView.getLayoutParams();
                 if (TextUtils.isEmpty(activityInfoData.getActivityCode()) || activityInfoData.getSubItems().size() == 0) {
@@ -132,32 +149,33 @@ public class ShopCarGoodsAdapter extends BaseMultiItemQuickAdapter<MultiItemEnti
                     layoutParams.width = MATCH_PARENT;
                 }
                 helper.itemView.setLayoutParams(layoutParams);
-                helper.itemView.setVisibility(!TextUtils.isEmpty(activityInfoData.getActivityCode()) ? View.VISIBLE : View.GONE);
-                //设置标签
-                helper.setGone(R.id.ll_communal_activity_topic_tag, true)
-                        .setGone(R.id.tv_communal_activity_tag, !TextUtils.isEmpty(activityInfoData.getActivityTag()))
-                        .setText(R.id.tv_communal_activity_tag_next, "凑单")
-                        .setText(R.id.tv_communal_activity_tag, getStrings(activityInfoData.getActivityTag()));
+                if (!TextUtils.isEmpty(activityInfoData.getActivityCode()) && activityInfoData.getSubItems() != null && activityInfoData.getSubItems().size() > 0) {
+                    //设置标签
+                    helper.setGone(R.id.tv_communal_activity_tag, !TextUtils.isEmpty(activityInfoData.getActivityTag()))
+                            .setText(R.id.tv_communal_activity_tag_next, "凑单")
+                            .setText(R.id.tv_communal_activity_tag, getStrings(activityInfoData.getActivityTag()));
 
-                //设置规则
-                switch (activityInfoData.getActivityType()) {
-                    case 0:
-                    case 1:
-                    case 4:
-                    case 8:
-                        helper.setGone(R.id.ll_communal_activity_tag_rule, true)
-                                .setText(R.id.tv_communal_activity_tag_rule, getStrings(activityInfoData.getActivityRule()))
-                                .addOnClickListener(R.id.tv_communal_activity_tag_next).setTag(R.id.tv_communal_activity_tag_next, activityInfoData)
-                                .addOnClickListener(R.id.tv_communal_activity_tag_rule).setTag(R.id.tv_communal_activity_tag_rule, activityInfoData);
-                        break;
-                    case 2:
-                    case 3:
-                    case 5:
-                    case 6:
-                    case 7:
-                        helper.setGone(R.id.ll_communal_activity_tag_rule, false);
-                        break;
+                    //设置规则
+                    switch (activityInfoData.getActivityType()) {
+                        case 0:
+                        case 1:
+                        case 4:
+                        case 8:
+                            helper.setGone(R.id.ll_communal_activity_tag_rule, true)
+                                    .setText(R.id.tv_communal_activity_tag_rule, ShopCarDao.subItemCheceked(activityInfoData) ? getStrings(activityInfoData.getActivityRule()) : getStrings(activityInfoData.getPreActivityRule()))
+                                    .addOnClickListener(R.id.tv_communal_activity_tag_next).setTag(R.id.tv_communal_activity_tag_next, activityInfoData)
+                                    .addOnClickListener(R.id.tv_communal_activity_tag_rule).setTag(R.id.tv_communal_activity_tag_rule, activityInfoData);
+                            break;
+                        case 2:
+                        case 3:
+                        case 5:
+                        case 6:
+                        case 7:
+                            helper.setGone(R.id.ll_communal_activity_tag_rule, false);
+                            break;
+                    }
                 }
+
                 break;
         }
 

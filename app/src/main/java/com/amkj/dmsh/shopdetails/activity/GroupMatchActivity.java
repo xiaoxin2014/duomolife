@@ -2,6 +2,7 @@ package com.amkj.dmsh.shopdetails.activity;
 
 import android.content.Intent;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -304,9 +305,6 @@ public class GroupMatchActivity extends BaseActivity {
         return mRlMain;
     }
 
-    /**
-     * @param view
-     */
     @OnClick({R.id.tv_life_back, R.id.iv_img_service, R.id.iv_img_share, R.id.tv_add_car, R.id.tv_buy})
     public void onViewClicked(View view) {
         Intent intent;
@@ -333,7 +331,7 @@ public class GroupMatchActivity extends BaseActivity {
                                 mTvAddCar.setEnabled(false);
                                 //加入购物车
                                 Map<String, Object> params = new HashMap<>();
-                                String combines = ShopCarDao.getCombines(groupGoods);
+                                String combines = ShopCarDao.getCombinesCart(groupGoods);
                                 if (!TextUtils.isEmpty(combines)) {
                                     params.put("combines", combines);
                                 }
@@ -363,7 +361,6 @@ public class GroupMatchActivity extends BaseActivity {
                             }
                         } else {
                             ConstantMethod.showToast("请选择主商品属性");
-//                            selectSku(groupGoods.get(0), 0, false, view);
                         }
                     }
                 } else {
@@ -426,6 +423,13 @@ public class GroupMatchActivity extends BaseActivity {
             return getStringChangeDouble(groupList.get(0).getMinPrice());
         } else {
             return 0;
+        }
+    }
+
+    @Override
+    protected void postEventResult(@NonNull EventMessage message) {
+        if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
+            getCarCount(getActivity(), mBadge);
         }
     }
 }

@@ -7,7 +7,7 @@ import java.util.List;
  * Version:v4.1.0
  * ClassDescription :组合商品加入购物车传入参数combines数据类型
  */
-public class CombineBean {
+public class CombineCartBean {
 
     /**
      * productId : 123

@@ -34,6 +34,7 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.DirectIndentWriteActivity;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
+import com.amkj.dmsh.shopdetails.bean.CombineGoodsBean;
 import com.amkj.dmsh.shopdetails.bean.EditGoodsSkuEntity;
 import com.amkj.dmsh.shopdetails.bean.ShopCarGoodsSku;
 import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
@@ -84,7 +85,7 @@ import static com.amkj.dmsh.constant.Url.Q_SHOP_DETAILS_DEL_CAR;
 import static com.amkj.dmsh.constant.Url.Q_SHOP_DETAILS_GET_SKU_CAR;
 import static com.amkj.dmsh.mine.biz.ShopCarDao.getCartIds;
 import static com.amkj.dmsh.mine.biz.ShopCarDao.isValid;
-import static com.amkj.dmsh.mine.biz.ShopCarDao.notifyItemChange;
+import static com.amkj.dmsh.mine.biz.ShopCarDao.updateGoodsInfo;
 import static com.amkj.dmsh.mine.biz.ShopCarDao.removeSelGoods;
 
 /**
@@ -160,9 +161,6 @@ public class ShopCarActivity extends BaseActivity {
         header_shared.setSelected(false);
         shopCarGoodsAdapter = new ShopCarGoodsAdapter(ShopCarActivity.this, shopGoodsList);
         communal_recycler.setLayoutManager(new LinearLayoutManager(this));
-        communal_recycler.addItemDecoration(new ItemDecoration.Builder()
-                // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_gray_f_two_px).create());
         communal_recycler.setAdapter(shopCarGoodsAdapter);
 
         smart_communal_refresh.setOnRefreshListener(refreshLayout -> {
@@ -184,7 +182,6 @@ public class ShopCarActivity extends BaseActivity {
             ActivityInfoBean activityInfoBean = null;
             if (view.getId() == R.id.tv_communal_activity_tag_next || view.getId() == R.id.tv_communal_activity_tag_rule) {
                 activityInfoBean = (ActivityInfoBean) view.getTag();
-                activityInfoBean.setPosition(position);
             } else {
                 cartInfoBean = (CartInfoBean) view.getTag();
                 if (cartInfoBean == null) {
@@ -197,10 +194,10 @@ public class ShopCarActivity extends BaseActivity {
             switch (view.getId()) {
                 //单个选中或者取消
                 case R.id.cb_shop_car_sel:
-                    ShopCarDao.selectOne(shopGoodsList, position, isEditStatus);
+                    ShopCarDao.selectOne(cartInfoBean, isEditStatus);
                     //商品有效并且不在编辑状态时更新结算价格
                     if (isValid(cartInfoBean) && !isEditStatus) {
-                        getSettlePrice(cartInfoBean, true, true);
+                        getSettlePrice(cartInfoBean, null, true);
                     }
                     break;
                 //修改购物车商品属性
@@ -277,9 +274,7 @@ public class ShopCarActivity extends BaseActivity {
                 }
             }
         });
-        download_btn_communal.setOnClickListener(v ->
-
-        {
+        download_btn_communal.setOnClickListener(v -> {
             LinearLayoutManager linearLayoutManager = (LinearLayoutManager) communal_recycler.getLayoutManager();
             int firstVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition();
             int mVisibleCount = linearLayoutManager.findLastVisibleItemPosition()
@@ -290,12 +285,9 @@ public class ShopCarActivity extends BaseActivity {
             communal_recycler.smoothScrollToPosition(0);
         });
         cartHeaderView = LayoutInflater.from(ShopCarActivity.this).
-
                 inflate(R.layout.layout_cart_recommend, null, false);
 
-        recommendHeaderView = new
-
-                RecommendHeaderView();
+        recommendHeaderView = new RecommendHeaderView();
         ButterKnife.bind(recommendHeaderView, cartHeaderView);
         recommendHeaderView.initViews();
     }
@@ -374,22 +366,23 @@ public class ShopCarActivity extends BaseActivity {
                                 //添加失效商品
                                 addShopCartInfo(false, rubbishCarts);
 
-                                if (page == 1) {
-                                    updatePrice(shopCartBean, true);
-                                } else {
-                                    //如果加载第二页时，选中了全选
-                                    if (allCheckedStatus) {
-                                        getSettlePrice(null, false, true);
-                                    } else {
-                                        updatePrice(shopCartBean, false);
-                                    }
-                                }
                                 shopCarGoodsAdapter.expandAll();
                                 shopCarGoodsAdapter.notifyDataSetChanged();
                                 shopCarGoodsAdapter.loadMoreComplete();
                                 //更新购物车数量
                                 shopCartNum = shopCartBean.getTotalCount();
                                 tv_header_titleAll.setText(shopCartNum < 1 ? "购物车" : "购物车(" + shopCartNum + ")");
+
+                                if (page == 1) {
+                                    updatePrice(shopCartBean, true);
+                                } else {
+                                    //如果加载第二页时，选中了全选
+                                    if (allCheckedStatus) {
+                                        getSettlePrice(null, null, false);
+                                    } else {
+                                        updatePrice(shopCartBean, false);
+                                    }
+                                }
                             } else {
                                 shopCarGoodsAdapter.loadMoreFail();
                                 getCartRecommend();
@@ -419,6 +412,9 @@ public class ShopCarActivity extends BaseActivity {
             CartBean cartBean = carts.get(i);
             if (cartBean != null) {
                 ActivityInfoBean activityInfoBean = cartBean.getActivityInfo();
+                if (activityInfoBean == null) {
+                    activityInfoBean = new ActivityInfoBean();
+                }
                 List<CartInfoBean> cartInfoList = cartBean.getCartInfoList();
                 CartInfoBean combineMainProduct = cartBean.getCombineMainProduct();
                 List<CartInfoBean> combineMatchProducts = cartBean.getCombineMatchProducts();
@@ -429,13 +425,14 @@ public class ShopCarActivity extends BaseActivity {
                     }
                     cartInfoList.clear();
                     combineMainProduct.setMainProduct(true);//设置主商品标志
+                    combineMainProduct.setValid(isValid);
                     cartInfoList.add(combineMainProduct);
                     if (combineMatchProducts != null && combineMatchProducts.size() > 0) {
                         //设置搭配商品购物车id，与主商品进行绑定
                         for (CartBean.CartInfoBean CartInfoBean : combineMatchProducts) {
                             CartInfoBean.setId(combineMainProduct.getId());
                             CartInfoBean.setCombineProduct(true);
-                            CartInfoBean.setCount(1);
+                            CartInfoBean.setCount(combineMainProduct.getCount());
                             CartInfoBean.setValid(isValid);
                         }
                         cartInfoList.addAll(combineMatchProducts);
@@ -446,13 +443,6 @@ public class ShopCarActivity extends BaseActivity {
                 if (cartInfoList != null && cartInfoList.size() > 0) {
                     for (int j = 0; j < cartInfoList.size(); j++) {
                         CartInfoBean cartInfoBean = cartInfoList.get(j);
-
-//                        //如果有活动信息就加在活动数组第一条数据上
-//                        if (activityInfoBean != null && j == 0) {
-//                            cartInfoBean.setShowActInfo(1);
-//                            cartInfoBean.setActivityInfoData(activityInfoBean);
-//                        }
-
                         cartInfoBean.setValid(isValid);
 
                         //加载数据时如果是全选状态,手动选中所有有效商品
@@ -460,18 +450,8 @@ public class ShopCarActivity extends BaseActivity {
                             cartInfoBean.setSelected(true);
                         }
 
-                        if (activityInfoBean == null) {
-                            activityInfoBean = new ActivityInfoBean();
-                        }
                         activityInfoBean.addSubItem(cartInfoBean);
                     }
-
-
-//                    //设置分割线
-//                    if (activityInfoBean != null && shopGoodsList.size() > 0 && carts.size() > i + 1) {
-//                        CartInfoBean cartInfoBean = shopGoodsList.get(shopGoodsList.size() - 1);
-//                        cartInfoBean.setShowLine(1);
-//                    }
                 }
 
                 shopGoodsList.add(activityInfoBean);
@@ -503,7 +483,7 @@ public class ShopCarActivity extends BaseActivity {
     //本地计算结算金额
     private void updateLocalPrice() {
         String[] shoppingInfo = ShopCarDao.getShoppingCount(shopGoodsList);
-        tv_cart_total.setText(("￥" + shoppingInfo[1]));//结算金额
+        tv_cart_total.setText(("¥" + shoppingInfo[1]));//结算金额
         tv_settlement_dis_car_price.setVisibility(View.GONE);
         tv_cart_buy_orCount.setText(("去结算(" + shoppingInfo[0] + ")")); //结算商品件数
     }
@@ -529,10 +509,16 @@ public class ShopCarActivity extends BaseActivity {
             //结算
             case R.id.tv_communal_buy_or_count:
                 List<CartInfoBean> settlementGoods = ShopCarDao.getSettlementGoods(shopGoodsList);
-                if (settlementGoods != null && settlementGoods.size() > 0) {
-                    //结算商品 跳转订单填写
-                    Intent intent = new Intent(ShopCarActivity.this, DirectIndentWriteActivity.class);
-                    intent.putParcelableArrayListExtra("productDate", (ArrayList<? extends Parcelable>) settlementGoods);
+                List<CombineGoodsBean> combineGoods = ShopCarDao.getCombineGoods(shopGoodsList);
+                //结算商品 跳转订单填写
+                Intent intent = new Intent(ShopCarActivity.this, DirectIndentWriteActivity.class);
+                if (settlementGoods.size() > 0 || combineGoods.size() > 0) {
+                    if (settlementGoods.size() > 0) {
+                        intent.putParcelableArrayListExtra("goods", (ArrayList<? extends Parcelable>) settlementGoods);
+                    }
+                    if (combineGoods.size() > 0) {
+                        intent.putParcelableArrayListExtra("combineGoods", (ArrayList<? extends Parcelable>) combineGoods);
+                    }
                     startActivity(intent);
                 } else {
                     showToast(this, "请先选择商品");
@@ -566,9 +552,9 @@ public class ShopCarActivity extends BaseActivity {
             ShopCarDao.selectBuyAll(shopGoodsList, isChecked);
             shopCarGoodsAdapter.notifyDataSetChanged();
             if (isChecked) {
-                getSettlePrice(null, false, true);
+                getSettlePrice(null, ShopCarDao.getActivityInfos(shopGoodsList), true);
             } else {
-                tv_cart_total.setText(("￥0.00"));
+                tv_cart_total.setText(("¥0.00"));
                 tv_settlement_dis_car_price.setVisibility(View.GONE);
                 tv_cart_buy_orCount.setText(("去结算(" + 0 + ")"));
             }
@@ -579,7 +565,7 @@ public class ShopCarActivity extends BaseActivity {
     //删除选中商品弹窗
     private void setDeleteGoodsDialog() {
         String[] selGoodsInfo = ShopCarDao.getSelGoodsInfo(shopGoodsList);
-        if (!TextUtils.isEmpty(selGoodsInfo[0])) {
+        if (getStringChangeDouble(selGoodsInfo[1]) > 0) {
             if (alertDialogHelper == null) {
                 alertDialogHelper = new AlertDialogHelper(ShopCarActivity.this);
                 alertDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
@@ -589,7 +575,7 @@ public class ShopCarActivity extends BaseActivity {
                     @Override
                     public void confirm() {
                         //            确定删除商品
-                        delSelGoods(selGoodsInfo);
+                        delSelGoods();
                     }
 
                     @Override
@@ -604,27 +590,26 @@ public class ShopCarActivity extends BaseActivity {
     }
 
     //删除商品
-    private void delSelGoods(String[] selGoodsInfo) {
+    private void delSelGoods() {
         if (loadHud == null) return;
         loadHud.show();
         Map<String, Object> params = new HashMap<>();
+        String[] selGoodsInfo = ShopCarDao.getSelGoodsInfo(shopGoodsList);
         params.put("userId", userId);
         params.put("ids", selGoodsInfo[0]);
         NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_SHOP_DETAILS_DEL_CAR,
                 params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
-                        loadHud.dismiss();
                         RequestStatus status = new Gson().fromJson(result, RequestStatus.class);
-                        if (status != null) {
-                            if (status.getCode().equals(SUCCESS_CODE)) {
-                                shopCartNum = shopCartNum - getStringChangeIntegers(selGoodsInfo[1]);
-                                tv_header_titleAll.setText(shopCartNum < 1 ? "购物车" : "购物车(" + shopCartNum + ")");
-                                removeSelGoods(shopGoodsList, shopCarGoodsAdapter);
-                                getSettlePrice(null, false, false);
-                            } else if (!status.getCode().equals(EMPTY_CODE)) {
-                                showToastRequestMsg(ShopCarActivity.this, status);
-                            }
+                        if (status != null && status.getCode().equals(SUCCESS_CODE)) {
+                            shopCartNum = shopCartNum - getStringChangeIntegers(selGoodsInfo[1]);
+                            tv_header_titleAll.setText(shopCartNum < 1 ? "购物车" : "购物车(" + shopCartNum + ")");
+                            List<ActivityInfoBean> activityList = removeSelGoods(shopGoodsList, shopCarGoodsAdapter);
+                            getSettlePrice(null, activityList, true);
+                        } else {
+                            loadHud.dismiss();
+                            showToastRequestMsg(ShopCarActivity.this, status);
                         }
                     }
 
@@ -707,10 +692,13 @@ public class ShopCarActivity extends BaseActivity {
         params.put("saleSkuId", shopCarGoodsSku != null ? shopCarGoodsSku.getSaleSkuId() : cartInfoBean.getSaleSku().getId());
         params.put("price", shopCarGoodsSku != null ? shopCarGoodsSku.getPrice() + "" : cartInfoBean.getSaleSku().getPrice());
         params.put("id", cartInfoBean.getId());
-
-        if (cartInfoBean.getActivityInfoData() != null) {
-            ActivityInfoBean activityInfoData = cartInfoBean.getActivityInfoData();
-            params.put("activityCode", activityInfoData.getActivityCode());
+        try {
+            ActivityInfoBean activityInfoBean = (ActivityInfoBean) shopGoodsList.get(shopCarGoodsAdapter.getParentPosition(cartInfoBean));
+            if (activityInfoBean != null) {
+                params.put("activityCode", activityInfoBean.getActivityCode());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_SHOP_DETAILS_CHANGE_CAR, params, new NetLoadListenerHelper() {
             @Override
@@ -720,7 +708,7 @@ public class ShopCarActivity extends BaseActivity {
                     //修改完成后台会默认选中（自动添加到当天加入购物车的商品）
                     cartInfoBean.setSelected(true);
                     //修改完成更新结算金额
-                    getSettlePrice(cartInfoBean, true, false);
+                    getSettlePrice(cartInfoBean, null, true);
                     //更新购物车商品数量
                     if (type == ADD_NUM) {
                         shopCartNum++;
@@ -747,11 +735,13 @@ public class ShopCarActivity extends BaseActivity {
     /**
      * 获取结算金额
      *
+     * @param cartInfoBean 被修改的商品
+     * @param delGoods     需要更新的活动集合
      * @param isNotifyItem 是否需要通知刷新商品(单个选中或取消选中，修改数量以及sku时需要刷新)
      */
-    private void getSettlePrice(CartInfoBean cartInfoBean, boolean isNotifyItem, boolean show) {
+    private void getSettlePrice(CartInfoBean cartInfoBean, List<ActivityInfoBean> delGoods, boolean isNotifyItem) {
         if (shopGoodsList.size() > 0) {
-            if (show) {
+            if (!loadHud.isShowing()) {
                 loadHud.show();
             }
             Map<String, Object> params = new HashMap<>();
@@ -770,13 +760,14 @@ public class ShopCarActivity extends BaseActivity {
                             //更新结算金额
                             updatePrice(shopCarNewInfoEntity.getResult(), true);
                             //刷新条目
-                            if (cartInfoBean != null && isNotifyItem) {
-                                notifyItemChange(shopCarGoodsAdapter, shopCartBean, cartInfoBean);
+                            if (isNotifyItem) {
+                                updateGoodsInfo(shopCarGoodsAdapter, shopCartBean, cartInfoBean, delGoods);
                             }
                         } else if (EMPTY_CODE.equals(shopCarNewInfoEntity.getCode())) {
-                            tv_cart_total.setText(("￥" + "0.00"));//结算金额
+                            tv_cart_total.setText(("¥" + "0.00"));//结算金额
                             tv_settlement_dis_car_price.setVisibility(View.GONE);
                             tv_cart_buy_orCount.setText(("去结算(" + 0 + ")")); //结算商品件数
+                            shopCarGoodsAdapter.notifyDataSetChanged();
                         } else {
                             updateLocalPrice();
                             showToast(ShopCarActivity.this, R.string.refrence_only);

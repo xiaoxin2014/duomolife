@@ -4,9 +4,17 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:gravity="center_vertical"
-              android:paddingLeft="@dimen/sc_mm_80"
-              android:paddingRight="@dimen/sc_mm_24"
-              android:paddingTop="@dimen/sc_mm_40">
+              android:orientation="horizontal"
+              android:visibility="gone"
+              android:paddingLeft="@dimen/sc_mm_26"
+              android:paddingTop="@dimen/sc_mm_40"
+              android:paddingRight="@dimen/sc_mm_24">
+
+    <View
+        android:id="@+id/blank"
+        android:layout_width="@dimen/sc_mm_54"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/tv_communal_activity_tag"
