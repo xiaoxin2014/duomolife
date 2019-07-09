@@ -230,7 +230,6 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
                 });
             }
         }
-        //        销售组合
         List<SkuSaleBean> skuSaleList = this.editGoodsSkuBean.getSkuSale();
         final ProductSkuBean productSkuBean = getSkuShow(this.editGoodsSkuBean);
         //         默认显示图片

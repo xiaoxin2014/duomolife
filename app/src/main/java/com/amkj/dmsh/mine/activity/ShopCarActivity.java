@@ -84,9 +84,8 @@ import static com.amkj.dmsh.constant.Url.Q_SHOP_DETAILS_CHANGE_CAR;
 import static com.amkj.dmsh.constant.Url.Q_SHOP_DETAILS_DEL_CAR;
 import static com.amkj.dmsh.constant.Url.Q_SHOP_DETAILS_GET_SKU_CAR;
 import static com.amkj.dmsh.mine.biz.ShopCarDao.getCartIds;
-import static com.amkj.dmsh.mine.biz.ShopCarDao.isValid;
-import static com.amkj.dmsh.mine.biz.ShopCarDao.updateGoodsInfo;
 import static com.amkj.dmsh.mine.biz.ShopCarDao.removeSelGoods;
+import static com.amkj.dmsh.mine.biz.ShopCarDao.updateGoodsInfo;
 
 /**
  * Created by atd48 on 2016/10/22.
@@ -194,7 +193,7 @@ public class ShopCarActivity extends BaseActivity {
                 case R.id.cb_shop_car_sel:
                     ShopCarDao.selectOne(cartInfoBean, isEditStatus);
                     //商品有效并且不在编辑状态时更新结算价格
-                    if (isValid(cartInfoBean) && !isEditStatus) {
+                    if (cartInfoBean.isValid() && !isEditStatus) {
                         getSettlePrice(cartInfoBean, null, true);
                     }
                     break;
@@ -217,7 +216,7 @@ public class ShopCarActivity extends BaseActivity {
                 case R.id.img_integration_details_credits_add:
                     int oldCount = cartInfoBean.getCount();
                     int newNum = oldCount + 1;
-                    if (oldCount > 0 && isValid(cartInfoBean)) {
+                    if (oldCount > 0 && cartInfoBean.isValid()) {
                         int quantity = cartInfoBean.getSaleSku().getQuantity();
                         if (newNum <= quantity) {
                             if (cartInfoBean.isMainProduct()) {
@@ -234,7 +233,7 @@ public class ShopCarActivity extends BaseActivity {
                 case R.id.img_integration_details_credits_minus:
                     oldCount = cartInfoBean.getCount();
                     newNum = oldCount - 1;
-                    if (isValid(cartInfoBean)) {
+                    if (cartInfoBean.isValid()) {
                         if (newNum > 0) {
                             if (cartInfoBean.isMainProduct()) {
                                 showToast(this, "组合商品无法修改数量");
@@ -418,20 +417,22 @@ public class ShopCarActivity extends BaseActivity {
                 List<CartInfoBean> combineMatchProducts = cartBean.getCombineMatchProducts();
                 //判断是否是组合搭配商品
                 if (combineMainProduct != null) {
-                    if (cartInfoList == null) {
-                        cartInfoList = new ArrayList<>();
-                    }
-                    cartInfoList.clear();
+                    cartInfoList = new ArrayList<>();
+                    //添加主商品
                     combineMainProduct.setMainProduct(true);//设置主商品标志
                     combineMainProduct.setValid(isValid);
                     cartInfoList.add(combineMainProduct);
+                    //添加搭配商品
                     if (combineMatchProducts != null && combineMatchProducts.size() > 0) {
-                        //设置搭配商品购物车id，与主商品进行绑定
-                        for (CartBean.CartInfoBean CartInfoBean : combineMatchProducts) {
-                            CartInfoBean.setId(combineMainProduct.getId());
-                            CartInfoBean.setCombineProduct(true);
-                            CartInfoBean.setCount(combineMainProduct.getCount());
-                            CartInfoBean.setValid(isValid);
+                        for (CartBean.CartInfoBean cartInfoBean : combineMatchProducts) {
+                            cartInfoBean.setId(combineMainProduct.getId());
+                            cartInfoBean.setCombineProduct(true);
+                            cartInfoBean.setCount(combineMainProduct.getCount());
+                            cartInfoBean.setValid(false);
+                            //只要搭配商品有任意一件失效，主商品不可选
+                            if (!ShopCarDao.isValid(cartInfoBean)) {
+                                combineMainProduct.setValid(false);
+                            }
                         }
                         cartInfoList.addAll(combineMatchProducts);
                     }
@@ -441,10 +442,15 @@ public class ShopCarActivity extends BaseActivity {
                 if (cartInfoList != null && cartInfoList.size() > 0) {
                     for (int j = 0; j < cartInfoList.size(); j++) {
                         CartInfoBean cartInfoBean = cartInfoList.get(j);
-                        cartInfoBean.setValid(isValid);
+                        if (!cartInfoBean.isMainProduct() && !cartInfoBean.isCombineProduct()) {
+                            cartInfoBean.setValid(isValid);
+                        }
 
-                        //加载数据时如果是全选状态,手动选中所有有效商品
-                        if (!isEditStatus && isValid && check_box_all_buy.isChecked()) {
+
+                        if (!isValid) {
+                            cartInfoBean.setSelected(false);
+                        } else if (!isEditStatus && check_box_all_buy.isChecked()) {
+                            //加载数据时如果是全选状态,手动选中所有有效商品
                             cartInfoBean.setSelected(true);
                         }
 
@@ -480,8 +486,8 @@ public class ShopCarActivity extends BaseActivity {
 
     //本地计算结算金额
     private void updateLocalPrice() {
+        showToast(ShopCarActivity.this, R.string.refrence_only);
         String[] shoppingInfo = ShopCarDao.getShoppingCount(shopGoodsList);
-        tv_cart_total.setText(("¥" + shoppingInfo[1]));//结算金额
         tv_settlement_dis_car_price.setVisibility(View.GONE);
         tv_cart_buy_orCount.setText(("去结算(" + shoppingInfo[0] + ")")); //结算商品件数
     }
@@ -768,7 +774,6 @@ public class ShopCarActivity extends BaseActivity {
                             shopCarGoodsAdapter.notifyDataSetChanged();
                         } else {
                             updateLocalPrice();
-                            showToast(ShopCarActivity.this, R.string.refrence_only);
                         }
                     }
                 }

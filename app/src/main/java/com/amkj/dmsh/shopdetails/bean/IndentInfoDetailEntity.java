@@ -6,7 +6,7 @@ import android.os.Parcelable;
 import com.amkj.dmsh.mine.bean.CartProductInfoBean;
 import com.amkj.dmsh.base.BaseEntity;
 import com.amkj.dmsh.constant.CommunalDetailBean;
-import com.amkj.dmsh.shopdetails.bean.IndentDiscountsEntity.IndentDiscountsBean.PriceInfoBean;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;

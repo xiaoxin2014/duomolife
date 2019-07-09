@@ -78,16 +78,19 @@ public class ShopCarGoodsAdapter extends BaseMultiItemQuickAdapter<MultiItemEnti
                 TextView dividerView = helper.getView(R.id.tv_line_ten);
                 ViewGroup.LayoutParams dividerLayoutParams = dividerView.getLayoutParams();
                 int parentPosition = getParentPosition(multiItemEntity);
-                ActivityInfoBean activityInfoBean = (ActivityInfoBean) getData().get(parentPosition);
-                List<CartInfoBean> subItems = activityInfoBean.getSubItems();
-                if (!TextUtils.isEmpty(activityInfoBean.getActivityCode()) && subItems.get(subItems.size() - 1) == cartInfoBean) {
-                    dividerLayoutParams.height = AutoSizeUtils.dp2px(context, 10);
-                    dividerLayoutParams.width = MATCH_PARENT;
-                } else {
-                    dividerLayoutParams.height = AutoSizeUtils.dp2px(context, 0.5f);
-                    dividerLayoutParams.width = MATCH_PARENT;
+                if (parentPosition != -1) {
+                    ActivityInfoBean activityInfoBean = (ActivityInfoBean) getData().get(parentPosition);
+                    List<CartInfoBean> subItems = activityInfoBean.getSubItems();
+                    if (!TextUtils.isEmpty(activityInfoBean.getActivityCode()) && subItems != null && subItems.size() > 0 && subItems.get(subItems.size() - 1) == cartInfoBean) {
+                        dividerLayoutParams.height = AutoSizeUtils.dp2px(context, 10);
+                        dividerLayoutParams.width = MATCH_PARENT;
+                    } else {
+                        dividerLayoutParams.height = AutoSizeUtils.dp2px(context, 0.5f);
+                        dividerLayoutParams.width = MATCH_PARENT;
+                    }
+                    dividerView.setLayoutParams(dividerLayoutParams);
                 }
-                dividerView.setLayoutParams(dividerLayoutParams);
+
                 //商品状态
                 if (cartInfoBean.getStatus() == 1 && cartInfoBean.getSaleSku() != null) {
                     if (cartInfoBean.getSaleSku().getQuantity() > 0) {
@@ -117,13 +120,6 @@ public class ShopCarGoodsAdapter extends BaseMultiItemQuickAdapter<MultiItemEnti
                     rect_shop_car_item.setMaxNum(saleSku.getQuantity());
                 }
                 rect_shop_car_item.setAutoChangeNumber(false);
-
-                //价格显示
-//        if (cartInfoBean.isCombineProduct()) {
-//            helper.setText(R.id.tv_shop_car_product_price, context.getString(R.string.combine_price) +
-//                    "¥" + (cartInfoBean.getSaleSku() != null
-//                    ? cartInfoBean.getSaleSku().getPrice() : "--"));
-//        } else {
                 String activityPriceDesc = cartInfoBean.getActivityPriceDesc();
                 String price = getStringsFormat(context, R.string.shop_cart_rmb_price, getStrings(activityPriceDesc), cartInfoBean.getSaleSku() != null ? cartInfoBean.getSaleSku().getPrice() : "--");
                 if (!TextUtils.isEmpty(cartInfoBean.getActivityPriceDesc())) {
@@ -133,7 +129,6 @@ public class ShopCarGoodsAdapter extends BaseMultiItemQuickAdapter<MultiItemEnti
                     helper.setText(R.id.tv_shop_car_product_price, price)
                             .setTextColor(R.id.tv_shop_car_product_price, context.getResources().getColor(R.color.text_black_t));
                 }
-//        }
                 break;
             case ConstantVariable.TITLE:
                 helper.setGone(R.id.ll_communal_activity_topic_tag, true)

@@ -91,6 +91,7 @@
     <color name="light_green">#f5f8fa</color>
     <color name="gray_d">#dddddd</color>
     <color name="text_yel_f_s">#f6c004</color>
+    <color name="text_yel_f_s_present">#9ff6c004</color>
     <color name="text_bg_light_blue_e">#eaf4fd</color>
     <color name="text_color_e_s">#e6e6e6</color>
     <color name="color_blue_sev">#77befe</color>

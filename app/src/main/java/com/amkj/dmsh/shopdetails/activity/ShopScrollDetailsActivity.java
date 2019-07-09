@@ -140,7 +140,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.stripTrailingZeros;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.RECOMMEND_PRODUCT;
 import static com.amkj.dmsh.constant.ConstantVariable.RECOMMEND_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
 import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
@@ -917,6 +916,8 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 }
             }
         });
+
+        //拼团商品标识
         if (!TextUtils.isEmpty(shopProperty.getGpDiscounts())) {
             tv_group_product.setVisibility(VISIBLE);
             tv_group_product.setText(getString(R.string.group_discount, getStrings(shopProperty.getGpDiscounts())));
@@ -1253,18 +1254,18 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
     //商品服务标签
     private void setSeviceTag(ShopPropertyBean shopProperty, ViewGroup viewGroup, FlexboxLayout flexboxLayout, boolean maxOneLine) {
-        List<TagsBean> tags = shopProperty.getTags();
-        String tagIds = shopProperty.getTagIds();
-        shopProperty.setTagIds(tagIds);
-        if (tags != null && tags.size() > 0 && !TextUtils.isEmpty(tagIds) && tagIds.split(",").length > 0) {
-            final Map<Integer, String> tagMap = new HashMap<>();
-            for (TagsBean tagsBean : shopProperty.getTags()) {
-                tagMap.put(tagsBean.getId(), getStrings(tagsBean.getName()));
-            }
-            final String[] tagSelected = shopProperty.getTagIds().split(",");
-            flexboxLayout.removeAllViews();
-            for (String aTagSelected : tagSelected) {
-                try {
+        try {
+            List<TagsBean> tags = shopProperty.getTags();
+            String tagIds = shopProperty.getTagIds();
+            shopProperty.setTagIds(tagIds);
+            if (tags != null && tags.size() > 0 && !TextUtils.isEmpty(tagIds) && tagIds.split(",").length > 0) {
+                final Map<Integer, String> tagMap = new HashMap<>();
+                for (TagsBean tagsBean : shopProperty.getTags()) {
+                    tagMap.put(tagsBean.getId(), getStrings(tagsBean.getName()));
+                }
+                final String[] tagSelected = shopProperty.getTagIds().split(",");
+                flexboxLayout.removeAllViews();
+                for (String aTagSelected : tagSelected) {
                     String tagName = tagMap.get(Integer.parseInt(aTagSelected));
                     if (!TextUtils.isEmpty(tagName)) {
                         TextView textView = (TextView) LayoutInflater.from(getActivity()).inflate(R.layout.layout_product_tag, null, false);
@@ -1272,31 +1273,32 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                         textView.setText(getStrings(tagName));
                         flexboxLayout.addView(textView);
                     }
-                } catch (NumberFormatException e) {
-                    e.printStackTrace();
+                }
+
+                //限制标签不能超过屏幕外
+                if (maxOneLine && flexboxLayout.getChildCount() > 1) {
+                    ViewTreeObserver observer = flexboxLayout.getViewTreeObserver();
+                    observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                        @Override
+                        public void onGlobalLayout() {
+                            int width = flexboxLayout.getMeasuredWidth();
+                            int screenWidth = ((TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike()).getScreenWidth();
+                            int max = screenWidth - AutoSizeUtils.mm2px(mAppContext, 60) - mIvMoreTag.getWidth();
+                            if (width >= max && flexboxLayout.getChildCount() > 1) {
+                                mIvMoreTag.setVisibility(VISIBLE);
+                                flexboxLayout.removeViewAt(flexboxLayout.getChildCount() - 1);
+                            } else {
+                                flexboxLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                            }
+                        }
+                    });
                 }
             }
 
-            //限制标签不能超过屏幕外
-            if (maxOneLine && flexboxLayout.getChildCount() > 1) {
-                ViewTreeObserver observer = flexboxLayout.getViewTreeObserver();
-                observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @Override
-                    public void onGlobalLayout() {
-                        int width = flexboxLayout.getMeasuredWidth();
-                        int screenWidth = ((TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike()).getScreenWidth();
-                        int max = screenWidth - AutoSizeUtils.mm2px(mAppContext, 60) - mIvMoreTag.getWidth();
-                        if (width >= max && flexboxLayout.getChildCount() > 1) {
-                            flexboxLayout.removeViewAt(flexboxLayout.getChildCount() - 1);
-                        } else {
-                            flexboxLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        }
-                    }
-                });
-            }
+            viewGroup.setVisibility(flexboxLayout.getChildCount() > 0 ? VISIBLE : GONE);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        viewGroup.setVisibility(flexboxLayout.getChildCount() > 0 ? VISIBLE : GONE);
     }
 
     //开启倒计时
@@ -1539,11 +1541,11 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 shopCarGoodsSkuDif.setPresentIds(getStrings(shopProperty.getSkuSale().get(0).getPresentSkuIds()));
             }
 
-            //设置下面最低价
-            tv_ql_sp_pro_sc_price.setText(getRmbFormat(this, shopProperty.getPrice()));
-            //设置下面最高价
             String minPrice = skuSaleList.get(0).getPrice();
             String maxPrice = skuSaleList.get(skuSaleList.size() - 1).getPrice();
+            //设置下面最低价
+            tv_ql_sp_pro_sc_price.setText(getRmbFormat(this, minPrice));
+            //设置下面最高价
             mTvMaxPrice.setVisibility(!minPrice.equals(maxPrice) ? VISIBLE : GONE);
             mTvMaxPrice.setText(getRmbFormat(this, "~" + "¥" + stripTrailingZeros(maxPrice), false));
         } else {
@@ -1657,7 +1659,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 //            结算商品 跳转订单填写
             Intent intent = new Intent(getActivity(), DirectIndentWriteActivity.class);
             intent.putExtra("uid", userId);
-            intent.putParcelableArrayListExtra("productDate", (ArrayList<? extends Parcelable>) settlementGoods);
+            intent.putParcelableArrayListExtra("goods", (ArrayList<? extends Parcelable>) settlementGoods);
             startActivity(intent);
         } else {
             if (skuDialog != null) {
@@ -1764,35 +1766,31 @@ public class ShopScrollDetailsActivity extends BaseActivity {
      * 点击推荐商品
      */
     private void skipProDetail(ShopRecommendHotTopicBean shopRecommendHotTopicBean) {
+        Intent intent = new Intent();
         switch (shopRecommendHotTopicBean.getType_id()) {
             case 0:
-                Intent intent = new Intent();
-                intent.setClass(getActivity(), ShopTimeScrollDetailsActivity.class);
+                intent.setClass(this, ShopTimeScrollDetailsActivity.class);
                 intent.putExtra("productId", String.valueOf(shopRecommendHotTopicBean.getId()));
                 startActivity(intent);
                 break;
             case 1:
-                NetLoadUtils.getNetInstance().showLoadSirLoading(loadService);
-                productId = String.valueOf(shopRecommendHotTopicBean.getId());
-                recommendType = RECOMMEND_PRODUCT;
-                setTotalData();
-                ctb_qt_pro_details.setCurrentTab(0);
-                if (constantMethod != null) {
-                    constantMethod.stopSchedule();
-                    constantMethod.releaseHandlers();
-                    constantMethod = null;
-                }
-                loadData();
+                intent.setClass(this, ShopScrollDetailsActivity.class);
+                intent.putExtra("productId", String.valueOf(shopRecommendHotTopicBean.getId()));
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                overridePendingTransition(0, 0);
+                startActivity(intent);
+                finish();
                 break;
             case 2:
-                intent = new Intent();
-                intent.setClass(getActivity(), IntegralScrollDetailsActivity.class);
+                intent.setClass(this, IntegralScrollDetailsActivity.class);
                 intent.putExtra("productId", String.valueOf(shopRecommendHotTopicBean.getId()));
                 startActivity(intent);
                 break;
             default:
                 break;
         }
+
+
     }
 
     private void setTotalData() {
@@ -1823,7 +1821,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             case R.id.iv_life_back:
                 finish();
                 break;
-            //打开活动规则详情
+            //打开活动专区
             case R.id.ll_product_activity_detail:
                 if (shopPropertyBean != null && !TextUtils.isEmpty(shopPropertyBean.getActivityCode())) {
                     intent = new Intent(this, QualityProductActActivity.class);
@@ -1933,7 +1931,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 break;
             //点击服务标签
             case R.id.ll_layout_pro_sc_tag:
-                if (mDirectGoodsServerEntity != null) {
+                if (mDirectGoodsServerEntity != null && mIvMoreTag.getVisibility() == VISIBLE) {
                     if (alertDialog == null) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.CustomTransDialog);
                         View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.layout_sevicetag_dialog, communal_recycler_wrap, false);

@@ -60,14 +60,14 @@ import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.amkj.dmsh.utils.webformatdata.ShareDataBean;
 import com.amkj.dmsh.views.CustomPopWindow;
+import com.amkj.dmsh.views.flycoTablayout.CommonTabLayout;
+import com.amkj.dmsh.views.flycoTablayout.listener.CustomTabEntity;
+import com.amkj.dmsh.views.flycoTablayout.listener.OnTabSelectListener;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.bigkoo.convenientbanner.listener.OnItemClickListener;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.amkj.dmsh.views.flycoTablayout.CommonTabLayout;
-import com.amkj.dmsh.views.flycoTablayout.listener.CustomTabEntity;
-import com.amkj.dmsh.views.flycoTablayout.listener.OnTabSelectListener;;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -125,6 +125,7 @@ import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_EMPTY
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PROMOTION_TITLE;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getWaterMarkImgUrl;
 
+;
 ;
 
 public class ShopTimeScrollDetailsActivity extends BaseActivity {

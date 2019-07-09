@@ -12,7 +12,7 @@ import com.chad.library.adapter.base.entity.MultiItemEntity;
 /**
  * Created by xiaoxin on 2019/7/1
  * Version:v4.1.0
- * ClassDescription :购物车商品活动组信息
+ * ClassDescription :商品活动信息
  */
 public class ActivityInfoBean extends AbstractExpandableItem<CartInfoBean> implements Parcelable, MultiItemEntity {
     /**

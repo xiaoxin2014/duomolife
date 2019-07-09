@@ -28,7 +28,7 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.DirectPaySuccessActivity;
 import com.amkj.dmsh.shopdetails.adapter.IndentDiscountAdapter;
-import com.amkj.dmsh.shopdetails.bean.IndentDiscountsEntity.IndentDiscountsBean.PriceInfoBean;
+import com.amkj.dmsh.shopdetails.bean.PriceInfoBean;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateAliPayIndentBean;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateUnionPayIndentEntity;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateUnionPayIndentEntity.QualityCreateUnionPayIndentBean;

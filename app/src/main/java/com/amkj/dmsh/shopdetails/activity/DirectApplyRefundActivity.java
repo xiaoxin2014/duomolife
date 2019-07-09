@@ -31,6 +31,7 @@ import com.amkj.dmsh.address.widget.adapters.ArrayWheelAdapter;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.ImageBean;
+import com.amkj.dmsh.shopdetails.bean.RefundApplyEntity.RefundApplyBean.ProductsBean;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
@@ -189,7 +190,7 @@ public class DirectApplyRefundActivity extends BaseActivity {
     public final String REPAIR_CONTENT = "问题描述*";
     public final String REFUND_CONTENT = "退款说明";
     private DirectProductListAdapter indentProAdapter;
-    private List<DirectRefundProBean> proList = new ArrayList<>();
+    private List<ProductsBean> proList = new ArrayList<>();
     //    退款类型
     private List<String> refundTypeList = new ArrayList<>();
     public static final String APPLY_REFUND = "applyRefund";
@@ -253,7 +254,6 @@ public class DirectApplyRefundActivity extends BaseActivity {
                         .build();
                 tv_header_titleAll.setText("申请售后");
             }
-            proList.addAll(refundBean.getDirectRefundProList());
         }
         communal_recycler_wrap.setNestedScrollingEnabled(false);
         communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(DirectApplyRefundActivity.this));
@@ -423,7 +423,13 @@ public class DirectApplyRefundActivity extends BaseActivity {
     }
 
     private void setRefundApplyData(RefundApplyBean refundApplyBean) {
-//        退款金额说明
+        //退款商品列表
+        List<ProductsBean> products = refundApplyBean.getProducts();
+        if (products != null && products.size() > 0) {
+            proList.addAll(products);
+            indentProAdapter.notifyDataSetChanged();
+        }
+        //退款金额说明
         String priceName;
         if (refundApplyBean.getRefundIntegralPrice() > 0) {
             float moneyPrice = getFloatNumber(refundApplyBean.getRefundPrice());

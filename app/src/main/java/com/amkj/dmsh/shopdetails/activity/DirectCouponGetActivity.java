@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
@@ -18,7 +17,7 @@ import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.adapter.DirectMyCouponAdapter;
 import com.amkj.dmsh.shopdetails.bean.DirectCouponEntity;
 import com.amkj.dmsh.shopdetails.bean.DirectCouponEntity.DirectCouponBean;
-import com.amkj.dmsh.shopdetails.bean.IndentDiscountsEntity.IndentDiscountsBean.ProductInfoBean.ActivityProductInfoBean;
+import com.amkj.dmsh.shopdetails.bean.IndentWriteEntity.IndentWriteBean.ProductsBean.ProductInfoBean;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
@@ -38,7 +37,6 @@ import butterknife.OnClick;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -75,7 +73,7 @@ public class DirectCouponGetActivity extends BaseActivity {
     private List<DirectCouponBean> couponList = new ArrayList();
     private int page = 1;
     private DirectMyCouponAdapter directMyCouponAdapter;
-    private List<ActivityProductInfoBean> settlementGoods;
+    private List<ProductInfoBean> settlementGoods;
     private int scrollY;
     private float screenHeight;
     private DirectCouponEntity directCouponEntity;
@@ -208,26 +206,23 @@ public class DirectCouponGetActivity extends BaseActivity {
     }
 
     private void selfChoiceCoupon() {
-        if (settlementGoods != null
-                && userId > 0) {
+        if (settlementGoods != null && userId > 0) {
             List<SelCouponGoodsEntity> selCouponGoodsEntityList = new ArrayList<>();
             SelCouponGoodsEntity selCouponGoodsEntity;
             for (int i = 0; i < settlementGoods.size(); i++) {
                 selCouponGoodsEntity = new SelCouponGoodsEntity();
-                ActivityProductInfoBean activityProductInfoBean = settlementGoods.get(i);
-                selCouponGoodsEntity.setPrice(!TextUtils.isEmpty(activityProductInfoBean.getNewPrice())
-                        ? activityProductInfoBean.getNewPrice() : activityProductInfoBean.getPrice());
-                selCouponGoodsEntity.setCount(activityProductInfoBean.getCount());
+                ProductInfoBean productInfoBean = settlementGoods.get(i);
+                selCouponGoodsEntity.setPrice(productInfoBean.getPrice());
+                selCouponGoodsEntity.setCount(productInfoBean.getCount());
 //            产品ID
-                selCouponGoodsEntity.setId(activityProductInfoBean.getId());
+                selCouponGoodsEntity.setId(productInfoBean.getId());
                 selCouponGoodsEntityList.add(selCouponGoodsEntity);
             }
-            String url = Url.BASE_URL + Url.Q_SELF_SHOP_DETAILS_COUPON;
             Map<String, Object> params = new HashMap<>();
             params.put("uid", userId);
             params.put("isApp", 1);
             params.put("orderList", new Gson().toJson(selCouponGoodsEntityList));
-            NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.Q_SELF_SHOP_DETAILS_COUPON, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     smart_communal_refresh.finishRefresh();
@@ -256,7 +251,7 @@ public class DirectCouponGetActivity extends BaseActivity {
                             couponList.addAll(directCouponEntity.getDirectCouponBeanList());
                         } else if (!directCouponEntity.getCode().equals(EMPTY_CODE)) {
                             showToast(DirectCouponGetActivity.this, directCouponEntity.getMsg());
-                        }else{
+                        } else {
                             directMyCouponAdapter.loadMoreEnd();
                         }
                         directMyCouponAdapter.notifyDataSetChanged();
@@ -269,16 +264,6 @@ public class DirectCouponGetActivity extends BaseActivity {
                     smart_communal_refresh.finishRefresh();
                     directMyCouponAdapter.loadMoreComplete();
                     NetLoadUtils.getNetInstance().showLoadSir(loadService, couponList, directCouponEntity);
-                }
-
-                @Override
-                public void netClose() {
-                    showToast(mAppContext, R.string.unConnectedNetwork);
-                }
-
-                @Override
-                public void onError(Throwable throwable) {
-                    showToast(mAppContext, R.string.invalidData);
                 }
             });
         } else {

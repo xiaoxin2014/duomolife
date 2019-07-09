@@ -34,7 +34,7 @@ import com.amkj.dmsh.shopdetails.bean.ApplyRefundCheckEntity.ApplyRefundCheckBea
 import com.amkj.dmsh.shopdetails.bean.DirectApplyRefundBean;
 import com.amkj.dmsh.shopdetails.bean.DirectApplyRefundBean.DirectRefundProBean;
 import com.amkj.dmsh.shopdetails.bean.DirectAppraisePassBean;
-import com.amkj.dmsh.shopdetails.bean.IndentDiscountsEntity.IndentDiscountsBean.PriceInfoBean;
+import com.amkj.dmsh.shopdetails.bean.PriceInfoBean;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateAliPayIndentBean;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateWeChatPayIndentBean;
 import com.amkj.dmsh.shopdetails.integration.bean.IntegralIndentOrderEntity.IntegralIndentOrderBean.OrderListBean;

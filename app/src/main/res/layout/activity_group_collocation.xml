@@ -63,9 +63,9 @@
                     android:textSize="@dimen/sc_mm_22"/>
 
                 <TextView
-                    android:layout_alignBaseline="@+id/tv_group_price"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/tv_group_price"
                     android:layout_toLeftOf="@+id/tv_group_price"
                     android:lines="1"
                     android:text="组合价:"
@@ -92,7 +92,7 @@
                 android:id="@+id/tv_add_car"
                 android:layout_width="@dimen/sc_mm_225"
                 android:layout_height="match_parent"
-                android:background="@color/text_pink_red"
+                android:background="@drawable/sel_add_car"
                 android:gravity="center"
                 android:text="加入购物车"
                 android:textColor="@color/white"
@@ -102,7 +102,7 @@
                 android:id="@+id/tv_buy"
                 android:layout_width="@dimen/sc_mm_225"
                 android:layout_height="match_parent"
-                android:background="@color/text_normal_red"
+                android:background="@drawable/sel_buy_now"
                 android:gravity="center"
                 android:text="立即购买"
                 android:textColor="@color/white"

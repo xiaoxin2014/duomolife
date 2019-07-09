@@ -1,7 +1,7 @@
 package com.amkj.dmsh.shopdetails.integration.bean;
 
 import com.amkj.dmsh.base.BaseEntity;
-import com.amkj.dmsh.shopdetails.bean.IndentDiscountsEntity.IndentDiscountsBean.PriceInfoBean;
+import com.amkj.dmsh.shopdetails.bean.PriceInfoBean;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;

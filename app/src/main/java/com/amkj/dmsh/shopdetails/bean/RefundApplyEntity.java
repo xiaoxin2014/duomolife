@@ -69,6 +69,15 @@ public class RefundApplyEntity {
         private List<MoneyAndGoodsRefundReasonBean> moneyAndGoodsRefundReason;
         private List<MoneyRefundReasonBean> moneyRefundReason;
         private List<WaitDeliveryRefundReasonBean> waitDeliveryRefundReason;
+        private List<ProductsBean> products;
+
+        public List<ProductsBean> getProducts() {
+            return products;
+        }
+
+        public void setProducts(List<ProductsBean> products) {
+            this.products = products;
+        }
 
         public int getRefundIntegralPrice() {
             return refundIntegralPrice;
@@ -93,7 +102,6 @@ public class RefundApplyEntity {
         public void setRefundType(Map<String, String> refundType) {
             this.refundType = refundType;
         }
-
 
 
         public String getRefundPrice() {
@@ -203,6 +211,74 @@ public class RefundApplyEntity {
 
             public void setId(int id) {
                 this.id = id;
+            }
+        }
+
+
+        public static class ProductsBean {
+
+            /**
+             * picUrl : http://image.domolife.cn/2016-07-18_578cd8560cc08.JPG
+             * productSkuValue : 默认:默认
+             * price : 0.01
+             * count : 1
+             * integralPrice : 0
+             * productName : 英国JOSEPH 多功能铲式滤水漏勺
+             */
+
+            private String picUrl;
+            private String productSkuValue;
+            private String price;
+            private int count;
+            private int integralPrice;
+            private String productName;
+
+            public String getPicUrl() {
+                return picUrl;
+            }
+
+            public void setPicUrl(String picUrl) {
+                this.picUrl = picUrl;
+            }
+
+            public String getProductSkuValue() {
+                return productSkuValue;
+            }
+
+            public void setProductSkuValue(String productSkuValue) {
+                this.productSkuValue = productSkuValue;
+            }
+
+            public String getPrice() {
+                return price;
+            }
+
+            public void setPrice(String price) {
+                this.price = price;
+            }
+
+            public int getCount() {
+                return count;
+            }
+
+            public void setCount(int count) {
+                this.count = count;
+            }
+
+            public int getIntegralPrice() {
+                return integralPrice;
+            }
+
+            public void setIntegralPrice(int integralPrice) {
+                this.integralPrice = integralPrice;
+            }
+
+            public String getProductName() {
+                return productName;
+            }
+
+            public void setProductName(String productName) {
+                this.productName = productName;
             }
         }
     }

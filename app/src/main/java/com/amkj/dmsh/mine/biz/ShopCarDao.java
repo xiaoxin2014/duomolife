@@ -7,7 +7,6 @@ import com.amkj.dmsh.mine.bean.ActivityInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean;
 import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean.CartBean;
 import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean.CartBean.CartInfoBean;
-import com.amkj.dmsh.shopdetails.GoodsPriceCalculate;
 import com.amkj.dmsh.shopdetails.bean.CombineCartBean;
 import com.amkj.dmsh.shopdetails.bean.CombineCartBean.CombineMatchsBean;
 import com.amkj.dmsh.shopdetails.bean.CombineGoodsBean;
@@ -15,7 +14,6 @@ import com.amkj.dmsh.shopdetails.bean.GroupGoodsEntity.GroupGoodsBean.CombineCom
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.Gson;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +43,7 @@ public class ShopCarDao {
         for (int i = 0; i < shopGoodsList.size(); i++) {
             if (shopGoodsList.get(i).getItemType() == PRODUCT) {
                 CartInfoBean cartInfoBean = (CartInfoBean) shopGoodsList.get(i);
-                if (cartInfoBean.getStatus() == 1 && isValid(cartInfoBean)) {
+                if (cartInfoBean.getStatus() == 1 && cartInfoBean.isValid()) {
                     cartInfoBean.setSelected(isChecked);
                 }
             }
@@ -139,33 +137,27 @@ public class ShopCarDao {
     }
 
     /**
-     * 获取结算信息，肯定需要获取总价和数量，但是数据结构改变了，这里处理也要变；
-     *
-     * @return 0=选中的商品数量；1=选中的商品总价
+     * @return 0=选中的商品数量；
      */
     public static String[] getShoppingCount(List<MultiItemEntity> shopGoodsList) {
         String[] infos = new String[2];
         int selectedCount = 0;
-        double totalPrice = 0;
         for (int i = 0; i < shopGoodsList.size(); i++) {
             MultiItemEntity multiItemEntity = shopGoodsList.get(i);
-            if (multiItemEntity instanceof ActivityInfoBean) {
+            if (multiItemEntity.getItemType() == TITLE) {
                 ActivityInfoBean activityInfoBean = (ActivityInfoBean) multiItemEntity;
                 List<CartInfoBean> subItems = activityInfoBean.getSubItems();
-                for (CartInfoBean cartInfoBean : subItems) {
-                    boolean isSelected = cartInfoBean.isSelected();
-                    if (isSelected && isValid(cartInfoBean)) {
-                        String price = cartInfoBean.getSaleSku().getPrice();
-                        int count = cartInfoBean.getCount();
-                        double totalPrice1 = GoodsPriceCalculate.getPrice(count, Double.parseDouble(price));
-                        totalPrice = totalPrice + totalPrice1;
-                        selectedCount = selectedCount + (cartInfoBean.isMainProduct() ? subItems.size() : count);
+                if (subItems != null) {
+                    for (CartInfoBean cartInfoBean : subItems) {
+                        boolean isSelected = cartInfoBean.isSelected();
+                        if (isSelected && cartInfoBean.isValid()) {
+                            selectedCount = selectedCount + (cartInfoBean.isMainProduct() ? subItems.size() : cartInfoBean.getCount());
+                        }
                     }
                 }
             }
         }
         infos[0] = (selectedCount + "");
-        infos[1] = new BigDecimal(totalPrice).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() + "";
         return infos;
     }
 
@@ -193,34 +185,29 @@ public class ShopCarDao {
         for (MultiItemEntity multiItemEntity : shopGoodsList) {
             if (multiItemEntity.getItemType() == TITLE) {
                 ActivityInfoBean activityInfoBean = (ActivityInfoBean) multiItemEntity;
-                if (!TextUtils.isEmpty(activityInfoBean.getActivityCode()) && activityInfoBean.getActivityCode().contains("ZH")) {
+                if (!TextUtils.isEmpty(activityInfoBean.getActivityCode()) && (activityInfoBean.getActivityCode().contains("ZH") || activityInfoBean.getActivityType() == 6)) {
                     List<CartInfoBean> subItems = activityInfoBean.getSubItems();
-                    if (subItems != null) {
-                        if (subItems.get(0).isMainProduct() && subItems.get(0).isSelected()) {
-                            CombineGoodsBean combineGoodsBean = new CombineGoodsBean();
-                            List<CombineGoodsBean.MatchProductsBean> matchProductsBeans = new ArrayList<>();
-                            for (CartInfoBean cartInfoBean : subItems) {
-                                if (cartInfoBean.isMainProduct()) {
-                                    combineGoodsBean.setMainId(0);
-                                    combineGoodsBean.setCount(cartInfoBean.getCount());
-                                    combineGoodsBean.setProductId(cartInfoBean.getProductId());
-                                    if (cartInfoBean.getSaleSku() != null) {
-                                        combineGoodsBean.setSkuId(cartInfoBean.getSaleSku().getId());
-                                    }
-                                } else if (cartInfoBean.isCombineProduct()) {
-                                    CombineGoodsBean.MatchProductsBean matchProductsBean = new CombineGoodsBean.MatchProductsBean();
-                                    matchProductsBean.setCombineMatchId(0);
-                                    matchProductsBean.setProductId(cartInfoBean.getProductId());
-                                    if (cartInfoBean.getSaleSku() != null) {
-                                        matchProductsBean.setSkuId(cartInfoBean.getSaleSku().getId());
-                                    }
-                                    matchProductsBeans.add(matchProductsBean);
+                    if (subItems != null && subItems.size() > 0 && subItems.get(0).isMainProduct() && subItems.get(0).isSelected() && subItems.get(0).isValid()) {
+                        CombineGoodsBean combineGoodsBean = new CombineGoodsBean();
+                        for (CartInfoBean cartInfoBean : subItems) {
+                            if (cartInfoBean.isMainProduct()) {
+                                combineGoodsBean.setMainId(0);
+                                combineGoodsBean.setCount(cartInfoBean.getCount());
+                                combineGoodsBean.setProductId(cartInfoBean.getProductId());
+                                if (cartInfoBean.getSaleSku() != null) {
+                                    combineGoodsBean.setSkuId(cartInfoBean.getSaleSku().getId());
                                 }
+                            } else if (cartInfoBean.isCombineProduct()) {
+                                CombineGoodsBean.MatchProductsBean matchProductsBean = new CombineGoodsBean.MatchProductsBean();
+                                matchProductsBean.setCombineMatchId(0);
+                                matchProductsBean.setProductId(cartInfoBean.getProductId());
+                                if (cartInfoBean.getSaleSku() != null) {
+                                    matchProductsBean.setSkuId(cartInfoBean.getSaleSku().getId());
+                                }
+                                combineGoodsBean.getMatchProducts().add(matchProductsBean);
                             }
-                            combineGoodsBean.setMatchProducts(matchProductsBeans);
-                            combineGoods.add(combineGoodsBean);
                         }
-
+                        combineGoods.add(combineGoodsBean);
                     }
                 }
             }
@@ -249,8 +236,11 @@ public class ShopCarDao {
     public static List<Integer> getCartIds(List<MultiItemEntity> shopGoodsList) {
         List<Integer> cartIds = new ArrayList<>();
         for (MultiItemEntity multiItemEntity : shopGoodsList) {
-            if (multiItemEntity.getItemType() == PRODUCT && ((CartInfoBean) multiItemEntity).isSelected() && isValid((CartInfoBean) multiItemEntity)) {
-                cartIds.add(((CartInfoBean) multiItemEntity).getId());
+            if (multiItemEntity.getItemType() == PRODUCT) {
+                CartInfoBean cartInfoBean = (CartInfoBean) multiItemEntity;
+                if (cartInfoBean.isSelected() && cartInfoBean.isValid()) {
+                    cartIds.add(cartInfoBean.getId());
+                }
             }
         }
         return cartIds;
@@ -261,7 +251,7 @@ public class ShopCarDao {
      */
     public static boolean isValid(CartInfoBean cartInfoBean) {
         //1.没有失效 2.有库存 3.非待售 4.sku属性正常
-        return cartInfoBean.getStatus() == 1 && cartInfoBean.getSaleSku().getQuantity() > 0 && !cartInfoBean.isForSale() && cartInfoBean.getSaleSku() != null && !cartInfoBean.isCombineProduct();
+        return cartInfoBean.getStatus() == 1 && cartInfoBean.getSaleSku() != null && cartInfoBean.getSaleSku().getQuantity() > 0 && !cartInfoBean.isForSale();
     }
 
     /**
@@ -369,5 +359,23 @@ public class ShopCarDao {
         }
     }
 
+    //判断组合商品库存（组合商品无库存或者所有搭配商品无库存时返回false）
+    public static boolean checkStock(List<CombineCommonBean> goods) {
+        int num = 0;//无库存的搭配商品数量
+        for (CombineCommonBean commonBean : goods) {
+            if (commonBean.isMainProduct()) {
+                if (commonBean.getStock() == 0) {
+                    //主商品无库存直接返回false
+                    return false;
+                }
+            } else {
+                if (commonBean.getStock() == 0) {
+                    num++;
+                }
+            }
+        }
+
+        return num < goods.size() - 1;
+    }
 
 }

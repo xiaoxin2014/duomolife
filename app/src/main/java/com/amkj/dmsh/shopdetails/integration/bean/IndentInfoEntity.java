@@ -3,7 +3,7 @@ package com.amkj.dmsh.shopdetails.integration.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.amkj.dmsh.shopdetails.bean.IndentDiscountsEntity.IndentDiscountsBean.PriceInfoBean;
+import com.amkj.dmsh.shopdetails.bean.PriceInfoBean;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;

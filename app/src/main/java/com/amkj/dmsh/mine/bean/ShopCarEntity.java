@@ -6,7 +6,6 @@ import android.os.Parcelable;
 import com.amkj.dmsh.base.BaseTimeEntity;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
-import com.amkj.dmsh.shopdetails.bean.GroupGoodsEntity.GroupGoodsBean.CombineCommonBean;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.annotations.SerializedName;
 
@@ -204,13 +203,6 @@ public class ShopCarEntity extends BaseTimeEntity {
 
                 public void setMainProduct(boolean mainProduct) {
                     isMainProduct = mainProduct;
-                }
-
-                public CartInfoBean(CombineCommonBean combineCommonBean) {
-                    setProductId(combineCommonBean.getProductId());
-                    setId(combineCommonBean.getSkuId());
-                    setCount(combineCommonBean.getCount());
-                    setSaleSku(new SaleSkuBean(combineCommonBean.getQuantity(), combineCommonBean.getMinPrice(), combineCommonBean.getSkuId()));
                 }
 
                 public boolean isMore() {

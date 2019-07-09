@@ -1044,9 +1044,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".shopdetails.activity.SalesReturnAppealActivity"
-            android:screenOrientation="portrait"/>
-        <activity
             android:name=".shopdetails.activity.DirectPublishAppraiseActivity"
             android:screenOrientation="portrait"/>
         <activity

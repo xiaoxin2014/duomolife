@@ -255,7 +255,8 @@
                                     android:layout_alignParentRight="true"
                                     android:layout_centerVertical="true"
                                     android:paddingTop="@dimen/dp_10"
-                                    android:src="@drawable/right_btn_nor"/>
+                                    android:src="@drawable/right_btn_nor"
+                                    android:visibility="gone"/>
                             </RelativeLayout>
 
                             <LinearLayout

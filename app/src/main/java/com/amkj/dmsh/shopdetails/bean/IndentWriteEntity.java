@@ -1,5 +1,8 @@
 package com.amkj.dmsh.shopdetails.bean;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.amkj.dmsh.base.BaseTimeEntity;
 import com.amkj.dmsh.mine.bean.ActivityInfoBean;
 
@@ -77,8 +80,8 @@ public class IndentWriteEntity extends BaseTimeEntity {
             this.showIdCard = showIdCard;
         }
 
-        public int getReal() {
-            return real;
+        public boolean isReal() {
+            return real == 1;
         }
 
         public void setReal(int real) {
@@ -133,12 +136,21 @@ public class IndentWriteEntity extends BaseTimeEntity {
              * msg : null
              */
 
-            private int id;
+            private Integer id;
             private String title;
             private String price;
             private String msg;
+            private int allowCouoon;
 
-            public int getId() {
+            public int getAllowCouoon() {
+                return allowCouoon;
+            }
+
+            public void setAllowCouoon(int allowCouoon) {
+                this.allowCouoon = allowCouoon;
+            }
+
+            public Integer getId() {
                 return id;
             }
 
@@ -182,8 +194,8 @@ public class IndentWriteEntity extends BaseTimeEntity {
 
             private ActivityInfoBean activityInfo;
             private List<ProductInfoBean> productInfos;
-            private CombineMainProductBean combineMainProduct;
-            private List<CombineMatchProductsBean> combineMatchProducts;
+            private ProductInfoBean combineMainProduct;
+            private List<ProductInfoBean> combineMatchProducts;
 
             public ActivityInfoBean getActivityInfo() {
                 return activityInfo;
@@ -201,206 +213,23 @@ public class IndentWriteEntity extends BaseTimeEntity {
                 this.productInfos = productInfos;
             }
 
-            public CombineMainProductBean getCombineMainProduct() {
+            public ProductInfoBean getCombineMainProduct() {
                 return combineMainProduct;
             }
 
-            public void setCombineMainProduct(CombineMainProductBean combineMainProduct) {
+            public void setCombineMainProduct(ProductInfoBean combineMainProduct) {
                 this.combineMainProduct = combineMainProduct;
             }
 
-            public List<CombineMatchProductsBean> getCombineMatchProducts() {
+            public List<ProductInfoBean> getCombineMatchProducts() {
                 return combineMatchProducts;
             }
 
-            public void setCombineMatchProducts(List<CombineMatchProductsBean> combineMatchProducts) {
+            public void setCombineMatchProducts(List<ProductInfoBean> combineMatchProducts) {
                 this.combineMatchProducts = combineMatchProducts;
             }
 
-
-            public static class CombineMainProductBean {
-                /**
-                 * id : 18001
-                 * combineMainId : 51
-                 * skuName : 颜色:蓝色,尺码:S
-                 * picUrl : http://image.domolife.cn/platform/fkQ8HyEQaQ1552389678430.jpg
-                 * price : 100.00
-                 * prePrice : 424.00
-                 * name : 澳大利亚MacyMccoy翻边牛仔背带裤
-                 * count : 1
-                 * saleSkuId : 10745
-                 */
-
-                private int id;
-                private int combineMainId;
-                private String skuName;
-                private String picUrl;
-                private String price;
-                private String prePrice;
-                private String name;
-                private int count;
-                private int saleSkuId;
-
-                public int getId() {
-                    return id;
-                }
-
-                public void setId(int id) {
-                    this.id = id;
-                }
-
-                public int getCombineMainId() {
-                    return combineMainId;
-                }
-
-                public void setCombineMainId(int combineMainId) {
-                    this.combineMainId = combineMainId;
-                }
-
-                public String getSkuName() {
-                    return skuName;
-                }
-
-                public void setSkuName(String skuName) {
-                    this.skuName = skuName;
-                }
-
-                public String getPicUrl() {
-                    return picUrl;
-                }
-
-                public void setPicUrl(String picUrl) {
-                    this.picUrl = picUrl;
-                }
-
-                public String getPrice() {
-                    return price;
-                }
-
-                public void setPrice(String price) {
-                    this.price = price;
-                }
-
-                public String getPrePrice() {
-                    return prePrice;
-                }
-
-                public void setPrePrice(String prePrice) {
-                    this.prePrice = prePrice;
-                }
-
-                public String getName() {
-                    return name;
-                }
-
-                public void setName(String name) {
-                    this.name = name;
-                }
-
-                public int getCount() {
-                    return count;
-                }
-
-                public void setCount(int count) {
-                    this.count = count;
-                }
-
-                public int getSaleSkuId() {
-                    return saleSkuId;
-                }
-
-                public void setSaleSkuId(int saleSkuId) {
-                    this.saleSkuId = saleSkuId;
-                }
-            }
-
-            public static class CombineMatchProductsBean {
-                /**
-                 * id : 17996
-                 * combineMatchId : 51
-                 * skuName : 规格:2支装
-                 * picUrl : http://image.domolife.cn/platform/C8ST7Zb7jH1552374483923.jpg
-                 * price : 30.00
-                 * prePrice : 78.00
-                 * name : 意大利ACQUA ALLE ROSE古老玫瑰水300ml  组合装
-                 * saleSkuId : 10728
-                 */
-
-                private int id;
-                private int combineMatchId;
-                private String skuName;
-                private String picUrl;
-                private String price;
-                private String prePrice;
-                private String name;
-                private int saleSkuId;
-
-                public int getId() {
-                    return id;
-                }
-
-                public void setId(int id) {
-                    this.id = id;
-                }
-
-                public int getCombineMatchId() {
-                    return combineMatchId;
-                }
-
-                public void setCombineMatchId(int combineMatchId) {
-                    this.combineMatchId = combineMatchId;
-                }
-
-                public String getSkuName() {
-                    return skuName;
-                }
-
-                public void setSkuName(String skuName) {
-                    this.skuName = skuName;
-                }
-
-                public String getPicUrl() {
-                    return picUrl;
-                }
-
-                public void setPicUrl(String picUrl) {
-                    this.picUrl = picUrl;
-                }
-
-                public String getPrice() {
-                    return price;
-                }
-
-                public void setPrice(String price) {
-                    this.price = price;
-                }
-
-                public String getPrePrice() {
-                    return prePrice;
-                }
-
-                public void setPrePrice(String prePrice) {
-                    this.prePrice = prePrice;
-                }
-
-                public String getName() {
-                    return name;
-                }
-
-                public void setName(String name) {
-                    this.name = name;
-                }
-
-                public int getSaleSkuId() {
-                    return saleSkuId;
-                }
-
-                public void setSaleSkuId(int saleSkuId) {
-                    this.saleSkuId = saleSkuId;
-                }
-            }
-
-            public class ProductInfoBean {
+            public static class ProductInfoBean implements Parcelable {
 
                 /**
                  * skuName : 颜色:藏青色,尺码:39/40
@@ -426,12 +255,44 @@ public class IndentWriteEntity extends BaseTimeEntity {
                 private int saleSkuId;
                 private String activitypriceDesc;
                 private String notBuyAreaIds;
-                private int notBuyAreaInfo;
+                private String notBuyAreaInfo;
                 private int real;
                 private int allowCoupon;
+                private PresentInfo presentInfo;
+                //是否显示分割线
                 private int showLine;
+                //是够显示活动信息
                 private int showActInfo;
+                //存储活动信息
                 private ActivityInfoBean activityInfoBean;
+                //主商品id
+                private int combineMainId;
+                //搭配商品id
+                private int combineMatchId;
+
+                public PresentInfo getPresentInfo() {
+                    return presentInfo;
+                }
+
+                public void setPresentInfo(PresentInfo presentInfo) {
+                    this.presentInfo = presentInfo;
+                }
+
+                public int getCombineMainId() {
+                    return combineMainId;
+                }
+
+                public void setCombineMainId(int combineMainId) {
+                    this.combineMainId = combineMainId;
+                }
+
+                public int getCombineMatchId() {
+                    return combineMatchId;
+                }
+
+                public void setCombineMatchId(int combineMatchId) {
+                    this.combineMatchId = combineMatchId;
+                }
 
                 public ActivityInfoBean getActivityInfoBean() {
                     return activityInfoBean;
@@ -529,11 +390,11 @@ public class IndentWriteEntity extends BaseTimeEntity {
                     this.notBuyAreaIds = notBuyAreaIds;
                 }
 
-                public int getNotBuyAreaInfo() {
+                public String getNotBuyAreaInfo() {
                     return notBuyAreaInfo;
                 }
 
-                public void setNotBuyAreaInfo(int notBuyAreaInfo) {
+                public void setNotBuyAreaInfo(String notBuyAreaInfo) {
                     this.notBuyAreaInfo = notBuyAreaInfo;
                 }
 
@@ -553,6 +414,140 @@ public class IndentWriteEntity extends BaseTimeEntity {
                     this.allowCoupon = allowCoupon;
                 }
 
+
+
+                public static class PresentInfo implements Parcelable {
+
+                    /**
+                     * id : 3
+                     * name : 三生三世
+                     * picUrl : http://image.domolife.cn/platform/20190621/20190621165811803.png
+                     */
+
+                    private int id;
+                    private String name;
+                    private String picUrl;
+
+                    public int getId() {
+                        return id;
+                    }
+
+                    public void setId(int id) {
+                        this.id = id;
+                    }
+
+                    public String getName() {
+                        return name;
+                    }
+
+                    public void setName(String name) {
+                        this.name = name;
+                    }
+
+                    public String getPicUrl() {
+                        return picUrl;
+                    }
+
+                    public void setPicUrl(String picUrl) {
+                        this.picUrl = picUrl;
+                    }
+
+                    @Override
+                    public int describeContents() {
+                        return 0;
+                    }
+
+                    @Override
+                    public void writeToParcel(Parcel dest, int flags) {
+                        dest.writeInt(this.id);
+                        dest.writeString(this.name);
+                        dest.writeString(this.picUrl);
+                    }
+
+                    public PresentInfo() {
+                    }
+
+                    protected PresentInfo(Parcel in) {
+                        this.id = in.readInt();
+                        this.name = in.readString();
+                        this.picUrl = in.readString();
+                    }
+
+                    public static final Creator<PresentInfo> CREATOR = new Creator<PresentInfo>() {
+                        @Override
+                        public PresentInfo createFromParcel(Parcel source) {
+                            return new PresentInfo(source);
+                        }
+
+                        @Override
+                        public PresentInfo[] newArray(int size) {
+                            return new PresentInfo[size];
+                        }
+                    };
+                }
+
+                @Override
+                public int describeContents() {
+                    return 0;
+                }
+
+                @Override
+                public void writeToParcel(Parcel dest, int flags) {
+                    dest.writeString(this.skuName);
+                    dest.writeString(this.picUrl);
+                    dest.writeString(this.price);
+                    dest.writeString(this.name);
+                    dest.writeInt(this.count);
+                    dest.writeInt(this.id);
+                    dest.writeInt(this.saleSkuId);
+                    dest.writeString(this.activitypriceDesc);
+                    dest.writeString(this.notBuyAreaIds);
+                    dest.writeString(this.notBuyAreaInfo);
+                    dest.writeInt(this.real);
+                    dest.writeInt(this.allowCoupon);
+                    dest.writeParcelable(this.presentInfo, flags);
+                    dest.writeInt(this.showLine);
+                    dest.writeInt(this.showActInfo);
+                    dest.writeParcelable(this.activityInfoBean, flags);
+                    dest.writeInt(this.combineMainId);
+                    dest.writeInt(this.combineMatchId);
+                }
+
+                public ProductInfoBean() {
+                }
+
+                protected ProductInfoBean(Parcel in) {
+                    this.skuName = in.readString();
+                    this.picUrl = in.readString();
+                    this.price = in.readString();
+                    this.name = in.readString();
+                    this.count = in.readInt();
+                    this.id = in.readInt();
+                    this.saleSkuId = in.readInt();
+                    this.activitypriceDesc = in.readString();
+                    this.notBuyAreaIds = in.readString();
+                    this.notBuyAreaInfo = in.readString();
+                    this.real = in.readInt();
+                    this.allowCoupon = in.readInt();
+                    this.presentInfo = in.readParcelable(PresentInfo.class.getClassLoader());
+                    this.showLine = in.readInt();
+                    this.showActInfo = in.readInt();
+                    this.activityInfoBean = in.readParcelable(ActivityInfoBean.class.getClassLoader());
+                    this.combineMainId = in.readInt();
+                    this.combineMatchId = in.readInt();
+                }
+
+                public static final Creator<ProductInfoBean> CREATOR = new Creator<ProductInfoBean>() {
+                    @Override
+                    public ProductInfoBean createFromParcel(Parcel source) {
+                        return new ProductInfoBean(source);
+                    }
+
+                    @Override
+                    public ProductInfoBean[] newArray(int size) {
+                        return new ProductInfoBean[size];
+                    }
+                };
             }
         }
     }

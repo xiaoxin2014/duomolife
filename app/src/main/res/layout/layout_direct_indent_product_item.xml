@@ -26,8 +26,7 @@
                 android:layout_width="@dimen/sc_mm_120"
                 android:layout_height="@dimen/sc_mm_120"
                 android:layout_centerHorizontal="true"
-                android:scaleType="centerCrop"
-                />
+                android:scaleType="centerCrop"/>
 
             <TextView
                 android:id="@+id/tv_pro_new_user_favor"
@@ -180,6 +179,8 @@
         android:textColor="@color/text_normal_red"
         android:textSize="@dimen/sc_mm_22"
         android:visibility="gone"/>
+
+    <include layout="@layout/layout_present"/>
 
     <RelativeLayout
         android:id="@+id/rel_indent_com_pre_pro"

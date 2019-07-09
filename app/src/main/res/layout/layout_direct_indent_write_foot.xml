@@ -1,32 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/white"
-    android:divider="@drawable/divider_ll_10dp_gray_bg"
-    android:showDividers="beginning|middle"
-    android:orientation="vertical">
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@color/white"
+              android:divider="@drawable/divider_ll_10dp_gray_bg"
+              android:orientation="vertical"
+              android:showDividers="beginning|middle">
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:orientation="vertical"
+        android:layout_height="wrap_content"
         android:divider="@drawable/item_divider_gray_f_two_px"
-        android:showDividers="middle"
-        android:layout_height="wrap_content">
+        android:orientation="vertical"
+        android:showDividers="middle">
+
         <com.amkj.dmsh.views.RectAddAndSubViewDirect
             android:id="@+id/rect_indent_number"
             android:layout_width="match_parent"
-            android:visibility="visible"
+            android:layout_height="@dimen/sc_mm_88"
             android:layout_marginLeft="@dimen/gap_left"
             android:layout_marginRight="@dimen/gap_right"
             android:gravity="center_vertical"
-            android:layout_height="@dimen/sc_mm_88"/>
+            android:visibility="visible"/>
+
         <LinearLayout
+            android:id="@+id/ll_layout_coupon"
             android:layout_width="match_parent"
             android:layout_height="@dimen/sc_mm_88"
+            android:orientation="horizontal"
             android:paddingLeft="@dimen/gap_left"
-            android:paddingRight="@dimen/gap_right"
-            android:id="@+id/ll_layout_coupon"
-            android:orientation="horizontal">
+            android:paddingRight="@dimen/gap_right">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -35,31 +38,31 @@
                 android:layout_centerVertical="true"
                 android:text="优惠券"
                 android:textColor="@color/text_black_t"
-                android:textSize="@dimen/sc_mm_28" />
+                android:textSize="@dimen/sc_mm_28"/>
 
             <TextView
                 android:id="@+id/tv_direct_product_favorable"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:drawablePadding="@dimen/dimen_7_dp"
                 android:drawableRight="@drawable/right_btn_nor"
+                android:drawablePadding="@dimen/dimen_7_dp"
                 android:ellipsize="end"
                 android:gravity="center_vertical|right"
                 android:lines="1"
                 android:paddingLeft="@dimen/sc_mm_25"
                 android:text="@string/unavailable_ticket"
                 android:textColor="@color/selector_font_red_gray"
-                android:textSize="@dimen/sc_mm_28" />
+                android:textSize="@dimen/sc_mm_28"/>
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/ll_indent_open_invoice"
             android:layout_width="match_parent"
             android:layout_height="@dimen/sc_mm_88"
+            android:orientation="horizontal"
             android:paddingLeft="@dimen/gap_left"
             android:paddingRight="@dimen/gap_right"
-            android:id="@+id/ll_indent_open_invoice"
-            android:orientation="horizontal"
             android:visibility="gone">
 
             <TextView
@@ -69,31 +72,31 @@
                 android:layout_centerVertical="true"
                 android:text="发票"
                 android:textColor="@color/text_black_t"
-                android:textSize="@dimen/sc_mm_28" />
+                android:textSize="@dimen/sc_mm_28"/>
 
             <TextView
                 android:id="@+id/tv_direct_product_invoice"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:drawablePadding="@dimen/dimen_7_dp"
                 android:drawableRight="@drawable/right_btn_nor"
+                android:drawablePadding="@dimen/dimen_7_dp"
                 android:ellipsize="end"
                 android:gravity="center_vertical|right"
                 android:lines="1"
                 android:text="不开发票"
                 android:textColor="@color/selector_font_red_gray"
-                android:textSize="@dimen/sc_mm_28" />
+                android:textSize="@dimen/sc_mm_28"/>
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/ll_indent_product_note"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/gap_left"
-            android:paddingRight="@dimen/gap_right"
-            android:id="@+id/ll_indent_product_note"
             android:background="@color/white"
-            android:minHeight="@dimen/sc_mm_88">
+            android:minHeight="@dimen/sc_mm_88"
+            android:paddingLeft="@dimen/gap_left"
+            android:paddingRight="@dimen/gap_right">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -101,32 +104,35 @@
                 android:gravity="center_vertical"
                 android:text="留言"
                 android:textColor="@color/text_black_t"
-                android:textSize="@dimen/sc_mm_28" />
+                android:textSize="@dimen/sc_mm_28"/>
 
             <EditText
                 android:id="@+id/edt_direct_product_note"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="@dimen/sc_mm_88"
                 android:background="@android:color/transparent"
                 android:gravity="center_vertical"
                 android:hint="对本次交易的说明 (选填)"
                 android:maxLines="2"
+                android:minHeight="@dimen/sc_mm_88"
                 android:paddingLeft="@dimen/sc_mm_30"
                 android:textColor="@color/home_text_color"
-                android:textSize="@dimen/sc_mm_28" />
+                android:textSize="@dimen/sc_mm_28"/>
         </LinearLayout>
     </LinearLayout>
+
     <android.support.v7.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:nestedScrollingEnabled="false"
         android:id="@+id/rv_indent_write_info"
-        android:scrollbars="none"
-        android:layout_height="wrap_content"/>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:nestedScrollingEnabled="false"
+        android:scrollbars="none"/>
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="@dimen/sc_mm_75"
@@ -135,8 +141,8 @@
             android:paddingRight="@dimen/gap_right"
             android:text="选择支付方式"
             android:textColor="@color/home_text_color"
-            android:textSize="@dimen/sc_mm_28" />
+            android:textSize="@dimen/sc_mm_28"/>
 
-        <include layout="@layout/layout_direct_pay_way_item" />
+        <include layout="@layout/layout_direct_pay_way_item"/>
     </LinearLayout>
 </LinearLayout>

@@ -2,7 +2,6 @@ package com.amkj.dmsh.shopdetails.adapter;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,16 +27,15 @@ import com.amkj.dmsh.shopdetails.bean.ApplyRefundCheckEntity;
 import com.amkj.dmsh.shopdetails.bean.ApplyRefundCheckEntity.ApplyRefundCheckBean;
 import com.amkj.dmsh.shopdetails.bean.DirectApplyRefundBean;
 import com.amkj.dmsh.shopdetails.bean.DirectApplyRefundBean.DirectRefundProBean;
-import com.amkj.dmsh.shopdetails.bean.IndentDiscountsEntity.IndentDiscountsBean.ProductInfoBean.ActivityProductInfoBean;
 import com.amkj.dmsh.shopdetails.bean.IndentInfoDetailEntity.IndentInfoDetailBean.OrderDetailBean.GoodsDetailBean.OrderProductInfoBean;
+import com.amkj.dmsh.shopdetails.bean.IndentWriteEntity.IndentWriteBean.ProductsBean.ProductInfoBean;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.OrderListBean;
+import com.amkj.dmsh.shopdetails.bean.RefundApplyEntity.RefundApplyBean.ProductsBean;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.gson.Gson;
-import com.klinker.android.link_builder.Link;
-import com.klinker.android.link_builder.LinkBuilder;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,12 +46,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import me.jessyan.autosize.utils.AutoSizeUtils;
-
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
+import static com.amkj.dmsh.constant.ConstantMethod.getSpannableString;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRO_STATUS;
@@ -87,6 +84,7 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
 
     @Override
     protected void convert(BaseViewHolder helper, Object item) {
+        if (item == null) return;
         TextView tv_direct_indent_product_price = helper.getView(R.id.tv_direct_indent_pro_price);
         tv_direct_indent_product_price.setSelected(false);
         switch (type) {
@@ -187,17 +185,18 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                 break;
             case INDENT_W_TYPE:
                 //            订单填写
-                ActivityProductInfoBean productInfoBean = (ActivityProductInfoBean) item;
+                ProductInfoBean productInfoBean = (ProductInfoBean) item;
                 GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.iv_direct_indent_pro), productInfoBean.getPicUrl());
                 helper.setText(R.id.tv_direct_indent_pro_name, getStrings(productInfoBean.getName()))
                         .setText(R.id.tv_direct_indent_pro_sku, getStrings(productInfoBean.getSkuName()))
                         .setText(R.id.tv_direct_pro_count, "x" + productInfoBean.getCount())
                         .setGone(R.id.iv_indent_pro_use_cp, productInfoBean.getAllowCoupon() != 0)
                         .setGone(R.id.tv_details_gray, productInfoBean.getShowLine() == 1)
-                        .setGone(R.id.iv_indent_product_del, productInfoBean.isShowDel() && !TextUtils.isEmpty(productInfoBean.getNotBuyAreaInfo()))
+                        .setGone(R.id.iv_indent_product_del, !TextUtils.isEmpty(productInfoBean.getNotBuyAreaInfo()))
                         .addOnClickListener(R.id.iv_indent_product_del).setTag(R.id.iv_indent_product_del, productInfoBean)
                         .setGone(R.id.tv_indent_write_reason, !TextUtils.isEmpty(productInfoBean.getNotBuyAreaInfo()))
-                        .setText(R.id.tv_indent_write_reason, getStrings(productInfoBean.getNotBuyAreaInfo()));
+                        .setText(R.id.tv_indent_write_reason, getStrings(productInfoBean.getNotBuyAreaInfo()))
+                        .setGone(R.id.rel_indent_com_pre_pro, false);
                 if (productInfoBean.getActivityInfoBean() != null && productInfoBean.getShowActInfo() == 1) {
                     String activityTag = getStrings(productInfoBean.getActivityInfoBean().getActivityTag());
                     helper.setGone(R.id.ll_communal_activity_topic_tag, true)
@@ -211,58 +210,22 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                 } else {
                     helper.setGone(R.id.ll_communal_activity_topic_tag, false);
                 }
-
-                if (productInfoBean.getCombineProductInfoList() != null
-                        && productInfoBean.getCombineProductInfoList().size() > 0) {
-                    helper.setText(R.id.tv_direct_indent_pro_price,
-                            context.getString(R.string.combine_price) + getStringsChNPrice(context, productInfoBean.getPrice()));
+                String activityPriceDesc = productInfoBean.getActivitypriceDesc();
+                String price = getStringsFormat(context, R.string.shop_cart_rmb_price, getStrings(activityPriceDesc), productInfoBean.getPrice());
+                if (!TextUtils.isEmpty(productInfoBean.getActivitypriceDesc())) {
+                    helper.setText(R.id.tv_direct_indent_pro_price, getSpannableString(price, 0, activityPriceDesc.length(), 0.8f, null))
+                            .setTextColor(R.id.tv_direct_indent_pro_price, context.getResources().getColor(R.color.text_normal_red));
                 } else {
-                    if (!TextUtils.isEmpty(productInfoBean.getActivityPriceDesc())) {
-                        TextView tv_direct_indent_pro_price = helper.getView(R.id.tv_direct_indent_pro_price);
-                        tv_direct_indent_pro_price.setSelected(true);
-                        Link link = new Link(productInfoBean.getActivityPriceDesc());
-                        link.setTextColor(Color.parseColor("#ff5a6b"));
-                        link.setTextSize(AutoSizeUtils.mm2px(mAppContext, 22));
-                        link.setBgColor(Color.parseColor("#ffffff"));
-                        link.setUnderlined(false);
-                        link.setHighlightAlpha(0f);
-                        String priceText = productInfoBean.getActivityPriceDesc()
-                                + String.format(context.getResources().getString(R.string.money_price_chn)
-                                , productInfoBean.getPrice());
-                        CharSequence price = LinkBuilder.from(context, priceText)
-                                .addLink(link)
-                                .build();
-                        tv_direct_indent_pro_price.setText(price);
-                    } else if (!TextUtils.isEmpty(productInfoBean.getNewUserTag())) {
-                        TextView tv_direct_indent_pro_price = helper.getView(R.id.tv_direct_indent_pro_price);
-                        tv_direct_indent_pro_price.setSelected(true);
-                        String priceText = productInfoBean.getNewUserTag()
-                                + String.format(context.getResources().getString(R.string.money_price_chn)
-                                , productInfoBean.getPrice());
-                        tv_direct_indent_pro_price.setText(priceText);
-                    } else {
-                        helper.setText(R.id.tv_direct_indent_pro_price,
-                                String.format(context.getResources().getString(R.string.money_price_chn)
-                                        , productInfoBean.getPrice()));
-                    }
+                    helper.setText(R.id.tv_direct_indent_pro_price, price)
+                            .setTextColor(R.id.tv_direct_indent_pro_price, context.getResources().getColor(R.color.text_black_t));
                 }
-                if (productInfoBean.getCombineProductInfoList() != null
-                        || productInfoBean.getPresentProductInfoList() != null) {
-                    helper.setGone(R.id.rel_indent_com_pre_pro, true);
-                    preComProInfoBeanList = new ArrayList<>();
-                    if (productInfoBean.getPresentProductInfoList() != null
-                            && productInfoBean.getPresentProductInfoList().size() > 0) {
-                        preComProInfoBeanList.addAll(productInfoBean.getPresentProductInfoList());
-                    }
-                    if (productInfoBean.getCombineProductInfoList() != null && productInfoBean.getCombineProductInfoList().size() > 0) {
-                        for (CartProductInfoBean cartProductInfoBean : productInfoBean.getCombineProductInfoList()) {
-                            cartProductInfoBean.setCount(0);
-                        }
-                        preComProInfoBeanList.addAll(productInfoBean.getCombineProductInfoList());
-                    }
-                    setComPreData(helper, preComProInfoBeanList, false, false, false);
-                } else {
-                    helper.setGone(R.id.rel_indent_com_pre_pro, false);
+
+                //赠品
+                helper.setGone(R.id.ll_present, productInfoBean.getPresentInfo() != null);
+                if (productInfoBean.getPresentInfo() != null) {
+                    ProductInfoBean.PresentInfo presentInfo = productInfoBean.getPresentInfo();
+                    helper.setText(R.id.tv_name, presentInfo.getName());
+                    GlideImageLoaderUtil.loadCenterCrop(context, helper.getView(R.id.iv_cover), presentInfo.getPicUrl());
                 }
                 helper.itemView.setTag(productInfoBean);
                 break;
@@ -277,36 +240,36 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                 helper.itemView.setTag(groupShopDetailsBean);
                 break;
             case APPLY_REFUND:
-                DirectRefundProBean applyRefundBean = (DirectRefundProBean) item;
-                GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.iv_direct_indent_pro), applyRefundBean.getPicUrl());
-                helper.setText(R.id.tv_direct_indent_pro_name, getStrings(applyRefundBean.getName()))
-                        .setText(R.id.tv_direct_indent_pro_sku, getStrings(applyRefundBean.getSaleSkuValue()))
-                        .setText(R.id.tv_direct_pro_count, "x" + applyRefundBean.getCount());
+                ProductsBean productsBean = (ProductsBean) item;
+                GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.iv_direct_indent_pro), productsBean.getPicUrl());
+                helper.setText(R.id.tv_direct_indent_pro_name, getStrings(productsBean.getProductName()))
+                        .setText(R.id.tv_direct_indent_pro_sku, getStrings(productsBean.getProductSkuValue()))
+                        .setText(R.id.tv_direct_pro_count, "x" + productsBean.getCount());
                 String priceName;
-                if (applyRefundBean.getIntegralPrice() > 0) {
-                    float moneyPrice = getFloatNumber(applyRefundBean.getPrice());
+                if (productsBean.getIntegralPrice() > 0) {
+                    float moneyPrice = getFloatNumber(productsBean.getPrice());
                     if (moneyPrice > 0) {
                         priceName = String.format(context.getResources().getString(R.string.integral_product_and_price)
-                                , applyRefundBean.getIntegralPrice(), getStrings(applyRefundBean.getPrice()));
+                                , productsBean.getIntegralPrice(), getStrings(productsBean.getPrice()));
                     } else {
                         priceName = String.format(context.getResources().getString(R.string.integral_indent_product_price)
-                                , applyRefundBean.getIntegralPrice());
+                                , productsBean.getIntegralPrice());
                     }
                 } else {
-                    priceName = getStringsChNPrice(context, applyRefundBean.getPrice());
+                    priceName = getStringsChNPrice(context, productsBean.getPrice());
                 }
                 helper.setText(R.id.tv_direct_indent_pro_price, priceName);
-                if (applyRefundBean.getCartProductInfoList() != null) {
-                    helper.setGone(R.id.rel_indent_com_pre_pro, true);
-                    preComProInfoBeanList = new ArrayList<>();
-                    if (applyRefundBean.getCartProductInfoList() != null && applyRefundBean.getCartProductInfoList().size() > 0) {
-                        preComProInfoBeanList.addAll(applyRefundBean.getCartProductInfoList());
-                    }
-                    setComPreData(helper, preComProInfoBeanList, false, false, false);
-                } else {
-                    helper.setGone(R.id.rel_indent_com_pre_pro, false);
-                }
-                helper.itemView.setTag(applyRefundBean);
+//                if (productsBean.getCartProductInfoList() != null) {
+//                    helper.setGone(R.id.rel_indent_com_pre_pro, true);
+//                    preComProInfoBeanList = new ArrayList<>();
+//                    if (productsBean.getCartProductInfoList() != null && productsBean.getCartProductInfoList().size() > 0) {
+//                        preComProInfoBeanList.addAll(productsBean.getCartProductInfoList());
+//                    }
+//                    setComPreData(helper, preComProInfoBeanList, false, false, false);
+//                } else {
+                helper.setGone(R.id.rel_indent_com_pre_pro, false);
+//                }
+                helper.itemView.setTag(productsBean);
                 break;
             case INDENT_INVOICE:
                 //            发票订单详情

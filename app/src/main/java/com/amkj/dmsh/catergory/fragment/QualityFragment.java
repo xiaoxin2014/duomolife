@@ -21,8 +21,8 @@ import com.amkj.dmsh.catergory.bean.CatergoryOneLevelEntity.CatergoryOneLevelBea
 import com.amkj.dmsh.catergory.bean.CatergoryOneLevelEntity.CatergoryOneLevelBean.RelateArticleBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.homepage.activity.ArticleTypeActivity;
 import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
+import com.amkj.dmsh.homepage.activity.ArticleTypeActivity;
 import com.amkj.dmsh.homepage.activity.HomePageSearchActivity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;

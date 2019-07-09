@@ -424,8 +424,6 @@ public class Url {
     public static final String Q_INQUIRY_WAIT_PAY = "api/goods/order/getWaitPay";
     //查询良品已发货订单
     public static final String Q_INQUIRY_DEL_IVERED = "api/goods/order/getWaitTakeDelivery";
-    //申请退款
-    public static final String Q_INDENT_REFUND = "api/goods/order/getApplyRefundInfo";
     //申请取消订单 待发货
     public static final String Q_CANCEL_INDENT_REFUND = "api/goods/order/cancelRefund";
     //查询物流
@@ -503,6 +501,8 @@ public class Url {
     public static final String INDENT_DISCOUNTS_INFO = "api/goods/order/getOrderSettleInfoNew";
     //    订单优惠信息 大营销中心新版
     public static final String INDENT_DISCOUNTS_NEW_INFO = "api/goods/order/getOrderSettleInfoNewV2";
+    //    更新订单优惠信息 大营销中心新版
+    public static final String INDENT_DISCOUNTS_UPDATE_INFO = "api/goods/order/getOrderSettlePriceInfo";
     //    订单结算价格 新
     public static final String INDENT_SETTLE_PRICE = "api/goods/order/getTotalPriceByCouponNew";
     //    订单搜索

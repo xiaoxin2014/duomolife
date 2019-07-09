@@ -75,8 +75,6 @@ public class EditGoodsSkuEntity {
         //        积分商品专属
         private int userScore;
         private List<PresentProductInfoBean> presentProductInfoList;
-        //是否是组合搭配
-        private boolean isGroupMatch;
         private List<SkuSaleBean> skuSale;
         private List<PropvaluesBean> propvalues;
         private List<PropsBean> props;
@@ -100,7 +98,6 @@ public class EditGoodsSkuEntity {
                 setShopCarEdit(true);
                 this.skuId = CombineCommonBean.getSkuId();
             }
-            this.isGroupMatch = true;
             this.isCombine = true;
         }
 
@@ -110,14 +107,6 @@ public class EditGoodsSkuEntity {
 
         public void setCombine(boolean combine) {
             isCombine = combine;
-        }
-
-        public boolean isGroupMatch() {
-            return isGroupMatch;
-        }
-
-        public void setGroupMatch(boolean groupMatch) {
-            isGroupMatch = groupMatch;
         }
 
         public List<CombineProductInfoBean> getCombineProductInfoList() {

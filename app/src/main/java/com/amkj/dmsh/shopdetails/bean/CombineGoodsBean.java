@@ -60,6 +60,10 @@ public class CombineGoodsBean implements Parcelable {
     }
 
     public List<MatchProductsBean> getMatchProducts() {
+        if (matchProducts == null) {
+            matchProducts = new ArrayList<>();
+        }
+
         return matchProducts;
     }
 

@@ -92,7 +92,7 @@ public class GroupGoodsEntity extends BaseEntity {
             private String maxPrice;
             private String name;
             //所有sku商品总库存
-            private int Stock = 1;
+            private int stock = -1;
             private List<SkuSaleBean> skuSale;
             private List<PropvaluesBean> propvalues;
             private List<PropsBean> props;
@@ -106,8 +106,6 @@ public class GroupGoodsEntity extends BaseEntity {
             private String skuValue;
             //要购买的商品件数(默认一件)
             private int count = 1;
-            //要购买的商品库存
-            private int quantity;
             //当前选中的搭配商品省了多少钱
             private double saveMoney;
             //当前选中的搭配商品价格
@@ -143,19 +141,21 @@ public class GroupGoodsEntity extends BaseEntity {
             }
 
             public int getStock() {
-                return Stock;
+                int quantity = 0;
+                if (skuSale != null) {
+                    for (int i = 0; i < skuSale.size(); i++) {
+                        SkuSaleBean skuSaleBean = skuSale.get(i);
+                        if (skuSaleBean != null) {
+                            quantity = quantity + skuSaleBean.getQuantity();
+                        }
+                    }
+                }
+
+                return stock == -1 ? quantity : stock;
             }
 
             public void setStock(int stock) {
-                Stock = stock;
-            }
-
-            public int getQuantity() {
-                return quantity;
-            }
-
-            public void setQuantity(int quantity) {
-                this.quantity = quantity;
+                this.stock = stock;
             }
 
             public int getSkuId() {
