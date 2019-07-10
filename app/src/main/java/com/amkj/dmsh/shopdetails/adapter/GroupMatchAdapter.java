@@ -45,7 +45,8 @@ public class GroupMatchAdapter extends BaseQuickAdapter<CombineCommonBean, BaseV
                 //最低价！=最高价并且sku没有选中才会显示最高价
                 .setGone(R.id.tv_max_price, (!TextUtils.isEmpty(item.getMaxPrice()) && !item.getMaxPrice().equals(item.getMinPrice())))
                 .addOnClickListener(R.id.rl_cover).setTag(R.id.rl_cover, item)
-                .setEnabled(R.id.tv_select_sku, item.getSkuSale().size() > 1)
+                //是否可以选择sku
+                .setEnabled(R.id.tv_select_sku, item.getSkuSale().size() > 1 && item.getStock() > 0)
                 .addOnClickListener(R.id.tv_select_sku).setTag(R.id.tv_select_sku, item)
                 .setEnabled(R.id.tv_shop_car_sel, !item.isMainProduct() && item.getStock() > 0);//主商品和无库存商品不可选中
 
@@ -57,7 +58,7 @@ public class GroupMatchAdapter extends BaseQuickAdapter<CombineCommonBean, BaseV
         } else {
             //多个sku且没有选择任何sku时
             if (item.getSkuId() == 0) {
-                tvSku.setText("请选择规格");
+                tvSku.setText(item.getStock() > 0 ? "请选择规格" : "对不起,该商品已被抢光");
             } else {
                 for (SkuSaleBean skuSaleBean : skuSaleList) {
                     if (item.getSkuId() == skuSaleBean.getId()) {

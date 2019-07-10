@@ -90,6 +90,7 @@ public class EditGoodsSkuEntity {
             this.picUrl = CombineCommonBean.getPicUrl();
             this.id = CombineCommonBean.getProductId();
             this.productName = CombineCommonBean.getName();
+            this.quantity = CombineCommonBean.getStock();
             this.skuSale = CombineCommonBean.getSkuSale();
             this.propvalues = CombineCommonBean.getPropvalues();
             this.props = CombineCommonBean.getProps();

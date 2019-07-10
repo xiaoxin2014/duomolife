@@ -263,7 +263,7 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
         skuDialogView.rImg_direct_attribute_product.setTag(R.id.iv_tag, getStrings(this.editGoodsSkuBean.getPicUrl()));
         skuDialogView.tv_dir_indent_pro_name.setText(this.editGoodsSkuBean.getProductName());
         skuDialogView.tv_dir_indent_pro_quality.setSelected(true);
-        skuDialogView.tv_dir_indent_pro_quality.setText(("库存:" + editGoodsSkuBean.getQuantity()));
+        skuDialogView.tv_dir_indent_pro_quality.setText(editGoodsSkuBean.getQuantity() > 0 ? ("库存:" + editGoodsSkuBean.getQuantity()) : "");
         //        获取价格排序范围
         Collections.sort(skuSaleList, new Comparator<SkuSaleBean>() {
             @Override
@@ -348,7 +348,7 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
             }
         } else {
             skuDialogView.tv_dir_indent_pro_quality.setSelected(true);
-            skuDialogView.tv_dir_indent_pro_quality.setText(("库存：" + quantity));
+            skuDialogView.tv_dir_indent_pro_quality.setText(quantity > 0 ? ("库存：" + quantity) : "");
             for (ProductParameterTypeBean productParameterTypeBean : productParameterTypeBeanList) {
                 for (ProductParameterValueBean productParameterValueBean : productParameterTypeBean.getValues()) {
                     if (skuProp.contains(String.valueOf(productParameterValueBean.getPropId())) && productParameterValueBean.getNotice() != 0) {
@@ -1233,7 +1233,7 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
                         rel_rect_count.setVisibility(View.GONE);
                     } else {
                         skuDialogView.tv_dir_indent_pro_quality.setSelected(true);
-                        skuDialogView.tv_dir_indent_pro_quality.setText(("库存：" + skuSaleBean.getQuantity()));
+                        skuDialogView.tv_dir_indent_pro_quality.setText(skuSaleBean.getQuantity() > 0 ? ("库存：" + skuSaleBean.getQuantity()) : "");
                         isSelectNotice = false;
                         noticeType = 0;
                     }
