@@ -65,6 +65,8 @@ public class ConstantVariable {
     public static final int TOTAL_COUNT_THIRTY = 30;
     //    加载条目40
     public static final int TOTAL_COUNT_FORTY = 40;
+    //    加载条目80
+    public static final int TOTAL_COUNT_EIGHTY = 80;
     //  关联商品请求码
     public static final int RELEVANCE_PRO_REQ = 201;
     //    背景图片请求码

@@ -76,7 +76,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.RECOMMEND_CAR;
 import static com.amkj.dmsh.constant.ConstantVariable.RECOMMEND_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.REDUCE_NUM;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_FORTY;
+import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_EIGHTY;
 import static com.amkj.dmsh.constant.Url.MINE_SHOP_CAR_RECOMMEND_GOODS;
 import static com.amkj.dmsh.constant.Url.NEW_MINE_SHOP_CAR_GOODS;
 import static com.amkj.dmsh.constant.Url.NEW_PRO_SETTLE_PRICE;
@@ -335,7 +335,7 @@ public class ShopCarActivity extends BaseActivity {
     private void getShopCarProInfo() {
         boolean allCheckedStatus = isEditStatus ? check_box_all_del.isChecked() : check_box_all_buy.isChecked();
         Map<String, Object> params = new HashMap<>();
-        params.put("showCount", TOTAL_COUNT_FORTY);
+        params.put("showCount", TOTAL_COUNT_EIGHTY);
         params.put("currentPage", page);
         params.put("userId", userId);
         NetLoadUtils.getNetInstance().loadNetDataPost(this, NEW_MINE_SHOP_CAR_GOODS,
