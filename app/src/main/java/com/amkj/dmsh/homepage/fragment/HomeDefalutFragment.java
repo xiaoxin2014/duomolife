@@ -243,10 +243,10 @@ public class HomeDefalutFragment extends BaseFragment {
 
 
         //初始化精选专题（福利社）适配器
-        mHomeWelfareAdapter = new HomeWelfareAdapter(getActivity(), null);
+        mHomeWelfareAdapter = new HomeWelfareAdapter(getActivity(), mThemeList);
         mVpFelware.setAdapter(mHomeWelfareAdapter);
         mVpFelware.setPageMargin(AutoSizeUtils.mm2px(mAppContext, 22));
-        mVpFelware.setOffscreenPageLimit(2);
+        mVpFelware.setOffscreenPageLimit(mHomeWelfareAdapter.getCount() - 1);
 
         //初始化好物适配器
         GridLayoutManager niceManager = new GridLayoutManager(getActivity()
@@ -470,8 +470,9 @@ public class HomeDefalutFragment extends BaseFragment {
                         if (mHomeWelfareEntity != null) {
                             if (themeList != null && themeList.size() > 0) {
                                 mThemeList.clear();
-                                mThemeList.addAll(mHomeWelfareEntity.getResult());
-                                mHomeWelfareAdapter.refresh(mThemeList);
+                                mThemeList.addAll(themeList);
+                                mHomeWelfareAdapter = new HomeWelfareAdapter(getActivity(), mThemeList);
+                                mVpFelware.setAdapter(mHomeWelfareAdapter);
                             }
                         }
 
@@ -501,7 +502,6 @@ public class HomeDefalutFragment extends BaseFragment {
                     @Override
                     public void onSuccess(String result) {
                         mSmartLayout.finishRefresh();
-
                         UserLikedProductEntity userLikedProductEntity = new Gson().fromJson(result, UserLikedProductEntity.class);
                         if (userLikedProductEntity != null) {
                             List<LikedProductBean> goodProductList = userLikedProductEntity.getGoodsList();
