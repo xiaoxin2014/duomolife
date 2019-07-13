@@ -48,7 +48,7 @@ public class GroupMatchAdapter extends BaseQuickAdapter<CombineCommonBean, BaseV
                 //是否可以选择sku
                 .setEnabled(R.id.tv_select_sku, item.getSkuSale().size() > 1 && item.getStock() > 0)
                 .addOnClickListener(R.id.tv_select_sku).setTag(R.id.tv_select_sku, item)
-                .setEnabled(R.id.tv_shop_car_sel, !item.isMainProduct() && item.getStock() > 0);//主商品和无库存商品不可选中
+                .setEnabled(R.id.tv_shop_car_sel, item.getStock() > 0);//无库存商品不可选中
 
         TextView tvSku = helper.getView(R.id.tv_select_sku);
         //只有一个sku默认直接显示
@@ -71,6 +71,7 @@ public class GroupMatchAdapter extends BaseQuickAdapter<CombineCommonBean, BaseV
 
         TextView tvSelect = helper.getView(R.id.tv_shop_car_sel);
         tvSelect.setSelected(item.isSelected());
+        tvSelect.setAlpha((item.isSelected() && item.isMainProduct()) ? 0.5f : 1);//主商品默认选中并且不可取消选中
         helper.itemView.setTag(item);
     }
 

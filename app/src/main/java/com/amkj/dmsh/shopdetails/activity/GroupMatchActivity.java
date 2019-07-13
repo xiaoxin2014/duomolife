@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -147,7 +148,7 @@ public class GroupMatchActivity extends BaseActivity {
         //选中和取消选中
         mGroupCollocaAdapter.setOnItemClickListener((adapter, view, position) -> {
             CombineCommonBean combineCommonBean = (CombineCommonBean) view.getTag();
-            if (combineCommonBean != null && !combineCommonBean.isMainProduct()) {
+            if (combineCommonBean != null && !combineCommonBean.isMainProduct() && ((ViewGroup) view).getChildAt(0).isEnabled()) {
                 //已选择sku的情况下才能直接选中或取消选中
                 if (combineCommonBean.getSkuId() > 0) {
                     view.setSelected(!view.isSelected());
@@ -256,6 +257,7 @@ public class GroupMatchActivity extends BaseActivity {
                         if (combineMainProduct != null) {
                             combineMainProduct.setMainProduct(true);
                             combineMainProduct.setActivityCode(groupGoodsBean.getActivityCode());
+                            combineMainProduct.setSelected(true);//主商品默认选中并且不可取消选中
                             goods.add(combineMainProduct);
                         }
                         List<CombineCommonBean> combineProductList = groupGoodsBean.getCombineMatchProductList();
