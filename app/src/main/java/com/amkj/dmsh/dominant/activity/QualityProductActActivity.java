@@ -2,19 +2,15 @@ package com.amkj.dmsh.dominant.activity;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
@@ -26,22 +22,17 @@ import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
-import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
-import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
-import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -69,7 +60,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.BASE_SHARE_PAGE_TWO;
 import static com.amkj.dmsh.constant.Url.Q_ACT_PRO_LIST;
 
-;
 
 /**
  * @author LGuiPeng
@@ -100,7 +90,7 @@ public class QualityProductActActivity extends BaseActivity {
     private float screenHeight;
     private Badge badge;
     private String activityCode;
-    private List<LikedProductBean> actProActivityList = new ArrayList();
+    private List<LikedProductBean> actProActivityList = new ArrayList<>();
     private QualityTypeProductAdapter qualityTypeProductAdapter;
     private QActivityProView qActivityProView;
     private UserLikedProductEntity likedProductEntity;
@@ -124,12 +114,7 @@ public class QualityProductActActivity extends BaseActivity {
         iv_img_service.setImageResource(R.drawable.shop_car_gray_icon);
         communal_recycler.setLayoutManager(new GridLayoutManager(QualityProductActActivity.this, 2));
 
-        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                loadData();
-            }
-        });
+        smart_communal_refresh.setOnRefreshListener(refreshLayout -> loadData());
         qualityTypeProductAdapter = new QualityTypeProductAdapter(QualityProductActActivity.this, actProActivityList);
         View headerView = LayoutInflater.from(QualityProductActActivity.this).inflate(R.layout.layout_act_topic_no_count_time, null, false);
         qActivityProView = new QActivityProView();
@@ -139,8 +124,6 @@ public class QualityProductActActivity extends BaseActivity {
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_dp)
-
-
                 .create());
         qualityTypeProductAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
@@ -333,71 +316,6 @@ public class QualityProductActActivity extends BaseActivity {
         TextView tv_pro_act_desc;
         @BindView(R.id.tv_pro_act_s_end_time)
         TextView tv_pro_act_s_end_time;
-        AlertDialog alertDialog;
-
-        /**
-         * 弹框打开活动规则详情
-         *
-         * @param view
-         */
-        @OnClick(R.id.ll_act_topic_no_coun_time)
-        void openActivityRule(View view) {
-            if (likedProductEntity != null) {
-                if (alertDialog == null) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(QualityProductActActivity.this, R.style.CustomTransDialog);
-                    View dialogView = LayoutInflater.from(QualityProductActActivity.this).inflate(R.layout.layout_act_topic_rule, null, false);
-                    RuleDialogView ruleDialog = new RuleDialogView();
-                    ButterKnife.bind(ruleDialog, dialogView);
-                    ruleDialog.initViews();
-                    ruleDialog.setData();
-                    alertDialog = builder.create();
-                    alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                    alertDialog.setCanceledOnTouchOutside(true);
-                    alertDialog.show();
-                    TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-                    int dialogHeight = (int) (app.getScreenHeight() * 0.4 + 1);
-                    Window window = alertDialog.getWindow();
-                    window.getDecorView().setPadding(0, 0, 0, 0);
-                    window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, dialogHeight);
-                    window.setGravity(Gravity.BOTTOM);//底部出现
-                    window.setContentView(dialogView);
-                } else {
-                    alertDialog.show();
-                }
-            }
-        }
-
-        class RuleDialogView {
-            @BindView(R.id.tv_act_topic_rule_title)
-            TextView tv_act_topic_rule_title;
-            @BindView(R.id.tv_act_topic_rule_skip)
-            TextView tv_act_topic_rule_skip;
-            @BindView(R.id.communal_recycler)
-            RecyclerView communal_recycler;
-            CommunalDetailAdapter actRuleDetailsAdapter;
-            List<CommunalDetailObjectBean> communalDetailBeanList = new ArrayList<>();
-
-            public void initViews() {
-                tv_act_topic_rule_skip.setVisibility(View.GONE);
-                communal_recycler.setNestedScrollingEnabled(false);
-                communal_recycler.setLayoutManager(new LinearLayoutManager(QualityProductActActivity.this));
-                communal_recycler.setNestedScrollingEnabled(false);
-                actRuleDetailsAdapter = new CommunalDetailAdapter(QualityProductActActivity.this, communalDetailBeanList);
-                communal_recycler.setLayoutManager(new LinearLayoutManager(QualityProductActActivity.this));
-                communal_recycler.setAdapter(actRuleDetailsAdapter);
-            }
-
-            public void setData() {
-                tv_act_topic_rule_title.setText("活动规则");
-                tv_act_topic_rule_skip.setText(String.format(getResources().getString(R.string.skip_topic)
-                        , getStrings(likedProductEntity.getActivityTag())));
-                if (likedProductEntity.getActivityRuleDetailList() != null && likedProductEntity.getActivityRuleDetailList().size() > 0) {
-                    communalDetailBeanList.clear();
-                    communalDetailBeanList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(likedProductEntity.getActivityRuleDetailList()));
-                    actRuleDetailsAdapter.notifyDataSetChanged();
-                }
-            }
-        }
     }
 
     @OnClick(R.id.tv_life_back)
@@ -449,7 +367,7 @@ public class QualityProductActActivity extends BaseActivity {
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
         if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
-            getCarCount(getActivity(),badge);
+            getCarCount(getActivity(), badge);
         }
     }
 }

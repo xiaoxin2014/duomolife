@@ -1,40 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/ll_act_topic_no_coun_time"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/text_light_pink_da"
+              android:id="@+id/ll_act_topic_no_coun_time"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@color/text_light_pink_da"
+              android:gravity="center_vertical"
+              android:orientation="horizontal"
+              android:paddingLeft="@dimen/sc_mm_20"
+              android:paddingTop="@dimen/sc_mm_23"
+              android:paddingBottom="@dimen/sc_mm_23">
 
-    android:gravity="center_vertical"
-    android:orientation="horizontal"
-    android:paddingBottom="@dimen/sc_mm_23"
-    android:paddingLeft="@dimen/sc_mm_20"
-    android:paddingTop="@dimen/sc_mm_23">
-
-    <include layout="@layout/layout_communal_pro_tag_red" />
+    <include layout="@layout/layout_communal_pro_tag_red"/>
 
     <RelativeLayout
         android:layout_width="0px"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:paddingLeft="@dimen/sc_mm_10"
-        android:paddingRight="@dimen/sc_mm_10"
-        android:layout_weight="1">
+        android:paddingRight="@dimen/sc_mm_10">
+
         <TextView
             android:id="@+id/tv_product_activity_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/tv_communal_pro_red_tag"
             android:textColor="@color/text_black_t"
-            android:textSize="@dimen/sc_mm_26" />
+            android:textSize="@dimen/sc_mm_26"/>
+
         <TextView
-            android:layout_width="match_parent"
-            android:layout_marginTop="@dimen/sc_mm_16"
-            android:layout_below="@id/tv_product_activity_description"
             android:id="@+id/tv_pro_act_s_end_time"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/tv_product_activity_description"
+            android:layout_marginTop="@dimen/sc_mm_16"
             android:textColor="@color/text_login_gray_s"
-            android:textSize="@dimen/sc_mm_24" />
+            android:textSize="@dimen/sc_mm_24"/>
     </RelativeLayout>
 
-    <include layout="@layout/layout_comm_next_right" />
+    <include
+        layout="@layout/layout_comm_next_right"
+        android:visibility="gone"/>
 </LinearLayout>
