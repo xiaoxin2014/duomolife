@@ -430,7 +430,7 @@ public class ConstantMethod {
      */
     public static String stripTrailingZeros(String priceText) {
         try {
-            return new BigDecimal(priceText.trim()).stripTrailingZeros().toPlainString();
+            return new BigDecimal(priceText.replaceAll(" ", "")).stripTrailingZeros().toPlainString();
         } catch (Exception e) {
             return getStrings(priceText);
         }

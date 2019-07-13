@@ -62,10 +62,10 @@ import butterknife.OnClick;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static com.amkj.dmsh.constant.ConstantMethod.getDoubleFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeDouble;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -483,9 +483,9 @@ public class ShopCarActivity extends BaseActivity {
                 price = getStringChangeDouble(tv_cart_total.getText().toString().trim()) + price;
                 discount = getStringChangeDouble(tv_settlement_dis_car_price.getText().toString().trim()) + discount;
             }
-            tv_cart_total.setText(getDoubleFormat(this, R.string.group_total_price, price));
+            tv_cart_total.setText(getStringsFormat(this, R.string.group_total_price, String.valueOf(price)));
             //优惠金额
-            tv_settlement_dis_car_price.setText(getDoubleFormat(this, R.string.newshopcar_discount_price, discount));
+            tv_settlement_dis_car_price.setText(getStringsFormat(this, R.string.newshopcar_discount_price, String.valueOf(discount)));
             tv_settlement_dis_car_price.setVisibility(discount != 0 ? View.VISIBLE : GONE);
             //结算商品件数
             String[] shoppingInfo = ShopCarDao.getShoppingCount(shopGoodsList);

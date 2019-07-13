@@ -52,12 +52,13 @@ import q.rorbin.badgeview.Badge;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
-import static com.amkj.dmsh.constant.ConstantMethod.getDoubleFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getSpannableString;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeDouble;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
+import static com.amkj.dmsh.constant.ConstantMethod.stripTrailingZeros;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
@@ -212,7 +213,7 @@ public class GroupMatchActivity extends BaseActivity {
                     }
                 }
                 mTvSaveNum.setVisibility(View.VISIBLE);
-                mTvSaveNum.setText(getDoubleFormat(this, R.string.save_money, totalSave));
+                mTvSaveNum.setText(getStringsFormat(this, R.string.save_money, stripTrailingZeros(String.valueOf(totalSave))));
             } else {
                 groupPrice = getMinGroup();
                 mTvSaveNum.setVisibility(View.GONE);
@@ -224,7 +225,7 @@ public class GroupMatchActivity extends BaseActivity {
             String end = (combineMainProduct.getSkuId() <= 0 || !isSelectGroup()) ? "起" : "";
 
             //组合价=主商品价格+组合商品价格
-            String totalPrice = getDoubleFormat(this, R.string.group_total_price, mainPrice + groupPrice) + end;
+            String totalPrice = getStringsFormat(this, R.string.group_total_price, stripTrailingZeros(String.valueOf(mainPrice + groupPrice))) + end;
             CharSequence rmbFormat = getSpannableString(totalPrice, 1, TextUtils.isEmpty(end) ? totalPrice.length() : totalPrice.length() - 1, 1.6f, null);
             mTvGroupPrice.setText(rmbFormat);
         } catch (Exception e) {

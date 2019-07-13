@@ -3,6 +3,8 @@ package com.amkj.dmsh.shopdetails.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import static com.amkj.dmsh.constant.ConstantMethod.stripTrailingZeros;
+
 /**
  * Created by xiaoxin on 2019/6/17
  * Version:v4.1.0
@@ -24,7 +26,6 @@ public class SkuSaleBean implements Parcelable {
     private int id;
     private int productId;
     private String price;
-    private String prePrice;
     private int quantity;
     private String propValues;  //sku，多个propValueId之间用逗号隔开   例如L,白色
     private int type;
@@ -34,9 +35,11 @@ public class SkuSaleBean implements Parcelable {
     private String newUserTag;
     //            积分商品独有属性
     private String moneyPrice;
+    private String prePrice;
+
 
     public String getPrePrice() {
-        return prePrice;
+        return stripTrailingZeros(prePrice);
     }
 
     public String getPresentSkuIds() {
@@ -48,7 +51,7 @@ public class SkuSaleBean implements Parcelable {
     }
 
     public String getMoneyPrice() {
-        return moneyPrice;
+        return stripTrailingZeros(moneyPrice);
     }
 
     public void setMoneyPrice(String moneyPrice) {
@@ -72,7 +75,7 @@ public class SkuSaleBean implements Parcelable {
     }
 
     public String getPrice() {
-        return price;
+        return stripTrailingZeros(price);
     }
 
     public void setPrice(String price) {
@@ -112,7 +115,7 @@ public class SkuSaleBean implements Parcelable {
     }
 
     public String getActivityPrice() {
-        return activityPrice;
+        return stripTrailingZeros(activityPrice);
     }
 
     public void setActivityPrice(String activityPrice) {
@@ -149,6 +152,12 @@ public class SkuSaleBean implements Parcelable {
     }
 
     public SkuSaleBean() {
+    }
+
+    public SkuSaleBean(int quantity, String price, int id) {
+        this.id = id;
+        this.price = price;
+        this.quantity = quantity;
     }
 
     protected SkuSaleBean(Parcel in) {

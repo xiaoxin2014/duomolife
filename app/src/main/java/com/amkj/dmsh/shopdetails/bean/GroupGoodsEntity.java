@@ -5,6 +5,8 @@ import com.amkj.dmsh.constant.ConstantMethod;
 
 import java.util.List;
 
+import static com.amkj.dmsh.constant.ConstantMethod.stripTrailingZeros;
+
 /**
  * Created by xiaoxin on 2019/6/17
  * Version:v4.1.0
@@ -122,7 +124,7 @@ public class GroupGoodsEntity extends BaseEntity {
             }
 
             public String getPrice() {
-                return price;
+                return stripTrailingZeros(price);
             }
 
             public void setPrice(String price) {
@@ -226,7 +228,7 @@ public class GroupGoodsEntity extends BaseEntity {
             }
 
             public String getMinPrice() {
-                return ConstantMethod.getStrings(minPrice.replaceAll(" ", ""));
+                return stripTrailingZeros(minPrice);
             }
 
             public void setMinPrice(String minPrice) {
@@ -234,7 +236,7 @@ public class GroupGoodsEntity extends BaseEntity {
             }
 
             public String getMaxPrice() {
-                return ConstantMethod.getStrings(maxPrice.replaceAll(" ", ""));
+                return stripTrailingZeros(maxPrice);
             }
 
             public void setMaxPrice(String maxPrice) {

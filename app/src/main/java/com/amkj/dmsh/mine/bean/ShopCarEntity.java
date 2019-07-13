@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import com.amkj.dmsh.base.BaseTimeEntity;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
+import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.annotations.SerializedName;
 
@@ -144,7 +145,7 @@ public class ShopCarEntity extends BaseTimeEntity {
 
                 private boolean isForSale;
                 private int productId;
-                private SaleSkuBean saleSku;
+                private SkuSaleBean saleSku;
                 private String saleSkuValue;
                 private int count;
                 private String priceTag;
@@ -245,11 +246,11 @@ public class ShopCarEntity extends BaseTimeEntity {
                     this.productId = productId;
                 }
 
-                public SaleSkuBean getSaleSku() {
+                public SkuSaleBean getSaleSku() {
                     return saleSku;
                 }
 
-                public void setSaleSku(SaleSkuBean saleSku) {
+                public void setSaleSku(SkuSaleBean saleSku) {
                     this.saleSku = saleSku;
                 }
 

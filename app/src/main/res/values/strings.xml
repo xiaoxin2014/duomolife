@@ -244,9 +244,8 @@
     <string name="min_price">¥%s起</string>
     <string name="xsg_market_price">原价:¥%s</string>
     <string name="economize_money">省%s元</string>
-    <string name="group_total_price">¥%.2f</string>
-    <string name="group_total_price_start">¥%.2f起</string>
-    <string name="save_money">省了¥%.2f</string>
-    <string name="newshopcar_discount_price">优惠了¥%.2f元</string>
+    <string name="group_total_price">¥%s</string>
+    <string name="save_money">省了¥%s</string>
+    <string name="newshopcar_discount_price">优惠了¥%s元</string>
 
 </resources>

@@ -136,7 +136,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
 import static com.amkj.dmsh.constant.ConstantMethod.showImageActivity;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
-import static com.amkj.dmsh.constant.ConstantMethod.stripTrailingZeros;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
@@ -778,7 +777,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                             ShopRecommendHotTopicBean hotTopicBean = articalRecommendList.get(0);
                             if (hotTopicBean != null) {
                                 mLlArtical.setVisibility(VISIBLE);
-                                GlideImageLoaderUtil.loadImage(getActivity(), mIvArticalCover, hotTopicBean.getPicUrl());
+                                GlideImageLoaderUtil.loadRoundImg(getActivity(), mIvArticalCover, hotTopicBean.getPicUrl(), 0);
                                 mTvArticalTitle.setText(getStrings(hotTopicBean.getTitle()));
                                 mTvArticalDesc.setText(getStrings(hotTopicBean.getDescription()));
                             }
@@ -1109,7 +1108,8 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     .addLink(link)
                     .build();
         } else {
-            tv_ql_sp_pro_sc_market_price.setText(String.format(getString(R.string.money_market_price_chn), shopProperty.getMarketPrice()));
+            String marketPrice = shopProperty.getMarketPrice();
+            tv_ql_sp_pro_sc_market_price.setText(String.format(getString(R.string.money_market_price_chn), marketPrice));
         }
 
 
@@ -1547,7 +1547,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             tv_ql_sp_pro_sc_price.setText(getRmbFormat(this, minPrice));
             //设置下面最高价
             mTvMaxPrice.setVisibility(!minPrice.equals(maxPrice) ? VISIBLE : GONE);
-            mTvMaxPrice.setText(getRmbFormat(this, "~" + "¥" + stripTrailingZeros(maxPrice), false));
+            mTvMaxPrice.setText(getRmbFormat(this, "~" + "¥" + maxPrice, false));
         } else {
             showToast(this, "商品数据错误");
         }
@@ -1647,7 +1647,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             cartInfoBean.setProductId(shopPropertyBean.getId());
             cartInfoBean.setCount(shopCarGoodsSkuDif.getCount());
             cartInfoBean.setId(shopCarGoodsSkuDif.getSaleSkuId());
-            cartInfoBean.setSaleSku(new CartInfoBean.SaleSkuBean(shopPropertyBean.getQuantity(), shopCarGoodsSkuDif.getPrice() + "", shopCarGoodsSkuDif.getSaleSkuId()));
+            cartInfoBean.setSaleSku(new SkuSaleBean(shopPropertyBean.getQuantity(), shopCarGoodsSkuDif.getPrice() + "", shopCarGoodsSkuDif.getSaleSkuId()));
             settlementGoods.add(cartInfoBean);
 //            商品结算
             Properties prop = new Properties();

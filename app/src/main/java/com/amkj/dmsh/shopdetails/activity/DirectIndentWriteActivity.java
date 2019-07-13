@@ -33,7 +33,6 @@ import com.amkj.dmsh.dominant.activity.QualityProductActActivity;
 import com.amkj.dmsh.dominant.bean.GroupShopDetailsEntity.GroupShopDetailsBean;
 import com.amkj.dmsh.mine.bean.ActivityInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean.CartBean.CartInfoBean;
-import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean.CartBean.CartInfoBean.SaleSkuBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.adapter.DirectProductListAdapter;
@@ -53,6 +52,7 @@ import com.amkj.dmsh.shopdetails.bean.QualityCreateUnionPayIndentEntity;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateWeChatPayIndentBean;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateWeChatPayIndentBean.ResultBean.PayKeyBean;
 import com.amkj.dmsh.shopdetails.bean.ShopCarGoodsSkuTransmit;
+import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
 import com.amkj.dmsh.shopdetails.payutils.AliPay;
 import com.amkj.dmsh.shopdetails.payutils.UnionPay;
 import com.amkj.dmsh.shopdetails.payutils.WXPay;
@@ -1223,7 +1223,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
             pullFootView.rect_indent_number.setNum(productInfoBean.getCount());
             if (passGoods != null) {
                 for (CartInfoBean cartInfoBean : passGoods) {
-                    SaleSkuBean saleSku = cartInfoBean.getSaleSku();
+                    SkuSaleBean saleSku = cartInfoBean.getSaleSku();
                     if (saleSku != null && saleSku.getId() == productInfoBean.getSaleSkuId()) {
                         pullFootView.rect_indent_number.setMaxNum(saleSku.getQuantity());
                     }

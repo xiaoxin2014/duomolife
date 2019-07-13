@@ -11,6 +11,7 @@ import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.mine.bean.ActivityInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean.CartBean.CartInfoBean;
 import com.amkj.dmsh.mine.biz.ShopCarDao;
+import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.views.RectAddAndSubViewCommunal;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
@@ -116,7 +117,7 @@ public class ShopCarGoodsAdapter extends BaseMultiItemQuickAdapter<MultiItemEnti
                 }
                 rect_shop_car_item.setNum(cartInfoBean.getCount());
                 if (cartInfoBean.getSaleSku() != null) {
-                    CartInfoBean.SaleSkuBean saleSku = cartInfoBean.getSaleSku();
+                    SkuSaleBean saleSku = cartInfoBean.getSaleSku();
                     rect_shop_car_item.setMaxNum(saleSku.getQuantity());
                 }
                 rect_shop_car_item.setAutoChangeNumber(false);
