@@ -191,9 +191,11 @@ public class ShopCarActivity extends BaseActivity {
             switch (view.getId()) {
                 //单个选中或者取消
                 case R.id.cb_shop_car_sel:
-                    ShopCarDao.selectOne(cartInfoBean, isEditStatus);
+                    ShopCarDao.selectOne(shopGoodsList, cartInfoBean, isEditStatus);
                     //商品有效并且不在编辑状态时更新结算价格
-                    if (cartInfoBean.isValid() && !isEditStatus) {
+                    if (isEditStatus) {
+                        shopCarGoodsAdapter.notifyDataSetChanged();
+                    } else if (cartInfoBean.isValid()) {
                         getSettlePrice(cartInfoBean, null, true);
                     }
                     break;
@@ -428,10 +430,17 @@ public class ShopCarActivity extends BaseActivity {
                             cartInfoBean.setId(combineMainProduct.getId());
                             cartInfoBean.setCombineProduct(true);
                             cartInfoBean.setCount(combineMainProduct.getCount());
-                            cartInfoBean.setValid(false);
+                            cartInfoBean.setSelected(combineMainProduct.isSelected());
+                            cartInfoBean.setValid(isValid);
                             //只要搭配商品有任意一件失效，主商品不可选
                             if (!ShopCarDao.isValid(cartInfoBean)) {
                                 combineMainProduct.setValid(false);
+                            }
+                        }
+                        //只要主商品失效，所有的搭配商品都会失效
+                        if (!combineMainProduct.isValid()) {
+                            for (CartBean.CartInfoBean cartInfoBean : combineMatchProducts) {
+                                cartInfoBean.setValid(false);
                             }
                         }
                         cartInfoList.addAll(combineMatchProducts);

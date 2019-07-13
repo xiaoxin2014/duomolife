@@ -124,14 +124,21 @@ public class ShopCarDao {
      *
      * @param isEditStatus 是否编辑状态
      */
-    public static void selectOne(CartInfoBean cartInfoBean, boolean isEditStatus) {
+    public static void selectOne(List<MultiItemEntity> shopGoodsList, CartInfoBean cartInfoBean, boolean isEditStatus) {
         if (cartInfoBean != null) {
-            if (isEditStatus) {
-                boolean isDelete = !cartInfoBean.isDelete();
-                cartInfoBean.setDelete(isDelete);
-            } else {
-                boolean isSelected = !cartInfoBean.isSelected();
-                cartInfoBean.setSelected(isSelected);
+            Boolean isSelected = !cartInfoBean.isSelected();
+            Boolean isDelete = !cartInfoBean.isDelete();
+            for (MultiItemEntity multiItemEntity : shopGoodsList) {
+                if (multiItemEntity.getItemType() == PRODUCT) {
+                    CartInfoBean bean = (CartInfoBean) multiItemEntity;
+                    if (bean.getId() == cartInfoBean.getId()) {
+                        if (isEditStatus) {
+                            bean.setDelete(isDelete);
+                        } else {
+                            bean.setSelected(isSelected);
+                        }
+                    }
+                }
             }
         }
     }

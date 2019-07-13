@@ -56,7 +56,7 @@ public class ShopCarGoodsAdapter extends BaseMultiItemQuickAdapter<MultiItemEnti
                 final RectAddAndSubViewCommunal rect_shop_car_item = helper.getView(R.id.communal_rect_add_sub);
                 helper.setChecked(R.id.cb_shop_car_sel, isEditStatus ? cartInfoBean.isDelete() : cartInfoBean.isSelected());
                 //商品有效或者在编辑状态时(编辑状态搭配商品单独选中)
-                if ((cartInfoBean.isValid() || isEditStatus) && !cartInfoBean.isCombineProduct()) {
+                if (cartInfoBean.isValid() || isEditStatus) {
                     cb_shop_car_sel.setEnabled(true);
                 } else {
                     cb_shop_car_sel.setEnabled(false);
