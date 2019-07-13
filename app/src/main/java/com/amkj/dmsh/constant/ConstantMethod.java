@@ -295,7 +295,7 @@ public class ConstantMethod {
         } else {
             try {
                 Matcher m = Pattern.compile("[\\u4e00-\\u9fa5]").matcher(text);
-                return Double.parseDouble(m.replaceAll("").replaceAll("¥","").trim());
+                return Double.parseDouble(m.replaceAll("").replaceAll("¥", "").trim());
             } catch (NumberFormatException e) {
                 e.printStackTrace();
                 return 0;
@@ -1401,7 +1401,7 @@ public class ConstantMethod {
 
     //      统计福利社点击商品
     public static void totalWelfareProNum(Activity activity, int productId, int topId) {
-        String url = Url.BASE_URL + Url.TOTAL_WELFARE_PRO_NUM;
+        String url = Url.TOTAL_WELFARE_PRO_NUM;
         Map<String, Object> params = new HashMap<>();
         //回复文章或帖子
         params.put("productId", productId);

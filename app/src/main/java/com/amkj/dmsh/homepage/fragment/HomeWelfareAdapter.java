@@ -1,6 +1,6 @@
 package com.amkj.dmsh.homepage.fragment;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -37,8 +37,11 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
  */
 public class HomeWelfareAdapter extends CommonPagerAdapter<HomeWelfareBean> {
 
-    public HomeWelfareAdapter(Context context, List<HomeWelfareBean> datas) {
+    private final Activity mContext;
+
+    public HomeWelfareAdapter(Activity context, List<HomeWelfareBean> datas) {
         super(context, datas, R.layout.item_home_walfare);
+        mContext = context;
     }
 
     @Override
@@ -122,9 +125,11 @@ public class HomeWelfareAdapter extends CommonPagerAdapter<HomeWelfareBean> {
             if (goodsBean != null) {
                 Intent intent = new Intent(mContext, ShopScrollDetailsActivity.class);
                 intent.putExtra("productId", String.valueOf(goodsBean.getId()));
+                mContext.startActivity(intent);
                 //记录埋点参数sourceId(福利社专题对应的ID)
                 ConstantMethod.saveSourceId(HomeDefalutFragment.class.getSimpleName(), String.valueOf(item.getId()));
-                mContext.startActivity(intent);
+                //统计福利社点击商品
+                ConstantMethod.totalWelfareProNum(mContext, goodsBean.getId(), item.getId());
             }
         });
         rvTopicGoods.setAdapter(topicGoodsAdapter);

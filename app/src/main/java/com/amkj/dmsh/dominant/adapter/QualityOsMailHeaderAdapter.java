@@ -85,29 +85,13 @@ public class QualityOsMailHeaderAdapter extends BaseQuickAdapter<DMLThemeBean, B
             if (dMLGoodsBean != null) {
                 //跳转良品详情页
                 Intent intent = new Intent();
-                if (dMLGoodsBean.getItemType() == ConstantVariable.TYPE_0) {
-                    intent.setClass(context, ShopScrollDetailsActivity.class);
-                    intent.putExtra("productId", String.valueOf(dMLGoodsBean.getId()));
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    //记录埋点参数sourceId(福利社专题对应的ID)
-                    ConstantMethod.saveSourceId(context.getClass().getSimpleName(), String.valueOf(dMLThemeBean.getId()));
-                    context.startActivity(intent);
-                } else if (dMLGoodsBean.getItemType() == ConstantVariable.TYPE_1) {
-                    switch (type) {
-                        case "welfare":
-                            intent.setClass(context, DoMoLifeWelfareDetailsActivity.class);
-                            intent.putExtra("welfareId", String.valueOf(dMLGoodsBean.getId()));
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            context.startActivity(intent);
-                            break;
-                        case "overseas":
-                            intent.setClass(context, QualityOverseasDetailsActivity.class);
-                            intent.putExtra("overseasId", String.valueOf(dMLGoodsBean.getId()));
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            context.startActivity(intent);
-                            break;
-                    }
-                }
+                intent.setClass(context, ShopScrollDetailsActivity.class);
+                intent.putExtra("productId", String.valueOf(dMLGoodsBean.getId()));
+                context.startActivity(intent);
+                //记录埋点参数sourceId(福利社专题对应的ID)
+                ConstantMethod.saveSourceId(context.getClass().getSimpleName(), String.valueOf(dMLThemeBean.getId()));
+                //统计福利社点击商品
+                ConstantMethod.totalWelfareProNum(context, dMLGoodsBean.getId(), dMLThemeBean.getId());
             }
         });
         horGvAdapter.setOnLoadMoreListener(() -> {
