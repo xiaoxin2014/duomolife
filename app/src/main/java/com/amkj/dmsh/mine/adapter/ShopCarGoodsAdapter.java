@@ -1,6 +1,7 @@
 package com.amkj.dmsh.mine.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.TextUtils;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -11,6 +12,7 @@ import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.mine.bean.ActivityInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean.CartBean.CartInfoBean;
 import com.amkj.dmsh.mine.biz.ShopCarDao;
+import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.views.RectAddAndSubViewCommunal;
@@ -130,6 +132,14 @@ public class ShopCarGoodsAdapter extends BaseMultiItemQuickAdapter<MultiItemEnti
                     helper.setText(R.id.tv_shop_car_product_price, price)
                             .setTextColor(R.id.tv_shop_car_product_price, context.getResources().getColor(R.color.text_black_t));
                 }
+
+                helper.itemView.setOnClickListener(v -> {
+                    if (cartInfoBean.getStatus() == 1 && cartInfoBean.getSaleSku() != null && !isEditStatus) {
+                        Intent intent = new Intent(context, ShopScrollDetailsActivity.class);
+                        intent.putExtra("productId", String.valueOf(cartInfoBean.getProductId()));
+                        context.startActivity(intent);
+                    }
+                });
                 break;
             case ConstantVariable.TITLE:
                 helper.setGone(R.id.ll_communal_activity_topic_tag, true)

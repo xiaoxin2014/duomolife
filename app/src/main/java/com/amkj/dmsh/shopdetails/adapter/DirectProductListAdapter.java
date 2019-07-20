@@ -192,7 +192,7 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                         .setText(R.id.tv_direct_pro_count, "x" + productInfoBean.getCount())
                         .setGone(R.id.iv_indent_pro_use_cp, productInfoBean.getAllowCoupon() != 0)
                         .setGone(R.id.tv_details_gray, productInfoBean.getShowLine() == 1)
-                        .setGone(R.id.iv_indent_product_del, !TextUtils.isEmpty(productInfoBean.getNotBuyAreaInfo()) || !TextUtils.isEmpty(productInfoBean.getNotBuyAreaIds()))
+                        .setGone(R.id.iv_indent_product_del, !TextUtils.isEmpty(productInfoBean.getNotBuyAreaInfo()))
                         .addOnClickListener(R.id.iv_indent_product_del).setTag(R.id.iv_indent_product_del, productInfoBean)
                         .setGone(R.id.tv_indent_write_reason, !TextUtils.isEmpty(productInfoBean.getNotBuyAreaInfo()))
                         .setText(R.id.tv_indent_write_reason, getStrings(productInfoBean.getNotBuyAreaInfo()))

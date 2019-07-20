@@ -172,10 +172,6 @@ public class ShopCarActivity extends BaseActivity {
             getShopCarProInfo();
         }, communal_recycler);
 
-        shopCarGoodsAdapter.setOnItemClickListener((adapter, view, position) -> {
-            CartInfoBean cartInfoBean = (CartInfoBean) view.getTag();
-            skipProDetail(cartInfoBean);
-        });
         shopCarGoodsAdapter.setOnItemChildClickListener((adapter, view, position) -> {
             CartInfoBean cartInfoBean = null;
             ActivityInfoBean activityInfoBean = null;

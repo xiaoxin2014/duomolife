@@ -35,6 +35,7 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyProductIndentInfo;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
+import com.amkj.dmsh.shopdetails.adapter.RefundDetailProductAdapter;
 import com.amkj.dmsh.shopdetails.adapter.RefundTypeAdapter;
 import com.amkj.dmsh.shopdetails.bean.DirectApplyRefundBean;
 import com.amkj.dmsh.shopdetails.bean.DirectApplyRefundBean.DirectRefundProBean;
@@ -43,12 +44,12 @@ import com.amkj.dmsh.shopdetails.bean.RefundDetailEntity.RefundDetailBean;
 import com.amkj.dmsh.shopdetails.bean.RefundDetailEntity.RefundDetailBean.ExpressInfoBean;
 import com.amkj.dmsh.shopdetails.bean.RefundDetailEntity.RefundDetailBean.RefundGoodsAddressBean;
 import com.amkj.dmsh.shopdetails.bean.RefundDetailEntity.RefundDetailBean.RefundPayInfoBean;
+import com.amkj.dmsh.shopdetails.bean.RefundDetailProductBean;
 import com.amkj.dmsh.shopdetails.bean.RefundLogisticEntity;
 import com.amkj.dmsh.shopdetails.bean.RefundTypeBean;
 import com.amkj.dmsh.utils.KeyboardUtils;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
-import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.google.gson.Gson;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
@@ -63,6 +64,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static android.widget.LinearLayout.SHOW_DIVIDER_END;
@@ -98,7 +100,7 @@ import static com.amkj.dmsh.constant.Url.Q_INDENT_REPAIR_RECEIVE;
  * created on 2017/8/18
  * class description:退款售后详情
  */
-public class DoMoRefundDetailActivity extends BaseActivity{
+public class DoMoRefundDetailActivity extends BaseActivity {
     @BindView(R.id.iv_indent_service)
     ImageView iv_indent_service;
     @BindView(R.id.tv_indent_title)
@@ -157,7 +159,7 @@ public class DoMoRefundDetailActivity extends BaseActivity{
     //    售后类型数据
     @BindView(R.id.rv_refund_type)
     RecyclerView rv_refund_type;
-//    维修通过审核不需要展示
+    //    维修通过审核不需要展示
     @BindView(R.id.rel_refund_product)
     RelativeLayout rel_refund_product;
     //    底栏申请
@@ -179,6 +181,10 @@ public class DoMoRefundDetailActivity extends BaseActivity{
     TextView tv_refund_logistic_sel;
     @BindView(R.id.wv_communal_one)
     WheelView wv_communal_one;
+    @BindView(R.id.rv_product)
+    RecyclerView mRvProduct;
+    @BindView(R.id.ll_product)
+    LinearLayout mLlProduct;
     private String no;
     private String orderProductId;
     private String orderRefundProductId;
@@ -205,6 +211,8 @@ public class DoMoRefundDetailActivity extends BaseActivity{
     private String repairAddress;
     private RefundDetailEntity refundDetailEntity;
     private AlertDialogHelper cancelApplyDialogHelper;
+    private List<RefundDetailProductBean> products = new ArrayList<>();
+    private RefundDetailProductAdapter refundDetailProductAdapter;
 
     @Override
     protected int getContentView() {
@@ -254,6 +262,12 @@ public class DoMoRefundDetailActivity extends BaseActivity{
                 }
             }
         });
+
+        //初始化退款商品列表
+        mRvProduct.setLayoutManager(new LinearLayoutManager(this));
+        mRvProduct.setNestedScrollingEnabled(false);
+        refundDetailProductAdapter = new RefundDetailProductAdapter(this, products);
+        mRvProduct.setAdapter(refundDetailProductAdapter);
     }
 
     @Override
@@ -293,7 +307,7 @@ public class DoMoRefundDetailActivity extends BaseActivity{
     }
 
     private void getRepairDetailData() {
-        if(userId<1){
+        if (userId < 1) {
             return;
         }
         Map<String, Object> params = new HashMap<>();
@@ -341,7 +355,7 @@ public class DoMoRefundDetailActivity extends BaseActivity{
     }
 
     private void getRefundDetailData() {
-        if(userId<1){
+        if (userId < 1) {
             return;
         }
         Map<String, Object> params = new HashMap<>();
@@ -414,7 +428,7 @@ public class DoMoRefundDetailActivity extends BaseActivity{
     private void cancelRefund(String url, Map<String, Object> params) {
         params.put("orderRefundProductId", refundDetailBean.getOrderRefundProductId());
         params.put("orderProductId", refundDetailBean.getOrderProductId());
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -444,7 +458,7 @@ public class DoMoRefundDetailActivity extends BaseActivity{
     }
 
     private void getLogisticCompany() {
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_INDENT_LOGISTIC_COM,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_INDENT_LOGISTIC_COM, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -514,24 +528,26 @@ public class DoMoRefundDetailActivity extends BaseActivity{
                 }
             }
         }
-        GlideImageLoaderUtil.loadCenterCrop(DoMoRefundDetailActivity.this, iv_direct_indent_pro, refundDetailBean.getPicUrl());
-        tv_direct_indent_pro_name.setText(getStrings(refundDetailBean.getName()));
-        String priceName;
-        if (refundDetailBean.getIntegralPrice() > 0) {
-            float moneyPrice = getFloatNumber(refundDetailBean.getPrice());
-            if (moneyPrice > 0) {
-                priceName = String.format(getResources().getString(R.string.integral_product_and_price)
-                        , refundDetailBean.getIntegralPrice(), getStrings(refundDetailBean.getPrice()));
-            } else {
-                priceName = String.format(getResources().getString(R.string.integral_indent_product_price)
-                        , refundDetailBean.getIntegralPrice());
-            }
+
+        //显示退款商品信息
+        List<RefundDetailProductBean> productList = refundDetailBean.getRefundOrderProductList();
+        mLlProduct.setVisibility(View.GONE);
+        mRvProduct.setVisibility(View.VISIBLE);
+        products.clear();
+        if (productList != null && productList.size() > 0) {
+            products.addAll(productList);
         } else {
-            priceName = getStringsChNPrice(DoMoRefundDetailActivity.this, refundDetailBean.getPrice());
+            RefundDetailProductBean refundDetailProductBean = new RefundDetailProductBean();
+            refundDetailProductBean.setPicUrl(refundDetailBean.getPicUrl());
+            refundDetailProductBean.setProductName(refundDetailBean.getName());
+            refundDetailProductBean.setCount(String.valueOf(refundDetailBean.getCount()));
+            refundDetailProductBean.setSaleSkuValue(refundDetailBean.getSaleSkuValue());
+            refundDetailProductBean.setPrice(refundDetailBean.getPrice());
+            refundDetailProductBean.setIntegralPrice(String.valueOf(refundDetailBean.getIntegralPrice()));
+            products.add(refundDetailProductBean);
         }
-        tv_direct_indent_pro_price.setText(priceName);
-        tv_direct_indent_pro_sku.setText(getStrings(refundDetailBean.getSaleSkuValue()));
-        tv_direct_pro_count.setText(("x" + refundDetailBean.getCount()));
+        refundDetailProductAdapter.notifyDataSetChanged();
+
         setRefundTypeData(refundDetailBean);
         tv_submit_apply_refund.setVisibility(View.GONE);
         if (REFUND_REPAIR.equals(refundType)) {
@@ -636,7 +652,7 @@ public class DoMoRefundDetailActivity extends BaseActivity{
                         tv_repair_consignee_phone.setText((refundGoodsAddress.getRefundGoodsReceiver() + "\t" + refundGoodsAddress.getRefundGoodsPhone()));
                         repairAddress = getStrings(refundGoodsAddress.getRefundGoodsAddress()) + "\t" + refundGoodsAddress.getRefundGoodsReceiver() + "\t" + refundGoodsAddress.getRefundGoodsPhone();
                     }
-                }else if(refundDetailBean.getStatus() == -35){
+                } else if (refundDetailBean.getStatus() == -35) {
                     ll_refund_logistic.setVisibility(View.VISIBLE);
                     tv_refund_logistic_sel.setVisibility(View.GONE);
                     et_refund_logistic_no.setVisibility(View.GONE);
@@ -649,9 +665,9 @@ public class DoMoRefundDetailActivity extends BaseActivity{
                         repairAddress = getStrings(refundGoodsAddress.getRefundGoodsAddress()) + "\t" + refundGoodsAddress.getRefundGoodsReceiver() + "\t"
                                 + refundGoodsAddress.getRefundGoodsPhone();
                     }
-                    if(expressInfo!=null){
-                        tv_refund_logistic.setText(getString(R.string.refund_pass_express_company,getStrings(expressInfo.getExpressCompany())));
-                        tv_refund_logistic_no.setText(getString(R.string.refund_pass_express_no,getStrings(expressInfo.getExpressNo())));
+                    if (expressInfo != null) {
+                        tv_refund_logistic.setText(getString(R.string.refund_pass_express_company, getStrings(expressInfo.getExpressCompany())));
+                        tv_refund_logistic_no.setText(getString(R.string.refund_pass_express_no, getStrings(expressInfo.getExpressNo())));
                     }
                 } else {
                     ll_refund_logistic.setVisibility(View.GONE);
@@ -857,7 +873,7 @@ public class DoMoRefundDetailActivity extends BaseActivity{
         params.put("refundNo", refundDetailBean.getRefundNo());
         params.put("expressNo", logisticNo);
         params.put("expressFee", TextUtils.isEmpty(logisticFee) ? "0" : logisticFee);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_INDENT_REPAIR_LOGISTIC_SUB,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_INDENT_REPAIR_LOGISTIC_SUB, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -900,7 +916,7 @@ public class DoMoRefundDetailActivity extends BaseActivity{
         params.put("userId", userId);
         params.put("expressCompany", logistic);
         params.put("expressNo", logisticNo);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_INDENT_LOGISTIC_SUB,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_INDENT_LOGISTIC_SUB, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -937,7 +953,7 @@ public class DoMoRefundDetailActivity extends BaseActivity{
         params.put("orderNo", no);
         params.put("orderProductId", orderProductId);
         params.put("orderRefundProductId", orderRefundProductId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_INDENT_REPAIR_RECEIVE,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_INDENT_REPAIR_RECEIVE, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -1068,7 +1084,7 @@ public class DoMoRefundDetailActivity extends BaseActivity{
             constantMethod.releaseHandlers();
         }
         super.onDestroy();
-        if(cancelApplyDialogHelper!=null&&cancelApplyDialogHelper.isShowing()){
+        if (cancelApplyDialogHelper != null && cancelApplyDialogHelper.isShowing()) {
             cancelApplyDialogHelper.dismiss();
         }
         KeyboardUtils.unregisterSoftInputChangedListener(this);
@@ -1082,11 +1098,12 @@ public class DoMoRefundDetailActivity extends BaseActivity{
             qyProductIndentInfo.setTitle(refundDetailBean.getName());
             qyProductIndentInfo.setPicUrl(getStrings(refundDetailBean.getPicUrl()));
             qyProductIndentInfo.setDesc(INDENT_PRO_STATUS.get(String.valueOf(refundDetailBean.getStatus())));
-            qyProductIndentInfo.setNote(String.format(getResources().getString(R.string.money_price_chn),refundDetailBean.getPrice()));
+            qyProductIndentInfo.setNote(String.format(getResources().getString(R.string.money_price_chn), refundDetailBean.getPrice()));
             qyProductIndentInfo.setUrl(Url.BASE_SHARE_PAGE_TWO + "m/template/order_template/order.html?noid=" + refundDetailBean.getNo());
         }
         QyServiceUtils.getQyInstance().openQyServiceChat(this, "退款售后详情", "", qyProductIndentInfo);
     }
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (ev.getAction() == MotionEvent.ACTION_DOWN) {
@@ -1116,5 +1133,12 @@ public class DoMoRefundDetailActivity extends BaseActivity{
                     && event.getY() > top && event.getY() < bottom);
         }
         return false;
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // TODO: add setContentView(...) invocation
+        ButterKnife.bind(this);
     }
 }

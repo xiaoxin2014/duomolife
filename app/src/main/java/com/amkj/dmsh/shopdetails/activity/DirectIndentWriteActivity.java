@@ -17,7 +17,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
@@ -33,6 +33,7 @@ import com.amkj.dmsh.dominant.activity.QualityProductActActivity;
 import com.amkj.dmsh.dominant.bean.GroupShopDetailsEntity.GroupShopDetailsBean;
 import com.amkj.dmsh.mine.bean.ActivityInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean.CartBean.CartInfoBean;
+import com.amkj.dmsh.mine.biz.ShopCarDao;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.adapter.DirectProductListAdapter;
@@ -62,9 +63,6 @@ import com.amkj.dmsh.views.RectAddAndSubViewDirect;
 import com.google.gson.Gson;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -132,13 +130,10 @@ public class DirectIndentWriteActivity extends BaseActivity {
     private PullFootView pullFootView;
     private final int NEW_CRE_ADDRESS_REQ = 101;
     private final int SEL_ADDRESS_REQ = 102;
-    //    订单数据
-    private List<CartInfoBean> passGoods = new ArrayList<>();
-    private List<CombineGoodsBean> combineGoods = new ArrayList<>();
     private final int DIRECT_COUPON_REQ = 105;
     private QualityCreateWeChatPayIndentBean qualityWeChatIndent;
     private QualityCreateAliPayIndentBean qualityAliPayIndent;
-    private String payWay = "";
+    private String payWay = PAY_ALI_PAY;//默认支付宝付款
     //    创建订单 未结算
     private String orderCreateNo = "";
     //     完成支付订单编号
@@ -152,14 +147,10 @@ public class DirectIndentWriteActivity extends BaseActivity {
     private List<GroupShopDetailsBean> groupShopDetailsBeanList = new ArrayList<>();
     public final static String INDENT_GROUP_SHOP = "group_shop";
     public final static String INDENT_W_TYPE = "indent";
-    //    订单优惠信息必传参数
-    private List<IndentProDiscountBean> discountBeanList = new ArrayList<>();
-    //    订单价格优惠列表
-    private List<PriceInfoBean> priceInfoList = new ArrayList<>();
+
     private String invoiceNum;
     private IndentDiscountAdapter indentDiscountAdapter;
     private IndentWriteEntity identWriteEntity;
-    private List<ProductInfoBean> productInfoList = new ArrayList<>();
     private boolean isReal = false;
     private Date createIndentTime;
     private ConstantMethod constantMethod;
@@ -171,6 +162,18 @@ public class DirectIndentWriteActivity extends BaseActivity {
     private QualityCreateUnionPayIndentEntity qualityUnionIndent;
     private UnionPay unionPay;
     private DirectProductListAdapter directProductAdapter;
+    //    普通订单数据
+    private List<CartInfoBean> passGoods = new ArrayList<>();
+    //    组合订单数据
+    private List<CombineGoodsBean> combineGoods = new ArrayList<>();
+    //    订单优惠信息必传参数
+    private List<IndentProDiscountBean> discountBeanList = new ArrayList<>();
+    //    订单价格优惠列表
+    private List<PriceInfoBean> priceInfoList = new ArrayList<>();
+    //    商品列表
+    private List<ProductInfoBean> productInfoList = new ArrayList<>();
+    private String[] indentInfo = new String[2];
+
 
     @Override
     protected int getContentView() {
@@ -202,12 +205,22 @@ public class DirectIndentWriteActivity extends BaseActivity {
         View footView = LayoutInflater.from(this).inflate(R.layout.layout_direct_indent_write_foot, (ViewGroup) communal_recycler.getParent(), false);
         pullFootView = new PullFootView();
         ButterKnife.bind(pullFootView, footView);
+        //支付方式
+        ((RadioGroup) footView.findViewById(R.id.radio_group)).setOnCheckedChangeListener((group, checkedId) -> {
+            if (checkedId == R.id.rb_checked_alipay) {
+                payWay = PAY_ALI_PAY;
+            } else if (checkedId == R.id.rb_checked_wechat_pay) {
+                payWay = PAY_WX_PAY;
+            } else if (checkedId == R.id.rb_checked_union_pay) {
+                payWay = PAY_UNION_PAY;
+            }
+        });
+
         if (passGoods != null || combineGoods != null || orderNo != null) {
             if (passGoods != null) {
                 discountBeanList.clear();
                 for (int i = 0; i < passGoods.size(); i++) {
                     CartInfoBean cartInfoBean = passGoods.get(i);
-//                    优惠信息参数
                     IndentProDiscountBean indentProBean = new IndentProDiscountBean();
                     indentProBean.setId(cartInfoBean.getProductId());
                     indentProBean.setSaleSkuId(cartInfoBean.getSaleSku().getId());
@@ -259,7 +272,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                         for (IndentProDiscountBean discountBean : discountBeanList) {
                             if (productInfoBean.getId() == discountBean.getId()) {
                                 discountBeanList.remove(discountBean);
-                                if (discountBeanList.size() > 0) {
+                                if (discountBeanList.size() > 0 || combineGoods.size() > 0) {
                                     getIndentDiscounts(false);
                                 } else {
                                     finish();
@@ -294,6 +307,251 @@ public class DirectIndentWriteActivity extends BaseActivity {
         pullFootView.rv_indent_write_info.setAdapter(indentDiscountAdapter);
     }
 
+
+    @Override
+    protected void loadData() {
+        if (type.equals(INDENT_W_TYPE)) {
+            if (isFirst) {
+                getDefaultAddress();
+            } else {
+                getAddressDetails();
+            }
+        } else if (type.equals(INDENT_GROUP_SHOP)) {
+            pullFootView.ll_layout_coupon.setVisibility(View.GONE);
+            if (isFirst) {
+                getDefaultAddress();
+            } else {
+                getAddressDetails();
+            }
+        }
+    }
+    /**
+     * 获取订单结算信息
+     *
+     * @param updatePriceInfo(是否需要修改订单结算信息,选择优惠券或者修改地址时为true)
+     */
+    private void getIndentDiscounts(boolean updatePriceInfo) {
+        if (discountBeanList.size() > 0 || combineGoods.size() > 0) {
+            Map<String, Object> params = new HashMap<>();
+            params.put("userId", userId);
+            params.put("addressId", addressId);
+            if (updatePriceInfo) {
+                params.put("userCouponId", couponId);
+            }
+            if (type.equals(INDENT_GROUP_SHOP)) {
+                params.put("gpInfoId", groupShopDetailsBean.getGpInfoId());
+                params.put("gpRecordId", groupShopDetailsBean.getGpRecordId());
+            }
+            if (discountBeanList != null && discountBeanList.size() > 0) {
+                params.put("goods", new Gson().toJson(discountBeanList));
+            }
+            if (combineGoods != null && combineGoods.size() > 0) {
+                params.put("combineGoods", new Gson().toJson(combineGoods));
+            }
+            NetLoadUtils.getNetInstance().loadNetDataPost(this, updatePriceInfo ? Url.INDENT_DISCOUNTS_UPDATE_INFO : Url.INDENT_DISCOUNTS_NEW_INFO, params, new NetLoadListenerHelper() {
+                @Override
+                public void onSuccess(String result) {
+                    if (loadHud != null) {
+                        loadHud.dismiss();
+                    }
+                    productInfoList.clear();
+                    identWriteEntity = new Gson().fromJson(result, IndentWriteEntity.class);
+                    if (identWriteEntity != null && identWriteEntity.getIndentWriteBean() != null) {
+                        indentWriteBean = identWriteEntity.getIndentWriteBean();
+                        List<ProductsBean> products = indentWriteBean.getProducts();
+                        if (identWriteEntity.getCode().equals(SUCCESS_CODE) && products != null && products.size() > 0) {
+                            setDiscountsInfo(indentWriteBean);
+                        }
+                    }
+
+                    directProductAdapter.notifyDataSetChanged();
+                    NetLoadUtils.getNetInstance().showLoadSir(loadService, identWriteEntity);
+                }
+
+                @Override
+                public void onNotNetOrException() {
+                    if (loadHud != null) {
+                        loadHud.dismiss();
+                    }
+                    NetLoadUtils.getNetInstance().showLoadSir(loadService, identWriteEntity);
+                }
+            });
+        } else {
+            if (loadHud != null) {
+                loadHud.dismiss();
+            }
+            NetLoadUtils.getNetInstance().showLoadSir(loadService, identWriteEntity);
+        }
+    }
+
+    //设置所有结算信息
+    private void setDiscountsInfo(IndentWriteBean indentWriteBean) {
+        //实名制相关
+        isReal = indentWriteBean.isReal();
+        tv_indent_write_commit.setEnabled(indentWriteBean.getAllProductNotBuy() == 0);
+        setOverseaData(indentWriteBean);
+        //金额信息
+        setDiscounts(indentWriteBean.getPriceInfos());
+        //是否有可用的优惠券
+        UserCouponInfoBean userCouponInfo = indentWriteBean.getUserCouponInfo();
+        if (userCouponInfo != null) {
+            if (userCouponInfo.getAllowCouoon() == 1 && userCouponInfo.getId() != null && userCouponInfo.getId() > 0) {
+                pullFootView.tv_direct_product_favorable.setText(("-¥" + userCouponInfo.getPrice()));
+                couponId = userCouponInfo.getId();
+                pullFootView.tv_direct_product_favorable.setSelected(true);
+            } else {
+                pullFootView.tv_direct_product_favorable.setSelected(false);
+                pullFootView.tv_direct_product_favorable.setText(couponId == -1 ? "不使用优惠券" : userCouponInfo.getMsg());
+            }
+        }
+
+        List<ProductsBean> products = indentWriteBean.getProducts();
+        indentInfo = ShopCarDao.getIndentInfo(products);
+        for (int i = 0; i < products.size(); i++) {
+            ProductsBean productsBean = products.get(i);
+            List<ProductInfoBean> productInfos = productsBean.getProductInfos();
+            ProductInfoBean combineMainProduct = productsBean.getCombineMainProduct();
+            List<ProductInfoBean> combineMatchProducts = productsBean.getCombineMatchProducts();
+            //设置搭配商品数量
+            if (combineMainProduct != null) {
+                productInfos = new ArrayList<>();
+                productInfos.add(combineMainProduct);
+                if (combineMatchProducts != null) {
+                    for (ProductInfoBean productInfoBean : combineMatchProducts) {
+                        productInfoBean.setCount(combineMainProduct.getCount());
+                        productInfos.add(productInfoBean);
+                    }
+                }
+            }
+
+            //添加分割线和活动信息展示
+            for (int j = 0; j < productInfos.size(); j++) {
+                ProductInfoBean productInfoBean = productInfos.get(j);
+                if (productsBean.getActivityInfo() != null && j == 0) {
+                    productInfoBean.setShowActInfo(1);
+                }
+                productInfoBean.setActivityInfoBean(productsBean.getActivityInfo());
+                productInfoList.add(productInfoBean);
+            }
+
+            if (productsBean.getActivityInfo() != null && productInfoList.size() > 0
+                    && indentWriteBean.getProducts().size() > i + 1) {
+                ProductInfoBean productInfoBean = productInfoList.get(productInfoList.size() - 1);
+                productInfoBean.setShowLine(1);
+                productInfoList.set(productInfoList.size() - 1, productInfoBean);
+            }
+        }
+        if (!INDENT_GROUP_SHOP.equals(type)
+                && productInfoList.size() > 0 && productInfoList.size() < 2) {
+            ProductInfoBean productInfoBean = productInfoList.get(0);
+            pullFootView.rect_indent_number.setVisibility(VISIBLE);
+            pullFootView.rect_indent_number.setNum(productInfoBean.getCount());
+            if (passGoods != null) {
+                for (CartInfoBean cartInfoBean : passGoods) {
+                    SkuSaleBean saleSku = cartInfoBean.getSaleSku();
+                    if (saleSku != null && saleSku.getId() == productInfoBean.getSaleSkuId()) {
+                        pullFootView.rect_indent_number.setMaxNum(saleSku.getQuantity());
+                    }
+                }
+            }
+        } else {
+            pullFootView.rect_indent_number.setVisibility(View.GONE);
+        }
+    }
+
+    private void setOverseaData(IndentWriteBean indentWriteBean) {
+        if (indentWriteBean.isReal()) {
+            pullHeaderView.ll_oversea_info.setVisibility(VISIBLE);
+            pullHeaderView.et_oversea_name.setText(getStringFilter(indentWriteBean.getRealName()));
+            pullHeaderView.et_oversea_name.setSelection(getStrings(indentWriteBean.getRealName()).length());
+            pullHeaderView.et_oversea_card.setText(getStringFilter(indentWriteBean.getIdCard()));
+            pullHeaderView.et_oversea_card.setSelection(getStrings(indentWriteBean.getIdCard()).length());
+            pullHeaderView.et_oversea_card.setTag(R.id.id_tag, getStrings(indentWriteBean.getIdCard()));
+            pullHeaderView.et_oversea_card.setTag(getStrings(indentWriteBean.getIdCard()));
+            if (!TextUtils.isEmpty(indentWriteBean.getPrompt())) {
+                pullHeaderView.tv_oversea_buy_tint.setVisibility(VISIBLE);
+                pullHeaderView.tv_oversea_buy_tint.setText(getStrings(indentWriteBean.getPrompt()));
+            } else {
+                pullHeaderView.tv_oversea_buy_tint.setVisibility(View.GONE);
+            }
+        } else {
+            pullHeaderView.tv_oversea_buy_tint.setVisibility(View.GONE);
+            pullHeaderView.ll_oversea_info.setVisibility(View.GONE);
+        }
+    }
+
+    private void setDiscounts(List<PriceInfoBean> indentDiscountsList) {
+        if (indentDiscountsList != null) {
+            priceInfoList.clear();
+            priceInfoList.addAll(indentDiscountsList);
+            PriceInfoBean priceInfoBean = priceInfoList.get(priceInfoList.size() - 1);
+            tv_indent_total_price.setText(getStrings(priceInfoBean.getTotalPriceName()));
+            priceInfoList.remove(priceInfoList.get(priceInfoList.size() - 1));
+            indentDiscountAdapter.setNewData(priceInfoList);
+        }
+    }
+
+    private void getDefaultAddress() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, DELIVERY_ADDRESS, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                AddressInfoEntity addressInfoEntity = gson.fromJson(result, AddressInfoEntity.class);
+                if (addressInfoEntity != null) {
+                    if (addressInfoEntity.getCode().equals(SUCCESS_CODE)) {
+                        setAddressData(addressInfoEntity.getAddressInfoBean());
+                    } else if (addressInfoEntity.getCode().equals(EMPTY_CODE)) {
+                        setAddressData(null);
+                    } else {
+                        constantMethod.showImportantToast(DirectIndentWriteActivity.this, addressInfoEntity.getMsg());
+                    }
+                }
+            }
+        });
+    }
+
+    private void getAddressDetails() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", addressId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, ADDRESS_DETAILS, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                AddressInfoEntity addressInfoEntity = gson.fromJson(result, AddressInfoEntity.class);
+                if (addressInfoEntity != null) {
+                    if (addressInfoEntity.getCode().equals(SUCCESS_CODE)) {
+                        setAddressData(addressInfoEntity.getAddressInfoBean());
+                    } else if (addressInfoEntity.getCode().equals(EMPTY_CODE)) {
+                        setAddressData(null);
+                    } else {
+                        constantMethod.showImportantToast(DirectIndentWriteActivity.this, addressInfoEntity.getMsg());
+                    }
+                }
+            }
+        });
+    }
+
+    private void setAddressData(AddressInfoEntity.AddressInfoBean addressInfoBean) {
+        if (addressInfoBean != null) {
+            addressId = addressInfoBean.getId();
+            pullHeaderView.ll_indent_address_default.setVisibility(VISIBLE);
+            pullHeaderView.ll_indent_address_null.setVisibility(View.GONE);
+            pullHeaderView.tv_consignee_name.setText(addressInfoBean.getConsignee());
+            pullHeaderView.tv_address_mobile_number.setText(addressInfoBean.getMobile());
+            pullHeaderView.tv_indent_details_address.setText((addressInfoBean.getAddress_com() + addressInfoBean.getAddress() + " "));
+        } else {
+            pullHeaderView.ll_indent_address_default.setVisibility(View.GONE);
+            pullHeaderView.ll_indent_address_null.setVisibility(VISIBLE);
+        }
+        //            再次购买
+        if (orderNo != null) {
+            getOrderData();
+        } else {
+            getIndentDiscounts(!isFirst);
+        }
+    }
     //  再次购买，获取商品信息
     private void getOrderData() {
         passGoods = new ArrayList<>();
@@ -344,84 +602,37 @@ public class DirectIndentWriteActivity extends BaseActivity {
     //提交订单
     @OnClick(R.id.tv_indent_write_commit)
     void goExchange() {
-        if (type.equals(INDENT_W_TYPE)) {
-            if (addressId != 0 && productInfoList.size() > 0) {
-                tv_indent_write_commit.setEnabled(false);
-                if (pullFootView.rb_checked_aliPay.isChecked() ||
-                        pullFootView.rb_checked_weChat_pay.isChecked() ||
-                        pullFootView.rb_checked_union_pay.isChecked()) {
-                    if (pullFootView.rb_checked_aliPay.isChecked()) {
-                        //  调起支付宝支付
-                        payWay = PAY_ALI_PAY;
-                    } else if (pullFootView.rb_checked_weChat_pay.isChecked()) {
-                        //  调起微信支付
-                        payWay = PAY_WX_PAY;
-                    } else {
-                        //  调起银联支付
-                        payWay = PAY_UNION_PAY;
-                    }
-                    if (!TextUtils.isEmpty(orderCreateNo)) {
-                        paymentIndent();
-                    } else {
-                        setCreateIndent();
-                    }
-                }
-            } else if (addressId == 0) {
-                constantMethod.showImportantToast(this, "收货地址为空");
+        if (userId > 0) {
+            //订单锁定,再次支付
+            if (!TextUtils.isEmpty(orderCreateNo)) {
+                paymentIndent();
             } else {
-                constantMethod.showImportantToast(this, "商品选择错误");
-            }
-        } else if (type.equals(INDENT_GROUP_SHOP) && groupShopDetailsBean != null) {
-            if (userId > 0) {
-                if (addressId != 0) {
-                    tv_indent_write_commit.setEnabled(false);
-                    if (pullFootView.rb_checked_aliPay.isChecked() ||
-                            pullFootView.rb_checked_weChat_pay.isChecked() ||
-                            pullFootView.rb_checked_union_pay.isChecked()) {
-                        if (pullFootView.rb_checked_aliPay.isChecked()) {
-                            //  调起支付宝支付
-                            payWay = PAY_ALI_PAY;
-                        } else if (pullFootView.rb_checked_weChat_pay.isChecked()) {
-                            //  调起微信支付
-                            payWay = PAY_WX_PAY;
-                        } else {
-                            //  调起银联支付
-                            payWay = PAY_UNION_PAY;
-                        }
-                        if (!TextUtils.isEmpty(orderCreateNo)) {
-                            paymentIndent();
-                        } else {
-                            createGroupIndent(payWay, groupShopDetailsBean);
-                        }
+                //第一次提交订单
+                if (addressId == 0) {
+                    constantMethod.showImportantToast(this, "收货地址为空");
+                } else if (TextUtils.isEmpty(payWay)) {
+                    constantMethod.showImportantToast(this, "请选择支付方式");
+                } else if (type.equals(INDENT_GROUP_SHOP) && groupShopDetailsBean != null) {
+                    createGroupIndent(payWay, groupShopDetailsBean);
+                } else if (type.equals(INDENT_W_TYPE) && productInfoList.size() > 0) {
+                    //判断是否需要实名
+                    if (isReal && (pullHeaderView.et_oversea_name.getText().toString().length() < 0 || pullHeaderView.et_oversea_card.getText().toString().length() < 0)) {
+                        tv_indent_write_commit.setEnabled(true);
+                        constantMethod.showImportantToast(this, "因国家海关要求，购买跨境商品时需完善实名信息后方可购买。");
+                    } else {
+                        createIndent();
                     }
                 } else {
-                    constantMethod.showImportantToast(this, "收货地址为空");
+                    constantMethod.showImportantToast(this, "商品数据错误");
                 }
-            } else {
-                getLoginStatus(this);
-            }
-        }
-    }
-
-    private void setCreateIndent() {
-        if (isReal) {
-            if (pullHeaderView.et_oversea_name.getText().toString().length() > 0
-                    && pullHeaderView.et_oversea_card.getText().toString().length() > 0) {
-                createIndent(payWay, productInfoList);
-            } else if (TextUtils.isEmpty(pullHeaderView.et_oversea_name.getText().toString()) || TextUtils.isEmpty(pullHeaderView.et_oversea_card.getText().toString())) {
-                tv_indent_write_commit.setEnabled(true);
-                constantMethod.showImportantToast(this, "因国家海关要求，购买跨境商品时需完善实名信息后方可购买。");
             }
         } else {
-            createIndent(payWay, productInfoList);
+            getLoginStatus(this);
         }
     }
 
     /**
      * 创建拼团订单
-     *
-     * @param payWay
-     * @param groupShopDetailsBean
      */
     private void createGroupIndent(final String payWay, GroupShopDetailsBean groupShopDetailsBean) {
         String message = pullFootView.edt_direct_product_note.getText().toString().trim();
@@ -430,7 +641,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
         params.put("userId", userId);
         //用户地址
         params.put("userAddressId", addressId);
-//        拼团订单状态 开团 1 拼团 2
+        //拼团订单状态 开团 1 拼团 2
         params.put("gpStatus", groupShopDetailsBean.getGpStatus());
         params.put("gpProductId", groupShopDetailsBean.getGpProductId());
         params.put("gpInfoId", groupShopDetailsBean.getGpInfoId());
@@ -449,16 +660,16 @@ public class DirectIndentWriteActivity extends BaseActivity {
         if (!TextUtils.isEmpty(message)) {
             params.put("remark", message);
         }
-//        是否开具发票
+        //是否开具发票
         if (!TextUtils.isEmpty(invoiceTitle)) {
             params.put("invoice", invoiceTitle);
             if (!TextUtils.isEmpty(invoiceNum)) {
                 params.put("taxpayer_on", invoiceNum);
             }
         }
-//        付款方式
-//        2019.1.16 新增银联支付
+        //付款方式
         params.put("buyType", payWay);
+        //2019.1.16 新增银联支付
         if (payWay.equals(PAY_UNION_PAY)) {
             params.put("paymentLinkType", 2);
             params.put("isApp", true);
@@ -474,6 +685,93 @@ public class DirectIndentWriteActivity extends BaseActivity {
 
             @Override
             public void onNotNetOrException() {
+                tv_indent_write_commit.setEnabled(true);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                constantMethod.showImportantToast(DirectIndentWriteActivity.this, R.string.do_failed);
+            }
+
+            @Override
+            public void netClose() {
+                constantMethod.showImportantToast(DirectIndentWriteActivity.this, R.string.unConnectedNetwork);
+            }
+        });
+    }
+
+    /**
+     * 创建普通订单
+     */
+    private void createIndent() {
+        if (loadHud != null) {
+            loadHud.show();
+        }
+        String message = pullFootView.edt_direct_product_note.getText().toString().trim();
+        Map<String, Object> params = new HashMap<>();
+        //用户ID
+        params.put("userId", userId);
+        //用户地址
+        params.put("userAddressId", addressId);
+        //普通商品
+        if (!TextUtils.isEmpty(indentInfo[0])) {
+            params.put("goods", indentInfo[0]);
+        }
+
+        //组合商品
+        if (!TextUtils.isEmpty(indentInfo[1])) {
+            params.put("combineGoods", indentInfo[1]);
+        }
+
+        //用户留言
+        if (!TextUtils.isEmpty(message)) {
+            params.put("remark", message);
+        }
+        //是否开具发票
+        if (!TextUtils.isEmpty(invoiceTitle)) {
+            params.put("invoice", invoiceTitle);
+        }
+        //是否使用优惠券
+        if (couponId > 0) {
+            params.put("userCouponId", couponId);
+        }
+        //付款方式 微信 wechatPay 支付宝 aliPay
+        //2019.1.16 新增银联支付
+        params.put("buyType", payWay);
+        if (payWay.equals(PAY_UNION_PAY)) {
+            params.put("paymentLinkType", 2);
+            params.put("isApp", true);
+        }
+        params.put("isWeb", false);
+        if (isReal) {
+            params.put("realName", pullHeaderView.et_oversea_name.getText().toString().trim());
+            String idCard = pullHeaderView.et_oversea_card.getText().toString().trim();
+            String showIdCard = (String) pullHeaderView.et_oversea_card.getTag();
+            String reallyIdCard = (String) pullHeaderView.et_oversea_card.getTag(R.id.id_tag);
+            if (idCard.equals(getStrings(showIdCard))) {
+                params.put("idcard", reallyIdCard);
+            } else {
+                params.put("idcard", idCard);
+            }
+        }
+        //订单来源
+        params.put("source", 0);
+        //添加埋点来源参数
+        ConstantMethod.addSourceParameter(params);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_CREATE_INDENT, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                if (pullFootView.rect_indent_number.getVisibility() == VISIBLE) {
+                    pullFootView.rect_indent_number.setVisibility(GONE);
+                }
+                dealingIndentPayResult(result);
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                if (loadHud != null) {
+                    loadHud.dismiss();
+                }
                 tv_indent_write_commit.setEnabled(true);
             }
 
@@ -510,112 +808,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
 
             @Override
             public void onNotNetOrException() {
-                tv_indent_write_commit.setEnabled(true);
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                constantMethod.showImportantToast(DirectIndentWriteActivity.this, R.string.do_failed);
-            }
-
-            @Override
-            public void netClose() {
-                constantMethod.showImportantToast(DirectIndentWriteActivity.this, R.string.unConnectedNetwork);
-            }
-        });
-    }
-
-    /**
-     * 创建订单
-     *
-     * @param payType         支付方式
-     * @param productInfoList 购买商品信息
-     */
-    private void createIndent(final String payType, final List<ProductInfoBean> productInfoList) {
-        if (loadHud != null) {
-            loadHud.show();
-        }
-        String message = pullFootView.edt_direct_product_note.getText().toString().trim();
-        Map<String, Object> params = new HashMap<>();
-        //用户ID
-        params.put("userId", userId);
-        //用户地址
-        params.put("userAddressId", addressId);
-        //订单信息
-        JSONArray jsonArray = new JSONArray();
-        try {
-            for (ProductInfoBean productInfoBean : productInfoList) {
-                ActivityInfoBean activityInfoBean = productInfoBean.getActivityInfoBean();
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("saleSkuId", productInfoBean.getSaleSkuId());
-                jsonObject.put("id", productInfoBean.getId());
-                jsonObject.put("count", productInfoBean.getCount());
-                if (productInfoBean.getPresentInfo() != null) {
-                    jsonObject.put("presentSkuIds", productInfoBean.getPresentInfo().getId());
-                } else {
-                    jsonObject.put("presentSkuIds", "");
-                }
-                if (activityInfoBean != null && !TextUtils.isEmpty(activityInfoBean.getActivityCode())) {
-                    jsonObject.put("activityCode", activityInfoBean.getActivityCode());
-                }
-                jsonArray.put(jsonObject);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        params.put("goods", jsonArray.toString().trim());
-        //用户留言
-        if (!TextUtils.isEmpty(message)) {
-            params.put("remark", message);
-        }
-        //是否开具发票
-        if (!TextUtils.isEmpty(invoiceTitle)) {
-            params.put("invoice", invoiceTitle);
-        }
-        //是否使用优惠券
-        if (couponId > 0) {
-            params.put("userCouponId", couponId);
-        }
-        //付款方式 微信 wechatPay 支付宝 aliPay
-        //2019.1.16 新增银联支付
-        params.put("buyType", payType);
-        if (payType.equals(PAY_UNION_PAY)) {
-            params.put("paymentLinkType", 2);
-            params.put("isApp", true);
-        }
-        params.put("isWeb", false);
-        if (isReal) {
-            params.put("isOverseasGo", true);
-            params.put("realName", pullHeaderView.et_oversea_name.getText().toString().trim());
-            String idCard = pullHeaderView.et_oversea_card.getText().toString().trim();
-            String showIdCard = (String) pullHeaderView.et_oversea_card.getTag();
-            String reallyIdCard = (String) pullHeaderView.et_oversea_card.getTag(R.id.id_tag);
-            if (idCard.equals(getStrings(showIdCard))) {
-                params.put("idcard", reallyIdCard);
-            } else {
-                params.put("idcard", idCard);
-            }
-        } else {
-            params.put("isOverseasGo", false);
-        }
-        //订单来源
-        params.put("source", 0);
-        //添加埋点来源参数
-        ConstantMethod.addSourceParameter(params);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_CREATE_INDENT, params, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                if (pullFootView.rect_indent_number.getVisibility() == VISIBLE) {
-                    pullFootView.rect_indent_number.setVisibility(GONE);
-                }
-                dealingIndentPayResult(result);
-            }
-
-            @Override
-            public void onNotNetOrException() {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
                 tv_indent_write_commit.setEnabled(true);
             }
 
@@ -1077,23 +1269,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
         }
     }
 
-    @Override
-    protected void loadData() {
-        if (type.equals(INDENT_W_TYPE)) {
-            if (isFirst) {
-                getDefaultAddress();
-            } else {
-                getAddressDetails();
-            }
-        } else if (type.equals(INDENT_GROUP_SHOP)) {
-            pullFootView.ll_layout_coupon.setVisibility(View.GONE);
-            if (isFirst) {
-                getDefaultAddress();
-            } else {
-                getAddressDetails();
-            }
-        }
-    }
 
     @Override
     public View getLoadView() {
@@ -1105,229 +1280,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
         return true;
     }
 
-    /**
-     * 获取订单结算信息
-     *
-     * @param updatePriceInfo(是否需要修改订单结算信息,选择优惠券或者修改地址时为true)
-     */
-    private void getIndentDiscounts(boolean updatePriceInfo) {
 
-        if (discountBeanList.size() > 0 || combineGoods.size() > 0) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("userId", userId);
-            params.put("addressId", addressId);
-            if (updatePriceInfo) {
-                params.put("userCouponId", couponId);
-            }
-            if (type.equals(INDENT_GROUP_SHOP)) {
-                params.put("gpInfoId", groupShopDetailsBean.getGpInfoId());
-                params.put("gpRecordId", groupShopDetailsBean.getGpRecordId());
-            }
-            if (discountBeanList != null && discountBeanList.size() > 0) {
-                params.put("goods", new Gson().toJson(discountBeanList));
-            }
-            if (combineGoods != null && combineGoods.size() > 0) {
-                params.put("combineGoods", new Gson().toJson(combineGoods));
-            }
-            NetLoadUtils.getNetInstance().loadNetDataPost(this, updatePriceInfo ? Url.INDENT_DISCOUNTS_UPDATE_INFO : Url.INDENT_DISCOUNTS_NEW_INFO, params, new NetLoadListenerHelper() {
-                @Override
-                public void onSuccess(String result) {
-                    if (loadHud != null) {
-                        loadHud.dismiss();
-                    }
-                    Gson gson = new Gson();
-                    identWriteEntity = gson.fromJson(result, IndentWriteEntity.class);
-                    if (identWriteEntity != null) {
-                        if (identWriteEntity.getCode().equals(SUCCESS_CODE)) {
-                            indentWriteBean = identWriteEntity.getIndentWriteBean();
-                            setDiscountsInfo(indentWriteBean);
-                        }
-                    }
-                    NetLoadUtils.getNetInstance().showLoadSir(loadService, identWriteEntity);
-                }
-
-                @Override
-                public void onNotNetOrException() {
-                    if (loadHud != null) {
-                        loadHud.dismiss();
-                    }
-                    NetLoadUtils.getNetInstance().showLoadSir(loadService, identWriteEntity);
-                }
-            });
-        } else {
-            if (loadHud != null) {
-                loadHud.dismiss();
-            }
-            NetLoadUtils.getNetInstance().showLoadSir(loadService, identWriteEntity);
-        }
-    }
-
-    private void setDiscountsInfo(IndentWriteBean indentWriteBean) {
-        //实名制相关
-        isReal = indentWriteBean.isReal();
-        tv_indent_write_commit.setEnabled(indentWriteBean.getAllProductNotBuy() == 0);
-        setOverseaData(indentWriteBean);
-        //金额信息
-        setDiscounts(indentWriteBean.getPriceInfos());
-        //是否有可用的优惠券
-        UserCouponInfoBean userCouponInfo = indentWriteBean.getUserCouponInfo();
-        if (userCouponInfo != null) {
-            if (userCouponInfo.getAllowCouoon() == 1 && userCouponInfo.getId() != null && userCouponInfo.getId() > 0) {
-                pullFootView.tv_direct_product_favorable.setText(("-¥" + userCouponInfo.getPrice()));
-                couponId = userCouponInfo.getId();
-                pullFootView.tv_direct_product_favorable.setSelected(true);
-            } else {
-                pullFootView.tv_direct_product_favorable.setSelected(false);
-                pullFootView.tv_direct_product_favorable.setText(userCouponInfo.getMsg());
-            }
-        }
-
-        //组装商品列表数据
-        productInfoList.clear();
-        for (int i = 0; i < indentWriteBean.getProducts().size(); i++) {
-            ProductsBean productsBean = indentWriteBean.getProducts().get(i);
-            List<ProductInfoBean> productInfos = productsBean.getProductInfos();
-            ProductInfoBean combineMainProduct = productsBean.getCombineMainProduct();
-            List<ProductInfoBean> combineMatchProducts = productsBean.getCombineMatchProducts();
-            if (combineMainProduct != null) {
-                productInfos = new ArrayList<>();
-                productInfos.add(combineMainProduct);
-                if (combineMatchProducts != null) {
-                    for (ProductInfoBean productInfoBean : combineMatchProducts) {
-                        productInfoBean.setCount(combineMainProduct.getCount());
-                        productInfos.add(productInfoBean);
-                    }
-                }
-            }
-
-
-            for (int j = 0; j < productInfos.size(); j++) {
-                ProductInfoBean productInfoBean = productInfos.get(j);
-                if (productsBean.getActivityInfo() != null && j == 0) {
-                    productInfoBean.setShowActInfo(1);
-                }
-                productInfoBean.setActivityInfoBean(productsBean.getActivityInfo());
-                productInfoList.add(productInfoBean);
-            }
-            if (productsBean.getActivityInfo() != null && productInfoList.size() > 0
-                    && indentWriteBean.getProducts().size() > i + 1) {
-                ProductInfoBean productInfoBean = productInfoList.get(productInfoList.size() - 1);
-                productInfoBean.setShowLine(1);
-                productInfoList.set(productInfoList.size() - 1, productInfoBean);
-            }
-        }
-        if (!INDENT_GROUP_SHOP.equals(type)
-                && productInfoList.size() > 0 && productInfoList.size() < 2) {
-            ProductInfoBean productInfoBean = productInfoList.get(0);
-            pullFootView.rect_indent_number.setVisibility(VISIBLE);
-            pullFootView.rect_indent_number.setNum(productInfoBean.getCount());
-            if (passGoods != null) {
-                for (CartInfoBean cartInfoBean : passGoods) {
-                    SkuSaleBean saleSku = cartInfoBean.getSaleSku();
-                    if (saleSku != null && saleSku.getId() == productInfoBean.getSaleSkuId()) {
-                        pullFootView.rect_indent_number.setMaxNum(saleSku.getQuantity());
-                    }
-                }
-            }
-        } else {
-            pullFootView.rect_indent_number.setVisibility(View.GONE);
-        }
-        directProductAdapter.notifyDataSetChanged();
-    }
-
-    private void setOverseaData(IndentWriteBean indentWriteBean) {
-        if (indentWriteBean.isReal()) {
-            pullHeaderView.ll_oversea_info.setVisibility(VISIBLE);
-            pullHeaderView.et_oversea_name.setText(getStringFilter(indentWriteBean.getRealName()));
-            pullHeaderView.et_oversea_name.setSelection(getStrings(indentWriteBean.getRealName()).length());
-            pullHeaderView.et_oversea_card.setText(getStringFilter(indentWriteBean.getIdCard()));
-            pullHeaderView.et_oversea_card.setSelection(getStrings(indentWriteBean.getIdCard()).length());
-            pullHeaderView.et_oversea_card.setTag(R.id.id_tag, getStrings(indentWriteBean.getIdCard()));
-            pullHeaderView.et_oversea_card.setTag(getStrings(indentWriteBean.getIdCard()));
-            if (!TextUtils.isEmpty(indentWriteBean.getPrompt())) {
-                pullHeaderView.tv_oversea_buy_tint.setVisibility(VISIBLE);
-                pullHeaderView.tv_oversea_buy_tint.setText(getStrings(indentWriteBean.getPrompt()));
-            } else {
-                pullHeaderView.tv_oversea_buy_tint.setVisibility(View.GONE);
-            }
-        } else {
-            pullHeaderView.tv_oversea_buy_tint.setVisibility(View.GONE);
-            pullHeaderView.ll_oversea_info.setVisibility(View.GONE);
-        }
-    }
-
-    private void setDiscounts(List<PriceInfoBean> indentDiscountsList) {
-        if (indentDiscountsList != null) {
-            priceInfoList.clear();
-            priceInfoList.addAll(indentDiscountsList);
-            PriceInfoBean priceInfoBean = priceInfoList.get(priceInfoList.size() - 1);
-            tv_indent_total_price.setText(getStrings(priceInfoBean.getTotalPriceName()));
-            priceInfoList.remove(priceInfoList.get(priceInfoList.size() - 1));
-            indentDiscountAdapter.setNewData(priceInfoList);
-        }
-    }
-
-    private void getDefaultAddress() {
-        Map<String, Object> params = new HashMap<>();
-        params.put("uid", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, DELIVERY_ADDRESS, params, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                Gson gson = new Gson();
-                AddressInfoEntity addressInfoEntity = gson.fromJson(result, AddressInfoEntity.class);
-                if (addressInfoEntity != null) {
-                    if (addressInfoEntity.getCode().equals(SUCCESS_CODE)) {
-                        setAddressData(addressInfoEntity.getAddressInfoBean());
-                    } else if (addressInfoEntity.getCode().equals(EMPTY_CODE)) {
-                        setAddressData(null);
-                    } else {
-                        constantMethod.showImportantToast(DirectIndentWriteActivity.this, addressInfoEntity.getMsg());
-                    }
-                }
-            }
-        });
-    }
-
-    private void getAddressDetails() {
-        Map<String, Object> params = new HashMap<>();
-        params.put("id", addressId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, ADDRESS_DETAILS, params, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                Gson gson = new Gson();
-                AddressInfoEntity addressInfoEntity = gson.fromJson(result, AddressInfoEntity.class);
-                if (addressInfoEntity != null) {
-                    if (addressInfoEntity.getCode().equals(SUCCESS_CODE)) {
-                        setAddressData(addressInfoEntity.getAddressInfoBean());
-                    } else if (addressInfoEntity.getCode().equals(EMPTY_CODE)) {
-                        setAddressData(null);
-                    } else {
-                        constantMethod.showImportantToast(DirectIndentWriteActivity.this, addressInfoEntity.getMsg());
-                    }
-                }
-            }
-        });
-    }
-
-    private void setAddressData(AddressInfoEntity.AddressInfoBean addressInfoBean) {
-        if (addressInfoBean != null) {
-            addressId = addressInfoBean.getId();
-            pullHeaderView.ll_indent_address_default.setVisibility(VISIBLE);
-            pullHeaderView.ll_indent_address_null.setVisibility(View.GONE);
-            pullHeaderView.tv_consignee_name.setText(addressInfoBean.getConsignee());
-            pullHeaderView.tv_address_mobile_number.setText(addressInfoBean.getMobile());
-            pullHeaderView.tv_indent_details_address.setText((addressInfoBean.getAddress_com() + addressInfoBean.getAddress() + " "));
-        } else {
-            pullHeaderView.ll_indent_address_default.setVisibility(View.GONE);
-            pullHeaderView.ll_indent_address_null.setVisibility(VISIBLE);
-        }
-        //            再次购买
-        if (orderNo != null) {
-            getOrderData();
-        } else {
-            getIndentDiscounts(!isFirst);
-        }
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -1353,7 +1306,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                     break;
                 case DIRECT_COUPON_REQ:
                     //            获取优惠券
-                    couponId = data.getIntExtra("couponId", 0);
+                    couponId = data.getIntExtra("couponId", -1);
                     double couponAmount = data.getDoubleExtra("couponAmount", 0);
                     pullFootView.tv_direct_product_favorable.setText(couponId < 1 ? "不使用优惠券" : "-¥" + couponAmount);
                     getIndentDiscounts(true);
@@ -1380,7 +1333,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
             }
         }
     }
-
 
     class PullHeaderView {
         //    地址为空
@@ -1447,15 +1399,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
         EditText edt_direct_product_note;
         @BindView(R.id.ll_indent_product_note)
         LinearLayout ll_indent_product_note;
-        //支付宝支付
-        @BindView(R.id.rb_checked_alipay)
-        RadioButton rb_checked_aliPay;
-        //微信支付
-        @BindView(R.id.rb_checked_wechat_pay)
-        RadioButton rb_checked_weChat_pay;
-        //银联支付
-        @BindView(R.id.rb_checked_union_pay)
-        RadioButton rb_checked_union_pay;
         //        发票展示
         @BindView(R.id.tv_direct_product_invoice)
         TextView tv_direct_product_invoice;
@@ -1467,30 +1410,9 @@ public class DirectIndentWriteActivity extends BaseActivity {
         RecyclerView rv_indent_write_info;
         @BindView(R.id.rect_indent_number)
         RectAddAndSubViewDirect rect_indent_number;
+        @BindView(R.id.radio_group)
+        RadioGroup mRadioGroup;
 
-        //支付宝方式
-        @OnClick(value = {R.id.ll_aliPay, R.id.rb_checked_alipay})
-        void aliPay() {
-            rb_checked_aliPay.setChecked(true);
-            rb_checked_weChat_pay.setChecked(false);
-            rb_checked_union_pay.setChecked(false);
-        }
-
-        //微信支付方式
-        @OnClick(value = {R.id.ll_Layout_weChat, R.id.rb_checked_wechat_pay})
-        void weChat() {
-            rb_checked_weChat_pay.setChecked(true);
-            rb_checked_aliPay.setChecked(false);
-            rb_checked_union_pay.setChecked(false);
-        }
-
-        //        银联支付
-        @OnClick(value = {R.id.ll_Layout_union_pay, R.id.rb_checked_union_pay})
-        void unionPay() {
-            rb_checked_union_pay.setChecked(true);
-            rb_checked_aliPay.setChecked(false);
-            rb_checked_weChat_pay.setChecked(false);
-        }
 
         //        优惠券选择
         @OnClick(R.id.ll_layout_coupon)

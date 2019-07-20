@@ -1172,8 +1172,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             }
 
             //赠品活动标签
-            ShopPropertyBean.PresentInfoBean presentInfo = shopProperty.getPresentInfo();
-            if (presentInfo != null) {
+            if (shopProperty.isHasPresent()) {
                 MarketLabelBean marketLabelBean = new MarketLabelBean();
                 marketLabelBean.setTitle("赠品");
                 marketLabelBean.setLabelCode(1);

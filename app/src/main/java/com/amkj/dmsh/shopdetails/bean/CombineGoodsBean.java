@@ -27,6 +27,7 @@ public class CombineGoodsBean implements Parcelable {
     private int count;
     private List<MatchProductsBean> matchProducts;
 
+
     public int getMainId() {
         return mainId;
     }

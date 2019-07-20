@@ -194,9 +194,11 @@
     <string name="address_not_null">请填写收货地址</string>
     <!--积分订单-->
     <string name="integral_product_and_price">%1$d积分+%2$s元</string>
+    <string name="integral_product_and_price2">%1$s积分+%2$s元</string>
     <string name="integral_product_add">%1$d积分+</string>
     <string name="integral_indent_product_price_and_money">%1$d积分+¥%2$s</string>
     <string name="integral_indent_product_price">%1$d积分</string>
+    <string name="integral_indent_product_price2">%1$d积分</string>
     <string name="integral_indent_product_count">共%1$d件 实付:</string>
     <string name="product_comment_count">Ta们在说(%1$d)</string>
     <string name="buy_return_integral_total">返%1$d积分</string>

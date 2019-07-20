@@ -72,8 +72,8 @@ public class ShopDetailsEntity extends BaseEntity {
         private String activityStartTime;
         private String activityEndTime;
         private String activityRule;
-        //赠品信息
-        private PresentInfoBean presentInfo;
+        //是否含赠品
+        private boolean hasPresent;
         //满赠活动
         private MZPresentInfoBean mzPresentInfo;
         @SerializedName("presentSkuIds")
@@ -90,6 +90,14 @@ public class ShopDetailsEntity extends BaseEntity {
         private long addSecond;
         private String maxDiscounts;
 
+
+        public boolean isHasPresent() {
+            return hasPresent;
+        }
+
+        public void setHasPresent(boolean hasPresent) {
+            this.hasPresent = hasPresent;
+        }
 
         public String getMaxDiscounts() {
             return maxDiscounts;
@@ -391,14 +399,6 @@ public class ShopDetailsEntity extends BaseEntity {
             this.activityRule = activityRule;
         }
 
-        public PresentInfoBean getPresentInfo() {
-            return presentInfo;
-        }
-
-        public void setPresentInfo(PresentInfoBean presentInfo) {
-            this.presentInfo = presentInfo;
-        }
-
         public MZPresentInfoBean getMzPresentInfo() {
             return mzPresentInfo;
         }
@@ -613,51 +613,6 @@ public class ShopDetailsEntity extends BaseEntity {
             }
         }
 
-        public static class PresentInfoBean {
-            /**
-             * id : 1
-             * quantity : 1231
-             * picUrl : http://image.domolife.cn/platform/YEYnTXn3as1560503438864.jpg
-             * activityCode : ZP1560503944
-             */
-
-            private int id;
-            private int quantity;
-            private String picUrl;
-            private String activityCode;
-
-            public int getId() {
-                return id;
-            }
-
-            public void setId(int id) {
-                this.id = id;
-            }
-
-            public int getQuantity() {
-                return quantity;
-            }
-
-            public void setQuantity(int quantity) {
-                this.quantity = quantity;
-            }
-
-            public String getPicUrl() {
-                return picUrl;
-            }
-
-            public void setPicUrl(String picUrl) {
-                this.picUrl = picUrl;
-            }
-
-            public String getActivityCode() {
-                return activityCode;
-            }
-
-            public void setActivityCode(String activityCode) {
-                this.activityCode = activityCode;
-            }
-        }
 
         public static class CombineProductInfoBean {
 

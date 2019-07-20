@@ -11,8 +11,14 @@ import com.amkj.dmsh.shopdetails.bean.CombineCartBean;
 import com.amkj.dmsh.shopdetails.bean.CombineCartBean.CombineMatchsBean;
 import com.amkj.dmsh.shopdetails.bean.CombineGoodsBean;
 import com.amkj.dmsh.shopdetails.bean.GroupGoodsEntity.GroupGoodsBean.CombineCommonBean;
+import com.amkj.dmsh.shopdetails.bean.IndentWriteEntity.IndentWriteBean.ProductsBean;
+import com.amkj.dmsh.shopdetails.bean.IndentWriteEntity.IndentWriteBean.ProductsBean.ProductInfoBean;
+import com.amkj.dmsh.shopdetails.bean.CombineGoodsBean.MatchProductsBean;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.Gson;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -340,6 +346,24 @@ public class ShopCarDao {
         return ActivityInfos;
     }
 
+    //判断组合商品库存（组合商品无库存或者所有搭配商品无库存时返回false）
+    public static boolean checkStock(List<CombineCommonBean> goods) {
+        int num = 0;//无库存的搭配商品数量
+        for (CombineCommonBean commonBean : goods) {
+            if (commonBean.isMainProduct()) {
+                if (commonBean.getStock() == 0) {
+                    //主商品无库存直接返回false
+                    return false;
+                }
+            } else {
+                if (commonBean.getStock() == 0) {
+                    num++;
+                }
+            }
+        }
+
+        return num < goods.size() - 1;
+    }
 
     //组合搭配加入购物车
     public static String getCombinesCart(List<CombineCommonBean> groupList) {
@@ -366,23 +390,56 @@ public class ShopCarDao {
         }
     }
 
-    //判断组合商品库存（组合商品无库存或者所有搭配商品无库存时返回false）
-    public static boolean checkStock(List<CombineCommonBean> goods) {
-        int num = 0;//无库存的搭配商品数量
-        for (CombineCommonBean commonBean : goods) {
-            if (commonBean.isMainProduct()) {
-                if (commonBean.getStock() == 0) {
-                    //主商品无库存直接返回false
-                    return false;
+
+    public static String[] getIndentInfo(List<ProductsBean> products) {
+        String[] info = new String[2];
+        List<CombineGoodsBean> combineGoodsList = new ArrayList<>();
+        JSONArray jsonArray = new JSONArray();
+        for (ProductsBean productsBean : products) {
+            List<ProductInfoBean> productInfos = productsBean.getProductInfos();
+            ProductInfoBean combineMainProduct = productsBean.getCombineMainProduct();
+            List<ProductInfoBean> combineMatchProducts = productsBean.getCombineMatchProducts();
+            //组合商品
+            if (combineMainProduct != null) {
+                CombineGoodsBean combineGoodsBean = new CombineGoodsBean();
+                List<MatchProductsBean> matchProducts = new ArrayList<>();
+                combineGoodsBean.setSkuId(combineMainProduct.getSaleSkuId());
+                combineGoodsBean.setProductId(combineMainProduct.getId());
+                combineGoodsBean.setCount(combineMainProduct.getCount());
+                combineGoodsBean.setMainId(combineMainProduct.getCombineMainId());
+                if (combineMatchProducts != null && combineMatchProducts.size() > 0) {
+                    for (ProductInfoBean productInfoBean : combineMatchProducts) {
+                        MatchProductsBean matchProductsBean = new MatchProductsBean();
+                        matchProductsBean.setProductId(productInfoBean.getId());
+                        matchProductsBean.setCombineMatchId(productInfoBean.getCombineMatchId());
+                        matchProductsBean.setSkuId(productInfoBean.getSaleSkuId());
+                        matchProducts.add(matchProductsBean);
+                    }
                 }
-            } else {
-                if (commonBean.getStock() == 0) {
-                    num++;
+                combineGoodsBean.setMatchProducts(matchProducts);
+                combineGoodsList.add(combineGoodsBean);
+            } else if (productInfos != null && productInfos.size() > 0) {
+                for (ProductInfoBean productInfoBean : productInfos) {
+                    try {
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("saleSkuId", productInfoBean.getSaleSkuId());
+                        jsonObject.put("id", productInfoBean.getId());
+                        jsonObject.put("count", productInfoBean.getCount());
+                        jsonArray.put(jsonObject);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
+
             }
         }
-
-        return num < goods.size() - 1;
+        if (jsonArray.length()>0){
+            info[0] = jsonArray.toString().trim();
+        }
+        if (combineGoodsList.size()>0){
+            info[1] = new Gson().toJson(combineGoodsList);
+        }
+        return info;
     }
 
 }

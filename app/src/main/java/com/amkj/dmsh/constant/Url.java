@@ -385,7 +385,10 @@ public class Url {
     //首页轮播图
     public static final String Q_HOME_AD_LOOP = "api/goods/getAd";
     //    二期订单创建
-    public static final String Q_CREATE_INDENT = "api/goods/order/addOrderNew";
+//    public static final String Q_CREATE_INDENT = "api/goods/order/addOrderNew";
+    //大营销中心订单创建
+    public static final String Q_CREATE_INDENT = "api/goods/order/addOrderPayInfoNewV2";
+
     //    积分订单创建
     public static final String INTEGRAL_CREATE_INDENT = "api/integralorder/addIntegralOrder";
     //    再次购买

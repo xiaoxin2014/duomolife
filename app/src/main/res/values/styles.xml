@@ -283,4 +283,10 @@
         <item name="android:windowIsFloating">true</item>
         <item name="android:windowIsTranslucent">false</item>
     </style>
+
+    <!--自定义radiobutton-->
+    <style name="CustomRadioBtn">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:button">@drawable/selector_pay_way</item>
+    </style>
 </resources>

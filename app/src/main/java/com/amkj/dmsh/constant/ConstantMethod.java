@@ -284,7 +284,7 @@ public class ConstantMethod {
 
 
     /**
-     * String转换成int(先去掉中文和货币符号)
+     * String转换成double(先去掉中文和货币符号)
      *
      * @param text
      * @return

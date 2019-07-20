@@ -107,6 +107,7 @@ public class RefundDetailEntity extends BaseEntity{
         @SerializedName("presentProductInfo")
         private List<CartProductInfoBean> presentProductInfoList;
         private RefundGoodsAddressBean refundGoodsAddress;
+
         /**
          * expressInfo : {"expressNo":"888999888909988999","expressCompany":"中国邮政"}
          */
@@ -138,6 +139,17 @@ public class RefundDetailEntity extends BaseEntity{
          */
 
         private RefundPayInfoBean refundPayInfo;
+
+        //大营销中心新增字段
+        private List<RefundDetailProductBean> refundOrderProductList;
+
+        public List<RefundDetailProductBean> getRefundOrderProductList() {
+            return refundOrderProductList;
+        }
+
+        public void setRefundOrderProductList(List<RefundDetailProductBean> refundOrderProductList) {
+            this.refundOrderProductList = refundOrderProductList;
+        }
 
         public static RefundDetailBean objectFromData(String str) {
             return new Gson().fromJson(str, RefundDetailBean.class);
