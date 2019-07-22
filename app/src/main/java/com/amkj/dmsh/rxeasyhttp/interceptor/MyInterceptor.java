@@ -83,14 +83,14 @@ public class MyInterceptor implements Interceptor {
             response = chain.proceed(builder.build());
             String responseInfo = response.peekBody(1024 * 1024).string();
             Map<String, Object> responseMap = JSON.parseObject(responseInfo);
+
+            //打印响应结果
+            httpLog(request, DomoJson, responseInfo);
             if ("52".equals(responseMap.get("code"))) {
                 builder.removeHeader("domo-custom");
                 builder.addHeader("domo-custom", getBase64(mDomoCommon));
                 return chain.proceed(builder.build());
             }
-
-            //打印响应结果
-            httpLog(request, DomoJson, responseInfo);
         } catch (Exception e) {
             //上报异常
             CrashReport.postCatchedException(new Exception(

@@ -163,6 +163,7 @@ public class GroupMatchActivity extends BaseActivity {
         mSmartCommunalRefresh.setOnRefreshListener((refreshLayout) -> {
             getGroupGoods(mProductId);
             mTvSaveNum.setVisibility(View.GONE);
+            skuDialog = null;
         });
     }
 
