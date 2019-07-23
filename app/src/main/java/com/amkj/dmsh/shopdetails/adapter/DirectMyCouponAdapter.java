@@ -56,7 +56,7 @@ public class DirectMyCouponAdapter extends BaseMultiItemQuickAdapter<DirectCoupo
             TextView tv_coupon_type = helper.getView(R.id.tv_coupon_type);
             GradientDrawable drawable = new GradientDrawable();
             drawable.setShape(GradientDrawable.RECTANGLE);
-            int radius = AutoSizeUtils.mm2px(mAppContext,8);
+            int radius = AutoSizeUtils.mm2px(mAppContext, 8);
             drawable.setCornerRadius(radius);
             try {
                 drawable.setColor(Color.parseColor((!TextUtils.isEmpty(directCouponBean.getModeBgColor()) ?
@@ -64,16 +64,6 @@ public class DirectMyCouponAdapter extends BaseMultiItemQuickAdapter<DirectCoupo
                 tv_coupon_type.setBackground(drawable);
             } catch (Exception e) {
                 e.printStackTrace();
-            }
-//        优惠券是否过期
-//        s是否过期
-            if (!TextUtils.isEmpty(directCouponBean.getBeOverdue())
-                    && directCouponBean.getBeOverdue().equals("0") ||
-                    TextUtils.isEmpty(directCouponBean.getBeOverdue())) {
-                helper.setGone(R.id.rImg_coupon_tag, false);
-            } else {
-                helper.setGone(R.id.rImg_coupon_tag, true)
-                        .setImageResource(R.id.rImg_coupon_tag, R.drawable.coupon_icon_due_soon);
             }
             helper.setText(R.id.tv_coupon_money, String.valueOf(directCouponBean.getAmount()))
                     .setGone(R.id.view_coupon, helper.getLayoutPosition() - getHeaderLayoutCount() == 0)
@@ -108,24 +98,27 @@ public class DirectMyCouponAdapter extends BaseMultiItemQuickAdapter<DirectCoupo
                 tv_coupon_status.setText("已使用");
                 helper.setGone(R.id.rImg_coupon_tag, false);
             } else {
-                if (TextUtils.isEmpty(directCouponBean.getBeOverdue()) ||
-                        (!TextUtils.isEmpty(directCouponBean.getBeOverdue())
-                                && directCouponBean.getBeOverdue().equals("0"))) {
+                if (TextUtils.isEmpty(directCouponBean.getBeOverdue()) || directCouponBean.getBeOverdue().equals("0")) {
                     helper.setGone(R.id.rImg_coupon_tag, false);
                     tv_coupon_status.setVisibility(View.GONE);
                     helper.tv_coupon_used.setVisibility("checkCoupon".equals(couponStatus) ? View.VISIBLE : View.GONE);
-                } else {
+                } else if (directCouponBean.getBeOverdue().equals("1")){
                     helper.setGone(R.id.rImg_coupon_tag, true)
                             .setImageResource(R.id.rImg_coupon_tag, R.drawable.coupon_icon_due_soon);
                     tv_coupon_status.setVisibility(View.VISIBLE);
                     tv_coupon_status.setText("已过期");
+                }else if (directCouponBean.getBeOverdue().equals("2")){
+                    helper.setGone(R.id.rImg_coupon_tag, true)
+                            .setImageResource(R.id.rImg_coupon_tag, R.drawable.coupon_icon_invalid);
+                    tv_coupon_status.setVisibility(View.VISIBLE);
+                    tv_coupon_status.setText("已失效");
                 }
             }
-        }else{
+        } else {
             try {
                 helper.getView(R.id.tv_nonuse_coupon)
                         .setBackgroundColor(Color.parseColor((!TextUtils.isEmpty(directCouponBean.getBgColor()) ?
-                        directCouponBean.getBgColor() : BLUE_BG)));
+                                directCouponBean.getBgColor() : BLUE_BG)));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -161,7 +154,7 @@ public class DirectMyCouponAdapter extends BaseMultiItemQuickAdapter<DirectCoupo
             if (tv_coupon_used != null) {
                 GradientDrawable drawable = new GradientDrawable();
                 drawable.setShape(GradientDrawable.RECTANGLE);
-                int radius = AutoSizeUtils.mm2px(mAppContext,21);
+                int radius = AutoSizeUtils.mm2px(mAppContext, 21);
                 drawable.setCornerRadius(radius);
                 drawable.setColor(mContext.getResources().getColor(R.color.text_normal_red));
                 tv_coupon_used.setBackground(drawable);

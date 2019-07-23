@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -18,7 +17,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -27,7 +25,6 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.UMShareAction;
@@ -35,7 +32,6 @@ import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.activity.QualityProductActActivity;
 import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity;
 import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity.QualityGroupShareBean;
-import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.mine.bean.CartProductInfoBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
@@ -45,7 +41,6 @@ import com.amkj.dmsh.shopdetails.adapter.DirectProductListAdapter;
 import com.amkj.dmsh.shopdetails.adapter.IndentDiscountAdapter;
 import com.amkj.dmsh.shopdetails.bean.ApplyRefundCheckEntity;
 import com.amkj.dmsh.shopdetails.bean.ApplyRefundCheckEntity.ApplyRefundCheckBean;
-import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.shopdetails.bean.DirectApplyRefundBean;
 import com.amkj.dmsh.shopdetails.bean.DirectApplyRefundBean.DirectRefundProBean;
 import com.amkj.dmsh.shopdetails.bean.DirectAppraisePassBean;
@@ -68,7 +63,6 @@ import com.amkj.dmsh.shopdetails.payutils.WXPay;
 import com.amkj.dmsh.utils.CommunalCopyTextUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
-import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.amkj.dmsh.views.CustomPopWindow;
 import com.google.gson.Gson;
 import com.klinker.android.link_builder.Link;
@@ -76,7 +70,6 @@ import com.klinker.android.link_builder.LinkBuilder;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
-import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -182,11 +175,9 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
     private int statusCode;
     private String payWay = "";
     private CustomPopWindow mCustomPopWindow;
-    private AlertDialog alertDialog;
     private IndentInfoDetailEntity infoDetailEntity;
     private IndentDiscountAdapter indentDiscountAdapter;
     private boolean isOnPause;
-    private RuleDialogView ruleDialog;
     private ConstantMethod constantMethod;
     private AlertDialogHelper cancelOrderDialogHelper;
     private AlertDialogHelper confirmOrderDialogHelper;
@@ -302,8 +293,12 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
                         }
                         break;
                     case R.id.ll_communal_activity_topic_tag:
-                        orderProductInfoBean = (OrderProductInfoBean) view.getTag();
-                        setDialogRule(orderProductInfoBean);
+                        ActivityInfoDetailBean activityInfoBean = orderProductInfoBean.getActivityInfoDetailBean();
+                        if (activityInfoBean != null && !TextUtils.isEmpty(activityInfoBean.getActivityCode())) {
+                            Intent activityIntent = new Intent(DirectExchangeDetailsActivity.this, QualityProductActActivity.class);
+                            activityIntent.putExtra("activityCode", getStrings(activityInfoBean.getActivityCode()));
+                            startActivity(activityIntent);
+                        }
                         break;
                 }
             }
@@ -1443,81 +1438,6 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
         });
     }
 
-    /**
-     * 活动规则弹框
-     *
-     * @param orderProductInfoBean
-     */
-    private void setDialogRule(OrderProductInfoBean orderProductInfoBean) {
-        if (orderProductInfoBean.getActivityInfoDetailBean() != null) {
-            if (alertDialog == null) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(DirectExchangeDetailsActivity.this, R.style.CustomTransDialog);
-                View dialogView = LayoutInflater.from(DirectExchangeDetailsActivity.this).inflate(R.layout.layout_act_topic_rule, null, false);
-                ruleDialog = new RuleDialogView();
-                ButterKnife.bind(ruleDialog, dialogView);
-                ruleDialog.initViews();
-                ruleDialog.setData(orderProductInfoBean.getActivityInfoDetailBean());
-                alertDialog = builder.create();
-                alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                alertDialog.setCanceledOnTouchOutside(true);
-                alertDialog.show();
-                TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-                int dialogHeight = (int) (app.getScreenHeight() * 0.4 + 1);
-                Window window = alertDialog.getWindow();
-                window.getDecorView().setPadding(0, 0, 0, 0);
-                window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, dialogHeight);
-                window.setGravity(Gravity.BOTTOM);//底部出现
-                window.setContentView(dialogView);
-            } else {
-                alertDialog.show();
-            }
-            ruleDialog.tv_act_topic_rule_skip.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    ActivityInfoDetailBean activityInfoBean = (ActivityInfoDetailBean) view.getTag();
-                    if (activityInfoBean != null && !TextUtils.isEmpty(activityInfoBean.getActivityCode())) {
-                        alertDialog.dismiss();
-                        Intent intent = new Intent(DirectExchangeDetailsActivity.this, QualityProductActActivity.class);
-                        intent.putExtra("activityCode", getStrings(activityInfoBean.getActivityCode()));
-                        startActivity(intent);
-                    }
-                }
-            });
-        }
-    }
-
-    class RuleDialogView {
-        @BindView(R.id.tv_act_topic_rule_title)
-        TextView tv_act_topic_rule_title;
-        @BindView(R.id.tv_act_topic_rule_skip)
-        TextView tv_act_topic_rule_skip;
-        @BindView(R.id.communal_recycler)
-        RecyclerView communal_recycler;
-        CommunalDetailAdapter actRuleDetailsAdapter;
-        List<CommunalDetailObjectBean> communalDetailBeanList = new ArrayList<>();
-
-        public void initViews() {
-            tv_act_topic_rule_skip.setVisibility(View.VISIBLE);
-            communal_recycler.setNestedScrollingEnabled(false);
-            communal_recycler.setLayoutManager(new LinearLayoutManager(DirectExchangeDetailsActivity.this));
-            communal_recycler.setNestedScrollingEnabled(false);
-            actRuleDetailsAdapter = new CommunalDetailAdapter(DirectExchangeDetailsActivity.this, communalDetailBeanList);
-            communal_recycler.setLayoutManager(new LinearLayoutManager(DirectExchangeDetailsActivity.this));
-            communal_recycler.setAdapter(actRuleDetailsAdapter);
-        }
-
-        public void setData(ActivityInfoDetailBean activityInfoBean) {
-            tv_act_topic_rule_title.setText("活动规则");
-            tv_act_topic_rule_skip.setText(String.format(getResources().getString(R.string.skip_topic)
-                    , getStrings(activityInfoBean.getActivityTag())));
-            tv_act_topic_rule_skip.setTag(activityInfoBean);
-            if (activityInfoBean.getActivityRuleDetailList() != null && activityInfoBean.getActivityRuleDetailList().size() > 0) {
-                communalDetailBeanList.clear();
-                communalDetailBeanList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(activityInfoBean.getActivityRuleDetailList()));
-                actRuleDetailsAdapter.notifyDataSetChanged();
-            }
-        }
-    }
 
     @OnClick(R.id.tv_indent_back)
     void goBack(View view) {

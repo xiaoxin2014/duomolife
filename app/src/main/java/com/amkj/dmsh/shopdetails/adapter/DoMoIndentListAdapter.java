@@ -195,7 +195,6 @@ public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoI
             Intent intent = new Intent();
             intent.setClass(context, DirectLogisticsDetailsActivity.class);
             intent.putExtra("orderNo", orderListBean.getNo());
-            intent.putExtra("presentLogistics", "赠品物流");
             context.startActivity(intent);
         });
         int statusCode = orderListBean.getStatus();

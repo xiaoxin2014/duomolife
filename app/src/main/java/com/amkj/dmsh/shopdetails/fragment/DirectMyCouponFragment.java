@@ -24,8 +24,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -88,21 +86,14 @@ public class DirectMyCouponFragment extends BaseFragment {
                 .setDividerId(R.drawable.item_divider_twenty_white).create());
         directMyCouponAdapter = new DirectMyCouponAdapter(couponList, "checkCoupon");
         communal_recycler.setAdapter(directMyCouponAdapter);
-        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                //                滚动距离置0
-                scrollY = 0;
-                loadData();
-
-            }
+        smart_communal_refresh.setOnRefreshListener(refreshLayout -> {
+            //                滚动距离置0
+            scrollY = 0;
+            loadData();
         });
-        directMyCouponAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
-            @Override
-            public void onLoadMoreRequested() {
-                page++;
-                checkCoupon();
-            }
+        directMyCouponAdapter.setOnLoadMoreListener(() -> {
+            page++;
+            checkCoupon();
         }, communal_recycler);
         directMyCouponAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override

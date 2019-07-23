@@ -25,8 +25,17 @@ public class CombineGoodsBean implements Parcelable {
     private int productId;
     private int skuId;
     private int count;
+    private int cartId;
     private List<MatchProductsBean> matchProducts;
 
+
+    public int getCartId() {
+        return cartId;
+    }
+
+    public void setCartId(int cartId) {
+        this.cartId = cartId;
+    }
 
     public int getMainId() {
         return mainId;
@@ -158,7 +167,8 @@ public class CombineGoodsBean implements Parcelable {
         dest.writeInt(this.productId);
         dest.writeInt(this.skuId);
         dest.writeInt(this.count);
-        dest.writeList(this.matchProducts);
+        dest.writeInt(this.cartId);
+        dest.writeTypedList(this.matchProducts);
     }
 
     public CombineGoodsBean() {
@@ -169,11 +179,11 @@ public class CombineGoodsBean implements Parcelable {
         this.productId = in.readInt();
         this.skuId = in.readInt();
         this.count = in.readInt();
-        this.matchProducts = new ArrayList<MatchProductsBean>();
-        in.readList(this.matchProducts, MatchProductsBean.class.getClassLoader());
+        this.cartId = in.readInt();
+        this.matchProducts = in.createTypedArrayList(MatchProductsBean.CREATOR);
     }
 
-    public static final Parcelable.Creator<CombineGoodsBean> CREATOR = new Parcelable.Creator<CombineGoodsBean>() {
+    public static final Creator<CombineGoodsBean> CREATOR = new Creator<CombineGoodsBean>() {
         @Override
         public CombineGoodsBean createFromParcel(Parcel source) {
             return new CombineGoodsBean(source);
@@ -184,4 +194,5 @@ public class CombineGoodsBean implements Parcelable {
             return new CombineGoodsBean[size];
         }
     };
+
 }

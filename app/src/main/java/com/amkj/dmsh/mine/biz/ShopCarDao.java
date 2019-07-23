@@ -207,6 +207,7 @@ public class ShopCarDao {
                                 combineGoodsBean.setMainId(0);
                                 combineGoodsBean.setCount(cartInfoBean.getCount());
                                 combineGoodsBean.setProductId(cartInfoBean.getProductId());
+                                combineGoodsBean.setCartId(cartInfoBean.getId());
                                 if (cartInfoBean.getSaleSku() != null) {
                                     combineGoodsBean.setSkuId(cartInfoBean.getSaleSku().getId());
                                 }

@@ -112,14 +112,16 @@ public class DirectLogisticsDetailsActivity extends BaseActivity {
                                 //赠品物流信息
                                 List<List<LogisticsProductPacketBean>> presentPacketList = directLogisticsEntity.getDirectLogisticsBean().getPresentLogistics();
                                 if (presentPacketList != null && presentPacketList.size() > 0) {
-                                    List<LogisticsProductPacketBean> PacketList = presentPacketList.get(0);
-                                    for (LogisticsProductPacketBean bean : PacketList) {
-                                        bean.setExpressCompany(bean.getPExpressCompany());
-                                        bean.setCount(bean.getPresentCount());
-                                        bean.setExpressNo(bean.getpExpressNo());
-                                        bean.setName(bean.getPresentName());
-                                        bean.setId(bean.getOrderProductId());
-                                        bean.setPicUrl(bean.getPresentPicUrl());
+                                    for (int i = 0; i < presentPacketList.size(); i++) {
+                                        List<LogisticsProductPacketBean> PacketList = presentPacketList.get(i);
+                                        for (LogisticsProductPacketBean bean : PacketList) {
+                                            bean.setExpressCompany(bean.getPExpressCompany());
+                                            bean.setCount(bean.getPresentCount());
+                                            bean.setExpressNo(bean.getpExpressNo());
+                                            bean.setName(bean.getPresentName());
+                                            bean.setId(bean.getOrderProductId());
+                                            bean.setPicUrl(bean.getPresentPicUrl());
+                                        }
                                     }
 
                                     packetList.addAll(presentPacketList);
