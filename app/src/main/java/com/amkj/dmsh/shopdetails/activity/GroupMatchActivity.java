@@ -208,7 +208,7 @@ public class GroupMatchActivity extends BaseActivity {
             //组合商品价格计算方案（如果选择了组合商品，计算选中的组合商品总价格，否则筛选出最低的组合商品价格）
             if (isSelectGroup()) {
                 for (CombineCommonBean bean : goods) {
-                    if (bean.isSelected() && bean.getSkuId() > 0 && !bean.isMainProduct()) {
+                    if (bean.isSelected() && bean.getSkuId() > 0) {
                         groupPrice += Double.parseDouble(bean.getMinPrice());
                         totalSave += bean.getSaveMoney();
                     }

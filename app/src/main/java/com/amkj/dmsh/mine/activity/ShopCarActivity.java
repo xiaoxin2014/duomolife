@@ -68,6 +68,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
+import static com.amkj.dmsh.constant.ConstantMethod.stripTrailingZeros;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.ADD_NUM;
 import static com.amkj.dmsh.constant.ConstantVariable.CHANGE_SKU;
@@ -346,6 +347,7 @@ public class ShopCarActivity extends BaseActivity {
                         if (mShopCarNewInfoEntity != null) {
                             ShopCartBean shopCartBean = mShopCarNewInfoEntity.getResult();
                             String code = mShopCarNewInfoEntity.getCode();
+
                             if (shopCartBean == null || shopCartBean.getCarts() == null || shopCartBean.getCarts().size() == 0 || EMPTY_CODE.equals(code)) {
                                 shopCarGoodsAdapter.loadMoreEnd();
                                 getCartRecommend();
@@ -479,9 +481,9 @@ public class ShopCarActivity extends BaseActivity {
                 price = getStringChangeDouble(tv_cart_total.getText().toString().trim()) + price;
                 discount = getStringChangeDouble(tv_settlement_dis_car_price.getText().toString().trim()) + discount;
             }
-            tv_cart_total.setText(getStringsFormat(this, R.string.group_total_price, String.valueOf(price)));
+            tv_cart_total.setText(getStringsFormat(this, R.string.group_total_price, stripTrailingZeros(String.valueOf(price))));
             //优惠金额
-            tv_settlement_dis_car_price.setText(getStringsFormat(this, R.string.newshopcar_discount_price, String.valueOf(discount)));
+            tv_settlement_dis_car_price.setText(getStringsFormat(this, R.string.newshopcar_discount_price, stripTrailingZeros(String.valueOf(discount))));
             tv_settlement_dis_car_price.setVisibility(discount != 0 ? View.VISIBLE : GONE);
             //结算商品件数
             String[] shoppingInfo = ShopCarDao.getShoppingCount(shopGoodsList);

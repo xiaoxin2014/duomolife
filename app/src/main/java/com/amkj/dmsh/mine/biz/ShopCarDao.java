@@ -157,16 +157,10 @@ public class ShopCarDao {
         int selectedCount = 0;
         for (int i = 0; i < shopGoodsList.size(); i++) {
             MultiItemEntity multiItemEntity = shopGoodsList.get(i);
-            if (multiItemEntity.getItemType() == TITLE) {
-                ActivityInfoBean activityInfoBean = (ActivityInfoBean) multiItemEntity;
-                List<CartInfoBean> subItems = activityInfoBean.getSubItems();
-                if (subItems != null) {
-                    for (CartInfoBean cartInfoBean : subItems) {
-                        boolean isSelected = cartInfoBean.isSelected();
-                        if (isSelected && cartInfoBean.isValid()) {
-                            selectedCount = selectedCount + (cartInfoBean.isMainProduct() ? subItems.size() : cartInfoBean.getCount());
-                        }
-                    }
+            if (multiItemEntity.getItemType() == PRODUCT) {
+                CartInfoBean cartInfoBean = (CartInfoBean) multiItemEntity;
+                if (cartInfoBean.isSelected() && cartInfoBean.isValid()) {
+                    selectedCount = selectedCount + cartInfoBean.getCount();
                 }
             }
         }
@@ -434,10 +428,10 @@ public class ShopCarDao {
 
             }
         }
-        if (jsonArray.length()>0){
+        if (jsonArray.length() > 0) {
             info[0] = jsonArray.toString().trim();
         }
-        if (combineGoodsList.size()>0){
+        if (combineGoodsList.size() > 0) {
             info[1] = new Gson().toJson(combineGoodsList);
         }
         return info;
