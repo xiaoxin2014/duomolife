@@ -2,7 +2,6 @@ package com.amkj.dmsh.mine.activity;
 
 import android.content.Intent;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -61,7 +60,6 @@ import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 
 import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeDouble;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
@@ -159,20 +157,18 @@ public class ShopCarActivity extends BaseActivity {
         header_shared.setCompoundDrawables(null, null, null, null);
         header_shared.setText("编辑");
         header_shared.setSelected(false);
-        shopCarGoodsAdapter = new ShopCarGoodsAdapter(ShopCarActivity.this, shopGoodsList);
-        communal_recycler.setLayoutManager(new LinearLayoutManager(this));
-        communal_recycler.setAdapter(shopCarGoodsAdapter);
 
+        setFloatingButton(download_btn_communal, communal_recycler);
         smart_communal_refresh.setOnRefreshListener(refreshLayout -> {
             check_box_all_buy.setChecked(false);
             check_box_all_del.setChecked(false);
             loadData();
         });
-        shopCarGoodsAdapter.setOnLoadMoreListener(() -> {
-            page++;
-            getShopCarProInfo();
-        }, communal_recycler);
 
+        //初始化购物车商品列表
+        shopCarGoodsAdapter = new ShopCarGoodsAdapter(ShopCarActivity.this, shopGoodsList);
+        communal_recycler.setLayoutManager(new LinearLayoutManager(this));
+        communal_recycler.setAdapter(shopCarGoodsAdapter);
         shopCarGoodsAdapter.setOnItemChildClickListener((adapter, view, position) -> {
             CartInfoBean cartInfoBean = null;
             ActivityInfoBean activityInfoBean = null;
@@ -218,7 +214,7 @@ public class ShopCarActivity extends BaseActivity {
                     if (oldCount > 0 && cartInfoBean.isValid()) {
                         int quantity = cartInfoBean.getSaleSku().getQuantity();
                         if (newNum <= quantity) {
-                            if (cartInfoBean.isMainProduct()) {
+                            if (cartInfoBean.isMainProduct() || cartInfoBean.isCombineProduct()) {
                                 showToast(this, "组合商品无法修改数量");
                             } else {
                                 changeGoods(null, newNum, ADD_NUM, cartInfoBean);
@@ -234,7 +230,7 @@ public class ShopCarActivity extends BaseActivity {
                     newNum = oldCount - 1;
                     if (cartInfoBean.isValid()) {
                         if (newNum > 0) {
-                            if (cartInfoBean.isMainProduct()) {
+                            if (cartInfoBean.isMainProduct() || cartInfoBean.isCombineProduct()) {
                                 showToast(this, "组合商品无法修改数量");
                             } else {
                                 changeGoods(null, newNum, REDUCE_NUM, cartInfoBean);
@@ -247,45 +243,19 @@ public class ShopCarActivity extends BaseActivity {
             }
 
         });
-        communal_recycler.addOnScrollListener(new RecyclerView.OnScrollListener()
+        shopCarGoodsAdapter.setOnLoadMoreListener(() -> {
+            page++;
+            getShopCarProInfo();
+        }, communal_recycler);
 
-        {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-                //特殊布局 特殊处理
-                int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
-                if (lastVisibleItemPosition > 15) {
-                    if (download_btn_communal.getVisibility() == GONE) {
-                        download_btn_communal.setVisibility(VISIBLE);
-                        download_btn_communal.hide(false);
-                    }
-                    if (!download_btn_communal.isVisible()) {
-                        download_btn_communal.show(true);
-                    }
-                } else {
-                    if (download_btn_communal.isVisible()) {
-                        download_btn_communal.hide();
-                    }
-                }
-            }
-        });
-        download_btn_communal.setOnClickListener(v -> {
-            LinearLayoutManager linearLayoutManager = (LinearLayoutManager) communal_recycler.getLayoutManager();
-            int firstVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition();
-            int mVisibleCount = linearLayoutManager.findLastVisibleItemPosition()
-                    - linearLayoutManager.findFirstVisibleItemPosition() + 1;
-            if (firstVisibleItemPosition > mVisibleCount) {
-                communal_recycler.scrollToPosition(mVisibleCount);
-            }
-            communal_recycler.smoothScrollToPosition(0);
-        });
+        //初始化推荐商品列表
         cartHeaderView = LayoutInflater.from(ShopCarActivity.this).
                 inflate(R.layout.layout_cart_recommend, null, false);
-
         recommendHeaderView = new RecommendHeaderView();
         ButterKnife.bind(recommendHeaderView, cartHeaderView);
         recommendHeaderView.initViews();
+
+
     }
 
     private void skipProDetail(CartInfoBean cartInfoBean) {

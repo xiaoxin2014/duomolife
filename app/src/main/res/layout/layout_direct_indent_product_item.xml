@@ -3,6 +3,8 @@
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:background="@color/white"
+              android:focusable="true"
+              android:focusableInTouchMode="true"
               android:gravity="center_vertical"
               android:orientation="vertical">
 
@@ -12,6 +14,7 @@
         android:id="@+id/rv_product"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:nestedScrollingEnabled="false"
         android:scrollbars="none"
         android:visibility="gone"/>
 
@@ -38,7 +41,14 @@
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/gap_left">
 
-        <include layout="@layout/layout_communal_recycler_wrap"/>
+        <android.support.v7.widget.RecyclerView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/communal_recycler_wrap"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:nestedScrollingEnabled="false"
+            android:scrollbars="none"/>
     </RelativeLayout>
 
     <TextView

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +26,8 @@ import com.kingja.loadsir.callback.Callback;
 import com.kingja.loadsir.core.LoadService;
 import com.kingja.loadsir.core.LoadSir;
 import com.kingja.loadsir.core.Transport;
+import com.melnykov.fab.FloatingActionButton;
+import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.tencent.stat.StatService;
 import com.umeng.analytics.MobclickAgent;
 
@@ -43,6 +46,8 @@ import cn.jzvd.JzvdStd;
 import me.jessyan.autosize.AutoSize;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
 
@@ -67,6 +72,7 @@ public abstract class BaseFragment extends ImmersionFragment {
     protected boolean isLazy = true;          //当前Fragment是否需要使用懒加载方式
     public TotalPersonalTrajectory totalPersonalTrajectory;
     public LoadService loadService;
+    private int scrollY;
 
     public static <T extends BaseFragment> T newInstance(Class<?> subFragmentCls, Map<String, String> params, Map<String, Object> objectParams) {
         try {
@@ -259,6 +265,39 @@ public abstract class BaseFragment extends ImmersionFragment {
      */
     protected boolean isAddLoad() {
         return false;
+    }
+
+    /**
+     * 添加悬浮置顶按钮
+     */
+    protected void setFloatingButton(FloatingActionButton floatingActionButton, View view) {
+        int screenHeight = ((TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike()).getScreenHeight();
+        if (view instanceof RecyclerView) {
+            ((RecyclerView) view).addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                    scrollY += dy;
+                    if (scrollY > screenHeight * 1.5) {
+                        if (floatingActionButton.getVisibility() == GONE) {
+                            floatingActionButton.setVisibility(VISIBLE);
+                            floatingActionButton.hide(false);
+                        }
+                        if (!floatingActionButton.isVisible()) {
+                            floatingActionButton.show(true);
+                        }
+                    } else {
+                        if (floatingActionButton.isVisible()) {
+                            floatingActionButton.hide();
+                        }
+                    }
+                }
+            });
+            floatingActionButton.setOnClickListener(v -> {
+                floatingActionButton.hide();
+                ((RecyclerView) view).stopScroll();
+                ((RecyclerView) view).smoothScrollToPosition(0);
+            });
+        }
     }
 
     @Override

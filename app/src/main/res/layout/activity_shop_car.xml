@@ -39,7 +39,5 @@
                 <include layout="@layout/layout_communal_settlement" />
             </RelativeLayout>
         </LinearLayout>
-
-        <include layout="@layout/shop_car_loading_empty_error" />
     </FrameLayout>
 </LinearLayout>
