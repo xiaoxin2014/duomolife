@@ -1,36 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/ll_indent_bottom"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/sc_mm_98"
-    android:gravity="center_vertical|right"
-    android:orientation="horizontal">
+              android:id="@+id/ll_indent_bottom"
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/sc_mm_98"
+              android:gravity="center_vertical|right"
+              android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/tv_indent_border_zero_gray"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/sc_mm_58"
+        android:layout_gravity="center_vertical"
+        android:background="@drawable/selector_border_circle_three_gray_white"
+        android:gravity="center"
+        android:minWidth="@dimen/sc_mm_160"
+        android:paddingLeft="@dimen/sc_mm_15"
+        android:paddingRight="@dimen/sc_mm_15"
+        android:text="赠品物流"
+        android:textColor="@color/text_login_gray_s"
+        android:textSize="@dimen/sc_mm_26"
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/tv_indent_border_first_gray"
         android:layout_width="wrap_content"
-        android:paddingLeft="@dimen/sc_mm_15"
-        android:paddingRight="@dimen/sc_mm_15"
-        android:minWidth="@dimen/sc_mm_160"
         android:layout_height="@dimen/sc_mm_58"
         android:layout_gravity="center_vertical"
+        android:layout_marginLeft="@dimen/sc_mm_20"
         android:background="@drawable/selector_border_circle_three_gray_white"
-
         android:gravity="center"
+        android:minWidth="@dimen/sc_mm_160"
+        android:paddingLeft="@dimen/sc_mm_15"
+        android:paddingRight="@dimen/sc_mm_15"
         android:textColor="@color/text_login_gray_s"
-        android:textSize="@dimen/sc_mm_26" />
+        android:textSize="@dimen/sc_mm_26"/>
 
     <TextView
         android:id="@+id/tv_indent_border_second_blue"
         android:layout_width="wrap_content"
-        android:paddingLeft="@dimen/sc_mm_15"
-        android:paddingRight="@dimen/sc_mm_15"
-        android:minWidth="@dimen/sc_mm_160"
         android:layout_height="@dimen/sc_mm_58"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="@dimen/sc_mm_20"
         android:background="@drawable/border_circle_three_blue_white"
         android:gravity="center"
+        android:minWidth="@dimen/sc_mm_160"
+        android:paddingLeft="@dimen/sc_mm_15"
+        android:paddingRight="@dimen/sc_mm_15"
         android:textColor="@color/text_login_blue_z"
-        android:textSize="@dimen/sc_mm_26" />
+        android:textSize="@dimen/sc_mm_26"/>
 </LinearLayout>

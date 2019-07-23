@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Created by atd48 on 2016/10/31.
  */
-public class DirectLogisticsEntity extends BaseEntity{
+public class DirectLogisticsEntity extends BaseEntity {
 
     @SerializedName("result")
     private DirectLogisticsBean directLogisticsBean;
@@ -27,6 +27,11 @@ public class DirectLogisticsEntity extends BaseEntity{
     public static class DirectLogisticsBean {
         @SerializedName("logistics")
         private List<List<LogisticsProductPacketBean>> logisticsProductPacketList;
+        private List<List<LogisticsProductPacketBean>> presentLogistics;
+
+        public List<List<LogisticsProductPacketBean>> getPresentLogistics() {
+            return presentLogistics;
+        }
 
         public List<List<LogisticsProductPacketBean>> getLogisticsProductPacketList() {
             return logisticsProductPacketList;
@@ -36,7 +41,11 @@ public class DirectLogisticsEntity extends BaseEntity{
             this.logisticsProductPacketList = logisticsProductPacketList;
         }
 
-        public static class LogisticsProductPacketBean implements Parcelable{
+        public void setPresentLogistics(List<List<LogisticsProductPacketBean>> presentLogistics) {
+            this.presentLogistics = presentLogistics;
+        }
+
+        public static class LogisticsProductPacketBean implements Parcelable {
             private String deliverTime;
             private String marketPrice;
             private String expressNo;
@@ -50,6 +59,33 @@ public class DirectLogisticsEntity extends BaseEntity{
             private String name;
             private int id;
             private int integralPrice;
+
+
+            //赠品信息
+            /**
+             * pExpressCompany : 圆通快递
+             * presentPicUrl : http://image.domolife.cn/platform/20190719/20190719143036086.jpeg
+             * pExpressType : YTO
+             * presentCount : 1
+             * pExpressNo : 126932600739050329
+             * orderProductId : 454409
+             * presentName : 褪黑素
+             */
+
+            private String pExpressCompany;
+            private String presentPicUrl;
+            private int presentCount;
+            private String pExpressNo;
+            private int orderProductId;
+            private String presentName;
+
+            public String getpExpressNo() {
+                return pExpressNo;
+            }
+
+            public void setpExpressNo(String pExpressNo) {
+                this.pExpressNo = pExpressNo;
+            }
 
             public String getDeliverTime() {
                 return deliverTime;
@@ -147,7 +183,55 @@ public class DirectLogisticsEntity extends BaseEntity{
                 this.integralPrice = integralPrice;
             }
 
-            public static class LogisticsDetailsBean implements Parcelable{
+            public String getPExpressCompany() {
+                return pExpressCompany;
+            }
+
+            public void setPExpressCompany(String pExpressCompany) {
+                this.pExpressCompany = pExpressCompany;
+            }
+
+            public String getPresentPicUrl() {
+                return presentPicUrl;
+            }
+
+            public void setPresentPicUrl(String presentPicUrl) {
+                this.presentPicUrl = presentPicUrl;
+            }
+
+            public int getPresentCount() {
+                return presentCount;
+            }
+
+            public void setPresentCount(int presentCount) {
+                this.presentCount = presentCount;
+            }
+
+            public String getPExpressNo() {
+                return pExpressNo;
+            }
+
+            public void setPExpressNo(String pExpressNo) {
+                this.pExpressNo = pExpressNo;
+            }
+
+            public int getOrderProductId() {
+                return orderProductId;
+            }
+
+            public void setOrderProductId(int orderProductId) {
+                this.orderProductId = orderProductId;
+            }
+
+            public String getPresentName() {
+                return presentName;
+            }
+
+            public void setPresentName(String presentName) {
+                this.presentName = presentName;
+            }
+
+            public static class LogisticsDetailsBean implements Parcelable {
                 @SerializedName("result")
                 private LogisticsBean logisticsBean;
 
@@ -159,7 +243,7 @@ public class DirectLogisticsEntity extends BaseEntity{
                     this.logisticsBean = logisticsBean;
                 }
 
-                public static class LogisticsBean implements Parcelable{
+                public static class LogisticsBean implements Parcelable {
                     @SerializedName("list")
                     private List<LogisticTextBean> logisticTextBeanList;
 
@@ -171,7 +255,7 @@ public class DirectLogisticsEntity extends BaseEntity{
                         this.logisticTextBeanList = logisticTextBeanList;
                     }
 
-                    public static class LogisticTextBean implements Parcelable{
+                    public static class LogisticTextBean implements Parcelable {
                         /**
                          * time : 2018-12-04 21:10:56
                          * status : 该订单暂无流转信息，请耐心等待或联系客服！

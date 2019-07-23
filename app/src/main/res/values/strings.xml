@@ -124,7 +124,7 @@
     <string name="text_act_not_start">活动价 ¥%1$s（未开始）</string>
     <string name="car_discount_price">优惠了¥%1$s元</string>
     <string name="money_price_chn">¥%1$s</string>
-    <string name="shop_cart_rmb_price">%1$s¥%2$s</string>
+    <string name="shop_cart_rmb_price">%1$s  ¥%2$s</string>
     <string name="money_market_price_chn">参考价¥%1$s</string>
     <string name="cart_present">【赠品】%1$s</string>
     <string name="cart_combine">【组合购】%1$s</string>

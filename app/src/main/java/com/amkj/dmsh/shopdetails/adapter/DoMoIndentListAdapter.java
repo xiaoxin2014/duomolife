@@ -16,6 +16,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.shopdetails.activity.DirectExchangeDetailsActivity;
+import com.amkj.dmsh.shopdetails.activity.DirectLogisticsDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.OrderListBean;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -164,7 +165,7 @@ public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoI
         if (0 <= orderListBean.getStatus() && orderListBean.getStatus() < 10) {
             //            展示倒计时
             if (!TextUtils.isEmpty(orderListBean.getCurrentTime())
-                    &&isEndOrStartTimeAddSeconds(orderListBean.getCreateTime()
+                    && isEndOrStartTimeAddSeconds(orderListBean.getCreateTime()
                     , orderListBean.getCurrentTime()
                     , orderListBean.getSecond())) {
                 intentHView.tv_direct_indent_create_time.setVisibility(View.GONE);
@@ -188,13 +189,20 @@ public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoI
         });
     }
 
-    //
     private void setIntentStatus(IntentHView intentHView, IntentFView intentFView, final OrderListBean orderListBean) {
+        intentFView.tv_indent_border_zero_gray.setVisibility(orderListBean.getIsShowPresentLogistics() == 1 ? View.VISIBLE : View.GONE);
+        intentFView.tv_indent_border_zero_gray.setOnClickListener(v -> {
+            Intent intent = new Intent();
+            intent.setClass(context, DirectLogisticsDetailsActivity.class);
+            intent.putExtra("orderNo", orderListBean.getNo());
+            intent.putExtra("presentLogistics", "赠品物流");
+            context.startActivity(intent);
+        });
         int statusCode = orderListBean.getStatus();
         intentHView.tv_indent_type_show.setText(getStrings(ConstantVariable.INDENT_PRO_STATUS.get(String.valueOf(statusCode))));
-        if (-20 <= statusCode && statusCode <= -10 || (-26 <= statusCode&& statusCode<= -24)) {
+        if (-20 <= statusCode && statusCode <= -10 || (-26 <= statusCode && statusCode <= -24)) {
             intentFView.ll_indent_bottom.setVisibility(View.GONE);
-        }else if (0 <= statusCode && statusCode < 10) {
+        } else if (0 <= statusCode && statusCode < 10) {
 //          底栏 件数
             intentFView.tv_border_first_gray.setVisibility(View.VISIBLE);
             intentFView.tv_border_second_blue.setVisibility(View.VISIBLE);
@@ -253,7 +261,7 @@ public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoI
                 intentFView.tv_border_second_blue.setVisibility(View.GONE);
                 intentFView.tv_border_first_gray.setVisibility(View.GONE);
             }
-            if(orderListBean.isWaitDeliveryFlag()){
+            if (orderListBean.isWaitDeliveryFlag()) {
                 intentFView.ll_indent_bottom.setVisibility(View.VISIBLE);
                 intentFView.tv_border_second_blue.setVisibility(View.VISIBLE);
                 intentFView.tv_border_second_blue.setText("提醒发货");
@@ -409,6 +417,9 @@ public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoI
         //        底栏
         @BindView(R.id.ll_indent_bottom)
         LinearLayout ll_indent_bottom;
+        //        查看赠品物流
+        @BindView(R.id.tv_indent_border_zero_gray)
+        TextView tv_indent_border_zero_gray;
         @BindView(R.id.tv_indent_border_first_gray)
         TextView tv_border_first_gray;
         @BindView(R.id.tv_indent_border_second_blue)
@@ -416,6 +427,7 @@ public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoI
         //        商品 件数 价格 统计
         @BindView(R.id.tv_intent_count_price)
         TextView tv_intent_count_price;
+
     }
 
     public class IndentListViewHolder extends BaseViewHolder {
@@ -430,12 +442,6 @@ public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoI
                 communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
                         // 设置分隔线资源ID
                         .setDividerId(R.drawable.item_divider_gray_f_two_px)
-
-
-
-
-
-
                         .create());
             }
         }

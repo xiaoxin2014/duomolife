@@ -4,8 +4,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.amkj.dmsh.base.BaseEntity;
-import com.google.gson.annotations.SerializedName;
 import com.amkj.dmsh.mine.bean.CartProductInfoBean;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 import java.util.Map;
@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * Created by atd48 on 2016/10/28.
  */
-public class InquiryOrderEntry extends BaseEntity{
+public class InquiryOrderEntry extends BaseEntity {
     @SerializedName("result")
     private OrderInquiryDateEntry orderInquiryDateEntry;
 
@@ -121,6 +121,17 @@ public class InquiryOrderEntry extends BaseEntity{
             private boolean isBaskReader;
             private List<GoodsBean> goods;
             private int second;
+
+            //是否显示赠品物流
+            private int isShowPresentLogistics;
+
+            public int getIsShowPresentLogistics() {
+                return isShowPresentLogistics;
+            }
+
+            public void setIsShowPresentLogistics(int isShowPresentLogistics) {
+                this.isShowPresentLogistics = isShowPresentLogistics;
+            }
 
             public int getSecond() {
                 return second;
@@ -341,6 +352,17 @@ public class InquiryOrderEntry extends BaseEntity{
                 @SerializedName("presentProductInfo")
                 private List<CartProductInfoBean> presentProductInfoList;
 
+                //赠品信息
+                private PresentProductOrder presentProductOrder;
+
+                public PresentProductOrder getPresentProductOrder() {
+                    return presentProductOrder;
+                }
+
+                public void setPresentProductOrder(PresentProductOrder presentProductOrder) {
+                    this.presentProductOrder = presentProductOrder;
+                }
+
                 public String getCombineParentId() {
                     return combineParentId;
                 }
@@ -501,7 +523,41 @@ public class InquiryOrderEntry extends BaseEntity{
                     this.completeTime = completeTime;
                 }
 
-                public GoodsBean() {
+                public static class PresentProductOrder {
+
+                    /**
+                     * presentPicUrl : http://image.domolife.cn/platform/20190719/20190719143036086.jpeg
+                     * presentCount : 1
+                     * presentName : 褪黑素
+                     */
+
+                    private String presentPicUrl;
+                    private String presentCount;
+                    private String presentName;
+
+                    public String getPresentPicUrl() {
+                        return presentPicUrl;
+                    }
+
+                    public void setPresentPicUrl(String presentPicUrl) {
+                        this.presentPicUrl = presentPicUrl;
+                    }
+
+                    public String getPresentCount() {
+                        return presentCount;
+                    }
+
+                    public void setPresentCount(String presentCount) {
+                        this.presentCount = presentCount;
+                    }
+
+                    public String getPresentName() {
+                        return presentName;
+                    }
+
+                    public void setPresentName(String presentName) {
+                        this.presentName = presentName;
+                    }
                 }
 
                 @Override

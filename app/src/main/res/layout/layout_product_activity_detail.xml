@@ -21,9 +21,10 @@
             android:layout_weight="1"
             android:ellipsize="end"
             android:gravity="center_vertical"
-            android:maxLines="1"
+            android:maxLines="2"
             android:paddingLeft="@dimen/sc_mm_30"
             android:paddingRight="@dimen/sc_mm_10"
+            android:text="@string/defaul"
             android:textColor="@color/white"
             android:textSize="@dimen/sc_mm_30"/>
 

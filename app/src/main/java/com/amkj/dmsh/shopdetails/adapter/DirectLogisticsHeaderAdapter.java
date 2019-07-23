@@ -3,9 +3,10 @@ package com.amkj.dmsh.shopdetails.adapter;
 import android.content.Context;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.shopdetails.bean.DirectLogisticsEntity.DirectLogisticsBean.LogisticsProductPacketBean;
+import com.amkj.dmsh.shopdetails.bean.DirectLogisticsEntity;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.amkj.dmsh.shopdetails.bean.DirectLogisticsEntity.DirectLogisticsBean.LogisticsProductPacketBean;
 import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
@@ -15,7 +16,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 /**
  * Created by atd48 on 2016/10/31.
  */
-public class DirectLogisticsHeaderAdapter extends BaseQuickAdapter<LogisticsProductPacketBean, BaseViewHolder> {
+public class DirectLogisticsHeaderAdapter extends BaseQuickAdapter<DirectLogisticsEntity.DirectLogisticsBean.LogisticsProductPacketBean, BaseViewHolder> {
     private final Context context;
 
     public DirectLogisticsHeaderAdapter(Context context, List<LogisticsProductPacketBean> logisticsBeanList) {
