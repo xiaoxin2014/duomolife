@@ -2,6 +2,7 @@ package com.amkj.dmsh.shopdetails.bean;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
 import com.amkj.dmsh.base.BaseTimeEntity;
 import com.amkj.dmsh.mine.bean.ActivityInfoBean;
@@ -141,6 +142,15 @@ public class IndentWriteEntity extends BaseTimeEntity {
             private String price;
             private String msg;
             private int allowCouoon;
+            private String startFee;
+
+            public String getStartFee() {
+                return (!TextUtils.isEmpty(startFee) && !"0".equals(startFee)) ? "满¥" + startFee : "";
+            }
+
+            public void setStartFee(String startFee) {
+                this.startFee = startFee;
+            }
 
             public int getAllowCouoon() {
                 return allowCouoon;
@@ -255,20 +265,35 @@ public class IndentWriteEntity extends BaseTimeEntity {
                 private int saleSkuId;
                 private String activitypriceDesc;
                 private String notBuyAreaIds;
+                //该地区无法配送
                 private String notBuyAreaInfo;
                 private int real;
                 private int allowCoupon;
+                //赠品信息
                 private PresentInfo presentInfo;
+                //主商品id
+                private int combineMainId;
+                //搭配商品id
+                private int combineMatchId;
+                //购物车id
+                private int cartId;
+
+
                 //是否显示分割线
                 private int showLine;
                 //是够显示活动信息
                 private int showActInfo;
                 //存储活动信息
                 private ActivityInfoBean activityInfoBean;
-                //主商品id
-                private int combineMainId;
-                //搭配商品id
-                private int combineMatchId;
+
+
+                public int getCartId() {
+                    return cartId;
+                }
+
+                public void setCartId(int cartId) {
+                    this.cartId = cartId;
+                }
 
                 public PresentInfo getPresentInfo() {
                     return presentInfo;

@@ -280,6 +280,7 @@ public class ShopCarDao {
                             ActivityInfoBean activityInfo = cartBean.getActivityInfo();
                             if (activityInfo != null && activityInfo.getActivityCode().equals(activityInfoBean.getActivityCode())) {
                                 activityInfoBean.setActivityRule(activityInfo.getActivityRule());
+                                activityInfoBean.setNeedMore(cartBean.getActivityInfo().isNeedMore());
                                 break;
                             }
                         }
@@ -298,6 +299,7 @@ public class ShopCarDao {
                         //判断是否是活动商品(如果是，更新活动规则)
                         if (!TextUtils.isEmpty(activityCode) && activityInfoBean != null && activityInfoBean.getActivityCode().equals(activityCode)) {
                             parent.setActivityRule(cartBean.getActivityInfo().getActivityRule());
+                            parent.setNeedMore(cartBean.getActivityInfo().isNeedMore());
                         }
 
                         //匹配被修改的商品
@@ -402,6 +404,7 @@ public class ShopCarDao {
                 combineGoodsBean.setProductId(combineMainProduct.getId());
                 combineGoodsBean.setCount(combineMainProduct.getCount());
                 combineGoodsBean.setMainId(combineMainProduct.getCombineMainId());
+                combineGoodsBean.setCartId(combineMainProduct.getCartId());
                 if (combineMatchProducts != null && combineMatchProducts.size() > 0) {
                     for (ProductInfoBean productInfoBean : combineMatchProducts) {
                         MatchProductsBean matchProductsBean = new MatchProductsBean();
@@ -420,6 +423,7 @@ public class ShopCarDao {
                         jsonObject.put("saleSkuId", productInfoBean.getSaleSkuId());
                         jsonObject.put("id", productInfoBean.getId());
                         jsonObject.put("count", productInfoBean.getCount());
+                        jsonObject.put("cartId", productInfoBean.getCartId());
                         jsonArray.put(jsonObject);
                     } catch (Exception e) {
                         e.printStackTrace();

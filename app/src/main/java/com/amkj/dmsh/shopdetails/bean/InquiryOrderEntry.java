@@ -523,43 +523,6 @@ public class InquiryOrderEntry extends BaseEntity {
                     this.completeTime = completeTime;
                 }
 
-                public static class PresentProductOrder {
-
-                    /**
-                     * presentPicUrl : http://image.domolife.cn/platform/20190719/20190719143036086.jpeg
-                     * presentCount : 1
-                     * presentName : 褪黑素
-                     */
-
-                    private String presentPicUrl;
-                    private String presentCount;
-                    private String presentName;
-
-                    public String getPresentPicUrl() {
-                        return presentPicUrl;
-                    }
-
-                    public void setPresentPicUrl(String presentPicUrl) {
-                        this.presentPicUrl = presentPicUrl;
-                    }
-
-                    public String getPresentCount() {
-                        return presentCount;
-                    }
-
-                    public void setPresentCount(String presentCount) {
-                        this.presentCount = presentCount;
-                    }
-
-                    public String getPresentName() {
-                        return presentName;
-                    }
-
-                    public void setPresentName(String presentName) {
-                        this.presentName = presentName;
-                    }
-                }
-
                 @Override
                 public int describeContents() {
                     return 0;

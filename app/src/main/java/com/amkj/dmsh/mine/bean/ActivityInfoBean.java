@@ -30,6 +30,16 @@ public class ActivityInfoBean extends AbstractExpandableItem<CartInfoBean> imple
     private String activityRule;
     private String preActivityRule;
     private int allowCoupon;
+    //是否需要显示凑单按钮（优惠已经达到最大额度就不需要提示凑单）
+    private boolean needMore;
+
+    public boolean isNeedMore() {
+        return needMore;
+    }
+
+    public void setNeedMore(boolean needMore) {
+        this.needMore = needMore;
+    }
 
     public int getAllowCoupon() {
         return allowCoupon;

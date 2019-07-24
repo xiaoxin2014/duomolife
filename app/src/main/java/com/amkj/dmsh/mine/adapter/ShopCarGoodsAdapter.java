@@ -11,7 +11,6 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.mine.bean.ActivityInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean.CartBean.CartInfoBean;
-import com.amkj.dmsh.mine.biz.ShopCarDao;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
@@ -67,7 +66,7 @@ public class ShopCarGoodsAdapter extends BaseMultiItemQuickAdapter<MultiItemEnti
                 }
 
                 GlideImageLoaderUtil.loadCenterCrop(context, helper.getView(R.id.img_shop_car_product), cartInfoBean.getPicUrl());
-                //        "activityType": { "0": "满减", "1": "折扣", "2": "立减", "3": "限时购", "4": "满赠", "5": "首单赠", "6": "组合商品", "7": "赠品", "8": "第二件半价" }
+                //"activityType": { "0": "满减", "1": "折扣", "2": "立减", "3": "限时购", "4": "满赠", "5": "首单赠", "6": "组合商品", "7": "赠品", "8": "第二件半价" }
                 helper.addOnClickListener(R.id.cb_shop_car_sel).setTag(R.id.cb_shop_car_sel, R.id.shop_car_cb, cartInfoBean)//是否选中商品
                         .setText(R.id.tv_shop_car_name, getStrings(cartInfoBean.getName()))
                         .setText(R.id.tv_shop_car_product_sku, getStrings(cartInfoBean.getSaleSkuValue()))
@@ -142,39 +141,46 @@ public class ShopCarGoodsAdapter extends BaseMultiItemQuickAdapter<MultiItemEnti
                 });
                 break;
             case ConstantVariable.TITLE:
+                //是否显示活动信息
+                ActivityInfoBean activityInfoData = (ActivityInfoBean) multiItemEntity;
+                boolean showActivityInfo = !TextUtils.isEmpty(activityInfoData.getActivityCode()) && activityInfoData.getSubItems() != null && activityInfoData.getSubItems().size() > 0;
                 helper.setGone(R.id.ll_communal_activity_topic_tag, true)
                         .setGone(R.id.blank, true);
 
-                ActivityInfoBean activityInfoData = (ActivityInfoBean) multiItemEntity;
                 ViewGroup.LayoutParams layoutParams = helper.itemView.getLayoutParams();
-                if (TextUtils.isEmpty(activityInfoData.getActivityCode()) || activityInfoData.getSubItems().size() == 0) {
-                    layoutParams.height = 0;
-                    layoutParams.width = 0;
-                } else {
+                if (showActivityInfo) {
                     layoutParams.height = WRAP_CONTENT;
                     layoutParams.width = MATCH_PARENT;
+                } else {
+                    layoutParams.height = 0;
+                    layoutParams.width = 0;
                 }
                 helper.itemView.setLayoutParams(layoutParams);
-                if (!TextUtils.isEmpty(activityInfoData.getActivityCode()) && activityInfoData.getSubItems() != null && activityInfoData.getSubItems().size() > 0) {
-                    //设置标签
-                    helper.setGone(R.id.tv_communal_activity_tag, !TextUtils.isEmpty(activityInfoData.getActivityTag()))
-                            .setText(R.id.tv_communal_activity_tag_next, "凑单")
-                            .setText(R.id.tv_communal_activity_tag, getStrings(activityInfoData.getActivityTag()));
 
+                if (showActivityInfo) {
+                    //设置标签
+                    helper.setText(R.id.tv_communal_activity_tag, getStrings(activityInfoData.getActivityTag()))
+                            .setGone(R.id.tv_communal_activity_tag, !TextUtils.isEmpty(activityInfoData.getActivityTag()))
+                            .setText(R.id.tv_communal_activity_tag_next, activityInfoData.isNeedMore() ? "凑单" : "")
+                            .addOnClickListener(R.id.ll_communal_activity_tag_rule).setTag(R.id.ll_communal_activity_tag_rule, activityInfoData);
                     //设置规则
                     switch (activityInfoData.getActivityType()) {
+                        //显示规则，可进入专场
                         case 0:
                         case 1:
-                        case 4:
-                        case 8:
-                            helper.setGone(R.id.ll_communal_activity_tag_rule, true)
-                                    .setText(R.id.tv_communal_activity_tag_rule, ShopCarDao.subItemCheceked(activityInfoData) ? getStrings(activityInfoData.getActivityRule()) : getStrings(activityInfoData.getPreActivityRule()))
-                                    .addOnClickListener(R.id.tv_communal_activity_tag_next).setTag(R.id.tv_communal_activity_tag_next, activityInfoData)
-                                    .addOnClickListener(R.id.tv_communal_activity_tag_rule).setTag(R.id.tv_communal_activity_tag_rule, activityInfoData);
-                            break;
                         case 2:
-                        case 3:
+                        case 4:
                         case 5:
+                        case 8:
+                            helper.setText(R.id.tv_communal_activity_tag_rule, getStrings(activityInfoData.getActivityRule()))
+                                    .setGone(R.id.ll_communal_activity_tag_rule, true);
+                            break;
+                        //不显示规则，可以进入专场
+                        case 3:
+                            helper.setText(R.id.tv_communal_activity_tag_rule, "")
+                                    .setGone(R.id.ll_communal_activity_tag_rule, true);
+                            break;
+                        //不显示规则，也不能进入专场
                         case 6:
                         case 7:
                             helper.setGone(R.id.ll_communal_activity_tag_rule, false);

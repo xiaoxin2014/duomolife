@@ -110,8 +110,6 @@ public class GroupGoodsEntity extends BaseEntity {
             private int count = 1;
             //当前选中的搭配商品省了多少钱
             private double saveMoney;
-            //当前选中的搭配商品价格
-            private String price;
             //存储主商品活动code
             private String activityCode;
 
@@ -121,14 +119,6 @@ public class GroupGoodsEntity extends BaseEntity {
 
             public void setActivityCode(String activityCode) {
                 this.activityCode = activityCode;
-            }
-
-            public String getPrice() {
-                return stripTrailingZeros(price);
-            }
-
-            public void setPrice(String price) {
-                this.price = price;
             }
 
             public double getSaveMoney() {

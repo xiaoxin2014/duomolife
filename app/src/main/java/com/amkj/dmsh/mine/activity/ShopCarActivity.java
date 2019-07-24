@@ -40,6 +40,7 @@ import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
 import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
+import com.amkj.dmsh.utils.DoubleUtil;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.bottomdialog.SkuDialog;
@@ -172,7 +173,7 @@ public class ShopCarActivity extends BaseActivity {
         shopCarGoodsAdapter.setOnItemChildClickListener((adapter, view, position) -> {
             CartInfoBean cartInfoBean = null;
             ActivityInfoBean activityInfoBean = null;
-            if (view.getId() == R.id.tv_communal_activity_tag_next || view.getId() == R.id.tv_communal_activity_tag_rule) {
+            if (view.getId() == R.id.ll_communal_activity_tag_rule) {
                 activityInfoBean = (ActivityInfoBean) view.getTag();
             } else {
                 cartInfoBean = (CartInfoBean) view.getTag();
@@ -201,8 +202,7 @@ public class ShopCarActivity extends BaseActivity {
                     }
                     break;
                 //跳转活动专场
-                case R.id.tv_communal_activity_tag_next:
-                case R.id.tv_communal_activity_tag_rule:
+                case R.id.ll_communal_activity_tag_rule:
                     Intent intent = new Intent(ShopCarActivity.this, QualityProductActActivity.class);
                     intent.putExtra("activityCode", activityInfoBean.getActivityCode());
                     startActivity(intent);
@@ -448,8 +448,8 @@ public class ShopCarActivity extends BaseActivity {
             double price = shopCartBean.getTotalProductPrice();
             double discount = shopCartBean.getTotalProductDiscountPrice();
             if (!isPage1) {
-                price = getStringChangeDouble(tv_cart_total.getText().toString().trim()) + price;
-                discount = getStringChangeDouble(tv_settlement_dis_car_price.getText().toString().trim()) + discount;
+                price = DoubleUtil.add(getStringChangeDouble(tv_cart_total.getText().toString().trim()), price);
+                discount = DoubleUtil.add(getStringChangeDouble(tv_settlement_dis_car_price.getText().toString().trim()), discount);
             }
             tv_cart_total.setText(getStringsFormat(this, R.string.group_total_price, stripTrailingZeros(String.valueOf(price))));
             //优惠金额
@@ -738,12 +738,12 @@ public class ShopCarActivity extends BaseActivity {
                     if (shopCarNewInfoEntity != null) {
                         ShopCartBean shopCartBean = shopCarNewInfoEntity.getResult();
                         if (SUCCESS_CODE.equals(shopCarNewInfoEntity.getCode()) && shopCartBean != null) {
-                            //更新结算金额
-                            updatePrice(shopCarNewInfoEntity.getResult(), true);
                             //刷新条目
                             if (isNotifyItem) {
                                 updateGoodsInfo(shopCarGoodsAdapter, shopCartBean, cartInfoBean, delGoods);
                             }
+                            //更新结算金额
+                            updatePrice(shopCarNewInfoEntity.getResult(), true);
                         } else if (EMPTY_CODE.equals(shopCarNewInfoEntity.getCode())) {
                             tv_cart_total.setText(("¥" + "0.00"));//结算金额
                             tv_settlement_dis_car_price.setVisibility(View.GONE);

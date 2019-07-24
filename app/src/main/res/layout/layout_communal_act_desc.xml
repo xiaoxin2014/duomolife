@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:visibility="gone"
               android:id="@+id/ll_communal_activity_topic_tag"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:gravity="center_vertical"
               android:orientation="horizontal"
-              android:visibility="gone"
               android:paddingLeft="@dimen/sc_mm_26"
               android:paddingTop="@dimen/sc_mm_40"
               android:paddingRight="@dimen/sc_mm_24">
@@ -26,10 +26,8 @@
         android:paddingTop="@dimen/sc_mm_5"
         android:paddingRight="@dimen/sc_mm_8"
         android:paddingBottom="@dimen/sc_mm_5"
-        android:text="满减"
         android:textColor="@color/white"
-        android:textSize="@dimen/sc_mm_24"
-        android:visibility="gone"/>
+        android:textSize="@dimen/sc_mm_24"/>
 
     <LinearLayout
         android:id="@+id/ll_communal_activity_tag_rule"

@@ -36,6 +36,7 @@
     <include layout="@layout/layout_present"/>
 
     <RelativeLayout
+        android:visibility="gone"
         android:id="@+id/rel_indent_com_pre_pro"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -1,73 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/white"
-    android:id="@+id/ll_oversea_info"
-    android:visibility="gone"
-    android:focusable="true"
-    android:focusableInTouchMode="true"
-    android:divider="@drawable/divider_ll_0_5_dp"
-    android:showDividers="middle"
-    android:orientation="vertical">
+              android:id="@+id/ll_oversea_info"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@color/white"
+              android:divider="@drawable/divider_ll_0_5_dp"
+              android:focusable="true"
+              android:focusableInTouchMode="true"
+              android:orientation="vertical"
+              android:showDividers="middle">
+
     <RelativeLayout
         android:layout_width="match_parent"
+        android:layout_height="@dimen/sc_mm_104"
         android:paddingLeft="@dimen/gap_left"
-        android:paddingRight="@dimen/gap_right"
-        android:layout_height="@dimen/sc_mm_104">
+        android:paddingRight="@dimen/gap_right">
+
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_centerVertical="true"
             android:id="@+id/tv_oversea_name"
-            android:textSize="@dimen/sc_mm_28"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:text="实名用户"
             android:textColor="@color/text_black_t"
-            android:layout_height="wrap_content" />
+            android:textSize="@dimen/sc_mm_28"/>
+
         <EditText
-            android:layout_width="wrap_content"
-            android:layout_centerVertical="true"
             android:id="@+id/et_oversea_name"
-            android:textSize="@dimen/sc_mm_28"
-            android:singleLine="true"
-            android:ellipsize="end"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:layout_alignParentRight="true"
-            android:background="@color/white"
-            android:layout_toRightOf="@id/tv_oversea_name"
-            android:hint="@string/input_name"
-            android:textColorHint="@color/text_gray_hint_n"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/sc_mm_20"
+            android:layout_toRightOf="@id/tv_oversea_name"
+            android:background="@color/white"
+            android:ellipsize="end"
             android:gravity="right|center_vertical"
+            android:hint="@string/input_name"
+            android:singleLine="true"
             android:textColor="@color/text_black_t"
-            android:layout_height="match_parent" />
+            android:textColorHint="@color/text_gray_hint_n"
+            android:textSize="@dimen/sc_mm_28"/>
     </RelativeLayout>
+
     <RelativeLayout
         android:layout_width="match_parent"
+        android:layout_height="@dimen/sc_mm_104"
         android:paddingLeft="@dimen/gap_left"
-        android:paddingRight="@dimen/gap_right"
-        android:layout_height="@dimen/sc_mm_104">
+        android:paddingRight="@dimen/gap_right">
+
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_centerVertical="true"
             android:id="@+id/tv_oversea_card"
-            android:textSize="@dimen/sc_mm_28"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:text="身份证号码"
             android:textColor="@color/text_black_t"
-            android:layout_height="wrap_content" />
+            android:textSize="@dimen/sc_mm_28"/>
+
         <EditText
-            android:layout_width="wrap_content"
-            android:layout_centerVertical="true"
             android:id="@+id/et_oversea_card"
-            android:textSize="@dimen/sc_mm_28"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:layout_alignParentRight="true"
-            android:background="@color/white"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/sc_mm_20"
             android:layout_toRightOf="@id/tv_oversea_card"
+            android:background="@color/white"
+            android:ellipsize="end"
+            android:gravity="right|center_vertical"
             android:hint="@string/input_card"
             android:singleLine="true"
-            android:ellipsize="end"
-            android:textColorHint="@color/text_gray_hint_n"
-            android:layout_marginLeft="@dimen/sc_mm_20"
-            android:gravity="right|center_vertical"
             android:textColor="@color/text_black_t"
-            android:layout_height="match_parent" />
+            android:textColorHint="@color/text_gray_hint_n"
+            android:textSize="@dimen/sc_mm_28"/>
     </RelativeLayout>
 </LinearLayout>

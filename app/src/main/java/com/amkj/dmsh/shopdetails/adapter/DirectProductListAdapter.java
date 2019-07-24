@@ -16,6 +16,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.bean.GroupShopDetailsEntity.GroupShopDetailsBean;
 import com.amkj.dmsh.mine.adapter.ShopCarComPreProAdapter;
+import com.amkj.dmsh.mine.bean.ActivityInfoBean;
 import com.amkj.dmsh.mine.bean.CartProductInfoBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
@@ -30,8 +31,8 @@ import com.amkj.dmsh.shopdetails.bean.DirectApplyRefundBean.DirectRefundProBean;
 import com.amkj.dmsh.shopdetails.bean.IndentInfoDetailEntity.IndentInfoDetailBean.OrderDetailBean.GoodsDetailBean.OrderProductInfoBean;
 import com.amkj.dmsh.shopdetails.bean.IndentWriteEntity.IndentWriteBean.ProductsBean.ProductInfoBean;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.OrderListBean;
+import com.amkj.dmsh.shopdetails.bean.PresentProductOrder;
 import com.amkj.dmsh.shopdetails.bean.RefundApplyEntity.RefundApplyBean.ProductsBean;
-import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.OrderListBean.GoodsBean.PresentProductOrder;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -107,28 +108,7 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                     helper.setText(R.id.tv_direct_pro_count, "x" + goodsBean.getCount());
                 }
                 tv_direct_indent_product_price.setText(priceChnText);
-//                if (goodsBean.getCombineProductInfoList() != null
-//                        || goodsBean.getPresentProductInfoList() != null) {
-//                    helper.setGone(R.id.rel_indent_com_pre_pro, true);
-//                    preComProInfoBeanList = new ArrayList<>();
-//                    if (goodsBean.getPresentProductInfoList() != null && goodsBean.getPresentProductInfoList().size() > 0) {
-//                        preComProInfoBeanList.addAll(goodsBean.getPresentProductInfoList());
-//                    }
-//                    if (goodsBean.getCombineProductInfoList() != null && goodsBean.getCombineProductInfoList().size() > 0) {
-//                        for (int i = 0; i < goodsBean.getCombineProductInfoList().size(); i++) {
-//                            CartProductInfoBean cartProductInfoBean = goodsBean.getCombineProductInfoList().get(i);
-//                            cartProductInfoBean.setItemType(TYPE_1);
-//                            if (goodsBean.getStatus() == 0) {
-//                                cartProductInfoBean.setCount(0);
-//                            }
-//                            cartProductInfoBean.setIndentType(INDENT_TYPE);
-//                            preComProInfoBeanList.add(cartProductInfoBean);
-//                        }
-//                    }
-//                    setComPreData(helper, preComProInfoBeanList, true, true, false);
-//                } else {
                 helper.setGone(R.id.rel_indent_com_pre_pro, false);
-//                }
 
                 //显示赠品信息
                 PresentProductOrder presentProductOrder = goodsBean.getPresentProductOrder();
@@ -191,6 +171,14 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                 } else {
                     helper.setGone(R.id.rel_indent_com_pre_pro, false);
                 }
+                //显示赠品信息
+                PresentProductOrder presentProduct= orderProductInfoBean.getPresentProductOrder();
+                helper.setGone(R.id.ll_present, presentProduct != null);
+                if (presentProduct != null) {
+                    helper.setText(R.id.tv_name, presentProduct.getPresentName())
+                            .setText(R.id.tv_count, "x" + presentProduct.getPresentCount());
+                    GlideImageLoaderUtil.loadCenterCrop(context, helper.getView(R.id.iv_cover), presentProduct.getPresentPicUrl());
+                }
                 helper.itemView.setTag(orderProductInfoBean);
                 break;
             case INDENT_W_TYPE:
@@ -208,15 +196,35 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                         .setText(R.id.tv_indent_write_reason, getStrings(productInfoBean.getNotBuyAreaInfo()))
                         .setGone(R.id.rel_indent_com_pre_pro, false);
                 if (productInfoBean.getActivityInfoBean() != null && productInfoBean.getShowActInfo() == 1) {
-                    String activityTag = getStrings(productInfoBean.getActivityInfoBean().getActivityTag());
+                    ActivityInfoBean activityInfoData = productInfoBean.getActivityInfoBean();
+                    String activityTag = getStrings(activityInfoData.getActivityTag());
                     helper.setGone(R.id.ll_communal_activity_topic_tag, true)
                             .setGone(R.id.tv_communal_activity_tag, !TextUtils.isEmpty(activityTag))
                             .setText(R.id.tv_communal_activity_tag, activityTag)
-                            .setGone(R.id.ll_communal_activity_tag_rule, true)
-                            .setText(R.id.tv_communal_activity_tag_rule, getStrings(productInfoBean.getActivityInfoBean().getActivityRule()))
-                            .setGone(R.id.tv_communal_activity_tag_next,
-                                    !TextUtils.isEmpty(productInfoBean.getActivityInfoBean().getActivityRule()))
-                            .addOnClickListener(R.id.ll_communal_activity_topic_tag).setTag(R.id.ll_communal_activity_topic_tag, productInfoBean);
+                            .addOnClickListener(R.id.ll_communal_activity_tag_rule).setTag(R.id.ll_communal_activity_tag_rule, productInfoBean);
+                    //设置规则
+                    switch (activityInfoData.getActivityType()) {
+                        //显示规则，可进入专场
+                        case 0:
+                        case 1:
+                        case 2:
+                        case 4:
+                        case 5:
+                        case 8:
+                            helper.setText(R.id.tv_communal_activity_tag_rule, getStrings(activityInfoData.getActivityRule()))
+                                    .setGone(R.id.ll_communal_activity_tag_rule, true);
+                            break;
+                        //不显示规则，显示倒计时，可以进入专场
+                        case 3:
+                            helper.setText(R.id.tv_communal_activity_tag_rule, "")
+                                    .setGone(R.id.ll_communal_activity_tag_rule, true);
+                            break;
+                        //不显示规则，也不能进入专场
+                        case 6:
+                        case 7:
+                            helper.setGone(R.id.ll_communal_activity_tag_rule, false);
+                            break;
+                    }
                 } else {
                     helper.setGone(R.id.ll_communal_activity_topic_tag, false);
                 }

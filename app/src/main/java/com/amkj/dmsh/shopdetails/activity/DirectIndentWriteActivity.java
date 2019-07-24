@@ -260,7 +260,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
             ProductInfoBean productInfoBean = (ProductInfoBean) view.getTag();
             if (productInfoBean != null) {
                 switch (view.getId()) {
-                    case R.id.ll_communal_activity_topic_tag:
+                    case R.id.ll_communal_activity_tag_rule:
                         ActivityInfoBean activityInfoBean = productInfoBean.getActivityInfoBean();
                         if (activityInfoBean != null && !TextUtils.isEmpty(activityInfoBean.getActivityCode())) {
                             Intent intent1 = new Intent(this, QualityProductActActivity.class);
@@ -325,6 +325,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
             }
         }
     }
+
     /**
      * 获取订单结算信息
      *
@@ -396,9 +397,10 @@ public class DirectIndentWriteActivity extends BaseActivity {
         UserCouponInfoBean userCouponInfo = indentWriteBean.getUserCouponInfo();
         if (userCouponInfo != null) {
             if (userCouponInfo.getAllowCouoon() == 1 && userCouponInfo.getId() != null && userCouponInfo.getId() > 0) {
-                pullFootView.tv_direct_product_favorable.setText(("-¥" + userCouponInfo.getPrice()));
-                couponId = userCouponInfo.getId();
+                //判断优惠券是否有门槛   无门槛-xx 有门槛满xx-xx
+                pullFootView.tv_direct_product_favorable.setText((userCouponInfo.getStartFee() + "-¥" + userCouponInfo.getPrice()));
                 pullFootView.tv_direct_product_favorable.setSelected(true);
+                couponId = userCouponInfo.getId();
             } else {
                 pullFootView.tv_direct_product_favorable.setSelected(false);
                 pullFootView.tv_direct_product_favorable.setText(couponId == -1 ? "不使用优惠券" : userCouponInfo.getMsg());
@@ -406,7 +408,9 @@ public class DirectIndentWriteActivity extends BaseActivity {
         }
 
         List<ProductsBean> products = indentWriteBean.getProducts();
+        //组装创建订单商品信息
         indentInfo = ShopCarDao.getIndentInfo(products);
+        //组装商品展示信息
         for (int i = 0; i < products.size(); i++) {
             ProductsBean productsBean = products.get(i);
             List<ProductInfoBean> productInfos = productsBean.getProductInfos();
@@ -464,10 +468,10 @@ public class DirectIndentWriteActivity extends BaseActivity {
             pullHeaderView.ll_oversea_info.setVisibility(VISIBLE);
             pullHeaderView.et_oversea_name.setText(getStringFilter(indentWriteBean.getRealName()));
             pullHeaderView.et_oversea_name.setSelection(getStrings(indentWriteBean.getRealName()).length());
-            pullHeaderView.et_oversea_card.setText(getStringFilter(indentWriteBean.getIdCard()));
-            pullHeaderView.et_oversea_card.setSelection(getStrings(indentWriteBean.getIdCard()).length());
-            pullHeaderView.et_oversea_card.setTag(R.id.id_tag, getStrings(indentWriteBean.getIdCard()));
-            pullHeaderView.et_oversea_card.setTag(getStrings(indentWriteBean.getIdCard()));
+            pullHeaderView.et_oversea_card.setText(getStringFilter(indentWriteBean.getShowIdCard()));
+            pullHeaderView.et_oversea_card.setSelection(getStrings(indentWriteBean.getShowIdCard()).length());
+            pullHeaderView.et_oversea_card.setTag(R.id.id_tag, getStrings(indentWriteBean.getShowIdCard()));
+            pullHeaderView.et_oversea_card.setTag(getStrings(indentWriteBean.getShowIdCard()));
             if (!TextUtils.isEmpty(indentWriteBean.getPrompt())) {
                 pullHeaderView.tv_oversea_buy_tint.setVisibility(VISIBLE);
                 pullHeaderView.tv_oversea_buy_tint.setText(getStrings(indentWriteBean.getPrompt()));
@@ -552,6 +556,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
             getIndentDiscounts(!isFirst);
         }
     }
+
     //  再次购买，获取商品信息
     private void getOrderData() {
         passGoods = new ArrayList<>();
@@ -748,6 +753,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
             String idCard = pullHeaderView.et_oversea_card.getText().toString().trim();
             String showIdCard = (String) pullHeaderView.et_oversea_card.getTag();
             String reallyIdCard = (String) pullHeaderView.et_oversea_card.getTag(R.id.id_tag);
+            //判断是否修改了默认的idcard
             if (idCard.equals(getStrings(showIdCard))) {
                 params.put("idcard", reallyIdCard);
             } else {
@@ -1279,7 +1285,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
     protected boolean isAddLoad() {
         return true;
     }
-
 
 
     @Override

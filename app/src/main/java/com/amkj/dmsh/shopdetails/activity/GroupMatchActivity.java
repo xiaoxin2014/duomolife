@@ -31,6 +31,7 @@ import com.amkj.dmsh.shopdetails.bean.CombineGoodsBean;
 import com.amkj.dmsh.shopdetails.bean.EditGoodsSkuEntity.EditGoodsSkuBean;
 import com.amkj.dmsh.shopdetails.bean.GroupGoodsEntity;
 import com.amkj.dmsh.shopdetails.bean.GroupGoodsEntity.GroupGoodsBean.CombineCommonBean;
+import com.amkj.dmsh.utils.DoubleUtil;
 import com.amkj.dmsh.views.bottomdialog.SkuDialog;
 import com.google.gson.Gson;
 import com.luck.picture.lib.decoration.RecycleViewDivider;
@@ -203,32 +204,35 @@ public class GroupMatchActivity extends BaseActivity {
     //更新总价格
     private void updateTotalPrice() {
         try {
-            double groupPrice = 0;
-            double totalSave = 0;
-            //组合商品价格计算方案（如果选择了组合商品，计算选中的组合商品总价格，否则筛选出最低的组合商品价格）
+            CombineCommonBean mainBan = goods.get(0);
+            //主商品价格
+            double mainPrice = getStringChangeDouble(mainBan.getMinPrice());
+
+            //搭配商品总价格
+            double matchTotalPrice = 0;
             if (isSelectGroup()) {
                 for (CombineCommonBean bean : goods) {
-                    if (bean.isSelected() && bean.getSkuId() > 0) {
-                        groupPrice += Double.parseDouble(bean.getMinPrice());
-                        totalSave += bean.getSaveMoney();
+                    if (bean.isSelected() && bean.getSkuId() > 0 && !bean.isMainProduct()) {
+                        matchTotalPrice = DoubleUtil.add(matchTotalPrice, getStringChangeDouble(bean.getMinPrice()));
                     }
                 }
-                mTvSaveNum.setVisibility(View.VISIBLE);
-                mTvSaveNum.setText(getStringsFormat(this, R.string.save_money, stripTrailingZeros(String.valueOf(totalSave))));
             } else {
-                groupPrice = getMinGroup();
-                mTvSaveNum.setVisibility(View.GONE);
+                matchTotalPrice = getMinMatch();
             }
 
-            //获取主商品价格
-            CombineCommonBean combineMainProduct = goods.get(0);
-            double mainPrice = getStringChangeDouble(combineMainProduct.getMinPrice());
-            String end = (combineMainProduct.getSkuId() <= 0 || !isSelectGroup()) ? "起" : "";
-
-            //组合价=主商品价格+组合商品价格
-            String totalPrice = getStringsFormat(this, R.string.group_total_price, stripTrailingZeros(String.valueOf(mainPrice + groupPrice))) + end;
+            //计算总优惠(主商品+搭配商品)
+            double totalSave = 0;
+            for (CombineCommonBean bean : goods) {
+                if (bean.isSelected() && bean.getSkuId() > 0) {
+                    totalSave = DoubleUtil.add(totalSave, bean.getSaveMoney());
+                }
+            }
+            String end = (mainBan.getSkuId() <= 0 || !isSelectGroup()) ? "起" : "";
+            String totalPrice = getStringsFormat(this, R.string.group_total_price, stripTrailingZeros(String.valueOf(DoubleUtil.add(mainPrice, matchTotalPrice)))) + end;
             CharSequence rmbFormat = getSpannableString(totalPrice, 1, TextUtils.isEmpty(end) ? totalPrice.length() : totalPrice.length() - 1, 1.6f, null);
             mTvGroupPrice.setText(rmbFormat);
+            mTvSaveNum.setVisibility(isSelectGroup() ? View.VISIBLE : View.GONE);
+            mTvSaveNum.setText(getStringsFormat(this, R.string.save_money, stripTrailingZeros(String.valueOf(totalSave))));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -438,9 +442,9 @@ public class GroupMatchActivity extends BaseActivity {
     }
 
     //获取最低价格的组合商品
-    private double getMinGroup() {
-        if (goods != null && goods.size() > 0) {
-            List<CombineCommonBean> groupList = new ArrayList<>(goods);
+    private double getMinMatch() {
+        if (goods != null && goods.size() > 1) {
+            List<CombineCommonBean> groupList = new ArrayList<>(goods.subList(1, goods.size()));
             Collections.sort(groupList);
             return getStringChangeDouble(groupList.get(0).getMinPrice());
         } else {
