@@ -21,6 +21,8 @@ public class ActivityInfoBean extends AbstractExpandableItem<CartInfoBean> imple
      * activityTag : 立减震撼来
      * activityType : 2
      * activityRule : 立减20.0元
+     * activityStartTime : 2019-07-02 23:41:22
+     * activityEndTime : 2019-07-31 00:00:00
      */
 
     private String activityCode;
@@ -32,6 +34,9 @@ public class ActivityInfoBean extends AbstractExpandableItem<CartInfoBean> imple
     private int allowCoupon;
     //是否需要显示凑单按钮（优惠已经达到最大额度就不需要提示凑单）
     private boolean needMore;
+    private String activityStartTime;
+    private String activityEndTime;
+
 
     public boolean isNeedMore() {
         return needMore;
@@ -124,7 +129,7 @@ public class ActivityInfoBean extends AbstractExpandableItem<CartInfoBean> imple
         this.preActivityRule = in.readString();
     }
 
-    public static final Parcelable.Creator<ActivityInfoBean> CREATOR = new Parcelable.Creator<ActivityInfoBean>() {
+    public static final Creator<ActivityInfoBean> CREATOR = new Creator<ActivityInfoBean>() {
         @Override
         public ActivityInfoBean createFromParcel(Parcel source) {
             return new ActivityInfoBean(source);
@@ -162,5 +167,21 @@ public class ActivityInfoBean extends AbstractExpandableItem<CartInfoBean> imple
     @Override
     public int hashCode() {
         return activityCode.hashCode();
+    }
+
+    public String getActivityStartTime() {
+        return activityStartTime;
+    }
+
+    public void setActivityStartTime(String activityStartTime) {
+        this.activityStartTime = activityStartTime;
+    }
+
+    public String getActivityEndTime() {
+        return activityEndTime;
+    }
+
+    public void setActivityEndTime(String activityEndTime) {
+        this.activityEndTime = activityEndTime;
     }
 }

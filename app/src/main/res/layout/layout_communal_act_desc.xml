@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:visibility="gone"
               android:id="@+id/ll_communal_activity_topic_tag"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
@@ -8,7 +7,8 @@
               android:orientation="horizontal"
               android:paddingLeft="@dimen/sc_mm_26"
               android:paddingTop="@dimen/sc_mm_40"
-              android:paddingRight="@dimen/sc_mm_24">
+              android:paddingRight="@dimen/sc_mm_24"
+              android:visibility="gone">
 
     <View
         android:id="@+id/blank"
@@ -22,10 +22,8 @@
         android:layout_height="wrap_content"
         android:background="@drawable/border_circle_two_pink_bg"
         android:gravity="center"
-        android:paddingLeft="@dimen/sc_mm_8"
-        android:paddingTop="@dimen/sc_mm_5"
-        android:paddingRight="@dimen/sc_mm_8"
-        android:paddingBottom="@dimen/sc_mm_5"
+        android:paddingLeft="@dimen/sc_mm_5"
+        android:paddingRight="@dimen/sc_mm_5"
         android:textColor="@color/white"
         android:textSize="@dimen/sc_mm_24"/>
 

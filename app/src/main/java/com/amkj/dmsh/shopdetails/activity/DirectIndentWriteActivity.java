@@ -470,7 +470,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
             pullHeaderView.et_oversea_name.setSelection(getStrings(indentWriteBean.getRealName()).length());
             pullHeaderView.et_oversea_card.setText(getStringFilter(indentWriteBean.getShowIdCard()));
             pullHeaderView.et_oversea_card.setSelection(getStrings(indentWriteBean.getShowIdCard()).length());
-            pullHeaderView.et_oversea_card.setTag(R.id.id_tag, getStrings(indentWriteBean.getShowIdCard()));
+            pullHeaderView.et_oversea_card.setTag(R.id.id_tag, getStrings(indentWriteBean.getIdCard()));
             pullHeaderView.et_oversea_card.setTag(getStrings(indentWriteBean.getShowIdCard()));
             if (!TextUtils.isEmpty(indentWriteBean.getPrompt())) {
                 pullHeaderView.tv_oversea_buy_tint.setVisibility(VISIBLE);
@@ -490,7 +490,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
             priceInfoList.addAll(indentDiscountsList);
             PriceInfoBean priceInfoBean = priceInfoList.get(priceInfoList.size() - 1);
             tv_indent_total_price.setText(getStrings(priceInfoBean.getTotalPriceName()));
-            priceInfoList.remove(priceInfoList.get(priceInfoList.size() - 1));
+//            priceInfoList.remove(priceInfoList.get(priceInfoList.size() - 1));实付金额
             indentDiscountAdapter.setNewData(priceInfoList);
         }
     }
@@ -919,6 +919,63 @@ public class DirectIndentWriteActivity extends BaseActivity {
         }
     }
 
+    private void doAliPay(String pay_param) {
+        new AliPay(this, pay_param, new AliPay.AliPayResultCallBack() {
+            @Override
+            public void onSuccess() {
+                showToast(DirectIndentWriteActivity.this, "支付成功");
+//                跳转订单完成页
+                if (type.equals(INDENT_GROUP_SHOP)) {
+                    switch (groupShopDetailsBean.getGpStatus()) {
+                        case 1:
+//                            开团
+                            skipGpShareIndent();
+                            break;
+                        case 2:
+//                            拼团
+                            skipMineGroupIndent();
+                            break;
+                    }
+                } else {
+                    skipDirectIndent();
+                }
+                if (totalPersonalTrajectory != null) {
+                    totalPersonalTrajectory.getFileTotalTrajectory();
+                }
+            }
+
+            @Override
+            public void onDealing() {
+                showToast(DirectIndentWriteActivity.this, "支付处理中...");
+            }
+
+            @Override
+            public void onError(int error_code) {
+                switch (error_code) {
+                    case AliPay.ERROR_RESULT:
+                        showToast(DirectIndentWriteActivity.this, "支付失败:支付结果解析错误");
+                        break;
+                    case AliPay.ERROR_NETWORK:
+                        showToast(DirectIndentWriteActivity.this, "支付失败:网络连接错误");
+                        break;
+                    case AliPay.ERROR_PAY:
+                        showToast(DirectIndentWriteActivity.this, "支付错误:支付码支付失败");
+                        break;
+                    default:
+                        showToast(DirectIndentWriteActivity.this, "支付错误");
+                        break;
+                }
+                skipIndentDetail();
+            }
+
+            @Override
+            public void onCancel() {
+                skipIndentDetail();
+                showToast(DirectIndentWriteActivity.this, "支付取消");
+            }
+        }).doPay();
+    }
+
     private void doWXPay(PayKeyBean pay_param) {
         WXPay.init(getApplicationContext());//要在支付前调用
         WXPay.getInstance().doPayDateObject(pay_param, new WXPay.WXPayResultCallBack() {
@@ -956,15 +1013,83 @@ public class DirectIndentWriteActivity extends BaseActivity {
                         showToast(DirectIndentWriteActivity.this, "支付失败");
                         break;
                 }
-                payError();
+//                payError();
+                skipIndentDetail();
             }
 
             @Override
             public void onCancel() {
-                payCancel();
+                skipIndentDetail();
                 showToast(DirectIndentWriteActivity.this, "支付取消");
             }
         });
+    }
+
+    /**
+     * 银联支付
+     *
+     * @param qualityUnionIndent
+     */
+    private void unionPay(@NonNull QualityCreateUnionPayIndentEntity qualityUnionIndent) {
+        if (qualityUnionIndent.getQualityCreateUnionPayIndent().getPayKeyBean() != null &&
+                !TextUtils.isEmpty(qualityUnionIndent.getQualityCreateUnionPayIndent().getPayKeyBean().getPaymentUrl())) {
+            if (loadHud != null) {
+                loadHud.show();
+            }
+            unionPay = new UnionPay(DirectIndentWriteActivity.this,
+                    qualityUnionIndent.getQualityCreateUnionPayIndent().getPayKeyBean().getPaymentUrl(),
+                    new UnionPay.UnionPayResultCallBack() {
+                        @Override
+                        public void onUnionPaySuccess(String webResultValue) {
+                            if (loadHud != null) {
+                                loadHud.dismiss();
+                            }
+                            if (!TextUtils.isEmpty(webResultValue) && "1".equals(webResultValue)) {
+                                finish();
+                            } else {
+                                //                跳转订单完成页
+                                if (type.equals(INDENT_GROUP_SHOP)) {
+                                    switch (groupShopDetailsBean.getGpStatus()) {
+                                        case 1:
+//                            开团
+                                            skipGpShareIndent();
+                                            break;
+                                        case 2:
+//                            拼团
+                                            skipMineGroupIndent();
+                                            break;
+                                    }
+                                } else {
+                                    skipDirectIndent();
+                                }
+                            }
+                            if (totalPersonalTrajectory != null) {
+                                totalPersonalTrajectory.getFileTotalTrajectory();
+                            }
+                        }
+
+                        @Override
+                        public void onUnionPayError(String errorMes) {
+                            if (loadHud != null) {
+                                loadHud.dismiss();
+                            }
+                            showToast(DirectIndentWriteActivity.this, errorMes);
+                            skipIndentDetail();
+                        }
+                    });
+        } else {
+            constantMethod.showImportantToast(DirectIndentWriteActivity.this, "缺少重要参数，请选择其它支付渠道！");
+        }
+    }
+
+    //已创建订单，取消支付
+    private void skipIndentDetail() {
+        if (!TextUtils.isEmpty(orderCreateNo)) {
+            Intent intent = new Intent(this, DirectExchangeDetailsActivity.class);
+            intent.putExtra("orderNo", orderCreateNo);
+            startActivity(intent);
+            finish();
+        }
     }
 
     /**
@@ -1010,6 +1135,48 @@ public class DirectIndentWriteActivity extends BaseActivity {
             payErrorDialogHelper.show();
         }
     }
+
+    /**
+     * 订单支付取消弹窗
+     */
+    private void payCancel() {
+        if (payCancelDialogHelper == null) {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this, PAY_CANCEL, new NetLoadListenerHelper() {
+                @Override
+                public void onSuccess(String result) {
+                    RequestStatus requestStatus = RequestStatus.objectFromData(result);
+                    if (requestStatus != null && SUCCESS_CODE.equals(requestStatus.getCode())) {
+                        payCancelDialogHelper = new AlertDialogHelper(DirectIndentWriteActivity.this);
+                        payCancelDialogHelper.setMsgTextGravity(Gravity.CENTER).setTitleVisibility(GONE)
+                                .setMsg(!TextUtils.isEmpty(requestStatus.getDescription()) ?
+                                        requestStatus.getDescription() : "好货不等人哦，喜欢就入了吧")
+                                .setCancelText("去意已决").setConfirmText("继续支付")
+                                .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s))
+                                .setCancelable(false);
+                        payCancelDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                            @Override
+                            public void confirm() {
+                            }
+
+                            @Override
+                            public void cancel() {
+                                finish();
+                            }
+                        });
+                        payCancelDialogHelper.show();
+                    }
+                }
+
+                @Override
+                public void netClose() {
+                    finish();
+                }
+            });
+        } else {
+            finish();
+        }
+    }
+
 
     /**
      * 设置退款倒计时
@@ -1070,47 +1237,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
         }
     }
 
-    /**
-     * 订单支付取消弹窗
-     */
-    private void payCancel() {
-        if (payCancelDialogHelper == null) {
-            NetLoadUtils.getNetInstance().loadNetDataPost(this, PAY_CANCEL, new NetLoadListenerHelper() {
-                @Override
-                public void onSuccess(String result) {
-                    RequestStatus requestStatus = RequestStatus.objectFromData(result);
-                    if (requestStatus != null && SUCCESS_CODE.equals(requestStatus.getCode())) {
-                        payCancelDialogHelper = new AlertDialogHelper(DirectIndentWriteActivity.this);
-                        payCancelDialogHelper.setMsgTextGravity(Gravity.CENTER).setTitleVisibility(GONE)
-                                .setMsg(!TextUtils.isEmpty(requestStatus.getDescription()) ?
-                                        requestStatus.getDescription() : "好货不等人哦，喜欢就入了吧")
-                                .setCancelText("去意已决").setConfirmText("继续支付")
-                                .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s))
-                                .setCancelable(false);
-                        payCancelDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
-                            @Override
-                            public void confirm() {
-                            }
-
-                            @Override
-                            public void cancel() {
-                                finish();
-                            }
-                        });
-                        payCancelDialogHelper.show();
-                    }
-                }
-
-                @Override
-                public void netClose() {
-                    finish();
-                }
-            });
-        } else {
-            finish();
-        }
-    }
-
     private void skipMineGroupIndent() {
         Intent intent = new Intent();
         intent.setClass(DirectIndentWriteActivity.this, QualityGroupShopMineActivity.class);
@@ -1131,66 +1257,8 @@ public class DirectIndentWriteActivity extends BaseActivity {
         finish();
     }
 
-    private void doAliPay(String pay_param) {
-        new AliPay(this, pay_param, new AliPay.AliPayResultCallBack() {
-            @Override
-            public void onSuccess() {
-                showToast(DirectIndentWriteActivity.this, "支付成功");
-//                跳转订单完成页
-                if (type.equals(INDENT_GROUP_SHOP)) {
-                    switch (groupShopDetailsBean.getGpStatus()) {
-                        case 1:
-//                            开团
-                            skipGpShareIndent();
-                            break;
-                        case 2:
-//                            拼团
-                            skipMineGroupIndent();
-                            break;
-                    }
-                } else {
-                    skipDirectIndent();
-                }
-                if (totalPersonalTrajectory != null) {
-                    totalPersonalTrajectory.getFileTotalTrajectory();
-                }
-            }
 
-            @Override
-            public void onDealing() {
-                showToast(DirectIndentWriteActivity.this, "支付处理中...");
-            }
-
-            @Override
-            public void onError(int error_code) {
-                switch (error_code) {
-                    case AliPay.ERROR_RESULT:
-                        showToast(DirectIndentWriteActivity.this, "支付失败:支付结果解析错误");
-                        break;
-
-                    case AliPay.ERROR_NETWORK:
-                        showToast(DirectIndentWriteActivity.this, "支付失败:网络连接错误");
-                        break;
-
-                    case AliPay.ERROR_PAY:
-                        showToast(DirectIndentWriteActivity.this, "支付错误:支付码支付失败");
-                        break;
-
-                    default:
-                        showToast(DirectIndentWriteActivity.this, "支付错误");
-                        break;
-                }
-                payError();
-            }
-
-            @Override
-            public void onCancel() {
-                payCancel();
-                showToast(DirectIndentWriteActivity.this, "支付取消");
-            }
-        }).doPay();
-    }
-
+    //支付成功跳转
     private void skipDirectIndent() {
         Intent intent = new Intent(DirectIndentWriteActivity.this, DirectPaySuccessActivity.class);
         intent.putExtra(INDENT_PRODUCT_TYPE, INDENT_PROPRIETOR_PRODUCT);
@@ -1216,63 +1284,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
                 finish();
             }
         }, 1000);
-    }
-
-    /**
-     * 银联支付
-     *
-     * @param qualityUnionIndent
-     */
-    private void unionPay(@NonNull QualityCreateUnionPayIndentEntity qualityUnionIndent) {
-        if (qualityUnionIndent.getQualityCreateUnionPayIndent().getPayKeyBean() != null &&
-                !TextUtils.isEmpty(qualityUnionIndent.getQualityCreateUnionPayIndent().getPayKeyBean().getPaymentUrl())) {
-            if (loadHud != null) {
-                loadHud.show();
-            }
-            unionPay = new UnionPay(DirectIndentWriteActivity.this,
-                    qualityUnionIndent.getQualityCreateUnionPayIndent().getPayKeyBean().getPaymentUrl(),
-                    new UnionPay.UnionPayResultCallBack() {
-                        @Override
-                        public void onUnionPaySuccess(String webResultValue) {
-                            if (loadHud != null) {
-                                loadHud.dismiss();
-                            }
-                            if (!TextUtils.isEmpty(webResultValue) && "1".equals(webResultValue)) {
-                                finish();
-                            } else {
-                                //                跳转订单完成页
-                                if (type.equals(INDENT_GROUP_SHOP)) {
-                                    switch (groupShopDetailsBean.getGpStatus()) {
-                                        case 1:
-//                            开团
-                                            skipGpShareIndent();
-                                            break;
-                                        case 2:
-//                            拼团
-                                            skipMineGroupIndent();
-                                            break;
-                                    }
-                                } else {
-                                    skipDirectIndent();
-                                }
-                            }
-                            if (totalPersonalTrajectory != null) {
-                                totalPersonalTrajectory.getFileTotalTrajectory();
-                            }
-                        }
-
-                        @Override
-                        public void onUnionPayError(String errorMes) {
-                            if (loadHud != null) {
-                                loadHud.dismiss();
-                            }
-                            showToast(DirectIndentWriteActivity.this, errorMes);
-                            payError();
-                        }
-                    });
-        } else {
-            constantMethod.showImportantToast(DirectIndentWriteActivity.this, "缺少重要参数，请选择其它支付渠道！");
-        }
     }
 
 

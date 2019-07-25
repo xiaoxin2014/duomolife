@@ -132,11 +132,12 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                             .setGone(R.id.tv_communal_activity_tag, !TextUtils.isEmpty(activityTag))
                             .setText(R.id.tv_communal_activity_tag, activityTag)
                             .setGone(R.id.tv_details_gray, orderProductInfoBean.getShowLine() == 1)
-                            .setGone(R.id.ll_communal_activity_tag_rule, true)
-                            .setText(R.id.tv_communal_activity_tag_rule, getStrings(orderProductInfoBean.getActivityInfoDetailBean().getActivityRule()))
-                            .setGone(R.id.tv_communal_activity_tag_next,
-                                    !TextUtils.isEmpty(orderProductInfoBean.getActivityInfoDetailBean().getActivityRule()))
-                            .addOnClickListener(R.id.ll_communal_activity_topic_tag).setTag(R.id.ll_communal_activity_topic_tag, orderProductInfoBean);
+                            .setGone(R.id.ll_communal_activity_tag_rule, false);
+                    //订单详情暂时不显示活动规则，也不可以跳转专场
+//                            .setText(R.id.tv_communal_activity_tag_rule, getStrings(orderProductInfoBean.getActivityInfoDetailBean().getActivityRule()))
+//                            .setGone(R.id.tv_communal_activity_tag_next,
+//                                    !TextUtils.isEmpty(orderProductInfoBean.getActivityInfoDetailBean().getActivityRule()))
+//                            .addOnClickListener(R.id.ll_communal_activity_topic_tag).setTag(R.id.ll_communal_activity_topic_tag, orderProductInfoBean);
                 } else {
                     helper.setGone(R.id.ll_communal_activity_topic_tag, false);
                 }
@@ -200,8 +201,10 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                     String activityTag = getStrings(activityInfoData.getActivityTag());
                     helper.setGone(R.id.ll_communal_activity_topic_tag, true)
                             .setGone(R.id.tv_communal_activity_tag, !TextUtils.isEmpty(activityTag))
-                            .setText(R.id.tv_communal_activity_tag, activityTag)
-                            .addOnClickListener(R.id.ll_communal_activity_tag_rule).setTag(R.id.ll_communal_activity_tag_rule, productInfoBean);
+                            .setText(R.id.tv_communal_activity_tag, activityTag);
+                    //订单填写暂时都不允许跳转专场
+//                            .addOnClickListener(R.id.ll_communal_activity_tag_rule).setTag(R.id.ll_communal_activity_tag_rule, productInfoBean);
+                    helper.setGone(R.id.tv_communal_activity_tag_next, false);
                     //设置规则
                     switch (activityInfoData.getActivityType()) {
                         //显示规则，可进入专场
@@ -211,18 +214,16 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                         case 4:
                         case 5:
                         case 8:
-                            helper.setText(R.id.tv_communal_activity_tag_rule, getStrings(activityInfoData.getActivityRule()))
-                                    .setGone(R.id.ll_communal_activity_tag_rule, true);
+                            helper.setText(R.id.tv_communal_activity_tag_rule, getStrings(activityInfoData.getActivityRule()));
                             break;
                         //不显示规则，显示倒计时，可以进入专场
                         case 3:
-                            helper.setText(R.id.tv_communal_activity_tag_rule, "")
-                                    .setGone(R.id.ll_communal_activity_tag_rule, true);
+                            helper.setText(R.id.tv_communal_activity_tag_rule, activityInfoData.getActivityEndTime()+"结束");
                             break;
                         //不显示规则，也不能进入专场
                         case 6:
                         case 7:
-                            helper.setGone(R.id.ll_communal_activity_tag_rule, false);
+                            helper.setText(R.id.tv_communal_activity_tag_rule, "");
                             break;
                     }
                 } else {
