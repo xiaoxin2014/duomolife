@@ -268,7 +268,7 @@ public class QualityNewProActivity extends BaseActivity {
         page = 1;
         getNewProShaft();
         getNewProAd();
-        getCarCount(getActivity(),badge);
+        getCarCount(getActivity());
     }
 
     private void getNewProAd() {
@@ -360,7 +360,7 @@ public class QualityNewProActivity extends BaseActivity {
         if (requestCode == IS_LOGIN_CODE) {
             page = 1;
             getQualityNewPro();
-            getCarCount(getActivity(),badge);
+            getCarCount(getActivity());
         }
     }
 
@@ -530,7 +530,9 @@ public class QualityNewProActivity extends BaseActivity {
                 qNewProView.ad_communal_banner.setPointViewVisible(false);
             }
         } else if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
-            getCarCount(getActivity(),badge);
+            if (badge!=null){
+                badge.setBadgeNumber((int) message.result);
+            }
         }
     }
 }

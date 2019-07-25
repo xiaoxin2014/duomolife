@@ -243,7 +243,7 @@ public class QualityOverseasDetailsActivity extends BaseActivity {
         //商品列表
         getRecommendData();
 //        购物车数量
-        getCarCount(getActivity(),badge);
+        getCarCount(getActivity());
     }
 
 
@@ -462,7 +462,9 @@ public class QualityOverseasDetailsActivity extends BaseActivity {
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
         if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
-            getCarCount(getActivity(),badge);
+            if (badge!=null){
+                badge.setBadgeNumber((int) message.result);
+            }
         }
     }
 }

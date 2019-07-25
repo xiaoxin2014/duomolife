@@ -401,7 +401,7 @@ public class QualityOverseasMailActivity extends BaseActivity {
         if (requestCode == IS_LOGIN_CODE) {
             productPage = 1;
             getOverseasProData();
-            getCarCount(getActivity(),badge);
+            getCarCount(getActivity());
         }
     }
 

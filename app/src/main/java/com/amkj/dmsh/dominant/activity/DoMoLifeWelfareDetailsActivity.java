@@ -305,7 +305,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
         //头部信息
         page = 1;
         getThemeDetailsData();
-        getCarCount(getActivity(), badge);
+        getCarCount(getActivity());
         getTopicComment();
     }
 
@@ -648,7 +648,9 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                 }
             }
         } else if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
-            getCarCount(getActivity(),badge);
+            if (badge!=null){
+                badge.setBadgeNumber((int) message.result);
+            }
         }
     }
 

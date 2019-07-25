@@ -16,7 +16,6 @@ import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
-import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.homepage.activity.HomePageSearchActivity;
 import com.amkj.dmsh.homepage.adapter.HomePageNewAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
@@ -24,7 +23,6 @@ import com.amkj.dmsh.homepage.bean.HomeCommonEntity;
 import com.amkj.dmsh.homepage.bean.HomeCommonEntity.HomeCommonBean;
 import com.amkj.dmsh.homepage.bean.MarqueeTextEntity;
 import com.amkj.dmsh.message.activity.MessageActivity;
-import com.amkj.dmsh.message.bean.MessageTotalEntity;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
@@ -47,17 +45,16 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.adClickTotal;
 import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatAd;
+import static com.amkj.dmsh.constant.ConstantMethod.getMessageCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getTopBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
-import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_ALL;
 import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.GTE_HOME_NAVBAR;
 import static com.amkj.dmsh.constant.Url.H_Q_MARQUEE_AD;
-import static com.amkj.dmsh.message.bean.MessageTotalEntity.MessageTotalBean;
 
 /**
  * Created by xiaoxin on 2019/4/12 0012
@@ -121,9 +118,9 @@ public class HomePageFragment extends BaseFragment {
             getMarqueeData();
         }
         //购物车数量
-        getCarCount(getActivity(), badgeCart);
+        getCarCount(getActivity());
         //获取消息数量
-        getMessageWarm();
+        getMessageCount(getActivity(), badgeMsg);
     }
 
 
@@ -196,42 +193,9 @@ public class HomePageFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        getMessageWarm();
-        getCarCount(getActivity(), badgeCart);
+        getMessageCount(getActivity(), badgeMsg);
     }
 
-
-    private void getMessageWarm() {
-        if (userId < 1) {
-            if (badgeMsg != null) {
-                badgeMsg.setBadgeNumber(0);
-            }
-            return;
-        }
-        String url = Url.BASE_URL + Url.H_MES_STATISTICS;
-        Map<String, Object> params = new HashMap<>();
-        params.put("uid", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), url
-                , params, new NetLoadListenerHelper() {
-                    @Override
-                    public void onSuccess(String result) {
-                        Gson gson = new Gson();
-                        MessageTotalEntity messageTotalEntity = gson.fromJson(result, MessageTotalEntity.class);
-                        if (messageTotalEntity != null) {
-                            if (messageTotalEntity.getCode().equals(SUCCESS_CODE)) {
-                                MessageTotalBean messageTotalBean = messageTotalEntity.getMessageTotalBean();
-                                int totalCount = messageTotalBean.getSmTotal() + messageTotalBean.getLikeTotal()
-                                        + messageTotalBean.getCommentTotal() + messageTotalBean.getOrderTotal()
-                                        + messageTotalBean.getCommOffifialTotal();
-                                if (badgeMsg != null) {
-                                    badgeMsg.setBadgeNumber(totalCount);
-                                }
-                            }
-                        }
-                    }
-                });
-
-    }
 
     @OnClick({R.id.iv_message, R.id.tv_search, R.id.iv_home_shop_car, R.id.iv_home_marquee_close})
     public void onViewClicked(View view) {
@@ -307,7 +271,9 @@ public class HomePageFragment extends BaseFragment {
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
         if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
-            getCarCount(getActivity(), badgeCart);
+            if (badgeCart != null) {
+                badgeCart.setBadgeNumber((int) message.result);
+            }
         }
     }
 }

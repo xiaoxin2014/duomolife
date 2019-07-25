@@ -250,7 +250,7 @@ public class QualityCustomTopicActivity extends BaseActivity {
     protected void getData() {
         getCustomCoverDescription();
         getQualityCustomPro();
-        getCarCount(getActivity(), badge);
+        getCarCount(getActivity());
     }
 
     /**
@@ -327,7 +327,7 @@ public class QualityCustomTopicActivity extends BaseActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == IS_LOGIN_CODE) {
-            getCarCount(getActivity(), badge);
+            getCarCount(getActivity());
         }
     }
 
@@ -471,7 +471,9 @@ public class QualityCustomTopicActivity extends BaseActivity {
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
         if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
-            getCarCount(getActivity(), badge);
+            if (badge!=null){
+                badge.setBadgeNumber((int) message.result);
+            }
         }
     }
 }

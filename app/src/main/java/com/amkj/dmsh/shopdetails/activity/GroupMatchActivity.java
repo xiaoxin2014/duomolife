@@ -37,8 +37,6 @@ import com.google.gson.Gson;
 import com.luck.picture.lib.decoration.RecycleViewDivider;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
-import org.greenrobot.eventbus.EventBus;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -240,7 +238,7 @@ public class GroupMatchActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
-        getCarCount(this, mBadge);
+        getCarCount(this);
         getGroupGoods(mProductId);
     }
 
@@ -417,7 +415,7 @@ public class GroupMatchActivity extends BaseActivity {
                 if (status != null && SUCCESS_CODE.equals(status.getCode())) {
                     showToast(getActivity(), "添加商品成功");
                     //通知刷新购物车数量
-                    EventBus.getDefault().post(new EventMessage(ConstantVariable.UPDATE_CAR_NUM, ""));
+                    ConstantMethod.getCarCount(getActivity());
                 } else {
                     showToastRequestMsg(getActivity(), status);
                 }
@@ -455,7 +453,9 @@ public class GroupMatchActivity extends BaseActivity {
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
         if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
-            getCarCount(getActivity(), mBadge);
+            if (mBadge!=null){
+                mBadge.setBadgeNumber((int) message.result);
+            }
         }
     }
 }

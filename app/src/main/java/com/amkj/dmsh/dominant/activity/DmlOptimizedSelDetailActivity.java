@@ -60,7 +60,6 @@ import static android.view.View.GONE;
 import static com.amkj.dmsh.R.id.tv_communal_pro_tag;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
-import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -377,7 +376,9 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
         if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
-            getCarCount(getActivity(),badge);
+            if (badge!=null){
+                badge.setBadgeNumber((int) message.result);
+            }
         }
     }
 }

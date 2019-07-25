@@ -97,8 +97,6 @@ import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.tencent.stat.StatService;
 import com.umeng.socialize.UMShareAPI;
 
-import org.greenrobot.eventbus.EventBus;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -667,7 +665,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             communalDetailAdapter.notifyDataSetChanged();
             getShopProDetails();
             getServiceData(productId);
-            getCarCount(getActivity(), badge);
+            getCarCount(getActivity());
         }
     }
 
@@ -1604,7 +1602,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                             totalPersonalTrajectory.saveTotalDataToFile(totalMap);
                             showToast(getActivity(), "添加商品成功");
                             //通知刷新购物车数量
-                            EventBus.getDefault().post(new EventMessage(ConstantVariable.UPDATE_CAR_NUM, ""));
+                            getCarCount(getActivity());
                             if (skuDialog != null) {
                                 shopCarGoodsSkuDif = null;
                             }
@@ -2049,20 +2047,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         totalPersonalTrajectory.saveTotalDataToFile(totalMap);
     }
 
-    @Override
-    protected void postEventResult(@NonNull EventMessage message) {
-        if (START_AUTO_PAGE_TURN.equals(message.type)) {
-            if (banner_ql_sp_pro_details != null && !banner_ql_sp_pro_details.isCanScroll()) {
-                openScrollBanner();
-            }
-        } else if (STOP_AUTO_PAGE_TURN.equals(message.type)) {
-            if (banner_ql_sp_pro_details != null && banner_ql_sp_pro_details.isCanScroll()) {
-                stopScrollBanner();
-            }
-        } else if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
-            getCarCount(getActivity(), badge);
-        }
-    }
 
     private void stopScrollBanner() {
         banner_ql_sp_pro_details.setCanScroll(false);
@@ -2109,4 +2093,22 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         }
         super.onDestroy();
     }
+
+    @Override
+    protected void postEventResult(@NonNull EventMessage message) {
+        if (START_AUTO_PAGE_TURN.equals(message.type)) {
+            if (banner_ql_sp_pro_details != null && !banner_ql_sp_pro_details.isCanScroll()) {
+                openScrollBanner();
+            }
+        } else if (STOP_AUTO_PAGE_TURN.equals(message.type)) {
+            if (banner_ql_sp_pro_details != null && banner_ql_sp_pro_details.isCanScroll()) {
+                stopScrollBanner();
+            }
+        } else if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
+            if (badge!=null){
+                badge.setBadgeNumber((int) message.result);
+            }
+        }
+    }
+
 }

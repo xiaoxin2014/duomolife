@@ -142,7 +142,7 @@ public class QualityTypeHotSaleProActivity extends BaseActivity {
     protected void loadData() {
         getHotSaleAd();
         getQualityProductShaft();
-        getCarCount(getActivity(),badge);
+        getCarCount(getActivity());
     }
 
     private void getHotSaleAd() {
@@ -270,7 +270,9 @@ public class QualityTypeHotSaleProActivity extends BaseActivity {
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
         if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
-            getCarCount(getActivity(),badge);
+            if (badge!=null){
+                badge.setBadgeNumber((int) message.result);
+            }
         }
     }
 }

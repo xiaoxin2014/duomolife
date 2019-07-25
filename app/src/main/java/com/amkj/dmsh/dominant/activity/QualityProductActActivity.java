@@ -215,7 +215,7 @@ public class QualityProductActActivity extends BaseActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == IS_LOGIN_CODE) {
-            getCarCount(getActivity(), badge);
+            getCarCount(getActivity());
         }
     }
 
@@ -223,7 +223,7 @@ public class QualityProductActActivity extends BaseActivity {
     protected void loadData() {
         page = 1;
         getActProActivityData();
-        getCarCount(getActivity(), badge);
+        getCarCount(getActivity());
     }
 
     @Override
@@ -367,7 +367,9 @@ public class QualityProductActActivity extends BaseActivity {
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
         if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
-            getCarCount(getActivity(), badge);
+            if (badge!=null){
+                badge.setBadgeNumber((int) message.result);
+            }
         }
     }
 }

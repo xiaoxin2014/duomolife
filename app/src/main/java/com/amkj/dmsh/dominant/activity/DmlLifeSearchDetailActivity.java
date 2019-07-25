@@ -375,7 +375,7 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
     protected void getData() {
         getSearchData();
         getSearchComment();
-        getCarCount(getActivity(), badge);
+        getCarCount(getActivity());
     }
 
 
@@ -822,7 +822,9 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
                 }
             }
         } else if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
-            getCarCount(getActivity(), badge);
+            if (badge!=null){
+                badge.setBadgeNumber((int) message.result);
+            }
         }
     }
 

@@ -27,9 +27,7 @@ import com.amkj.dmsh.find.bean.FindHotTopicEntity.FindHotTopicBean;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.message.activity.MessageActivity;
-import com.amkj.dmsh.message.bean.MessageTotalEntity;
 import com.amkj.dmsh.network.NetCacheLoadListenerHelper;
-import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.release.activity.ReleaseImgArticleActivity;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
@@ -46,10 +44,8 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -57,10 +53,10 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 import q.rorbin.badgeview.Badge;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.getMessageCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getTopBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.REFRESH_MESSAGE_TOTAL;
 import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
@@ -70,7 +66,6 @@ import static com.amkj.dmsh.constant.Url.BASE_URL;
 import static com.amkj.dmsh.constant.Url.FIND_AD;
 import static com.amkj.dmsh.constant.Url.F_ACTIVITY_AD;
 import static com.amkj.dmsh.constant.Url.F_HOT_TOPIC_LIST;
-import static com.amkj.dmsh.constant.Url.H_MESSAGE_WARM;
 
 /**
  * Created by atd48 on 2016/6/21.
@@ -110,7 +105,7 @@ public class FindFragment extends BaseFragment {
     //    热门主题
     private List<FindHotTopicBean> hotTopicList = new ArrayList<>();
     private Badge badge;
-    private boolean isOnPause;
+    private boolean isFirst = true;
     private FindHotTopicAdapter findHotTopicAdapter;
     private int topicPage = 1;
     public static final String FIND_TYPE = "find";
@@ -191,25 +186,21 @@ public class FindFragment extends BaseFragment {
         startActivity(intent);
     }
 
-    @Override
-    public void onPause() {
-        isOnPause = true;
-        super.onPause();
-    }
 
     @Override
     public void onResume() {
-        if (isOnPause) {
-            isOnPause = false;
-            getMessageWarm();
+        if (!isFirst) {
+            getMessageCount(getActivity(), badge);
         }
+
+        isFirst = false;
         super.onResume();
     }
 
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
         if (message.type.equals(REFRESH_MESSAGE_TOTAL)) {
-            getMessageWarm();
+            getMessageCount(getActivity(), badge);
         } else if (START_AUTO_PAGE_TURN.equals(message.type)) {
             if (adBeanList.size() > 0 && ad_communal_banner != null && !ad_communal_banner.isTurning()) {
                 ad_communal_banner.setCanScroll(true);
@@ -225,43 +216,19 @@ public class FindFragment extends BaseFragment {
         }
     }
 
-    private void getMessageWarm() {
-        if (userId < 1) {
-            badge.setBadgeNumber(0);
-            return;
-        }
-        Map<String, Object> params = new HashMap<>();
-        params.put("uid", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), H_MESSAGE_WARM, params, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                Gson gson = new Gson();
-                MessageTotalEntity messageTotalEntity = gson.fromJson(result, MessageTotalEntity.class);
-                if (messageTotalEntity != null) {
-                    MessageTotalEntity.MessageTotalBean messageTotalBean = messageTotalEntity.getMessageTotalBean();
-                    if (badge != null) {
-                        int total = messageTotalBean.getSmTotal() + messageTotalBean.getLikeTotal()
-                                + messageTotalBean.getOrderTotal() + messageTotalBean.getCommentTotal()
-                                + messageTotalBean.getCommOffifialTotal();
-                        badge.setBadgeNumber(total);
-                    }
-                }
-            }
-        });
-    }
 
     @Override
     protected void loadData() {
         getFindAd();
         getFindActivity();
-        getMessageWarm();
+        getMessageCount(getActivity(), badge);
         getHotTopic();
     }
 
     private void getFindAd() {
         LinkedHashMap<String, Object> params = new LinkedHashMap<>();
         params.put("vidoShow", "1");
-        NetLoadUtils.getNetInstance().loadNetDataGetCache(getActivity(),BASE_URL + FIND_AD, params, isUpdateCache, new NetCacheLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(getActivity(), BASE_URL + FIND_AD, params, isUpdateCache, new NetCacheLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -305,7 +272,7 @@ public class FindFragment extends BaseFragment {
      * 发现-活动图
      */
     private void getFindActivity() {
-        NetLoadUtils.getNetInstance().loadNetDataGetCache(getActivity(),BASE_URL + F_ACTIVITY_AD, isUpdateCache, new NetCacheLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(getActivity(), BASE_URL + F_ACTIVITY_AD, isUpdateCache, new NetCacheLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 findActivityList.clear();
@@ -331,7 +298,7 @@ public class FindFragment extends BaseFragment {
      * 获取热门主题
      */
     private void getHotTopic() {
-        NetLoadUtils.getNetInstance().loadNetDataGetCache(getActivity(),BASE_URL + F_HOT_TOPIC_LIST, isUpdateCache, new NetCacheLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(getActivity(), BASE_URL + F_HOT_TOPIC_LIST, isUpdateCache, new NetCacheLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 if (topicPage == 1) {

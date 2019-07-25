@@ -66,6 +66,7 @@ import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
 import com.amkj.dmsh.find.activity.ImagePagerActivity;
 import com.amkj.dmsh.homepage.activity.DoMoLifeCommunalActivity;
 import com.amkj.dmsh.homepage.activity.DoMoLifeLotteryActivity;
+import com.amkj.dmsh.message.bean.MessageTotalEntity;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
@@ -1789,7 +1790,8 @@ public class ConstantMethod {
                             totalMap.put(TOTAL_NAME_TYPE, "addCartSuccess");
                             totalPersonalTrajectory.saveTotalDataToFile(totalMap);
                             //通知刷新购物车数量
-                            EventBus.getDefault().post(new EventMessage(ConstantVariable.UPDATE_CAR_NUM, ""));
+                            getCarCount(activity);
+//                            EventBus.getDefault().post(new EventMessage(ConstantVariable.UPDATE_CAR_NUM, ""));
                         } else {
                             showToastRequestMsg(context, status);
                         }
@@ -1817,7 +1819,7 @@ public class ConstantMethod {
     }
 
     //更新购物车商品数量
-    public static void getCarCount(Activity activity, Badge badge) {
+    public static void getCarCount(Activity activity) {
         if (userId > 0) {
             //购物车数量展示
             Map<String, Object> params = new HashMap<>();
@@ -1830,14 +1832,46 @@ public class ConstantMethod {
                     if (requestStatus != null) {
                         if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                             int cartNumber = requestStatus.getResult();
-                            badge.setBadgeNumber(cartNumber);
+                            EventBus.getDefault().post(new EventMessage(ConstantVariable.UPDATE_CAR_NUM, cartNumber));
                         }
                     }
                 }
             });
         } else {
-            if (badge != null) badge.setBadgeNumber(0);
+            EventBus.getDefault().post(new EventMessage(ConstantVariable.UPDATE_CAR_NUM, 0));
         }
+    }
+
+
+    //更新消息数量
+    public static void getMessageCount(Activity activity, Badge badgeMsg) {
+        if (userId < 1) {
+            if (badgeMsg != null) {
+                badgeMsg.setBadgeNumber(0);
+            }
+            return;
+        }
+        String url = Url.BASE_URL + Url.H_MES_STATISTICS;
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(activity, url, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                MessageTotalEntity messageTotalEntity = gson.fromJson(result, MessageTotalEntity.class);
+                if (messageTotalEntity != null) {
+                    if (messageTotalEntity.getCode().equals(SUCCESS_CODE)) {
+                        MessageTotalEntity.MessageTotalBean messageTotalBean = messageTotalEntity.getMessageTotalBean();
+                        int totalCount = messageTotalBean.getSmTotal() + messageTotalBean.getLikeTotal()
+                                + messageTotalBean.getCommentTotal() + messageTotalBean.getOrderTotal()
+                                + messageTotalBean.getCommOffifialTotal();
+                        if (badgeMsg != null) {
+                            badgeMsg.setBadgeNumber(totalCount);
+                        }
+                    }
+                }
+            }
+        });
     }
 
 

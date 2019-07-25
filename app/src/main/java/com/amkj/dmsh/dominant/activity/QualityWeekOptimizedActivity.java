@@ -231,7 +231,7 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
     @Override
     protected void loadData() {
         page = 1;
-        getCarCount(getActivity(),badge);
+        getCarCount(getActivity());
         getBuyListDetailData();
     }
 
@@ -394,7 +394,9 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
         if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
-            getCarCount(getActivity(),badge);
+            if (badge!=null){
+                badge.setBadgeNumber((int) message.result);
+            }
         }
     }
 }
