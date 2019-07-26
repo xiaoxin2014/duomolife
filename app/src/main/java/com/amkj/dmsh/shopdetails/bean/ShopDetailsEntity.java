@@ -87,8 +87,11 @@ public class ShopDetailsEntity extends BaseEntity {
         private List<String> preSaleInfo;
         private List<CouponJsonBean> couponJson;
         private List<CommunalDetailBean> itemBody;
-        private long addSecond;
         private String maxDiscounts;
+
+        //自定义字段
+        private long addSecond;
+
 
 
         public boolean isHasPresent() {

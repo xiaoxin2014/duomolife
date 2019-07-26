@@ -413,7 +413,7 @@ public class GroupMatchActivity extends BaseActivity {
                 mTvAddCar.setEnabled(true);
                 RequestStatus status = new Gson().fromJson(result, RequestStatus.class);
                 if (status != null && SUCCESS_CODE.equals(status.getCode())) {
-                    showToast(getActivity(), "添加商品成功");
+                    showToast(getActivity(), getString(R.string.AddCarSuccess));
                     //通知刷新购物车数量
                     ConstantMethod.getCarCount(getActivity());
                 } else {

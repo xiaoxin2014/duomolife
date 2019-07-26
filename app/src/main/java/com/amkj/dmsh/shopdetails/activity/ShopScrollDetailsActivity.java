@@ -1084,7 +1084,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     constantMethod.stopSchedule();
                 }
             }
-
         }
 
         //设置参考价
@@ -1600,7 +1599,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                             totalMap.put("productId", String.valueOf(shopPropertyBean.getId()));
                             totalMap.put(TOTAL_NAME_TYPE, "addCartSuccess");
                             totalPersonalTrajectory.saveTotalDataToFile(totalMap);
-                            showToast(getActivity(), "添加商品成功");
+                            showToast(getActivity(), getString(R.string.AddCarSuccess));
                             //通知刷新购物车数量
                             getCarCount(getActivity());
                             if (skuDialog != null) {

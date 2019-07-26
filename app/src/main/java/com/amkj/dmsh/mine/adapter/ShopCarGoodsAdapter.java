@@ -11,6 +11,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.mine.bean.ActivityInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean.CartBean.CartInfoBean;
+import com.amkj.dmsh.mine.biz.ShopCarDao;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
@@ -172,18 +173,27 @@ public class ShopCarGoodsAdapter extends BaseMultiItemQuickAdapter<MultiItemEnti
                         case 4:
                         case 5:
                         case 8:
-                            helper.setText(R.id.tv_communal_activity_tag_rule, getStrings(activityInfoData.getActivityRule()))
-                                    .setGone(R.id.ll_communal_activity_tag_rule, true);
+                            helper.setText(R.id.tv_communal_activity_tag_rule, ShopCarDao.subItemCheceked(activityInfoData) ? getStrings(activityInfoData.getActivityRule()) : getStrings(activityInfoData.getPreActivityRule()))
+                                    .setGone(R.id.tv_communal_activity_tag_next, true)
+                                    .setEnabled(R.id.ll_communal_activity_tag_rule, true);
+                            break;
+                        //显示规则，不能进入专场
+                        case 6:
+                            helper.setText(R.id.tv_communal_activity_tag_rule,  ShopCarDao.subItemCheceked(activityInfoData) ? getStrings(activityInfoData.getActivityRule()) : getStrings(activityInfoData.getPreActivityRule()))
+                                    .setGone(R.id.tv_communal_activity_tag_next, false)
+                                    .setEnabled(R.id.ll_communal_activity_tag_rule, false);
                             break;
                         //不显示规则，可以进入专场
                         case 3:
                             helper.setText(R.id.tv_communal_activity_tag_rule, "")
-                                    .setGone(R.id.ll_communal_activity_tag_rule, true);
+                                    .setGone(R.id.tv_communal_activity_tag_next, true)
+                                    .setEnabled(R.id.ll_communal_activity_tag_rule, true);
                             break;
                         //不显示规则，也不能进入专场
-                        case 6:
                         case 7:
-                            helper.setGone(R.id.ll_communal_activity_tag_rule, false);
+                            helper.setText(R.id.tv_communal_activity_tag_rule, "")
+                                    .setGone(R.id.tv_communal_activity_tag_next, false)
+                                    .setEnabled(R.id.ll_communal_activity_tag_rule, false);
                             break;
                     }
                 }

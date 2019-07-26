@@ -43,9 +43,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
@@ -102,15 +106,44 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                 if (goodsBean.getCombineProductInfoList() != null && goodsBean.getCombineProductInfoList().size() > 0) {
                     helper.setGone(R.id.tv_direct_pro_count, goodsBean.getStatus() == 0)
                             .setText(R.id.tv_direct_pro_count, "x" + goodsBean.getCount());
-                    priceChnText = context.getString(R.string.combine_price) + getStringsChNPrice(context, goodsBean.getPrice());
+                    //组合价为0时不显示
+                    if (TextUtils.isEmpty(goodsBean.getPrice()) || "0".equals(goodsBean.getPrice())) {
+                        priceChnText = "";
+                    } else {
+                        priceChnText = context.getString(R.string.combine_price) + getStringsChNPrice(context, goodsBean.getPrice());
+                    }
                 } else {
                     priceChnText = getStringsChNPrice(context, goodsBean.getPrice());
                     helper.setText(R.id.tv_direct_pro_count, "x" + goodsBean.getCount());
                 }
-                tv_direct_indent_product_price.setText(priceChnText);
-                helper.setGone(R.id.rel_indent_com_pre_pro, false);
 
-                //显示赠品信息
+                tv_direct_indent_product_price.setText(priceChnText);
+
+                //组合购以及赠品
+                if (goodsBean.getCombineProductInfoList() != null
+                        || goodsBean.getPresentProductInfoList() != null) {
+                    helper.setGone(R.id.rel_indent_com_pre_pro, true);
+                    preComProInfoBeanList = new ArrayList<>();
+                    if (goodsBean.getPresentProductInfoList() != null && goodsBean.getPresentProductInfoList().size() > 0) {
+                        preComProInfoBeanList.addAll(goodsBean.getPresentProductInfoList());
+                    }
+                    if (goodsBean.getCombineProductInfoList() != null && goodsBean.getCombineProductInfoList().size() > 0) {
+                        for (int i = 0; i < goodsBean.getCombineProductInfoList().size(); i++) {
+                            CartProductInfoBean cartProductInfoBean = goodsBean.getCombineProductInfoList().get(i);
+                            cartProductInfoBean.setItemType(TYPE_1);
+                            if (goodsBean.getStatus() == 0) {
+                                cartProductInfoBean.setCount(0);
+                            }
+                            cartProductInfoBean.setIndentType(INDENT_TYPE);
+                            preComProInfoBeanList.add(cartProductInfoBean);
+                        }
+                    }
+                    setComPreData(helper, preComProInfoBeanList, true, true, false);
+                } else {
+                    helper.setGone(R.id.rel_indent_com_pre_pro, false);
+                }
+
+                //普通赠品信息
                 PresentProductOrder presentProductOrder = goodsBean.getPresentProductOrder();
                 helper.setGone(R.id.ll_present, presentProductOrder != null);
                 if (presentProductOrder != null) {
@@ -173,7 +206,7 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                     helper.setGone(R.id.rel_indent_com_pre_pro, false);
                 }
                 //显示赠品信息
-                PresentProductOrder presentProduct= orderProductInfoBean.getPresentProductOrder();
+                PresentProductOrder presentProduct = orderProductInfoBean.getPresentProductOrder();
                 helper.setGone(R.id.ll_present, presentProduct != null);
                 if (presentProduct != null) {
                     helper.setText(R.id.tv_name, presentProduct.getPresentName())
@@ -213,15 +246,16 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                         case 2:
                         case 4:
                         case 5:
+                        case 6:
                         case 8:
                             helper.setText(R.id.tv_communal_activity_tag_rule, getStrings(activityInfoData.getActivityRule()));
                             break;
                         //不显示规则，显示倒计时，可以进入专场
                         case 3:
-                            helper.setText(R.id.tv_communal_activity_tag_rule, activityInfoData.getActivityEndTime()+"结束");
+                            boolean activityValid = isActivityValid(System.currentTimeMillis(), activityInfoData.getActivityStartTime(), activityInfoData.getActivityEndTime());
+                            helper.setText(R.id.tv_communal_activity_tag_rule, activityValid ? activityInfoData.getActivityEndTime() + "结束" : "");
                             break;
                         //不显示规则，也不能进入专场
-                        case 6:
                         case 7:
                             helper.setText(R.id.tv_communal_activity_tag_rule, "");
                             break;
@@ -260,7 +294,7 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                 break;
             case APPLY_REFUND:
                 ProductsBean productsBean = (ProductsBean) item;
-                GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.iv_direct_indent_pro), productsBean.getPicUrl());
+                GlideImageLoaderUtil.loadCenterCrop(context, helper.getView(R.id.iv_direct_indent_pro), productsBean.getPicUrl());
                 helper.setText(R.id.tv_direct_indent_pro_name, getStrings(productsBean.getProductName()))
                         .setText(R.id.tv_direct_indent_pro_sku, getStrings(productsBean.getProductSkuValue()))
                         .setText(R.id.tv_direct_pro_count, "x" + productsBean.getCount());
@@ -293,7 +327,7 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
             case INDENT_INVOICE:
                 //            发票订单详情
                 orderProductInfoBean = (OrderProductInfoBean) item;
-                GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.iv_direct_indent_pro), orderProductInfoBean.getPicUrl());
+                GlideImageLoaderUtil.loadCenterCrop(context, helper.getView(R.id.iv_direct_indent_pro), orderProductInfoBean.getPicUrl());
                 helper.setText(R.id.tv_direct_indent_pro_name, getStrings(orderProductInfoBean.getName()))
                         .setText(R.id.tv_direct_indent_pro_sku, getStrings(orderProductInfoBean.getSaleSkuValue()))
                         .setText(R.id.tv_direct_indent_pro_price, getStringsChNPrice(context, orderProductInfoBean.getPrice()))
@@ -603,5 +637,21 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                 showToast(context, R.string.unConnectedNetwork);
             }
         });
+    }
+
+    //判断活动是否已开始并且未结束
+    private boolean isActivityValid(long currentTime, String startTime, String endTime) {
+        try {
+            //格式化开始时间
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+            Date dateStart = formatter.parse(startTime);
+            Date dateEnd = formatter.parse(endTime);
+            if (currentTime >= dateStart.getTime() && currentTime < dateEnd.getTime()) {
+                return true;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

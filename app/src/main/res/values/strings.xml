@@ -64,7 +64,7 @@
     <!--淘宝优惠券-->
     <string name="coupon_tb_price">¥%1$s元优惠券</string>
 
-    <string name="AddCarSuccess">添加商品成功</string>
+    <string name="AddCarSuccess">成功加入购物车~</string>
     <string name="integral_hint">积分可以兑换礼品，晒单可获得更多积分</string>
     <string name="collect_failed">收藏%1$s失败</string>
     <string name="collect_success">收藏%1$s成功</string>
