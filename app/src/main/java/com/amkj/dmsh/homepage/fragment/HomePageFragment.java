@@ -92,6 +92,7 @@ public class HomePageFragment extends BaseFragment {
     private List<HomeCommonBean> mGoodsNavbarList = new ArrayList<>();
     private HomeCommonEntity mHomeNavbarEntity;
     private boolean isAutoClose;
+    private boolean isFirst = true;
 
 
     @Override
@@ -193,7 +194,10 @@ public class HomePageFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        getMessageCount(getActivity(), badgeMsg);
+        if (!isFirst) {
+            getMessageCount(getActivity(), badgeMsg);
+        }
+        isFirst = false;
     }
 
 
