@@ -39,6 +39,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import butterknife.ButterKnife;
 import cn.jzvd.JzvdStd;
@@ -75,7 +76,8 @@ public abstract class BaseActivity extends AppCompatActivity {
                 .setSize(AutoSizeUtils.mm2px(mAppContext, 50), AutoSizeUtils.mm2px(mAppContext, 50));
 //                .setDimAmount(0.5f)
         //Api通用参数初始化
-        commonMap.put("reqId", String.valueOf(System.currentTimeMillis()));
+        commonMap.put("reqId", UUID.randomUUID().toString().replaceAll("-", ""));
+//        commonMap.put("reqId", String.valueOf(System.currentTimeMillis()));
         // 重新加载逻辑
         if (isAddLoad()) {
             loadService = LoadSir.getDefault().register(getLoadView() != null ? getLoadView() : this, new Callback.OnReloadListener() {

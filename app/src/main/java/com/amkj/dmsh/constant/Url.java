@@ -393,6 +393,8 @@ public class Url {
     public static final String INTEGRAL_CREATE_INDENT = "api/integralorder/addIntegralOrder";
     //    再次购买
     public static final String Q_RE_BUY_INDENT = "api/goods/order/againBuy";
+    //    新版再次购买
+    public static final String Q_NEW_RE_BUY_INDENT = "api/goods/order/againBuyNewV2";
     //订单付款
     public static final String Q_PAYMENT_INDENT = "api/goods/order/buy";
     //    银联支付手动回调

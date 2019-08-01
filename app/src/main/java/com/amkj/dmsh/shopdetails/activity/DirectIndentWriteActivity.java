@@ -100,8 +100,8 @@ import static com.amkj.dmsh.constant.Url.PAY_CANCEL;
 import static com.amkj.dmsh.constant.Url.PAY_ERROR;
 import static com.amkj.dmsh.constant.Url.Q_CREATE_GROUP_INDENT;
 import static com.amkj.dmsh.constant.Url.Q_CREATE_INDENT;
+import static com.amkj.dmsh.constant.Url.Q_NEW_RE_BUY_INDENT;
 import static com.amkj.dmsh.constant.Url.Q_PAYMENT_INDENT;
-import static com.amkj.dmsh.constant.Url.Q_RE_BUY_INDENT;
 
 
 /**
@@ -561,8 +561,9 @@ public class DirectIndentWriteActivity extends BaseActivity {
     private void getOrderData() {
         passGoods = new ArrayList<>();
         Map<String, Object> params = new HashMap<>();
-        params.put("no", orderNo);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_RE_BUY_INDENT, params, new NetLoadListenerHelper() {
+        params.put("orderNo", orderNo);
+        params.put("userId", userId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_NEW_RE_BUY_INDENT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 if (productInfoList != null) {
@@ -1082,13 +1083,17 @@ public class DirectIndentWriteActivity extends BaseActivity {
         }
     }
 
-    //已创建订单，取消支付
+    //已创建订单，取消支付，跳转到订单详情
     private void skipIndentDetail() {
         if (!TextUtils.isEmpty(orderCreateNo)) {
             Intent intent = new Intent(this, DirectExchangeDetailsActivity.class);
             intent.putExtra("orderNo", orderCreateNo);
-            startActivity(intent);
-            finish();
+            //延时跳转到订单详情页面（因为线程问题，立即跳转可能会失效）
+            new Handler().postDelayed(() -> {
+                startActivity(intent);
+                finish();
+            }, 500);
+
         }
     }
 
