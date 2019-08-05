@@ -10,14 +10,16 @@ import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean.CartBean.CartInfoBean;
 import com.amkj.dmsh.shopdetails.bean.CombineCartBean;
 import com.amkj.dmsh.shopdetails.bean.CombineCartBean.CombineMatchsBean;
 import com.amkj.dmsh.shopdetails.bean.CombineGoodsBean;
+import com.amkj.dmsh.shopdetails.bean.CombineGoodsBean.MatchProductsBean;
 import com.amkj.dmsh.shopdetails.bean.GroupGoodsEntity.GroupGoodsBean.CombineCommonBean;
+import com.amkj.dmsh.shopdetails.bean.IndentProDiscountBean;
 import com.amkj.dmsh.shopdetails.bean.IndentWriteEntity.IndentWriteBean.ProductsBean;
 import com.amkj.dmsh.shopdetails.bean.IndentWriteEntity.IndentWriteBean.ProductsBean.ProductInfoBean;
-import com.amkj.dmsh.shopdetails.bean.CombineGoodsBean.MatchProductsBean;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -387,11 +389,11 @@ public class ShopCarDao {
         }
     }
 
-
-    public static String[] getIndentInfo(List<ProductsBean> products) {
-        String[] info = new String[2];
-        List<CombineGoodsBean> combineGoodsList = new ArrayList<>();
-        JSONArray jsonArray = new JSONArray();
+    //获取创建订单商品信息
+    public static List[] getIndentGoodsInfo(List<ProductsBean> products) {
+        List[] info = new List[2];
+        List<CombineGoodsBean> combineGoodsList = new ArrayList<>();//组合商品信息
+        List<IndentProDiscountBean> goodsList = new ArrayList<>();//普通商品信息
         for (ProductsBean productsBean : products) {
             List<ProductInfoBean> productInfos = productsBean.getProductInfos();
             ProductInfoBean combineMainProduct = productsBean.getCombineMainProduct();
@@ -418,27 +420,48 @@ public class ShopCarDao {
                 combineGoodsList.add(combineGoodsBean);
             } else if (productInfos != null && productInfos.size() > 0) {
                 for (ProductInfoBean productInfoBean : productInfos) {
-                    try {
-                        JSONObject jsonObject = new JSONObject();
-                        jsonObject.put("saleSkuId", productInfoBean.getSaleSkuId());
-                        jsonObject.put("id", productInfoBean.getId());
-                        jsonObject.put("count", productInfoBean.getCount());
-                        jsonObject.put("cartId", productInfoBean.getCartId());
-                        jsonArray.put(jsonObject);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    IndentProDiscountBean indentProDiscountBean = new IndentProDiscountBean();
+                    indentProDiscountBean.setSaleSkuId(productInfoBean.getSaleSkuId());
+                    indentProDiscountBean.setId(productInfoBean.getId());
+                    indentProDiscountBean.setCount(productInfoBean.getCount());
+                    indentProDiscountBean.setCartId(productInfoBean.getCartId());
+                    goodsList.add(indentProDiscountBean);
                 }
 
             }
         }
-        if (jsonArray.length() > 0) {
-            info[0] = jsonArray.toString().trim();
-        }
-        if (combineGoodsList.size() > 0) {
-            info[1] = new Gson().toJson(combineGoodsList);
-        }
+        info[0] = goodsList;
+        info[1] = combineGoodsList;
         return info;
     }
 
+
+    //从订单结算页面选择优惠券所传商品信息
+    public static String getCouponGoodsInfo(List<ProductInfoBean> products) {
+        JSONArray jsonArray = new JSONArray();
+        for (ProductInfoBean productInfoBean : products) {
+            ActivityInfoBean activityInfo = productInfoBean.getActivityInfoBean();
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("saleSkuId", productInfoBean.getSaleSkuId());
+                jsonObject.put("id", productInfoBean.getId());
+                jsonObject.put("count", productInfoBean.getCount());
+                jsonObject.put("price", productInfoBean.getPrice());
+                if (!TextUtils.isEmpty(productInfoBean.getZhPrice())) {
+                    jsonObject.put("zhPrice", productInfoBean.getZhPrice());
+                }
+
+                if (activityInfo != null && (productInfoBean.getCombineMainId() != 0 || productInfoBean.getCombineMatchId() != 0)) {
+                    jsonObject.put("activityCode", activityInfo.getActivityCode());
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            jsonArray.put(jsonObject);
+        }
+
+        return jsonArray.length() > 0 ? jsonArray.toString() : "";
+    }
 }

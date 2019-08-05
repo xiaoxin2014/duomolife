@@ -1,5 +1,8 @@
 package com.amkj.dmsh.address.bean;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -57,7 +60,7 @@ public class AddressInfoEntity {
         this.msg = msg;
     }
 
-    public static class AddressInfoBean {
+    public static class AddressInfoBean implements Parcelable {
         private int id;
         private int status;
         private int user_id;
@@ -166,5 +169,56 @@ public class AddressInfoEntity {
         public void setMobile(String mobile) {
             this.mobile = mobile;
         }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeInt(this.id);
+            dest.writeInt(this.status);
+            dest.writeInt(this.user_id);
+            dest.writeString(this.address);
+            dest.writeString(this.consignee);
+            dest.writeString(this.community);
+            dest.writeString(this.province);
+            dest.writeString(this.postcode);
+            dest.writeString(this.district);
+            dest.writeString(this.address_com);
+            dest.writeString(this.city);
+            dest.writeString(this.mobile);
+        }
+
+        public AddressInfoBean() {
+        }
+
+        protected AddressInfoBean(Parcel in) {
+            this.id = in.readInt();
+            this.status = in.readInt();
+            this.user_id = in.readInt();
+            this.address = in.readString();
+            this.consignee = in.readString();
+            this.community = in.readString();
+            this.province = in.readString();
+            this.postcode = in.readString();
+            this.district = in.readString();
+            this.address_com = in.readString();
+            this.city = in.readString();
+            this.mobile = in.readString();
+        }
+
+        public static final Parcelable.Creator<AddressInfoBean> CREATOR = new Parcelable.Creator<AddressInfoBean>() {
+            @Override
+            public AddressInfoBean createFromParcel(Parcel source) {
+                return new AddressInfoBean(source);
+            }
+
+            @Override
+            public AddressInfoBean[] newArray(int size) {
+                return new AddressInfoBean[size];
+            }
+        };
     }
 }

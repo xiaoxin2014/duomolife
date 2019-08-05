@@ -261,7 +261,7 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
                     if (addressInfoEntity.getCode().equals(SUCCESS_CODE)) {
                         showToast(AddressNewCreatedActivity.this, "添加成功");
                         Intent data = new Intent();
-                        data.putExtra("addressId", addressInfoEntity.getAddressInfoBean().getId());
+                        data.putExtra("addressInfoBean", addressInfoEntity.getAddressInfoBean());
                         setResult(RESULT_OK, data);
                         finish();
                     } else {
@@ -309,7 +309,7 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
                 if (addressInfoEntity != null) {
                     if (addressInfoEntity.getCode().equals(SUCCESS_CODE)) {
                         Intent data = new Intent();
-                        data.putExtra("addressId", addressInfoEntity.getAddressInfoBean().getId());
+                        data.putExtra("addressInfoBean", addressInfoEntity.getAddressInfoBean());
                         setResult(RESULT_OK, data);
                         finish();
                     } else {

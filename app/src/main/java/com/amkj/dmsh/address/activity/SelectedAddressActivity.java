@@ -11,12 +11,12 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.address.adapter.SelectedAddressAdapter;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.address.bean.AddressInfoEntity.AddressInfoBean;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.integration.bean.AddressListEntity;
-import com.amkj.dmsh.shopdetails.integration.bean.AddressListEntity.AddressListBean;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
@@ -59,7 +59,7 @@ public class SelectedAddressActivity extends BaseActivity {
     SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
-    private List<AddressListBean> addressAllBeanList = new ArrayList<>();
+    private List<AddressInfoBean> addressAllBeanList = new ArrayList<>();
     private SelectedAddressAdapter selectedAddressAdapter;
     private int CREATE_ADDRESS_REQ = 103;
     private int EDIT_ADDRESS_REQ = 104;
@@ -103,21 +103,21 @@ public class SelectedAddressActivity extends BaseActivity {
         selectedAddressAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                AddressListBean addressAllBean = (AddressListBean) view.getTag();
-                if (addressAllBean != null && !isMineSkip) {
-                    goBackAddress(addressAllBean.getId());
+                AddressInfoBean addressInfoBean = (AddressInfoBean) view.getTag();
+                if (addressInfoBean != null && !isMineSkip) {
+                    goBackAddress(addressInfoBean);
                 }
             }
         });
         selectedAddressAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                final AddressListBean addressAllBean = (AddressListBean) view.getTag();
-                if (addressAllBean != null) {
+                final AddressInfoBean addressInfoBean = (AddressInfoBean) view.getTag();
+                if (addressInfoBean != null) {
                     switch (view.getId()) {
                         case R.id.cb_address_selected_item:
                             CheckBox cb_address_selected_item = (CheckBox) view;
-                            if (addressAllBean.getStatus() != 1) {
+                            if (addressInfoBean.getStatus() != 1) {
                                 for (int i = 0; i < addressAllBeanList.size(); i++) {
                                     if (i == position) {
                                         addressAllBeanList.get(i).setStatus(1);
@@ -127,26 +127,25 @@ public class SelectedAddressActivity extends BaseActivity {
                                 }
                                 selectedAddressAdapter.notifyDataSetChanged();
 //                    修改默认地址
-                                upDateDefaultAddress(addressAllBean);
+                                upDateDefaultAddress(addressInfoBean);
                             } else {
                                 cb_address_selected_item.setChecked(true);
                             }
                             break;
                         case R.id.tv_address_item_edit:
                             Intent addressData = new Intent(SelectedAddressActivity.this, AddressNewCreatedActivity.class);
-                            addressData.putExtra("addressId", String.valueOf(addressAllBean.getId()));
-                            addressData.putExtra("uid", addressAllBean.getUser_id());
+                            addressData.putExtra("addressId", String.valueOf(addressInfoBean.getId()));
                             startActivityForResult(addressData, EDIT_ADDRESS_REQ);
                             break;
                         case R.id.tv_address_item_del:
-                            if (addressAllBean.getStatus() == 1) {
+                            if (addressInfoBean.getStatus() == 1) {
                                 showToast(SelectedAddressActivity.this, "不能删除默认地址,请先设置其它地址为默认地址");
                             } else {
                                 // 创建
                                 dialog = new AlertDialog.Builder(SelectedAddressActivity.this)
                                         .setTitle("删除收货地址")
                                         .setMessage("确定删除这个收货地址吗?")
-                                        .setPositiveButton("确定", (dialog, which) -> delAddress(addressAllBean.getId()))
+                                        .setPositiveButton("确定", (dialog, which) -> delAddress(addressInfoBean.getId()))
                                         .setNegativeButton("取消", (dialog, which) -> dialog.cancel())
                                         .create();
                                 dialog.setCanceledOnTouchOutside(false);
@@ -171,7 +170,6 @@ public class SelectedAddressActivity extends BaseActivity {
     }
 
     //  新增地址
-
     @OnClick(R.id.tv_header_shared)
     void addAddress() {
         Intent skipNewCreate = new Intent(SelectedAddressActivity.this, AddressNewCreatedActivity.class);
@@ -188,18 +186,18 @@ public class SelectedAddressActivity extends BaseActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CREATE_ADDRESS_REQ || requestCode == EDIT_ADDRESS_REQ) {
-            int addressId = data.getIntExtra("addressId", 0);
-            if (!isMineSkip && addressId != 0) {
-                goBackAddress(addressId);
+            AddressInfoBean addressInfoBean = data.getParcelableExtra("addressInfoBean");
+            if (!isMineSkip && addressInfoBean != null) {
+                goBackAddress(addressInfoBean);
             } else {
                 loadData();
             }
         }
     }
 
-    private void goBackAddress(int addressId) {
+    private void goBackAddress(AddressInfoBean addressInfoBean) {
         Intent dataIntent = new Intent();
-        dataIntent.putExtra("addressId", addressId);
+        dataIntent.putExtra("addressInfoBean", addressInfoBean);
         setResult(RESULT_OK, dataIntent);
         finish();
     }
@@ -208,7 +206,7 @@ public class SelectedAddressActivity extends BaseActivity {
     private void delAddress(int id) {
         Map<String, Object> params = new HashMap<>();
         params.put("id", id);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,DEL_ADDRESS,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, DEL_ADDRESS, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -227,7 +225,7 @@ public class SelectedAddressActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
-        if(userId<1){
+        if (userId < 1) {
             return;
         }
         String url = Url.BASE_URL + Url.ADDRESS_LIST;
@@ -271,11 +269,11 @@ public class SelectedAddressActivity extends BaseActivity {
         });
     }
 
-    private void upDateDefaultAddress(final AddressListBean addressAllBean) {
+    private void upDateDefaultAddress(final AddressInfoBean addressInfoBean) {
         Map<String, Object> params = new HashMap<>();
-        params.put("id", addressAllBean.getId());
-        params.put("user_id", addressAllBean.getUser_id());
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,UPDATE_DEFAULT_ADDRESS,params,new NetLoadListenerHelper(){
+        params.put("id", addressInfoBean.getId());
+        params.put("user_id", addressInfoBean.getUser_id());
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, UPDATE_DEFAULT_ADDRESS, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -284,7 +282,7 @@ public class SelectedAddressActivity extends BaseActivity {
                     if (status.getCode().equals(SUCCESS_CODE)) {
                         showToast(SelectedAddressActivity.this, "修改默认地址完成");
                         if (!isMineSkip) {
-                            goBackAddress(addressAllBean.getId());
+                            goBackAddress(addressInfoBean);
                         } else {
                             loadData();
                         }
@@ -296,7 +294,7 @@ public class SelectedAddressActivity extends BaseActivity {
 
             @Override
             public void netClose() {
-                showToast(SelectedAddressActivity.this,R.string.unConnectedNetwork);
+                showToast(SelectedAddressActivity.this, R.string.unConnectedNetwork);
             }
         });
     }

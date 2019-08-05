@@ -259,6 +259,7 @@ public class IndentWriteEntity extends BaseTimeEntity {
                 private String skuName;
                 private String picUrl;
                 private String price;
+                private String zhPrice;
                 private String name;
                 private int count;
                 private int id;
@@ -278,7 +279,6 @@ public class IndentWriteEntity extends BaseTimeEntity {
                 //购物车id
                 private int cartId;
 
-
                 //是否显示分割线
                 private int showLine;
                 //是够显示活动信息
@@ -286,6 +286,14 @@ public class IndentWriteEntity extends BaseTimeEntity {
                 //存储活动信息
                 private ActivityInfoBean activityInfoBean;
 
+
+                public String getZhPrice() {
+                    return zhPrice;
+                }
+
+                public void setZhPrice(String zhPrice) {
+                    this.zhPrice = zhPrice;
+                }
 
                 public int getCartId() {
                     return cartId;

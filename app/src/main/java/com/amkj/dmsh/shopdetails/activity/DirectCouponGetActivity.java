@@ -1,31 +1,25 @@
 package com.amkj.dmsh.shopdetails.activity;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.mine.bean.SelCouponGoodsEntity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.adapter.DirectMyCouponAdapter;
 import com.amkj.dmsh.shopdetails.bean.DirectCouponEntity;
 import com.amkj.dmsh.shopdetails.bean.DirectCouponEntity.DirectCouponBean;
-import com.amkj.dmsh.shopdetails.bean.IndentWriteEntity.IndentWriteBean.ProductsBean.ProductInfoBean;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
-import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,8 +29,6 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -44,11 +36,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
-
-;
-;
-;
-
 
 /**
  * @author LGuiPeng
@@ -70,12 +57,9 @@ public class DirectCouponGetActivity extends BaseActivity {
     TextView tv_header_titleAll;
     @BindView(R.id.tv_header_shared)
     TextView header_shared;
-    private List<DirectCouponBean> couponList = new ArrayList();
-    private int page = 1;
+    private List<DirectCouponBean> couponList = new ArrayList<>();
     private DirectMyCouponAdapter directMyCouponAdapter;
-    private List<ProductInfoBean> settlementGoods;
-    private int scrollY;
-    private float screenHeight;
+    private String couponGoodsJson;
     private DirectCouponEntity directCouponEntity;
 
     @Override
@@ -89,7 +73,13 @@ public class DirectCouponGetActivity extends BaseActivity {
         tv_header_titleAll.setText("选择优惠券");
         header_shared.setVisibility(View.INVISIBLE);
         Intent intent = getIntent();
-        settlementGoods = intent.getParcelableArrayListExtra("couponGoods");
+
+        if (intent != null && !TextUtils.isEmpty(intent.getStringExtra("couponGoods"))) {
+            couponGoodsJson = intent.getStringExtra("couponGoods");
+        } else {
+            showToast(getActivity(), "商品信息有误，请重试");
+            finish();
+        }
         communal_recycler.setLayoutManager(new LinearLayoutManager(DirectCouponGetActivity.this));
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
@@ -97,52 +87,11 @@ public class DirectCouponGetActivity extends BaseActivity {
                 .create());
         directMyCouponAdapter = new DirectMyCouponAdapter(couponList, "couponGet");
         communal_recycler.setAdapter(directMyCouponAdapter);
-        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                //                滚动距离置0
-                scrollY = 0;
-                loadData();
-            }
+        smart_communal_refresh.setOnRefreshListener(refreshLayout -> {
+            loadData();
         });
         directMyCouponAdapter.setEnableLoadMore(false);
-        TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-        screenHeight = app.getScreenHeight();
-        communal_recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                scrollY += dy;
-                if (!recyclerView.canScrollVertically(-1)) {
-                    scrollY = 0;
-                }
-                if (scrollY > screenHeight * 1.5 && dy < 0) {
-                    if (download_btn_communal.getVisibility() == GONE) {
-                        download_btn_communal.setVisibility(VISIBLE);
-                        download_btn_communal.hide(false);
-                    }
-                    if (!download_btn_communal.isVisible()) {
-                        download_btn_communal.show();
-                    }
-                } else {
-                    if (download_btn_communal.isVisible()) {
-                        download_btn_communal.hide();
-                    }
-                }
-            }
-        });
-        download_btn_communal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) communal_recycler.getLayoutManager();
-                int firstVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition();
-                int mVisibleCount = linearLayoutManager.findLastVisibleItemPosition()
-                        - linearLayoutManager.findFirstVisibleItemPosition() + 1;
-                if (firstVisibleItemPosition > mVisibleCount) {
-                    communal_recycler.scrollToPosition(mVisibleCount);
-                }
-                communal_recycler.smoothScrollToPosition(0);
-            }
-        });
+        setFloatingButton(download_btn_communal, communal_recycler);
         directMyCouponAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -191,7 +140,6 @@ public class DirectCouponGetActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
-        page = 1;
         selfChoiceCoupon();
     }
 
@@ -206,22 +154,11 @@ public class DirectCouponGetActivity extends BaseActivity {
     }
 
     private void selfChoiceCoupon() {
-        if (settlementGoods != null && userId > 0) {
-            List<SelCouponGoodsEntity> selCouponGoodsEntityList = new ArrayList<>();
-            SelCouponGoodsEntity selCouponGoodsEntity;
-            for (int i = 0; i < settlementGoods.size(); i++) {
-                selCouponGoodsEntity = new SelCouponGoodsEntity();
-                ProductInfoBean productInfoBean = settlementGoods.get(i);
-                selCouponGoodsEntity.setPrice(productInfoBean.getPrice());
-                selCouponGoodsEntity.setCount(productInfoBean.getCount());
-//            产品ID
-                selCouponGoodsEntity.setId(productInfoBean.getId());
-                selCouponGoodsEntityList.add(selCouponGoodsEntity);
-            }
+        if (!TextUtils.isEmpty(couponGoodsJson) && userId > 0) {
             Map<String, Object> params = new HashMap<>();
             params.put("uid", userId);
             params.put("isApp", 1);
-            params.put("orderList", new Gson().toJson(selCouponGoodsEntityList));
+            params.put("orderList", couponGoodsJson);
             NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.Q_SELF_SHOP_DETAILS_COUPON, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {

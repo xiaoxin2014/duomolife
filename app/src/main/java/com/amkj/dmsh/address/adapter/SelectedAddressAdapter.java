@@ -1,7 +1,7 @@
 package com.amkj.dmsh.address.adapter;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.shopdetails.integration.bean.AddressListEntity.AddressListBean;
+import com.amkj.dmsh.address.bean.AddressInfoEntity.AddressInfoBean;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
@@ -12,17 +12,17 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 /**
  * Created by atd48 on 2016/7/16.
  */
-public class SelectedAddressAdapter extends BaseQuickAdapter<AddressListBean, BaseViewHolder> {
+public class SelectedAddressAdapter extends BaseQuickAdapter<AddressInfoBean, BaseViewHolder> {
 
     private final boolean isShowDel;
 
-    public SelectedAddressAdapter(List<AddressListBean> addressAllBeanList, boolean isShowDel) {
+    public SelectedAddressAdapter(List<AddressInfoBean> addressAllBeanList, boolean isShowDel) {
         super(R.layout.adapter_address_selected_item, addressAllBeanList);
         this.isShowDel = isShowDel;
     }
 
     @Override
-    protected void convert(BaseViewHolder helper, AddressListBean addressAllBean) {
+    protected void convert(BaseViewHolder helper, AddressInfoBean addressAllBean) {
         helper.setText(R.id.tv_address_item_perName, getStrings(addressAllBean.getConsignee()))
                 .setText(R.id.tv_address_item_perPhone, getStrings(addressAllBean.getMobile()))
                 .setText(R.id.tv_address_item_address, getStrings(addressAllBean.getAddress_com() + addressAllBean.getAddress()))

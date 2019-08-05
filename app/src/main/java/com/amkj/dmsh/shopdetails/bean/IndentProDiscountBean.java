@@ -4,7 +4,6 @@ package com.amkj.dmsh.shopdetails.bean;
  * @author LGuiPeng
  * @email liuguipeng163@163.com
  * created on 2017/8/25
- * class description:订单优惠信息
  */
 
 public class IndentProDiscountBean {

@@ -1,5 +1,7 @@
 package com.amkj.dmsh.shopdetails.integration.bean;
 
+
+import com.amkj.dmsh.address.bean.AddressInfoEntity.AddressInfoBean;
 import com.amkj.dmsh.base.BaseEntity;
 import com.google.gson.annotations.SerializedName;
 
@@ -30,115 +32,13 @@ public class AddressListEntity extends BaseEntity{
      */
 
     @SerializedName("result")
-    private List<AddressListBean> addressAllBeanList;
+    private List<AddressInfoBean > addressAllBeanList;
 
-    public List<AddressListBean> getAddressAllBeanList() {
+    public List<AddressInfoBean> getAddressAllBeanList() {
         return addressAllBeanList;
     }
 
-    public void setAddressAllBeanList(List<AddressListBean> addressAllBeanList) {
+    public void setAddressAllBeanList(List<AddressInfoBean> addressAllBeanList) {
         this.addressAllBeanList = addressAllBeanList;
-    }
-
-    public static class AddressListBean {
-        private int id;
-        private int status;
-        private String address;
-        private String consignee;
-        private String community;
-        private String province;
-        private int user_id;
-        private String district;
-        private String address_com;
-        private String city;
-        private String mobile;
-
-        public int getId() {
-            return id;
-        }
-
-        public void setId(int id) {
-            this.id = id;
-        }
-
-        public int getStatus() {
-            return status;
-        }
-
-        public void setStatus(int status) {
-            this.status = status;
-        }
-
-        public String getAddress() {
-            return address;
-        }
-
-        public void setAddress(String address) {
-            this.address = address;
-        }
-
-        public String getConsignee() {
-            return consignee;
-        }
-
-        public void setConsignee(String consignee) {
-            this.consignee = consignee;
-        }
-
-        public String getCommunity() {
-            return community;
-        }
-
-        public void setCommunity(String community) {
-            this.community = community;
-        }
-
-        public String getProvince() {
-            return province;
-        }
-
-        public void setProvince(String province) {
-            this.province = province;
-        }
-
-        public int getUser_id() {
-            return user_id;
-        }
-
-        public void setUser_id(int user_id) {
-            this.user_id = user_id;
-        }
-
-        public String getDistrict() {
-            return district;
-        }
-
-        public void setDistrict(String district) {
-            this.district = district;
-        }
-
-        public String getAddress_com() {
-            return address_com;
-        }
-
-        public void setAddress_com(String address_com) {
-            this.address_com = address_com;
-        }
-
-        public String getCity() {
-            return city;
-        }
-
-        public void setCity(String city) {
-            this.city = city;
-        }
-
-        public String getMobile() {
-            return mobile;
-        }
-
-        public void setMobile(String mobile) {
-            this.mobile = mobile;
-        }
     }
 }
