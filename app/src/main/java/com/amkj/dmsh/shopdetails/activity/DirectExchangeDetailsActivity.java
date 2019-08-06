@@ -369,29 +369,25 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
                                 );
                                 break;
                             case 2:
-                                if (refundOrderDialogHelper == null) {
-                                    refundOrderDialogHelper = new AlertDialogHelper(DirectExchangeDetailsActivity.this);
-                                    refundOrderDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
-                                            .setMsg(getStrings(applyRefundCheckBean.getMsg())).setCancelText("取消").setConfirmText("确定")
-                                            .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s));
-                                    refundOrderDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
-                                        @Override
-                                        public void confirm() {
-                                            intent.setClass(DirectExchangeDetailsActivity.this, DirectApplyRefundActivity.class);
-                                            Bundle bundle = new Bundle();
-                                            bundle.putParcelable("refundPro", refundBean);
-                                            intent.putExtra(REFUND_TYPE, REFUND_TYPE);
-                                            intent.putExtras(bundle);
-                                            startActivity(intent);
-                                        }
+                                refundOrderDialogHelper = new AlertDialogHelper(DirectExchangeDetailsActivity.this);
+                                refundOrderDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
+                                        .setMsg(getStrings(applyRefundCheckBean.getMsg())).setCancelText("取消").setConfirmText("确定")
+                                        .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s));
+                                refundOrderDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                                    @Override
+                                    public void confirm() {
+                                        intent.setClass(DirectExchangeDetailsActivity.this, DirectApplyRefundActivity.class);
+                                        Bundle bundle = new Bundle();
+                                        bundle.putParcelable("refundPro", refundBean);
+                                        intent.putExtra(REFUND_TYPE, REFUND_TYPE);
+                                        intent.putExtras(bundle);
+                                        startActivity(intent);
+                                    }
 
-                                        @Override
-                                        public void cancel() {
-                                        }
-                                    });
-                                } else {
-                                    refundOrderDialogHelper.setMsg(getStrings(applyRefundCheckBean.getMsg()));
-                                }
+                                    @Override
+                                    public void cancel() {
+                                    }
+                                });
                                 refundOrderDialogHelper.show();
                                 break;
                         }
