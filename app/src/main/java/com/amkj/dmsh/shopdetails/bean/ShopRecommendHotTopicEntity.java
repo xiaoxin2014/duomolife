@@ -80,6 +80,8 @@ public class ShopRecommendHotTopicEntity extends BaseEntity {
         private String activity_code;
         private int itemType;
         private String save_num;
+        private String digest;
+
 
         /**
          * androidLink : app://ArticleOfficialActivity?ArtId=14516
@@ -94,6 +96,14 @@ public class ShopRecommendHotTopicEntity extends BaseEntity {
         private String type;
         private List<MarketLabelBean> marketLabelList;
         private boolean isSelected;
+
+        public String getDigest() {
+            return digest;
+        }
+
+        public void setDigest(String digest) {
+            this.digest = digest;
+        }
 
         public boolean isSelected() {
             return isSelected;

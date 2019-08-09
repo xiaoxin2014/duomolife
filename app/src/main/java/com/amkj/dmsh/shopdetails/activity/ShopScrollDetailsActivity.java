@@ -127,6 +127,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getRmbFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getSpannableString;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeDouble;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTime;
@@ -777,7 +778,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                                 mLlArtical.setVisibility(VISIBLE);
                                 GlideImageLoaderUtil.loadRoundImg(getActivity(), mIvArticalCover, hotTopicBean.getPicUrl(), 0);
                                 mTvArticalTitle.setText(getStrings(hotTopicBean.getTitle()));
-                                mTvArticalDesc.setText(getStrings(hotTopicBean.getDescription()));
+                                mTvArticalDesc.setText(getStrings(hotTopicBean.getDigest()));
                             }
                         }
                     }
@@ -1017,6 +1018,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             String price = newUserTag + getRmbFormat(this, shopProperty.getPrice()) + end;
             mTvProductMinPrice.setText(getSpannableString(price, 1 + newUserTag.length(), price.length() - end.length(), 1.6f, null));
             mTvProductMartketPrice.setText(getStringsFormat(this, R.string.money_market_price_chn, shopProperty.getMarketPrice()));
+            mTvProductMartketPrice.setVisibility(getStringChangeDouble(shopProperty.getMarketPrice()) > 0 ? VISIBLE : GONE);//大于0才显示
         } else {
             //设置活动标签信息以及状态
             String activityCode = shopProperty.getActivityCode();
@@ -1034,6 +1036,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     //限时购活动价(未开始时：activityPrice表示活动价；已开始时：price表示活动价)
                     String price = getRmbFormat(this, isTimeStart(shopDetailsEntity) ? shopProperty.getPrice() : shopProperty.getActivityPrice()) + end;
                     mTvProductMinPrice.setText(getSpannableString(price, 1, price.length() - end.length(), 1.6f, null));
+                    mTvProductMartketPrice.setVisibility(getStringChangeDouble(shopProperty.getMarketPrice()) > 0 ? VISIBLE : GONE);//大于0才显示
                     //市场价
                     if (isTimeStart(shopDetailsEntity)) {
                         //已开始时显示划线价（市场参考价）
@@ -1107,6 +1110,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         } else {
             String marketPrice = shopProperty.getMarketPrice();
             tv_ql_sp_pro_sc_market_price.setText(String.format(getString(R.string.money_market_price_chn), marketPrice));
+            tv_ql_sp_pro_sc_market_price.setVisibility(getStringChangeDouble(marketPrice) > 0 ? VISIBLE : GONE);
         }
 
 
@@ -2104,7 +2108,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 stopScrollBanner();
             }
         } else if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
-            if (badge!=null){
+            if (badge != null) {
                 badge.setBadgeNumber((int) message.result);
             }
         }
