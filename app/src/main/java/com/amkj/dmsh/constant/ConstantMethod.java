@@ -1820,22 +1820,24 @@ public class ConstantMethod {
 
     //更新购物车商品数量
     public static void getCarCount(Activity activity) {
-        //购物车数量展示
-        Map<String, Object> params = new HashMap<>();
-        params.put("userId", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(activity, Q_QUERY_CAR_COUNT, params, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                Gson gson = new Gson();
-                MessageBean requestStatus = gson.fromJson(result, MessageBean.class);
-                if (requestStatus != null) {
-                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        int cartNumber = requestStatus.getResult();
-                        EventBus.getDefault().post(new EventMessage(ConstantVariable.UPDATE_CAR_NUM, cartNumber));
+        if (userId > 0) {
+            //购物车数量展示
+            Map<String, Object> params = new HashMap<>();
+            params.put("userId", userId);
+            NetLoadUtils.getNetInstance().loadNetDataPost(activity, Q_QUERY_CAR_COUNT, params, new NetLoadListenerHelper() {
+                @Override
+                public void onSuccess(String result) {
+                    Gson gson = new Gson();
+                    MessageBean requestStatus = gson.fromJson(result, MessageBean.class);
+                    if (requestStatus != null) {
+                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
+                            int cartNumber = requestStatus.getResult();
+                            EventBus.getDefault().post(new EventMessage(ConstantVariable.UPDATE_CAR_NUM, cartNumber));
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
     }
 
 
