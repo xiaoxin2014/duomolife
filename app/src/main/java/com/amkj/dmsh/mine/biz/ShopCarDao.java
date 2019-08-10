@@ -30,6 +30,9 @@ import static com.amkj.dmsh.constant.ConstantVariable.TITLE;
 
 
 public class ShopCarDao {
+    public static final int NORMAL = 1;//正常
+    public static final int MATCH_INVALID = 2;//搭配商品失效
+    public static final int MATCH_NO_QUANTITY = 3;//搭配商品无库存
 
     /**
      * 选择全部，点下全部按钮，改变所有商品选中状态
@@ -261,8 +264,29 @@ public class ShopCarDao {
      */
     public static boolean isValid(CartInfoBean cartInfoBean) {
         //1.没有失效 2.有库存 3.非待售 4.sku属性正常
-        return cartInfoBean.getStatus() == 1 && cartInfoBean.getSaleSku() != null && cartInfoBean.getSaleSku().getQuantity() > 0 && !cartInfoBean.isForSale();
+        return cartInfoBean.getSaleSku() != null && cartInfoBean.getSaleSku().getQuantity() > 0 && !cartInfoBean.isForSale();
     }
+
+    /**
+     * 判断是否组合搭配商品失效(主商品正常，但是搭配商品中有失效的情况)
+     */
+    public static int isMatchInValid(ShopCarGoodsAdapter shopCarGoodsAdapter, CartInfoBean cartInfoBean) {
+        if (cartInfoBean.isMainProduct() || cartInfoBean.isCombineProduct()) {
+            List<CartInfoBean> subItem = getSubItem(shopCarGoodsAdapter, cartInfoBean);
+            for (CartInfoBean bean : subItem) {
+                if (bean.isCombineProduct()) {
+                    if (bean.getStatus() == 0) {
+                        return MATCH_INVALID;
+                    } else if (bean.getSaleSku() != null && bean.getSaleSku().getQuantity() <= 0) {
+                        return MATCH_NO_QUANTITY;
+                    }
+                }
+            }
+        }
+
+        return NORMAL;
+    }
+
 
     /**
      * 刷新商品信息

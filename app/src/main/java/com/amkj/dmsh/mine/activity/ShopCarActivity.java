@@ -83,6 +83,8 @@ import static com.amkj.dmsh.constant.Url.NEW_PRO_SETTLE_PRICE;
 import static com.amkj.dmsh.constant.Url.Q_SHOP_DETAILS_CHANGE_CAR;
 import static com.amkj.dmsh.constant.Url.Q_SHOP_DETAILS_DEL_CAR;
 import static com.amkj.dmsh.constant.Url.Q_SHOP_DETAILS_GET_SKU_CAR;
+import static com.amkj.dmsh.mine.biz.ShopCarDao.MATCH_INVALID;
+import static com.amkj.dmsh.mine.biz.ShopCarDao.NORMAL;
 import static com.amkj.dmsh.mine.biz.ShopCarDao.getCartIds;
 import static com.amkj.dmsh.mine.biz.ShopCarDao.removeSelGoods;
 import static com.amkj.dmsh.mine.biz.ShopCarDao.updateGoodsInfo;
@@ -185,13 +187,19 @@ public class ShopCarActivity extends BaseActivity {
             switch (view.getId()) {
                 //单个选中或者取消
                 case R.id.cb_shop_car_sel:
-                    ShopCarDao.selectOne(shopGoodsList, cartInfoBean, isEditStatus);
-                    //商品有效并且不在编辑状态时更新结算价格
-                    if (isEditStatus) {
-                        shopCarGoodsAdapter.notifyDataSetChanged();
-                    } else if (cartInfoBean.isValid()) {
-                        getSettlePrice(cartInfoBean, null, true);
+                    int status = ShopCarDao.isMatchInValid(shopCarGoodsAdapter, cartInfoBean);
+                    if (status == NORMAL) {
+                        ShopCarDao.selectOne(shopGoodsList, cartInfoBean, isEditStatus);
+                        //商品有效并且不在编辑状态时更新结算价格
+                        if (isEditStatus) {
+                            shopCarGoodsAdapter.notifyDataSetChanged();
+                        } else if (cartInfoBean.isValid()) {
+                            getSettlePrice(cartInfoBean, null, true);
+                        }
+                    } else {
+                        showToast(status == MATCH_INVALID ? "搭配商品失效" : "搭配商品无库存");
                     }
+
                     break;
                 //修改购物车商品属性
                 case R.id.tv_shop_car_product_sku:
@@ -400,10 +408,10 @@ public class ShopCarActivity extends BaseActivity {
                             cartInfoBean.setCount(combineMainProduct.getCount());
                             cartInfoBean.setSelected(combineMainProduct.isSelected());
                             cartInfoBean.setValid(isValid);
-                            //只要搭配商品有任意一件失效，主商品不可选
-                            if (!ShopCarDao.isValid(cartInfoBean)) {
-                                combineMainProduct.setValid(false);
-                            }
+////                            //只要搭配商品有任意一件失效，主商品不可选
+//                            if (!ShopCarDao.isValid(cartInfoBean)) {
+//                                combineMainProduct.setValid(false);
+//                            }
                         }
                         //只要主商品失效，所有的搭配商品都会失效
                         if (!combineMainProduct.isValid()) {

@@ -94,18 +94,30 @@ public class ShopCarGoodsAdapter extends BaseMultiItemQuickAdapter<MultiItemEnti
                     dividerView.setLayoutParams(dividerLayoutParams);
                 }
 
-                //商品状态
+                //rubbishCarts商品状态(如果商品状态为0，显示已下架，totalQuantity即总库存为0显示已抢光，其他状态显示失效)
                 if (!cartInfoBean.isValid()) {
-                    helper.setGone(R.id.tv_buy_sack_tag, true);
                     if (cartInfoBean.getStatus() == 0) {
+                        helper.setGone(R.id.tv_buy_sack_tag, true);
                         helper.setText(R.id.tv_buy_sack_tag, "已下架");
+                        helper.setGone(R.id.iv_com_pro_tag_out, false);
                     } else if (cartInfoBean.getSaleSku().getQuantity() <= 0) {
-                        helper.setText(R.id.tv_buy_sack_tag, "已抢光");
+                        helper.setGone(R.id.tv_buy_sack_tag, false);
+                        helper.setGone(R.id.iv_com_pro_tag_out, true);
                     } else {
+                        helper.setGone(R.id.tv_buy_sack_tag, true);
                         helper.setText(R.id.tv_buy_sack_tag, "已失效");
+                        helper.setGone(R.id.iv_com_pro_tag_out, false);
                     }
-                } else {
-                    helper.setGone(R.id.tv_buy_sack_tag, false);
+                } else {//carts状态(不为1显示已失效,为1时判断库存，无库存显示已抢光)
+                    if (cartInfoBean.getStatus() == 1) {
+                        helper.setGone(R.id.tv_buy_sack_tag, false);
+                        helper.setGone(R.id.iv_com_pro_tag_out, cartInfoBean.getSaleSku().getQuantity() <= 0);
+                    } else {
+                        helper.setGone(R.id.tv_buy_sack_tag, true);
+                        helper.setText(R.id.tv_buy_sack_tag, "已失效");
+                        helper.setGone(R.id.iv_com_pro_tag_out, false);
+                    }
+
                 }
 
                 //编辑状态&&sku不为空&&有效&&有更多属性
