@@ -95,16 +95,17 @@ public class ShopCarGoodsAdapter extends BaseMultiItemQuickAdapter<MultiItemEnti
                 }
 
                 //商品状态
-                if (cartInfoBean.getStatus() == 1 && cartInfoBean.getSaleSku() != null) {
-                    if (cartInfoBean.getSaleSku().getQuantity() > 0) {
-                        helper.setGone(R.id.tv_buy_sack_tag, false);
+                if (!cartInfoBean.isValid()) {
+                    helper.setGone(R.id.tv_buy_sack_tag, true);
+                    if (cartInfoBean.getStatus() == 0) {
+                        helper.setText(R.id.tv_buy_sack_tag, "已下架");
+                    } else if (cartInfoBean.getSaleSku().getQuantity() <= 0) {
+                        helper.setText(R.id.tv_buy_sack_tag, "已抢光");
                     } else {
-                        helper.setGone(R.id.tv_buy_sack_tag, true)
-                                .setText(R.id.tv_buy_sack_tag, "已抢光");
+                        helper.setText(R.id.tv_buy_sack_tag, "已失效");
                     }
                 } else {
-                    helper.setGone(R.id.tv_buy_sack_tag, true)
-                            .setText(R.id.tv_buy_sack_tag, "已下架");
+                    helper.setGone(R.id.tv_buy_sack_tag, false);
                 }
 
                 //编辑状态&&sku不为空&&有效&&有更多属性
@@ -179,7 +180,7 @@ public class ShopCarGoodsAdapter extends BaseMultiItemQuickAdapter<MultiItemEnti
                             break;
                         //显示规则，不能进入专场
                         case 6:
-                            helper.setText(R.id.tv_communal_activity_tag_rule,  ShopCarDao.subItemCheceked(activityInfoData) ? getStrings(activityInfoData.getActivityRule()) : getStrings(activityInfoData.getPreActivityRule()))
+                            helper.setText(R.id.tv_communal_activity_tag_rule, ShopCarDao.subItemCheceked(activityInfoData) ? getStrings(activityInfoData.getActivityRule()) : getStrings(activityInfoData.getPreActivityRule()))
                                     .setGone(R.id.tv_communal_activity_tag_next, false)
                                     .setEnabled(R.id.ll_communal_activity_tag_rule, false);
                             break;

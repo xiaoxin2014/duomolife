@@ -1141,7 +1141,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
         //营销以及活动标签
         if ((!TextUtils.isEmpty(shopProperty.getActivityTag()) && !TextUtils.isEmpty(shopProperty.getActivityCode())) ||
-                (shopPropertyBean.getMarketLabelList() != null && shopProperty.getMarketLabelList().size() > 0) || !TextUtils.isEmpty(shopProperty.getNewUserTag())) {
+                (shopPropertyBean.getMarketLabelList() != null && shopProperty.getMarketLabelList().size() > 0) || !TextUtils.isEmpty(shopProperty.getNewUserTag())||shopProperty.isHasPresent()) {
             fbl_details_market_label.setVisibility(VISIBLE);
             fbl_details_market_label.removeAllViews();
             //新人专享活动标签

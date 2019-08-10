@@ -61,7 +61,6 @@
                         android:layout_alignParentBottom="true"
                         android:background="#7f000000"
                         android:gravity="center"
-                        android:text="已抢光"
                         android:textColor="@color/white"
                         android:textSize="@dimen/sc_mm_24"
                         android:visibility="gone"/>
