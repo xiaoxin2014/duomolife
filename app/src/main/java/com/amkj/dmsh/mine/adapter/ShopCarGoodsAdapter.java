@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
@@ -54,16 +53,16 @@ public class ShopCarGoodsAdapter extends BaseMultiItemQuickAdapter<MultiItemEnti
                 //        产品属性
                 TextView tv_shop_car_product_sku = helper.getView(R.id.tv_shop_car_product_sku);
                 //        选择按钮
-                CheckBox cb_shop_car_sel = helper.getView(R.id.cb_shop_car_sel);
+                TextView cb_shop_car_sel = helper.getView(R.id.cb_shop_car_sel);
                 //        数量增减
                 final RectAddAndSubViewCommunal rect_shop_car_item = helper.getView(R.id.communal_rect_add_sub);
-                helper.setChecked(R.id.cb_shop_car_sel, isEditStatus ? cartInfoBean.isDelete() : cartInfoBean.isSelected());
+                cb_shop_car_sel.setSelected(isEditStatus ? cartInfoBean.isDelete() : cartInfoBean.isSelected());
                 //商品有效或者在编辑状态时(编辑状态搭配商品单独选中)
                 if (cartInfoBean.isValid() || isEditStatus) {
                     cb_shop_car_sel.setEnabled(true);
                 } else {
                     cb_shop_car_sel.setEnabled(false);
-                    cb_shop_car_sel.setChecked(false);
+                    cb_shop_car_sel.setSelected(false);
                 }
 
                 GlideImageLoaderUtil.loadCenterCrop(context, helper.getView(R.id.img_shop_car_product), cartInfoBean.getPicUrl());

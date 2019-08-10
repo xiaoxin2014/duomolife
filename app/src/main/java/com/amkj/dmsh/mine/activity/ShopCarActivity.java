@@ -188,7 +188,7 @@ public class ShopCarActivity extends BaseActivity {
                 //单个选中或者取消
                 case R.id.cb_shop_car_sel:
                     int status = ShopCarDao.isMatchInValid(shopCarGoodsAdapter, cartInfoBean);
-                    if (status == NORMAL) {
+                    if (status == NORMAL || isEditStatus) {
                         ShopCarDao.selectOne(shopGoodsList, cartInfoBean, isEditStatus);
                         //商品有效并且不在编辑状态时更新结算价格
                         if (isEditStatus) {

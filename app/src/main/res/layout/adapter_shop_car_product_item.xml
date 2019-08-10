@@ -12,14 +12,14 @@
         android:paddingTop="@dimen/sc_mm_12"
         android:paddingRight="@dimen/gap_right">
 
-        <CheckBox
+        <TextView
             android:id="@+id/cb_shop_car_sel"
             android:layout_width="@dimen/sc_mm_80"
             android:layout_height="@dimen/sc_mm_160"
             android:layout_gravity="center_vertical"
             android:background="@color/transparent"
             android:button="@null"
-            android:drawableLeft="@drawable/sel_check_box_shop_car"
+            android:drawableLeft="@drawable/sel_select_box_shop_car"
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:gravity="center"
