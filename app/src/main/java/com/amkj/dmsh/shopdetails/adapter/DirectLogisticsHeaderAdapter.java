@@ -1,6 +1,7 @@
 package com.amkj.dmsh.shopdetails.adapter;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.shopdetails.bean.DirectLogisticsEntity;
@@ -28,6 +29,7 @@ public class DirectLogisticsHeaderAdapter extends BaseQuickAdapter<DirectLogisti
     protected void convert(BaseViewHolder helper, LogisticsProductPacketBean logisticsProductPacketBean) {
         GlideImageLoaderUtil.loadCenterCrop(context, helper.getView(R.id.iv_logistic_indent_pro), logisticsProductPacketBean.getPicUrl());
         helper.setText(R.id.tv_logistic_indent_pro_name, getStrings(logisticsProductPacketBean.getName()))
-                .setText(R.id.tv_logistics_indent_time, "下单时间：" + logisticsProductPacketBean.getDeliverTime());
+                .setText(R.id.tv_logistics_indent_time, "下单时间：" + logisticsProductPacketBean.getDeliverTime())
+                .setGone(R.id.tv_logistics_indent_time, !TextUtils.isEmpty(logisticsProductPacketBean.getDeliverTime()));
     }
 }

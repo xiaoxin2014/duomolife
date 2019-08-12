@@ -106,11 +106,21 @@ public class DirectLogisticsDetailsActivity extends BaseActivity {
                         if (directLogisticsEntity != null && directLogisticsEntity.getDirectLogisticsBean() != null) {
                             //普通物流信息
                             List<List<LogisticsProductPacketBean>> packetList = directLogisticsEntity.getDirectLogisticsBean().getLogisticsProductPacketList();
+                            //赠品物流信息
+                            List<List<LogisticsProductPacketBean>> presentPacketList = directLogisticsEntity.getDirectLogisticsBean().getPresentLogistics();
                             if (directLogisticsEntity.getCode().equals(SUCCESS_CODE) && packetList != null) {
                                 pageTitle.clear();
                                 logisticPacketBeans.clear();
-                                //赠品物流信息
-                                List<List<LogisticsProductPacketBean>> presentPacketList = directLogisticsEntity.getDirectLogisticsBean().getPresentLogistics();
+                                for (int i = 0; i < packetList.size(); i++) {
+                                    pageTitle.add("包裹" + (i + 1));
+                                }
+
+                                if (presentPacketList != null && presentPacketList.size() > 0) {
+                                    for (int i = 0; i < presentPacketList.size(); i++) {
+                                        pageTitle.add("赠品" + (i + 1));
+                                    }
+                                }
+
                                 if (presentPacketList != null && presentPacketList.size() > 0) {
                                     for (int i = 0; i < presentPacketList.size(); i++) {
                                         List<LogisticsProductPacketBean> PacketList = presentPacketList.get(i);
@@ -123,11 +133,7 @@ public class DirectLogisticsDetailsActivity extends BaseActivity {
                                             bean.setPicUrl(bean.getPresentPicUrl());
                                         }
                                     }
-
                                     packetList.addAll(presentPacketList);
-                                }
-                                for (int i = 0; i < packetList.size(); i++) {
-                                    pageTitle.add("包裹" + (i + 1));
                                 }
                                 setLogisticsData(packetList);
                             } else if (!directLogisticsEntity.getCode().equals(EMPTY_CODE)) {

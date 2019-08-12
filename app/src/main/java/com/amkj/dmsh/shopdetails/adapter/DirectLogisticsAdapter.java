@@ -1,5 +1,6 @@
 package com.amkj.dmsh.shopdetails.adapter;
 
+import android.text.TextUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -33,12 +34,13 @@ public class DirectLogisticsAdapter extends BaseQuickAdapter<LogisticTextBean, B
             iv_direct_logistic_icon.setSelected(true);
             tv_direct_logist_info.setSelected(true);
             tv_direct_logist_info_time.setSelected(true);
-        }else{
+        } else {
             iv_direct_logistic_icon.setSelected(false);
             tv_direct_logist_info.setSelected(false);
             tv_direct_logist_info_time.setSelected(false);
         }
         helper.setText(R.id.tv_direct_logist_info, getStrings(logistic.getStatus()))
-                .setText(R.id.tv_direct_logist_info_time, getStrings(logistic.getTime()));
+                .setText(R.id.tv_direct_logist_info_time, getStrings(logistic.getTime()))
+                .setGone(R.id.tv_direct_logist_info_time, !TextUtils.isEmpty(logistic.getTime()));
     }
 }
