@@ -1458,7 +1458,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
                     qyProductIndentInfo.setPicUrl(getStrings(goodsBeanList.get(0).getPicUrl()));
                 }
                 qyProductIndentInfo.setDesc(INDENT_PRO_STATUS.get(String.valueOf(orderDetailBean.getStatus())));
-                qyProductIndentInfo.setNote(String.format(getResources().getString(R.string.money_price_chn), orderDetailBean.getAmount()));
+                qyProductIndentInfo.setNote(String.format(getResources().getString(R.string.money_price_chn), orderDetailBean.getPayAmount()));
                 qyProductIndentInfo.setUrl(Url.BASE_SHARE_PAGE_TWO + "m/template/order_template/order.html?noid=" + orderNo);
             }
             QyServiceUtils.getQyInstance().openQyServiceChat(this, "订单详情", Url.BASE_SHARE_PAGE_TWO + "m/template/order_template/order.html?noid=" + orderNo, qyProductIndentInfo);
