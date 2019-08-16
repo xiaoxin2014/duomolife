@@ -66,7 +66,8 @@ public class MyInterceptor implements Interceptor {
         try {
             String DomoJson = new JSONObject(newMap).toString();
             //添加公共请求参数
-            builder.addHeader("domo-custom", getBase64(newMap));
+            String base64 = getBase64(newMap);
+            builder.addHeader("domo-custom", base64);
             //默认添加 Accept -Language
             String acceptLanguage = HttpHeaders.getAcceptLanguage();
             if (!TextUtils.isEmpty(acceptLanguage)) {
@@ -86,6 +87,8 @@ public class MyInterceptor implements Interceptor {
 
             //打印响应结果
             httpLog(request, DomoJson, responseInfo);
+
+            //检验token是否校验失败
             if ("52".equals(responseMap.get("code"))) {
                 builder.removeHeader("domo-custom");
                 builder.addHeader("domo-custom", getBase64(mDomoCommon));

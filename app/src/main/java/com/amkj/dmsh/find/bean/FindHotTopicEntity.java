@@ -56,10 +56,25 @@ public class FindHotTopicEntity extends BaseEntity{
         private String first_img_url;
         private String reminder;
         private boolean isCollect;
+        private String topicCatergory;
+
+        public FindHotTopicBean(int participants_number, String title,String topicCatergory) {
+            this.participants_number = participants_number;
+            this.title = title;
+            this.topicCatergory = topicCatergory;
+        }
 
         public static FindHotTopicBean objectFromData(String str) {
 
             return new Gson().fromJson(str, FindHotTopicBean.class);
+        }
+
+        public String getTopicCatergory() {
+            return topicCatergory;
+        }
+
+        public void setTopicCatergory(String topicCatergory) {
+            this.topicCatergory = topicCatergory;
         }
 
         public String getFirst_img_url() {

@@ -56,7 +56,7 @@ public class ConstantVariable {
     public static final String R_LOGIN_BACK_CODE = "0x101";
     public static final String R_LOGIN_BACK_DATA_CODE = "AccountInf";
     //    子评论默认加载条数
-    public static final int DEFAULT_COMMENT_TOTAL_COUNT = 6;
+    public static final int DEFAULT_COMMENT_TOTAL_COUNT = 20;
     //    默认加载条目
     public static final int TOTAL_COUNT_TEN = 10;
     //    加载条目20
@@ -149,6 +149,7 @@ public class ConstantVariable {
     public static final String MES_ADVISE = "advise";
     //    消息-评论-反馈意见
     public static final String MES_FEEDBACK = "feedback";
+    public static Map<String, String> CAR_PRO_STATUS = new HashMap<>();
     /**
      * 正则表达式
      */
@@ -365,7 +366,12 @@ public class ConstantVariable {
     /**
      * Eventbus类型常量
      */
-    public static final String UPDATE_CAR_NUM = "updateCarNum";//用户信息本地shared_prefs文件名
+    public static final String UPDATE_CAR_NUM = "updateCarNum";
+    public static final String UPDATE_POST_CONTENT = "updatePostContent";
+    public static final String UPDATE_FOLLOW_STATUS = "updateFollowStatus";
+    public static final String UPDATE_POST_COMMENT = "updatePostComment";
+    public static final String UPDATE_SCORE_LIST = "updateScoreList";
+    public static final String UPDATE_WAITAPPRAISE_ICON = "updateWaitAppraiseIcon";//刷新全部订单/待评价角标
 
 
     /**
@@ -383,5 +389,12 @@ public class ConstantVariable {
     public static final int ADD_NUM = 0;//增加数量
     public static final int REDUCE_NUM = 1;//减少数量
     public static final int CHANGE_SKU = 2;//修改sku
+
+
+    public static final int NEW_FANS = 1;//新增粉丝
+    public static final int RECOMMEND_FOLLOW = 2;//推荐关注
+    public static final int RECOMMEND_FOLLOW_TITLE = 3;//推荐关注头部
+
+    public static final String TOPIC_TYPE = "topic";
 
 }

@@ -11,21 +11,6 @@ import java.util.List;
  */
 public class GoodsCommentEntity extends BaseEntity{
 
-    /**
-     * result : [{"content":"傻逼","createTime":"2016-09-30 11:26:09","nickname":"Lucci","status":0,"userId":23317,"star":1,"images":"http://p1.so.qhmsg.com/bdr/326__/t01e91f5292c9cbb821.jpg","avatar":"http://img.domolife.cn/test/20160920233958.jpg"}]
-     * code : 01
-     * msg : 请求成功
-     */
-    /**
-     * content : 傻逼
-     * createTime : 2016-09-30 11:26:09
-     * nickname : Lucci
-     * status : 0
-     * userId : 23317
-     * star : 1
-     * images : http://p1.so.qhmsg.com/bdr/326__/t01e91f5292c9cbb821.jpg
-     * avatar : http://img.domolife.cn/test/20160920233958.jpg
-     */
     private int evaluateCount;
     @SerializedName("result")
     private List<GoodsCommentBean> goodsComments;

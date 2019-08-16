@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:background="@color/transparent"
-    android:layout_gravity="center_horizontal|bottom">
-    <TextView
-        android:layout_width="@dimen/sc_mm_348"
-        android:layout_marginBottom="@dimen/sc_mm_30"
-        android:background="@drawable/login_bt_bg"
-        android:id="@+id/tv_find_release_topic"
-        android:gravity="center"
-        android:textColor="@color/text_black_t"
-        android:textSize="@dimen/sc_mm_32"
+                android:id="@+id/rl_find_release_topic"
+                android:layout_width="@dimen/sc_mm_348"
+                android:layout_height="@dimen/sc_mm_80"
+                android:layout_gravity="center_horizontal|bottom"
+                android:layout_marginBottom="@dimen/sc_mm_36"
+                android:background="@drawable/shap_join_topic_bg"
+                android:gravity="center">
 
+    <TextView
+        android:id="@+id/tv_find_release_topic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/camera_blcak"
+        android:drawablePadding="@dimen/sc_mm_22"
+        android:gravity="center"
         android:text="@string/find_release_topic"
-        android:layout_height="@dimen/sc_mm_80" />
+        android:textColor="@color/text_black_t"
+        android:textSize="@dimen/sc_mm_34"/>
 </RelativeLayout>

@@ -13,13 +13,10 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.CommunalComment;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
-import com.amkj.dmsh.find.activity.ArticleDetailsImgActivity;
-import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
 import com.amkj.dmsh.message.adapter.MessageCommunalAdapterNew;
 import com.amkj.dmsh.message.bean.MessageCommentEntity;
 import com.amkj.dmsh.message.bean.MessageCommentEntity.MessageCommentBean;
@@ -32,7 +29,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,9 +39,9 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.skipPostDetail;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
@@ -53,7 +49,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.MES_ADVISE;
 import static com.amkj.dmsh.constant.ConstantVariable.MES_FEEDBACK;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
-;
 
 /**
  * Created by atd48 on 2016/7/11.
@@ -80,12 +75,10 @@ public class MessageCommentActivity extends BaseActivity {
     @BindView(R.id.tv_send_comment)
     TextView tv_sendComment;
 
-    private List<MessageCommentBean> commentList = new ArrayList();
+    private List<MessageCommentBean> commentList = new ArrayList<>();
     public static final String TYPE = "message_comment";
     private int page = 1;
     private MessageCommunalAdapterNew messageCommunalAdapter;
-    private int scrollY = 0;
-    private float screenHeight;
     private MessageCommentEntity articleCommentEntity;
 
     @Override
@@ -101,6 +94,7 @@ public class MessageCommentActivity extends BaseActivity {
         messageCommunalAdapter = new MessageCommunalAdapterNew(MessageCommentActivity.this, commentList, TYPE);
         //        获取头部消息列表
         communal_recycler.setLayoutManager(new LinearLayoutManager(this));
+        communal_recycler.setBackgroundColor(getResources().getColor(R.color.light_gray_f));
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_ten_dp).create());
@@ -114,43 +108,7 @@ public class MessageCommentActivity extends BaseActivity {
                 getCommentData();
             }
         }, communal_recycler);
-        TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-        screenHeight = app.getScreenHeight();
-        communal_recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                scrollY += dy;
-                if (!recyclerView.canScrollVertically(-1)) {
-                    scrollY = 0;
-                }
-                if (scrollY > screenHeight * 1.5 && dy < 0) {
-                    if (download_btn_communal.getVisibility() == GONE) {
-                        download_btn_communal.setVisibility(VISIBLE);
-                        download_btn_communal.hide(false);
-                    }
-                    if (!download_btn_communal.isVisible()) {
-                        download_btn_communal.show();
-                    }
-                } else {
-                    if (download_btn_communal.isVisible()) {
-                        download_btn_communal.hide();
-                    }
-                }
-            }
-        });
-        download_btn_communal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) communal_recycler.getLayoutManager();
-                int firstVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition();
-                int mVisibleCount = linearLayoutManager.findLastVisibleItemPosition()
-                        - linearLayoutManager.findFirstVisibleItemPosition() + 1;
-                if (firstVisibleItemPosition > mVisibleCount) {
-                    communal_recycler.scrollToPosition(mVisibleCount);
-                }
-                communal_recycler.smoothScrollToPosition(0);
-            }
-        });
+        setFloatingButton(download_btn_communal, communal_recycler);
         messageCommunalAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
@@ -173,7 +131,7 @@ public class MessageCommentActivity extends BaseActivity {
                             intent.putExtra("userId", String.valueOf(messageCommentBean.getUid()));
                             startActivity(intent);
                             break;
-                        case R.id.tv_user_product_description:
+                        case R.id.rel_adapter_message_communal:
                             skipActivity(messageCommentBean);
                     }
                 }
@@ -186,14 +144,8 @@ public class MessageCommentActivity extends BaseActivity {
         if (messageCommentBean.getStatus() == 1) {
             switch (messageCommentBean.getObj()) {
                 case "doc":
-                    intent.setClass(MessageCommentActivity.this, ArticleOfficialActivity.class);
-                    intent.putExtra("ArtId", String.valueOf(messageCommentBean.getObj_id()));
-                    startActivity(intent);
-                    break;
                 case "post":
-                    intent.setClass(MessageCommentActivity.this, ArticleDetailsImgActivity.class);
-                    intent.putExtra("ArtId", String.valueOf(messageCommentBean.getObj_id()));
-                    startActivity(intent);
+                    skipPostDetail(getActivity(), String.valueOf(messageCommentBean.getObj_id()), 2);
                     break;
                 case "goods":
                     intent.setClass(MessageCommentActivity.this, ShopTimeScrollDetailsActivity.class);
@@ -266,7 +218,7 @@ public class MessageCommentActivity extends BaseActivity {
                                 commentList.addAll(articleCommentEntity.getMessageCommentList());
                             } else if (articleCommentEntity.getCode().equals(EMPTY_CODE)) {
                                 messageCommunalAdapter.loadMoreEnd();
-                            }else{
+                            } else {
                                 showToast(MessageCommentActivity.this, articleCommentEntity.getMsg());
                             }
                         }
@@ -347,7 +299,7 @@ public class MessageCommentActivity extends BaseActivity {
         communalComment.setIsReply(1);
         communalComment.setReplyUserId(messageCommentBean.getUid());
         communalComment.setPid(messageCommentBean.getId());
-        communalComment.setMainCommentId(messageCommentBean.getMainCommentId());
+        communalComment.setMainCommentId(messageCommentBean.getMainCommentId() > 0 ? messageCommentBean.getMainCommentId() : messageCommentBean.getId());
         communalComment.setObjId(messageCommentBean.getObj_id());
         communalComment.setToUid(messageCommentBean.getTo_uid());
     }

@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -54,9 +55,11 @@ import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.zzhoujay.richtext.ImageHolder;
+import com.zzhoujay.richtext.LinkHolder;
 import com.zzhoujay.richtext.RichText;
 import com.zzhoujay.richtext.RichTextConfig;
 import com.zzhoujay.richtext.callback.DrawableGetter;
+import com.zzhoujay.richtext.callback.LinkFixCallback;
 import com.zzhoujay.richtext.callback.OnImageClickListener;
 import com.zzhoujay.richtext.callback.OnUrlClickListener;
 import com.zzhoujay.richtext.callback.SimpleImageFixCallback;
@@ -75,6 +78,7 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
+import static com.amkj.dmsh.constant.ConstantMethod.showImageActivity;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.IMG_REGEX_TAG;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
@@ -147,6 +151,8 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
     private int uid;
     //    是否是图片
     private boolean isImageTag;
+    //图片集合
+    List<String> imgList = new ArrayList<>();
 
     public CommunalDetailAdapter(Activity context, List<CommunalDetailObjectBean> descriptionBeanList) {
         super(descriptionBeanList);
@@ -209,7 +215,7 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                 final ImageView img_product_coupon_pic = holder.getView(R.id.img_product_coupon_pic);
                 GlideImageLoaderUtil.loadImgDynamicDrawable(context, img_product_coupon_pic, TextUtils.isEmpty(detailObjectBean.getNewPirUrl()) ?
                         (TextUtils.isEmpty(detailObjectBean.getPicUrl()) ? "" : detailObjectBean.getPicUrl())
-                        : detailObjectBean.getNewPirUrl());
+                        : detailObjectBean.getNewPirUrl(), -1);
                 holder.setTag(R.id.img_product_coupon_pic, R.id.iv_avatar_tag, detailObjectBean.getId())
                         .setTag(R.id.img_product_coupon_pic, R.id.iv_type_tag, detailObjectBean.getItemType())
                         .addOnClickListener(R.id.img_product_coupon_pic);
@@ -226,8 +232,11 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
             case TYPE_GOODS_IMG:
             case TYPE_GOODS_IMG_DIRECT_BUY:
                 final ImageView iv_communal_cover_wrap = holder.getView(R.id.iv_communal_cover_wrap);
-                GlideImageLoaderUtil.loadImgDynamicDrawable(context, iv_communal_cover_wrap, detailObjectBean.getNewPirUrl());
+                GlideImageLoaderUtil.loadImgDynamicDrawable(context, iv_communal_cover_wrap, detailObjectBean.getNewPirUrl(), -1);
                 holder.addOnClickListener(R.id.iv_communal_cover_wrap).setTag(R.id.iv_communal_cover_wrap, R.id.iv_tag, detailObjectBean);
+                if (!imgList.contains(detailObjectBean.getNewPirUrl())) {
+                    imgList.add(detailObjectBean.getNewPirUrl());
+                }
                 holder.itemView.setTag(detailObjectBean);
                 break;
             case TYPE_GOODS_2X:
@@ -409,6 +418,13 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                                 content = matcher.group();
                             }
                         }
+
+                        //帖子详情图片间距处理
+                        if (detailObjectBean.isPost()) {
+                            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) iv_communal_image.getLayoutParams();
+                            layoutParams.setMargins(0, 0, 0, AutoSizeUtils.mm2px(mAppContext, 20));
+                            iv_communal_image.setLayoutParams(layoutParams);
+                        }
                         rel_communal_image.setVisibility(View.VISIBLE);
                         iv_communal_image.setVisibility(View.VISIBLE);
                         tv_content_type.setVisibility(View.GONE);
@@ -418,7 +434,9 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                         //判断content是不是正确的图片地址
                         boolean isPic = content.startsWith("http") && (content.contains("gif") || content.contains("jpg") || content.contains("jpeg") ||
                                 content.contains("png") || content.contains("GIF") || content.contains("JPG") || content.contains("PNG") || content.contains("gif"));
-                        GlideImageLoaderUtil.loadImgDynamicDrawable(context, iv_communal_image, (String) iv_communal_image.getTag(isPic ? R.id.iv_tag : R.id.iv_two_tag));
+                        String tag = (String) iv_communal_image.getTag(isPic ? R.id.iv_tag : R.id.iv_two_tag);
+                        if (!imgList.contains(tag)) imgList.add(tag);
+                        GlideImageLoaderUtil.loadImgDynamicDrawable(context, iv_communal_image, tag, -1);
                     } else {
                         rel_communal_image.setVisibility(View.GONE);
                         tv_content_type.setVisibility(View.VISIBLE);
@@ -477,6 +495,16 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                                 }
                             }
                         }
+
+                        //帖子详情内容间距，颜色以以及超链接处理
+                        if (detailObjectBean.isPost()) {
+                            FrameLayout.LayoutParams layoutParams1 = (FrameLayout.LayoutParams) tv_content_type.getLayoutParams();
+                            layoutParams1.setMargins(0, 0, 0, 0);
+                            tv_content_type.setTextColor(context.getResources().getColor(R.color.text_black_t));
+                            tv_content_type.setLineSpacing(AutoSizeUtils.mm2px(mAppContext, 12), 1.0f);
+                            tv_content_type.setLayoutParams(layoutParams1);
+                        }
+
                         RichText.initCacheDir(context);
                         //硬件加速不能关闭，会对图片展示不兼容
                         tv_content_type.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
@@ -555,6 +583,12 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                             public boolean urlClicked(String url) {
                                 setSkipPath(context, url, false);
                                 return true;
+                            }
+                        }).linkFix(new LinkFixCallback() {
+                            @Override
+                            public void fix(LinkHolder holder) {
+                                holder.setColor(0xff0a88fa);
+                                holder.setUnderLine(false);
                             }
                         }).into(tv_content_type);
                     }
@@ -697,11 +731,21 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
         if (!TextUtils.isEmpty(imageUrlUrl)) {
             setSkipPath(context, imageUrlUrl, false);
         } else if (!TextUtils.isEmpty(imageUrl)) {
-            List<ImageBean> imageBeanList = new ArrayList<>();
-            ImageBean imageBean = new ImageBean();
-            imageBean.setPicUrl(imageUrl);
-            imageBeanList.add(imageBean);
-            ImagePagerActivity.startImagePagerActivity(context, IMAGE_DEF, imageBeanList, 0, null);
+//            List<ImageBean> imageBeanList = new ArrayList<>();
+//            for (String url : imgList) {
+//                ImageBean imageBean = new ImageBean();
+//                imageBean.setPicUrl(url);
+//                imageBeanList.add(imageBean);
+//            }
+
+            if (imgList.contains(imageUrl)) {
+                for (int i = 0; i < imgList.size(); i++) {
+                    if (imageUrl.equals(imgList.get(i))) {
+                        showImageActivity(context, IMAGE_DEF, i, imgList);
+                        break;
+                    }
+                }
+            }
         }
     }
 

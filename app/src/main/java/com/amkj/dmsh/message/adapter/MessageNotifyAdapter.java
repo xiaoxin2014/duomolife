@@ -39,7 +39,8 @@ public class MessageNotifyAdapter extends BaseQuickAdapter<MessageNotifyBean, Ba
     protected void convert(BaseViewHolder helper, MessageNotifyBean messageIndentBean) {
         ImageView iv_mes_notify_cover_pro = helper.getView(R.id.iv_mes_notify_cover_pro);
         ImageView iv_mes_notify_cover_icon = helper.getView(R.id.iv_mes_notify_cover_icon);
-        helper.setGone(R.id.fl_mes_sys, true);
+        helper.setGone(R.id.fl_mes_sys, true)
+                .setText(R.id.tv_mes_notify_look, !TextUtils.isEmpty(messageIndentBean.getButtonName()) ? messageIndentBean.getButtonName() : "立即查看");
         switch (getStrings(messageIndentBean.getObj())) {
             case "goods":
                 GlideImageLoaderUtil.loadCenterCrop(context, iv_mes_notify_cover_pro, messageIndentBean.getImage());
@@ -88,7 +89,7 @@ public class MessageNotifyAdapter extends BaseQuickAdapter<MessageNotifyBean, Ba
         } else if ("birthday".equals(messageIndentBean.getObj())) {
             helper.setText(R.id.tv_mes_notify_content, getStrings(messageIndentBean.getM_content()))
                     .setGone(R.id.tv_mes_notify_look, !TextUtils.isEmpty(messageIndentBean.getAndroidLink()))
-                    .setText(R.id.tv_mes_notify_look,"查看更多")
+                    .setText(R.id.tv_mes_notify_look, "查看更多")
                     .setGone(R.id.rel_product_price, false)
                     .setText(R.id.tv_mes_notify_product_title, getStrings(messageIndentBean.getM_title()))
                     .setGone(R.id.tv_mes_notify_product_title, !TextUtils.isEmpty(messageIndentBean.getM_title()));

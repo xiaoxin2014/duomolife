@@ -58,7 +58,7 @@ public class DirectProductEvaluationActivity extends BaseActivity {
     SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
-    private List<GoodsCommentBean> goodsComments = new ArrayList();
+    private List<GoodsCommentBean> goodsComments = new ArrayList<>();
     private int page = 1;
     private DirectEvaluationAdapter directEvaluationAdapter;
     private String productId;
@@ -181,16 +181,6 @@ public class DirectProductEvaluationActivity extends BaseActivity {
                         directEvaluationAdapter.loadMoreEnd(true);
                         smart_communal_refresh.finishRefresh();
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, goodsComments, goodsCommentEntity);
-                    }
-
-                    @Override
-                    public void netClose() {
-                        showToast(DirectProductEvaluationActivity.this, R.string.unConnectedNetwork);
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
-                        showToast(DirectProductEvaluationActivity.this, R.string.invalidData);
                     }
                 });
     }

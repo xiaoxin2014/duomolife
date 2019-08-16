@@ -1,6 +1,5 @@
 package com.amkj.dmsh.homepage.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,8 +15,6 @@ import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
-import com.amkj.dmsh.find.activity.ArticleDetailsImgActivity;
-import com.amkj.dmsh.find.activity.ArticleInvitationDetailsActivity;
 import com.amkj.dmsh.find.adapter.PullUserInvitationAdapter;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean;
@@ -43,6 +40,7 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.skipPostDetail;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
@@ -144,20 +142,8 @@ public class SearchInvitationDetailsFragment extends BaseFragment {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 InvitationDetailBean invitationSearch = (InvitationDetailBean) view.getTag();
-                if (invitationSearch != null) {
-                    Intent intent = new Intent();
-                    switch (invitationSearch.getArticletype()) {
-                        case 1:
-                            intent.setClass(getActivity(), ArticleInvitationDetailsActivity.class);
-                            break;
-                        case 3:
-                            break;
-                        default:
-                            intent.setClass(getActivity(), ArticleDetailsImgActivity.class);
-                            break;
-                    }
-                    intent.putExtra("ArtId", String.valueOf(invitationSearch.getId()));
-                    startActivity(intent);
+                if (invitationSearch != null && invitationSearch.getArticletype() != 3) {
+                    skipPostDetail(getActivity(), String.valueOf(invitationSearch.getId()), invitationSearch.getArticletype());
                 }
             }
         });
@@ -194,7 +180,7 @@ public class SearchInvitationDetailsFragment extends BaseFragment {
         //文章id
         params.put("object_id", invitationDetailBean.getId());
         params.put("type", ConstantVariable.TYPE_C_ARTICLE);
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),F_ARTICLE_COLLECT,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), F_ARTICLE_COLLECT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 loadHud.dismiss();
@@ -220,7 +206,7 @@ public class SearchInvitationDetailsFragment extends BaseFragment {
 
             @Override
             public void netClose() {
-                showToast(getActivity(),R.string.unConnectedNetwork);
+                showToast(getActivity(), R.string.unConnectedNetwork);
             }
         });
     }
@@ -233,7 +219,7 @@ public class SearchInvitationDetailsFragment extends BaseFragment {
         //关注id
         params.put("id", invitationDetailBean.getId());
         params.put("favortype", "doc");
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),F_ARTICLE_DETAILS_FAVOR,params,null);
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), F_ARTICLE_DETAILS_FAVOR, params, null);
         tv_like.setSelected(!tv_like.isSelected());
         tv_like.setText(ConstantMethod.getNumCount(tv_like.isSelected(), invitationDetailBean.isFavor(), invitationDetailBean.getFavor(), "赞"));
     }
@@ -254,6 +240,7 @@ public class SearchInvitationDetailsFragment extends BaseFragment {
     protected void getReqParams(Bundle bundle) {
         searchData = (String) bundle.get(SEARCH_DATA);
     }
+
     @Override
     protected void loadData() {
         page = 1;
@@ -294,7 +281,7 @@ public class SearchInvitationDetailsFragment extends BaseFragment {
                                 invitationSearchList.addAll(invitationDetailEntity.getInvitationSearchList());
                             } else if (invitationDetailEntity.getCode().equals(EMPTY_CODE)) {
                                 adapterInvitation.loadMoreEnd();
-                            }else{
+                            } else {
                                 showToast(getActivity(), invitationDetailEntity.getMsg());
                             }
                             adapterInvitation.notifyDataSetChanged();

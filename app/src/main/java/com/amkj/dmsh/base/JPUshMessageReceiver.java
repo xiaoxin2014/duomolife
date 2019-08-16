@@ -44,6 +44,7 @@ public class JPUshMessageReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        if (intent == null || intent.getExtras() == null) return;
         Bundle bundle = intent.getExtras();
         if (JPushInterface.ACTION_REGISTRATION_ID.equals(intent.getAction())) {
             String regId = bundle.getString(JPushInterface.EXTRA_REGISTRATION_ID);
@@ -55,13 +56,12 @@ public class JPUshMessageReceiver extends BroadcastReceiver {
             try {
                 JSONObject json = new JSONObject(bundle.getString(JPushInterface.EXTRA_EXTRA));
                 String pushType = json.getString("pushType");
-                if (0 < Integer.parseInt(pushType) && Integer.parseInt(pushType) <= 20) {
+//                if (0 < Integer.parseInt(pushType) && Integer.parseInt(pushType) <= 35) {//暂时先注释
 //                    消息
-                    Intent sendMessage = new Intent(MainActivity.MESSAGE_RECEIVED_ACTION);
-                    sendMessage.putExtra("isShow", true);
-                    context.sendBroadcast(sendMessage);
-                }
-
+                Intent sendMessage = new Intent(MainActivity.MESSAGE_RECEIVED_ACTION);
+                sendMessage.putExtra("isShow", true);
+                context.sendBroadcast(sendMessage);
+//                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }

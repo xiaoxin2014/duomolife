@@ -1,17 +1,19 @@
 package com.amkj.dmsh.shopdetails.activity;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.View;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.homepage.activity.HomePageSearchActivity;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.adapter.IndentPagerAdapter;
 import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
-import com.amkj.dmsh.views.flycoTablayout.listener.OnTabSelectListener;;
+import com.amkj.dmsh.views.flycoTablayout.listener.OnTabSelectListener;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -23,6 +25,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_INDENT;
 import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_TYPE;
+import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_WAITAPPRAISE_ICON;
 
 
 public class DoMoIndentAllActivity extends BaseActivity {
@@ -31,6 +34,7 @@ public class DoMoIndentAllActivity extends BaseActivity {
     @BindView(R.id.vp_indent_container)
     ViewPager vp_indent_container;
     private String type = "";
+    private int waitEvaluateNum;
     public static final String INDENT_TYPE = "inquiryOrder";
     private IndentPagerAdapter indentPagerAdapter;
 
@@ -94,6 +98,11 @@ public class DoMoIndentAllActivity extends BaseActivity {
             communal_stl_tab.setCurrentTab(0);
         }
 
+        //待评价商品数量
+        waitEvaluateNum = getIntent().getIntExtra("waitEvaluateNum", 0);
+        if (waitEvaluateNum > 0) {
+            communal_stl_tab.showMsg(4, "有奖励");
+        }
     }
 
     @Override
@@ -131,5 +140,17 @@ public class DoMoIndentAllActivity extends BaseActivity {
         QyServiceUtils.getQyInstance()
                 .openQyServiceChat(DoMoIndentAllActivity.this
                         , "订单列表", "");
+    }
+
+    @Override
+    protected void postEventResult(@NonNull EventMessage message) {
+        //更新待评价角标
+        if (UPDATE_WAITAPPRAISE_ICON.equals(message.type)) {
+            if (((int) message.result) > 0) {
+                communal_stl_tab.showMsg(4, "有奖励");
+            } else {
+                communal_stl_tab.hideMsg(4);
+            }
+        }
     }
 }

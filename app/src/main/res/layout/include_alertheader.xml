@@ -19,7 +19,7 @@
         android:paddingBottom="@dimen/dimen_10_dp"
         android:lineSpacingExtra="@dimen/dimen_5_dp"
         android:gravity="center_vertical"
-        android:textColor="@color/textColor_alert_title"
+        android:textColor="@color/text_login_gray_s"
         android:textSize="@dimen/sc_mm_28" />
 
     <TextView

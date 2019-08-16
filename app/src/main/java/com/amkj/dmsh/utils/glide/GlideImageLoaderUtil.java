@@ -395,7 +395,23 @@ public class GlideImageLoaderUtil {
         }
         return bitmap;
     }
-
+    /**
+     */
+    public static void loadRoundImg(final Context context, final ImageView iv,
+                                    String imgUrl, int radius, RoundedCornersTransformation.CornerType cornerType) {
+        if (null != context && iv != null) {
+            if (TextUtils.isEmpty(imgUrl)) {
+                imgUrl = "android.resource://com.amkj.dmsh/" + R.drawable.load_loading_image;
+            }
+            Glide.with(context).load(imgUrl)
+                    .apply(new RequestOptions().dontAnimate()
+                            .placeholder(R.drawable.load_loading_image)
+                            .error(R.drawable.load_loading_image)
+                            .transforms(new CenterCrop(), new RoundedCornersTransformation(radius, 0, cornerType)))
+                    .into(iv);
+        }
+    }
+	
     /**
      * 带回调的，例如启动页广告需要加载完成在展示
      * 启动一个子线程去加载图片
@@ -464,15 +480,12 @@ public class GlideImageLoaderUtil {
     }
 
     /**
-     * 原图加载
+     * 自定义尺寸加载图片(原图加载避免大图无法加载 )
      *
-     * @param context
-     * @param imageView
-     * @param imgUrl
+     * @param with 图片指定尺寸  -1表示屏幕宽度
      */
-    public static void loadImgDynamicDrawable(final Context context, final ImageView imageView, String imgUrl) {
+    public static void loadImgDynamicDrawable(final Context context, final ImageView imageView, String imgUrl, int with) {
         if (null != context && imageView != null && !TextUtils.isEmpty(imgUrl)) {
-            // 原图加载避免大图无法加载 预判尺寸是否大于内存最大值
             Map<String, Object> params = new HashMap<>();
             params.put("imgUrl", imgUrl);
             params.put("imgView", imageView);
@@ -506,16 +519,16 @@ public class GlideImageLoaderUtil {
                         imgUrlX = (String) params.get("imgUrl");
                         imageViewX = (ImageView) params.get("imgView");
                         imageUrlWidthHeight = (int[]) params.get("imgSize");
-                        int screenWidth = ((TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike()).getScreenWidth();
+                        int screenWidth = (with == -1 ? ((TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike()).getScreenWidth() : with);
                         if (imageUrlWidthHeight != null && imageUrlWidthHeight.length > 1) {
                             imgWidth = imageUrlWidthHeight[0];
                             imgHeight = imageUrlWidthHeight[1];
                             //判断图片宽度是否大于屏幕宽度
-                            if (imgWidth > screenWidth) {
-                                int height = screenWidth * imgHeight / imgWidth;
-                                imgWidth = screenWidth;
-                                imgHeight = height;
-                            }
+//                            if (imgWidth > screenWidth) {
+                            int height = screenWidth * imgHeight / imgWidth;
+                            imgWidth = screenWidth;
+                            imgHeight = height;
+//                            }
 
                             //判断缩放后的高度是否大于限制高度
                             int limitHeight = getOpenglRenderLimitValue();
@@ -1097,9 +1110,7 @@ public class GlideImageLoaderUtil {
     public static Bitmap getBitmapFromView(View v) {
         Bitmap b = null;
         try {
-            TinkerBaseApplicationLike tinkerApplicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-            int screenWidth = tinkerApplicationLike.getScreenWidth();
-            b = Bitmap.createBitmap(screenWidth, screenWidth, Bitmap.Config.RGB_565);
+            b = Bitmap.createBitmap(v.getMeasuredWidth() ,v.getMeasuredWidth()  , Bitmap.Config.ARGB_8888);
             Canvas c = new Canvas(b);
             int left = v.getLeft();
             int top = v.getTop();
@@ -1108,10 +1119,12 @@ public class GlideImageLoaderUtil {
             v.layout(left, top, right, bottom);
             // Draw background
             Drawable bgDrawable = v.getBackground();
-            if (bgDrawable != null)
-                bgDrawable.draw(c);
-            else
-                c.drawColor(Color.WHITE);
+            //绘制图片本身的背景
+//            if (bgDrawable != null)
+//                bgDrawable.draw(c);
+//            else
+            //手动设置背景
+            c.drawColor(Color.WHITE);
             // Draw view to canvas
             v.draw(c);
         } catch (Exception e) {

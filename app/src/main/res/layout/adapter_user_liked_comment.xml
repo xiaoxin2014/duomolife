@@ -1,48 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/white"
-    android:orientation="vertical">
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@color/white"
+              android:orientation="vertical">
 
-    <include layout="@layout/comment_layout" />
+    <include layout="@layout/comment_layout"/>
 
     <RelativeLayout
         android:id="@+id/rel_adapter_message_communal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/sc_mm_23"
-        android:layout_marginLeft="@dimen/sc_mm_20"
-        android:background="@color/gray_color_bg"
-        android:layout_marginRight="@dimen/sc_mm_20"
+        android:layout_height="@dimen/sc_mm_136"
+        android:layout_marginLeft="@dimen/sc_mm_30"
+        android:layout_marginRight="@dimen/sc_mm_30"
+        android:layout_marginBottom="@dimen/sc_mm_40"
+        android:background="@color/light_gray_f"
         android:gravity="center_vertical">
 
-        <ImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+        <ImageView
             android:id="@+id/img_user_product"
-            android:layout_width="@dimen/sc_mm_136"
-            android:layout_height="@dimen/sc_mm_136"
-            android:layout_alignParentLeft="true"
+            android:layout_width="@dimen/sc_mm_96"
+            android:layout_height="match_parent"
             android:layout_alignParentTop="true"
+            android:layout_margin="@dimen/sc_mm_20"
             android:scaleType="centerCrop"
-            android:visibility="visible"
-             />
-        <android.support.text.emoji.widget.EmojiTextView xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:visibility="visible"/>
+
+        <android.support.text.emoji.widget.EmojiTextView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/tv_user_product_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:layout_centerVertical="true"
             android:layout_toRightOf="@id/img_user_product"
-
             android:ellipsize="end"
-            android:gravity="center_vertical|left"
-            android:lineSpacingExtra="@dimen/dimen_4dp"
-            android:maxLines="2"
-            android:paddingLeft="@dimen/sc_mm_22"
-            android:paddingTop="@dimen/sc_mm_10"
-            android:paddingBottom="@dimen/sc_mm_10"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:paddingLeft="@dimen/sc_mm_26"
             android:paddingRight="@dimen/sc_mm_22"
             android:textColor="@color/home_text_color"
             android:textSize="@dimen/sc_mm_24"
-            app:emojiconSize = "14sp"/>
+            app:emojiconSize="14sp"/>
     </RelativeLayout>
 </LinearLayout>

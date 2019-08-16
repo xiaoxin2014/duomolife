@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        layout="@layout/layout_topic_search"
+        android:visibility="gone"/>
+
+    <include layout="@layout/activity_domolife_header"/>
+
+    <LinearLayout
+        android:id="@+id/ll_topic"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/light_gray_f"
+        android:orientation="horizontal">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_catergory"
+            android:layout_width="@dimen/sc_mm_220"
+            android:layout_height="match_parent"
+            android:scrollbars="none"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_topic"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:scrollbars="none"/>
+    </LinearLayout>
+</LinearLayout>

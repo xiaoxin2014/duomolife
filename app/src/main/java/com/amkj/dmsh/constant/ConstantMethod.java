@@ -64,6 +64,8 @@ import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.dominant.activity.QualityNewUserActivity;
 import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
 import com.amkj.dmsh.find.activity.ImagePagerActivity;
+import com.amkj.dmsh.find.activity.PostDetailActivity;
+import com.amkj.dmsh.find.activity.TopicDetailActivity;
 import com.amkj.dmsh.homepage.activity.DoMoLifeCommunalActivity;
 import com.amkj.dmsh.homepage.activity.DoMoLifeLotteryActivity;
 import com.amkj.dmsh.message.bean.MessageTotalEntity;
@@ -81,6 +83,7 @@ import com.amkj.dmsh.shopdetails.bean.EditGoodsSkuEntity.EditGoodsSkuBean;
 import com.amkj.dmsh.shopdetails.bean.ShopCarGoodsSku;
 import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
 import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
+import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.utils.MarketUtils;
 import com.amkj.dmsh.utils.SharedPreUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
@@ -152,6 +155,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.PRO_COMMENT;
 import static com.amkj.dmsh.constant.ConstantVariable.PRO_TOPIC;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_SPACE_CHAR;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_TEXT;
+import static com.amkj.dmsh.constant.ConstantVariable.REGEX_URL;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TAOBAO_APPKEY;
 import static com.amkj.dmsh.constant.ConstantVariable.TOKEN;
@@ -458,14 +462,18 @@ public class ConstantMethod {
         }
     }
 
-    public static String getIntegralFormat(Context context, int resStringId, @NonNull int number) {
+    public static String getIntegralFormat(Context context, int resStringId, @NonNull int... number) {
         if (context == null) {
             return "";
         }
         if (resStringId <= 0) {
             return "";
         }
-        return String.format(context.getResources().getString(resStringId), number);
+        if (number.length == 1) {
+            return String.format(context.getResources().getString(resStringId), number[0]);
+        } else {
+            return String.format(context.getResources().getString(resStringId), number[0], number[1]);
+        }
     }
 
     public static String getDoubleFormat(Context context, int resStringId, @NonNull double number) {
@@ -1487,6 +1495,42 @@ public class ConstantMethod {
         }
     }
 
+    //跳转用户中心
+    public static void skipUserCenter(Context context, int uid) {
+        if (isContextExisted(context)) {
+            Intent intent = new Intent();
+            intent.setClass(context, UserPagerActivity.class);
+            intent.putExtra("userId", String.valueOf(uid));
+            context.startActivity(intent);
+        }
+    }
+
+    /**
+     * 跳转帖子详情
+     *
+     * @param articalType //文章类型 1.后台发布的富文本帖子 2.用户发布的普通帖子
+     */
+    public static void skipPostDetail(Context context, String ArtId, int articalType) {
+        if (isContextExisted(context)) {
+            Intent intent = new Intent(context, PostDetailActivity.class);
+            intent.putExtra("ArtId", ArtId);
+            intent.putExtra("articletype", articalType);
+            context.startActivity(intent);
+        }
+    }
+
+
+    /**
+     * 跳转话题详情
+     */
+    public static void skipTopicDetail(Context context, String topicId) {
+        if (isContextExisted(context)) {
+            Intent intent = new Intent(context, TopicDetailActivity.class);
+            intent.putExtra("topicId", topicId);
+            context.startActivity(intent);
+        }
+    }
+
     //    获取系统权限
     public void getPermissions(final Context context, final String... permissions) {
         this.context = context;
@@ -1791,7 +1835,6 @@ public class ConstantMethod {
                             totalPersonalTrajectory.saveTotalDataToFile(totalMap);
                             //通知刷新购物车数量
                             getCarCount(activity);
-//                            EventBus.getDefault().post(new EventMessage(ConstantVariable.UPDATE_CAR_NUM, ""));
                         } else {
                             showToastRequestMsg(context, status);
                         }
@@ -3114,30 +3157,6 @@ public class ConstantMethod {
         return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
     }
 
-    /**
-     * 获取当前存储位置
-     **/
-    public String takePicRootDir(Context context, @NonNull String filePathName) {
-        if (checkSDCardAvailable()) {
-            return Environment.getExternalStorageDirectory().getPath() + "/" + filePathName;
-        } else {
-            return context.getFilesDir().getPath() + "/" + filePathName;
-        }
-    }
-
-    //判断文件是否存在
-    public boolean fileIsExist(String invoiceSavePath) {
-        File file = new File(invoiceSavePath);
-        return file.exists();
-    }
-
-    //创建文件夹
-    public void createFilePath(String savePath) {
-        File destDir = new File(savePath);
-        if (!destDir.exists()) {
-            destDir.mkdirs();
-        }
-    }
 
     /**
      * 获取时分秒
@@ -3268,6 +3287,8 @@ public class ConstantMethod {
             case "QualityWeekOptimizedActivity"://每周优选
             case "QualityWeekOptimizedFragment"://每周优选
                 return 6;
+            case "PostDetailActivity"://帖子详情
+                return 7;
             default:
                 return -1;
         }
@@ -3339,5 +3360,42 @@ public class ConstantMethod {
             bitmap = null;
         }
         System.gc();
+    }
+
+    //获取帖子类型
+    public static int getPostType(String title) {
+        if ("精选".equals(title)) {
+            return 3;
+        } else if ("最新".equals(title)) {
+            return 1;
+        } else if ("一周最热".equals(title)) {
+            return 4;
+        } else if ("关注".equals(title)) {
+            return 5;
+        } else if ("最热".equals(title)) {
+            return 2;
+        } else {
+            return 0;
+        }
+    }
+
+    //识别并设置超链接
+    public static void setTextLink(Activity activity,TextView textView){
+        //识别超链接
+        Link discernUrl = new Link(Pattern.compile(REGEX_URL));
+        discernUrl.setTextColor(0xff0a88fa);
+        discernUrl.setUnderlined(false);
+        discernUrl.setHighlightAlpha(0f);
+        discernUrl.setUrlReplace(true);
+        discernUrl.setOnClickListener(clickedText -> {
+            if (!TextUtils.isEmpty(clickedText)) {
+                setSkipPath(activity, clickedText, false);
+            } else {
+                showToast(activity, "网址有误，请重试");
+            }
+        });
+        LinkBuilder.on(textView)
+                .addLink(discernUrl)
+                .build();
     }
 }

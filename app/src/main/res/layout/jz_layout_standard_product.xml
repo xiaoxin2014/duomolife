@@ -32,7 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_alignParentBottom="true"
-            android:background="@drawable/jz_bottom_bg"
+            android:background="@color/transparent"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:visibility="invisible">
@@ -123,7 +123,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:background="@drawable/jz_title_bg"
+            android:background="@color/transparent"
             android:paddingLeft="10dp"
             android:paddingStart="10dp">
 

@@ -95,7 +95,11 @@ public abstract class BaseFragment extends ImmersionFragment {
                         bundle.putParcelableArrayList(key, (ArrayList<? extends Parcelable>) value);
                     } else if (value instanceof String) {
                         bundle.putString(key, (String) value);
-                    } else {
+                    } else if (value instanceof Boolean) {
+                        bundle.putBoolean(key, (Boolean) value);
+                    } else if (value instanceof Integer){
+                        bundle.putInt(key, (int) value);
+                    }else {
                         bundle.putParcelable(key, (Parcelable) value);
                     }
                 }

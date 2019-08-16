@@ -6,5 +6,5 @@
     android:padding="@dimen/sc_mm_10"
     android:scaleType="fitCenter"
     android:src="@drawable/refresh_header"
-    app:layout_srlBackgroundColor="@color/white"
-    app:layout_srlSpinnerStyle="Translate" />
+    app:layout_srlBackgroundColor="@color/transparent"
+    app:layout_srlSpinnerStyle="Translate"/>

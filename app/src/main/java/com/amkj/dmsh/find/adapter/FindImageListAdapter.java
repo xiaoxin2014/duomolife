@@ -48,7 +48,7 @@ public class FindImageListAdapter extends BaseMultiItemQuickAdapter<PictureBean,
                 final ImageView iv_image_details = helper.getView(R.id.iv_image_details);
                 iv_image_details.setImageResource(R.drawable.load_loading_image);
                 if (!TextUtils.isEmpty(pictureBean.getPath())) {
-                    GlideImageLoaderUtil.loadImgDynamicDrawable(context, iv_image_details, pictureBean.getPath());
+                    GlideImageLoaderUtil.loadImgDynamicDrawable(context, iv_image_details, pictureBean.getPath(),-1);
                 }
                 break;
             case TYPE_2:

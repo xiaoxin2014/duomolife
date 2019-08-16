@@ -132,7 +132,7 @@ public class PersonalBgImgSelActivity extends BaseActivity {
             }
         });
         coverImgWidth = AutoSizeUtils.mm2px(mAppContext, 750);
-        coverImgHeight = AutoSizeUtils.mm2px(mAppContext, 480);
+        coverImgHeight = AutoSizeUtils.mm2px(mAppContext, 353);
     }
 
     /**

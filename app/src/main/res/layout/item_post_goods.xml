@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rl_goods"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/sc_mm_160"
+    android:layout_marginBottom="@dimen/sc_mm_10"
+    android:background="@color/light_gray_f"
+    android:padding="@dimen/sc_mm_20">
+
+    <ImageView
+        android:id="@+id/iv_cover"
+        android:layout_width="@dimen/sc_mm_120"
+        android:layout_height="@dimen/sc_mm_120"
+        android:src="@drawable/load_loading_image"/>
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/sc_mm_24"
+        android:layout_marginTop="@dimen/sc_mm_14"
+        android:layout_toRightOf="@+id/iv_cover"
+        android:text="@string/defaul"
+        android:textColor="@color/text_black_t"
+        android:textSize="@dimen/sc_mm_26"/>
+
+    <TextView
+        android:id="@+id/tv_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="@dimen/sc_mm_24"
+        android:layout_marginBottom="@dimen/sc_mm_7"
+        android:layout_toRightOf="@+id/iv_cover"
+        android:textColor="@color/text_normal_red"
+        android:textSize="@dimen/sc_mm_26"/>
+
+    <ImageView
+        android:id="@+id/iv_add_car"
+        android:layout_width="@dimen/sc_mm_42"
+        android:layout_height="@dimen/sc_mm_53"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="@dimen/sc_mm_10"
+        android:src="@drawable/join_cart"/>
+</RelativeLayout>

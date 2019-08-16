@@ -240,7 +240,7 @@ public class QualityCustomTopicFragment extends BaseFragment {
                         if (!TextUtils.isEmpty(customCoverDesBean.getPicUrl())) {
                             qNewProView.iv_communal_cover_wrap.setVisibility(View.VISIBLE);
                             GlideImageLoaderUtil.loadImgDynamicDrawable(getActivity(), qNewProView.iv_communal_cover_wrap,
-                                    getStrings(customCoverDesBean.getPicUrl()));
+                                    getStrings(customCoverDesBean.getPicUrl()),-1);
                         } else {
                             qNewProView.iv_communal_cover_wrap.setVisibility(View.GONE);
                         }

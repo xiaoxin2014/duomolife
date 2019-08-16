@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/ll_post_detail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <include layout="@layout/layout_post_user_info"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_detail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            android:paddingLeft="@dimen/sc_mm_20"
+            android:paddingRight="@dimen/sc_mm_20"/>
+
+        <include layout="@layout/layout_post_info"/>
+    </LinearLayout>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_related"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/sc_mm_20"
+        android:layout_marginBottom="@dimen/sc_mm_50"
+        android:background="@color/light_gray_f"
+        android:nestedScrollingEnabled="false"
+        android:padding="@dimen/sc_mm_20"
+        android:visibility="gone"/>
+
+    <com.amkj.dmsh.find.view.PostGoodsView
+        android:id="@+id/posterView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/sc_mm_20"
+        android:layout_marginRight="@dimen/sc_mm_20"
+        android:layout_marginBottom="@dimen/sc_mm_50"
+        android:visibility="gone"/>
+
+    <include layout="@layout/layout_post_detail_comment"/>
+
+    <TextView
+        android:id="@+id/tv_recommend_post"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/light_gray_f"
+        android:paddingLeft="@dimen/sc_mm_20"
+        android:paddingTop="@dimen/sc_mm_30"
+        android:paddingBottom="@dimen/sc_mm_10"
+        android:text="相关推荐"
+        android:textColor="@color/text_black_t"
+        android:textSize="@dimen/sc_mm_30"/>
+</LinearLayout>

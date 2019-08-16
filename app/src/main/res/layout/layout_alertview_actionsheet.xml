@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:paddingBottom="@dimen/dimen_10_dp"
             android:gravity="center"
-            android:textColor="@color/textColor_actionsheet_title"
+            android:textColor="@color/text_login_gray_s"
             android:textSize="@dimen/textSize_actionsheet_title" />
 
         <TextView

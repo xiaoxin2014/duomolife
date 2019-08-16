@@ -56,6 +56,7 @@ import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.skipPostDetail;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
@@ -160,20 +161,8 @@ public class FindTagDetailsActivity extends BaseActivity {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 InvitationDetailBean invitationSearch = (InvitationDetailBean) view.getTag();
-                if (invitationSearch != null) {
-                    Intent intent = new Intent();
-                    switch (invitationSearch.getArticletype()) {
-                        case 1:
-                            intent.setClass(FindTagDetailsActivity.this, ArticleInvitationDetailsActivity.class);
-                            break;
-                        case 3:
-                            break;
-                        default:
-                            intent.setClass(FindTagDetailsActivity.this, ArticleDetailsImgActivity.class);
-                            break;
-                    }
-                    intent.putExtra("ArtId", String.valueOf(invitationSearch.getId()));
-                    startActivity(intent);
+                if (invitationSearch != null && invitationSearch.getArticletype() != 3) {
+                    skipPostDetail(getActivity(), String.valueOf(invitationSearch.getId()), invitationSearch.getArticletype());
                 }
             }
         });
@@ -453,7 +442,7 @@ public class FindTagDetailsActivity extends BaseActivity {
                     , getStrings(tagBean.getImg_url())
                     , getStrings(tagBean.getTag_name())
                     , ""
-                    , "",1);
+                    , "", 1);
         }
     }
 

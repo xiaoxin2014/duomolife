@@ -13,6 +13,8 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.find.activity.JoinSuccessActivity;
+import com.amkj.dmsh.find.activity.PostDetailActivity;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.umeng.socialize.bean.SHARE_MEDIA;
@@ -41,19 +43,19 @@ public class AlertDialogShareHelper {
     private AlertDialog shareAlertDialog;
     private View dialogView;
     private List<ShareIconTitleBean> iconTitleList = new ArrayList<>();
-    private Integer [] shareIcon = {R.drawable.share_wechat_icon,R.drawable.share_circle_icon
-            ,  R.drawable.share_qq_icon, R.drawable.share_sina_icon
-            , R.drawable.share_copy_icon, R.drawable.share_save_icon};
-    private String[] shareTitle = { "微信","微信朋友圈", "QQ", "微博", "复制链接","保存图片"};
+    private Integer[] shareIcon = {R.drawable.share_wechat_icon, R.drawable.share_circle_icon
+            , R.drawable.share_qq_icon, R.drawable.share_sina_icon
+            , R.drawable.share_copy_icon, R.drawable.share_save_icon, R.drawable.report_post};
+    private String[] shareTitle = {"微信", "微信朋友圈", "QQ", "微博", "复制链接", "保存图片", "举报帖子"};
     //
-    private SHARE_MEDIA[] sharePlatform = {SHARE_MEDIA.WEIXIN,SHARE_MEDIA.WEIXIN_CIRCLE,
-            SHARE_MEDIA.QQ, SHARE_MEDIA.SINA, SHARE_MEDIA.POCKET,SHARE_MEDIA.MORE};
+    private SHARE_MEDIA[] sharePlatform = {SHARE_MEDIA.WEIXIN, SHARE_MEDIA.WEIXIN_CIRCLE,
+            SHARE_MEDIA.QQ, SHARE_MEDIA.SINA, SHARE_MEDIA.POCKET, SHARE_MEDIA.MORE, SHARE_MEDIA.TUMBLR};
 
     public AlertDialogShareHelper(Activity context) {
         this(context, false);
     }
 
-    public AlertDialogShareHelper(Activity context,boolean showDownImg) {
+    public AlertDialogShareHelper(Activity context, boolean showDownImg) {
         this.context = context;
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         dialogView = LayoutInflater.from(context).inflate(R.layout.layout_alert_dialog_share, null, false);
@@ -61,14 +63,32 @@ public class AlertDialogShareHelper {
         builder.setCancelable(true);
 //        三个数组必须一一对应
         if (shareIcon.length == shareTitle.length && sharePlatform.length == shareIcon.length) {
-            List<Integer> shareIcons = Arrays.asList(shareIcon);
-            List<String> shareTitles = Arrays.asList(shareTitle);
-            List<SHARE_MEDIA> shareMedia = Arrays.asList(sharePlatform);
-            if(!showDownImg){
-                shareIcons = shareIcons.subList(0,shareIcons.size()-1);
-                shareTitles = shareTitles.subList(0,shareTitles.size()-1);
-                shareMedia = shareMedia.subList(0,shareMedia.size()-1);
+            List<Integer> shareIcons = new ArrayList<>(Arrays.asList(shareIcon));
+            List<String> shareTitles = new ArrayList<>(Arrays.asList(shareTitle));
+            List<SHARE_MEDIA> shareMedia = new ArrayList<>(Arrays.asList(sharePlatform));
+            if (!showDownImg) {
+                shareIcons.remove(Integer.valueOf(R.drawable.share_save_icon));
+                shareTitles.remove("保存图片");
+                shareMedia.remove(SHARE_MEDIA.MORE);
             }
+
+            //帖子详情显示举报
+            if (!PostDetailActivity.class.getSimpleName().equals(context.getClass().getSimpleName())) {
+                shareIcons.remove(Integer.valueOf(R.drawable.report_post));
+                shareTitles.remove("举报帖子");
+                shareMedia.remove(SHARE_MEDIA.TUMBLR);
+            }
+
+            //晒单成功界面只分享到微信渠道
+            if (JoinSuccessActivity.class.getSimpleName().equals(context.getClass().getSimpleName())) {
+                shareIcons.remove(Integer.valueOf(R.drawable.share_qq_icon));
+                shareTitles.remove("QQ");
+                shareMedia.remove(SHARE_MEDIA.QQ);
+                shareIcons.remove(Integer.valueOf(R.drawable.share_sina_icon));
+                shareTitles.remove("微博");
+                shareMedia.remove(SHARE_MEDIA.SINA);
+            }
+
             ShareIconTitleBean shareIconTitleBean;
             for (int i = 0; i < shareIcons.size(); i++) {
                 shareIconTitleBean = new ShareIconTitleBean();
@@ -93,7 +113,7 @@ public class AlertDialogShareHelper {
         });
         shareAlertDialog = builder.create();
         Window window = shareAlertDialog.getWindow();
-        if(window!=null){
+        if (window != null) {
             window.setBackgroundDrawableResource(android.R.color.transparent);
         }
         isFirstSet = true;
@@ -104,7 +124,7 @@ public class AlertDialogShareHelper {
      */
     public void show() {
         if (!shareAlertDialog.isShowing()
-                &&isContextExisted(context)) {
+                && isContextExisted(context)) {
             AutoSize.autoConvertDensityOfGlobal((Activity) context);
             shareAlertDialog.show();
         }
@@ -126,7 +146,7 @@ public class AlertDialogShareHelper {
     }
 
     public void dismiss() {
-        if (shareAlertDialog != null&& isContextExisted(context)) {
+        if (shareAlertDialog != null && isContextExisted(context)) {
             shareAlertDialog.dismiss();
         }
         if (loadView != null) {

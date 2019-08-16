@@ -190,6 +190,8 @@ public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoI
     }
 
     private void setIntentStatus(IntentHView intentHView, IntentFView intentFView, final OrderListBean orderListBean) {
+        intentFView.tv_border_second_blue.setBackgroundResource(R.drawable.border_circle_three_blue_white);	
+        intentFView.tv_border_second_blue.setTextColor(context.getResources().getColor(R.color.text_login_blue_z));
         intentFView.tv_indent_border_zero_gray.setVisibility(orderListBean.getIsShowPresentLogistics() == 1 ? View.VISIBLE : View.GONE);
         intentFView.tv_indent_border_zero_gray.setOnClickListener(v -> {
             Intent intent = new Intent();
@@ -280,56 +282,68 @@ public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoI
             intentFView.tv_border_second_blue.setTag(R.id.tag_first, CONFIRM_ORDER);
             intentFView.tv_border_second_blue.setTag(R.id.tag_second, orderListBean);
             intentFView.tv_border_second_blue.setOnClickListener(this);
-        } else if (30 <= statusCode && statusCode <= 41) {
-            if (statusCode == 40) { //已评价状态
-//                评价晒单
-                if (orderListBean.isBaskReader()) {
-                    intentFView.tv_border_first_gray.setVisibility(View.VISIBLE);
-                    intentFView.tv_border_first_gray.setTag(R.id.tag_first, BASK_READER);
-                    intentFView.tv_border_first_gray.setText("晒单赢积分");
-                    intentFView.tv_border_first_gray.setTag(R.id.tag_second, orderListBean);
-                    intentFView.tv_border_first_gray.setOnClickListener(this);
-                    intentFView.tv_border_second_blue.setVisibility(View.GONE);
-                } else {
-                    intentFView.ll_indent_bottom.setVisibility(View.GONE);
-                }
-            } else {
-                boolean isShowEvaluate = false;
-                //            列表暂时不展示发票信息
-                intentFView.tv_border_second_blue.setVisibility(View.GONE);
-//            评价
-                for (int i = 0; i < orderListBean.getGoods().size(); i++) {
-                    OrderListBean.GoodsBean goodsBean = orderListBean.getGoods().get(i);
-                    if (goodsBean.getStatus() == 30) {
-                        isShowEvaluate = true;
-                        break;
+        } else if (30 <= statusCode && statusCode <= 40) {
+            //待评价和部分评价状态都要显示评分按钮
+            if (statusCode == 30 || statusCode == 31) {
+                intentFView.ll_indent_bottom.setVisibility(View.VISIBLE);
+                //列表暂时不展示发票信息
+                intentFView.tv_border_first_gray.setVisibility(View.GONE);
+                intentFView.tv_border_second_blue.setText(R.string.write_score_comment);
+                intentFView.tv_border_second_blue.setBackgroundResource(R.drawable.border_circle_three_yellow_white);
+                intentFView.tv_border_second_blue.setTextColor(context.getResources().getColor(R.color.max_score_yellow));
+                intentFView.tv_max_reward.setText(orderListBean.getMaxRewardTip());
+                //未评价的数量
+                int noShowEvaluateNum = 0;
+                GoodsBean goodsBean = null;
+                List<GoodsBean> goods = orderListBean.getGoods();
+                for (GoodsBean bean : goods) {
+                    if (bean.getCombineProductInfoList() == null) {
+                        //普通商品
+                        if (bean.getStatus() == 30) {
+                            noShowEvaluateNum++;
+                            goodsBean = bean;
+                        }
+                    } else if (bean.getCombineProductInfoList().size() > 0) {
+                        int num = 0;
+                        List<CartProductInfoBean> combineProductInfoList = bean.getCombineProductInfoList();
+                        //判断组合购是否所有子商品待评价
+                        for (CartProductInfoBean cartProductInfoBean : combineProductInfoList) {
+                            if (cartProductInfoBean.getStatus() == 30) {
+                                num++;
+                            }
+                        }
+                        if (num == combineProductInfoList.size()){
+                            noShowEvaluateNum++;
+                            goodsBean = bean;
+                        }
                     }
                 }
-                if (isShowEvaluate) {
-                    intentFView.tv_border_first_gray.setVisibility(View.VISIBLE);
-                    if (!TextUtils.isEmpty(orderListBean.getTotalScore())) {
-                        String scoreTotal = String.format(context.getResources().getString(R.string.appraise_integral_score)
-                                , orderListBean.getTotalScore());
-                        intentFView.tv_border_first_gray.setText(scoreTotal);
-                        Pattern p = Pattern.compile(REGEX_NUM);
-                        Link redNum = new Link(p);
-                        //        @用户昵称
-                        redNum.setTextColor(Color.parseColor("#ff5e5e"));
-                        redNum.setUnderlined(false);
-                        redNum.setHighlightAlpha(0f);
-                        LinkBuilder.on(intentFView.tv_border_first_gray)
-                                .setText(scoreTotal)
-                                .addLink(redNum)
-                                .build();
-                    } else {
-                        intentFView.tv_border_first_gray.setText(R.string.appraise_integral);
+                GoodsBean finalGoodsBean = goodsBean;
+                int finalNoShowEvaluateNum = noShowEvaluateNum;
+                intentFView.ll_indent_bottom.setVisibility(finalNoShowEvaluateNum > 0 ? View.VISIBLE : View.GONE);
+                intentFView.tv_max_reward.setVisibility(finalNoShowEvaluateNum > 0 ? View.VISIBLE : View.GONE);
+                intentFView.tv_border_second_blue.setOnClickListener(v -> {
+                    if (finalNoShowEvaluateNum == 1) {
+                        //直接跳转评分界面
+                        ScoreGoodsEntity.ScoreGoodsBean scoreGoodsBean = new ScoreGoodsEntity.ScoreGoodsBean();
+                        scoreGoodsBean.setOrderNo(orderListBean.getNo());
+                        scoreGoodsBean.setCover(finalGoodsBean.getPicUrl());
+                        scoreGoodsBean.setOrderProductId(String.valueOf(finalGoodsBean.getOrderProductId()));
+                        scoreGoodsBean.setProductId(String.valueOf(finalGoodsBean.getId()));
+                        scoreGoodsBean.setProductName(finalGoodsBean.getName());
+                        Intent intent = new Intent(context, JoinTopicActivity.class);
+                        intent.putExtra("maxRewardTip", orderListBean.getMaxRewardTip());
+                        intent.putExtra("scoreGoods", scoreGoodsBean);
+                        context.startActivity(intent);
+                    } else if (finalNoShowEvaluateNum > 1) {
+                        //跳转评分列表
+                        Intent intent = new Intent(context, IndentScoreListActivity.class);
+                        intent.putExtra("orderNo", orderListBean.getNo());
+                        context.startActivity(intent);
                     }
-                    intentFView.tv_border_first_gray.setTag(R.id.tag_first, PRO_APPRAISE);
-                    intentFView.tv_border_first_gray.setTag(R.id.tag_second, orderListBean);
-                    intentFView.tv_border_first_gray.setOnClickListener(this);
-                } else {
-                    intentFView.ll_indent_bottom.setVisibility(View.GONE);
-                }
+                });
+            } else if (statusCode == 40) {//已评价
+                intentFView.ll_indent_bottom.setVisibility(View.GONE);
             }
         } else {
             intentFView.ll_indent_bottom.setVisibility(View.GONE);
@@ -426,7 +440,8 @@ public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoI
         //        商品 件数 价格 统计
         @BindView(R.id.tv_intent_count_price)
         TextView tv_intent_count_price;
-
+        @BindView(R.id.tv_max_reward)
+        TextView tv_max_reward;
     }
 
     public class IndentListViewHolder extends BaseViewHolder {

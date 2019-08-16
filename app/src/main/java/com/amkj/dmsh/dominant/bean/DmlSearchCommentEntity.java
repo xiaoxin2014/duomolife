@@ -93,6 +93,7 @@ public class DmlSearchCommentEntity {
         private String ctime;
         private int id;
         private int mainContentId;
+
         private List<ReplyCommListBean> replyCommList;
 
         public int getLike_num() {

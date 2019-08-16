@@ -15,32 +15,29 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.TinkerBaseApplicationLike;
+import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.constant.CommunalComment;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.adapter.ArticleCommentDetailAdapter;
 import com.amkj.dmsh.dominant.bean.CommentDetailEntity;
-import com.amkj.dmsh.dominant.bean.CommentDetailEntity.CommentDetailBean;
-import com.amkj.dmsh.dominant.bean.CommentDetailEntity.CommentDetailBean.ReplyCommBean;
+import com.amkj.dmsh.dominant.bean.PostCommentEntity;
+import com.amkj.dmsh.dominant.bean.PostCommentEntity.PostCommentBean;
+import com.amkj.dmsh.dominant.bean.PostCommentEntity.PostCommentBean.ReplyCommListBean;
+import com.amkj.dmsh.find.view.PostReplyPw;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.utils.CommonUtils;
-import com.amkj.dmsh.utils.CommunalCopyTextUtils;
 import com.amkj.dmsh.utils.KeyboardUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
-import com.tencent.bugly.beta.tinker.TinkerManager;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,18 +53,16 @@ import butterknife.OnLongClick;
 import butterknife.OnTouch;
 
 import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
-import static com.amkj.dmsh.R.id.tv_comm_comment_like;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_COMMENT_TOTAL_COUNT;
+import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
+import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_POST_COMMENT;
 
-;
 
 /**
  * @author LGuiPeng
@@ -77,20 +72,18 @@ import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
  */
 public class CommentDetailsActivity extends BaseActivity {
     @BindView(R.id.smart_communal_refresh)
-    RefreshLayout smart_communal_refresh;
+    SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
     //    滚动至顶部
     @BindView(R.id.download_btn_communal)
     public FloatingActionButton download_btn_communal;
-
     @BindView(R.id.ll_input_comment)
     public LinearLayout ll_input_comment;
     @BindView(R.id.emoji_edit_comment)
     EmojiEditText emoji_edit_comment;
     @BindView(R.id.tv_send_comment)
     TextView tv_send_comment;
-
     @BindView(R.id.tv_header_title)
     TextView tv_header_titleAll;
     @BindView(R.id.tv_header_shared)
@@ -99,15 +92,15 @@ public class CommentDetailsActivity extends BaseActivity {
     private int scrollY;
     //    按下点击位置
     private float locationY;
-    private float screenHeight;
     private ArticleCommentDetailAdapter articleCommentAdapter;
-    private List<ReplyCommBean> commentDetailList = new ArrayList();
+    private List<ReplyCommListBean> commentDetailList = new ArrayList<>();
     private CommentHeaderView commentHeaderView;
-    private CommentDetailBean commentDetailBean;
+    private PostCommentEntity.PostCommentBean commentDetailBean;
     private String commentId;
     private String objId;
     private String commentType;
     private CommentDetailEntity commentDetailEntity;
+    private PostReplyPw mAlphaPw;
 
     @Override
     protected int getContentView() {
@@ -124,123 +117,70 @@ public class CommentDetailsActivity extends BaseActivity {
         commentType = intent.getStringExtra("commentType");
         communal_recycler.setLayoutManager(new LinearLayoutManager(CommentDetailsActivity.this));
         articleCommentAdapter = new ArticleCommentDetailAdapter(CommentDetailsActivity.this, commentDetailList);
-        View commentView = LayoutInflater.from(CommentDetailsActivity.this).inflate(R.layout.adapter_article_comment, (ViewGroup) communal_recycler.getParent(), false);
+        View commentView = LayoutInflater.from(CommentDetailsActivity.this).inflate(R.layout.layout_comment_detail_head, (ViewGroup) communal_recycler.getParent(), false);
         commentHeaderView = new CommentHeaderView();
         ButterKnife.bind(commentHeaderView, commentView);
-        commentHeaderView.initView();
         articleCommentAdapter.addHeaderView(commentView);
         communal_recycler.setAdapter(articleCommentAdapter);
-        articleCommentAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
-            @Override
-            public void onLoadMoreRequested() {
-                page++;
-                getCommentData();
-            }
+        articleCommentAdapter.setOnLoadMoreListener(() -> {
+            page++;
+            getCommentData();
         }, communal_recycler);
-        articleCommentAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
-            @Override
-            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                ReplyCommBean replyCommBean = (ReplyCommBean) view.getTag(R.id.iv_tag);
-                if (replyCommBean == null) {
-                    replyCommBean = (ReplyCommBean) view.getTag();
-                }
-                if (replyCommBean != null) {
-                    switch (view.getId()) {
-                        case tv_comm_comment_like:
-                            if (userId > 0) {
-                                replyCommBean.setFavor(!replyCommBean.isFavor());
-                                int likeNum = replyCommBean.getLike_num();
-                                replyCommBean.setLike_num(replyCommBean.isFavor()
-                                        ? likeNum + 1 : likeNum - 1 > 0 ? likeNum - 1 : 0);
-                                commentDetailList.set(position, replyCommBean);
-                                articleCommentAdapter.notifyItemChanged(position + adapter.getHeaderLayoutCount());
-                                setCommentLike(replyCommBean.getId());
+
+        articleCommentAdapter.setOnItemLongClickListener((adapter, view, position) -> {
+            TextView tvContent = (TextView) adapter.getViewByPosition(communal_recycler, position + adapter.getHeaderLayoutCount(), R.id.tv_comm_comment_inner_content);
+            ReplyCommListBean replyCommBean = (ReplyCommListBean) view.getTag();
+            if (replyCommBean != null) {
+                //点击弹窗（回复和举报）
+                mAlphaPw = new PostReplyPw(getActivity(), replyCommBean.getObj_id(), 2) {
+                    @Override
+                    public void onCommentClick() {
+                        //打开评论
+                        if (userId > 0) {
+                            if (View.VISIBLE == ll_input_comment.getVisibility()) {
+                                commentViewVisible(View.GONE, null);
                             } else {
-                                getLoginStatus(CommentDetailsActivity.this);
+                                commentViewVisible(View.VISIBLE, replyCommBean);
                             }
-                            break;
-                        case R.id.tv_comm_comment_receive:
-//                            打开评论
-                            if (userId > 0) {
-                                if (View.VISIBLE == ll_input_comment.getVisibility()) {
-                                    commentViewVisible(View.GONE, null);
-                                } else {
-                                    commentViewVisible(View.VISIBLE, replyCommBean);
-                                }
-                            } else {
-                                getLoginStatus(CommentDetailsActivity.this);
-                            }
-                            break;
-                        case R.id.civ_comm_comment_avatar:
-                            skipUserUI(replyCommBean.getUid());
-                            break;
+                        } else {
+                            getLoginStatus(CommentDetailsActivity.this);
+                        }
                     }
-                }
+                };
+
+                mAlphaPw.showAsDropDown(tvContent, 0, 0);
             }
+            return true;
         });
-        articleCommentAdapter.setOnItemChildLongClickListener(new BaseQuickAdapter.OnItemChildLongClickListener() {
-            @Override
-            public boolean onItemChildLongClick(BaseQuickAdapter adapter, View view, int position) {
-                ReplyCommBean replyCommBean = (ReplyCommBean) view.getTag();
-                if (replyCommBean != null && !TextUtils.isEmpty(replyCommBean.getContent())) {
-                    CommunalCopyTextUtils.showPopWindow(CommentDetailsActivity.this, (TextView) view, replyCommBean.getContent());
+
+        articleCommentAdapter.setOnItemClickListener((adapter, view, position) -> {
+            ReplyCommListBean replyCommBean = (ReplyCommListBean) view.getTag();
+            if (replyCommBean != null) {
+                //打开评论
+                if (userId > 0) {
+                    if (View.VISIBLE == ll_input_comment.getVisibility()) {
+                        commentViewVisible(View.GONE, null);
+                    } else {
+                        commentViewVisible(View.VISIBLE, replyCommBean);
+                    }
+                } else {
+                    getLoginStatus(CommentDetailsActivity.this);
                 }
-                return false;
             }
         });
 
-        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                loadData();
-            }
+        smart_communal_refresh.setOnRefreshListener(refreshLayout -> {
+            loadData();
         });
-        TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-        screenHeight = app.getScreenHeight();
-        communal_recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                scrollY += dy;
-                if (!recyclerView.canScrollVertically(-1)) {
-                    scrollY = 0;
-                }
-                if (scrollY > screenHeight * 1.5 && dy < 0) {
-                    if (download_btn_communal.getVisibility() == GONE) {
-                        download_btn_communal.setVisibility(VISIBLE);
-                        download_btn_communal.hide(false);
-                    }
-                    if (!download_btn_communal.isVisible()) {
-                        download_btn_communal.show();
-                    }
-                } else {
-                    if (download_btn_communal.isVisible()) {
-                        download_btn_communal.hide();
-                    }
-                }
-            }
-        });
-        download_btn_communal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) communal_recycler.getLayoutManager();
-                int firstVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition();
-                int mVisibleCount = linearLayoutManager.findLastVisibleItemPosition()
-                        - linearLayoutManager.findFirstVisibleItemPosition() + 1;
-                if (firstVisibleItemPosition > mVisibleCount) {
-                    communal_recycler.scrollToPosition(mVisibleCount);
-                }
-                communal_recycler.smoothScrollToPosition(0);
-            }
-        });
-        KeyboardUtils.registerSoftInputChangedListener(this, new KeyboardUtils.OnSoftInputChangedListener() {
-            @Override
-            public void onSoftInputChanged(int height) {
-                if (height == 0) {
-                    ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0).requestFocus();
-                }
+
+        setFloatingButton(download_btn_communal, communal_recycler);
+        KeyboardUtils.registerSoftInputChangedListener(this, height -> {
+            if (height == 0) {
+                ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0).requestFocus();
             }
         });
     }
+
 
     @Override
     protected void loadData() {
@@ -253,7 +193,7 @@ public class CommentDetailsActivity extends BaseActivity {
         Map<String, Object> params = new HashMap<>();
         params.put("comment_id", commentId);
         params.put("currentPage", page);
-        params.put("showCount", TOTAL_COUNT_TEN);
+        params.put("showCount", DEFAULT_COMMENT_TOTAL_COUNT);
         params.put("comtype", commentType);
         params.put("obj_id", objId);
         if (userId > 0) {
@@ -270,51 +210,41 @@ public class CommentDetailsActivity extends BaseActivity {
                         }
                         Gson gson = new Gson();
                         commentDetailEntity = gson.fromJson(result, CommentDetailEntity.class);
-                        if (commentDetailEntity != null) {
-                            if (commentDetailEntity.getCode().equals(SUCCESS_CODE)) {
-                                commentDetailBean = commentDetailEntity.getCommentDetailBean();
+                        if (commentDetailEntity != null && commentDetailEntity.getCommentDetailBean() != null) {
+                            commentDetailBean = commentDetailEntity.getCommentDetailBean();
+                            List<ReplyCommListBean> replyCommList = commentDetailBean.getReplyCommList();
+                            if (replyCommList != null && replyCommList.size() > 0 ) {
                                 setCommentData(commentDetailBean);
-                            } else if (commentDetailEntity.getCode().equals(EMPTY_CODE)) {
-                                articleCommentAdapter.loadMoreEnd();
-                            } else {
+                            } else if (ERROR_CODE.equals(commentDetailEntity.getCode())) {
                                 showToast(CommentDetailsActivity.this, commentDetailEntity.getMsg());
+                                articleCommentAdapter.loadMoreFail();
+                            } else {
+                                articleCommentAdapter.loadMoreEnd();
                             }
+                        }else {
+                            articleCommentAdapter.loadMoreEnd();
                         }
-                        NetLoadUtils.getNetInstance().showLoadSir(loadService, commentDetailBean, commentDetailEntity);
+                        articleCommentAdapter.notifyDataSetChanged();
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, commentDetailList, commentDetailEntity);
                     }
 
                     @Override
                     public void onNotNetOrException() {
-                        articleCommentAdapter.loadMoreEnd(true);
+                        articleCommentAdapter.loadMoreFail();
                         smart_communal_refresh.finishRefresh();
-                        NetLoadUtils.getNetInstance().showLoadSir(loadService, commentDetailBean, commentDetailEntity);
-                    }
-
-                    @Override
-                    public void netClose() {
-                        showToast(CommentDetailsActivity.this, R.string.unConnectedNetwork);
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
-                        showToast(CommentDetailsActivity.this, R.string.invalidData);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, commentDetailList, commentDetailEntity);
                     }
                 });
     }
 
-    private void setCommentData(CommentDetailBean commentDetailBean) {
+    private void setCommentData(PostCommentBean commentDetailBean) {
         GlideImageLoaderUtil.loadHeaderImg(CommentDetailsActivity.this, commentHeaderView.civ_comm_comment_avatar, commentDetailBean.getAvatar());
         commentHeaderView.tv_comm_comment_nick_name.setText(getStrings(commentDetailBean.getNickname()));
         commentHeaderView.tv_comm_comment_content.setText(getStrings(commentDetailBean.getContent()));
         commentHeaderView.tv_comm_comment_time.setText(getStrings(commentDetailBean.getCtime()));
-        commentHeaderView.tv_comm_comment_like.setSelected(commentDetailBean.isIsFavor());
+        commentHeaderView.tv_comm_comment_like.setSelected(commentDetailBean.isFavor());
         commentHeaderView.tv_comm_comment_like.setText(commentDetailBean.getLike_num() > 0 ? String.valueOf(commentDetailBean.getLike_num()) : "赞");
         commentDetailList.addAll(commentDetailBean.getReplyCommList());
-        if (page == 1) {
-            articleCommentAdapter.setNewData(commentDetailList);
-        } else {
-            articleCommentAdapter.notifyDataSetChanged();
-        }
     }
 
     private void setCommentLike(int id) {
@@ -324,10 +254,10 @@ public class CommentDetailsActivity extends BaseActivity {
         params.put("tuid", userId);
         //评论id
         params.put("id", id);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,null);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, null);
     }
 
-    private void commentViewVisible(int visibility, final ReplyCommBean replyCommBean) {
+    private void commentViewVisible(int visibility, final ReplyCommListBean replyCommBean) {
         ll_input_comment.setVisibility(visibility);
         if (View.VISIBLE == visibility) {
             emoji_edit_comment.requestFocus();
@@ -445,12 +375,7 @@ public class CommentDetailsActivity extends BaseActivity {
         TextView tv_comm_comment_time;
         @BindView(R.id.tv_comm_comment_like)
         TextView tv_comm_comment_like;
-        @BindView(R.id.rel_art_comment_inner)
-        RelativeLayout rel_art_comment_inner;
 
-        public void initView() {
-            rel_art_comment_inner.setVisibility(GONE);
-        }
 
         @OnClick(R.id.tv_comm_comment_like)
         void likeComment() {
@@ -466,15 +391,6 @@ public class CommentDetailsActivity extends BaseActivity {
             }
         }
 
-        @OnClick(R.id.tv_comm_comment_receive)
-        void receiverComment() {
-            if (userId > 0) {
-                setReceiverComment();
-            } else {
-                getLoginStatus(CommentDetailsActivity.this);
-            }
-        }
-
         @OnClick(R.id.civ_comm_comment_avatar)
         void clickAvatar() {
             if (commentDetailBean != null) {
@@ -482,14 +398,35 @@ public class CommentDetailsActivity extends BaseActivity {
             }
         }
 
-        //        长安复制
-        @OnLongClick(R.id.tv_comm_comment_content)
-        boolean copyContent(View view) {
-            if (commentDetailBean != null && !TextUtils.isEmpty(commentDetailBean.getContent())) {
-                CommunalCopyTextUtils.showPopWindow(CommentDetailsActivity.this, (TextView) view, commentDetailBean.getContent());
+        //长按回复
+        @OnClick(R.id.rl_head)
+        void reply(View view) {
+            if (userId > 0) {
+                setReceiverComment();
+            } else {
+                getLoginStatus(CommentDetailsActivity.this);
             }
-            return false;
         }
+
+        //长按回复
+        @OnLongClick(R.id.rl_head)
+        boolean ReplyAndReport(View view) {
+            //点击弹窗（回复和举报）
+            mAlphaPw = new PostReplyPw(getActivity(), getStringChangeIntegers(objId), 2) {
+                @Override
+                public void onCommentClick() {
+                    if (userId > 0) {
+                        setReceiverComment();
+                    } else {
+                        getLoginStatus(CommentDetailsActivity.this);
+                    }
+                }
+            };
+
+            mAlphaPw.showAsDropDown(tv_comm_comment_content, 0, 0);
+            return true;
+        }
+
     }
 
     private void skipUserUI(int uid) {
@@ -514,12 +451,12 @@ public class CommentDetailsActivity extends BaseActivity {
             if (View.VISIBLE == ll_input_comment.getVisibility()) {
                 commentViewVisible(View.GONE, null);
             } else {
-                ReplyCommBean replyCommBean = new ReplyCommBean();
+                ReplyCommListBean replyCommBean = new ReplyCommListBean();
                 replyCommBean.setReply_uid(commentDetailBean.getUid());
                 replyCommBean.setNickname(commentDetailBean.getNickname());
                 replyCommBean.setId(commentDetailBean.getId());
                 replyCommBean.setObj_id(commentDetailBean.getObj_id());
-                replyCommBean.setFavor(commentDetailBean.isIsFavor());
+                replyCommBean.setIsFavor(commentDetailBean.isFavor());
                 replyCommBean.setTo_uid(commentDetailBean.getTo_uid());
                 commentViewVisible(View.VISIBLE, replyCommBean);
             }
@@ -527,6 +464,7 @@ public class CommentDetailsActivity extends BaseActivity {
             getLoginStatus(CommentDetailsActivity.this);
         }
     }
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (ev.getAction() == MotionEvent.ACTION_DOWN) {
@@ -534,7 +472,7 @@ public class CommentDetailsActivity extends BaseActivity {
             if (isShouldHideKeyboard(v, ev)) {
                 InputMethodManager imm =
                         (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                if(imm!=null){
+                if (imm != null) {
                     imm.hideSoftInputFromWindow(v.getWindowToken(),
                             InputMethodManager.HIDE_NOT_ALWAYS);
                 }
@@ -562,5 +500,31 @@ public class CommentDetailsActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         KeyboardUtils.unregisterSoftInputChangedListener(this);
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
+
+    @Override
+    public View getLoadView() {
+        return smart_communal_refresh;
+    }
+
+//    @Override
+//    protected void postEventResult(@NonNull EventMessage message) {
+//        if (UPDATE_POST_COMMENT.equals(message.type) && getSimpleName().equals(message.result)) {
+//            loadData();
+//        }
+//    }
+
+
+    @Override
+    protected void postEventResult(@NonNull EventMessage message) {
+        super.postEventResult(message);
+        if (UPDATE_POST_COMMENT.equals(message.type) && getSimpleName().equals(message.result)) {
+            loadData();
+        }
     }
 }

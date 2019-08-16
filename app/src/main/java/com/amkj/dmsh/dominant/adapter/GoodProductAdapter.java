@@ -32,10 +32,9 @@ import static com.amkj.dmsh.constant.ConstantVariable.PRODUCT;
 
 
 /**
- * @author LGuiPeng
- * @email liuguipeng163@163.com
- * created on 2017/6/29
- * class description:好物
+ * Created by xiaoxin on 2019/7/12
+ * Version:v4.0.0
+ * ClassDescription :一行2个商品通用适配器
  */
 
 public class GoodProductAdapter extends BaseMultiItemQuickAdapter<LikedProductBean, BaseViewHolder> {

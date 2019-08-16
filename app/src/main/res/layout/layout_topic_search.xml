@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/sc_mm_88"
+    android:background="@drawable/border_bottom_line"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingTop="@dimen/sc_mm_12"
+    android:paddingBottom="@dimen/sc_mm_12">
+
+    <TextView
+        android:id="@+id/iv_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/common_back_btn_nor"
+        android:paddingLeft="@dimen/sc_mm_36"
+        android:paddingRight="@dimen/sc_mm_30"/>
+
+    <com.amkj.dmsh.views.EditTextWithClear
+        android:id="@+id/et_search"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginRight="@dimen/sc_mm_54"
+        android:background="@drawable/shap_search_bg"
+        android:drawableLeft="@drawable/search_light_gray_icon"
+        android:drawablePadding="@dimen/sc_mm_20"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:hint="@string/input_keyword"
+        android:imeOptions="actionSearch"
+        android:paddingLeft="@dimen/sc_mm_20"
+        android:paddingRight="@dimen/sc_mm_20"
+        android:singleLine="true"
+        android:textColorHint="@color/color_blue_reply_com"
+        android:textCursorDrawable="@color/text_black_t"
+        android:textSize="@dimen/sc_mm_28"/>
+</LinearLayout>

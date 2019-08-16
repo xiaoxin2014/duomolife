@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.amkj.dmsh.BuildConfig;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.constant.TotalPersonalTrajectory;
+import com.amkj.dmsh.find.activity.TopicDetailActivity;
 import com.amkj.dmsh.netloadpage.NetEmptyCallback;
 import com.amkj.dmsh.netloadpage.NetLoadCallback;
 import com.amkj.dmsh.network.NetLoadUtils;
@@ -157,7 +158,7 @@ public abstract class BaseActivity extends AppCompatActivity {
      * 设置状态栏颜色
      */
     public void setStatusBar() {
-        if (ShopScrollDetailsActivity.class.getSimpleName().equals(mSimpleName)) {
+        if (ShopScrollDetailsActivity.class.getSimpleName().equals(mSimpleName)||TopicDetailActivity.class.getSimpleName().equals(mSimpleName)) {
             ImmersionBar.with(this).keyboardEnable(true).navigationBarEnable(false).statusBarDarkFont(true).fullScreen(true).init();
         } else {
 //            设置共同沉浸式样式
@@ -222,7 +223,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 case "QualityCustomTopicActivity":
                 case "QualityOverseasDetailsActivity":
                 case "QualityProductActActivity":
-                case "ArticleDetailsImgActivity":
+                case "PostDetailActivity":
                 case "ArticleInvitationDetailsActivity":
                 case "ArticleOfficialActivity":
                 case "QualityTypeProductActivity":
@@ -281,8 +282,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     /**
      * 获取loadView
-     *
-     * @return
      */
     public View getLoadView() {
         return null;
@@ -291,8 +290,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     /**
      * 获取顶部view(用于分享封面图)
-     *
-     * @return
      */
     public View getTopView() {
         return null;
@@ -300,8 +297,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     /**
      * 是否默认加载
-     *
-     * @return
      */
     protected boolean isAddLoad() {
         return false;
@@ -387,5 +382,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected String getSimpleName() {
         return mSimpleName;
+    }
+
+    public void setScrollY(int scrollY) {
+        this.scrollY = scrollY;
     }
 }

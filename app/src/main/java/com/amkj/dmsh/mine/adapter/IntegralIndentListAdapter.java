@@ -133,15 +133,15 @@ public class IntegralIndentListAdapter extends BaseQuickAdapter<OrderListBean, B
 //          确认订单
                 tv_indent_border_second_blue.setTag(R.id.tag_first, CONFIRM_ORDER);
                 tv_indent_border_second_blue.setTag(R.id.tag_second, orderListBean);
-            } else if (30 <= statusCode && statusCode <= 40) {
-                if (statusCode == 40) {
+            }  else if (30 <= statusCode && statusCode <= 40) {
+//                if(statusCode==40){
                     tv_indent_border_first_gray.setVisibility(View.GONE);
-                } else {
-                    tv_indent_border_first_gray.setVisibility(View.VISIBLE);
-                    tv_indent_border_first_gray.setText("评价");
-                    tv_indent_border_first_gray.setTag(R.id.tag_first, PRO_APPRAISE);
-                    tv_indent_border_first_gray.setTag(R.id.tag_second, orderListBean);
-                }
+//                }else{
+//                    tv_indent_border_first_gray.setVisibility(View.VISIBLE);
+//                    tv_indent_border_first_gray.setText("评价");
+//                    tv_indent_border_first_gray.setTag(R.id.tag_first, PRO_APPRAISE);
+//                    tv_indent_border_first_gray.setTag(R.id.tag_second, orderListBean);
+//                }
                 tv_indent_border_second_blue.setVisibility(View.VISIBLE);
                 tv_indent_border_second_blue.setText("申请售后");
                 tv_indent_border_second_blue.setTag(R.id.tag_first, REFUND_APPLY);

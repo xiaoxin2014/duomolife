@@ -26,7 +26,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/defaul"
-            android:textColor="@color/textColor_alert_title"
+            android:textColor="@color/text_login_gray_s"
             android:textSize="@dimen/sc_mm_30"/>
 
         <TextView

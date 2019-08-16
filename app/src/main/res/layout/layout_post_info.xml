@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="right|center_vertical"
+    android:orientation="horizontal"
+    android:paddingLeft="@dimen/sc_mm_20"
+    android:paddingTop="@dimen/sc_mm_15"
+    android:paddingRight="@dimen/sc_mm_20"
+    android:paddingBottom="@dimen/sc_mm_25"
+    tools:ignore="MissingDefaultResource">
+
+    <TextView
+        android:id="@+id/tv_view_num"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/text_login_gray_s"
+        android:textSize="@dimen/sc_mm_24"/>
+
+    <TextView
+        android:id="@+id/tv_collect_num"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/sc_mm_40"
+        android:textColor="@color/text_login_gray_s"
+        android:textSize="@dimen/sc_mm_24"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/tv_favor_num"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/sc_mm_40"
+        android:textColor="@color/text_login_gray_s"
+        android:textSize="@dimen/sc_mm_24"/>
+</LinearLayout>

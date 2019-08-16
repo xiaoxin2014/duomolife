@@ -16,196 +16,25 @@
             android:descendantFocusability="blocksDescendants"
             android:orientation="vertical">
 
-            <FrameLayout
-                android:id="@+id/fl_mine_bg"
+            <include layout="@layout/layout_mine_head"/>
+
+            <android.support.v7.widget.CardView
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/sc_mm_490"
-                android:background="@drawable/mine_no_login_bg">
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/sc_mm_20"
+                android:layout_marginTop="@dimen/sc_mm_20"
+                android:layout_marginRight="@dimen/sc_mm_20"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="@dimen/sc_mm_12"
+                app:cardElevation="0dp">
 
-                <ImageView
-                    android:id="@+id/iv_mine_page_bg"
+                <com.bigkoo.convenientbanner.ConvenientBanner
+                    android:id="@+id/ad_mine"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/mine_no_login_bg"/>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/translucence"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <RelativeLayout
-                        android:id="@+id/rel_header_title_mine"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <include layout="@layout/layout_mine_header"/>
-                    </RelativeLayout>
-
-                    <RelativeLayout
-                        android:id="@+id/rel_mine_info"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/sc_mm_380">
-
-                        <LinearLayout
-                            android:id="@+id/ll_mime_no_login"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_centerInParent="true"
-                            android:layout_gravity="center"
-                            android:gravity="center"
-                            android:orientation="vertical"
-                            android:paddingTop="@dimen/sc_mm_8"
-                            android:visibility="gone">
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:gravity="center"
-                                android:lineSpacingExtra="@dimen/dimen_10_dp"
-                                android:text="多么生活 您的生活美学专家\n为你提供最优质、省钱、放心的产品"
-                                android:textColor="@color/white"
-                                android:textSize="@dimen/sc_mm_28"/>
-
-                            <TextView
-                                android:id="@+id/tv_no_login_show"
-                                android:layout_width="@dimen/sc_mm_350"
-                                android:layout_height="@dimen/sc_mm_80"
-                                android:layout_marginTop="@dimen/sc_mm_50"
-                                android:gravity="center"
-                                android:text="登录/注册"
-                                android:textColor="@color/white"
-                                android:textSize="@dimen/sc_mm_32"/>
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/ll_mine_login"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_centerInParent="true"
-                            android:gravity="center"
-                            android:orientation="vertical"
-                            android:visibility="visible">
-
-                            <de.hdodenhof.circleimageview.CircleImageView
-                                android:id="@+id/iv_mine_header"
-                                android:layout_width="@dimen/sc_mm_130"
-                                android:layout_height="@dimen/sc_mm_130"
-                                android:layout_centerHorizontal="true"/>
-
-                            <TextView
-                                android:id="@+id/tv_mine_name"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="@dimen/sc_mm_15"
-                                android:ellipsize="end"
-                                android:maxLines="1"
-                                android:paddingLeft="@dimen/sc_mm_150"
-                                android:paddingRight="@dimen/sc_mm_150"
-                                android:textColor="@color/white"
-                                android:textSize="@dimen/sc_mm_30"/>
-
-                            <RelativeLayout
-                                android:id="@+id/rel_integral_more"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:padding="@dimen/sc_mm_15">
-
-                                <TextView
-                                    android:id="@+id/tv_mine_score"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_centerVertical="true"
-                                    android:text="积分：430"
-                                    android:textColor="@color/white"
-                                    android:textSize="@dimen/sc_mm_24"/>
-
-                                <TextView
-                                    android:id="@+id/tv_mine_get_score_more"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_centerVertical="true"
-                                    android:layout_toRightOf="@id/tv_mine_score"
-                                    android:paddingLeft="@dimen/gap_left"
-                                    android:text="获取更多积分"
-                                    android:textColor="@color/white"
-                                    android:textSize="@dimen/sc_mm_22"/>
-                            </RelativeLayout>
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginBottom="@dimen/sc_mm_15"
-                                android:background="@color/transparent"
-                                android:orientation="horizontal">
-
-                                <TextView
-                                    android:id="@+id/tv_mine_att_count"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:gravity="center"
-                                    android:lineSpacingExtra="@dimen/sc_mm_10"
-                                    android:lines="2"
-                                    android:textColor="@color/white"
-                                    android:textSize="@dimen/sc_mm_28"
-                                    android:visibility="visible"/>
-
-                                <TextView
-                                    android:id="@+id/tv_mine_fans_count"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:gravity="center"
-                                    android:lineSpacingExtra="@dimen/sc_mm_10"
-                                    android:lines="2"
-                                    android:textColor="@color/white"
-                                    android:textSize="@dimen/sc_mm_28"/>
-
-                                <TextView
-                                    android:id="@+id/tv_mine_inv_count"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:gravity="center"
-                                    android:lineSpacingExtra="@dimen/sc_mm_10"
-                                    android:lines="2"
-                                    android:textColor="@color/white"
-                                    android:textSize="@dimen/sc_mm_28"/>
-                            </LinearLayout>
-                        </LinearLayout>
-
-                    </RelativeLayout>
-                </LinearLayout>
-            </FrameLayout>
-
-            <RelativeLayout
-                android:id="@+id/rel_personal_data_sup"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/sc_mm_90"
-                android:background="#e4f0fe"
-                android:paddingLeft="@dimen/sc_mm_30"
-                android:visibility="gone">
-
-                <ImageView
-                    android:id="@+id/iv_personal_data_sup"
-                    android:layout_width="@dimen/sc_mm_40"
-                    android:layout_height="@dimen/sc_mm_40"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/mine_tips"/>
-
-                <TextView
-                    android:id="@+id/tv_personal_data_sup"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="@dimen/sc_mm_20"
-                    android:layout_toRightOf="@+id/iv_personal_data_sup"
-                    android:gravity="center_vertical"
-                    android:textColor="@color/text_login_gray_s"
-                    android:textSize="@dimen/sc_mm_28"/>
-            </RelativeLayout>
+                    android:layout_height="@dimen/sc_mm_160"/>
+            </android.support.v7.widget.CardView>
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -240,22 +69,19 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:divider="@drawable/item_divider_five_gray_f"
-                android:orientation="vertical"
-                android:showDividers="middle">
+                android:background="@color/light_gray_f"
+                android:orientation="vertical">
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rv_mine_indent_item"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/sc_mm_20"
+                    android:background="@color/white"
                     android:scrollbars="none"/>
 
                 <include layout="@layout/layout_communal_recycler_wrap"/>
 
-                <com.bigkoo.convenientbanner.ConvenientBanner
-                    android:id="@+id/ad_mine"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/sc_mm_180"/>
             </LinearLayout>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>

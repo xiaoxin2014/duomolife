@@ -371,7 +371,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
                             case 2:
                                 refundOrderDialogHelper = new AlertDialogHelper(DirectExchangeDetailsActivity.this);
                                 refundOrderDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
-                                        .setMsg(getStrings(applyRefundCheckBean.getMsg())).setCancelText("取消").setConfirmText("确定")
+                                        .setMsg(getStrings(applyRefundCheckBean.getMsg())).setCancelText("取消").setConfirmText("继续")
                                         .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s));
                                 refundOrderDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
                                     @Override
@@ -667,6 +667,8 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
      * @param indentInfoDetailBean
      */
     private void setIntentStatus(IndentInfoDetailBean indentInfoDetailBean) {
+        tv_indent_border_second_blue.setBackgroundResource(R.drawable.border_circle_three_blue_white);
+        tv_indent_border_second_blue.setTextColor(getResources().getColor(R.color.text_login_blue_z));
         OrderDetailBean orderDetailBean = indentInfoDetailBean.getOrderDetailBean();
         int statusCode = orderDetailBean.getStatus();
         List<GoodsDetailBean> goodDetails = indentInfoDetailBean.getOrderDetailBean().getGoodDetails();
@@ -788,61 +790,79 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
             tv_indent_border_second_blue.setTag(R.id.tag_second, indentInfoDetailBean);
             tv_indent_border_second_blue.setOnClickListener(this);
         } else if (30 <= statusCode && statusCode <= 40) {
+            //发票详情
             ll_indent_detail_bottom.setVisibility(View.VISIBLE);
+            tv_indent_border_first_gray.setVisibility(View.VISIBLE);
+            tv_indent_border_first_gray.setText("发票详情");
+            tv_indent_border_first_gray.setTag(R.id.tag_first, PRO_INVOICE);
+            tv_indent_border_first_gray.setTag(R.id.tag_second, indentInfoDetailBean);
+            tv_indent_border_first_gray.setOnClickListener(this);
+            tv_indent_border_second_blue.setVisibility(View.VISIBLE);
+            tv_indent_border_second_blue.setTag(R.id.tag_second, indentInfoDetailBean);
             if (statusCode == 40) { //已评价状态
-                tv_indent_border_first_gray.setVisibility(View.VISIBLE);
-                tv_indent_border_first_gray.setText("发票详情");
-//            发票详情
-                tv_indent_border_first_gray.setTag(R.id.tag_first, PRO_INVOICE);
-                tv_indent_border_first_gray.setTag(R.id.tag_second, indentInfoDetailBean);
-                tv_indent_border_first_gray.setOnClickListener(this);
-                tv_indent_border_second_blue.setVisibility(View.VISIBLE);
                 tv_indent_border_second_blue.setText("删除订单");
                 tv_indent_border_second_blue.setTag(R.id.tag_first, DEL);
-                tv_indent_border_second_blue.setTag(R.id.tag_second, indentInfoDetailBean);
                 tv_indent_border_second_blue.setOnClickListener(this);
-            } else {
-                boolean isShowEvaluate = false;
-                reach:
-                for (GoodsDetailBean goodsDetailBean : goodDetails) {
-                    for (OrderProductInfoBean orderProductInfoBean : goodsDetailBean.getOrderProductInfoList()) {
-                        if (orderProductInfoBean.getStatus() == 30) {
-                            isShowEvaluate = true;
-                            break reach;
+            } else if (statusCode == 30 || statusCode == 31) {
+                tv_indent_border_second_blue.setBackgroundResource(R.drawable.border_circle_three_yellow_white);
+                tv_indent_border_second_blue.setTextColor(getResources().getColor(R.color.max_score_yellow));
+                tv_indent_border_second_blue.setText(R.string.write_score_comment);
+
+                List<GoodsDetailBean> goods = orderDetailBean.getGoodDetails();
+                //未评价的数量
+                int noShowEvaluateNum = 0;
+                OrderProductInfoBean orderProductInfoBean = null;
+                for (GoodsDetailBean goodsDetailBean : goods) {
+                    List<OrderProductInfoBean> orderProductInfoList = goodsDetailBean.getOrderProductInfoList();
+                    if (orderProductInfoList != null) {
+                        for (OrderProductInfoBean bean : orderProductInfoList) {
+                            if (bean.getCombineProductInfoList() == null) {
+                                //普通商品
+                                if (bean.getStatus() == 30) {
+                                    noShowEvaluateNum++;
+                                    orderProductInfoBean = bean;
+                                }
+                            } else if (bean.getCombineProductInfoList().size() > 0) {
+                                int num = 0;
+                                List<CartProductInfoBean> combineProductInfoList = bean.getCombineProductInfoList();
+                                //判断组合购是否所有子商品待评价
+                                for (CartProductInfoBean cartProductInfoBean : combineProductInfoList) {
+                                    if (cartProductInfoBean.getStatus() == 30) {
+                                        num++;
+                                    }
+                                }
+                                if (num == combineProductInfoList.size()){
+                                    noShowEvaluateNum++;
+                                    orderProductInfoBean = bean;
+                                }
+                            }
                         }
                     }
                 }
-                if (isShowEvaluate) {
-                    if (!TextUtils.isEmpty(orderDetailBean.getTotalScore())) {
-                        String scoreTotal = String.format(getResources().getString(R.string.appraise_integral_score)
-                                , orderDetailBean.getTotalScore());
-                        tv_indent_border_second_blue.setText(scoreTotal);
-                        Pattern p = Pattern.compile(REGEX_NUM);
-                        Link redNum = new Link(p);
-                        //        @用户昵称
-                        redNum.setTextColor(Color.parseColor("#ff5e5e"));
-                        redNum.setUnderlined(false);
-                        redNum.setHighlightAlpha(0f);
-                        LinkBuilder.on(tv_indent_border_second_blue)
-                                .setText(scoreTotal)
-                                .addLink(redNum)
-                                .build();
-                    } else {
-                        tv_indent_border_second_blue.setText(R.string.appraise_integral);
+                tv_indent_border_second_blue.setVisibility(noShowEvaluateNum > 0 ? View.VISIBLE : GONE);
+                int finalNoShowEvaluateNum = noShowEvaluateNum;
+                OrderProductInfoBean finalOrderProductInfoBean = orderProductInfoBean;
+                tv_indent_border_second_blue.setOnClickListener(v -> {
+                    if (finalNoShowEvaluateNum == 1) {
+                        //直接跳转评分界面
+                        ScoreGoodsEntity.ScoreGoodsBean scoreGoodsBean = new ScoreGoodsEntity.ScoreGoodsBean();
+                        scoreGoodsBean.setOrderNo(infoDetailEntity.getIndentInfoDetailBean().getOrderDetailBean().getNo());
+                        scoreGoodsBean.setCover(finalOrderProductInfoBean.getPicUrl());
+                        scoreGoodsBean.setOrderProductId(String.valueOf(finalOrderProductInfoBean.getOrderProductId()));
+                        scoreGoodsBean.setProductId(String.valueOf(finalOrderProductInfoBean.getId()));
+                        scoreGoodsBean.setProductName(finalOrderProductInfoBean.getName());
+                        Intent intent = new Intent(this, JoinTopicActivity.class);
+                        intent.putExtra("scoreGoods", scoreGoodsBean);
+                        startActivity(intent);
+                    } else if (finalNoShowEvaluateNum > 1) {
+                        //跳转评分列表
+                        Intent intent = new Intent(this, IndentScoreListActivity.class);
+                        intent.putExtra("orderNo", infoDetailEntity.getIndentInfoDetailBean().getOrderDetailBean().getNo());
+                        startActivity(intent);
                     }
-                    tv_indent_border_second_blue.setVisibility(View.VISIBLE);
-                    tv_indent_border_second_blue.setTag(R.id.tag_first, PRO_APPRAISE);
-                    tv_indent_border_second_blue.setTag(R.id.tag_second, indentInfoDetailBean);
-                    tv_indent_border_second_blue.setOnClickListener(this);
-                } else {
-                    tv_indent_border_second_blue.setVisibility(View.GONE);
-                }
-                tv_indent_border_first_gray.setVisibility(View.VISIBLE);
-                tv_indent_border_first_gray.setText("发票详情");
-//            发票详情
-                tv_indent_border_first_gray.setTag(R.id.tag_first, PRO_INVOICE);
-                tv_indent_border_first_gray.setTag(R.id.tag_second, indentInfoDetailBean);
-                tv_indent_border_first_gray.setOnClickListener(this);
+                });
+
+
             }
         } else {
             ll_indent_detail_bottom.setVisibility(GONE);
@@ -968,48 +988,6 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
                     });
                 }
                 confirmOrderDialogHelper.show();
-                break;
-            case PRO_APPRAISE:
-                //评价
-                DirectAppraisePassBean directAppraisePassBean;
-                directAppraisePassBeanList.clear();
-                for (int i = 0; i < orderDetailBean.getGoodDetails().size(); i++) {
-                    GoodsDetailBean goodsDetailBean = orderDetailBean.getGoodDetails().get(i);
-                    for (int j = 0; j < goodsDetailBean.getOrderProductInfoList().size(); j++) {
-                        OrderProductInfoBean orderProductInfoBean = goodsDetailBean.getOrderProductInfoList().get(j);
-                        if (orderProductInfoBean.getCombineProductInfoList() != null
-                                && orderProductInfoBean.getCombineProductInfoList().size() > 0) {
-                            for (int k = 0; k < orderProductInfoBean.getCombineProductInfoList().size(); k++) {
-                                CartProductInfoBean cartProductInfoBean = orderProductInfoBean.getCombineProductInfoList().get(k);
-                                if (cartProductInfoBean.getStatus() == 30) {
-                                    directAppraisePassBean = new DirectAppraisePassBean();
-                                    directAppraisePassBean.setProductId(cartProductInfoBean.getId());
-                                    directAppraisePassBean.setOrderProductId(cartProductInfoBean.getOrderProductId());
-                                    directAppraisePassBean.setPath(cartProductInfoBean.getPicUrl());
-                                    directAppraisePassBean.setStar(5);
-                                    directAppraisePassBeanList.add(directAppraisePassBean);
-                                }
-                            }
-                        } else if (orderProductInfoBean.getStatus() == 30) {
-                            directAppraisePassBean = new DirectAppraisePassBean();
-                            directAppraisePassBean.setProductId(orderProductInfoBean.getId());
-                            directAppraisePassBean.setOrderProductId(orderProductInfoBean.getOrderProductId());
-                            directAppraisePassBean.setPath(orderProductInfoBean.getPicUrl());
-                            directAppraisePassBean.setStar(5);
-                            directAppraisePassBeanList.add(directAppraisePassBean);
-                        }
-                    }
-                }
-//                待评价
-                if (directAppraisePassBeanList.size() > 0) {
-                    intent.setClass(DirectExchangeDetailsActivity.this, DirectPublishAppraiseActivity.class);
-                    bundle = new Bundle();
-                    bundle.putParcelableArrayList("appraiseData", (ArrayList<? extends Parcelable>) directAppraisePassBeanList);
-                    intent.putExtras(bundle);
-                    intent.putExtra("uid", this.orderDetailBean.getUserId());
-                    intent.putExtra("orderNo", this.orderDetailBean.getNo());
-                    startActivity(intent);
-                }
                 break;
             case DEL:
 //                        删除订单
@@ -1458,7 +1436,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
                     qyProductIndentInfo.setPicUrl(getStrings(goodsBeanList.get(0).getPicUrl()));
                 }
                 qyProductIndentInfo.setDesc(INDENT_PRO_STATUS.get(String.valueOf(orderDetailBean.getStatus())));
-                qyProductIndentInfo.setNote(String.format(getResources().getString(R.string.money_price_chn), orderDetailBean.getPayAmount()));
+                qyProductIndentInfo.setNote(String.format(getResources().getString(R.string.money_price_chn), getStrings(orderDetailBean.getPayAmount())));
                 qyProductIndentInfo.setUrl(Url.BASE_SHARE_PAGE_TWO + "m/template/order_template/order.html?noid=" + orderNo);
             }
             QyServiceUtils.getQyInstance().openQyServiceChat(this, "订单详情", Url.BASE_SHARE_PAGE_TWO + "m/template/order_template/order.html?noid=" + orderNo, qyProductIndentInfo);

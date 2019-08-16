@@ -1,7 +1,6 @@
 package com.amkj.dmsh.dominant.adapter;
 
 import android.content.Context;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
@@ -39,7 +38,7 @@ public class ArticleCommentInnerAdapter extends BaseMultiItemQuickAdapter<ReplyC
         switch (helper.getItemViewType()) {
             case ConstantVariable.TYPE_0:
                 TextView tv_comm_comment_like = helper.getView(R.id.tv_comm_comment_like);
-                GlideImageLoaderUtil.loadHeaderImg(context, (ImageView) helper.getView(R.id.civ_comm_comment_inner_avatar), replyCommListBean.getAvatar());
+                GlideImageLoaderUtil.loadHeaderImg(context, helper.getView(R.id.civ_comm_comment_inner_avatar), replyCommListBean.getAvatar());
                 helper.setText(R.id.tv_comm_comment_inner_name, replyCommListBean.isIsReplyMain() ?
                         getStrings(replyCommListBean.getNickname()) :
                         (getStrings(replyCommListBean.getNickname()) + " 回复 " + getStrings(replyCommListBean.getNickname1())))

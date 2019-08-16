@@ -262,6 +262,7 @@ public class QualityCustomTopicActivity extends BaseActivity {
         }
         Map<String, Object> params = new HashMap<>();
         params.put("productType", productType);
+        params.put("version", 1);
         if (userId > 0) {
             params.put("uid", userId);
         }
@@ -282,7 +283,7 @@ public class QualityCustomTopicActivity extends BaseActivity {
                         if (!TextUtils.isEmpty(customCoverDesBean.getPicUrl())) {
                             qNewProView.iv_communal_cover_wrap.setVisibility(View.VISIBLE);
                             GlideImageLoaderUtil.loadImgDynamicDrawable(QualityCustomTopicActivity.this, qNewProView.iv_communal_cover_wrap,
-                                    getStrings(customCoverDesBean.getPicUrl()));
+                                    getStrings(customCoverDesBean.getPicUrl()),-1);
                         } else {
                             qNewProView.iv_communal_cover_wrap.setVisibility(View.GONE);
                         }
@@ -435,7 +436,7 @@ public class QualityCustomTopicActivity extends BaseActivity {
         if (customProList.size() > 0) {
             LikedProductBean likedProductBean = customProList.get(0);
             new UMShareAction(QualityCustomTopicActivity.this
-                    , likedProductBean.getPicUrl()
+                    , ""
                     , getStrings(userLikedProductEntity.getZoneName())
                     , "我在多么生活发现这几样好物，性价比不错，还包邮"
                     , Url.BASE_SHARE_PAGE_TWO + "m/template/goods/CustomZone.html?id=" + productType

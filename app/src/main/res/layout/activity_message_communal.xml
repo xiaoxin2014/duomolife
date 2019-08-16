@@ -25,9 +25,10 @@
     </LinearLayout>
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_weight="1"
-        android:layout_height="wrap_content">
-        <include layout="@layout/layout_communal_smart_refresh_recycler_float_loading" />
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <include layout="@layout/layout_communal_smart_refresh_recycler_float_loading"/>
     </FrameLayout>
     <include layout="@layout/layout_comment_edit"/>
 </LinearLayout>

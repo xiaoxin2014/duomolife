@@ -1,46 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:orientation="horizontal"
-    android:id="@+id/ll_article_comment"
-    android:visibility="visible"
-    android:gravity="center_vertical"
-    android:background="@drawable/border_top_line"
-    android:paddingTop="@dimen/sc_mm_15"
-    android:paddingBottom="@dimen/sc_mm_15"
-    android:paddingLeft="@dimen/sc_mm_20"
-    android:paddingRight="@dimen/sc_mm_15"
-    android:layout_height="@dimen/sc_mm_98">
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_weight="1"
-        android:paddingLeft="@dimen/sc_mm_20"
+              android:id="@+id/ll_article_comment"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@drawable/border_top_line"
+              android:gravity="center_vertical"
+              android:orientation="horizontal"
+              android:padding="@dimen/sc_mm_18"
+              android:paddingLeft="@dimen/sc_mm_20"
+              android:paddingTop="@dimen/sc_mm_15"
+              android:paddingRight="@dimen/sc_mm_15"
+              android:paddingBottom="@dimen/sc_mm_15"
+              android:visibility="visible">
 
+    <TextView
         android:id="@+id/tv_publish_comment"
-        android:gravity="center_vertical"
-        android:text="写评论……"
-        android:textSize="@dimen/sc_mm_28"
-        android:textColor="@color/text_gray_hint_n"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/sc_mm_68"
+        android:layout_weight="1"
         android:background="@drawable/border_cir_4dp_gray_f"
-        android:layout_height="match_parent" />
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/sc_mm_20"
+        android:text="@string/write_comment"
+        android:textColor="@color/text_gray_hint_n"
+        android:textSize="@dimen/sc_mm_28"/>
+
     <TextView
-        android:gravity="bottom|center"
-        android:paddingLeft="@dimen/sc_mm_50"
-        android:paddingRight="@dimen/sc_mm_25"
-        android:layout_width="wrap_content"
-        android:drawableTop="@drawable/sel_comment_like_heart"
         android:id="@+id/tv_article_bottom_like"
-        android:textSize="@dimen/sc_mm_18"
-        android:text="赞"
-        android:layout_height="match_parent" />
-    <TextView
-        android:paddingLeft="@dimen/sc_mm_25"
-        android:paddingRight="@dimen/sc_mm_40"
-        android:gravity="bottom|center"
         android:layout_width="wrap_content"
-        android:drawableTop="@drawable/sel_comment_collect_star"
+        android:layout_height="wrap_content"
+        android:drawableTop="@drawable/sel_comment_like_heart"
+        android:drawablePadding="@dimen/sc_mm_12"
+        android:gravity="center"
+        android:paddingLeft="@dimen/sc_mm_40"
+        android:paddingRight="@dimen/sc_mm_20"
+        android:text="赞"
+        android:textSize="@dimen/sc_mm_18"/>
+
+    <TextView
         android:id="@+id/tv_article_bottom_collect"
-        android:textSize="@dimen/sc_mm_18"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableTop="@drawable/sel_comment_collect_star"
+        android:drawablePadding="@dimen/sc_mm_12"
+        android:gravity="center"
+        android:paddingLeft="@dimen/sc_mm_20"
+        android:paddingRight="@dimen/sc_mm_22"
         android:text="收藏"
-        android:layout_height="match_parent" />
+        android:textSize="@dimen/sc_mm_18"/>
 </LinearLayout>

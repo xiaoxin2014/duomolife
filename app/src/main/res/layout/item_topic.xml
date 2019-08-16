@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="@dimen/sc_mm_40"
+    android:background="@drawable/border_bottom_line"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/sc_mm_24"
+    android:paddingBottom="@dimen/sc_mm_26">
+
+    <TextView
+        android:maxWidth="@dimen/sc_mm_500"
+        android:id="@+id/tv_topic_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:paddingRight="@dimen/sc_mm_40"
+        android:text="@string/defaul"
+        android:textColor="@color/text_black_t"
+        android:textSize="@dimen/sc_mm_30"/>
+
+    <TextView
+        android:id="@+id/tv_join_num"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/sc_mm_20"
+        android:ellipsize="end"
+        android:lines="1"
+        android:text="@string/defaul"
+        android:textColor="@color/color_blue_reply_com"
+        android:textSize="@dimen/sc_mm_24"/>
+</LinearLayout>

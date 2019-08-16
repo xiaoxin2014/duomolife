@@ -36,6 +36,11 @@ public class JzVideoPlayerStatusDialog extends JzvdStd {
     }
 
     @Override
+    public int getLayoutId() {
+        return R.layout.jz_layout_std_my;
+    }
+
+    @Override
     public void showWifiDialog() {
         if (alertDialogHelper == null) {
             alertDialogHelper = new AlertDialogHelper(getContext());

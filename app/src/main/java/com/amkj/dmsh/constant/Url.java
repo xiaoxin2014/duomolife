@@ -737,6 +737,37 @@ public class Url {
     public static final String ARTICLE_SHARE_COUNT = "api/my/addDocumentShareCount";
     //   每日分享
     public static final String SHARE_SUCCESS = "api/activity/shareReward";
+
+    /**
+     * 新版发现相关接口
+     */
+    //   获取帖子列表
+    public static final String GET_POST_LIST = "api/find/post/getPostList";
+    //   获取热门话题
+    public static final String GET_HOT_TOPIC = "api/find/post/getRecommendTopicList";
+    //   获取话题分类
+    public static final String GET_TOPIC_CATERGORY = "api/find/post/getAllTopicCategory";
+    //   获取分类话题
+    public static final String GET_CATERGORY_TOPIC = "api/find/post/getAllTopic";
+    //   获取话题详情
+    public static final String GET_TOPIC_DETAIL = "api/find/post/getTopicInfo";
+    //   获取可评价商品列表
+    public static final String GET_SCORE_PRODUCT = "api/find/post/getNeedCommentProductList";
+    //   商品晒单（发布帖子并评价）
+    public static final String PUBLISH_POST_ANDE_VALUATE = "api/find/post/publishPostAndEvaluate";
+    //   参与话题
+    public static final String JOIN_TOPIC = "api/find/post/savePost";
+    //   举报非法内容
+    public static final String REPORT_ILLEGAL = "api/find/post/reportIllegalContent";
+    //   新增粉丝
+    public static final String NEW_FANS = "api/find/post/getNewFans";
+    //    奖励规则H5地址
+    public static final String REWARD_RULE = BASE_SHARE_PAGE_TWO + "m/template/find_template/rewardRule.html?hideNav=1";
+    //    public static final String REWARD_RULE = "http://test.domolife.cn/test/template/find_template/rewardRule.html?hideNav=1";
+    //    已购买商品列表界面 广告位
+    public static final String FIND_AD2 = "api/website/getAdByFindTopic";
+
+
     /**
      * 关联商品
      */

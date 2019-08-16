@@ -1,9 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:background="@color/white"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/white"
+              android:orientation="vertical">
+
     <include layout="@layout/activity_duomolife_indent_header"/>
+
+    <RelativeLayout
+        android:id="@+id/rl_open_msg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/sc_mm_30"
+        android:layout_marginTop="@dimen/sc_mm_20"
+        android:layout_marginRight="@dimen/sc_mm_30"
+        android:background="@drawable/shap_topic_bg_blue"
+        android:paddingLeft="@dimen/sc_mm_34"
+        android:paddingTop="@dimen/sc_mm_18"
+        android:paddingRight="@dimen/sc_mm_25"
+        android:paddingBottom="@dimen/sc_mm_20">
+
+        <TextView
+            android:id="@+id/tv_open_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="打开通知消息"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_28"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_open_msg"
+            android:layout_marginTop="@dimen/sc_mm_17"
+            android:text="及时获取订单状态,优惠信息等"
+            android:textColor="@color/color_blue_reply_com"
+            android:textSize="@dimen/sc_mm_22"/>
+
+        <TextView
+            android:id="@+id/tv_open_now"
+            android:layout_width="@dimen/sc_mm_120"
+            android:layout_height="@dimen/sc_mm_42"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/shap_open_msg_bg"
+            android:gravity="center"
+            android:text="立即打开"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_24"/>
+    </RelativeLayout>
+
     <include layout="@layout/layout_communal_recycler"/>
 </LinearLayout>

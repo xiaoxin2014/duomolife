@@ -1,6 +1,5 @@
 package com.amkj.dmsh.homepage.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,7 +10,6 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
-import com.amkj.dmsh.find.activity.FindTopicDetailsActivity;
 import com.amkj.dmsh.find.adapter.FindTopicListAdapter;
 import com.amkj.dmsh.find.bean.FindHotTopicEntity;
 import com.amkj.dmsh.find.bean.FindHotTopicEntity.FindHotTopicBean;
@@ -34,6 +32,7 @@ import butterknife.BindView;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.skipTopicDetail;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
@@ -90,9 +89,7 @@ public class SearchTopicDetailsFragment extends BaseFragment {
         findTopicListAdapter.setOnItemClickListener((adapter, view, position) -> {
             FindHotTopicBean hotTopicBean = (FindHotTopicBean) view.getTag();
             if (hotTopicBean != null) {
-                Intent intent = new Intent(getActivity(), FindTopicDetailsActivity.class);
-                intent.putExtra("topicId", String.valueOf(hotTopicBean.getId()));
-                startActivity(intent);
+                skipTopicDetail(getActivity(), String.valueOf(hotTopicBean.getId()));
             }
         });
         findTopicListAdapter.setOnLoadMoreListener(() -> {

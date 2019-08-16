@@ -33,7 +33,7 @@
             android:id="@+id/rb_find"
             style="@style/RadioButtonStyleBottom"
             android:drawableTop="@drawable/selector_bottom_find_bar"
-            android:text="发现" />
+            android:text="社区" />
 
         <RadioButton
             android:id="@+id/rb_mine"

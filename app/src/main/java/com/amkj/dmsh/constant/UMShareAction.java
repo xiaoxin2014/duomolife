@@ -23,7 +23,11 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.dominant.activity.DoMoLifeWelfareDetailsActivity;
+import com.amkj.dmsh.dominant.activity.QualityCustomTopicActivity;
 import com.amkj.dmsh.dominant.activity.QualityNewUserActivity;
+import com.amkj.dmsh.find.activity.JoinSuccessActivity;
+import com.amkj.dmsh.find.activity.PostDetailActivity;
+import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
@@ -51,6 +55,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.BASE_URL;
 import static com.amkj.dmsh.constant.Url.SHARE_SAVE_IMAGE_URL;
+import static com.amkj.dmsh.dao.SoftApiDao.reportIllegal;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.createFilePath;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.fileIsExist;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getThumbImgUrl;
@@ -136,58 +141,66 @@ public class UMShareAction {
                     && isSaveImg && productId > 0 && context.getClass().getSimpleName().equals(ShopScrollDetailsActivity.class.getSimpleName()));
         }
         alertDialogShareHelper.show();
-        alertDialogShareHelper.setAlertSelectShareListener(new AlertDialogShareHelper.AlertSelectShareListener() {
-            @Override
-            public void selectShare(ShareIconTitleBean shareIconTitleBean) {
-                alertDialogShareHelper.setLoading(0);
-                if (!isSharing) {
-                    isSharing = true;
-                    switch (shareIconTitleBean.getSharePlatformType()) {
-                        //复制链接
-                        case POCKET:
-                            ClipboardManager cmb = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-                            ClipData mClipData = ClipData.newPlainText("Label", !TextUtils.isEmpty(urlLink) ? urlLink : "多么生活");
-                            cmb.setPrimaryClip(mClipData);
-                            showToast(context, R.string.copy_url_success);
-                            if (alertDialogShareHelper != null) {
-                                alertDialogShareHelper.dismiss();
+        alertDialogShareHelper.setAlertSelectShareListener(shareIconTitleBean -> {
+            alertDialogShareHelper.setLoading(0);
+            if (!isSharing) {
+                isSharing = true;
+                switch (shareIconTitleBean.getSharePlatformType()) {
+                    //复制链接
+                    case POCKET:
+                        ClipboardManager cmb = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+                        ClipData mClipData = ClipData.newPlainText("Label", !TextUtils.isEmpty(urlLink) ? urlLink : "多么生活");
+                        cmb.setPrimaryClip(mClipData);
+                        showToast(context, R.string.copy_url_success);
+                        if (alertDialogShareHelper != null) {
+                            alertDialogShareHelper.dismiss();
+                        }
+                        alertDialogShareHelper.setLoading(1);
+                        isSharing = false;
+                        break;
+                    //保存图片
+                    case MORE:
+                        if (constantMethod == null) {
+                            constantMethod = new ConstantMethod();
+                        }
+                        constantMethod.setOnGetPermissionsSuccess(new ConstantMethod.OnGetPermissionsSuccessListener() {
+                            @Override
+                            public void getPermissionsSuccess() {
+                                alertDialogShareHelper.setLoading(0);
+                                getSaveImageToCamera(productId, routineUrl);
                             }
-                            alertDialogShareHelper.setLoading(1);
-                            isSharing = false;
-                            break;
-                        //保存图片
-                        case MORE:
-                            if (constantMethod == null) {
-                                constantMethod = new ConstantMethod();
+                        });
+                        alertDialogShareHelper.setLoading(1);
+                        constantMethod.getPermissions(context, com.yanzhenjie.permission.Permission.WRITE_EXTERNAL_STORAGE);
+                        isSharing = false;
+                        break;
+                    //举报帖子
+                    case TUMBLR:
+                        reportIllegal(context, id, 1);
+                        if (alertDialogShareHelper != null) {
+                            alertDialogShareHelper.dismiss();
+                        }
+                        alertDialogShareHelper.setLoading(1);
+                        isSharing = false;
+                        break;
+                    //分享到第三方应用
+                    default:
+                        SHARE_MEDIA sharePlatformType = shareIconTitleBean.getSharePlatformType();
+                        //统计用户分享行为
+                        statisticsShare(context, id, title, 1, sharePlatformType);
+                        View view = context.getTopView();
+                        if (view != null && TextUtils.isEmpty(imgUrl)) {
+                            if (context instanceof DoMoLifeWelfareDetailsActivity) {
+                                ((ScrollView) view).scrollTo(0, 0);
+                            } else if (context instanceof ArticleOfficialActivity || context instanceof QualityCustomTopicActivity || context instanceof PostDetailActivity) {
+                                ((RecyclerView) view).scrollToPosition(0);
                             }
-                            constantMethod.setOnGetPermissionsSuccess(new ConstantMethod.OnGetPermissionsSuccessListener() {
+                            //滚动截屏
+                            new Handler().postDelayed(() -> new AsyncUtils<Bitmap>(context) {
                                 @Override
-                                public void getPermissionsSuccess() {
-                                    alertDialogShareHelper.setLoading(0);
-                                    getSaveImageToCamera(productId, routineUrl);
+                                public Bitmap runOnIO() {
+                                    return GlideImageLoaderUtil.getBitmapFromView(view);
                                 }
-                            });
-                            alertDialogShareHelper.setLoading(1);
-                            constantMethod.getPermissions(context, com.yanzhenjie.permission.Permission.WRITE_EXTERNAL_STORAGE);
-                            isSharing = false;
-                            break;
-                        //分享到第三方应用
-                        default:
-                            SHARE_MEDIA sharePlatformType = shareIconTitleBean.getSharePlatformType();
-                            //统计用户分享行为
-                            statisticsShare(context, id, title, 1, sharePlatformType);
-                            View view = context.getTopView();
-                            if (view != null) {
-                                if (context instanceof DoMoLifeWelfareDetailsActivity) {
-                                    ((ScrollView) view).scrollTo(0, 0);
-                                } else {
-                                    ((RecyclerView) view).scrollToPosition(0);
-                                }
-                                new Handler().postDelayed(() -> new AsyncUtils<Bitmap>(context) {
-                                    @Override
-                                    public Bitmap runOnIO() {
-                                        return GlideImageLoaderUtil.getBitmapFromView(view);
-                                    }
 
                                     @Override
                                     public void runOnUI(Bitmap bitmap) {
@@ -211,12 +224,11 @@ public class UMShareAction {
                                         }
                                     });
                                 } else {
-                                    setLoadImageShare(sharePlatformType, new UMImage(context, context instanceof QualityNewUserActivity ? R.drawable.newuser_top_img : R.drawable.domolife_logo), context, urlLink, title, description);
+                                setLoadImageShare(sharePlatformType, new UMImage(context, getDefaultCover(context)), context, urlLink, title, description);
                                 }
                             }
 
-                            break;
-                    }
+                        break;
                 }
             }
         });
@@ -265,9 +277,11 @@ public class UMShareAction {
                     umMin.setPath(routineUrl);
                     //小程序页面路径
                     umMin.setUserName(routineId);
-                    if (BuildConfig.DEBUG) {
+                    if (Url.BASE_URL.equals("http://ts.domolife.cn/")) {
                         // 测试环境下设置成开发版
                         com.umeng.socialize.Config.setMiniTest();
+                    } else if (Url.BASE_URL.equals("http://dev.domolife.cn/")) {
+                        com.umeng.socialize.Config.setMiniPreView();
                     }
 
                     // 小程序原始id,在微信平台查询
@@ -528,7 +542,7 @@ public class UMShareAction {
                 return 1;
             case "ArticleOfficialActivity"://文章
                 return 2;
-            case "ArticleDetailsImgActivity"://帖子
+            case "PostDetailActivity"://帖子
                 return 3;
             case "EditorSelectActivity"://小编精选
                 return 4;
@@ -561,7 +575,7 @@ public class UMShareAction {
     //判断该页面分享成功之后是否需要 --统计文章分享数量
     private boolean needStatistics(Activity activity) {
         switch (activity.getClass().getSimpleName()) {
-            case "ArticleDetailsImgActivity":
+            case "PostDetailActivity":
             case "ArticleInvitationDetailsActivity":
             case "DmlLifeSearchDetailActivity":
             case "DmlOptimizedSelDetailActivity":
@@ -605,5 +619,16 @@ public class UMShareAction {
         localContentValues.put("_data", paramFile.getAbsolutePath());
         localContentValues.put("_size", paramFile.length());
         return localContentValues;
+    }
+
+
+    private int getDefaultCover(Activity context) {
+        if (context instanceof QualityNewUserActivity) {
+            return R.drawable.newuser_top_img;
+        } else if (context instanceof JoinSuccessActivity) {
+            return R.drawable.share_post_default;
+        } else {
+            return R.drawable.domolife_logo;
+        }
     }
 }

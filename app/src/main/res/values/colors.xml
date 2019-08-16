@@ -14,6 +14,7 @@
     <color name="text_gray_c">#cccccc</color>
     <color name="text_black_t">#333</color>
     <color name="text_black_t2">#4d4d4d</color>
+    <color name="text_black_t3">#444</color>
     <color name="text_transculent_black">#7f535353</color>
     <color name="gray_bg">#f7f6f1</color>
     <color name="gray_light">#fafafa</color>
@@ -28,8 +29,7 @@
     <color name="bgColor_alertview_alert">#f8f8f8</color>
     <color name="bgColor_alertview_alert_start">#f0f0f0</color>
     <!--标题颜色-->
-    <color name="textColor_alert_title">#666666</color>
-    <color name="textColor_actionsheet_title">#666666</color>
+    <color name="text_login_gray_s">#666</color>
     <!--消息颜色-->
     <color name="textColor_alert_msg">#333333</color>
     <color name="textColor_actionsheet_msg">#333333</color>
@@ -54,12 +54,13 @@
     <color name="ratingBar_yellow">#F6CB06</color>
     <color name="color_blue_reply_com">#999</color>
     <color name="text_gray_hint_n">#999999</color>
-    <color name="text_login_gray_s">#666666</color>
+    <color name="topic_name_bg">#ecf5fc</color>
     <color name="gray_dd">#dddddd</color>
     <color name="bg_gray_f_n">#f9f9f9</color>
     <color name="text_buy_red_color">#ff4719</color>
     <color name="ct_deep_red_bg">#fd493d</color>
     <color name="text_b_red_color">#ff5e5e</color>
+    <color name="text_white_transcurent">#e5e5e5</color>
     <color name="bg_home_topic">#fff5f6</color>
     <color name="rmb_small">#ff5a6b</color>
     <color name="bg_home_topic_gray">#f7f7f7</color>
@@ -95,6 +96,7 @@
     <color name="text_bg_light_blue_e">#eaf4fd</color>
     <color name="text_color_e_s">#e6e6e6</color>
     <color name="color_blue_sev">#77befe</color>
+    <color name="topic_name_color">#777</color>
     <color name="text_blue_sev">#74bdff</color>
     <color name="text_gray_es">#e6e6e6</color>
     <color name="text_gray_dn">#d9d9d9</color>
@@ -111,4 +113,7 @@
     <color name="bg_trans_80_ffs_pink">#ccff6d79</color>
     <color name="time_bg_yellow">#ffe9b8</color>
     <color name="economize_money">#EEEEEE</color>
+    <color name="topic_stoke">#E0F0FF</color>
+    <color name="tab_color">#70b6fb</color>
+    <color name="max_score_yellow">#ffae00</color>
 </resources>

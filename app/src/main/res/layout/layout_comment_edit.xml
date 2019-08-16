@@ -1,44 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:emojicon="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/ll_input_comment"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/white"
-    android:minHeight="@dimen/sc_mm_98"
-    android:gravity="center_vertical"
-    android:orientation="horizontal"
-    android:paddingLeft="@dimen/sc_mm_20"
-    android:paddingRight="@dimen/sc_mm_16"
-    android:visibility="gone">
+              xmlns:emojicon="http://schemas.android.com/apk/res-auto"
+              android:id="@+id/ll_input_comment"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@color/white"
+              android:gravity="center_vertical"
+              android:minHeight="@dimen/sc_mm_98"
+              android:orientation="horizontal"
+              android:paddingLeft="@dimen/sc_mm_20"
+              android:paddingRight="@dimen/sc_mm_16"
+              android:visibility="gone">
 
     <android.support.text.emoji.widget.EmojiEditText
         android:id="@+id/emoji_edit_comment"
-        android:imeOptions="actionSend|actionNext"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/sc_mm_20"
         android:layout_marginBottom="@dimen/sc_mm_20"
-        android:minHeight="@dimen/sc_mm_68"
-        android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:maxLines="2"
+        android:background="@drawable/border_cir_4dp_gray_f"
         android:gravity="center_vertical"
         android:hint="评论一下"
-        android:background="@drawable/border_cir_4dp_gray_f"
+        android:imeOptions="actionSend|actionNext"
+        android:maxLines="2"
+        android:minHeight="@dimen/sc_mm_68"
+        android:paddingLeft="@dimen/sc_mm_20"
+        android:paddingRight="@dimen/sc_mm_20"
         android:textColorHint="@color/text_hint_gray_ae"
         android:textSize="@dimen/sc_mm_28"
-        emojicon:emojiconSize="20sp" />
+        emojicon:emojiconSize="20sp"/>
 
     <TextView
 
-        android:layout_marginLeft="@dimen/sc_mm_16"
-        android:padding="@dimen/sc_mm_16"
         android:id="@+id/tv_send_comment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="发送"
+        android:layout_marginLeft="@dimen/sc_mm_16"
         android:enabled="true"
         android:gravity="center"
-        android:textSize="@dimen/sc_mm_30"
-        android:textColor="@color/comment_selector_text_blue_gray" />
+        android:padding="@dimen/sc_mm_16"
+        android:text="发送"
+        android:textColor="@color/comment_selector_text_blue_gray"
+        android:textSize="@dimen/sc_mm_30"/>
 </LinearLayout>

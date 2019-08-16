@@ -497,7 +497,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
     private void setShareData() {
         if (qualityWefBean != null) {
             UMShareAction umShareAction = new UMShareAction(DoMoLifeWelfareDetailsActivity.this
-                    , qualityWefBean.getPicUrl()
+                    , ""
                     , qualityWefBean.getTitle()
                     , ""
                     , Url.BASE_SHARE_PAGE_TWO + ("m/template/common/topic.html" + "?id="

@@ -729,7 +729,7 @@ public class ArticleOfficialActivity extends BaseActivity {
     void sendShare() {
         if (dmlSearchDetailBean != null) {
             CommunalWebDetailUtils.getCommunalWebInstance()
-                    .setShareData(this, new ShareDataBean(dmlSearchDetailBean.getPath()
+                    .setShareData(this, new ShareDataBean(""
                             , getStrings(dmlSearchDetailBean.getTitle())
                             , getStrings(dmlSearchDetailBean.getDigest())
                             , Url.BASE_SHARE_PAGE_TWO + ("m/template/goods/study_detail.html" + "?id="

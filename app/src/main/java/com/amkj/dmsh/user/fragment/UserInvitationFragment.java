@@ -15,8 +15,6 @@ import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.find.activity.ArticleDetailsImgActivity;
-import com.amkj.dmsh.find.activity.ArticleInvitationDetailsActivity;
 import com.amkj.dmsh.find.adapter.PullUserInvitationAdapter;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean;
@@ -41,6 +39,7 @@ import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getNumCount;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.skipPostDetail;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
@@ -86,20 +85,8 @@ public class UserInvitationFragment extends BaseFragment {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 InvitationDetailBean invitationDetailBean = (InvitationDetailBean) view.getTag();
-                if (invitationDetailBean != null) {
-                    Intent intent = new Intent();
-                    switch (invitationDetailBean.getArticletype()) {
-                        case 1:
-                            intent.setClass(getActivity(), ArticleInvitationDetailsActivity.class);
-                            break;
-                        case 3:
-                            break;
-                        default:
-                            intent.setClass(getActivity(), ArticleDetailsImgActivity.class);
-                            break;
-                    }
-                    intent.putExtra("ArtId", String.valueOf(invitationDetailBean.getId()));
-                    startActivity(intent);
+                if (invitationDetailBean != null && invitationDetailBean.getArticletype() != 3) {
+                    skipPostDetail(getActivity(), String.valueOf(invitationDetailBean.getId()), invitationDetailBean.getArticletype());
                 }
             }
         });
@@ -210,18 +197,18 @@ public class UserInvitationFragment extends BaseFragment {
                         invitationDetailList.addAll(invitationDetailEntity.getInvitationSearchList());
                     } else if (!invitationDetailEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(getActivity(), invitationDetailEntity.getMsg());
-                    }else{
+                    } else {
                         adapterInvitationAdapter.loadMoreEnd();
                     }
                     adapterInvitationAdapter.notifyDataSetChanged();
                 }
-                NetLoadUtils.getNetInstance().showLoadSir(loadService,invitationDetailList,invitationDetailEntity);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, invitationDetailList, invitationDetailEntity);
             }
 
             @Override
             public void onNotNetOrException() {
                 adapterInvitationAdapter.loadMoreEnd(true);
-                NetLoadUtils.getNetInstance().showLoadSir(loadService,invitationDetailList,invitationDetailEntity);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, invitationDetailList, invitationDetailEntity);
             }
         });
     }
@@ -236,7 +223,7 @@ public class UserInvitationFragment extends BaseFragment {
         //文章id
         params.put("object_id", invitationDetailBean.getId());
         params.put("type", ConstantVariable.TYPE_C_ARTICLE);
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),url,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 loadHud.dismiss();
@@ -262,7 +249,7 @@ public class UserInvitationFragment extends BaseFragment {
 
             @Override
             public void netClose() {
-                showToast(getActivity(),R.string.unConnectedNetwork);
+                showToast(getActivity(), R.string.unConnectedNetwork);
             }
         });
     }
@@ -276,7 +263,7 @@ public class UserInvitationFragment extends BaseFragment {
         //关注id
         params.put("id", invitationDetailBean.getId());
         params.put("favortype", "doc");
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),url,params,null);
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), url, params, null);
         tv_like.setSelected(!tv_like.isSelected());
         tv_like.setText(getNumCount(tv_like.isSelected(), invitationDetailBean.isFavor(), invitationDetailBean.getFavor(), "赞"));
     }

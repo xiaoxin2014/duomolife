@@ -627,7 +627,7 @@ public class CommunalWebDetailUtils {
      * @param shareDataBean
      */
     public void setShareData(Activity activity, ShareDataBean shareDataBean) {
-        if (shareDataBean != null && !TextUtils.isEmpty(shareDataBean.getImgUrl())) {
+        if (shareDataBean != null) {
             UMShareAction umShareAction = new UMShareAction((BaseActivity) activity
                     , shareDataBean.getImgUrl()
                     , getStrings(shareDataBean.getTitle())

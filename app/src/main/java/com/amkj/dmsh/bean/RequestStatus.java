@@ -28,8 +28,71 @@ public class RequestStatus extends BaseEntity {
 //    新人类型
     private int userType  ;
 
+//    <--评分晒单成功-->
+    //    奖励积分数量
+    private int score;
+    //    分享提示
+    private String reminder;
+    //    帖子id
+    private int postId;
+    //    帖子摘要
+    private String digest;
+    //    封面图
+    private String coverPath;
+    //    话题名称
+    private String topicTitle;
+
+
     public static RequestStatus objectFromData(String str) {
         return new Gson().fromJson(str, RequestStatus.class);
+    }
+
+    public String getTopicTitle() {
+        return topicTitle;
+    }
+
+    public void setTopicTitle(String topicTitle) {
+        this.topicTitle = topicTitle;
+    }
+
+    public int getPostId() {
+        return postId;
+    }
+
+    public void setPostId(int postId) {
+        this.postId = postId;
+    }
+
+    public String getDigest() {
+        return digest;
+    }
+
+    public void setDigest(String digest) {
+        this.digest = digest;
+    }
+
+    public String getCoverPath() {
+        return coverPath;
+    }
+
+    public void setCoverPath(String coverPath) {
+        this.coverPath = coverPath;
+    }
+
+    public void setReminder(String reminder) {
+        this.reminder = reminder;
+    }
+
+    public String getReminder() {
+        return reminder;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
     }
 
     public int getCouponId() {

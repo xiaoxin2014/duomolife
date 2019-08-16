@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingTop="@dimen/sc_mm_16"
-    android:paddingLeft="@dimen/sc_mm_30"
-    android:paddingRight="@dimen/sc_mm_26"
-    android:paddingBottom="@dimen/sc_mm_24"
-    android:orientation="vertical">
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+              android:paddingLeft="@dimen/sc_mm_30"
+              android:paddingTop="@dimen/sc_mm_16"
+              android:paddingRight="@dimen/sc_mm_26"
+              android:paddingBottom="@dimen/sc_mm_24">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -17,36 +17,40 @@
             android:id="@+id/civ_comm_comment_inner_avatar"
             android:layout_width="@dimen/sc_mm_50"
             android:layout_height="@dimen/sc_mm_50"
-            android:src="@drawable/coupon"
             android:layout_centerVertical="true"
-             />
+            android:src="@drawable/coupon"
+            />
+
         <android.support.text.emoji.widget.EmojiTextView
+            android:id="@+id/tv_comm_comment_inner_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/sc_mm_12"
-            android:lines="1"
-            android:ellipsize="end"
-            android:text="多么生活 回复 domolife"
             android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/sc_mm_12"
             android:layout_toRightOf="@id/civ_comm_comment_inner_avatar"
-            android:id="@+id/tv_comm_comment_inner_name"
-            android:textSize="@dimen/sc_mm_24"
+            android:ellipsize="end"
+            android:lines="1"
+            android:text="@string/defaul"
             android:textColor="@color/text_gray_hint_n"
+            android:textSize="@dimen/sc_mm_24"
             app:emojiconSize="14sp"/>
     </RelativeLayout>
+
     <android.support.text.emoji.widget.EmojiTextView
-        android:layout_width="wrap_content"
-        android:layout_marginTop="@dimen/sc_mm_16"
         android:id="@+id/tv_comm_comment_inner_content"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/sc_mm_24"
+        android:layout_marginTop="@dimen/sc_mm_16"
         android:textColor="@color/text_black_t"
+        android:textSize="@dimen/sc_mm_24"
         app:emojiconSize="14sp"/>
+
     <RelativeLayout
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="center_vertical|right"
-        android:paddingTop="@dimen/sc_mm_14"
-        android:layout_height="wrap_content">
+        android:paddingTop="@dimen/sc_mm_14">
+
         <include layout="@layout/layout_comm_comment_like_rec"/>
     </RelativeLayout>
 </LinearLayout>

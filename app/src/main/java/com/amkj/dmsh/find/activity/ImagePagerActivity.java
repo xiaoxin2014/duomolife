@@ -248,7 +248,7 @@ public class ImagePagerActivity extends Activity {
                             .apply(gifOptions)
                             .into(new SimpleTarget<GifDrawable>() {
                                 @Override
-                                public void onResourceReady(@NonNull GifDrawable gifDrawable, @Nullable Transition<? super com.bumptech.glide.load.resource.gif.GifDrawable> transition) {
+                                public void onResourceReady(@NonNull GifDrawable gifDrawable, @Nullable Transition<? super GifDrawable> transition) {
                                     loading.setVisibility(View.GONE);
                                     big_image.setVisibility(View.GONE);
                                     gif_iv_image.setVisibility(View.VISIBLE);

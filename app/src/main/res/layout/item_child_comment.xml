@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rl_child_comment"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="@dimen/sc_mm_90"
+    android:background="@color/light_green"
+    android:paddingLeft="@dimen/sc_mm_30"
+    android:paddingTop="@dimen/sc_mm_18"
+    android:paddingBottom="@dimen/sc_mm_18">
+
+    <ImageView
+        android:id="@+id/civ_comm_comment_inner_avatar"
+        android:layout_width="@dimen/sc_mm_50"
+        android:layout_height="@dimen/sc_mm_50"
+        android:src="@drawable/default_ava_img"/>
+
+    <android.support.text.emoji.widget.EmojiTextView
+        android:id="@+id/tv_comm_comment_inner_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/sc_mm_10"
+        android:layout_marginTop="@dimen/sc_mm_10"
+        android:layout_toRightOf="@+id/civ_comm_comment_inner_avatar"
+        android:ellipsize="end"
+        android:lines="1"
+        android:text="@string/defaul"
+        android:textColor="@color/color_blue_reply_com"
+        android:textSize="@dimen/sc_mm_24"
+        app:emojiconSize="14sp"/>
+
+    <android.support.text.emoji.widget.EmojiTextView
+        android:id="@+id/tv_comm_comment_inner_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_comm_comment_inner_name"
+        android:layout_marginTop="@dimen/sc_mm_12"
+        android:text="@string/defaul"
+        android:textColor="@color/text_black_t"
+        android:textSize="@dimen/sc_mm_28"
+        app:emojiconSize="14sp"/>
+</RelativeLayout>

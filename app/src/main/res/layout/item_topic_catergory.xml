@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tv_catergory_name"
+    android:layout_width="@dimen/sc_mm_220"
+    android:layout_height="@dimen/sc_mm_120"
+    android:background="@drawable/sel_topic_catergory_bg"
+    android:drawableLeft="@drawable/sel_topic_catergory"
+    android:drawablePadding="@dimen/sc_mm_40"
+    android:ellipsize="end"
+    android:gravity="left|center_vertical"
+    android:paddingLeft="@dimen/sc_mm_2"
+    android:paddingRight="@dimen/sc_mm_20"
+    android:singleLine="true"
+    android:text="@string/defaul"
+    android:textColor="@color/sel_font_blue_black_sel"
+    android:textSize="@dimen/sc_mm_30"/>

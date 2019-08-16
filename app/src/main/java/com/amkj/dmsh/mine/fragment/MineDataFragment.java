@@ -10,8 +10,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -40,11 +38,9 @@ import com.amkj.dmsh.bean.QualityTypeEntity;
 import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.homepage.activity.AttendanceActivity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.message.activity.MessageActivity;
-import com.amkj.dmsh.mine.activity.AppDataActivity;
 import com.amkj.dmsh.mine.activity.MineInvitationListActivity;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.activity.PersonalBgImgActivity;
@@ -103,7 +99,6 @@ import static com.amkj.dmsh.constant.Url.MINE_PAGE;
 import static com.amkj.dmsh.constant.Url.MINE_PAGE_AD;
 import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 import static com.amkj.dmsh.constant.Url.Q_QUERY_INDENT_COUNT;
-import static com.gyf.barlibrary.ImmersionBar.getStatusBarHeight;
 
 /**
  * Created by atd48 on 2016/8/17.
@@ -116,16 +111,13 @@ public class MineDataFragment extends BaseFragment {
     ImageView iv_mine_page_bg;
     //    登录布局
     @BindView(R.id.ll_mine_login)
-    LinearLayout ll_mine_login;
+    RelativeLayout ll_mine_login;
     //头像
     @BindView(R.id.iv_mine_header)
     ImageView iv_mine_header;
     //名字
     @BindView(R.id.tv_mine_name)
     TextView tv_mine_name;
-    //    获取更多积分
-    @BindView(R.id.tv_mine_get_score_more)
-    TextView tv_mine_get_score_more;
     //粉丝数
     @BindView(R.id.tv_mine_fans_count)
     TextView tv_mine_fans_count;
@@ -157,18 +149,16 @@ public class MineDataFragment extends BaseFragment {
     public RecyclerView communal_recycler_wrap;
     @BindView(R.id.ad_mine)
     public ConvenientBanner ad_mine;
-    @BindView(R.id.rel_personal_data_sup)
-    public RelativeLayout rel_personal_data_sup;
     @BindView(R.id.tv_personal_data_sup)
     public TextView tv_personal_data_sup;
     private CommunalUserInfoBean communalUserInfoBean;
     private MineTypeAdapter typeMineAdapter;
     private List<MineTypeBean> mineTypeList = new ArrayList<>();
-    private final String[] typeMineName = {"购物车", "优惠券", "分享赚", "积分订单", "秒杀提醒", "收藏商品", "收藏内容", "客服",};
+    private final String[] typeMineName = {"购物车", "优惠券", "分享赚", "积分订单", "秒杀提醒", "收藏商品", "收藏内容", "客服", "设置"};
     private final String[] typeMineUrl = {"app://ShopCarActivity", "app://DirectMyCouponActivity", MAKE_SHARE_URL, "app://IntegralProductIndentActivity",
             "app://ShopTimeMyWarmActivity", "app://MineCollectProductActivity",
-            "app://MineCollectContentActivity", "app://ManagerServiceChat"};
-    private final String[] typeMinePic = {"m_s_car_icon", "m_coupon_icon", "m_share_icon", "m_i_integ_icon", "m_warm_icon", "m_c_pro_icon", "m_c_content_icon", "m_service_icon",};
+            "app://MineCollectContentActivity", "app://ManagerServiceChat", "app://AppDataActivity"};
+    private final String[] typeMinePic = {"m_s_car_icon", "m_coupon_icon", "m_share_icon", "m_i_integ_icon", "m_warm_icon", "m_c_pro_icon", "m_c_content_icon", "m_service_icon", "m_setting_icon"};
     //    订单模块
     private IndentTypeAdapter indentTypeAdapter;
     private List<QualityTypeBean> indentTypeList = new ArrayList<>();
@@ -182,6 +172,7 @@ public class MineDataFragment extends BaseFragment {
     private QyServiceUtils qyInstance;
     private SharedPreferences mineTypeShared;
     private MineTypeEntity mineTypeEntity;
+    private DirectIndentCountEntity mDirectIndentCountEntity;
 
     @Override
     protected int getContentView() {
@@ -191,8 +182,8 @@ public class MineDataFragment extends BaseFragment {
     @Override
     protected void initViews() {
         isLoginStatus();
-        tv_mine_get_score_more.getPaint().setAntiAlias(true);//抗锯齿
-        tv_mine_get_score_more.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG); //下划线
+        tv_personal_data_sup.getPaint().setAntiAlias(true);//抗锯齿
+        tv_personal_data_sup.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG); //下划线
         GridLayoutManager manager = new GridLayoutManager(getActivity(), 4);
         communal_recycler_wrap.setLayoutManager(manager);
         communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
@@ -273,23 +264,6 @@ public class MineDataFragment extends BaseFragment {
         });
         setQyService();
         ad_mine.setVisibility(View.GONE);
-        fl_mine_bg.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                fl_mine_bg.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                int measuredHeight = fl_mine_bg.getMeasuredHeight();
-                int loginMeasuredHeight = rel_mine_info.getMeasuredHeight();
-                int statusHeaderHeight = rel_header_mine.getMeasuredHeight();
-                int statusBarHeight = getStatusBarHeight(getActivity());
-                int height = loginMeasuredHeight + statusHeaderHeight + statusBarHeight;
-                if (measuredHeight < height) {
-                    ViewGroup.LayoutParams layoutParams = fl_mine_bg.getLayoutParams();
-                    layoutParams.height = height;
-                    fl_mine_bg.setLayoutParams(layoutParams);
-                }
-//                获取
-            }
-        });
     }
 
     /**
@@ -354,20 +328,21 @@ public class MineDataFragment extends BaseFragment {
      */
     private void setData(final CommunalUserInfoBean communalUserInfoBean) {
         tv_mine_name.setText(getStrings(communalUserInfoBean.getNickname()));
-        tv_mine_att_count.setText(String.format(getResources().getString(R.string.mine_follow_count), String.valueOf(communalUserInfoBean.getFllow())));
-        tv_mine_fans_count.setText(String.format(getResources().getString(R.string.mine_fans_count), String.valueOf(communalUserInfoBean.getFans())));
-        tv_mine_inv_count.setText(String.format(getResources().getString(R.string.mine_invitation_count), String.valueOf(communalUserInfoBean.getDocumentcount())));
-        tv_mine_score.setText(("积分：" + communalUserInfoBean.getScore()));
+        tv_mine_att_count.setText(String.valueOf(communalUserInfoBean.getFllow()));
+        tv_mine_fans_count.setText(String.valueOf(communalUserInfoBean.getFans()));
+        tv_mine_inv_count.setText(String.valueOf(communalUserInfoBean.getDocumentcount()));
+        tv_mine_score.setText(String.valueOf(communalUserInfoBean.getScore()));
         GlideImageLoaderUtil.loadHeaderImg(getActivity(), iv_mine_header, !TextUtils.isEmpty(communalUserInfoBean.getAvatar())
                 ? ImageConverterUtils.getFormatImg(communalUserInfoBean.getAvatar()) : "");
-        GlideImageLoaderUtil.loadCenterCrop(getActivity(), iv_mine_page_bg, !TextUtils.isEmpty(communalUserInfoBean.getBgimg_url())
+        GlideImageLoaderUtil.loadImage(getActivity(), iv_mine_page_bg, !TextUtils.isEmpty(communalUserInfoBean.getBgimg_url())
                 ? ImageConverterUtils.getFormatImg(communalUserInfoBean.getBgimg_url()) : BASE_RESOURCE_DRAW + R.drawable.mine_no_login_bg);
         setBottomTypeCount(communalUserInfoBean);
         if (communalUserInfoBean.getNoticeInfo() != null && !TextUtils.isEmpty(communalUserInfoBean.getNoticeInfo().getContent())) {
-            rel_personal_data_sup.setVisibility(View.VISIBLE);
-            tv_personal_data_sup.setText(getStrings(communalUserInfoBean.getNoticeInfo().getContent()));
+            tv_personal_data_sup.setVisibility(View.VISIBLE);
+            //完善资料获取积分
+//            tv_personal_data_sup.setText(getStrings(communalUserInfoBean.getNoticeInfo().getContent()));
         } else {
-            rel_personal_data_sup.setVisibility(View.GONE);
+            tv_personal_data_sup.setVisibility(View.GONE);
         }
     }
 
@@ -445,10 +420,10 @@ public class MineDataFragment extends BaseFragment {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
-                DirectIndentCountEntity directIndentCountEntity = gson.fromJson(result, DirectIndentCountEntity.class);
-                if (directIndentCountEntity != null) {
-                    if (directIndentCountEntity.getCode().equals(SUCCESS_CODE)) {
-                        setCountData(directIndentCountEntity.getDirectIndentCountBean());
+                mDirectIndentCountEntity = gson.fromJson(result, DirectIndentCountEntity.class);
+                if (mDirectIndentCountEntity != null) {
+                    if (mDirectIndentCountEntity.getCode().equals(SUCCESS_CODE)) {
+                        setCountData(mDirectIndentCountEntity.getDirectIndentCountBean());
                     }
                 }
             }
@@ -604,7 +579,7 @@ public class MineDataFragment extends BaseFragment {
         }
         ll_mine_login.setVisibility(View.GONE);
         ll_mime_no_login.setVisibility(View.VISIBLE);
-        rel_personal_data_sup.setVisibility(View.GONE);
+        tv_personal_data_sup.setVisibility(View.GONE);
         GlideImageLoaderUtil.loadCenterCrop(getActivity(), iv_mine_page_bg, BASE_RESOURCE_DRAW + R.drawable.mine_no_login_bg);
     }
 
@@ -620,7 +595,7 @@ public class MineDataFragment extends BaseFragment {
     }
 
     // 2016/8/18 跳转粉丝页
-    @OnClick(R.id.tv_mine_fans_count)
+    @OnClick(R.id.ll_mine_fans_count)
     void skipFans(View view) {
         if (userId != 0) {
             Intent intent = new Intent(getActivity(), UserFansAttentionActivity.class);
@@ -633,7 +608,7 @@ public class MineDataFragment extends BaseFragment {
     }
 
     //  2016/8/18 跳转关注页
-    @OnClick(R.id.tv_mine_att_count)
+    @OnClick(R.id.ll_mine_att_count)
     void skipAttention(View view) {
         if (userId != 0) {
             Intent intent = new Intent(getActivity(), UserFansAttentionActivity.class);
@@ -646,7 +621,7 @@ public class MineDataFragment extends BaseFragment {
     }
 
     //    我的帖子
-    @OnClick(R.id.tv_mine_inv_count)
+    @OnClick(R.id.ll_mine_inv_count)
     void skipInvitation(View view) {
         Intent intent = new Intent(getActivity(), MineInvitationListActivity.class);
         startActivity(intent);
@@ -658,13 +633,9 @@ public class MineDataFragment extends BaseFragment {
         Intent intent = new Intent();
         intent.setClass(getActivity(), DoMoIndentAllActivity.class);
         intent.putExtra("tab", "all");
-        startActivity(intent);
-    }
-
-    //  资料设置
-    @OnClick({R.id.iv_user_back})
-    void setUserData(View view) {
-        Intent intent = new Intent(getActivity(), AppDataActivity.class);
+        if (mDirectIndentCountEntity != null && mDirectIndentCountEntity.getDirectIndentCountBean() != null) {
+            intent.putExtra("waitEvaluateNum", mDirectIndentCountEntity.getDirectIndentCountBean().getWaitEvaluateNum());
+        }
         startActivity(intent);
     }
 
@@ -682,12 +653,6 @@ public class MineDataFragment extends BaseFragment {
         startActivityForResult(intent, IS_LOGIN_CODE);
     }
 
-    //    跳转签到
-    @OnClick(R.id.rel_integral_more)
-    void skipAtt(View view) {
-        Intent intent = new Intent(getActivity(), AttendanceActivity.class);
-        startActivity(intent);
-    }
 
     //    登录点击背景
     @OnClick({R.id.rel_mine_info, R.id.ll_mime_no_login})
@@ -699,7 +664,7 @@ public class MineDataFragment extends BaseFragment {
         }
     }
 
-    @OnClick(R.id.rel_personal_data_sup)
+    @OnClick(R.id.tv_personal_data_sup)
     void personalSupply(View view) {
         if (communalUserInfoBean != null && communalUserInfoBean.getNoticeInfo() != null
                 && !TextUtils.isEmpty(communalUserInfoBean.getNoticeInfo().getAndroid_link())) {

@@ -13,8 +13,6 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.find.activity.ArticleDetailsImgActivity;
-import com.amkj.dmsh.find.activity.ArticleInvitationDetailsActivity;
 import com.amkj.dmsh.find.adapter.PullUserInvitationAdapter;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean;
@@ -43,6 +41,7 @@ import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
+import static com.amkj.dmsh.constant.ConstantMethod.skipPostDetail;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
@@ -112,20 +111,8 @@ public class MineInvitationListActivity extends BaseActivity {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 InvitationDetailBean invitationDetailBean = (InvitationDetailBean) view.getTag();
-                if (invitationDetailBean != null) {
-                    Intent intent = new Intent();
-                    switch (invitationDetailBean.getArticletype()) {
-                        case 1:
-                            intent.setClass(MineInvitationListActivity.this, ArticleInvitationDetailsActivity.class);
-                            break;
-                        case 3:
-                            break;
-                        default:
-                            intent.setClass(MineInvitationListActivity.this, ArticleDetailsImgActivity.class);
-                            break;
-                    }
-                    intent.putExtra("ArtId", String.valueOf(invitationDetailBean.getId()));
-                    startActivity(intent);
+                if (invitationDetailBean != null && invitationDetailBean.getArticletype() != 3) {
+                    skipPostDetail(getActivity(), String.valueOf(invitationDetailBean.getId()), invitationDetailBean.getArticletype());
                 }
             }
         });
@@ -169,6 +156,12 @@ public class MineInvitationListActivity extends BaseActivity {
                                 });
                             }
                             delArticleDialogHelper.show();
+                            break;
+                        //点击评论
+                        case R.id.tv_com_art_comment_count:
+                            if (invitationDetailBean != null && invitationDetailBean.getArticletype() != 3) {
+                                skipPostDetail(getActivity(), String.valueOf(invitationDetailBean.getId()), invitationDetailBean.getArticletype());
+                            }
                             break;
                     }
                 }
@@ -289,7 +282,7 @@ public class MineInvitationListActivity extends BaseActivity {
         //文章id
         params.put("object_id", invitationDetailBean.getId());
         params.put("type", TYPE_C_ARTICLE);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,F_ARTICLE_COLLECT,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, F_ARTICLE_COLLECT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 loadHud.dismiss();
@@ -328,7 +321,7 @@ public class MineInvitationListActivity extends BaseActivity {
         //关注id
         params.put("id", invitationDetailBean.getId());
         params.put("favortype", "doc");
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,F_ARTICLE_DETAILS_FAVOR,params,null);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, F_ARTICLE_DETAILS_FAVOR, params, null);
         tv_like.setSelected(!tv_like.isSelected());
         tv_like.setText(ConstantMethod.getNumCount(tv_like.isSelected(), invitationDetailBean.isFavor(), invitationDetailBean.getFavor(), "赞"));
     }
@@ -337,7 +330,7 @@ public class MineInvitationListActivity extends BaseActivity {
         Map<String, Object> params = new HashMap<>();
         params.put("id", invitationDetailBean.getId());
         params.put("uid", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,MINE_INVITATION_DEL,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, MINE_INVITATION_DEL, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();

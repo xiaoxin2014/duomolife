@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/light_gray_f">
+
+    <TextView
+        android:id="@+id/tv_recommed"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sc_mm_90"
+        android:layout_marginTop="@dimen/sc_mm_20"
+        android:background="@drawable/border_bottom_line"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/sc_mm_30"
+        android:text="推荐关注"
+        android:textColor="@color/text_black_t"
+        android:textSize="@dimen/sc_mm_32"/>
+</LinearLayout>

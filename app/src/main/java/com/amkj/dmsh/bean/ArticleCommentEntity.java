@@ -68,13 +68,31 @@ public class ArticleCommentEntity extends BaseEntity{
         private String create_time;
         private int is_reply;
         private String path;
-        private int status;
+        private int status = 1;
         private String obj;
         private String description;
         private int comment_id;
         private Object to_uid;
         private int itemType;
         private int backCode;
+        private String commentUserName;
+        private String postAuthorName;
+
+        public String getCommentUserName() {
+            return commentUserName;
+        }
+
+        public void setCommentUserName(String commentUserName) {
+            this.commentUserName = commentUserName;
+        }
+
+        public String getPostAuthorName() {
+            return postAuthorName;
+        }
+
+        public void setPostAuthorName(String postAuthorName) {
+            this.postAuthorName = postAuthorName;
+        }
 
         public int getBackCode() {
             return backCode;

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/white"
-    android:gravity="center_vertical"
-    android:paddingTop="@dimen/sc_mm_30"
-    android:paddingBottom="@dimen/sc_mm_26"
-    android:orientation="horizontal">
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@color/white"
+              android:gravity="center_vertical"
+              android:orientation="horizontal"
+              android:paddingTop="@dimen/sc_mm_30"
+              android:paddingBottom="@dimen/sc_mm_26">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/iv_inv_user_avatar"
@@ -16,7 +16,7 @@
         android:src="@drawable/domolife_logo"
         app:civ_border_color="@color/circle_border_avatar"
         app:civ_border_width="@dimen/dimen_1dp"
-         />
+        />
 
     <LinearLayout
         android:layout_width="0dp"
@@ -32,9 +32,10 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:lines="1"
+            android:text="@string/defaul"
             android:textColor="@color/text_login_gray_s"
             android:textSize="@dimen/sc_mm_30"
-            app:emojiconSize="18sp" />
+            app:emojiconSize="18sp"/>
 
         <TextView
             android:id="@+id/tv_recommend_invitation_time"
@@ -42,18 +43,20 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/sc_mm_10"
             android:gravity="center_vertical"
+            android:text="@string/defaul"
             android:textColor="@color/text_gray_hint_n"
-            android:textSize="@dimen/sc_mm_24" />
+            android:textSize="@dimen/sc_mm_24"/>
     </LinearLayout>
+
     <TextView
         android:id="@+id/tv_inv_live_att"
         android:layout_width="@dimen/sc_mm_126"
         android:layout_height="@dimen/sc_mm_50"
         android:layout_gravity="right|center_vertical"
         android:background="@drawable/border_circle_four_gray_bg_white"
-        android:visibility="gone"
         android:gravity="center"
         android:text="关注"
         android:textColor="@color/text_login_gray_s"
-        android:textSize="@dimen/sc_mm_26" />
+        android:textSize="@dimen/sc_mm_26"
+        android:visibility="gone"/>
 </LinearLayout>

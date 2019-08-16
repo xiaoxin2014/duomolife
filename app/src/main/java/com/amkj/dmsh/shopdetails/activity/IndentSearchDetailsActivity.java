@@ -268,47 +268,6 @@ public class IndentSearchDetailsActivity extends BaseActivity {
                         }
                         confirmOrderDialogHelper.show();
                         break;
-                    case PRO_APPRAISE:
-//                        评价
-                        directAppraisePassList.clear();
-                        for (int i = 0; i < orderListBean.getGoods().size(); i++) {
-                            OrderListBean.GoodsBean goodBean = orderListBean.getGoods().get(i);
-                            if (goodBean.getCombineProductInfoList() != null
-                                    && goodBean.getCombineProductInfoList().size() > 0) {
-                                for (int k = 0; k < goodBean.getCombineProductInfoList().size(); k++) {
-                                    CartProductInfoBean cartProductInfoBean = goodBean.getCombineProductInfoList().get(k);
-                                    if (cartProductInfoBean.getStatus() == 30) {
-                                        directAppraisePassBean = new DirectAppraisePassBean();
-                                        directAppraisePassBean.setProductId(cartProductInfoBean.getId());
-                                        directAppraisePassBean.setOrderProductId(cartProductInfoBean.getOrderProductId());
-                                        directAppraisePassBean.setPath(cartProductInfoBean.getPicUrl());
-                                        directAppraisePassBean.setStar(5);
-                                        directAppraisePassList.add(directAppraisePassBean);
-                                    }
-                                }
-                            } else if (goodBean.getStatus() == 30) {
-                                directAppraisePassBean = new DirectAppraisePassBean();
-                                directAppraisePassBean.setPath(goodBean.getPicUrl());
-                                directAppraisePassBean.setProductId(goodBean.getId());
-                                directAppraisePassBean.setStar(5);
-                                directAppraisePassBean.setOrderProductId(goodBean.getOrderProductId());
-                                directAppraisePassList.add(directAppraisePassBean);
-                            }
-                        }
-                        intent.setClass(IndentSearchDetailsActivity.this, DirectPublishAppraiseActivity.class);
-                        bundle = new Bundle();
-                        bundle.putParcelableArrayList("appraiseData", (ArrayList<? extends Parcelable>) directAppraisePassList);
-                        intent.putExtras(bundle);
-                        intent.putExtra("uid", orderListBean.getUserId());
-                        intent.putExtra("orderNo", orderListBean.getNo());
-                        startActivity(intent);
-                        break;
-                    //                        晒单赢积分
-                    case BASK_READER:
-                        intent.setClass(IndentSearchDetailsActivity.this, ReleaseImgArticleActivity.class);
-                        intent.putExtra("orderNo", orderListBean.getNo());
-                        startActivity(intent);
-                        break;
                     case DEL:
 //                        删除订单
                         if (delOrderDialogHelper == null) {

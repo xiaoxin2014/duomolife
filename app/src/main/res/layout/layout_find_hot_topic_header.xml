@@ -1,34 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/sc_mm_88"
-    android:background="@color/white">
-
-    <View
-        android:layout_width="@dimen/sc_mm_5"
-        android:layout_height="@dimen/sc_mm_30"
-        android:layout_centerVertical="true"
-        android:background="@color/text_login_blue_z" />
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:layout_marginBottom="@dimen/sc_mm_20"
+                android:gravity="center_vertical">
 
     <TextView
+        android:id="@+id/tv_hot_topic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="@dimen/sc_mm_20"
-        android:text="@string/hot_text"
-        android:textColor="@color/text_login_gray_s"
-        android:textSize="@dimen/sc_mm_28" />
+        android:text="@string/hot_topic"
+        android:textColor="@color/text_black_t"
+        android:textSize="@dimen/sc_mm_32"
+        android:textStyle="bold"/>
 
     <TextView
-        android:id="@+id/tv_find_hot_topic"
+        android:id="@+id/tv_topic_catergory"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_alignParentRight="true"
-        android:drawablePadding="@dimen/sc_mm_5"
         android:drawableRight="@drawable/black_next_icon"
+        android:drawablePadding="@dimen/sc_mm_10"
         android:gravity="center_vertical"
-        android:paddingRight="@dimen/gap_right"
-        android:text="@string/text_more"
-        android:textColor="@color/text_login_gray_s"
-        android:textSize="@dimen/sc_mm_24" />
+        android:text="@string/catergory"
+        android:textColor="@color/text_black_t"
+        android:textSize="@dimen/sc_mm_28"/>
 </RelativeLayout>

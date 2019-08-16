@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/light_gray_f"
-    android:orientation="vertical"
-    android:paddingLeft="@dimen/sc_mm_30"
-    android:paddingRight="@dimen/sc_mm_30">
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@color/light_gray_f"
+              android:orientation="vertical"
+              android:paddingLeft="@dimen/sc_mm_30"
+              android:paddingRight="@dimen/sc_mm_30">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -21,7 +21,7 @@
             android:gravity="center_vertical"
             android:padding="@dimen/sc_mm_12"
             android:textColor="@color/white"
-            android:textSize="@dimen/sc_mm_26" />
+            android:textSize="@dimen/sc_mm_26"/>
     </RelativeLayout>
 
     <LinearLayout
@@ -29,9 +29,9 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:orientation="vertical"
-        android:paddingBottom="@dimen/sc_mm_30"
         android:paddingLeft="@dimen/sc_mm_30"
-        android:paddingRight="@dimen/sc_mm_30">
+        android:paddingRight="@dimen/sc_mm_30"
+        android:paddingBottom="@dimen/sc_mm_30">
 
         <TextView
             android:id="@+id/tv_mes_notify_type_name"
@@ -39,97 +39,106 @@
             android:layout_height="@dimen/sc_mm_88"
             android:gravity="center_vertical"
             android:textColor="@color/text_black_t"
-            android:textSize="@dimen/sc_mm_32" />
+            android:textSize="@dimen/sc_mm_32"/>
+
         <TextView
             android:id="@+id/tv_mes_notify_product_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/sc_mm_20"
             android:gravity="center_vertical"
-            android:visibility="gone"
             android:lineSpacingExtra="@dimen/dimen_7_dp"
             android:textColor="@color/text_black_t"
-            android:textSize="@dimen/sc_mm_28" />
+            android:textSize="@dimen/sc_mm_28"
+            android:visibility="gone"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <FrameLayout
-                android:layout_width="wrap_content"
                 android:id="@+id/fl_mes_sys"
-                android:layout_marginRight="@dimen/sc_mm_26"
-                android:layout_height="wrap_content">
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/sc_mm_26">
+
                 <ImageView
                     android:id="@+id/iv_mes_notify_cover_pro"
                     android:layout_width="@dimen/sc_mm_120"
                     android:layout_height="@dimen/sc_mm_120"
-                    android:visibility="visible"
                     android:scaleType="fitCenter"
-                     />
+                    android:visibility="visible"
+                    />
+
                 <ImageView
                     android:id="@+id/iv_mes_notify_cover_icon"
                     android:layout_width="@dimen/sc_mm_120"
                     android:layout_height="@dimen/sc_mm_70"
-                    android:visibility="gone"
                     android:scaleType="fitCenter"
-                     />
+                    android:visibility="gone"
+                    />
             </FrameLayout>
+
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_toRightOf="@id/fl_mes_sys"
+                android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_height="wrap_content">
+                android:layout_toRightOf="@id/fl_mes_sys">
+
                 <TextView
+                    android:id="@+id/tv_mes_notify_content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:lineSpacingExtra="@dimen/dimen_7_dp"
-                    android:maxLines="2"
                     android:ellipsize="end"
-                    android:id="@+id/tv_mes_notify_content"
+                    android:lineSpacingExtra="@dimen/dimen_7_dp"
                     android:textColor="@color/text_login_gray_s"
-                    android:textSize="@dimen/sc_mm_28" />
+                    android:textSize="@dimen/sc_mm_28"/>
+
                 <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_marginTop="@dimen/sc_mm_32"
                     android:id="@+id/rel_product_price"
-                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_below="@id/tv_mes_notify_content"
-                    android:layout_height="wrap_content">
+                    android:layout_marginTop="@dimen/sc_mm_32"
+                    android:visibility="gone">
+
                     <TextView
+                        android:id="@+id/tv_mes_product_price"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:lines="1"
                         android:ellipsize="end"
-                        android:id="@+id/tv_mes_product_price"
-                        android:text="¥268.00"
+                        android:lines="1"
+                        android:text="@string/defaul"
                         android:textColor="@color/text_normal_red"
-                        android:textSize="@dimen/sc_mm_28" />
+                        android:textSize="@dimen/sc_mm_28"/>
+
                     <TextView
+                        android:id="@+id/tv_mes_product_market_price"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="@dimen/sc_mm_40"
                         android:layout_toRightOf="@id/tv_mes_product_price"
-                        android:lines="1"
                         android:ellipsize="end"
-                        android:id="@+id/tv_mes_product_market_price"
-                        android:text="¥268.00"
+                        android:lines="1"
+                        android:text="@string/defaul"
                         android:textColor="@color/text_login_gray_s"
-                        android:textSize="@dimen/sc_mm_28" />
+                        android:textSize="@dimen/sc_mm_28"/>
                 </RelativeLayout>
             </RelativeLayout>
         </RelativeLayout>
+
         <TextView
+            android:id="@+id/tv_mes_notify_look"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_mes_indent_content"
+            android:layout_alignParentRight="true"
             android:layout_gravity="right"
             android:layout_marginTop="@dimen/sc_mm_12"
-            android:layout_below="@id/tv_mes_indent_content"
-            android:id="@+id/tv_mes_notify_look"
-            android:layout_alignParentRight="true"
-            android:textSize="@dimen/sc_mm_28"
-            android:textColor="@color/text_login_blue_z"
             android:text="立即查看"
-            android:layout_height="wrap_content" />
+            android:textColor="@color/text_login_blue_z"
+            android:textSize="@dimen/sc_mm_28"/>
     </LinearLayout>
 </LinearLayout>

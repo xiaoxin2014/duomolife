@@ -14,9 +14,6 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.find.XFLinearLayoutManager;
-import com.amkj.dmsh.find.activity.ArticleDetailsImgActivity;
-import com.amkj.dmsh.find.activity.FindTopicDetailsActivity;
-import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean.PictureBean;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean.RelevanceProBean;
@@ -42,12 +39,15 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showImageActivity;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.skipPostDetail;
+import static com.amkj.dmsh.constant.ConstantMethod.skipTopicDetail;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_URL;
+import static com.amkj.dmsh.constant.ConstantVariable.TOPIC_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
-import static com.amkj.dmsh.find.activity.FindTopicDetailsActivity.TOPIC_TYPE;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 
 ;
+
 
 /**
  * Created by atd48 on 2016/9/14.
@@ -117,7 +117,8 @@ public class PullUserInvitationAdapter extends BaseQuickAdapter<InvitationDetail
                 .setGone(R.id.tv_com_art_collect_count, false)
                 .addOnClickListener(R.id.tv_com_art_collect_count)
                 .setTag(R.id.tv_com_art_collect_count, invitationDetailBean)
-                .addOnClickListener(R.id.tv_com_art_comment_count).setTag(R.id.tv_com_art_comment_count, invitationDetailBean);;
+                .addOnClickListener(R.id.tv_com_art_comment_count).setTag(R.id.tv_com_art_comment_count, invitationDetailBean);
+        ;
         ImageView iv_find_rec_tag = helper.getView(R.id.iv_find_rec_tag);
         if (!TextUtils.isEmpty(invitationDetailBean.getRecommendType())) {
             String recommendType = invitationDetailBean.getRecommendType();
@@ -136,7 +137,7 @@ public class PullUserInvitationAdapter extends BaseQuickAdapter<InvitationDetail
         switch (invitationDetailBean.getArticletype()) {
             case 1:
                 ImageView iv_find_article_cover = helper.getView(R.id.iv_find_article_cover);
-                GlideImageLoaderUtil.loadImgDynamicDrawable(context, iv_find_article_cover, invitationDetailBean.getPath());
+                GlideImageLoaderUtil.loadImgDynamicDrawable(context, iv_find_article_cover, invitationDetailBean.getPath(), -1);
                 helper.setGone(R.id.rel_find_article, true)
                         .setGone(R.id.tv_inv_live_content, false)
                         .setText(R.id.tv_find_article_digest, getStrings(invitationDetailBean.getDigest()));
@@ -173,10 +174,7 @@ public class PullUserInvitationAdapter extends BaseQuickAdapter<InvitationDetail
                         links.add(link);
                         link.setOnClickListener(clickedText -> {
                             if (!TOPIC_TYPE.equals(type) && !TextUtils.isEmpty(invitationDetailBean.getTopic_title()) && invitationDetailBean.getTopic_id() > 0) {
-                                Intent intent = new Intent(context, FindTopicDetailsActivity.class);
-                                intent.putExtra("topicId", String.valueOf(invitationDetailBean.getTopic_id()));
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                context.startActivity(intent);
+                                skipTopicDetail(context, String.valueOf(invitationDetailBean.getTopic_id()));
                             }
                         });
                     }
@@ -261,20 +259,6 @@ public class PullUserInvitationAdapter extends BaseQuickAdapter<InvitationDetail
         helper.itemView.setTag(invitationDetailBean);
     }
 
-    private void skipArticlePage(int id, int articleType) {
-        Intent intent = new Intent();
-        switch (articleType) {
-            case 1:
-                intent.setClass(context, ArticleOfficialActivity.class);
-                break;
-            default:
-                intent.setClass(context, ArticleDetailsImgActivity.class);
-                break;
-        }
-        intent.putExtra("ArtId", String.valueOf(id));
-        context.startActivity(intent);
-    }
-
     private void setImagePath(RecyclerView rv_find_image, List<PictureBean> pathList, InvitationDetailBean invitationDetailBean) {
         pictureBeanList = new ArrayList<>();
         if (pathList.size() > 5) {
@@ -314,13 +298,14 @@ public class PullUserInvitationAdapter extends BaseQuickAdapter<InvitationDetail
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 PictureBean pictureBean = (PictureBean) view.getTag();
-                if (pictureBean != null && pictureBean.getOriginalList() != null
-                        && pictureBean.getItemType() != TYPE_2) {
-                    showImageActivity(context,IMAGE_DEF,
-                            pictureBean.getIndex() < pictureBean.getOriginalList().size() ? pictureBean.getIndex() : 0,
-                            pictureBean.getOriginalList());
-                } else if (TYPE_2 == pictureBean.getItemType()) {
-                    skipArticlePage(pictureBean.getObject_id(), pictureBean.getType());
+                if (pictureBean != null && pictureBean.getOriginalList() != null) {
+                    if (TYPE_2 == pictureBean.getItemType()) {
+                        skipPostDetail(context, String.valueOf(pictureBean.getObject_id()), pictureBean.getType());
+                    } else {
+                        showImageActivity(context, IMAGE_DEF,
+                                pictureBean.getIndex() < pictureBean.getOriginalList().size() ? pictureBean.getIndex() : 0,
+                                pictureBean.getOriginalList());
+                    }
                 }
             }
         });

@@ -677,7 +677,7 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
         webUrlTransform.put("study_detail.html", "app://ArticleOfficialActivity");
         webUrlParameterTransform.put("study_detail.html", getWebUrlParameter("id", "ArtId", null));
         //        帖子详情
-        webUrlTransform.put("find_detail.html", "app://ArticleDetailsImgActivity");
+        webUrlTransform.put("find_detail.html", "app://PostDetailActivity");
         webUrlParameterTransform.put("find_detail.html", getWebUrlParameter("id", "ArtId", null));
         //        品牌团详情
         webUrlTransform.put("brand.html", "app://TimeBrandDetailsActivity");
