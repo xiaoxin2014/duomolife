@@ -68,7 +68,7 @@ public class MessageCommentEntity extends BaseEntity{
         private String nickname2;
         private int id;
         private String nickname1;
-        private int status;
+        private int status = 1;
         private String avatar;
         private String at_uid;
         private List<?> atList;

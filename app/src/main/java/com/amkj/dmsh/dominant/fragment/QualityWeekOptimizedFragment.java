@@ -238,7 +238,7 @@ public class QualityWeekOptimizedFragment extends BaseFragment {
                         ConstantMethod.saveSourceId(QualityWeekOptimizedFragment.class.getSimpleName(), String.valueOf(shopBuyDetailBean.getId()));
 //                        //配置封面图
                         GlideImageLoaderUtil.loadImgDynamicDrawable(getActivity(), shopBuyListView.iv_communal_cover_wrap
-                                , shopBuyDetailBean.getCoverImgUrl());
+                                , shopBuyDetailBean.getCoverImgUrl(),-1);
                         List<CommunalDetailBean> descriptionBeanList = shopBuyDetailBean.getDescriptionBeanList();
                         if (descriptionBeanList != null) {
 //                            //筛选空行

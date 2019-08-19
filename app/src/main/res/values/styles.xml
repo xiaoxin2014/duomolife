@@ -284,9 +284,24 @@
         <item name="android:windowIsTranslucent">false</item>
     </style>
 
-    <!--自定义radiobutton-->
-    <style name="CustomRadioBtn">
-        <item name="android:background">@android:color/transparent</item>
-        <item name="android:button">@drawable/selector_pay_way</item>
+
+    <style name="pw_slide_up">
+        <item name="android:windowEnterAnimation">@anim/slide_in_up</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_up</item>
+    </style>
+
+    <style name="pw_slide_center">
+        <item name="android:windowEnterAnimation">@anim/slide_in_center</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_center</item>
+    </style>
+
+    <style name="pw_slide_down">
+        <item name="android:windowEnterAnimation">@anim/slide_in_down</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_down</item>
+    </style>
+
+    <style name="pw_slide_abc">
+        <item name="android:windowEnterAnimation">@anim/abc_popup_enter</item>
+        <item name="android:windowExitAnimation">@anim/abc_popup_exit</item>
     </style>
 </resources>

@@ -333,7 +333,7 @@ public class QualityShopHistoryListActivity extends BaseActivity {
                                 shopBuyDetailBean = shopDetailsEntity.getShopBuyDetailBean();
                                 tv_header_titleAll.setText(getStrings(shopBuyDetailBean.getName()));
                                 List<CommunalDetailBean> descriptionBeanList = shopBuyDetailBean.getDescriptionBeanList();
-                                GlideImageLoaderUtil.loadImgDynamicDrawable(QualityShopHistoryListActivity.this, shopBuyListView.iv_communal_cover_wrap, shopBuyDetailBean.getCoverImgUrl());
+                                GlideImageLoaderUtil.loadImgDynamicDrawable(QualityShopHistoryListActivity.this, shopBuyListView.iv_communal_cover_wrap, shopBuyDetailBean.getCoverImgUrl(),-1);
                                 if (descriptionBeanList != null) {
                                     itemDescriptionList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(descriptionBeanList));
                                 }

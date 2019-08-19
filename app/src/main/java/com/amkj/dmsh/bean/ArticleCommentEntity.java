@@ -1,6 +1,7 @@
 package com.amkj.dmsh.bean;
 
 import com.amkj.dmsh.base.BaseEntity;
+import com.amkj.dmsh.find.bean.BaseFavorBean;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.annotations.SerializedName;
 
@@ -42,7 +43,7 @@ public class ArticleCommentEntity extends BaseEntity{
         this.articleCommentList = articleCommentList;
     }
 
-    public static class ArticleCommentBean implements MultiItemEntity {
+    public static class ArticleCommentBean extends BaseFavorBean implements MultiItemEntity {
         public final static int NORMAL_CODE = 0;
         //    没有数据
         public final static int FOOT_EMPTY_CODE = 1;

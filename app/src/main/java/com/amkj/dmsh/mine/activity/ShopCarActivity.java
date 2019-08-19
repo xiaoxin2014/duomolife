@@ -538,7 +538,7 @@ public class ShopCarActivity extends BaseActivity {
     @OnCheckedChanged(R.id.check_box_all_buy)
     void allCheckBuy(boolean isChecked) {
         if (!isEditStatus && smart_communal_refresh.getState() == RefreshState.None) {
-            ShopCarDao.selectBuyAll(shopGoodsList, isChecked);
+            ShopCarDao.selectBuyAll(shopCarGoodsAdapter,shopGoodsList, isChecked);
             shopCarGoodsAdapter.notifyDataSetChanged();
             if (isChecked) {
                 getSettlePrice(null, ShopCarDao.getActivityInfos(shopGoodsList), true);

@@ -259,7 +259,7 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
                         ConstantMethod.saveSourceId(getSimpleName(), String.valueOf(shopBuyDetailBean.getId()));
 //                        //配置封面图
                         GlideImageLoaderUtil.loadImgDynamicDrawable(QualityWeekOptimizedActivity.this, shopBuyListView.iv_communal_cover_wrap
-                                , shopBuyDetailBean.getCoverImgUrl());
+                                , shopBuyDetailBean.getCoverImgUrl(),-1);
                         List<CommunalDetailBean> descriptionBeanList = shopBuyDetailBean.getDescriptionBeanList();
                         if (descriptionBeanList != null) {
 //                            //筛选空行

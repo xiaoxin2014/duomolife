@@ -1,6 +1,7 @@
 package com.amkj.dmsh.shopdetails.adapter;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.shopdetails.bean.DirectLogisticsEntity.DirectLogisticsBean.LogisticsProductPacketBean;
@@ -29,9 +30,14 @@ public class DirectLogisticsHeaderAdapter extends BaseQuickAdapter<LogisticsProd
         if (logisticsProductPacketBean == null) return;
         GlideImageLoaderUtil.loadCenterCrop(context, helper.getView(R.id.iv_logistic_indent_pro), logisticsProductPacketBean.getPicUrl());
         helper.setText(R.id.tv_logistic_indent_pro_name, getStrings(logisticsProductPacketBean.getName()))
+                .setGone(R.id.tv_logistic_indent_pro_name, !TextUtils.isEmpty(logisticsProductPacketBean.getName()))
                 .setText(R.id.tv_logistics_indent_sku, getStrings(logisticsProductPacketBean.getSaleSkuValue()))
+                .setGone(R.id.tv_logistics_indent_sku, !TextUtils.isEmpty(logisticsProductPacketBean.getSaleSkuValue()))
                 .setText(R.id.tv_logistics_indent_price, getStrings("¥" + logisticsProductPacketBean.getPrice()))
-                .setText(R.id.tv_logistics_indent_time, "下单时间：" + logisticsProductPacketBean.getDeliverTime());
+                .setGone(R.id.tv_logistics_indent_price, !TextUtils.isEmpty(logisticsProductPacketBean.getPrice()))
+                .setText(R.id.tv_logistics_indent_time, "下单时间：" + logisticsProductPacketBean.getDeliverTime())
+                .setGone(R.id.tv_logistics_indent_time, !TextUtils.isEmpty(logisticsProductPacketBean.getDeliverTime()));
+
         helper.itemView.setOnClickListener(v -> {
             skipProductUrl(context, 1, logisticsProductPacketBean.getId());
         });

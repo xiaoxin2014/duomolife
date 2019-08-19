@@ -234,7 +234,7 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                 final ImageView iv_communal_cover_wrap = holder.getView(R.id.iv_communal_cover_wrap);
                 GlideImageLoaderUtil.loadImgDynamicDrawable(context, iv_communal_cover_wrap, detailObjectBean.getNewPirUrl(), -1);
                 holder.addOnClickListener(R.id.iv_communal_cover_wrap).setTag(R.id.iv_communal_cover_wrap, R.id.iv_tag, detailObjectBean);
-                if (!imgList.contains(detailObjectBean.getNewPirUrl())) {
+                if (!imgList.contains(detailObjectBean.getNewPirUrl()) && !TextUtils.isEmpty(detailObjectBean.getNewPirUrl())) {
                     imgList.add(detailObjectBean.getNewPirUrl());
                 }
                 holder.itemView.setTag(detailObjectBean);
@@ -435,7 +435,7 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                         boolean isPic = content.startsWith("http") && (content.contains("gif") || content.contains("jpg") || content.contains("jpeg") ||
                                 content.contains("png") || content.contains("GIF") || content.contains("JPG") || content.contains("PNG") || content.contains("gif"));
                         String tag = (String) iv_communal_image.getTag(isPic ? R.id.iv_tag : R.id.iv_two_tag);
-                        if (!imgList.contains(tag)) imgList.add(tag);
+                        if (!imgList.contains(tag) && !TextUtils.isEmpty(tag)) imgList.add(tag);
                         GlideImageLoaderUtil.loadImgDynamicDrawable(context, iv_communal_image, tag, -1);
                     } else {
                         rel_communal_image.setVisibility(View.GONE);
@@ -731,13 +731,6 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
         if (!TextUtils.isEmpty(imageUrlUrl)) {
             setSkipPath(context, imageUrlUrl, false);
         } else if (!TextUtils.isEmpty(imageUrl)) {
-//            List<ImageBean> imageBeanList = new ArrayList<>();
-//            for (String url : imgList) {
-//                ImageBean imageBean = new ImageBean();
-//                imageBean.setPicUrl(url);
-//                imageBeanList.add(imageBean);
-//            }
-
             if (imgList.contains(imageUrl)) {
                 for (int i = 0; i < imgList.size(); i++) {
                     if (imageUrl.equals(imgList.get(i))) {

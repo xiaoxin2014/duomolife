@@ -64,6 +64,15 @@ public class MessageNotifyEntity extends BaseEntity{
         @SerializedName("json")
         private ProductPriceBean productPriceBean;
         private String title;
+        private String buttonName;
+
+        public String getButtonName() {
+            return buttonName;
+        }
+
+        public void setButtonName(String buttonName) {
+            this.buttonName = buttonName;
+        }
 
         public String getImage() {
             return image;

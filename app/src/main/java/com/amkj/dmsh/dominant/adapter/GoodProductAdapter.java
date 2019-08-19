@@ -57,7 +57,7 @@ public class GoodProductAdapter extends BaseMultiItemQuickAdapter<LikedProductBe
                 GlideImageLoaderUtil.loadCenterCrop(context, iv_quality_good_product_ad, getStrings(likedProductBean.getPicUrl()));
                 //点击广告封面图片
                 helper.itemView.setOnClickListener(v -> {
-                    /**
+                    /*
                      * 3.1.9 加入好物广告统计
                      */
                     adClickTotal(context, likedProductBean.getId());

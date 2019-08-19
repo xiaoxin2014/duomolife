@@ -220,6 +220,7 @@ public class QualityCustomTopicFragment extends BaseFragment {
         }
         Map<String, Object> params = new HashMap<>();
         params.put("productType", productType);
+        params.put("version", 1);
         if (userId > 0) {
             params.put("uid", userId);
         }

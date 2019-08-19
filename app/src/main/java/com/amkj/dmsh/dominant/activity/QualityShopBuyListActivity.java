@@ -376,7 +376,7 @@ public class QualityShopBuyListActivity extends BaseActivity {
                         //记录埋点参数sourceId(必买清单id)
                         ConstantMethod.saveSourceId(getSimpleName(), String.valueOf(shopBuyDetailBean.getId()));
                         List<CommunalDetailBean> descriptionBeanList = shopBuyDetailBean.getDescriptionBeanList();
-                        GlideImageLoaderUtil.loadImgDynamicDrawable(QualityShopBuyListActivity.this, shopBuyListView.iv_communal_cover_wrap, shopBuyDetailBean.getCoverImgUrl());
+                        GlideImageLoaderUtil.loadImgDynamicDrawable(QualityShopBuyListActivity.this, shopBuyListView.iv_communal_cover_wrap, shopBuyDetailBean.getCoverImgUrl(),-1);
                         if (descriptionBeanList != null) {
                             itemDescriptionList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(descriptionBeanList));
                         }

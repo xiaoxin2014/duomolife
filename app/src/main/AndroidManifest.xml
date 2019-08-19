@@ -275,23 +275,12 @@
         </activity>
         <!--帖子详情-->
         <activity
-            android:name=".find.activity.ArticleDetailsImgActivity"
+            android:name=".find.activity.PostDetailActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="ArticleDetailsImgActivity"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </activity>
-        <!--帖子文章-->
-        <activity
-            android:name=".find.activity.ArticleInvitationDetailsActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:exported="false"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="ArticleInvitationDetailsActivity"/>
+                <action android:name="PostDetailActivity"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
@@ -302,16 +291,6 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="DoMoLifeCommunalActivity"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </activity>
-        <!--发布图文-->
-        <activity
-            android:name=".release.activity.ReleaseImgArticleActivity"
-            android:exported="false"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="ReleaseImgArticleActivity"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
@@ -501,29 +480,6 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
-        <!--多么研究所-->
-        <activity
-            android:name=".dominant.activity.QualityDMLLifeSearchActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:exported="false"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="QualityDMLLifeSearchActivity"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </activity>
-        <!--多么研究所详情-->
-        <activity
-            android:name=".dominant.activity.DmlLifeSearchDetailActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:exported="false"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="DmlLifeSearchDetailActivity"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </activity>
-        <!--历史福利社清单详情-->
         <!--新品发布-->
         <activity
             android:name=".dominant.activity.QualityNewProActivity"
@@ -639,29 +595,6 @@
             </intent-filter>
         </activity>
 
-        <!--热门话题列表-->
-        <activity
-            android:name=".find.activity.FindHotTopicListActivity"
-            android:exported="false"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="FindHotTopicListActivity"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </activity>
-        <!--话题详情-->
-        <activity
-            android:name=".find.activity.FindTopicDetailsActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:exported="false"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="FindTopicDetailsActivity"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </activity>
-        <!--消息-->
-        <!--@我-->
         <!--赞-->
         <activity
             android:name=".message.activity.MessageLikedActivity"
@@ -924,7 +857,13 @@
             android:screenOrientation="portrait"/>
         <activity
             android:name=".mine.activity.AppDataActivity"
-            android:screenOrientation="portrait"/>
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="AppDataActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
         <activity
             android:name=".mine.activity.PersonalRealNameActivity"
             android:screenOrientation="portrait"/>
@@ -1190,6 +1129,96 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="HomeCatergoryActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
+        <!--发现-帖子详情-->
+
+        <!--发现-话题分类-->
+        <activity
+            android:name=".find.activity.TopicCatergoryActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="TopicCatergoryActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
+        <!--发现-话题详情-->
+        <activity
+            android:name=".find.activity.TopicDetailActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="TopicDetailActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
+        <!--发现-话题详情-参与话题-->
+        <activity
+            android:name=".find.activity.JoinTopicActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="JoinTopicActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
+        <!--发现-评分商品入口-->
+        <activity
+            android:name=".find.activity.GoodsScoreListActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="GoodsScoreListActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
+        <!--发现-帖子详情—评论列表-->
+        <activity
+            android:name=".find.activity.AllPostCommentActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="AllPostCommentActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
+        <!--发现-参与话题—发布成功-->
+        <activity
+            android:name=".find.activity.JoinSuccessActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="JoinSuccessActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
+        <!--消息中心-新增粉丝-->
+        <activity
+            android:name=".message.activity.NewFansActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="NewFansActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
+        <!--订单-多件商品评分-->
+        <activity
+            android:name=".find.activity.IndentScoreListActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="IndentScoreListActivity"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>

@@ -121,7 +121,15 @@ public class InquiryOrderEntry extends BaseEntity {
             private boolean isBaskReader;
             private List<GoodsBean> goods;
             private int second;
+        private String maxRewardTip;
 
+            public String getMaxRewardTip() {
+                return maxRewardTip;
+            }
+
+            public void setMaxRewardTip(String maxRewardTip) {
+                this.maxRewardTip = maxRewardTip;
+            }
             //是否显示赠品物流
             private int isShowPresentLogistics;
 

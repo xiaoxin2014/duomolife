@@ -50,13 +50,19 @@ public class ShopCarDao {
      *
      * @param isChecked true全部选中 false全部取消选中
      */
-    public static void selectBuyAll(List<MultiItemEntity> shopGoodsList, boolean isChecked) {
+    public static void selectBuyAll(ShopCarGoodsAdapter shopCarGoodsAdapter, List<MultiItemEntity> shopGoodsList, boolean isChecked) {
         for (int i = 0; i < shopGoodsList.size(); i++) {
             if (shopGoodsList.get(i).getItemType() == PRODUCT) {
                 CartInfoBean cartInfoBean = (CartInfoBean) shopGoodsList.get(i);
-                if (cartInfoBean.getStatus() == 1 && cartInfoBean.isValid()) {
-                    cartInfoBean.setSelected(isChecked);
+                if (isChecked) {
+                    //有效商品才能被选中
+                    if (cartInfoBean.getStatus() == 1 && cartInfoBean.isValid() && isMatchInValid(shopCarGoodsAdapter, cartInfoBean) == NORMAL) {
+                        cartInfoBean.setSelected(true);
+                    }
+                } else {
+                    cartInfoBean.setSelected(false);
                 }
+
             }
         }
     }

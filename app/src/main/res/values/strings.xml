@@ -109,7 +109,10 @@
     <string name="look_indent">查看订单</string>
     <string name="skip_quality">返回首页</string>
     <string name="hot_text">热门</string>
+    <string name="hot_topic">热门话题</string>
     <string name="text_more">查看更多</string>
+    <string name="catergory">分类</string>
+    <string name="get_integral">参与得积分</string>
     <string name="topic_format">#%1$s#</string>
     <string name="commit_failed">提交失败，请重新提交</string>
     <string name="text_oversea_hint">温馨提示：为保障顺利过关，收货地址使用的收货人姓名，身份证号码与付款人真实信息保持一致</string>
@@ -129,6 +132,7 @@
     <string name="cart_present">【赠品】%1$s</string>
     <string name="cart_combine">【组合购】%1$s</string>
     <string name="comment_count">全部评论(%1$d)</string>
+    <string name="comment_num">评论(%1$d)</string>
     <string name="combine_price">组合价 </string>
     <!--skuDialog sku选择-->
     <string name="sku_max_discount_price">最多可优惠%1$s元</string>
@@ -136,6 +140,7 @@
     <!--订单商品信息-->
     <string name="price_count">共 %1$d 件 合计:¥%2$s</string>
     <string name="appraise_integral">评价赢积分</string>
+    <string name="write_score_comment">写点评</string>
     <string name="appraise_integral_score">评价赢%1$s积分</string>
     <string name="appraise_public_hint">带图评价商品超过10个字有机会获取积分哦！</string>
     <string name="appraise_public_success">评价完成,晒单可赢得更多积分！</string>
@@ -230,7 +235,7 @@
     <string name="direct_bug"><![CDATA[立即购买>]]></string>
     <string name="defaul">---</string>
     <string name="see_detail"><![CDATA[查看详情>]]></string>
-    <string name="write_comment">写评论...</string>
+    <string name="write_comment">走心的评论一下…</string>
     <string name="send">发送</string>
     <string name="like">赞</string>
     <string name="editor_select_comment">精选留言</string>
@@ -249,5 +254,20 @@
     <string name="group_total_price">¥%s</string>
     <string name="save_money">省了¥%s</string>
     <string name="newshopcar_discount_price">优惠了¥%s元</string>
-
+    <string name="favor">赞</string>
+    <string name="follow">关注</string>
+    <string name="comment">评论</string>
+    <string name="more_comment">查看全部%d条评论</string>
+    <string name="reply">回复</string>
+    <string name="report">举报</string>
+    <string name="input_keyword">输入关键词</string>
+    <string name="follow_topic">关注话题</string>
+    <string name="topic_join_num">%d人参与</string>
+    <string name="topic_conten_num">·  %d篇精选内容</string>
+    <string name="release">发布</string>
+    <string name="award_rules">奖励规则 ?</string>
+    <string name="award_desc">再写%1$d字,可获得%2$d积分</string>
+    <string name="participant_num">%d人参与</string>
+    <string name="award_desc2">认真参与讨论可获得%d积分哦~</string>
+    <string name="post_pass_get_score">奖励%d积分~</string>
 </resources>
