@@ -1,6 +1,5 @@
 package com.amkj.dmsh.dominant.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
@@ -14,15 +13,12 @@ import android.widget.ImageView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
-import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
-import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
+import com.amkj.dmsh.dominant.adapter.GoodProductAdapter;
 import com.amkj.dmsh.dominant.bean.CustomCoverDesEntity;
 import com.amkj.dmsh.dominant.bean.CustomCoverDesEntity.CustomCoverDesBean;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
@@ -48,7 +44,6 @@ import butterknife.ButterKnife;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertFragmentNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -79,7 +74,7 @@ public class QualityCustomTopicFragment extends BaseFragment {
     private int page = 1;
     private int scrollY;
     private float screenHeight;
-    private QualityTypeProductAdapter qualityTypeProductAdapter;
+    private GoodProductAdapter qualityTypeProductAdapter;
     private List<LikedProductBean> customProList = new ArrayList();
     private List<CommunalDetailObjectBean> descriptionList = new ArrayList();
     private QNewProView qNewProView;
@@ -140,7 +135,7 @@ public class QualityCustomTopicFragment extends BaseFragment {
                 communal_recycler.smoothScrollToPosition(0);
             }
         });
-        qualityTypeProductAdapter = new QualityTypeProductAdapter(getActivity(), customProList);
+        qualityTypeProductAdapter = new GoodProductAdapter(getActivity(), customProList);
         headerView = LayoutInflater.from(getActivity()).inflate(R.layout.layout_communal_detail_scroll_rec_cover_wrap, null, false);
         qNewProView = new QNewProView();
         ButterKnife.bind(qNewProView, headerView);
@@ -159,42 +154,6 @@ public class QualityCustomTopicFragment extends BaseFragment {
                 getQualityCustomPro();
             }
         }, communal_recycler);
-        qualityTypeProductAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                LikedProductBean likedProductBean = (LikedProductBean) view.getTag();
-                if (likedProductBean != null) {
-                    Intent intent = new Intent(getActivity(), ShopScrollDetailsActivity.class);
-                    intent.putExtra("productId", String.valueOf(likedProductBean.getId()));
-                    startActivity(intent);
-                }
-            }
-        });
-        qualityTypeProductAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
-            @Override
-            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                loadHud.show();
-                LikedProductBean likedProductBean = (LikedProductBean) view.getTag();
-                if (likedProductBean != null) {
-                    if (userId > 0) {
-                        switch (view.getId()) {
-                            case R.id.iv_pro_add_car:
-                                BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
-                                baseAddCarProInfoBean.setProductId(likedProductBean.getId());
-                                baseAddCarProInfoBean.setActivityCode(getStrings(likedProductBean.getActivityCode()));
-                                baseAddCarProInfoBean.setProName(getStrings(likedProductBean.getName()));
-                                baseAddCarProInfoBean.setProPic(getStrings(likedProductBean.getPicUrl()));
-                                ConstantMethod constantMethod = new ConstantMethod();
-                                constantMethod.addShopCarGetSku(getActivity(), baseAddCarProInfoBean, loadHud);
-                                break;
-                        }
-                    } else {
-                        loadHud.dismiss();
-                        getLoginStatus(QualityCustomTopicFragment.this);
-                    }
-                }
-            }
-        });
         totalPersonalTrajectory = insertFragmentNewTotalData(getActivity(), this.getClass().getSimpleName(), productType);
         removeExistUtils = new RemoveExistUtils();
     }

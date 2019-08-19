@@ -17,18 +17,15 @@ import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.DMLThemeEntity;
 import com.amkj.dmsh.bean.DMLThemeEntity.DMLThemeBean;
 import com.amkj.dmsh.bean.DMLThemeEntity.DMLThemeBean.DMLGoodsBean;
-import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
-import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.dominant.adapter.GoodProductAdapter;
 import com.amkj.dmsh.dominant.adapter.QualityOsMailHeaderAdapter;
-import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.RemoveExistUtils;
@@ -50,9 +47,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static android.app.Activity.RESULT_OK;
-import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
-import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertFragmentNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -74,7 +69,7 @@ import static com.amkj.dmsh.constant.Url.Q_QUALITY_TYPE_AD;
  * @author LGuiPeng
  * @email liuguipeng163@163.com
  * created on 2017/6/29
- * class description:活动专区
+ * class description:海外直邮
  */
 
 public class QualityOverseasMailFragment extends BaseFragment {
@@ -84,7 +79,7 @@ public class QualityOverseasMailFragment extends BaseFragment {
     RecyclerView communal_recycler;
     //
     private List<LikedProductBean> typeDetails = new ArrayList();
-    private QualityTypeProductAdapter qualityTypeProductAdapter;
+    private GoodProductAdapter qualityTypeProductAdapter;
     private int themePage = 1;
     private int productPage = 1;
     private List<DMLThemeBean> themeList = new ArrayList();
@@ -123,7 +118,7 @@ public class QualityOverseasMailFragment extends BaseFragment {
                 loadData();
             }
         });
-        qualityTypeProductAdapter = new QualityTypeProductAdapter(getActivity(), typeDetails);
+        qualityTypeProductAdapter = new GoodProductAdapter(getActivity(), typeDetails);
         communal_recycler.setAdapter(qualityTypeProductAdapter);
         qualityTypeProductAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
@@ -146,42 +141,6 @@ public class QualityOverseasMailFragment extends BaseFragment {
                 }
             }
         }, communal_recycler);
-        qualityTypeProductAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
-            @Override
-            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                loadHud.show();
-                LikedProductBean likedProductBean = (LikedProductBean) view.getTag();
-                if (likedProductBean != null) {
-                    if (userId > 0) {
-                        switch (view.getId()) {
-                            case R.id.iv_pro_add_car:
-                                BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
-                                baseAddCarProInfoBean.setProductId(likedProductBean.getId());
-                                baseAddCarProInfoBean.setActivityCode(getStrings(likedProductBean.getActivityCode()));
-                                baseAddCarProInfoBean.setProName(getStrings(likedProductBean.getName()));
-                                baseAddCarProInfoBean.setProPic(getStrings(likedProductBean.getPicUrl()));
-                                ConstantMethod constantMethod = new ConstantMethod();
-                                constantMethod.addShopCarGetSku(getActivity(), baseAddCarProInfoBean, loadHud);
-                                break;
-                        }
-                    } else {
-                        loadHud.dismiss();
-                        getLoginStatus(QualityOverseasMailFragment.this);
-                    }
-                }
-            }
-        });
-        qualityTypeProductAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                LikedProductBean likedProductBean = (LikedProductBean) view.getTag();
-                if (likedProductBean != null) {
-                    Intent intent = new Intent(getActivity(), ShopScrollDetailsActivity.class);
-                    intent.putExtra("productId", String.valueOf(likedProductBean.getId()));
-                    startActivity(intent);
-                }
-            }
-        });
         overseasHeaderView.communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(getActivity()));
         overseasHeaderView.communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID

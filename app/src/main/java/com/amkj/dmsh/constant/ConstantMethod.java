@@ -12,7 +12,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -1674,42 +1673,15 @@ public class ConstantMethod {
     }
 
     /**
-     * 图片修改尺寸
-     *
-     * @param bitmap
-     * @param screenWidth
-     * @return
-     */
-    public static Bitmap zoomImage(Bitmap bitmap, int screenWidth) {
-        // 获取这个图片的宽和高
-        float width = bitmap.getWidth();
-        float height = bitmap.getHeight();
-        Bitmap newBitmap = null;
-        try {
-            float scaleWidth = ((float) screenWidth) / width;
-            // 创建操作图片用的matrix对象
-            Matrix matrix = new Matrix();
-            // 计算宽高缩放率
-            // 缩放图片动作
-            matrix.postScale(scaleWidth, scaleWidth);
-            newBitmap = Bitmap.createBitmap(bitmap, 0, 0, (int) width,
-                    (int) height, matrix, true);
-        } catch (Exception e) {
-            newBitmap = bitmap;
-            e.printStackTrace();
-        }
-        return newBitmap;
-    }
-
-    /**
-     * @param context
      * @param baseAddCarProInfoBean 商品基本信息
-     * @param loadHud
      */
-    public void addShopCarGetSku(final Activity context, final BaseAddCarProInfoBean baseAddCarProInfoBean, final KProgressHUD loadHud) {
+    public static void addShopCarGetSku(final Activity context, final BaseAddCarProInfoBean baseAddCarProInfoBean, final KProgressHUD loadHud) {
+        if (userId <= 0 || !isContextExisted(context)) {
+            getLoginStatus(context);
+            return;
+        }
+        loadHud.show();
         //商品详情内容
-        this.loadHud = loadHud;
-        this.context = context;
         String url = Url.BASE_URL + Url.Q_SHOP_DETAILS_GET_SKU_CAR;
         Map<String, Object> params = new HashMap<>();
         params.put("productId", baseAddCarProInfoBean.getProductId());
@@ -1717,9 +1689,7 @@ public class ConstantMethod {
         NetLoadUtils.getNetInstance().loadNetDataPost(context, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
+                loadHud.dismiss();
                 Gson gson = new Gson();
                 EditGoodsSkuEntity editGoodsSkuEntity = gson.fromJson(result, EditGoodsSkuEntity.class);
                 if (editGoodsSkuEntity != null) {
@@ -1730,11 +1700,11 @@ public class ConstantMethod {
                             return;
                         }
                         if (skuSaleBeanList.size() > 1) {
-                            setSkuValue(context, editGoodsSkuBean, baseAddCarProInfoBean);
+                            setSkuValue(context, editGoodsSkuBean, baseAddCarProInfoBean, loadHud);
                         } else {
                             SkuSaleBean skuSaleBean = skuSaleBeanList.get(0);
                             if ((skuSaleBean.getIsNotice() == 1 || skuSaleBean.getIsNotice() == 2) && skuSaleBean.getQuantity() == 0) {
-                                setSkuValue(context, editGoodsSkuBean, baseAddCarProInfoBean);
+                                setSkuValue(context, editGoodsSkuBean, baseAddCarProInfoBean, loadHud);
                             } else {
                                 if (skuSaleBean.getQuantity() > 0) {
                                     ShopCarGoodsSku shopCarGoodsSkuDif = new ShopCarGoodsSku();
@@ -1746,7 +1716,7 @@ public class ConstantMethod {
                                     shopCarGoodsSkuDif.setActivityCode(getStrings(baseAddCarProInfoBean.getActivityCode()));
                                     shopCarGoodsSkuDif.setValuesName(!TextUtils.isEmpty(editGoodsSkuBean.getPropvalues().get(0).getPropValueName())
                                             ? editGoodsSkuBean.getPropvalues().get(0).getPropValueName() : "默认");
-                                    addShopCar(context, shopCarGoodsSkuDif);
+                                    addShopCar(context, shopCarGoodsSkuDif, loadHud);
                                 } else {
                                     showToast(context, "商品已售罄，正在努力补货中~~~");
                                 }
@@ -1760,26 +1730,14 @@ public class ConstantMethod {
 
             @Override
             public void onNotNetOrException() {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                showToast(context, R.string.do_failed);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(context, R.string.unConnectedNetwork);
+                loadHud.dismiss();
             }
         });
     }
 
-    private void setSkuValue(Activity context, final EditGoodsSkuEntity.EditGoodsSkuBean editGoodsSkuBean, final BaseAddCarProInfoBean baseAddCarProInfoBean) {
+    private static void setSkuValue(Activity context, final EditGoodsSkuEntity.EditGoodsSkuBean editGoodsSkuBean, final BaseAddCarProInfoBean baseAddCarProInfoBean, final KProgressHUD loadHud) {
         //        sku 展示
-        SkuDialog skuDialog = new SkuDialog((Activity) context);
+        SkuDialog skuDialog = new SkuDialog(context);
         if (!TextUtils.isEmpty(baseAddCarProInfoBean.getProPic())) {
             editGoodsSkuBean.setPicUrl(baseAddCarProInfoBean.getProPic());
         }
@@ -1792,18 +1750,16 @@ public class ConstantMethod {
         skuDialog.getGoodsSKu(shopCarGoodsSku -> {
             if (shopCarGoodsSku != null) {
 //                    加入购物车
-                if (loadHud != null) {
-                    loadHud.show();
-                }
+                loadHud.show();
                 shopCarGoodsSku.setProductId(baseAddCarProInfoBean.getProductId());
                 shopCarGoodsSku.setActivityCode(getStrings(baseAddCarProInfoBean.getActivityCode()));
-                addShopCar(context, shopCarGoodsSku);
+                addShopCar(context, shopCarGoodsSku, loadHud);
             }
         });
     }
 
     //加入购物车
-    private void addShopCar(Activity activity, final ShopCarGoodsSku shopCarGoodsSku) {
+    private static void addShopCar(Activity activity, final ShopCarGoodsSku shopCarGoodsSku, final KProgressHUD loadHud) {
         if (userId != 0) {
             String url = Url.BASE_URL + Url.Q_SHOP_DETAILS_ADD_CAR;
             Map<String, Object> params = new HashMap<>();
@@ -1816,19 +1772,16 @@ public class ConstantMethod {
                 params.put("activityCode", shopCarGoodsSku.getActivityCode());
             }
             addSourceParameter(params);
-
             NetLoadUtils.getNetInstance().loadNetDataPost(activity, url, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     Gson gson = new Gson();
-                    if (loadHud != null) {
-                        loadHud.dismiss();
-                    }
+                    loadHud.dismiss();
                     RequestStatus status = gson.fromJson(result, RequestStatus.class);
                     if (status != null) {
                         if (status.getCode().equals(SUCCESS_CODE)) {
-                            showToast(context, context.getString(R.string.AddCarSuccess));
-                            TotalPersonalTrajectory totalPersonalTrajectory = new TotalPersonalTrajectory(context);
+                            showToast(activity, activity.getString(R.string.AddCarSuccess));
+                            TotalPersonalTrajectory totalPersonalTrajectory = new TotalPersonalTrajectory(activity);
                             Map<String, String> totalMap = new HashMap<>();
                             totalMap.put("productId", String.valueOf(shopCarGoodsSku.getProductId()));
                             totalMap.put(TOTAL_NAME_TYPE, "addCartSuccess");
@@ -1836,26 +1789,14 @@ public class ConstantMethod {
                             //通知刷新购物车数量
                             getCarCount(activity);
                         } else {
-                            showToastRequestMsg(context, status);
+                            showToastRequestMsg(activity, status);
                         }
                     }
                 }
 
                 @Override
                 public void onNotNetOrException() {
-                    if (loadHud != null) {
-                        loadHud.dismiss();
-                    }
-                }
-
-                @Override
-                public void netClose() {
-                    showToast(context, R.string.unConnectedNetwork);
-                }
-
-                @Override
-                public void onError(Throwable ex) {
-                    showToast(context, R.string.do_failed);
+                    loadHud.dismiss();
                 }
             });
         }
@@ -3380,7 +3321,7 @@ public class ConstantMethod {
     }
 
     //识别并设置超链接
-    public static void setTextLink(Activity activity,TextView textView){
+    public static void setTextLink(Activity activity, TextView textView) {
         //识别超链接
         Link discernUrl = new Link(Pattern.compile(REGEX_URL));
         discernUrl.setTextColor(0xff0a88fa);

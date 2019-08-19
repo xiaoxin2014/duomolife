@@ -1,7 +1,6 @@
 package com.amkj.dmsh.dominant.adapter;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -11,7 +10,6 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean.MarketLabelBean;
 import com.amkj.dmsh.utils.ProductLabelCreateUtils;
@@ -23,10 +21,10 @@ import com.google.android.flexbox.FlexboxLayout;
 import java.util.List;
 
 import static com.amkj.dmsh.constant.ConstantMethod.adClickTotal;
-import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.addShopCarGetSku;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
-import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
 import static com.amkj.dmsh.constant.ConstantVariable.AD_COVER;
 import static com.amkj.dmsh.constant.ConstantVariable.PRODUCT;
 
@@ -39,6 +37,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.PRODUCT;
 
 public class GoodProductAdapter extends BaseMultiItemQuickAdapter<LikedProductBean, BaseViewHolder> {
     private final Activity context;
+    private boolean isShopCarRecommend;//是否是购物车推荐商品列表
 
     public GoodProductAdapter(Activity context, List<LikedProductBean> goodsProList) {
         super(goodsProList);
@@ -64,9 +63,7 @@ public class GoodProductAdapter extends BaseMultiItemQuickAdapter<LikedProductBe
                     if (!TextUtils.isEmpty(likedProductBean.getAndroidLink())) {
                         setSkipPath(context, getStrings(likedProductBean.getAndroidLink()), false);
                     } else {
-                        Intent intent = new Intent(context, ShopScrollDetailsActivity.class);
-                        intent.putExtra("productId", String.valueOf(likedProductBean.getId()));
-                        context.startActivity(intent);
+                        skipProductUrl(context, likedProductBean.getType_id(), likedProductBean.getId());
                     }
                 });
                 break;
@@ -81,28 +78,23 @@ public class GoodProductAdapter extends BaseMultiItemQuickAdapter<LikedProductBe
                         .setText(R.id.tv_qt_pro_price, ConstantMethod.getRmbFormat(context, likedProductBean.getPrice()))
                         .addOnClickListener(R.id.iv_pro_add_car).setTag(R.id.iv_pro_add_car, likedProductBean);
                 //点击商品进入详情
-                helper.itemView.setOnClickListener(v -> {
-                    Intent intent = new Intent(context, ShopScrollDetailsActivity.class);
-                    intent.putExtra("productId", String.valueOf(likedProductBean.getId()));
-                    context.startActivity(intent);
-                });
+                if (!isShopCarRecommend) {
+                    helper.itemView.setOnClickListener(v -> {
+                        skipProductUrl(context, likedProductBean.getType_id(), likedProductBean.getId());
+                    });
+                }
 
                 //加入购物车
-                helper.getView(R.id.iv_pro_add_car).setOnClickListener(v -> {
-                    ((BaseActivity) context).loadHud.show();
-                    if (userId > 0) {
+                if (likedProductBean.getType_id() == 1) {//只有自营商品才能加入购物车
+                    helper.getView(R.id.iv_pro_add_car).setOnClickListener(v -> {
                         BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
                         baseAddCarProInfoBean.setProductId(likedProductBean.getId());
                         baseAddCarProInfoBean.setActivityCode(getStrings(likedProductBean.getActivityCode()));
                         baseAddCarProInfoBean.setProName(getStrings(likedProductBean.getName()));
                         baseAddCarProInfoBean.setProPic(getStrings(likedProductBean.getPicUrl()));
-                        ConstantMethod constantMethod = new ConstantMethod();
-                        constantMethod.addShopCarGetSku(context, baseAddCarProInfoBean, ((BaseActivity) context).loadHud);
-                    } else {
-                        ((BaseActivity) context).loadHud.dismiss();
-                        getLoginStatus(context);
-                    }
-                });
+                        addShopCarGetSku(context, baseAddCarProInfoBean, ((BaseActivity) context).loadHud);
+                    });
+                }
                 FlexboxLayout fbl_market_label = helper.getView(R.id.fbl_market_label);
                 if (!TextUtils.isEmpty(likedProductBean.getActivityTag()) || (likedProductBean.getMarketLabelList() != null
                         && likedProductBean.getMarketLabelList().size() > 0)) {
@@ -145,5 +137,9 @@ public class GoodProductAdapter extends BaseMultiItemQuickAdapter<LikedProductBe
                 break;
 
         }
+    }
+
+    public void setShopCarRecommend(boolean shopCarRecommend) {
+        isShopCarRecommend = shopCarRecommend;
     }
 }

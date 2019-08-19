@@ -29,9 +29,8 @@ import java.util.Map;
 
 import butterknife.BindView;
 
-import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.addShopCarGetSku;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
 import static com.amkj.dmsh.constant.Url.Q_PRODUCT_TYPE_LIST;
 
@@ -115,24 +114,17 @@ public class CatergoryGoodsFragment extends BaseFragment {
             }
         });
         mCatergoryGoodsAdapter.setOnItemChildClickListener((adapter, view, position) -> {
-            loadHud.show();
             LikedProductBean likedProductBean = (LikedProductBean) view.getTag();
             if (likedProductBean != null) {
-                if (userId > 0) {
-                    switch (view.getId()) {
-                        case R.id.iv_pro_add_car:
-                            BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
-                            baseAddCarProInfoBean.setProductId(likedProductBean.getId());
-                            baseAddCarProInfoBean.setActivityCode(getStrings(likedProductBean.getActivityCode()));
-                            baseAddCarProInfoBean.setProName(getStrings(likedProductBean.getName()));
-                            baseAddCarProInfoBean.setProPic(getStrings(likedProductBean.getPicUrl()));
-                            ConstantMethod constantMethod = new ConstantMethod();
-                            constantMethod.addShopCarGetSku(getActivity(), baseAddCarProInfoBean, loadHud);
-                            break;
-                    }
-                } else {
-                    loadHud.dismiss();
-                    getLoginStatus(getActivity());
+                switch (view.getId()) {
+                    case R.id.iv_pro_add_car:
+                        BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
+                        baseAddCarProInfoBean.setProductId(likedProductBean.getId());
+                        baseAddCarProInfoBean.setActivityCode(getStrings(likedProductBean.getActivityCode()));
+                        baseAddCarProInfoBean.setProName(getStrings(likedProductBean.getName()));
+                        baseAddCarProInfoBean.setProPic(getStrings(likedProductBean.getPicUrl()));
+                        addShopCarGetSku(getActivity(), baseAddCarProInfoBean, loadHud);
+                        break;
                 }
             }
         });

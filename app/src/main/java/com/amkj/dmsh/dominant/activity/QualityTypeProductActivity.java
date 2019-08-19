@@ -17,20 +17,17 @@ import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.QualityTypeEntity;
 import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean;
-import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
-import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.TabEntity;
 import com.amkj.dmsh.dominant.adapter.ChildProductTypeAdapter;
+import com.amkj.dmsh.dominant.adapter.GoodProductAdapter;
 import com.amkj.dmsh.dominant.adapter.ProductTypeSortAdapter;
-import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
 import com.amkj.dmsh.dominant.bean.SortTypeEntity;
 import com.amkj.dmsh.dominant.initviews.BottomPopWindows;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.RemoveExistUtils;
@@ -62,13 +59,11 @@ import razerdp.basepopup.BasePopupWindow;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_CHILD;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_ID;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_NAME;
@@ -120,7 +115,7 @@ public class QualityTypeProductActivity extends BaseActivity {
     //    子分类
     private List<QualityTypeBean> childTypeList = new ArrayList<>();
 
-    private QualityTypeProductAdapter qualityTypeProductAdapter;
+    private GoodProductAdapter qualityTypeProductAdapter;
     private QTypeView qTypeView;
     //tab集合
     private ArrayList<CustomTabEntity> tabs = new ArrayList<>();
@@ -200,7 +195,7 @@ public class QualityTypeProductActivity extends BaseActivity {
             }
         });
         download_btn_communal.setOnClickListener(v -> scrollHeader());
-        qualityTypeProductAdapter = new QualityTypeProductAdapter(QualityTypeProductActivity.this, typeDetails);
+        qualityTypeProductAdapter = new GoodProductAdapter(QualityTypeProductActivity.this, typeDetails);
         headerAdView = LayoutInflater.from(QualityTypeProductActivity.this).inflate(R.layout.layout_al_new_sp_banner, null, false);
         childTypeHeaderView = LayoutInflater.from(QualityTypeProductActivity.this).inflate(R.layout.layout_communal_recycler_wrap, null, false);
         qTypeView = new QTypeView();
@@ -215,36 +210,6 @@ public class QualityTypeProductActivity extends BaseActivity {
             page++;
             getQualityTypePro();
         }, communal_recycler);
-        qualityTypeProductAdapter.setOnItemClickListener((adapter, view, position) -> {
-            LikedProductBean likedProductBean = (LikedProductBean) view.getTag();
-            if (likedProductBean != null) {
-                Intent intent1 = new Intent(QualityTypeProductActivity.this, ShopScrollDetailsActivity.class);
-                intent1.putExtra("productId", String.valueOf(likedProductBean.getId()));
-                startActivity(intent1);
-            }
-        });
-        qualityTypeProductAdapter.setOnItemChildClickListener((adapter, view, position) -> {
-            loadHud.show();
-            LikedProductBean likedProductBean = (LikedProductBean) view.getTag();
-            if (likedProductBean != null) {
-                if (userId > 0) {
-                    switch (view.getId()) {
-                        case R.id.iv_pro_add_car:
-                            BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
-                            baseAddCarProInfoBean.setProductId(likedProductBean.getId());
-                            baseAddCarProInfoBean.setActivityCode(getStrings(likedProductBean.getActivityCode()));
-                            baseAddCarProInfoBean.setProName(getStrings(likedProductBean.getName()));
-                            baseAddCarProInfoBean.setProPic(getStrings(likedProductBean.getPicUrl()));
-                            ConstantMethod constantMethod = new ConstantMethod();
-                            constantMethod.addShopCarGetSku(QualityTypeProductActivity.this, baseAddCarProInfoBean, loadHud);
-                            break;
-                    }
-                } else {
-                    loadHud.dismiss();
-                    getLoginStatus(QualityTypeProductActivity.this);
-                }
-            }
-        });
         ctb_qt_tab_product_type.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
             public void onTabSelect(int position) {

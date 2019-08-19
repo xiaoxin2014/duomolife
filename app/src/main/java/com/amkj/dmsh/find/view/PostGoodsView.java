@@ -14,7 +14,6 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.find.bean.PostDetailEntity;
 import com.amkj.dmsh.find.bean.PostDetailEntity.PostDetailBean.RelatedGoodsBean;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
@@ -22,9 +21,8 @@ import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.addShopCarGetSku;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.userId;
 
 /**
  * Created by xiaoxin on 2019/3/18 0018
@@ -65,21 +63,11 @@ public class PostGoodsView extends LinearLayout {
         mTvTitle.setText(getStrings(relatedGoodsBean.getTitle()));
         mTvPrice.setText(("¥" + relatedGoodsBean.getPrice()));
         mIvAddCar.setOnClickListener(v -> {
-            if (ConstantMethod.isContextExisted(activity)) {
-                activity.loadHud.show();
-                if (userId > 0) {
-                    BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
-                    baseAddCarProInfoBean.setProductId(relatedGoodsBean.getProductId());
-                    //            baseAddCarProInfoBean.setActivityCode(getStrings(mRelatedGoodsBean.getActivityCode()));
-                    baseAddCarProInfoBean.setProName(getStrings(relatedGoodsBean.getTitle()));
-                    baseAddCarProInfoBean.setProPic(getStrings(relatedGoodsBean.getPictureUrl()));
-                    ConstantMethod constantMethod = new ConstantMethod();
-                    constantMethod.addShopCarGetSku(activity, baseAddCarProInfoBean, activity.loadHud);
-                } else {
-                    activity.loadHud.dismiss();
-                    getLoginStatus(activity);
-                }
-            }
+            BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
+            baseAddCarProInfoBean.setProductId(relatedGoodsBean.getProductId());
+            baseAddCarProInfoBean.setProName(getStrings(relatedGoodsBean.getTitle()));
+            baseAddCarProInfoBean.setProPic(getStrings(relatedGoodsBean.getPictureUrl()));
+            addShopCarGetSku(activity, baseAddCarProInfoBean, activity.loadHud);
         });
 
         mRlGoods.setOnClickListener(v -> {

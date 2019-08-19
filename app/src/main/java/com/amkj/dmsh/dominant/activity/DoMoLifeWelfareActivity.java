@@ -61,8 +61,8 @@ import q.rorbin.badgeview.Badge;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.addShopCarGetSku;
 import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
-import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -73,7 +73,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
 import static com.amkj.dmsh.constant.Url.H_DML_PREVIOUS_THEME;
 import static com.amkj.dmsh.constant.Url.H_DML_RECOMMEND;
 import static com.amkj.dmsh.constant.Url.H_DML_THEME;
-
 
 
 /**
@@ -196,24 +195,17 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
         qualityTypeProductAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                loadHud.show();
                 LikedProductBean likedProductBean = (LikedProductBean) view.getTag();
                 if (likedProductBean != null) {
-                    if (ConstantMethod.userId > 0) {
-                        switch (view.getId()) {
-                            case R.id.iv_pro_add_car:
-                                BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
-                                baseAddCarProInfoBean.setProductId(likedProductBean.getId());
-                                baseAddCarProInfoBean.setActivityCode(getStrings(likedProductBean.getActivityCode()));
-                                baseAddCarProInfoBean.setProName(getStrings(likedProductBean.getName()));
-                                baseAddCarProInfoBean.setProPic(getStrings(likedProductBean.getPicUrl()));
-                                ConstantMethod constantMethod = new ConstantMethod();
-                                constantMethod.addShopCarGetSku(DoMoLifeWelfareActivity.this, baseAddCarProInfoBean, loadHud);
-                                break;
-                        }
-                    } else {
-                        loadHud.dismiss();
-                        getLoginStatus(DoMoLifeWelfareActivity.this);
+                    switch (view.getId()) {
+                        case R.id.iv_pro_add_car:
+                            BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
+                            baseAddCarProInfoBean.setProductId(likedProductBean.getId());
+                            baseAddCarProInfoBean.setActivityCode(getStrings(likedProductBean.getActivityCode()));
+                            baseAddCarProInfoBean.setProName(getStrings(likedProductBean.getName()));
+                            baseAddCarProInfoBean.setProPic(getStrings(likedProductBean.getPicUrl()));
+                            addShopCarGetSku(DoMoLifeWelfareActivity.this, baseAddCarProInfoBean, loadHud);
+                            break;
                     }
                 }
             }
@@ -315,7 +307,7 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
         params.put("currentPage", themePage);
         params.put("showCount", TOTAL_COUNT_TEN);
         params.put("goodsCurrentPage", 1);
-        params.put("goodsShowCount",TOTAL_COUNT_TEN);
+        params.put("goodsShowCount", TOTAL_COUNT_TEN);
         NetLoadUtils.getNetInstance().loadNetDataPost(DoMoLifeWelfareActivity.this, H_DML_THEME
                 , params, new NetLoadListenerHelper() {
                     @Override
@@ -480,7 +472,7 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
         if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
-            if (badge!=null){
+            if (badge != null) {
                 badge.setBadgeNumber((int) message.result);
             }
         }

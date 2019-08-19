@@ -16,14 +16,11 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
-import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
-import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
-import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
+import com.amkj.dmsh.dominant.adapter.GoodProductAdapter;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.RemoveExistUtils;
@@ -49,8 +46,6 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
-import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
-import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
@@ -64,7 +59,7 @@ import static com.amkj.dmsh.constant.Url.QUALITY_PRODUCT_LABEL;
  * @email liuguipeng163@163.com
  * created on 2018/10/19
  * version 3.1.8
- * class description:商品标签详情
+ * class description:营销商品专场
  */
 public class ProductLabelDetailActivity extends BaseActivity {
     @BindView(R.id.smart_communal_refresh)
@@ -86,7 +81,7 @@ public class ProductLabelDetailActivity extends BaseActivity {
     Toolbar tl_quality_bar;
     private String productLabelId;
     private List<LikedProductBean> labelProductList = new ArrayList();
-    private QualityTypeProductAdapter qualityTypeProductAdapter;
+    private GoodProductAdapter qualityTypeProductAdapter;
     private UserLikedProductEntity likedProductEntity;
     private Badge badge;
     private int screenHeight;
@@ -119,7 +114,7 @@ public class ProductLabelDetailActivity extends BaseActivity {
                 loadData();
             }
         });
-        qualityTypeProductAdapter = new QualityTypeProductAdapter(this, labelProductList);
+        qualityTypeProductAdapter = new GoodProductAdapter(this, labelProductList);
         communal_recycler.setAdapter(qualityTypeProductAdapter);
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
@@ -131,42 +126,6 @@ public class ProductLabelDetailActivity extends BaseActivity {
                 getProductLabelData();
             }
         }, communal_recycler);
-        qualityTypeProductAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                LikedProductBean likedProductBean = (LikedProductBean) view.getTag();
-                if (likedProductBean != null) {
-                    Intent intent = new Intent(ProductLabelDetailActivity.this, ShopScrollDetailsActivity.class);
-                    intent.putExtra("productId", String.valueOf(likedProductBean.getId()));
-                    startActivity(intent);
-                }
-            }
-        });
-        qualityTypeProductAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
-            @Override
-            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                loadHud.show();
-                LikedProductBean likedProductBean = (LikedProductBean) view.getTag();
-                if (likedProductBean != null) {
-                    if (userId > 0) {
-                        switch (view.getId()) {
-                            case R.id.iv_pro_add_car:
-                                BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
-                                baseAddCarProInfoBean.setProductId(likedProductBean.getId());
-                                baseAddCarProInfoBean.setActivityCode(getStrings(likedProductBean.getActivityCode()));
-                                baseAddCarProInfoBean.setProName(getStrings(likedProductBean.getName()));
-                                baseAddCarProInfoBean.setProPic(getStrings(likedProductBean.getPicUrl()));
-                                ConstantMethod constantMethod = new ConstantMethod();
-                                constantMethod.addShopCarGetSku(ProductLabelDetailActivity.this, baseAddCarProInfoBean, loadHud);
-                                break;
-                        }
-                    } else {
-                        loadHud.dismiss();
-                        getLoginStatus(ProductLabelDetailActivity.this);
-                    }
-                }
-            }
-        });
         TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
         screenHeight = app.getScreenHeight();
         communal_recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -304,7 +263,7 @@ public class ProductLabelDetailActivity extends BaseActivity {
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
         if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
-            if (badge!=null){
+            if (badge != null) {
                 badge.setBadgeNumber((int) message.result);
             }
         }

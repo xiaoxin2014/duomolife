@@ -58,7 +58,7 @@ import q.rorbin.badgeview.Badge;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.addShopCarGetSku;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -184,24 +184,17 @@ public class DoMoLifeWelfareFragment extends BaseFragment {
         qualityTypeProductAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                loadHud.show();
                 LikedProductBean likedProductBean = (LikedProductBean) view.getTag();
                 if (likedProductBean != null) {
-                    if (ConstantMethod.userId > 0) {
-                        switch (view.getId()) {
-                            case R.id.iv_pro_add_car:
-                                BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
-                                baseAddCarProInfoBean.setProductId(likedProductBean.getId());
-                                baseAddCarProInfoBean.setActivityCode(getStrings(likedProductBean.getActivityCode()));
-                                baseAddCarProInfoBean.setProName(getStrings(likedProductBean.getName()));
-                                baseAddCarProInfoBean.setProPic(getStrings(likedProductBean.getPicUrl()));
-                                ConstantMethod constantMethod = new ConstantMethod();
-                                constantMethod.addShopCarGetSku(getActivity(), baseAddCarProInfoBean, loadHud);
-                                break;
-                        }
-                    } else {
-                        loadHud.dismiss();
-                        getLoginStatus(getActivity());
+                    switch (view.getId()) {
+                        case R.id.iv_pro_add_car:
+                            BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
+                            baseAddCarProInfoBean.setProductId(likedProductBean.getId());
+                            baseAddCarProInfoBean.setActivityCode(getStrings(likedProductBean.getActivityCode()));
+                            baseAddCarProInfoBean.setProName(getStrings(likedProductBean.getName()));
+                            baseAddCarProInfoBean.setProPic(getStrings(likedProductBean.getPicUrl()));
+                            addShopCarGetSku(getActivity(), baseAddCarProInfoBean, loadHud);
+                            break;
                     }
                 }
             }

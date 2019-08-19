@@ -21,7 +21,7 @@ import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.dominant.activity.QualityProductActActivity;
 import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
-import com.amkj.dmsh.homepage.adapter.ProNoShopCarAdapter;
+import com.amkj.dmsh.dominant.adapter.GoodProductAdapter;
 import com.amkj.dmsh.mine.adapter.ShopCarGoodsAdapter;
 import com.amkj.dmsh.mine.bean.ActivityInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarEntity;
@@ -141,7 +141,7 @@ public class ShopCarActivity extends BaseActivity {
     private boolean isOnPause;
     private RecommendHeaderView recommendHeaderView;
     private View cartHeaderView;
-    private ProNoShopCarAdapter proNoShopCarAdapter;
+    private GoodProductAdapter proNoShopCarAdapter;
     private UserLikedProductEntity likedProduct;
     private AlertDialogHelper alertDialogHelper;
     private ShopCarEntity mShopCarNewInfoEntity;
@@ -538,7 +538,7 @@ public class ShopCarActivity extends BaseActivity {
     @OnCheckedChanged(R.id.check_box_all_buy)
     void allCheckBuy(boolean isChecked) {
         if (!isEditStatus && smart_communal_refresh.getState() == RefreshState.None) {
-            ShopCarDao.selectBuyAll(shopCarGoodsAdapter,shopGoodsList, isChecked);
+            ShopCarDao.selectBuyAll(shopCarGoodsAdapter, shopGoodsList, isChecked);
             shopCarGoodsAdapter.notifyDataSetChanged();
             if (isChecked) {
                 getSettlePrice(null, ShopCarDao.getActivityInfos(shopGoodsList), true);
@@ -809,7 +809,8 @@ public class ShopCarActivity extends BaseActivity {
             communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
                     // 设置分隔线资源ID
                     .setDividerId(R.drawable.item_divider_five_gray_f).create());
-            proNoShopCarAdapter = new ProNoShopCarAdapter(ShopCarActivity.this, cartProRecommendList);
+            proNoShopCarAdapter = new GoodProductAdapter(ShopCarActivity.this, cartProRecommendList);
+            proNoShopCarAdapter.setShopCarRecommend(true);
             communal_recycler_wrap.setAdapter(proNoShopCarAdapter);
             proNoShopCarAdapter.setOnItemClickListener((adapter, view, position) -> {
                 LikedProductBean likedProductBean = (LikedProductBean) view.getTag();

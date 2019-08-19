@@ -56,9 +56,9 @@ import q.rorbin.badgeview.Badge;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
+import static com.amkj.dmsh.constant.ConstantMethod.addShopCarGetSku;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
-import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -190,25 +190,19 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
         qualityBuyListAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                loadHud.show();
                 QualityBuyListBean qualityBuyListBean = (QualityBuyListBean) view.getTag();
                 if (qualityBuyListBean != null) {
-                    if (userId > 0) {
-                        switch (view.getId()) {
-                            case R.id.iv_ql_bl_add_car:
-                                BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
-                                baseAddCarProInfoBean.setProductId(qualityBuyListBean.getId());
-                                baseAddCarProInfoBean.setActivityCode(getStrings(qualityBuyListBean.getActivityCode()));
-                                baseAddCarProInfoBean.setProName(getStrings(qualityBuyListBean.getName()));
-                                baseAddCarProInfoBean.setProPic(getStrings(qualityBuyListBean.getPicUrl()));
-                                ConstantMethod constantMethod = new ConstantMethod();
-                                constantMethod.addShopCarGetSku(QualityWeekOptimizedActivity.this, baseAddCarProInfoBean, loadHud);
-                                break;
-                        }
-                    } else {
-                        loadHud.dismiss();
-                        getLoginStatus(QualityWeekOptimizedActivity.this);
+                    switch (view.getId()) {
+                        case R.id.iv_ql_bl_add_car:
+                            BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
+                            baseAddCarProInfoBean.setProductId(qualityBuyListBean.getId());
+                            baseAddCarProInfoBean.setActivityCode(getStrings(qualityBuyListBean.getActivityCode()));
+                            baseAddCarProInfoBean.setProName(getStrings(qualityBuyListBean.getName()));
+                            baseAddCarProInfoBean.setProPic(getStrings(qualityBuyListBean.getPicUrl()));
+                            addShopCarGetSku(QualityWeekOptimizedActivity.this, baseAddCarProInfoBean, loadHud);
+                            break;
                     }
+
                 }
             }
         });
@@ -259,7 +253,7 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
                         ConstantMethod.saveSourceId(getSimpleName(), String.valueOf(shopBuyDetailBean.getId()));
 //                        //配置封面图
                         GlideImageLoaderUtil.loadImgDynamicDrawable(QualityWeekOptimizedActivity.this, shopBuyListView.iv_communal_cover_wrap
-                                , shopBuyDetailBean.getCoverImgUrl(),-1);
+                                , shopBuyDetailBean.getCoverImgUrl(), -1);
                         List<CommunalDetailBean> descriptionBeanList = shopBuyDetailBean.getDescriptionBeanList();
                         if (descriptionBeanList != null) {
 //                            //筛选空行
@@ -394,7 +388,7 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
         if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
-            if (badge!=null){
+            if (badge != null) {
                 badge.setBadgeNumber((int) message.result);
             }
         }

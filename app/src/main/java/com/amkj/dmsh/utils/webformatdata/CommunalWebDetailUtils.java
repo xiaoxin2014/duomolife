@@ -23,7 +23,6 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalDetailBean;
-import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
@@ -47,6 +46,7 @@ import cn.jzvd.Jzvd;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.addArticleShareCount;
+import static com.amkj.dmsh.constant.ConstantMethod.addShopCarGetSku;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -421,8 +421,7 @@ public class CommunalWebDetailUtils {
                                 baseAddCarProInfoBean.setProductId(qualityWelPro.getId());
                                 baseAddCarProInfoBean.setProName(getStrings(qualityWelPro.getName()));
                                 baseAddCarProInfoBean.setProPic(getStrings(qualityWelPro.getPicUrl()));
-                                ConstantMethod constantMethod = new ConstantMethod();
-                                constantMethod.addShopCarGetSku(activity, baseAddCarProInfoBean, loadHud);
+                                addShopCarGetSku(activity, baseAddCarProInfoBean, loadHud);
                             }
                             break;
                         default:

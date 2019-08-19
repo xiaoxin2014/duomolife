@@ -18,9 +18,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.HomeQualityFloatAdEntity;
-import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
-import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
+import com.amkj.dmsh.dominant.adapter.GoodProductAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
@@ -48,7 +46,6 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.adClickTotal;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
-import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -91,7 +88,7 @@ public class DirectPaySuccessActivity extends BaseActivity {
     private List<LikedProductBean> typeDetails = new ArrayList();
     private String indentNo;
     private String indentProductType;
-    private QualityTypeProductAdapter qualityTypeProductAdapter;
+    private GoodProductAdapter qualityTypeProductAdapter;
     private AlertDialogImage alertDialogAdImage;
     private UserLikedProductEntity likedProductEntity;
 
@@ -118,36 +115,13 @@ public class DirectPaySuccessActivity extends BaseActivity {
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_dp)
-
-
                 .create());
-        qualityTypeProductAdapter = new QualityTypeProductAdapter(DirectPaySuccessActivity.this, typeDetails);
+        qualityTypeProductAdapter = new GoodProductAdapter(DirectPaySuccessActivity.this, typeDetails);
         qualityTypeProductAdapter.addHeaderView(headerView);
+        qualityTypeProductAdapter.setShopCarRecommend(true);
         communal_recycler.setVerticalScrollBarEnabled(false);
         communal_recycler.setAdapter(qualityTypeProductAdapter);
         qualityTypeProductAdapter.setEnableLoadMore(false);
-        qualityTypeProductAdapter.setOnItemChildClickListener((adapter, view, position) -> {
-            loadHud.show();
-            LikedProductBean likedProductBean = (LikedProductBean) view.getTag();
-            if (likedProductBean != null) {
-                if (userId > 0) {
-                    switch (view.getId()) {
-                        case R.id.iv_pro_add_car:
-                            BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
-                            baseAddCarProInfoBean.setProductId(likedProductBean.getId());
-                            baseAddCarProInfoBean.setActivityCode(getStrings(likedProductBean.getActivityCode()));
-                            baseAddCarProInfoBean.setProName(getStrings(likedProductBean.getName()));
-                            baseAddCarProInfoBean.setProPic(getStrings(likedProductBean.getPicUrl()));
-                            ConstantMethod constantMethod = new ConstantMethod();
-                            constantMethod.addShopCarGetSku(DirectPaySuccessActivity.this, baseAddCarProInfoBean, loadHud);
-                            break;
-                    }
-                } else {
-                    loadHud.dismiss();
-                    getLoginStatus(this);
-                }
-            }
-        });
         qualityTypeProductAdapter.setOnItemClickListener((adapter, view, position) -> {
             LikedProductBean likedProductBean = (LikedProductBean) view.getTag();
             if (likedProductBean != null) {
@@ -238,7 +212,7 @@ public class DirectPaySuccessActivity extends BaseActivity {
                 alertDialogAdImage.setAlertClickListener(new AlertDialogImage.AlertImageClickListener() {
                     @Override
                     public void imageClick() {
-                        adClickTotal(getActivity(),communalADActivityBean.getId());
+                        adClickTotal(getActivity(), communalADActivityBean.getId());
                         setSkipPath(DirectPaySuccessActivity.this, communalADActivityBean.getAndroidLink(), false);
                         alertDialogAdImage.dismiss();
                     }

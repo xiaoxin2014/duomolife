@@ -19,15 +19,13 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
-import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.UMShareAction;
-import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
+import com.amkj.dmsh.dominant.adapter.GoodProductAdapter;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
@@ -59,7 +57,6 @@ import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
-import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -75,7 +72,7 @@ import static com.amkj.dmsh.constant.Url.Q_ACT_PRO_LIST;
  * @author LGuiPeng
  * @email liuguipeng163@163.com
  * created on 2017/10/17
- * class description:营销活动专场
+ * class description:活动商品专场
  */
 public class QualityProductActActivity extends BaseActivity {
     @BindView(R.id.smart_communal_refresh)
@@ -101,7 +98,7 @@ public class QualityProductActActivity extends BaseActivity {
     private Badge badge;
     private String activityCode;
     private List<LikedProductBean> actProActivityList = new ArrayList<>();
-    private QualityTypeProductAdapter qualityTypeProductAdapter;
+    private GoodProductAdapter qualityTypeProductAdapter;
     private QActivityProView qActivityProView;
     private UserLikedProductEntity likedProductEntity;
     private ConstantMethod constantMethod;
@@ -128,7 +125,7 @@ public class QualityProductActActivity extends BaseActivity {
         communal_recycler.setLayoutManager(new GridLayoutManager(QualityProductActActivity.this, 2));
 
         smart_communal_refresh.setOnRefreshListener(refreshLayout -> loadData());
-        qualityTypeProductAdapter = new QualityTypeProductAdapter(QualityProductActActivity.this, actProActivityList);
+        qualityTypeProductAdapter = new GoodProductAdapter(QualityProductActActivity.this, actProActivityList);
         View headerView = LayoutInflater.from(QualityProductActActivity.this).inflate(R.layout.layout_product_activity_detail, null, false);
         qActivityProView = new QActivityProView();
         ButterKnife.bind(qActivityProView, headerView);
@@ -146,42 +143,6 @@ public class QualityProductActActivity extends BaseActivity {
                 getActProActivityData();
             }
         }, communal_recycler);
-        qualityTypeProductAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                LikedProductBean likedProductBean = (LikedProductBean) view.getTag();
-                if (likedProductBean != null) {
-                    Intent intent = new Intent(QualityProductActActivity.this, ShopScrollDetailsActivity.class);
-                    intent.putExtra("productId", String.valueOf(likedProductBean.getId()));
-                    startActivity(intent);
-                }
-            }
-        });
-        qualityTypeProductAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
-            @Override
-            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                loadHud.show();
-                LikedProductBean likedProductBean = (LikedProductBean) view.getTag();
-                if (likedProductBean != null) {
-                    if (userId > 0) {
-                        switch (view.getId()) {
-                            case R.id.iv_pro_add_car:
-                                BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
-                                baseAddCarProInfoBean.setProductId(likedProductBean.getId());
-                                baseAddCarProInfoBean.setActivityCode(getStrings(likedProductBean.getActivityCode()));
-                                baseAddCarProInfoBean.setProName(getStrings(likedProductBean.getName()));
-                                baseAddCarProInfoBean.setProPic(getStrings(likedProductBean.getPicUrl()));
-                                ConstantMethod constantMethod = new ConstantMethod();
-                                constantMethod.addShopCarGetSku(QualityProductActActivity.this, baseAddCarProInfoBean, loadHud);
-                                break;
-                        }
-                    } else {
-                        loadHud.dismiss();
-                        getLoginStatus(QualityProductActActivity.this);
-                    }
-                }
-            }
-        });
         TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
         screenHeight = app.getScreenHeight();
         communal_recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {

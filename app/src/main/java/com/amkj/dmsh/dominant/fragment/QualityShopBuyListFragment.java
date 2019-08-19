@@ -62,7 +62,7 @@ import q.rorbin.badgeview.Badge;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.addShopCarGetSku;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -233,24 +233,17 @@ public class QualityShopBuyListFragment extends BaseFragment {
         qualityBuyListAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                loadHud.show();
                 QualityBuyListBean qualityBuyListBean = (QualityBuyListBean) view.getTag();
                 if (qualityBuyListBean != null) {
-                    if (userId > 0) {
-                        switch (view.getId()) {
-                            case R.id.iv_ql_bl_add_car:
-                                BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
-                                baseAddCarProInfoBean.setProductId(qualityBuyListBean.getId());
-                                baseAddCarProInfoBean.setActivityCode(getStrings(qualityBuyListBean.getActivityCode()));
-                                baseAddCarProInfoBean.setProName(getStrings(qualityBuyListBean.getName()));
-                                baseAddCarProInfoBean.setProPic(getStrings(qualityBuyListBean.getPicUrl()));
-                                ConstantMethod constantMethod = new ConstantMethod();
-                                constantMethod.addShopCarGetSku(getActivity(), baseAddCarProInfoBean, loadHud);
-                                break;
-                        }
-                    } else {
-                        loadHud.dismiss();
-                        getLoginStatus(getActivity());
+                    switch (view.getId()) {
+                        case R.id.iv_ql_bl_add_car:
+                            BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
+                            baseAddCarProInfoBean.setProductId(qualityBuyListBean.getId());
+                            baseAddCarProInfoBean.setActivityCode(getStrings(qualityBuyListBean.getActivityCode()));
+                            baseAddCarProInfoBean.setProName(getStrings(qualityBuyListBean.getName()));
+                            baseAddCarProInfoBean.setProPic(getStrings(qualityBuyListBean.getPicUrl()));
+                            addShopCarGetSku(getActivity(), baseAddCarProInfoBean, loadHud);
+                            break;
                     }
                 }
             }
@@ -346,7 +339,7 @@ public class QualityShopBuyListFragment extends BaseFragment {
                         //记录埋点参数sourceId(必买清单id)
                         ConstantMethod.saveSourceId(getSimpleName(), String.valueOf(shopBuyDetailBean.getId()));
                         List<CommunalDetailBean> descriptionBeanList = shopBuyDetailBean.getDescriptionBeanList();
-                        GlideImageLoaderUtil.loadImgDynamicDrawable(getActivity(), shopBuyListView.iv_communal_cover_wrap, shopBuyDetailBean.getCoverImgUrl(),-1);
+                        GlideImageLoaderUtil.loadImgDynamicDrawable(getActivity(), shopBuyListView.iv_communal_cover_wrap, shopBuyDetailBean.getCoverImgUrl(), -1);
                         if (descriptionBeanList != null) {
                             itemDescriptionList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(descriptionBeanList));
                         }

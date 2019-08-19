@@ -66,8 +66,8 @@ import q.rorbin.badgeview.Badge;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.addShopCarGetSku;
 import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
-import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -245,24 +245,17 @@ public class QualityShopBuyListActivity extends BaseActivity {
         qualityBuyListAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                loadHud.show();
                 QualityBuyListBean qualityBuyListBean = (QualityBuyListBean) view.getTag();
                 if (qualityBuyListBean != null) {
-                    if (userId > 0) {
-                        switch (view.getId()) {
-                            case R.id.iv_ql_bl_add_car:
-                                BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
-                                baseAddCarProInfoBean.setProductId(qualityBuyListBean.getId());
-                                baseAddCarProInfoBean.setActivityCode(getStrings(qualityBuyListBean.getActivityCode()));
-                                baseAddCarProInfoBean.setProName(getStrings(qualityBuyListBean.getName()));
-                                baseAddCarProInfoBean.setProPic(getStrings(qualityBuyListBean.getPicUrl()));
-                                ConstantMethod constantMethod = new ConstantMethod();
-                                constantMethod.addShopCarGetSku(QualityShopBuyListActivity.this, baseAddCarProInfoBean, loadHud);
-                                break;
-                        }
-                    } else {
-                        loadHud.dismiss();
-                        getLoginStatus(QualityShopBuyListActivity.this);
+                    switch (view.getId()) {
+                        case R.id.iv_ql_bl_add_car:
+                            BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
+                            baseAddCarProInfoBean.setProductId(qualityBuyListBean.getId());
+                            baseAddCarProInfoBean.setActivityCode(getStrings(qualityBuyListBean.getActivityCode()));
+                            baseAddCarProInfoBean.setProName(getStrings(qualityBuyListBean.getName()));
+                            baseAddCarProInfoBean.setProPic(getStrings(qualityBuyListBean.getPicUrl()));
+                            addShopCarGetSku(QualityShopBuyListActivity.this, baseAddCarProInfoBean, loadHud);
+                            break;
                     }
                 }
             }
@@ -376,7 +369,7 @@ public class QualityShopBuyListActivity extends BaseActivity {
                         //记录埋点参数sourceId(必买清单id)
                         ConstantMethod.saveSourceId(getSimpleName(), String.valueOf(shopBuyDetailBean.getId()));
                         List<CommunalDetailBean> descriptionBeanList = shopBuyDetailBean.getDescriptionBeanList();
-                        GlideImageLoaderUtil.loadImgDynamicDrawable(QualityShopBuyListActivity.this, shopBuyListView.iv_communal_cover_wrap, shopBuyDetailBean.getCoverImgUrl(),-1);
+                        GlideImageLoaderUtil.loadImgDynamicDrawable(QualityShopBuyListActivity.this, shopBuyListView.iv_communal_cover_wrap, shopBuyDetailBean.getCoverImgUrl(), -1);
                         if (descriptionBeanList != null) {
                             itemDescriptionList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(descriptionBeanList));
                         }
@@ -510,7 +503,7 @@ public class QualityShopBuyListActivity extends BaseActivity {
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
         if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
-            if (badge!=null){
+            if (badge != null) {
                 badge.setBadgeNumber((int) message.result);
             }
         }
