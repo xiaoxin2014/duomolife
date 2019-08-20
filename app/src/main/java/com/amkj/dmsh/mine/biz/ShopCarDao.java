@@ -293,6 +293,17 @@ public class ShopCarDao {
         return NORMAL;
     }
 
+    public static boolean isMatchInValid(List<CartInfoBean> subItem) {
+        for (CartInfoBean bean : subItem) {
+            //失效或者无库存
+            if (bean.getStatus() == 0 || (bean.getSaleSku() != null && bean.getSaleSku().getQuantity() <= 0)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
 
     /**
      * 刷新商品信息

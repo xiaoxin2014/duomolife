@@ -86,6 +86,7 @@ import static com.amkj.dmsh.constant.Url.Q_SHOP_DETAILS_GET_SKU_CAR;
 import static com.amkj.dmsh.mine.biz.ShopCarDao.MATCH_INVALID;
 import static com.amkj.dmsh.mine.biz.ShopCarDao.NORMAL;
 import static com.amkj.dmsh.mine.biz.ShopCarDao.getCartIds;
+import static com.amkj.dmsh.mine.biz.ShopCarDao.isMatchInValid;
 import static com.amkj.dmsh.mine.biz.ShopCarDao.removeSelGoods;
 import static com.amkj.dmsh.mine.biz.ShopCarDao.updateGoodsInfo;
 
@@ -400,18 +401,20 @@ public class ShopCarActivity extends BaseActivity {
                     combineMainProduct.setMainProduct(true);//设置主商品标志
                     combineMainProduct.setValid(isValid);
                     cartInfoList.add(combineMainProduct);
+
                     //添加搭配商品
                     if (combineMatchProducts != null && combineMatchProducts.size() > 0) {
+                        //当天加入购物车的组合商品如果失效，不会默认选中
+                        if (isValid && !isMatchInValid(combineMatchProducts)) {
+                            combineMainProduct.setSelected(false);
+                        }
                         for (CartBean.CartInfoBean cartInfoBean : combineMatchProducts) {
                             cartInfoBean.setId(combineMainProduct.getId());
                             cartInfoBean.setCombineProduct(true);
                             cartInfoBean.setCount(combineMainProduct.getCount());
                             cartInfoBean.setSelected(combineMainProduct.isSelected());
                             cartInfoBean.setValid(isValid);
-////                            //只要搭配商品有任意一件失效，主商品不可选
-//                            if (!ShopCarDao.isValid(cartInfoBean)) {
-//                                combineMainProduct.setValid(false);
-//                            }
+
                         }
                         //只要主商品失效，所有的搭配商品都会失效
                         if (!combineMainProduct.isValid()) {
