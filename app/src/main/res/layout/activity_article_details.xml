@@ -1,34 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/dl_art_detail_pro"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <FrameLayout
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/white"
+              android:orientation="vertical">
+
+    <include layout="@layout/activity_domolife_header"/>
+
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:focusable="true"
-        android:focusableInTouchMode="true">
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical">
+
+        <com.scwang.smartrefresh.layout.SmartRefreshLayout
+            android:id="@+id/smart_web_refresh"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-            <include layout="@layout/activity_domolife_header" />
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <include layout="@layout/layout_refresh_header_gif"/>
+
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1">
-                <include layout="@layout/layout_communal_smart_refresh_recycler_float_loading" />
+                android:layout_height="match_parent">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <com.amkj.dmsh.views.HtmlWebView
+                        android:id="@+id/web_communal"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
+
+                    <include
+                        layout="@layout/layout_communal_net_error"
+                        android:visibility="gone"/>
+                </FrameLayout>
+
+                <include layout="@layout/layout_communal_floating"/>
             </RelativeLayout>
-            <RelativeLayout
-                android:id="@+id/rel_article_bottom"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/border_top_line">
-                <include layout="@layout/layout_comment_edit" />
-                <include layout="@layout/layout_article_comment_bottom" />
-            </RelativeLayout>
-        </LinearLayout>
-        <include layout="@layout/layout_slide_menu_tag" />
-    </FrameLayout>
-    <include layout="@layout/layout_slid_draw_pro" />
-</android.support.v4.widget.DrawerLayout>
+        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
+        <RelativeLayout
+            android:id="@+id/rel_article_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border_top_line">
+
+            <include layout="@layout/layout_comment_edit"/>
+
+            <include layout="@layout/layout_article_comment_bottom"/>
+        </RelativeLayout>
+    </LinearLayout>
+</LinearLayout>
