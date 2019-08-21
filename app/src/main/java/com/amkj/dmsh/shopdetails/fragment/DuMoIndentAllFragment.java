@@ -21,7 +21,6 @@ import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity.QualityGroupShareBean
 import com.amkj.dmsh.mine.bean.CartProductInfoBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.release.activity.ReleaseImgArticleActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectApplyRefundActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectExchangeDetailsActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectIndentWriteActivity;

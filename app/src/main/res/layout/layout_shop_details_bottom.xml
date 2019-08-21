@@ -1,40 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/sc_mm_98"
-    android:background="@color/white"
-    android:id="@+id/ll_details_bottom"
-    android:orientation="horizontal">
+              android:id="@+id/ll_details_bottom"
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/sc_mm_98"
+              android:background="@color/white"
+              android:orientation="horizontal">
 
     <TextView
         android:id="@+id/tv_sp_details_collect"
         android:layout_width="@dimen/sc_mm_125"
         android:layout_height="match_parent"
 
-        android:paddingTop="@dimen/sc_mm_17"
-        android:drawableTop="@drawable/sel_comment_collect_star"
+        android:drawableTop="@drawable/sel_goods_collect_star"
         android:gravity="center"
+        android:paddingTop="@dimen/sc_mm_17"
         android:text="收藏"
         android:textColor="@color/text_login_gray_s"
-        android:textSize="@dimen/sc_mm_22" />
+        android:textSize="@dimen/sc_mm_22"/>
 
     <View
         android:layout_width="0.5dp"
         android:layout_height="@dimen/sc_mm_48"
         android:layout_gravity="center_vertical"
-        android:background="#686868" />
+        android:background="#686868"/>
 
     <TextView
         android:id="@+id/tv_sp_details_service"
         android:layout_width="@dimen/sc_mm_125"
-        android:paddingTop="@dimen/sc_mm_17"
         android:layout_height="match_parent"
         android:drawableTop="@drawable/service_gray"
-
         android:gravity="center"
+
+        android:paddingTop="@dimen/sc_mm_17"
         android:text="客服"
         android:textColor="@color/home_text_color"
-        android:textSize="@dimen/sc_mm_22" />
+        android:textSize="@dimen/sc_mm_22"/>
 
     <TextView
         android:id="@+id/tv_sp_details_add_car"
@@ -46,7 +46,7 @@
         android:gravity="center"
         android:text="加入购物车"
         android:textColor="@color/white"
-        android:textSize="@dimen/sc_mm_34" />
+        android:textSize="@dimen/sc_mm_34"/>
 
     <TextView
         android:id="@+id/tv_sp_details_buy_it"
@@ -58,5 +58,5 @@
         android:gravity="center"
         android:text="立即购买"
         android:textColor="@color/white"
-        android:textSize="@dimen/sc_mm_34" />
+        android:textSize="@dimen/sc_mm_34"/>
 </LinearLayout>

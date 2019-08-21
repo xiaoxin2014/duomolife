@@ -14,7 +14,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.find.bean.PostDetailEntity.PostDetailBean.RelatedGoodsBean;
+import com.amkj.dmsh.find.bean.RelatedGoodsBean;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 
@@ -40,16 +40,6 @@ public class PostGoodsView extends LinearLayout {
     ImageView mIvAddCar;
     @BindView(R.id.rl_goods)
     RelativeLayout mRlGoods;
-    private BaseActivity context;
-    private RelatedGoodsBean mRelatedGoodsBean;
-
-    public PostGoodsView(RelatedGoodsBean relatedGoodsBean, BaseActivity activity) {
-        this(activity, null);
-        context = activity;
-        mRelatedGoodsBean = relatedGoodsBean;
-        updateData(activity, relatedGoodsBean);
-    }
-
 
     public PostGoodsView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -59,6 +49,7 @@ public class PostGoodsView extends LinearLayout {
     }
 
     public void updateData(BaseActivity activity, RelatedGoodsBean relatedGoodsBean) {
+        if (relatedGoodsBean==null) return;
         GlideImageLoaderUtil.loadImage(activity, mIvCover, relatedGoodsBean.getPictureUrl());
         mTvTitle.setText(getStrings(relatedGoodsBean.getTitle()));
         mTvPrice.setText(("¥" + relatedGoodsBean.getPrice()));

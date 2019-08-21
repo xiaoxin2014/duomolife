@@ -6,7 +6,7 @@ import android.support.annotation.Nullable;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.find.bean.PostDetailEntity.PostDetailBean.RelatedGoodsBean;
+import com.amkj.dmsh.find.bean.RelatedGoodsBean;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;

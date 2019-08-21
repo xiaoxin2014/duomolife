@@ -454,6 +454,31 @@ public class NetLoadUtils<T, E extends BaseEntity> {
         }
     }
 
+
+    /**
+     * 集合数据
+     *
+     * @param loadService
+     * @param listNotNull 集合数据是否为空，针对多个集合数据
+     * @param resultClass
+     */
+    @SuppressWarnings("unchecked")
+    public void showLoadSir(LoadService loadService, boolean listNotNull, E resultClass) {
+        if (loadService != null) {
+            if (resultClass != null) {
+                if (listNotNull) {
+                    loadService.showWithConvertor(SUCCESS_CODE);
+                } else if (ERROR_CODE.equals(resultClass.getCode())) {
+                    loadService.showWithConvertor(ERROR_CODE);
+                } else {
+                    loadService.showWithConvertor(EMPTY_CODE);
+                }
+            } else {
+                loadService.showWithConvertor(ERROR_CODE);
+            }
+        }
+    }
+
     /**
      * 集合数据
      *
@@ -634,7 +659,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
                         //判断条件是为了避免重复调用
                         if (ConstantMethod.userId > 0) {
                             //调用登出接口
-                            ConstantMethod.logout(mContext,false);
+                            ConstantMethod.logout(mContext, false);
                             //通知我的界面刷新
                             EventBus.getDefault().post(new EventMessage(ConstantVariable.TOKEN_EXPIRE_LOG_OUT, ""));
                             //提示用户登录

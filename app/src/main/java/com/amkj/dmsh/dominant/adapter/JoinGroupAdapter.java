@@ -239,7 +239,7 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
             } else {
                 return true;
             }
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return true;
@@ -265,7 +265,7 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
                     }
                     cv_countdownTime.updateShow(dateEnd.getTime() - dateCurrent.getTime()
                             - groupShopJoinBean.getSecond() * 1000);
-                } catch (ParseException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             } else {
@@ -281,7 +281,7 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
                     }
                     cv_countdownTime.updateShow(dateStart.getTime() - dateCurrent.getTime()
                             - groupShopJoinBean.getSecond() * 1000);
-                } catch (ParseException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -331,7 +331,7 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
                     }
                 });
             }
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -350,7 +350,7 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
             if (dateCurrent.getTime() >= dateStart.getTime()) {
                 return true;
             }
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;

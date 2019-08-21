@@ -14,6 +14,7 @@ public class PostEntity extends BaseEntity {
 
     @SerializedName("list")
     private List<PostBean> postList;
+    private RelatedGoodsBean productInfo;
 
     public List<PostBean> getPostList() {
         return postList;
@@ -167,4 +168,11 @@ public class PostEntity extends BaseEntity {
         }
     }
 
+    public RelatedGoodsBean getProductInfo() {
+        return productInfo;
+    }
+
+    public void setProductInfo(RelatedGoodsBean productInfo) {
+        this.productInfo = productInfo;
+    }
 }

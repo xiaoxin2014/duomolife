@@ -1376,4 +1376,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         return "";
     }
+
+    //获取当前被选中的fragment
+    public Fragment getFragment() {
+        return fragment;
+    }
 }

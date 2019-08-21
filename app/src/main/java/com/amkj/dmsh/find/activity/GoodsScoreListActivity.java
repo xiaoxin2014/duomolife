@@ -54,6 +54,7 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEMO_LIFE_FILE;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
@@ -153,11 +154,11 @@ public class GoodsScoreListActivity extends BaseActivity {
     protected void loadData() {
         getFindAd();
         getGoods();
-        getHotTopic();
     }
 
     //获取已购商品
     private void getGoods() {
+        if (userId < 0) return;
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", 1);
         params.put("showCount", ConstantVariable.TOTAL_COUNT_FORTY);
@@ -169,7 +170,7 @@ public class GoodsScoreListActivity extends BaseActivity {
             public void onSuccess(String result) {
                 loadHud.dismiss();
                 mGoodsList.clear();
-                totalGoodsList.clear(); 
+                totalGoodsList.clear();
                 mScoreGoodsEntity = new Gson().fromJson(result, ScoreGoodsEntity.class);
                 if (mScoreGoodsEntity != null) {
                     mScoreGoodsAdapter.setRewardReminder(mScoreGoodsEntity.getMaxRewardTip());
@@ -186,7 +187,7 @@ public class GoodsScoreListActivity extends BaseActivity {
                 totalGoodsList.removeAll(mGoodsList);
                 mScoreGoodsAdapter.notifyDataSetChanged();
                 new Handler().postDelayed(() -> showGuideView(), 500);
-                NetLoadUtils.getNetInstance().showLoadSir(loadService, mScoreGoodsEntity);
+                getHotTopic();
             }
 
             @Override
@@ -194,7 +195,6 @@ public class GoodsScoreListActivity extends BaseActivity {
                 loadHud.dismiss();
                 mLlGoodsList.setVisibility(mGoodsList.size() > 0 ? View.VISIBLE : View.GONE);
                 mTvRefresh.setVisibility(totalGoodsList.size() > 3 ? View.VISIBLE : View.GONE);
-                NetLoadUtils.getNetInstance().showLoadSir(loadService, mScoreGoodsEntity);
             }
         });
     }
@@ -259,12 +259,16 @@ public class GoodsScoreListActivity extends BaseActivity {
                 }
                 mLlFindHotTopic.setVisibility(hotTopicList.size() == 0 ? View.GONE : View.VISIBLE);
                 findHotTopicAdapter.notifyDataSetChanged();
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, hotTopicList.size() > 0 || mGoodsList.size() > 0, mScoreGoodsEntity);
+
             }
 
             @Override
             public void onNotNetOrException() {
                 mSmartLayout.finishRefresh();
                 mLlFindHotTopic.setVisibility(hotTopicList.size() == 0 ? View.GONE : View.VISIBLE);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, hotTopicList.size() > 0 || mGoodsList.size() > 0, mScoreGoodsEntity);
+
             }
         });
     }

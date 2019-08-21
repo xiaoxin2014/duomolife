@@ -4,7 +4,6 @@
     android:id="@+id/rl_goods"
     android:layout_width="match_parent"
     android:layout_height="@dimen/sc_mm_160"
-    android:layout_marginBottom="@dimen/sc_mm_10"
     android:background="@color/light_gray_f"
     android:padding="@dimen/sc_mm_20">
 

@@ -774,9 +774,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".release.activity.RelevanceProListActivity"
-            android:screenOrientation="portrait"/>
-        <activity
             android:name=".dominant.activity.DoMoGroupJoinShareActivity"
             android:exported="false"
             android:screenOrientation="portrait">

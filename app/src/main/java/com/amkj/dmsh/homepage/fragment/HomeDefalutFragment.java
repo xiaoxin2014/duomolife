@@ -697,7 +697,6 @@ public class HomeDefalutFragment extends BaseFragment {
                     }
                     getArticleTypeList(true);
                 }
-
                 break;
             case R.id.ll_dynamic:
                 //跳转新人专区

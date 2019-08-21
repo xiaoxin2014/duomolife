@@ -1,7 +1,6 @@
 package com.amkj.dmsh.find.bean;
 
 import com.amkj.dmsh.base.BaseEntity;
-import com.amkj.dmsh.constant.ConstantMethod;
 
 import java.util.List;
 
@@ -340,62 +339,6 @@ public class PostDetailEntity extends BaseEntity {
 
             public void setTag_id(int tag_id) {
                 this.tag_id = tag_id;
-            }
-        }
-
-        public static class RelatedGoodsBean {
-            /**
-             * productId : 19408
-             * price : 42.00
-             * pictureUrl : http://image.domolife.cn/platform/SBket5TY5d1560242526857.jpg
-             * id : 14067
-             * title : 尔木萄 星空美妆蛋
-             */
-
-            private int productId;
-            private String price;
-            private String pictureUrl;
-            private int id;
-            private String title;
-
-            public int getProductId() {
-                return productId;
-            }
-
-            public void setProductId(int productId) {
-                this.productId = productId;
-            }
-
-            public String getPrice() {
-                return ConstantMethod.stripTrailingZeros(price);
-            }
-
-            public void setPrice(String price) {
-                this.price = price;
-            }
-
-            public String getPictureUrl() {
-                return pictureUrl;
-            }
-
-            public void setPictureUrl(String pictureUrl) {
-                this.pictureUrl = pictureUrl;
-            }
-
-            public int getId() {
-                return id;
-            }
-
-            public void setId(int id) {
-                this.id = id;
-            }
-
-            public String getTitle() {
-                return title;
-            }
-
-            public void setTitle(String title) {
-                this.title = title;
             }
         }
 

@@ -763,9 +763,10 @@ public class Url {
     public static final String NEW_FANS = "api/find/post/getNewFans";
     //    奖励规则H5地址
     public static final String REWARD_RULE = BASE_SHARE_PAGE_TWO + "m/template/find_template/rewardRule.html?hideNav=1";
-    //    public static final String REWARD_RULE = "http://test.domolife.cn/test/template/find_template/rewardRule.html?hideNav=1";
     //    已购买商品列表界面 广告位
     public static final String FIND_AD2 = "api/website/getAdByFindTopic";
+    //    获取商品详情更多评论
+    public static final String GET_PRODUCT_POST= "api/find/post/getProductPost";
 
 
     /**

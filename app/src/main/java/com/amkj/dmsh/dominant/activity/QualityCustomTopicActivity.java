@@ -209,7 +209,6 @@ public class QualityCustomTopicActivity extends BaseActivity {
     @Override
     protected void getData() {
         getCustomCoverDescription();
-        getQualityCustomPro();
         getCarCount(getActivity());
     }
 
@@ -243,7 +242,7 @@ public class QualityCustomTopicActivity extends BaseActivity {
                         if (!TextUtils.isEmpty(customCoverDesBean.getPicUrl())) {
                             qNewProView.iv_communal_cover_wrap.setVisibility(View.VISIBLE);
                             GlideImageLoaderUtil.loadImgDynamicDrawable(QualityCustomTopicActivity.this, qNewProView.iv_communal_cover_wrap,
-                                    getStrings(customCoverDesBean.getPicUrl()),-1);
+                                    getStrings(customCoverDesBean.getPicUrl()), -1);
                         } else {
                             qNewProView.iv_communal_cover_wrap.setVisibility(View.GONE);
                         }
@@ -269,6 +268,8 @@ public class QualityCustomTopicActivity extends BaseActivity {
                         qualityCustomTopicAdapter.notifyDataSetChanged();
                     }
                 }
+
+                getQualityCustomPro();
             }
 
             @Override
@@ -325,24 +326,14 @@ public class QualityCustomTopicActivity extends BaseActivity {
                             }
                             qualityCustomTopicAdapter.notifyDataSetChanged();
                         }
-                        NetLoadUtils.getNetInstance().showLoadSir(loadService, customProList, userLikedProductEntity);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, customProList.size() > 0 || descriptionList.size() > 0, userLikedProductEntity);
                     }
 
                     @Override
                     public void onNotNetOrException() {
                         smart_communal_refresh.finishRefresh();
                         qualityCustomTopicAdapter.loadMoreEnd(true);
-                        NetLoadUtils.getNetInstance().showLoadSir(loadService, customProList, userLikedProductEntity);
-                    }
-
-                    @Override
-                    public void netClose() {
-                        showToast(QualityCustomTopicActivity.this, R.string.unConnectedNetwork);
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
-                        showToast(QualityCustomTopicActivity.this, R.string.invalidData);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, customProList.size() > 0 || descriptionList.size() > 0, userLikedProductEntity);
                     }
                 });
     }
@@ -432,7 +423,7 @@ public class QualityCustomTopicActivity extends BaseActivity {
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
         if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
-            if (badge!=null){
+            if (badge != null) {
                 badge.setBadgeNumber((int) message.result);
             }
         }

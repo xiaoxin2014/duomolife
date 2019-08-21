@@ -3,6 +3,7 @@ package com.amkj.dmsh.find.fragment;
 import android.content.Intent;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.amkj.dmsh.MainActivity;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
@@ -64,6 +66,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getMessageCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getTopBadge;
+import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEMO_LIFE_FILE;
 import static com.amkj.dmsh.constant.ConstantVariable.REFRESH_MESSAGE_TOTAL;
@@ -306,7 +309,7 @@ public class FindFragment extends BaseFragment {
 
     public void showGuideView1() {
         boolean showFindGuide1 = (boolean) SharedPreUtils.getParam(DEMO_LIFE_FILE, "showFindGuide1", false);
-        if (!showFindGuide1) {
+        if (!showFindGuide1 && isFindSelected()) {
             GuideBuilder builder = new GuideBuilder();
             builder.setTargetView(mIvFindRelease)
                     .setAlpha(125)
@@ -335,7 +338,7 @@ public class FindFragment extends BaseFragment {
 
     public void showGuideView2() {
         boolean showFindGuide2 = (boolean) SharedPreUtils.getParam(DEMO_LIFE_FILE, "showFindGuide2", false);
-        if (!showFindGuide2) {
+        if (!showFindGuide2 && isFindSelected()) {
             List<HotTopicBean> data = findHotTopicAdapter.getData();
             if (data.size() > 0) {
                 TextView tvGetIntegral = (TextView) findHotTopicAdapter.getViewByPosition(communal_recycler_wrap, 0, R.id.tv_get_integral);
@@ -361,7 +364,7 @@ public class FindFragment extends BaseFragment {
                     builder.addComponent(new FindComponent2());
                     Guide guide = builder.createGuide();
                     guide.show(getActivity());
-                }else {
+                } else {
                     showGuideView3();
                 }
             }
@@ -373,7 +376,7 @@ public class FindFragment extends BaseFragment {
 
     public void showGuideView3() {
         boolean showFindGuide3 = (boolean) SharedPreUtils.getParam(DEMO_LIFE_FILE, "showFindGuide3", false);
-        if (!showFindGuide3) {
+        if (!showFindGuide3 && isFindSelected()) {
             View view = vp_post.getChildAt(std_find_art_type.getCurrentTab());
             if (view != null) {
                 RecyclerView recyclerView = view.findViewById(R.id.rv_topic_content);
@@ -405,5 +408,14 @@ public class FindFragment extends BaseFragment {
                 }
             }
         }
+    }
+
+    //判断MainActivity当前选中的是否是FindFragment
+    private boolean isFindSelected() {
+        if (isContextExisted(getActivity())) {
+            Fragment fragment = ((MainActivity) getActivity()).getFragment();
+            return fragment instanceof FindFragment;
+        }
+        return false;
     }
 }

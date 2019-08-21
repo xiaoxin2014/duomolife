@@ -12,8 +12,6 @@ import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantVariable;
-import com.amkj.dmsh.find.activity.ArticleDetailsImgActivity;
-import com.amkj.dmsh.find.activity.ArticleInvitationDetailsActivity;
 import com.amkj.dmsh.find.adapter.PullUserInvitationAdapter;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean;
@@ -40,6 +38,7 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getNumCount;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.skipPostDetail;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
@@ -87,26 +86,14 @@ public class CollectInvitationFragment extends BaseFragment {
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_ten_dp)
-
-
                 .create());
         adapterInvitationAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 InvitationDetailBean invitationDetailBean = (InvitationDetailBean) view.getTag();
-                Intent intent = new Intent();
-                switch (invitationDetailBean.getArticletype()) {
-                    case 1:
-                        intent.setClass(getActivity(), ArticleInvitationDetailsActivity.class);
-                        break;
-                    case 3:
-                        break;
-                    default:
-                        intent.setClass(getActivity(), ArticleDetailsImgActivity.class);
-                        break;
+                if (invitationDetailBean != null && invitationDetailBean.getArticletype() != 3) {
+                    skipPostDetail(getActivity(), String.valueOf(invitationDetailBean.getId()), invitationDetailBean.getArticletype());
                 }
-                intent.putExtra("ArtId", String.valueOf(invitationDetailBean.getId()));
-                startActivity(intent);
             }
         });
         TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
@@ -189,7 +176,7 @@ public class CollectInvitationFragment extends BaseFragment {
         //文章id
         params.put("object_id", invitationDetailBean.getId());
         params.put("type", ConstantVariable.TYPE_C_ARTICLE);
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),F_ARTICLE_COLLECT,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), F_ARTICLE_COLLECT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 loadHud.dismiss();
@@ -215,7 +202,7 @@ public class CollectInvitationFragment extends BaseFragment {
 
             @Override
             public void netClose() {
-                showToast(getActivity(),R.string.unConnectedNetwork);
+                showToast(getActivity(), R.string.unConnectedNetwork);
             }
         });
     }
@@ -228,7 +215,7 @@ public class CollectInvitationFragment extends BaseFragment {
         //关注id
         params.put("id", invitationDetailBean.getId());
         params.put("favortype", "doc");
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),F_ARTICLE_DETAILS_FAVOR,params,null);
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), F_ARTICLE_DETAILS_FAVOR, params, null);
         tv_like.setSelected(!tv_like.isSelected());
         tv_like.setText(getNumCount(tv_like.isSelected(), invitationDetailBean.isFavor(), invitationDetailBean.getFavor(), "赞"));
     }
@@ -269,7 +256,7 @@ public class CollectInvitationFragment extends BaseFragment {
                         invitationDetailList.addAll(invitationDetailEntity.getInvitationSearchList());
                     } else if (!invitationDetailEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(getActivity(), invitationDetailEntity.getMsg());
-                    }else{
+                    } else {
                         adapterInvitationAdapter.loadMoreEnd();
                     }
                     adapterInvitationAdapter.notifyDataSetChanged();
