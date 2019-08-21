@@ -80,6 +80,10 @@
     <string name="no_found_content">没有找到相关%1$s</string>
     <!--传递数据至web-->
     <string name="web_uid_method">javascript:getUserId(%1$d)</string>
+    <!--传递head至web-->
+    <string name="web_head_method">javascript:getHeader(%1$s,%2$s)</string>
+    <!--评论成功-->
+    <string name="web_comment_success_method">javascript:commentSuccess(\'%1$s\',\'%2$s\')</string>
     <!--图片上传-->
     <string name="web_image_up_method">javascript:upBackImage(\'%1$s\',\'%2$s\')</string>
     <!--添加日程回调-->

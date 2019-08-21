@@ -139,7 +139,7 @@ public class MyInterceptor implements Interceptor {
     }
 
     //多么生活api通用参数
-    private static Map<String, Object> getCommonApiParameter(Context context) {
+    public static Map<String, Object> getCommonApiParameter(Context context) {
         Map<String, Object> map = new HashMap<>();
         map.put("appVersion", DeviceUtils.getVersionName(context));
         map.put("device", DeviceUtils.getModel());
@@ -151,6 +151,4 @@ public class MyInterceptor implements Interceptor {
         map.put("deviceId", DeviceUtils.getAndroidID(context));
         return map;
     }
-
-
 }

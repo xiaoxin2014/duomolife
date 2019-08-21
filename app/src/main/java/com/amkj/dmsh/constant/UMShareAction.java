@@ -18,7 +18,6 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.ScrollView;
 
-import com.amkj.dmsh.BuildConfig;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.RequestStatus;
@@ -34,8 +33,8 @@ import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.utils.AsyncUtils;
 import com.amkj.dmsh.utils.FileStreamUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogShareHelper;
-import com.amkj.dmsh.utils.alertdialog.ShareIconTitleBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.views.HtmlWebView;
 import com.google.gson.Gson;
 import com.umeng.socialize.ShareAction;
 import com.umeng.socialize.UMShareListener;
@@ -192,8 +191,10 @@ public class UMShareAction {
                         if (view != null && TextUtils.isEmpty(imgUrl)) {
                             if (context instanceof DoMoLifeWelfareDetailsActivity) {
                                 ((ScrollView) view).scrollTo(0, 0);
-                            } else if (context instanceof ArticleOfficialActivity || context instanceof QualityCustomTopicActivity || context instanceof PostDetailActivity) {
+                            } else if (context instanceof QualityCustomTopicActivity || context instanceof PostDetailActivity) {
                                 ((RecyclerView) view).scrollToPosition(0);
+                            } else if (context instanceof ArticleOfficialActivity) {
+                                ((HtmlWebView) view).scrollTo(0, 0);
                             }
                             //滚动截屏
                             new Handler().postDelayed(() -> new AsyncUtils<Bitmap>(context) {
@@ -202,31 +203,31 @@ public class UMShareAction {
                                     return GlideImageLoaderUtil.getBitmapFromView(view);
                                 }
 
+                                @Override
+                                public void runOnUI(Bitmap bitmap) {
+                                    mBitmap = bitmap;
+                                    setLoadImageShare(sharePlatformType, new UMImage(context, bitmap), context, urlLink, title, description);
+                                }
+                            }.excueTask(), 100);
+                        } else {
+                            if (!TextUtils.isEmpty(imgUrl)) {
+                                //        加载图片
+                                GlideImageLoaderUtil.loadFinishImgDrawable(context, getThumbImgUrl(imgUrl, 300), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
                                     @Override
-                                    public void runOnUI(Bitmap bitmap) {
+                                    public void onSuccess(Bitmap bitmap) {
                                         mBitmap = bitmap;
                                         setLoadImageShare(sharePlatformType, new UMImage(context, bitmap), context, urlLink, title, description);
                                     }
-                                }.excueTask(), 100);
-                            } else {
-                                if (!TextUtils.isEmpty(imgUrl)) {
-                                    //        加载图片
-                                    GlideImageLoaderUtil.loadFinishImgDrawable(context, getThumbImgUrl(imgUrl, 300), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
-                                        @Override
-                                        public void onSuccess(Bitmap bitmap) {
-                                            mBitmap = bitmap;
-                                            setLoadImageShare(sharePlatformType, new UMImage(context, bitmap), context, urlLink, title, description);
-                                        }
 
-                                        @Override
-                                        public void onError() {
-                                            setLoadImageShare(sharePlatformType, new UMImage(context, R.drawable.domolife_logo), context, urlLink, title, description);
-                                        }
-                                    });
-                                } else {
+                                    @Override
+                                    public void onError() {
+                                        setLoadImageShare(sharePlatformType, new UMImage(context, R.drawable.domolife_logo), context, urlLink, title, description);
+                                    }
+                                });
+                            } else {
                                 setLoadImageShare(sharePlatformType, new UMImage(context, getDefaultCover(context)), context, urlLink, title, description);
-                                }
                             }
+                        }
 
                         break;
                 }
