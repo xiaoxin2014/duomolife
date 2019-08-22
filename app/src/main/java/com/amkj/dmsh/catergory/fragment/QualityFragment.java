@@ -96,31 +96,27 @@ public class QualityFragment extends BaseFragment {
         mRvCatergory.setAdapter(mOneLevelAdapter);
         mOneLevelAdapter.setOnItemChildClickListener((adapter, view, position) -> {
             RelateArticleBean relateArticleBean = (RelateArticleBean) view.getTag();
+            if (relateArticleBean == null) return;
+            Intent intent = null;
             switch (view.getId()) {
                 //进入文章专题
                 case R.id.rl_more_artical:
-                    if (relateArticleBean != null) {
-                        Intent intent = new Intent(getActivity(), ArticleTypeActivity.class);
-                        intent.putExtra("categoryTitle", relateArticleBean.getCategoryName());
-                        intent.putExtra("categoryId", relateArticleBean.getArticles().get(0).getArticleCategoryId());
-                        if (getActivity() != null) startActivity(intent);
-                    }
+                    intent = new Intent(getActivity(), ArticleTypeActivity.class);
+                    intent.putExtra("categoryTitle", relateArticleBean.getCategoryName());
+                    intent.putExtra("categoryId", String.valueOf(relateArticleBean.getArticles().get(0).getArticleCategoryId()));
+                    if (getActivity() != null) startActivity(intent);
                     break;
                 //点击进入文章详情
                 case R.id.fl_artical_left:
-                    if (relateArticleBean != null) {
-                        Intent intent = new Intent(getActivity(), ArticleOfficialActivity.class);
-                        intent.putExtra("ArtId", String.valueOf(relateArticleBean.getArticles().get(0).getDocumentId()));
-                        startActivity(intent);
-                    }
+                    intent = new Intent(getActivity(), ArticleOfficialActivity.class);
+                    intent.putExtra("ArtId", String.valueOf(relateArticleBean.getArticles().get(0).getDocumentId()));
+                    startActivity(intent);
                     break;
                 //点击进入文章详情
                 case R.id.fl_artical_right:
-                    if (relateArticleBean != null) {
-                        Intent intent = new Intent(getActivity(), ArticleOfficialActivity.class);
-                        intent.putExtra("ArtId", String.valueOf(relateArticleBean.getArticles().get(1).getDocumentId()));
-                        startActivity(intent);
-                    }
+                    intent = new Intent(getActivity(), ArticleOfficialActivity.class);
+                    intent.putExtra("ArtId", String.valueOf(relateArticleBean.getArticles().get(1).getDocumentId()));
+                    startActivity(intent);
                     break;
             }
         });

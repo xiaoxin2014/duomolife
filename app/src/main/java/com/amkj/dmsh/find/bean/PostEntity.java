@@ -43,6 +43,7 @@ public class PostEntity extends BaseEntity {
         private int status;
         private String topicTitle;
         private String avatar;
+        @SerializedName(value = "nickName", alternate = "nickname")
         private String nickName;
         private String digest;
         private String cover;

@@ -10,7 +10,6 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.text.emoji.widget.EmojiEditText;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -47,16 +46,13 @@ import com.alibaba.fastjson.JSON;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
-import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.AppUpdateUtils;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalComment;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.ConstantVariable;
+import com.amkj.dmsh.dao.SoftApiDao;
 import com.amkj.dmsh.dominant.bean.DmlSearchCommentEntity.DmlSearchCommentBean;
 import com.amkj.dmsh.homepage.bean.JsInteractiveBean;
-import com.amkj.dmsh.network.NetLoadListenerHelper;
-import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.SharedPreUtils;
@@ -64,8 +60,6 @@ import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.amkj.dmsh.utils.webformatdata.ShareDataBean;
 import com.amkj.dmsh.views.HtmlWebView;
-import com.amkj.dmsh.views.MyWebChromeClient;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.constant.RefreshState;
@@ -79,13 +73,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.OnTouch;
 import me.jessyan.autosize.AutoSize;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -108,8 +101,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.WEB_JD_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TAOBAO_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TB_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TMALL_SCHEME;
-import static com.amkj.dmsh.constant.Url.F_ARTICLE_COLLECT;
-import static com.amkj.dmsh.constant.Url.F_ARTICLE_DETAILS_FAVOR;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 import static com.amkj.dmsh.rxeasyhttp.interceptor.MyInterceptor.getCommonApiParameter;
 
@@ -117,14 +108,6 @@ import static com.amkj.dmsh.rxeasyhttp.interceptor.MyInterceptor.getCommonApiPar
  * Created by atd48 on 2016/6/30.
  */
 public class ArticleOfficialActivity extends BaseActivity {
-    @BindView(R.id.tv_life_back)
-    TextView mTvLifeBack;
-    @BindView(R.id.tv_header_title)
-    TextView mTvHeaderTitle;
-    @BindView(R.id.tv_header_shared)
-    TextView mTvHeaderShared;
-    @BindView(R.id.tl_normal_bar)
-    Toolbar mTlNormalBar;
     @BindView(R.id.web_communal)
     HtmlWebView web_communal;
     @BindView(R.id.emoji_edit_comment)
@@ -159,6 +142,12 @@ public class ArticleOfficialActivity extends BaseActivity {
     SmartRefreshLayout smart_web_refresh;
     @BindView(R.id.download_btn_communal)
     FloatingActionButton floatingActionButton;
+    @BindView(R.id.rl_toolbar2)
+    RelativeLayout mRlToolbar2;
+    @BindView(R.id.tv_title)
+    TextView mTvTitle;
+    @BindView(R.id.rl_toolbar)
+    LinearLayout mRlToolbar;
 
 
     private String artId;
@@ -177,8 +166,6 @@ public class ArticleOfficialActivity extends BaseActivity {
     @SuppressLint({"SetJavaScriptEnabled", "AddJavascriptInterface"})
     @Override
     protected void initViews() {
-        mTlNormalBar.setSelected(true);
-        mTvHeaderTitle.setText("");
         Intent intent = getIntent();
         artId = intent.getStringExtra("ArtId");
         //记录埋点参数sourceId
@@ -202,7 +189,6 @@ public class ArticleOfficialActivity extends BaseActivity {
         webSettings.setSupportZoom(true); // 支持缩放
         webSettings.setPluginState(WebSettings.PluginState.ON);
         webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE); // 不加载缓存内容
-        web_communal.setWebChromeClient(new MyWebChromeClient(this));
         //加载需要显示的网页
         if (NetWorkUtils.checkNet(this)) {
             webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
@@ -305,6 +291,7 @@ public class ArticleOfficialActivity extends BaseActivity {
         });
 
         int screenHeight = ((TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike()).getScreenHeight();
+        int bannerHeight = AutoSizeUtils.mm2px(this, 750);
         web_communal.setOnScrollChangedCallback((dx, dy) -> {
             if (dy < 2) {
                 setWebRefreshStatus(1);
@@ -324,6 +311,20 @@ public class ArticleOfficialActivity extends BaseActivity {
                 if (floatingActionButton.isVisible()) {
                     floatingActionButton.hide();
                 }
+            }
+
+
+            //设置标题栏
+            float alpha = dy * 1.0f / bannerHeight * 1.0f;
+            if (alpha >= 1) {
+                mRlToolbar2.setAlpha(0);
+                mRlToolbar.setAlpha(1);
+            } else if (alpha > 0) {
+                mRlToolbar2.setAlpha(alpha > 0.4f ? 0 : 1 - alpha);
+                mRlToolbar.setAlpha(alpha < 0.4f ? 0 : alpha);
+            } else {
+                mRlToolbar2.setAlpha(1);
+                mRlToolbar.setAlpha(0);
             }
         });
 
@@ -461,12 +462,7 @@ public class ArticleOfficialActivity extends BaseActivity {
                         case "alibcUrl":
                             jsSkipTaoBao(jsInteractiveBean.getOtherData());
                         case "navigationBar":
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    jsSetNavBar(jsInteractiveBean);
-                                }
-                            });
+                            runOnUiThread(() -> jsSetNavBar(jsInteractiveBean.getOtherData()));
                             break;
                         default:
                             jsInteractiveEmpty(null);
@@ -485,36 +481,10 @@ public class ArticleOfficialActivity extends BaseActivity {
     /**
      * js设置导航栏
      */
-    private void jsSetNavBar(JsInteractiveBean jsInteractiveBean) {
-        Map<String, Object> otherData = jsInteractiveBean.getOtherData();
-        if (otherData != null && otherData.get("navBarVisibility") != null) {
-            try {
-                int navBarVisibility = (int) otherData.get("navBarVisibility");
-                if (navBarVisibility == 1) {
-                    mTlNormalBar.setVisibility(View.VISIBLE);
-                    String navBarTitle = (String) getMapValue(otherData.get("navTitle"), "");
-                    mTvHeaderTitle.setText(getStrings(navBarTitle));
-                    mTvHeaderShared.setVisibility(((int) getMapValue(otherData.get("navShareVisibility"), 0)) == 1 ?
-                            View.VISIBLE : View.GONE);
-                } else {
-                    setDefaultNavBar(0);
-                }
-            } catch (Exception e) {
-                setDefaultNavBar(1);
-                e.printStackTrace();
-            }
-        } else {
-            setDefaultNavBar(1);
+    private void jsSetNavBar(Map<String, Object> otherData) {
+        if (otherData != null) {
+            mTvTitle.setText(getStrings((String) otherData.get("navTitle")));
         }
-    }
-
-    /**
-     * 设置导航栏默认设置
-     */
-    private void setDefaultNavBar(int navBarVisibility) {
-        mTvHeaderTitle.setText("");
-        mTvHeaderShared.setVisibility(View.GONE);
-        mTlNormalBar.setVisibility(navBarVisibility == 1 ? View.VISIBLE : View.GONE);
     }
 
 
@@ -723,7 +693,7 @@ public class ArticleOfficialActivity extends BaseActivity {
                 try {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                         web_communal.evaluateJavascript(jsUrl, s -> {
-                            Log.d(getSimpleName(), s);
+                            Log.d(getSimpleName(), s);//如果调起成功，返回值s等于jsUrl
                         });
                     } else {
                         web_communal.loadUrl(jsUrl);
@@ -738,64 +708,6 @@ public class ArticleOfficialActivity extends BaseActivity {
     @Override
     protected void loadData() {
 
-    }
-
-    private String getNumber(String content) {
-        String regex = "[0-9]\\d*\\.?\\d*";
-        Pattern p = Pattern.compile(regex);
-        Matcher m = p.matcher(content);
-        while (m.find()) {
-            return m.group();
-        }
-        return "0";
-    }
-
-    //文章点赞
-    private void setArticleLike() {
-        Map<String, Object> params = new HashMap<>();
-        //用户id
-        params.put("tuid", userId);
-        //关注id
-        params.put("id", artId);
-        params.put("favortype", "doc");
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, F_ARTICLE_DETAILS_FAVOR, params, null);
-        mTvArticleBottomLike.setSelected(!mTvArticleBottomLike.isSelected());
-        String likeCount = getNumber(mTvArticleBottomLike.getText().toString().trim());
-        int likeNum = Integer.parseInt(likeCount);
-        mTvArticleBottomLike.setText(String.valueOf(mTvArticleBottomLike.isSelected()
-                ? likeNum + 1 : likeNum - 1 > 0 ? likeNum - 1 : "赞"));
-    }
-
-
-    //    文章收藏
-    private void setArticleCollect() {
-        Map<String, Object> params = new HashMap<>();
-        //用户id
-        params.put("uid", userId);
-        //文章id
-        params.put("object_id", artId);
-        params.put("type", ConstantVariable.TYPE_C_ARTICLE);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, F_ARTICLE_COLLECT, params, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                loadHud.dismiss();
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                if (requestStatus != null) {
-                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        mTvArticleBottomCollect.setSelected(!mTvArticleBottomCollect.isSelected());
-                    } else {
-                        showToast(ArticleOfficialActivity.this, String.format(getResources().getString(R.string.collect_failed), "文章"));
-
-                    }
-                }
-            }
-
-            @Override
-            public void onNotNetOrException() {
-                loadHud.dismiss();
-            }
-        });
     }
 
     //发送评论
@@ -823,7 +735,6 @@ public class ArticleOfficialActivity extends BaseActivity {
                 mTvSendComment.setText("发送");
                 mTvSendComment.setEnabled(true);
                 webViewJs(getStringsFormat(getActivity(), R.string.web_comment_success_method, ERROR_CODE, communalComment.getContent()));
-
             }
         });
         constantMethod.setSendComment(ArticleOfficialActivity.this, communalComment);
@@ -890,13 +801,15 @@ public class ArticleOfficialActivity extends BaseActivity {
         return false;
     }
 
-    @OnClick({R.id.tv_life_back, R.id.tv_header_shared, R.id.tv_send_comment, R.id.tv_article_bottom_like, R.id.tv_article_bottom_collect, R.id.smart_web_refresh, R.id.tv_publish_comment})
+    @OnClick({R.id.iv_life_back, R.id.iv_life_back2, R.id.iv_img_share, R.id.iv_img_share2, R.id.tv_send_comment, R.id.tv_article_bottom_like, R.id.tv_article_bottom_collect, R.id.smart_web_refresh, R.id.tv_publish_comment})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.tv_life_back:
+            case R.id.iv_life_back:
+            case R.id.iv_life_back2:
                 finish();
                 break;
-            case R.id.tv_header_shared:
+            case R.id.iv_img_share:
+            case R.id.iv_img_share2:
                 CommunalWebDetailUtils.getCommunalWebInstance()
                         .setShareData(getActivity(), mShareDataBean);
                 break;
@@ -912,19 +825,10 @@ public class ArticleOfficialActivity extends BaseActivity {
                 }
                 break;
             case R.id.tv_article_bottom_like:
-                if (userId > 0) {
-                    setArticleLike();
-                } else {
-                    getLoginStatus(ArticleOfficialActivity.this);
-                }
+                SoftApiDao.favorArtical(this, artId, mTvArticleBottomLike);
                 break;
             case R.id.tv_article_bottom_collect:
-                if (userId > 0) {
-                    loadHud.show();
-                    setArticleCollect();
-                } else {
-                    getLoginStatus(ArticleOfficialActivity.this);
-                }
+                SoftApiDao.collectArtical(this, artId, mTvArticleBottomCollect);
                 break;
             case R.id.smart_web_refresh:
                 mRelCommunalNetError.setVisibility(View.GONE);

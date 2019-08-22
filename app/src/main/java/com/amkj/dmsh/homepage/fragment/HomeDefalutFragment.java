@@ -682,7 +682,6 @@ public class HomeDefalutFragment extends BaseFragment {
             //跳转文章列表
             case R.id.rl_more_artical:
                 intent = new Intent(getActivity(), ArticleTypeActivity.class);
-                intent.putExtra("categoryTitle", "种草特辑");
                 if (getActivity() != null) startActivity(intent);
                 break;
             //换一批文章

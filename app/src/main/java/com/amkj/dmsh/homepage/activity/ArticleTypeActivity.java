@@ -22,6 +22,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.OnClick;
 
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.Url.H_CATEGORY_LIST;
 
@@ -56,7 +57,7 @@ public class ArticleTypeActivity extends BaseActivity {
     protected void initViews() {
         mTvHeaderTitle.setText("种草特辑");
         if (getIntent() != null) {
-            mCategoryId = getIntent().getIntExtra("categoryId", 0);
+            mCategoryId = getStringChangeIntegers(getIntent().getStringExtra("categoryId"));
         }
     }
 

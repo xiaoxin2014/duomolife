@@ -62,6 +62,7 @@ import com.amkj.dmsh.utils.ImgUrlHelp;
 import com.amkj.dmsh.utils.Log;
 import com.amkj.dmsh.utils.MarketUtils;
 import com.amkj.dmsh.utils.NetWorkUtils;
+import com.amkj.dmsh.utils.SharedPreUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
 import com.amkj.dmsh.views.HtmlWebView;
@@ -74,6 +75,8 @@ import com.scwang.smartrefresh.layout.constant.RefreshState;
 import com.tencent.bugly.crashreport.CrashReport;
 import com.umeng.socialize.UMShareAPI;
 import com.yanzhenjie.permission.Permission;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -92,6 +95,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getMapValue;
 import static com.amkj.dmsh.constant.ConstantMethod.getOnlyUrlParams;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getVersionName;
 import static com.amkj.dmsh.constant.ConstantMethod.isWebLinkUrl;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
@@ -99,10 +103,12 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.REQUEST_NOTIFICATION_STATUS;
+import static com.amkj.dmsh.constant.ConstantVariable.TOKEN;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_JD_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TAOBAO_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TB_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TMALL_SCHEME;
+import static com.amkj.dmsh.rxeasyhttp.interceptor.MyInterceptor.getCommonApiParameter;
 import static com.luck.picture.lib.config.PictureConfigC.CHOOSE_REQUEST;
 
 
@@ -660,6 +666,9 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                         case "userId":
                             jsGetUserId(jsInteractiveBean);
                             break;
+                        case "getHeaderFromApp":
+                            getHeaderFromApp(jsInteractiveBean.getOtherData());
+                            break;
 //                            刷新设置
                         case "refresh":
                             runOnUiThread(new Runnable() {
@@ -746,6 +755,26 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
 
     }
 
+    //获取Header头
+    public void getHeaderFromApp(Map<String, Object> data) {
+        Map<String, Object> map = getCommonApiParameter(getActivity());
+        if (data != null && data.get("mustLogin") != null) {
+            int mustLogin = ((int) data.get("mustLogin"));
+            if (mustLogin == 1) {
+                if (userId > 0) {
+                    //登录情况下传uid和token
+                    map.put("uid", ConstantMethod.userId);
+                    String token = (String) SharedPreUtils.getParam(TOKEN, "");
+                    map.put("token", token);
+                } else {
+                    getLoginStatus(this);
+                }
+            }
+        }
+
+//        String base64 = Base64.encodeToString(new JSONObject(map).toString().getBytes(), Base64.NO_WRAP);
+        webViewJs(getStringsFormat(getActivity(), R.string.web_head_method, new JSONObject(map).toString(), userId == 0 ? "" : String.valueOf(userId)));
+    }
     /**
      * 跳转应用商店评分
      *

@@ -25,12 +25,15 @@ import java.util.Map;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.NEW_FANS;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_FOLLOW_STATUS;
+import static com.amkj.dmsh.constant.Url.F_ARTICLE_COLLECT;
+import static com.amkj.dmsh.constant.Url.F_ARTICLE_DETAILS_FAVOR;
 import static com.amkj.dmsh.constant.Url.F_TOPIC_COLLECT;
 import static com.amkj.dmsh.constant.Url.UPDATE_ATTENTION;
 
@@ -146,6 +149,59 @@ public class SoftApiDao {
         }
     }
 
+    //文章点赞
+    public static void favorArtical(BaseActivity activity, String artId, TextView tvLike) {
+        if (userId > 0) {
+            Map<String, Object> params = new HashMap<>();
+            params.put("tuid", userId);
+            params.put("id", artId);
+            params.put("favortype", "doc");
+            tvLike.setSelected(!tvLike.isSelected());
+            String likeCount = getNumber(tvLike.getText().toString().trim());
+            int likeNum = Integer.parseInt(likeCount);
+            tvLike.setText(String.valueOf(tvLike.isSelected()
+                    ? likeNum + 1 : likeNum - 1 > 0 ? likeNum - 1 : "赞"));
+            NetLoadUtils.getNetInstance().loadNetDataPost(activity, F_ARTICLE_DETAILS_FAVOR, params, null);
+        } else {
+            getLoginStatus(activity);
+        }
+    }
+
+    //    文章收藏
+    public static void collectArtical(BaseActivity activity, String artId, TextView tvCollect) {
+        if (userId > 0) {
+            activity.loadHud.show();
+            Map<String, Object> params = new HashMap<>();
+            //用户id
+            params.put("uid", userId);
+            //文章id
+            params.put("object_id", artId);
+            params.put("type", ConstantVariable.TYPE_C_ARTICLE);
+            NetLoadUtils.getNetInstance().loadNetDataPost(activity, F_ARTICLE_COLLECT, params, new NetLoadListenerHelper() {
+                @Override
+                public void onSuccess(String result) {
+                    activity.loadHud.dismiss();
+                    Gson gson = new Gson();
+                    RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+                    if (requestStatus != null) {
+                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
+                            tvCollect.setSelected(!tvCollect.isSelected());
+                        } else {
+                            showToast(activity, getStringsFormat(activity, R.string.collect_failed, "文章"));
+                        }
+                    }
+                }
+
+                @Override
+                public void onNotNetOrException() {
+                    activity.loadHud.dismiss();
+                }
+            });
+        } else {
+            getLoginStatus(activity);
+        }
+
+    }
 
     //帖子详情点赞
     public static void favorPostDetail(Activity activity, int postId, TextView tvFavor) {

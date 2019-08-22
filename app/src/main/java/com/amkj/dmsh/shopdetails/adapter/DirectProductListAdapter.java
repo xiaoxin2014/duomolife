@@ -649,7 +649,7 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
             if (currentTime >= dateStart.getTime() && currentTime < dateEnd.getTime()) {
                 return true;
             }
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;

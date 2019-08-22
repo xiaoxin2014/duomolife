@@ -18,6 +18,7 @@ import com.amkj.dmsh.BuildConfig;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.constant.TotalPersonalTrajectory;
 import com.amkj.dmsh.find.activity.TopicDetailActivity;
+import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
 import com.amkj.dmsh.netloadpage.NetEmptyCallback;
 import com.amkj.dmsh.netloadpage.NetLoadCallback;
 import com.amkj.dmsh.network.NetLoadUtils;
@@ -139,10 +140,10 @@ public abstract class BaseActivity extends AppCompatActivity {
                     if ("EditorCommentActivity".equals(mSimpleName)) {
                         ImageView iv_communal_pic = view.findViewById(R.id.iv_communal_pic);
                         iv_communal_pic.setImageResource(R.drawable.editor_message);
-                    }else if ("ShopCarActivity".equals(mSimpleName)){
+                    } else if ("ShopCarActivity".equals(mSimpleName)) {
                         ImageView iv_communal_pic = view.findViewById(R.id.iv_communal_pic);
                         iv_communal_pic.setImageResource(R.drawable.cart_empty_icon);
-                    }else {
+                    } else {
                         TextView tv_communal_net_tint = view.findViewById(R.id.tv_communal_net_tint);
                         tv_communal_net_tint.setText(finalHintText);
                     }
@@ -158,7 +159,7 @@ public abstract class BaseActivity extends AppCompatActivity {
      * 设置状态栏颜色
      */
     public void setStatusBar() {
-        if (ShopScrollDetailsActivity.class.getSimpleName().equals(mSimpleName)||TopicDetailActivity.class.getSimpleName().equals(mSimpleName)) {
+        if (this instanceof ShopScrollDetailsActivity || this instanceof TopicDetailActivity || this instanceof ArticleOfficialActivity) {
             ImmersionBar.with(this).keyboardEnable(true).navigationBarEnable(false).statusBarDarkFont(true).fullScreen(true).init();
         } else {
 //            设置共同沉浸式样式

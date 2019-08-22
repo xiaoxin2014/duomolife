@@ -92,10 +92,14 @@ public class CatergoryHeadView extends LinearLayout {
             mTvTopicName.setText("种草特辑");
             mIvTopCover.setOnClickListener(view -> skipCatergoryTwoLevel(CatergoryOneLevelBean, 0));
             mRlMoreArtical.setOnClickListener(view -> {
-                Intent intent = new Intent(mContext, ArticleTypeActivity.class);
-                intent.putExtra("categoryTitle", relateArticleBean.getCategoryName());
-                intent.putExtra("categoryId", relateArticleBean.getArticles().get(0).getArticleCategoryId());
-                mContext.startActivity(intent);
+                try {
+                    Intent intent = new Intent(mContext, ArticleTypeActivity.class);
+                    intent.putExtra("categoryTitle", relateArticleBean.getCategoryName());
+                    intent.putExtra("categoryId", String.valueOf(relateArticleBean.getArticles().get(0).getArticleCategoryId()));
+                    mContext.startActivity(intent);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             });
 
             mLlArtical.setVisibility(relateArticleBean != null && relateArticleBean.getArticles() != null && relateArticleBean.getArticles().size() > 0 ? View.VISIBLE : View.GONE);
@@ -142,7 +146,7 @@ public class CatergoryHeadView extends LinearLayout {
                 //进入二级分类页面
                 CatergoryOneLevelEntity.CatergoryOneLevelBean.ChildCategoryListBean childCategoryListBean = (CatergoryOneLevelEntity.CatergoryOneLevelBean.ChildCategoryListBean) view.getTag();
                 if (childCategoryListBean != null) {
-                    skipCatergoryTwoLevel(CatergoryOneLevelBean, position+1);
+                    skipCatergoryTwoLevel(CatergoryOneLevelBean, position + 1);
                 }
             });
             mRvChildCatergory.setAdapter(baseQuickAdapter);
