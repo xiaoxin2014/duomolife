@@ -53,7 +53,6 @@ import static com.amkj.dmsh.constant.Url.F_ARTICLE_COLLECT;
 import static com.amkj.dmsh.constant.Url.F_ARTICLE_DETAILS_FAVOR;
 import static com.amkj.dmsh.constant.Url.Q_DML_SEARCH_LIST;
 
-;
 
 /**
  * @author LGuiPeng

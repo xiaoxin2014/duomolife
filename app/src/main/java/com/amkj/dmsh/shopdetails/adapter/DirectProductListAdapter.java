@@ -1,6 +1,7 @@
 package com.amkj.dmsh.shopdetails.adapter;
 
 import android.app.Activity;
+import android.arch.lifecycle.LifecycleOwner;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -33,6 +34,7 @@ import com.amkj.dmsh.shopdetails.bean.IndentWriteEntity.IndentWriteBean.Products
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.OrderListBean;
 import com.amkj.dmsh.shopdetails.bean.PresentProductOrder;
 import com.amkj.dmsh.shopdetails.bean.RefundApplyEntity.RefundApplyBean.ProductsBean;
+import com.amkj.dmsh.utils.CountDownTimer;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -43,7 +45,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -54,6 +55,7 @@ import java.util.Map;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getSpannableString;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
@@ -252,8 +254,9 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                             break;
                         //不显示规则，显示倒计时，可以进入专场
                         case 3:
-                            boolean activityValid = isActivityValid(System.currentTimeMillis(), activityInfoData.getActivityStartTime(), activityInfoData.getActivityEndTime());
-                            helper.setText(R.id.tv_communal_activity_tag_rule, activityValid ? activityInfoData.getActivityEndTime() + "结束" : "");
+                            setCountTime(helper, activityInfoData);
+//                            boolean activityValid = isActivityValid(System.currentTimeMillis(), activityInfoData.getActivityStartTime(), activityInfoData.getActivityEndTime());
+//                            helper.setText(R.id.tv_communal_activity_tag_rule, activityValid ? activityInfoData.getActivityEndTime() + "结束" : "");
                             break;
                         //不显示规则，也不能进入专场
                         case 7:
@@ -371,6 +374,70 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                 helper.itemView.setTag(orderProductInfoBean);
                 break;
         }
+    }
+
+    //判断活动是否已开始并且未结束
+    private boolean setCountTime(long currentTime, String startTime, String endTime) {
+        try {
+            //格式化开始时间
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+            Date dateStart = formatter.parse(startTime);
+            Date dateEnd = formatter.parse(endTime);
+            if (currentTime >= dateStart.getTime() && currentTime < dateEnd.getTime()) {
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private void setCountTime(final BaseViewHolder helper, ActivityInfoBean activityInfoData) {
+        String startTime = activityInfoData.getActivityStartTime();
+        String endTime = activityInfoData.getActivityEndTime();
+        long currentTime = System.currentTimeMillis();
+        try {
+            //格式化开始时间
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+            Date dateStart = formatter.parse(startTime);
+            Date dateEnd = formatter.parse(endTime);
+            if (currentTime >= dateStart.getTime() && currentTime < dateEnd.getTime()) {
+                CountDownTimer countDownTimer;
+                countDownTimer = new CountDownTimer((LifecycleOwner) context, dateEnd.getTime() - currentTime, 1000) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+                        helper.setText(R.id.tv_communal_activity_tag_rule, getCoutDownTime(millisUntilFinished));
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        cancel();
+                        helper.setText(R.id.tv_communal_activity_tag_rule, "已结束");
+                    }
+                };
+
+                countDownTimer.start();
+            } else {
+                helper.setText(R.id.tv_communal_activity_tag_rule, "");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            helper.setText(R.id.tv_communal_activity_tag_rule, "");
+        }
+    }
+
+    private static String getCoutDownTime(long coutTime) {
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss", Locale.CHINA);
+        SimpleDateFormat yearFormat = new SimpleDateFormat("dd", Locale.CHINA);
+        try {
+            String time = timeFormat.format(new Date(coutTime));
+            int day = getStringChangeIntegers(yearFormat.format(new Date(coutTime)));
+
+            return "距结束  " + day + "  天" + time;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
     /**
@@ -639,19 +706,5 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
         });
     }
 
-    //判断活动是否已开始并且未结束
-    private boolean isActivityValid(long currentTime, String startTime, String endTime) {
-        try {
-            //格式化开始时间
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-            Date dateStart = formatter.parse(startTime);
-            Date dateEnd = formatter.parse(endTime);
-            if (currentTime >= dateStart.getTime() && currentTime < dateEnd.getTime()) {
-                return true;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
+
 }
