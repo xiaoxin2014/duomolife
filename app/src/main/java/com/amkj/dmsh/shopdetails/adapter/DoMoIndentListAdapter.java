@@ -41,6 +41,7 @@ import cn.iwgang.countdownview.DynamicConfig;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.getSpannableString;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
 import static com.amkj.dmsh.constant.ConstantVariable.CANCEL_ORDER;
@@ -158,7 +159,10 @@ public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoI
         directProductListAdapter.addHeaderView(headerView);
         directProductListAdapter.addFooterView(footView);
         helper.communal_recycler_wrap.setAdapter(directProductListAdapter);
-        intentFView.tv_intent_count_price.setText(String.format(context.getString(R.string.price_count), totalCount, orderListBean.getAmount()));
+        String countPrice = String.format(context.getString(R.string.price_count), totalCount, orderListBean.getAmount());
+        int start = countPrice.indexOf("¥");
+        int end = countPrice.indexOf(".");
+        intentFView.tv_intent_count_price.setText(getSpannableString(countPrice, start + 1, end == -1 ? countPrice.length() : end, 1.2f, ""));
         setIntentStatus(intentHView, intentFView, orderListBean);
         if (0 <= orderListBean.getStatus() && orderListBean.getStatus() < 10) {
             //            展示倒计时
@@ -188,7 +192,7 @@ public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoI
     }
 
     private void setIntentStatus(IntentHView intentHView, IntentFView intentFView, final OrderListBean orderListBean) {
-        intentFView.tv_border_second_blue.setBackgroundResource(R.drawable.border_circle_three_blue_white);	
+        intentFView.tv_border_second_blue.setBackgroundResource(R.drawable.border_circle_three_blue_white);
         intentFView.tv_border_second_blue.setTextColor(context.getResources().getColor(R.color.text_login_blue_z));
         intentFView.tv_indent_border_zero_gray.setVisibility(orderListBean.getIsShowPresentLogistics() == 1 ? View.VISIBLE : View.GONE);
         intentFView.tv_indent_border_zero_gray.setOnClickListener(v -> {
@@ -310,7 +314,7 @@ public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoI
                                 num++;
                             }
                         }
-                        if (num == combineProductInfoList.size()){
+                        if (num == combineProductInfoList.size()) {
                             noShowEvaluateNum++;
                             goodsBean = bean;
                         }

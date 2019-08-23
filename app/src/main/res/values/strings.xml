@@ -142,7 +142,7 @@
     <string name="sku_max_discount_price">最多可优惠%1$s元</string>
     <string name="sku_discount_price">优惠了%1$s元</string>
     <!--订单商品信息-->
-    <string name="price_count">共 %1$d 件 合计:¥%2$s</string>
+    <string name="price_count">共 %1$d 件   合计:¥%2$s</string>
     <string name="appraise_integral">评价赢积分</string>
     <string name="write_score_comment">写点评</string>
     <string name="appraise_integral_score">评价赢%1$s积分</string>
@@ -274,4 +274,5 @@
     <string name="participant_num">%d人参与</string>
     <string name="award_desc2">认真参与讨论可获得%d积分哦~</string>
     <string name="post_pass_get_score">奖励%d积分~</string>
+    <string name="min_buy_num">最少购买1件</string>
 </resources>

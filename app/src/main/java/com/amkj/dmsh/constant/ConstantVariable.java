@@ -372,6 +372,7 @@ public class ConstantVariable {
     public static final String UPDATE_POST_COMMENT = "updatePostComment";
     public static final String UPDATE_SCORE_LIST = "updateScoreList";
     public static final String UPDATE_WAITAPPRAISE_ICON = "updateWaitAppraiseIcon";//刷新全部订单/待评价角标
+    public static final String CHANGE_SKU_NUM ="changeSkuNum";//手动修改数量
 
 
     /**
@@ -389,6 +390,7 @@ public class ConstantVariable {
     public static final int ADD_NUM = 0;//增加数量
     public static final int REDUCE_NUM = 1;//减少数量
     public static final int CHANGE_SKU = 2;//修改sku
+
 
 
     public static final int NEW_FANS = 1;//新增粉丝

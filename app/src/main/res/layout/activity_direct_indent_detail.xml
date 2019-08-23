@@ -12,7 +12,7 @@
     </RelativeLayout>
     <LinearLayout
         android:layout_width="match_parent"
-        android:divider="@drawable/divider_ll_10dp_gray_bg"
+        android:divider="@drawable/item_divider_ten_dp"
         android:showDividers="beginning"
         android:id="@+id/ll_indent_detail_bottom"
         android:orientation="vertical"

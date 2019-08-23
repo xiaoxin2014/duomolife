@@ -80,7 +80,7 @@ public class DoMoIndentWaitPayFragment extends BaseFragment {
         communal_recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_five_dp)
+                .setDividerId(R.drawable.item_divider_ten_dp)
                 .create());
         doMoIndentListAdapter = new DoMoIndentListAdapter(getActivity(), orderListBeanList);
         communal_recycler.setAdapter(doMoIndentListAdapter);

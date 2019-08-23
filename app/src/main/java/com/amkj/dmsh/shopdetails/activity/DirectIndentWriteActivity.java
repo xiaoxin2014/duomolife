@@ -1,5 +1,6 @@
 package com.amkj.dmsh.shopdetails.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
@@ -10,8 +11,10 @@ import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -54,9 +57,11 @@ import com.amkj.dmsh.shopdetails.integration.bean.AddressListEntity;
 import com.amkj.dmsh.shopdetails.payutils.AliPay;
 import com.amkj.dmsh.shopdetails.payutils.UnionPay;
 import com.amkj.dmsh.shopdetails.payutils.WXPay;
+import com.amkj.dmsh.utils.KeyboardUtils;
+import com.amkj.dmsh.utils.TextWatchListener;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
-import com.amkj.dmsh.views.RectAddAndSubViewDirect;
+import com.amkj.dmsh.views.RectAddAndSubWriteView;
 import com.google.gson.Gson;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
@@ -72,10 +77,13 @@ import java.util.regex.Pattern;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
@@ -120,6 +128,8 @@ public class DirectIndentWriteActivity extends BaseActivity {
     //    商品结算金额
     @BindView(R.id.tv_indent_total_price)
     TextView tv_indent_total_price;
+    @BindView(R.id.ll_write_commit)
+    LinearLayout mLlWriteCommit;
     private boolean isFirst = true;//获取默认地址时为true,修改地址为false
     private int addressId;
     private String type = "";
@@ -169,6 +179,8 @@ public class DirectIndentWriteActivity extends BaseActivity {
     private List<PriceInfoBean> priceInfoList = new ArrayList<>();
     //    商品列表
     private List<ProductInfoBean> productInfoList = new ArrayList<>();
+    private int mNum;
+    private boolean first = true;
 
 
     @Override
@@ -201,6 +213,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
         View footView = LayoutInflater.from(this).inflate(R.layout.layout_direct_indent_write_foot, (ViewGroup) communal_recycler.getParent(), false);
         pullFootView = new PullFootView();
         ButterKnife.bind(pullFootView, footView);
+        pullFootView.init();
         //支付方式
         ((RadioGroup) footView.findViewById(R.id.radio_group)).setOnCheckedChangeListener((group, checkedId) -> {
             if (checkedId == R.id.rb_checked_alipay) {
@@ -281,7 +294,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
             }
         });
 
-        pullFootView.rect_indent_number.setOnNumChangeListener(new RectAddAndSubViewDirect.OnNumChangeListener() {
+        pullFootView.rect_indent_number.setOnNumChangeListener(new RectAddAndSubWriteView.OnNumChangeListener() {
             @Override
             public void onNumChange(View view, int stype, int num) {
                 if (discountBeanList.size() > 0 && discountBeanList.get(0).getCount() != num) {
@@ -301,6 +314,40 @@ public class DirectIndentWriteActivity extends BaseActivity {
         pullFootView.rv_indent_write_info.setLayoutManager(new LinearLayoutManager(DirectIndentWriteActivity.this));
         indentDiscountAdapter = new IndentDiscountAdapter(priceInfoList);
         pullFootView.rv_indent_write_info.setAdapter(indentDiscountAdapter);
+
+        //监听软键盘
+        KeyboardUtils.registerSoftInputChangedListener(this, new KeyboardUtils.OnSoftInputChangedListener() {
+            @Override
+            public void onSoftInputChanged(int height) {
+                if (!first) {//默认会调用一次
+                    if (height == 0) {
+                        //软键盘隐藏
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, AutoSizeUtils.mm2px(mAppContext, 98));
+                        mLlWriteCommit.setLayoutParams(params);
+                        if (mNum <= 0) {//最小购买数量为1件
+                            mNum = 1;
+                            pullFootView.rect_indent_number.setNum(mNum);
+                        } else if (mNum > pullFootView.rect_indent_number.getMaxNum()) {
+                            mNum = pullFootView.rect_indent_number.getMaxNum();
+                            pullFootView.rect_indent_number.setNum(mNum);
+                            constantMethod.showImportantToast(DirectIndentWriteActivity.this, R.string.product_sell_out);
+                        }
+                        if (discountBeanList.size() > 0 && discountBeanList.get(0).getCount() != mNum) {
+                            if (loadHud != null) {
+                                loadHud.show();
+                            }
+                            discountBeanList.get(0).setCount(mNum);
+                            getIndentDiscounts(false);
+                        }
+                    } else {
+                        //软键盘显示
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0);
+                        mLlWriteCommit.setLayoutParams(params);
+                    }
+                }
+                first = false;
+            }
+        });
     }
 
 
@@ -1409,10 +1456,18 @@ public class DirectIndentWriteActivity extends BaseActivity {
         @BindView(R.id.rv_indent_write_info)
         RecyclerView rv_indent_write_info;
         @BindView(R.id.rect_indent_number)
-        RectAddAndSubViewDirect rect_indent_number;
+        RectAddAndSubWriteView rect_indent_number;
         @BindView(R.id.radio_group)
         RadioGroup mRadioGroup;
 
+        void init() {
+            ((EditText) rect_indent_number.findViewById(R.id.tv_integration_details_credits_count)).addTextChangedListener(new TextWatchListener() {
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    mNum = getStringChangeIntegers(s.toString());
+                }
+            });
+        }
 
         //        优惠券选择
         @OnClick(R.id.ll_layout_coupon)
@@ -1494,4 +1549,38 @@ public class DirectIndentWriteActivity extends BaseActivity {
             payCancelDialogHelper.dismiss();
         }
     }
+
+    /**
+     * 点击编辑器外区域隐藏键盘 避免点击搜索完没有隐藏键盘
+     */
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if (isShouldHideKeyboard(v, ev)) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+            }
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    // Return whether touch the view.
+    private boolean isShouldHideKeyboard(View v, MotionEvent event) {
+        if (v instanceof EditText) {
+            int[] l = {0, 0};
+            v.getLocationInWindow(l);
+            int left = l[0],
+                    top = l[1],
+                    bottom = top + v.getHeight(),
+                    right = left + v.getWidth();
+            return !(event.getX() > left && event.getX() < right
+                    && event.getY() > top && event.getY() < bottom);
+        }
+        return false;
+    }
+
+
 }

@@ -2,7 +2,6 @@ package com.amkj.dmsh.shopdetails.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -25,7 +24,6 @@ import com.amkj.dmsh.shopdetails.activity.DirectApplyRefundActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectExchangeDetailsActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectIndentWriteActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectLogisticsDetailsActivity;
-import com.amkj.dmsh.shopdetails.activity.DirectPublishAppraiseActivity;
 import com.amkj.dmsh.shopdetails.adapter.DoMoIndentListAdapter;
 import com.amkj.dmsh.shopdetails.bean.DirectApplyRefundBean;
 import com.amkj.dmsh.shopdetails.bean.DirectApplyRefundBean.DirectRefundProBean;
@@ -55,7 +53,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.BASK_READER;
 import static com.amkj.dmsh.constant.ConstantVariable.BUY_AGAIN;
 import static com.amkj.dmsh.constant.ConstantVariable.CANCEL_ORDER;
 import static com.amkj.dmsh.constant.ConstantVariable.CANCEL_PAY_ORDER;
@@ -67,7 +64,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRO_STATUS;
 import static com.amkj.dmsh.constant.ConstantVariable.INVITE_GROUP;
 import static com.amkj.dmsh.constant.ConstantVariable.LITTER_CONSIGN;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY;
-import static com.amkj.dmsh.constant.ConstantVariable.PRO_APPRAISE;
 import static com.amkj.dmsh.constant.ConstantVariable.REFUND_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.REMIND_DELIVERY;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
@@ -110,7 +106,7 @@ public class DuMoIndentAllFragment extends BaseFragment {
         communal_recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.divider_ll_10dp_gray_bg).create());
+                .setDividerId(R.drawable.item_divider_ten_dp).create());
         doMoIndentListAdapter = new DoMoIndentListAdapter(getActivity(), orderListBeanList);
         communal_recycler.setAdapter(doMoIndentListAdapter);
 

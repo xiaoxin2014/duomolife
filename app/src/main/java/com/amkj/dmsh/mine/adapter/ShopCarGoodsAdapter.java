@@ -4,17 +4,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.constant.ConstantVariable;
+import com.amkj.dmsh.mine.activity.ShopCarActivity;
 import com.amkj.dmsh.mine.bean.ActivityInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean.CartBean.CartInfoBean;
 import com.amkj.dmsh.mine.biz.ShopCarDao;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
+import com.amkj.dmsh.utils.TextWatchListener;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.amkj.dmsh.views.RectAddAndSubViewCommunal;
+import com.amkj.dmsh.views.RectAddAndSubShopcarView;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
@@ -26,8 +29,10 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static com.amkj.dmsh.constant.ConstantMethod.getSpannableString;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
+import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
 
 
 /**
@@ -55,7 +60,7 @@ public class ShopCarGoodsAdapter extends BaseMultiItemQuickAdapter<MultiItemEnti
                 //        选择按钮
                 TextView cb_shop_car_sel = helper.getView(R.id.cb_shop_car_sel);
                 //        数量增减
-                final RectAddAndSubViewCommunal rect_shop_car_item = helper.getView(R.id.communal_rect_add_sub);
+                final RectAddAndSubShopcarView rect_shop_car_item = helper.getView(R.id.communal_rect_add_sub);
                 cb_shop_car_sel.setSelected(isEditStatus ? cartInfoBean.isDelete() : cartInfoBean.isSelected());
                 //商品有效或者在编辑状态时(编辑状态搭配商品单独选中)
                 if (cartInfoBean.isValid() || isEditStatus) {
@@ -152,6 +157,17 @@ public class ShopCarGoodsAdapter extends BaseMultiItemQuickAdapter<MultiItemEnti
                         context.startActivity(intent);
                     }
                 });
+
+                //监听手动修改数量(有效并且非组合商品才能修改数量)
+                rect_shop_car_item.findViewById(R.id.tv_integration_details_credits_count).setEnabled(cartInfoBean.isValid() && !cartInfoBean.isMainProduct() && !cartInfoBean.isCombineProduct());
+                ((EditText) rect_shop_car_item.findViewById(R.id.tv_integration_details_credits_count)).addTextChangedListener(new TextWatchListener() {
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        if (isContextExisted(context) && context instanceof ShopCarActivity) {
+                            ((ShopCarActivity) context).changeSkuNum(helper.getAdapterPosition(), getStringChangeIntegers(s.toString()));
+                        }
+                    }
+                });
                 break;
             case ConstantVariable.TITLE:
                 //是否显示活动信息
@@ -159,7 +175,6 @@ public class ShopCarGoodsAdapter extends BaseMultiItemQuickAdapter<MultiItemEnti
                 boolean showActivityInfo = !TextUtils.isEmpty(activityInfoData.getActivityCode()) && activityInfoData.getSubItems() != null && activityInfoData.getSubItems().size() > 0;
                 helper.setGone(R.id.ll_communal_activity_topic_tag, true)
                         .setGone(R.id.blank, true);
-
                 ViewGroup.LayoutParams layoutParams = helper.itemView.getLayoutParams();
                 if (showActivityInfo) {
                     layoutParams.height = WRAP_CONTENT;

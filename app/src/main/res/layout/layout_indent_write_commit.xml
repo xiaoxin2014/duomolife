@@ -1,25 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/sc_mm_98"
-    android:background="@color/white"
-    android:gravity="center_vertical"
-    android:orientation="horizontal">
+              android:id="@+id/ll_write_commit"
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/sc_mm_98"
+              android:background="@color/white"
+              android:gravity="center_vertical"
+              android:orientation="horizontal">
+
     <TextView
         android:layout_width="wrap_content"
-        android:textSize="@dimen/sc_mm_28"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/gap_left"
         android:text="实付："
         android:textColor="@color/text_black_t"
-        android:layout_height="wrap_content" />
+        android:textSize="@dimen/sc_mm_28"/>
+
     <TextView
         android:id="@+id/tv_indent_total_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="¥0.00 "
         android:layout_weight="1"
+        android:text="¥0.00 "
         android:textColor="@color/text_normal_red"
-        android:textSize="@dimen/sc_mm_40" />
+        android:textSize="@dimen/sc_mm_40"/>
 
     <TextView
         android:id="@+id/tv_indent_write_commit"
@@ -29,5 +32,5 @@
         android:gravity="center"
         android:text="提交订单"
         android:textColor="@android:color/white"
-        android:textSize="@dimen/sc_mm_34" />
+        android:textSize="@dimen/sc_mm_34"/>
 </LinearLayout>

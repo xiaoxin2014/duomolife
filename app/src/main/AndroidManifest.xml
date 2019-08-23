@@ -480,6 +480,29 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
+        <!--多么研究所-->
+        <activity
+            android:name=".dominant.activity.QualityDMLLifeSearchActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="QualityDMLLifeSearchActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+        <!--多么研究所详情-->
+        <activity
+            android:name=".dominant.activity.DmlLifeSearchDetailActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="DmlLifeSearchDetailActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+        <!--历史福利社清单详情-->
         <!--新品发布-->
         <activity
             android:name=".dominant.activity.QualityNewProActivity"

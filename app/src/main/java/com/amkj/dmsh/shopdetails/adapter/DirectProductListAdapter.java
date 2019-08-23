@@ -255,8 +255,6 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                         //不显示规则，显示倒计时，可以进入专场
                         case 3:
                             setCountTime(helper, activityInfoData);
-//                            boolean activityValid = isActivityValid(System.currentTimeMillis(), activityInfoData.getActivityStartTime(), activityInfoData.getActivityEndTime());
-//                            helper.setText(R.id.tv_communal_activity_tag_rule, activityValid ? activityInfoData.getActivityEndTime() + "结束" : "");
                             break;
                         //不显示规则，也不能进入专场
                         case 7:
@@ -376,22 +374,6 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
         }
     }
 
-    //判断活动是否已开始并且未结束
-    private boolean setCountTime(long currentTime, String startTime, String endTime) {
-        try {
-            //格式化开始时间
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-            Date dateStart = formatter.parse(startTime);
-            Date dateEnd = formatter.parse(endTime);
-            if (currentTime >= dateStart.getTime() && currentTime < dateEnd.getTime()) {
-                return true;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
     private void setCountTime(final BaseViewHolder helper, ActivityInfoBean activityInfoData) {
         String startTime = activityInfoData.getActivityStartTime();
         String endTime = activityInfoData.getActivityEndTime();
@@ -433,7 +415,7 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
             String time = timeFormat.format(new Date(coutTime));
             int day = getStringChangeIntegers(yearFormat.format(new Date(coutTime)));
 
-            return "距结束  " + day + "  天" + time;
+            return "距结束  " + day + "天" + time;
         } catch (Exception e) {
             e.printStackTrace();
         }

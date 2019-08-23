@@ -1,5 +1,6 @@
 package com.amkj.dmsh.mine.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Parcelable;
 import android.support.v7.widget.GridLayoutManager;
@@ -9,8 +10,11 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -18,6 +22,7 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.RequestStatus;
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.dominant.activity.QualityProductActActivity;
 import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
@@ -41,8 +46,10 @@ import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.DoubleUtil;
+import com.amkj.dmsh.utils.KeyboardUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
+import com.amkj.dmsh.views.RectAddAndSubShopcarView;
 import com.amkj.dmsh.views.bottomdialog.SkuDialog;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.Gson;
@@ -59,8 +66,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static android.view.View.GONE;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeDouble;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
@@ -146,6 +155,9 @@ public class ShopCarActivity extends BaseActivity {
     private UserLikedProductEntity likedProduct;
     private AlertDialogHelper alertDialogHelper;
     private ShopCarEntity mShopCarNewInfoEntity;
+    private boolean first;
+    private int mNum;
+    private int mPosition;
 
     @Override
     protected int getContentView() {
@@ -250,7 +262,6 @@ public class ShopCarActivity extends BaseActivity {
                     }
                     break;
             }
-
         });
         shopCarGoodsAdapter.setOnLoadMoreListener(() -> {
             page++;
@@ -264,7 +275,42 @@ public class ShopCarActivity extends BaseActivity {
         ButterKnife.bind(recommendHeaderView, cartHeaderView);
         recommendHeaderView.initViews();
 
-
+        //监听软键盘
+        KeyboardUtils.registerSoftInputChangedListener(this, height -> {
+            try {
+                if (!first) {//默认会调用一次
+                    if (height == 0) {
+                        //软键盘隐藏
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, AutoSizeUtils.mm2px(mAppContext, 98));
+                        rel_shop_car_bottom.setLayoutParams(params);
+                        RectAddAndSubShopcarView rectAddAndSubView = (RectAddAndSubShopcarView) shopCarGoodsAdapter.getViewByPosition(mPosition, R.id.communal_rect_add_sub);
+                        MultiItemEntity item = shopCarGoodsAdapter.getItem(mPosition);
+                        if (rectAddAndSubView != null) {
+                            if (mNum <= 0) {//最小购买数量为1件
+                                mNum = 1;
+                                rectAddAndSubView.setNum(1);
+                            } else if (mNum > rectAddAndSubView.getMaxNum()) {//最大数量不能超过库存
+                                mNum = rectAddAndSubView.getMaxNum();
+                                rectAddAndSubView.setNum(mNum);
+                                new ConstantMethod().showImportantToast(getActivity(), R.string.product_sell_out);
+                            }
+                            if (item instanceof CartInfoBean && ((CartInfoBean) item).getCount() != mNum) {
+                                if (mNum <= rectAddAndSubView.getMaxNum()) {
+                                    changeGoods(null, mNum, REDUCE_NUM, (CartInfoBean) item);
+                                }
+                            }
+                        }
+                    } else {
+                        //软键盘显示
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0);
+                        rel_shop_car_bottom.setLayoutParams(params);
+                    }
+                }
+                first = false;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     private void skipProDetail(CartInfoBean cartInfoBean) {
@@ -867,4 +913,42 @@ public class ShopCarActivity extends BaseActivity {
             alertDialogHelper.dismiss();
         }
     }
+
+    /**
+     * 点击编辑器外区域隐藏键盘 避免点击搜索完没有隐藏键盘
+     */
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if (isShouldHideKeyboard(v, ev)) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+            }
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    // Return whether touch the view.
+    private boolean isShouldHideKeyboard(View v, MotionEvent event) {
+        if (v instanceof EditText) {
+            int[] l = {0, 0};
+            v.getLocationInWindow(l);
+            int left = l[0],
+                    top = l[1],
+                    bottom = top + v.getHeight(),
+                    right = left + v.getWidth();
+            return !(event.getX() > left && event.getX() < right
+                    && event.getY() > top && event.getY() < bottom);
+        }
+        return false;
+    }
+
+    public void changeSkuNum(int position, int num) {
+        mPosition = position;
+        mNum = num;
+    }
+
 }
