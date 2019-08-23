@@ -9,8 +9,6 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-import static com.amkj.dmsh.constant.ConstantMethod.stripTrailingZeros;
-
 /**
  * Created by atd48 on 2016/10/4.
  */
@@ -203,7 +201,7 @@ public class ShopDetailsEntity extends BaseEntity {
         }
 
         public String getMarketPrice() {
-            return stripTrailingZeros(marketPrice);
+            return marketPrice;
         }
 
         public void setMarketPrice(String marketPrice) {
@@ -219,7 +217,7 @@ public class ShopDetailsEntity extends BaseEntity {
         }
 
         public String getPrice() {
-            return stripTrailingZeros(price);
+            return price;
         }
 
         public void setPrice(String price) {
@@ -363,7 +361,7 @@ public class ShopDetailsEntity extends BaseEntity {
         }
 
         public String getActivityPrice() {
-            return stripTrailingZeros(activityPrice);
+            return activityPrice;
         }
 
         public void setActivityPrice(String activityPrice) {

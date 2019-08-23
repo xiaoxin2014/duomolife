@@ -3,8 +3,6 @@ package com.amkj.dmsh.shopdetails.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import static com.amkj.dmsh.constant.ConstantMethod.stripTrailingZeros;
-
 /**
  * Created by xiaoxin on 2019/6/17
  * Version:v4.1.0
@@ -98,7 +96,7 @@ public class SkuSaleBean implements Parcelable {
     }
 
     public String getPrePrice() {
-        return stripTrailingZeros(prePrice);
+        return prePrice;
     }
 
     public String getPresentSkuIds() {
@@ -110,7 +108,7 @@ public class SkuSaleBean implements Parcelable {
     }
 
     public String getMoneyPrice() {
-        return stripTrailingZeros(moneyPrice);
+        return moneyPrice;
     }
 
     public void setMoneyPrice(String moneyPrice) {
@@ -134,7 +132,7 @@ public class SkuSaleBean implements Parcelable {
     }
 
     public String getPrice() {
-        return stripTrailingZeros(price);
+        return price;
     }
 
     public void setPrice(String price) {
@@ -174,7 +172,7 @@ public class SkuSaleBean implements Parcelable {
     }
 
     public String getActivityPrice() {
-        return stripTrailingZeros(activityPrice);
+        return activityPrice;
     }
 
     public void setActivityPrice(String activityPrice) {

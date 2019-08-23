@@ -1,6 +1,5 @@
 package com.amkj.dmsh.find.bean;
 
-import com.amkj.dmsh.constant.ConstantMethod;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -34,7 +33,7 @@ public class RelatedGoodsBean {
     }
 
     public String getPrice() {
-        return ConstantMethod.stripTrailingZeros(price);
+        return price;
     }
 
     public void setPrice(String price) {

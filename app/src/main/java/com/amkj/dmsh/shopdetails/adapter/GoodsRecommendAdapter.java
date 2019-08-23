@@ -16,7 +16,6 @@ import java.util.List;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getRmbFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.stripTrailingZeros;
 
 /**
  * Created by xiaoxin on 2019/5/24
@@ -38,7 +37,7 @@ public class GoodsRecommendAdapter extends BaseQuickAdapter<ShopRecommendHotTopi
             GlideImageLoaderUtil.loadImage(mContext, helper.getView(R.id.iv_cover_right), item.getPicUrl());
             helper.setText(R.id.tv_price_right, getRmbFormat(mContext, item.getPrice()))
                     .setGone(R.id.tv_market_price_right, !TextUtils.isEmpty(item.getMarketPrice()))
-                    .setText(R.id.tv_market_price_right, "¥" + stripTrailingZeros(getStrings(item.getMarketPrice())));
+                    .setText(R.id.tv_market_price_right, "¥" + getStrings(item.getMarketPrice()));
             ((TextView) helper.getView(R.id.tv_market_price_right)).getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
             ((TextView) helper.getView(R.id.tv_market_price_right)).getPaint().setAntiAlias(true);
             helper.itemView.setTag(item);

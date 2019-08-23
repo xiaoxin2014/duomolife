@@ -17,7 +17,6 @@ import java.util.List;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getRmbFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.stripTrailingZeros;
 
 /**
  * Created by xiaoxin on 2019/4/18 0018
@@ -45,7 +44,7 @@ public class HomeZoneAdapter extends BaseQuickAdapter<HomeCommonBean, BaseViewHo
         if (productInfoListBean != null) {
             GlideImageLoaderUtil.loadImage(mContext, helper.getView(R.id.iv_cover_left), productInfoListBean.getImg());
             helper.setText(R.id.tv_price_left, getRmbFormat(mContext, productInfoListBean.getPrice()));
-            helper.setText(R.id.tv_market_price_left, "¥" + stripTrailingZeros(getStrings(productInfoListBean.getMarketPrice())));
+            helper.setText(R.id.tv_market_price_left, "¥" + getStrings(productInfoListBean.getMarketPrice()));
             ((TextView) helper.getView(R.id.tv_market_price_left)).getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
         }
 
@@ -56,7 +55,7 @@ public class HomeZoneAdapter extends BaseQuickAdapter<HomeCommonBean, BaseViewHo
             if (rightBean != null) {
                 GlideImageLoaderUtil.loadImage(mContext, helper.getView(R.id.iv_cover_right), rightBean.getImg());
                 helper.setText(R.id.tv_price_right,getRmbFormat(mContext, rightBean.getPrice()));
-                helper.setText(R.id.tv_market_price_right, "¥" + stripTrailingZeros(getStrings(rightBean.getMarketPrice())));
+                helper.setText(R.id.tv_market_price_right, "¥" + getStrings(rightBean.getMarketPrice()));
                 ((TextView) helper.getView(R.id.tv_market_price_right)).getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
                 ((TextView) helper.getView(R.id.tv_market_price_right)).getPaint().setAntiAlias(true);
             }

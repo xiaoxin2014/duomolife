@@ -381,7 +381,7 @@ public class ConstantMethod {
         try {
             String price = getStrings(priceText);
             if (!TextUtils.isEmpty(price)) {
-                price = append ? "¥" + stripTrailingZeros(price) : stripTrailingZeros(price);
+                price = append ? "¥" + price : price;
                 Pattern pattern = Pattern.compile("[¥]");
                 Link link = new Link(pattern);
                 link.setTextColor(Color.parseColor("#ff5a6b"));
