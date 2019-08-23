@@ -7,8 +7,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -30,6 +32,7 @@ import com.amkj.dmsh.homepage.bean.ScoreGoodsEntity.ScoreGoodsBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.SharedPreUtils;
+import com.amkj.dmsh.utils.WindowUtils;
 import com.amkj.dmsh.views.guideview.Component;
 import com.amkj.dmsh.views.guideview.FindComponent4;
 import com.amkj.dmsh.views.guideview.Guide;
@@ -54,6 +57,7 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.skipJoinTopic;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEMO_LIFE_FILE;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
@@ -107,6 +111,7 @@ public class GoodsScoreListActivity extends BaseActivity {
     private ScoreGoodsAdapter mScoreGoodsAdapter;
     private ScoreGoodsEntity mScoreGoodsEntity;
     private String orderNo;
+    private PopupWindow mPw;
 
     @Override
     protected int getContentView() {
@@ -131,15 +136,20 @@ public class GoodsScoreListActivity extends BaseActivity {
         mScoreGoodsAdapter = new ScoreGoodsAdapter(this, mGoodsList);
         mRvGoods.setAdapter(mScoreGoodsAdapter);
         mScoreGoodsAdapter.setOnItemChildClickListener((adapter, view, position) -> {
-            //写点评
             ScoreGoodsBean scoreGoodsBean = (ScoreGoodsBean) view.getTag();
-            if (scoreGoodsBean != null && mScoreGoodsEntity != null) {
-                Intent intent = new Intent(getActivity(), JoinTopicActivity.class);
-                intent.putExtra("scoreGoods", scoreGoodsBean);
-                intent.putExtra("maxRewardTip", mScoreGoodsEntity.getMaxRewardTip());
-                intent.putExtra("rewardtip", mScoreGoodsEntity.getRewardTip());
-                intent.putExtra("reminder", mScoreGoodsEntity.getContentReminder());
-                startActivity(intent);
+            int joinCount = (int) SharedPreUtils.getParam(DEMO_LIFE_FILE, "JoinCount", 0);
+            if (joinCount < 2) {
+                mPw = WindowUtils.getFullPw(this, R.layout.pw_join_tips, Gravity.CENTER);
+                mPw.getContentView().setOnClickListener(v -> {
+                    mPw.dismiss();
+                    //写点评
+                    skipJoinTopic(getActivity(), scoreGoodsBean, mScoreGoodsEntity);
+                });
+                WindowUtils.showPw(this, mPw, Gravity.CENTER);
+                SharedPreUtils.setParam(DEMO_LIFE_FILE, "JoinCount", joinCount + 1);
+            } else {
+                //写点评
+                skipJoinTopic(this, scoreGoodsBean, mScoreGoodsEntity);
             }
         });
 
@@ -186,7 +196,6 @@ public class GoodsScoreListActivity extends BaseActivity {
                 mTvRefresh.setVisibility(totalGoodsList.size() > 3 ? View.VISIBLE : View.GONE);
                 totalGoodsList.removeAll(mGoodsList);
                 mScoreGoodsAdapter.notifyDataSetChanged();
-                new Handler().postDelayed(() -> showGuideView(), 500);
                 getHotTopic();
             }
 
@@ -260,7 +269,7 @@ public class GoodsScoreListActivity extends BaseActivity {
                 mLlFindHotTopic.setVisibility(hotTopicList.size() == 0 ? View.GONE : View.VISIBLE);
                 findHotTopicAdapter.notifyDataSetChanged();
                 NetLoadUtils.getNetInstance().showLoadSir(loadService, hotTopicList.size() > 0 || mGoodsList.size() > 0, mScoreGoodsEntity);
-
+                new Handler().postDelayed(() -> showGuideView(), 500);
             }
 
             @Override
@@ -347,5 +356,11 @@ public class GoodsScoreListActivity extends BaseActivity {
                 }
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        WindowUtils.closePw(mPw);
     }
 }

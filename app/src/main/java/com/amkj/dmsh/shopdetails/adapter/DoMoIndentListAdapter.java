@@ -6,9 +6,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.SparseArray;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
@@ -22,6 +24,8 @@ import com.amkj.dmsh.shopdetails.activity.DirectExchangeDetailsActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectLogisticsDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.OrderListBean;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.OrderListBean.GoodsBean;
+import com.amkj.dmsh.utils.SharedPreUtils;
+import com.amkj.dmsh.utils.WindowUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -48,6 +52,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.CANCEL_ORDER;
 import static com.amkj.dmsh.constant.ConstantVariable.CANCEL_PAY_ORDER;
 import static com.amkj.dmsh.constant.ConstantVariable.CHECK_LOG;
 import static com.amkj.dmsh.constant.ConstantVariable.CONFIRM_ORDER;
+import static com.amkj.dmsh.constant.ConstantVariable.DEMO_LIFE_FILE;
 import static com.amkj.dmsh.constant.ConstantVariable.INVITE_GROUP;
 import static com.amkj.dmsh.constant.ConstantVariable.LITTER_CONSIGN;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY;
@@ -71,6 +76,7 @@ public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoI
     private SparseArray<Object> sparseArray = new SparseArray<>();
     private Map<Integer, OrderListBean> beanMap = new HashMap<>();
     private ConstantMethod constantMethod;
+    private PopupWindow mPw;
 
     public DoMoIndentListAdapter(Activity context, List<OrderListBean> orderList) {
         super(R.layout.layout_communal_recycler_wrap, orderList);
@@ -325,30 +331,48 @@ public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoI
                 intentFView.ll_indent_bottom.setVisibility(finalNoShowEvaluateNum > 0 ? View.VISIBLE : View.GONE);
                 intentFView.tv_max_reward.setVisibility(finalNoShowEvaluateNum > 0 ? View.VISIBLE : View.GONE);
                 intentFView.tv_border_second_blue.setOnClickListener(v -> {
-                    if (finalNoShowEvaluateNum == 1) {
-                        //直接跳转评分界面
-                        ScoreGoodsEntity.ScoreGoodsBean scoreGoodsBean = new ScoreGoodsEntity.ScoreGoodsBean();
-                        scoreGoodsBean.setOrderNo(orderListBean.getNo());
-                        scoreGoodsBean.setCover(finalGoodsBean.getPicUrl());
-                        scoreGoodsBean.setOrderProductId(String.valueOf(finalGoodsBean.getOrderProductId()));
-                        scoreGoodsBean.setProductId(String.valueOf(finalGoodsBean.getId()));
-                        scoreGoodsBean.setProductName(finalGoodsBean.getName());
-                        Intent intent = new Intent(context, JoinTopicActivity.class);
-                        intent.putExtra("maxRewardTip", orderListBean.getMaxRewardTip());
-                        intent.putExtra("scoreGoods", scoreGoodsBean);
-                        context.startActivity(intent);
-                    } else if (finalNoShowEvaluateNum > 1) {
-                        //跳转评分列表
-                        Intent intent = new Intent(context, IndentScoreListActivity.class);
-                        intent.putExtra("orderNo", orderListBean.getNo());
-                        context.startActivity(intent);
+                    int joinCount = (int) SharedPreUtils.getParam(DEMO_LIFE_FILE, "IndentJoinCount", 0);
+                    if (joinCount < 2) {
+                        mPw = WindowUtils.getFullPw(context, R.layout.pw_join_tips, Gravity.CENTER);
+                        mPw.getContentView().setOnClickListener((View v1) -> {
+                            mPw.dismiss();
+                            //写点评
+                            SkipJoinTopic(orderListBean, finalGoodsBean, finalNoShowEvaluateNum);
+                        });
+                        WindowUtils.showPw(context, mPw, Gravity.CENTER);
+                        SharedPreUtils.setParam(DEMO_LIFE_FILE, "IndentJoinCount", joinCount + 1);
+                    } else {
+                        //写点评
+                        SkipJoinTopic(orderListBean, finalGoodsBean, finalNoShowEvaluateNum);
                     }
+
                 });
             } else if (statusCode == 40) {//已评价
                 intentFView.ll_indent_bottom.setVisibility(View.GONE);
             }
         } else {
             intentFView.ll_indent_bottom.setVisibility(View.GONE);
+        }
+    }
+
+    private void SkipJoinTopic(OrderListBean orderListBean, GoodsBean finalGoodsBean, int finalNoShowEvaluateNum) {
+        if (finalNoShowEvaluateNum == 1) {
+            //直接跳转评分界面
+            ScoreGoodsEntity.ScoreGoodsBean scoreGoodsBean = new ScoreGoodsEntity.ScoreGoodsBean();
+            scoreGoodsBean.setOrderNo(orderListBean.getNo());
+            scoreGoodsBean.setCover(finalGoodsBean.getPicUrl());
+            scoreGoodsBean.setOrderProductId(String.valueOf(finalGoodsBean.getOrderProductId()));
+            scoreGoodsBean.setProductId(String.valueOf(finalGoodsBean.getId()));
+            scoreGoodsBean.setProductName(finalGoodsBean.getName());
+            Intent intent = new Intent(context, JoinTopicActivity.class);
+            intent.putExtra("maxRewardTip", orderListBean.getMaxRewardTip());
+            intent.putExtra("scoreGoods", scoreGoodsBean);
+            context.startActivity(intent);
+        } else if (finalNoShowEvaluateNum > 1) {
+            //跳转评分列表
+            Intent intent = new Intent(context, IndentScoreListActivity.class);
+            intent.putExtra("orderNo", orderListBean.getNo());
+            context.startActivity(intent);
         }
     }
 

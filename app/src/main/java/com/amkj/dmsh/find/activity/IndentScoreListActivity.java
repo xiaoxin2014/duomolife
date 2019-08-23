@@ -1,6 +1,5 @@
 package com.amkj.dmsh.find.activity;
 
-import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -30,6 +29,7 @@ import butterknife.OnClick;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.skipJoinTopic;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_FORTY;
@@ -86,14 +86,7 @@ public class IndentScoreListActivity extends BaseActivity {
         mScoreGoodsAdapter.setOnItemChildClickListener((adapter, view, position) -> {
             //写点评
             ScoreGoodsBean scoreGoodsBean = (ScoreGoodsBean) view.getTag();
-            if (scoreGoodsBean != null && mScoreGoodsEntity != null) {
-                Intent intent = new Intent(getActivity(), JoinTopicActivity.class);
-                intent.putExtra("scoreGoods", scoreGoodsBean);
-                intent.putExtra("maxRewardTip", mScoreGoodsEntity.getMaxRewardTip());
-                intent.putExtra("reminder", mScoreGoodsEntity.getContentReminder());
-                intent.putExtra("rewardtip", mScoreGoodsEntity.getRewardTip());
-                startActivity(intent);
-            }
+            skipJoinTopic(this, scoreGoodsBean, mScoreGoodsEntity);
         });
     }
 

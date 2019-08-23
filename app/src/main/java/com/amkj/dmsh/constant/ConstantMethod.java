@@ -63,10 +63,13 @@ import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.dominant.activity.QualityNewUserActivity;
 import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
 import com.amkj.dmsh.find.activity.ImagePagerActivity;
+import com.amkj.dmsh.find.activity.JoinTopicActivity;
 import com.amkj.dmsh.find.activity.PostDetailActivity;
 import com.amkj.dmsh.find.activity.TopicDetailActivity;
 import com.amkj.dmsh.homepage.activity.DoMoLifeCommunalActivity;
 import com.amkj.dmsh.homepage.activity.DoMoLifeLotteryActivity;
+import com.amkj.dmsh.homepage.bean.ScoreGoodsEntity;
+import com.amkj.dmsh.homepage.bean.ScoreGoodsEntity.ScoreGoodsBean;
 import com.amkj.dmsh.message.bean.MessageTotalEntity;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
@@ -1527,6 +1530,21 @@ public class ConstantMethod {
             Intent intent = new Intent(context, TopicDetailActivity.class);
             intent.putExtra("topicId", topicId);
             context.startActivity(intent);
+        }
+    }
+
+
+    /**
+     * 跳转参与话题
+     */
+    public static void skipJoinTopic(Activity activity, ScoreGoodsBean scoreGoodsBean, ScoreGoodsEntity mScoreGoodsEntity) {
+        if (isContextExisted(activity) && scoreGoodsBean != null && mScoreGoodsEntity != null) {
+            Intent intent = new Intent(activity, JoinTopicActivity.class);
+            intent.putExtra("scoreGoods", scoreGoodsBean);
+            intent.putExtra("maxRewardTip", mScoreGoodsEntity.getMaxRewardTip());
+            intent.putExtra("rewardtip", mScoreGoodsEntity.getRewardTip());
+            intent.putExtra("reminder", mScoreGoodsEntity.getContentReminder());
+            activity.startActivity(intent);
         }
     }
 

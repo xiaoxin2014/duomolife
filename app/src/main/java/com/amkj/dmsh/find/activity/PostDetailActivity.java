@@ -476,6 +476,8 @@ public class PostDetailActivity extends BaseActivity {
         LinearLayout mLLPostDetail;
         @BindView(R.id.tv_recommend_post)
         TextView mTvRecommendPost;
+        @BindView(R.id.iv_high_quality)
+        ImageView mIvHighQuality;
 
 
         void init() {
@@ -519,6 +521,7 @@ public class PostDetailActivity extends BaseActivity {
         }
 
         void updateDetail() {
+            mIvHighQuality.setVisibility(mPostDetailBean.getIsRewarded() == 1 ? VISIBLE : GONE);
             //设置用户信息
             updateUserInfo();
             //普通内容

@@ -53,6 +53,7 @@ public class PostDetailEntity extends BaseEntity {
          * status : 1
          */
 
+        private int isRewarded;
         private int isfront;
         private int articletype;
         private boolean flag;//是否关注
@@ -77,6 +78,14 @@ public class PostDetailEntity extends BaseEntity {
         private List<TagsBean> tags;
         private List<RelatedGoodsBean> json;//关联商品
         private List<AtListBean> atList;
+
+        public int getIsRewarded() {
+            return isRewarded;
+        }
+
+        public void setIsRewarded(int isRewarded) {
+            this.isRewarded = isRewarded;
+        }
 
         public int getIsfront() {
             return isfront;
