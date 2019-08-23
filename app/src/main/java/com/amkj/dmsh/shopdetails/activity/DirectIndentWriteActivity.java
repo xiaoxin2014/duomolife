@@ -791,9 +791,9 @@ public class DirectIndentWriteActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_CREATE_INDENT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                if (pullFootView.rect_indent_number.getVisibility() == VISIBLE) {
-                    pullFootView.rect_indent_number.setVisibility(GONE);
-                }
+//                if (pullFootView.rect_indent_number.getVisibility() == VISIBLE) {
+//                    pullFootView.rect_indent_number.setVisibility(GONE);
+//                }
                 dealingIndentPayResult(result);
             }
 

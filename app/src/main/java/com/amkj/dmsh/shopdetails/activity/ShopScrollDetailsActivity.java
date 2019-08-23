@@ -1524,6 +1524,13 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 editGoodsSkuBean.setMaxDiscounts(getStrings(shopProperty.getMaxDiscounts()));
                 shopCarGoodsSkuDif = null;
                 skuDialog = new SkuDialog(getActivity());
+                skuDialog.setDismissListener(shopCarGoodsSku -> {
+                    if (shopCarGoodsSku != null) {
+                        shopCarGoodsSkuDif = shopCarGoodsSku;
+                        tv_ql_sp_pro_sku.setTextColor(getResources().getColor(R.color.text_black_t));
+                        tv_ql_sp_pro_sku.setText(("已选：" + shopCarGoodsSkuDif.getValuesName()));
+                    }
+                });
                 skuDialog.refreshView(editGoodsSkuBean);
             } else {
                 //仅有一个SKU

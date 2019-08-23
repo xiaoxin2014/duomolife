@@ -79,6 +79,7 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
     private Activity baseAct;
     private Dialog dialog;
     private DataListener listener;
+    private DismissListener dismissListener;
     //  存储Sku属性Id组合值
     private final Map<String, List<String>> skuIdGroup = new HashMap<>();
 
@@ -205,6 +206,11 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
                 getBackCloseKey();
             }
         });
+    }
+
+    //监听sku弹窗
+    public void setDismissListener(DismissListener dismissListener) {
+        this.dismissListener = dismissListener;
     }
 
     //   刷新数据
@@ -718,6 +724,10 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
             if (listener != null) {
                 listener.getSkuProperty(null);
             }
+        } else if (selectedSkuValueId.size() == editGoodsSkuBean.getProps().size() && dismissListener != null) {
+            //sku弹窗消失时，如果选择了sku，刷新skuValue
+            getCheckSelectedValue("");
+            dismissListener.updateSkuValue(shopCarGoodsSku);
         }
         dialog.cancel();
     }
@@ -779,11 +789,16 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
                         if (editGoodsSkuBean != null && editGoodsSkuBean.isCombine()) {
                             shopCarGoodsSku.setOriginalPrice(skuSaleBean.getPrePrice());
                         }
+                        shopCarGoodsSku.setCount(numQuantity);
+
+                        //已经获取到选中的sku,直接终止函数体
+                        if (TextUtils.isEmpty(type)) {
+                            return;
+                        }
                         if (numQuantity > skuSaleBean.getQuantity()) {
                             showToast(baseAct, "库存不足，请更改数量后再购买");
                             return;
                         }
-                        shopCarGoodsSku.setCount(numQuantity);
                         if (listener != null && shopCarGoodsSku != null) {
                             shopCarGoodsSku.setProType(getStrings(type));
                             listener.getSkuProperty(shopCarGoodsSku);
@@ -1319,6 +1334,10 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
 
     public interface DataListener {
         void getSkuProperty(ShopCarGoodsSku shopCarGoodsSku);
+    }
+
+    public interface DismissListener {
+        void updateSkuValue(ShopCarGoodsSku shopCarGoodsSku);
     }
 
     class SkuDialogView {
