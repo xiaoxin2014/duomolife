@@ -39,7 +39,9 @@ public class DirectLogisticsHeaderAdapter extends BaseQuickAdapter<LogisticsProd
                 .setGone(R.id.tv_logistics_indent_time, !TextUtils.isEmpty(logisticsProductPacketBean.getDeliverTime()));
 
         helper.itemView.setOnClickListener(v -> {
-            skipProductUrl(context, 1, logisticsProductPacketBean.getId());
+            if (!logisticsProductPacketBean.isPresent()) {//赠品不可跳转商品详情
+                skipProductUrl(context, 1, logisticsProductPacketBean.getId());
+            }
         });
     }
 }

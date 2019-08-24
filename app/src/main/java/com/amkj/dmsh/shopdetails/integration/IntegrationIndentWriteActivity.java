@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.address.activity.SelectedAddressActivity;
 import com.amkj.dmsh.address.bean.AddressInfoEntity;
+import com.amkj.dmsh.address.bean.AddressInfoEntity.AddressInfoBean;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
@@ -35,6 +36,7 @@ import com.amkj.dmsh.shopdetails.bean.QualityCreateUnionPayIndentEntity.QualityC
 import com.amkj.dmsh.shopdetails.bean.QualityCreateWeChatPayIndentBean;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateWeChatPayIndentBean.ResultBean.PayKeyBean;
 import com.amkj.dmsh.shopdetails.bean.ShopCarGoodsSku;
+import com.amkj.dmsh.shopdetails.integration.bean.AddressListEntity;
 import com.amkj.dmsh.shopdetails.integration.bean.CreateIntegralIndentInfo;
 import com.amkj.dmsh.shopdetails.integration.bean.CreateIntegralIndentInfo.IntegrationIndentBean;
 import com.amkj.dmsh.shopdetails.integration.bean.IntegralSettlementEntity;
@@ -68,6 +70,7 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.showImportantToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
@@ -81,7 +84,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.UNION_RESULT_CODE;
 import static com.amkj.dmsh.constant.Url.ADDRESS_DETAILS;
-import static com.amkj.dmsh.constant.Url.DELIVERY_ADDRESS;
+import static com.amkj.dmsh.constant.Url.ADDRESS_LIST;
 
 /**
  * @author Liuguipeng
@@ -201,32 +204,29 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
             ll_indent_address_empty_default.setVisibility(View.GONE);
             getProductSettlementInfo();
         } else {
-            if (isFirst) {
-                getDefaultAddress();
-            } else {
-                getAddressDetails();
-            }
+            getAddress();
         }
     }
 
-    /**
-     * 获取默认地址
-     */
-    private void getDefaultAddress() {
+    //获取默认地址（取地址列表的第一个）
+    private void getAddress() {
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, DELIVERY_ADDRESS, params, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, ADDRESS_LIST, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
-                AddressInfoEntity addressInfoEntity = gson.fromJson(result, AddressInfoEntity.class);
-                if (addressInfoEntity != null) {
-                    if (addressInfoEntity.getCode().equals(SUCCESS_CODE)) {
-                        setAddressData(addressInfoEntity.getAddressInfoBean());
-                    } else if (addressInfoEntity.getCode().equals(EMPTY_CODE)) {
+                AddressListEntity addressListEntity = gson.fromJson(result, AddressListEntity.class);
+                if (addressListEntity != null) {
+                    if (addressListEntity.getCode().equals(SUCCESS_CODE)) {
+                        List<AddressInfoBean> addressAllBeanList = addressListEntity.getAddressAllBeanList();
+                        if (addressAllBeanList != null && addressAllBeanList.size() > 0) {
+                            setAddressData(addressAllBeanList.get(0));
+                        }
+                    } else if (addressListEntity.getCode().equals(EMPTY_CODE)) {
                         setAddressData(null);
                     } else {
-                        showToast(IntegrationIndentWriteActivity.this, addressInfoEntity.getMsg());
+                        showImportantToast(getActivity(), addressListEntity.getMsg());
                     }
                 }
             }
@@ -681,9 +681,9 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == NEW_CREATE_ADDRESS_REQ || requestCode == SEL_ADDRESS_REQ) {
 //            获取地址成功
-            addressId = data.getIntExtra("addressId", 0);
+            AddressInfoBean addressInfoBean = data.getParcelableExtra("addressInfoBean");
             isFirst = false;
-            getAddressDetails();
+            setAddressData(addressInfoBean);
         } else if (requestCode == IS_LOGIN_CODE) {
             loadData();
         } else if (requestCode == UNION_RESULT_CODE) {

@@ -88,6 +88,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStringFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
 import static com.amkj.dmsh.constant.ConstantMethod.setEtFilter;
+import static com.amkj.dmsh.constant.ConstantMethod.showImportantToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
@@ -308,7 +309,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
 
             @Override
             public void onMaxQuantity(View view, int num) {
-                constantMethod.showImportantToast(DirectIndentWriteActivity.this, R.string.product_sell_out);
+                showImportantToast(DirectIndentWriteActivity.this, R.string.product_sell_out);
             }
         });
         pullFootView.rv_indent_write_info.setLayoutManager(new LinearLayoutManager(DirectIndentWriteActivity.this));
@@ -330,7 +331,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                         } else if (mNum > pullFootView.rect_indent_number.getMaxNum()) {
                             mNum = pullFootView.rect_indent_number.getMaxNum();
                             pullFootView.rect_indent_number.setNum(mNum);
-                            constantMethod.showImportantToast(DirectIndentWriteActivity.this, R.string.product_sell_out);
+                            showImportantToast(DirectIndentWriteActivity.this, R.string.product_sell_out);
                         }
                         if (discountBeanList.size() > 0 && discountBeanList.get(0).getCount() != mNum) {
                             if (loadHud != null) {
@@ -398,9 +399,9 @@ public class DirectIndentWriteActivity extends BaseActivity {
                                 setDiscountsInfo(indentWriteBean);
                             }
                         } else if (identWriteEntity.getCode().equals(EMPTY_CODE)) {
-                            constantMethod.showImportantToast(DirectIndentWriteActivity.this, R.string.invalidData);
+                            showImportantToast(DirectIndentWriteActivity.this, R.string.invalidData);
                         } else {
-                            constantMethod.showImportantToast(DirectIndentWriteActivity.this, identWriteEntity.getMsg());
+                            showImportantToast(DirectIndentWriteActivity.this, identWriteEntity.getMsg());
                         }
                     }
 
@@ -556,7 +557,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                     } else if (addressListEntity.getCode().equals(EMPTY_CODE)) {
                         setAddressData(null);
                     } else {
-                        constantMethod.showImportantToast(DirectIndentWriteActivity.this, addressListEntity.getMsg());
+                        showImportantToast(DirectIndentWriteActivity.this, addressListEntity.getMsg());
                     }
                 }
             }
@@ -603,14 +604,12 @@ public class DirectIndentWriteActivity extends BaseActivity {
                     List<ProductsBean> products = indentWriteBean.getProducts();
                     if (identWriteEntity.getCode().equals(SUCCESS_CODE)) {
                         if (products != null && products.size() > 0) {
-
-
                             setDiscountsInfo(indentWriteBean);
                         }
                     } else if (identWriteEntity.getCode().equals(EMPTY_CODE)) {
-                        constantMethod.showImportantToast(DirectIndentWriteActivity.this, R.string.invalidData);
+                        showImportantToast(DirectIndentWriteActivity.this, R.string.invalidData);
                     } else {
-                        constantMethod.showImportantToast(DirectIndentWriteActivity.this, identWriteEntity.getMsg());
+                        showImportantToast(DirectIndentWriteActivity.this, identWriteEntity.getMsg());
                     }
                 }
 
@@ -638,21 +637,21 @@ public class DirectIndentWriteActivity extends BaseActivity {
             } else {
                 //第一次提交订单
                 if (addressId == 0) {
-                    constantMethod.showImportantToast(this, "收货地址为空");
+                    showImportantToast(this, "收货地址为空");
                 } else if (TextUtils.isEmpty(payWay)) {
-                    constantMethod.showImportantToast(this, "请选择支付方式");
+                    showImportantToast(this, "请选择支付方式");
                 } else if (type.equals(INDENT_GROUP_SHOP) && groupShopDetailsBean != null) {
                     createGroupIndent(payWay, groupShopDetailsBean);
                 } else if (type.equals(INDENT_W_TYPE) && productInfoList.size() > 0) {
                     //判断是否需要实名
                     if (isReal && (pullHeaderView.et_oversea_name.getText().toString().length() < 0 || pullHeaderView.et_oversea_card.getText().toString().length() < 0)) {
                         tv_indent_write_commit.setEnabled(true);
-                        constantMethod.showImportantToast(this, "因国家海关要求，购买跨境商品时需完善实名信息后方可购买。");
+                        showImportantToast(this, "因国家海关要求，购买跨境商品时需完善实名信息后方可购买。");
                     } else {
                         createIndent();
                     }
                 } else {
-                    constantMethod.showImportantToast(this, "商品数据错误");
+                    showImportantToast(this, "商品数据错误");
                 }
             }
         } else {
@@ -719,12 +718,12 @@ public class DirectIndentWriteActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable throwable) {
-                constantMethod.showImportantToast(DirectIndentWriteActivity.this, R.string.do_failed);
+                showImportantToast(DirectIndentWriteActivity.this, R.string.do_failed);
             }
 
             @Override
             public void netClose() {
-                constantMethod.showImportantToast(DirectIndentWriteActivity.this, R.string.unConnectedNetwork);
+                showImportantToast(DirectIndentWriteActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
@@ -807,12 +806,12 @@ public class DirectIndentWriteActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable throwable) {
-                constantMethod.showImportantToast(DirectIndentWriteActivity.this, R.string.do_failed);
+                showImportantToast(DirectIndentWriteActivity.this, R.string.do_failed);
             }
 
             @Override
             public void netClose() {
-                constantMethod.showImportantToast(DirectIndentWriteActivity.this, R.string.unConnectedNetwork);
+                showImportantToast(DirectIndentWriteActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
@@ -843,12 +842,12 @@ public class DirectIndentWriteActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable throwable) {
-                constantMethod.showImportantToast(DirectIndentWriteActivity.this, R.string.do_failed);
+                showImportantToast(DirectIndentWriteActivity.this, R.string.do_failed);
             }
 
             @Override
             public void netClose() {
-                constantMethod.showImportantToast(DirectIndentWriteActivity.this, R.string.unConnectedNetwork);
+                showImportantToast(DirectIndentWriteActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
@@ -872,7 +871,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                     orderCreateNo = qualityWeChatIndent.getResult().getNo();
                     recordIndentTrack(orderCreateNo);
                 } else {
-                    constantMethod.showImportantToast(DirectIndentWriteActivity.this, qualityWeChatIndent.getResult() == null ? qualityWeChatIndent.getMsg() : qualityWeChatIndent.getResult().getMsg());
+                    showImportantToast(DirectIndentWriteActivity.this, qualityWeChatIndent.getResult() == null ? qualityWeChatIndent.getMsg() : qualityWeChatIndent.getResult().getMsg());
 //                            赠品送完刷新数据
                     if (qualityWeChatIndent.getResult() != null) {
                         presentStatusUpdate(qualityWeChatIndent.getResult().getCode());
@@ -892,7 +891,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                     if (qualityAliPayIndent.getResult() != null) {
                         presentStatusUpdate(qualityAliPayIndent.getResult().getCode());
                     }
-                    constantMethod.showImportantToast(DirectIndentWriteActivity.this, qualityAliPayIndent.getResult() == null ? qualityAliPayIndent.getMsg() : qualityAliPayIndent.getResult().getMsg());
+                    showImportantToast(DirectIndentWriteActivity.this, qualityAliPayIndent.getResult() == null ? qualityAliPayIndent.getMsg() : qualityAliPayIndent.getResult().getMsg());
                 }
             }
         } else if (payWay.equals(PAY_UNION_PAY)) {
@@ -904,7 +903,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                     recordIndentTrack(orderCreateNo);
                     unionPay(qualityUnionIndent);
                 } else {
-                    constantMethod.showImportantToast(DirectIndentWriteActivity.this, qualityUnionIndent.getQualityCreateUnionPayIndent() != null &&
+                    showImportantToast(DirectIndentWriteActivity.this, qualityUnionIndent.getQualityCreateUnionPayIndent() != null &&
                             qualityUnionIndent.getQualityCreateUnionPayIndent() != null &&
                             !TextUtils.isEmpty(qualityUnionIndent.getQualityCreateUnionPayIndent().getMsg()) ?
                             getStrings(qualityUnionIndent.getQualityCreateUnionPayIndent().getMsg()) :
@@ -1102,7 +1101,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                         }
                     });
         } else {
-            constantMethod.showImportantToast(DirectIndentWriteActivity.this, "缺少重要参数，请选择其它支付渠道！");
+            showImportantToast(DirectIndentWriteActivity.this, "缺少重要参数，请选择其它支付渠道！");
         }
     }
 

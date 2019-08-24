@@ -204,6 +204,7 @@ public class GoodsScoreListActivity extends BaseActivity {
                 loadHud.dismiss();
                 mLlGoodsList.setVisibility(mGoodsList.size() > 0 ? View.VISIBLE : View.GONE);
                 mTvRefresh.setVisibility(totalGoodsList.size() > 3 ? View.VISIBLE : View.GONE);
+                getHotTopic();
             }
         });
     }

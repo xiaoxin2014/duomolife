@@ -21,6 +21,7 @@ import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
+import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
 import com.amkj.dmsh.mine.biz.ShopCarDao;
@@ -54,6 +55,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getSpannableString;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeDouble;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
@@ -104,6 +106,7 @@ public class GroupMatchActivity extends BaseActivity {
     private String mProductId;
     private SkuDialog skuDialog;
     private int mPosition;
+    private CombineCommonBean mCombineMainProduct = null;
 
     @Override
     protected int getContentView() {
@@ -252,17 +255,16 @@ public class GroupMatchActivity extends BaseActivity {
             public void onSuccess(String result) {
                 mSmartCommunalRefresh.finishRefresh();
                 mGroupGoodsEntity = new Gson().fromJson(result, GroupGoodsEntity.class);
-                CombineCommonBean combineMainProduct = null;
                 if (mGroupGoodsEntity != null && mGroupGoodsEntity.getResult() != null) {
                     GroupGoodsEntity.GroupGoodsBean groupGoodsBean = mGroupGoodsEntity.getResult();
                     if (mGroupGoodsEntity.getCode().equals(SUCCESS_CODE)) {
                         goods.clear();
-                        combineMainProduct = groupGoodsBean.getCombineMainProduct();
-                        if (combineMainProduct != null) {
-                            combineMainProduct.setMainProduct(true);
-                            combineMainProduct.setActivityCode(groupGoodsBean.getActivityCode());
-                            combineMainProduct.setSelected(true);//主商品默认选中并且不可取消选中
-                            goods.add(combineMainProduct);
+                        mCombineMainProduct = groupGoodsBean.getCombineMainProduct();
+                        if (mCombineMainProduct != null) {
+                            mCombineMainProduct.setMainProduct(true);
+                            mCombineMainProduct.setActivityCode(groupGoodsBean.getActivityCode());
+                            mCombineMainProduct.setSelected(true);//主商品默认选中并且不可取消选中
+                            goods.add(mCombineMainProduct);
                         }
                         List<CombineCommonBean> combineProductList = groupGoodsBean.getCombineMatchProductList();
                         if (combineProductList != null && combineProductList.size() > 0) {
@@ -275,7 +277,7 @@ public class GroupMatchActivity extends BaseActivity {
                 }
 
                 mCommunalRecycler.setPadding(AutoSizeUtils.mm2px(mAppContext, 24), 0, AutoSizeUtils.mm2px(mAppContext, 24), AutoSizeUtils.mm2px(mAppContext, goods.size() > 0 ? 98 : 0));
-                if (combineMainProduct != null) {
+                if (mCombineMainProduct != null) {
                     NetLoadUtils.getNetInstance().showLoadSir(loadService, goods, mGroupGoodsEntity);
                     updateTotalPrice();
                 } else {
@@ -323,6 +325,13 @@ public class GroupMatchActivity extends BaseActivity {
                 break;
             //分享组合商品
             case R.id.iv_img_share:
+                if (mCombineMainProduct != null) {
+                    new UMShareAction(this,
+                            mCombineMainProduct.getPicUrl(), "【组合搭配】" + mCombineMainProduct.getName(),
+                            "【组合搭配】" + mCombineMainProduct.getName(),
+                            "https://www.domolife.cn/m/template/common/combination_match?id=" + mProductId,
+                            "pages/combineGoods/combineGoods?id=" + mProductId, getStringChangeIntegers(mProductId));
+                }
                 break;
             //加入购物车
             case R.id.tv_add_car:
@@ -453,7 +462,7 @@ public class GroupMatchActivity extends BaseActivity {
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
         if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
-            if (mBadge!=null){
+            if (mBadge != null) {
                 mBadge.setBadgeNumber((int) message.result);
             }
         }

@@ -3065,11 +3065,11 @@ public class ConstantMethod {
      * @param context
      * @param resId
      */
-    public void showImportantToast(Activity context, int resId) {
+    public static void showImportantToast(Activity context, int resId) {
         showImportantToast(context, context.getResources().getString(resId));
     }
 
-    public void showImportantToast(Activity context, String hintText) {
+    public static void showImportantToast(Activity context, String hintText) {
         int notificationEnabledValue = 1;
         if (Build.VERSION.SDK_INT >= KITKAT) {
             notificationEnabledValue = NotificationManagerCompat.from(context).areNotificationsEnabled() ? 1 : 0;
@@ -3079,15 +3079,13 @@ public class ConstantMethod {
         if (notificationEnabledValue > 0) {
             showToast(context, hintText);
         } else {
-            if (alertImportDialogHelper == null) {
-                alertImportDialogHelper = new AlertDialogHelper(context)
-                        .setSingleButton(true)
-                        .setConfirmText("确认")
-                        .setConfirmTextColor(context.getResources().getColor(R.color.text_login_gray_s))
-                        .setTitle("提示")
-                        .setTitleGravity(Gravity.CENTER)
-                        .setConfirmTextColor(context.getResources().getColor(R.color.text_login_blue_z));
-            }
+            AlertDialogHelper alertImportDialogHelper = new AlertDialogHelper(context)
+                    .setSingleButton(true)
+                    .setConfirmText("确认")
+                    .setConfirmTextColor(context.getResources().getColor(R.color.text_login_gray_s))
+                    .setTitle("提示")
+                    .setTitleGravity(Gravity.CENTER)
+                    .setConfirmTextColor(context.getResources().getColor(R.color.text_login_blue_z));
             alertImportDialogHelper.setMsg(hintText);
             if (!context.isFinishing()) {
                 alertImportDialogHelper.show();

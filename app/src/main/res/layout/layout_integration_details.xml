@@ -1,48 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:showDividers="middle"
-    android:orientation="vertical">
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+              android:showDividers="middle">
 
     <LinearLayout
+        android:id="@+id/ll_integral_detail_product"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/ll_integral_detail_product"
         android:divider="@drawable/item_divider_ten_dp_f_f"
-        android:showDividers="middle"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:showDividers="middle">
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <com.bigkoo.convenientbanner.ConvenientBanner
                 android:id="@+id/banner_integration_details"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/sc_mm_750"
                 android:background="@drawable/border_bottom_line"
-                 />
+                />
+
             <include
+                layout="@layout/layout_integration_details_introduce"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/banner_integration_details"
-                layout="@layout/layout_integration_details_introduce" />
+                android:layout_below="@id/banner_integration_details"/>
         </RelativeLayout>
+
         <LinearLayout
-            android:layout_width="match_parent"
             android:id="@+id/ll_product_comment"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:visibility="visible">
-            <include layout="@layout/layout_product_comment_eva"/>
+
+            <include
+                layout="@layout/layout_product_comment_eva"
+                android:visibility="gone"/>
+
             <include layout="@layout/adapter_direct_evaluation"/>
         </LinearLayout>
+
         <include
-            android:layout_marginLeft="@dimen/gap_left"
+            layout="@layout/layout_communal_flexbox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="@dimen/gap_right"
-            layout="@layout/layout_communal_flexbox"/>
+            android:layout_marginLeft="@dimen/gap_left"
+            android:layout_marginRight="@dimen/gap_right"/>
     </LinearLayout>
+
     <include layout="@layout/layout_communal_recycler_wrap"/>
 </LinearLayout>

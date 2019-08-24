@@ -149,6 +149,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.isShowTint;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODUCT_MORE;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODUCT_TITLE;
+import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getSquareImgUrl;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getWaterMarkImgUrl;
 
 
@@ -358,6 +359,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     private String recommendType;
     private int skuSaleBeanId;
     private int screenHeight;
+    private int screenWith;
     private GoodsRecommendAdapter mGoodsRecommendAdapter;
     private GoodsGroupAdapter mGoodsGroupAdapter;
     private AlertDialog alertDialog;
@@ -407,6 +409,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         recommendFlag = intent.getStringExtra("recommendFlag");
         TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
         screenHeight = app.getScreenHeight();
+        screenWith = app.getScreenWidth();
         recommendType = intent.getStringExtra(RECOMMEND_TYPE);
         if (TextUtils.isEmpty(productId)) {
             showToast(getActivity(), "商品信息有误，请重试");
@@ -859,7 +862,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             for (int i = 0; i < imageList.size(); i++) {
                 communalADActivityBean = new CommunalADActivityBean();
                 if (i == 0) {
-                    communalADActivityBean.setPicUrl(getWaterMarkImgUrl(imageList.get(i), shopProperty.getWaterRemark()));
+                    communalADActivityBean.setPicUrl(getWaterMarkImgUrl(getSquareImgUrl(imageList.get(i), screenWith), shopProperty.getWaterRemark()));
                     if (!TextUtils.isEmpty(shopProperty.getVideoUrl())) {
                         communalADActivityBean.setVideoUrl(shopProperty.getVideoUrl());
                         videoCount++;
@@ -1282,8 +1285,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                         @Override
                         public void onGlobalLayout() {
                             int width = flexboxLayout.getMeasuredWidth();
-                            int screenWidth = ((TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike()).getScreenWidth();
-                            int max = screenWidth - AutoSizeUtils.mm2px(mAppContext, 60) - mIvMoreTag.getWidth();
+                            int max = screenWith - AutoSizeUtils.mm2px(mAppContext, 60) - mIvMoreTag.getWidth();
                             if (width >= max && flexboxLayout.getChildCount() > 1) {
                                 mIvMoreTag.setVisibility(VISIBLE);
                                 flexboxLayout.removeViewAt(flexboxLayout.getChildCount() - 1);

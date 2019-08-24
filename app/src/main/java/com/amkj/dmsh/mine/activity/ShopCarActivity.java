@@ -22,7 +22,6 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.dominant.activity.QualityProductActActivity;
 import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
@@ -74,6 +73,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeDouble;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
+import static com.amkj.dmsh.constant.ConstantMethod.showImportantToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.stripTrailingZeros;
@@ -292,7 +292,7 @@ public class ShopCarActivity extends BaseActivity {
                             } else if (mNum > rectAddAndSubView.getMaxNum()) {//最大数量不能超过库存
                                 mNum = rectAddAndSubView.getMaxNum();
                                 rectAddAndSubView.setNum(mNum);
-                                new ConstantMethod().showImportantToast(getActivity(), R.string.product_sell_out);
+                                showImportantToast(getActivity(), R.string.product_sell_out);
                             }
                             if (item instanceof CartInfoBean && ((CartInfoBean) item).getCount() != mNum) {
                                 if (mNum <= rectAddAndSubView.getMaxNum()) {

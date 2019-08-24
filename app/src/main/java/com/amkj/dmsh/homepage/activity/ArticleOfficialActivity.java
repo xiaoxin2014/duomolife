@@ -90,6 +90,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.isWebLinkUrl;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
+import static com.amkj.dmsh.constant.ConstantMethod.showImportantToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.COMMENT_TYPE;
@@ -151,6 +152,7 @@ public class ArticleOfficialActivity extends BaseActivity {
 
 
     private String artId;
+    private String webUrl;
     private float locationY;
     private String errorUrl;
     private String refreshStatus;
@@ -168,6 +170,7 @@ public class ArticleOfficialActivity extends BaseActivity {
     protected void initViews() {
         Intent intent = getIntent();
         artId = intent.getStringExtra("ArtId");
+        webUrl = "https://www.domolife.cn/m/app/pages/study_detail_app.html?id=" + artId;
         //记录埋点参数sourceId
         ConstantMethod.saveSourceId(getClass().getSimpleName(), String.valueOf(artId));
         WebSettings webSettings = web_communal.getSettings();
@@ -201,7 +204,7 @@ public class ArticleOfficialActivity extends BaseActivity {
         webSettings.setUserAgentString(web_communal.getSettings().getUserAgentString() + " domolifeandroid" + getRandomString(501));
         //        js交互
         web_communal.addJavascriptInterface(new JsData(), "JsToAndroid");
-        web_communal.loadUrl("http://test.domolife.cn/test/app/pages/study_detail_app.html?id=" + artId);
+        web_communal.loadUrl(webUrl);
         //设置Web视图
         web_communal.setWebViewClient(new WebViewClient() {
             @Override
@@ -417,13 +420,13 @@ public class ArticleOfficialActivity extends BaseActivity {
             runOnUiThread(() -> {
                 Map map = (Map) JSON.parse(result);
                 String title = (String) map.get("objName");
-                String imageUrl = (String) map.get("imageUrl");
+//                String imageUrl = (String) map.get("imageUrl");
                 String content = (String) map.get("content");
                 String url = (String) map.get("url");
                 int objId = getStringChangeIntegers((String) map.get("objId"));
                 String routineUrl = (String) map.get("routineUrl");
                 CommunalWebDetailUtils.getCommunalWebInstance()
-                        .setShareData(getActivity(), new ShareDataBean(imageUrl
+                        .setShareData(getActivity(), new ShareDataBean(""
                                 , title, content, url, routineUrl, objId));
             });
         }
@@ -439,7 +442,7 @@ public class ArticleOfficialActivity extends BaseActivity {
                 if (jsInteractiveBean != null && !TextUtils.isEmpty(jsInteractiveBean.getType())) {
                     switch (jsInteractiveBean.getType()) {
                         case "showToast":
-                            runOnUiThread(() -> showImportantToast(jsInteractiveBean.getOtherData()));
+                            runOnUiThread(() -> showImportToast(jsInteractiveBean.getOtherData()));
                             break;
                         case "browseImage":
                             runOnUiThread(() -> browseImage(jsInteractiveBean.getOtherData()));
@@ -501,10 +504,10 @@ public class ArticleOfficialActivity extends BaseActivity {
     }
 
     //弹窗
-    public void showImportantToast(Map<String, Object> map) {
+    public void showImportToast(Map<String, Object> map) {
         if (map != null) {
             String msg = (String) map.get("msg");
-            new ConstantMethod().showImportantToast(this, msg);
+            showImportantToast(this, msg);
         }
     }
 
@@ -835,7 +838,7 @@ public class ArticleOfficialActivity extends BaseActivity {
                 if (isWebLinkUrl(errorUrl)) {
                     web_communal.loadUrl(errorUrl);
                 } else {
-                    web_communal.loadUrl("http://test.domolife.cn/test/app/pages/study_detail_app.html?id=" + artId);
+                    web_communal.loadUrl(webUrl);
                 }
                 break;
         }

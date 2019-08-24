@@ -131,6 +131,8 @@ public class DirectLogisticsDetailsActivity extends BaseActivity {
                                             bean.setName(bean.getPresentName());
                                             bean.setId(bean.getOrderProductId());
                                             bean.setPicUrl(bean.getPresentPicUrl());
+                                            bean.setPicUrl(bean.getPresentPicUrl());
+                                            bean.setPresent(true);
                                         }
                                     }
                                     packetList.addAll(presentPacketList);

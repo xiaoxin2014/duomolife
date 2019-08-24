@@ -260,6 +260,22 @@ public class GlideImageLoaderUtil {
         return imgUrl;
     }
 
+    //裁剪指定尺寸的正方形图片(先缩放成指定尺寸，然后居中裁剪成正方形)
+    public static String getSquareImgUrl(String imgUrl, int sizeValue) {
+        TinkerBaseApplicationLike applicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
+
+        String ossDataUrl = applicationLike.getOSSDataUrl();
+        if (!TextUtils.isEmpty(imgUrl) && imgUrl.contains(ossDataUrl)) {
+            String ossPrefix = "?x-oss-process=image";
+            String ossImg = "/resize,m_fill,w_" + sizeValue + ",limit_0/auto-orient,1";
+            if (imgUrl.contains(ossPrefix)) {
+                return imgUrl + ossImg;
+            } else {
+                return imgUrl + ossPrefix + ossImg;
+            }
+        }
+        return imgUrl;
+    }
 
     /**
      * 获取水印图片
@@ -395,6 +411,7 @@ public class GlideImageLoaderUtil {
         }
         return bitmap;
     }
+
     /**
      */
     public static void loadRoundImg(final Context context, final ImageView iv,
@@ -411,7 +428,7 @@ public class GlideImageLoaderUtil {
                     .into(iv);
         }
     }
-	
+
     /**
      * 带回调的，例如启动页广告需要加载完成在展示
      * 启动一个子线程去加载图片
@@ -1110,7 +1127,7 @@ public class GlideImageLoaderUtil {
     public static Bitmap getBitmapFromView(View v) {
         Bitmap b = null;
         try {
-            b = Bitmap.createBitmap(v.getMeasuredWidth() ,v.getMeasuredWidth()  , Bitmap.Config.ARGB_8888);
+            b = Bitmap.createBitmap(v.getMeasuredWidth(), v.getMeasuredWidth(), Bitmap.Config.ARGB_8888);
             Canvas c = new Canvas(b);
             int left = v.getLeft();
             int top = v.getTop();

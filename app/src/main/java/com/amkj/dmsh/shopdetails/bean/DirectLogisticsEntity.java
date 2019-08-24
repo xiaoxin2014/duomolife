@@ -78,6 +78,15 @@ public class DirectLogisticsEntity extends BaseEntity {
             private String pExpressNo;
             private int orderProductId;
             private String presentName;
+            private boolean isPresent;//是否是赠品的物流信息
+
+            public boolean isPresent() {
+                return isPresent;
+            }
+
+            public void setPresent(boolean present) {
+                isPresent = present;
+            }
 
             public String getpExpressNo() {
                 return pExpressNo;
