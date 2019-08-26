@@ -155,7 +155,7 @@ public class ShopCarActivity extends BaseActivity {
     private UserLikedProductEntity likedProduct;
     private AlertDialogHelper alertDialogHelper;
     private ShopCarEntity mShopCarNewInfoEntity;
-    private boolean first;
+    private boolean first=true;
     private int mNum;
     private int mPosition;
 
@@ -296,7 +296,7 @@ public class ShopCarActivity extends BaseActivity {
                             }
                             if (item instanceof CartInfoBean && ((CartInfoBean) item).getCount() != mNum) {
                                 if (mNum <= rectAddAndSubView.getMaxNum()) {
-                                    changeGoods(null, mNum, REDUCE_NUM, (CartInfoBean) item);
+                                    changeGoods(null, mNum, -1, (CartInfoBean) item);
                                 }
                             }
                         }
