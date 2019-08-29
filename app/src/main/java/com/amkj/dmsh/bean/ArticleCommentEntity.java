@@ -2,7 +2,6 @@ package com.amkj.dmsh.bean;
 
 import com.amkj.dmsh.base.BaseEntity;
 import com.amkj.dmsh.find.bean.BaseFavorBean;
-import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -10,7 +9,7 @@ import java.util.List;
 /**
  * Created by atd48 on 2016/8/30.
  */
-public class ArticleCommentEntity extends BaseEntity{
+public class ArticleCommentEntity extends BaseEntity {
 
 
     /**
@@ -43,7 +42,7 @@ public class ArticleCommentEntity extends BaseEntity{
         this.articleCommentList = articleCommentList;
     }
 
-    public static class ArticleCommentBean extends BaseFavorBean implements MultiItemEntity {
+    public static class ArticleCommentBean extends BaseFavorBean {
         public final static int NORMAL_CODE = 0;
         //    没有数据
         public final static int FOOT_EMPTY_CODE = 1;
@@ -74,7 +73,6 @@ public class ArticleCommentEntity extends BaseEntity{
         private String description;
         private int comment_id;
         private Object to_uid;
-        private int itemType;
         private int backCode;
         private String commentUserName;
         private String postAuthorName;
@@ -325,15 +323,6 @@ public class ArticleCommentEntity extends BaseEntity{
 
         public void setAtList(List<AtListBean> atList) {
             this.atList = atList;
-        }
-
-        public void setItemType(int itemType) {
-            this.itemType = itemType;
-        }
-
-        @Override
-        public int getItemType() {
-            return itemType;
         }
 
         public static class AtListBean {

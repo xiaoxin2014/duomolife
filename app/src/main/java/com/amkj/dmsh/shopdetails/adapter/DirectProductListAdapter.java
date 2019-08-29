@@ -55,7 +55,6 @@ import java.util.Map;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getSpannableString;
-import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
@@ -409,17 +408,15 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
     }
 
     private static String getCoutDownTime(long coutTime) {
-        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss", Locale.CHINA);
-        SimpleDateFormat yearFormat = new SimpleDateFormat("dd", Locale.CHINA);
         try {
-            String time = timeFormat.format(new Date(coutTime));
-            int day = getStringChangeIntegers(yearFormat.format(new Date(coutTime)));
-
-            return "距结束  " + day + "天" + time;
+            int day = (int) (coutTime / (1000 * 60 * 60 * 24));
+            int hour = (int) ((coutTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            int minute = (int) ((coutTime % (1000 * 60 * 60)) / (1000 * 60));
+            int second = (int) ((coutTime % (1000 * 60)) / 1000);
+            return "距结束 " + day + "天" + hour + ":" + minute + ":" + second;
         } catch (Exception e) {
-            e.printStackTrace();
+            return "";
         }
-        return "";
     }
 
     /**
