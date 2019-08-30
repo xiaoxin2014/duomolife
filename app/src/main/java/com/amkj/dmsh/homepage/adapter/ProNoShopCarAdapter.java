@@ -18,6 +18,9 @@ import com.google.android.flexbox.FlexboxLayout;
 
 import java.util.List;
 
+import me.jessyan.autosize.utils.AutoSizeUtils;
+
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.addShopCarGetSku;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
@@ -57,8 +60,8 @@ public class ProNoShopCarAdapter extends BaseMultiItemQuickAdapter<LikedProductB
                         .addOnClickListener(R.id.tv_search_empty_more);
                 break;
             case TYPE_0:
-                GlideImageLoaderUtil.loadThumbCenterCrop(context, (ImageView) helper.getView(R.id.iv_qt_pro_img)
-                        , likedProductBean.getPicUrl(), likedProductBean.getWaterRemark(), true);
+                GlideImageLoaderUtil.loadSquareImg(context, (ImageView) helper.getView(R.id.iv_qt_pro_img)
+                        , likedProductBean.getPicUrl(), likedProductBean.getWaterRemark(), AutoSizeUtils.mm2px(mAppContext, 350));
                 helper.setGone(R.id.iv_com_pro_tag_out, likedProductBean.getQuantity() < 1)
                         .setText(R.id.tv_qt_pro_name, !TextUtils.isEmpty(likedProductBean.getName()) ?
                                 getStrings(likedProductBean.getName()) : getStrings(likedProductBean.getTitle()))

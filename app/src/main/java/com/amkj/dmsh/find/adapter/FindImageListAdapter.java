@@ -59,11 +59,11 @@ public class FindImageListAdapter extends BaseMultiItemQuickAdapter<PictureBean,
                 iv_eva_image.setImageResource(R.drawable.load_loading_image);
                 helper.itemView.setTag(pictureBean);
                 if (!TextUtils.isEmpty(pictureBean.getPath())) {
-                    GlideImageLoaderUtil.loadThumbCenterCrop(context, iv_eva_image, pictureBean.getPath(),null,false);
+                    GlideImageLoaderUtil.loadThumbCenterCrop(context, iv_eva_image, pictureBean.getPath(),null);
                 }
                 break;
             default:
-                GlideImageLoaderUtil.loadThumbCenterCrop(context, (ImageView) helper.getView(R.id.iv_image_path), getStrings(pictureBean.getPath()), null, false);
+                GlideImageLoaderUtil.loadThumbCenterCrop(context, (ImageView) helper.getView(R.id.iv_image_path), getStrings(pictureBean.getPath()), null);
                 helper.itemView.setTag(pictureBean);
                 break;
         }

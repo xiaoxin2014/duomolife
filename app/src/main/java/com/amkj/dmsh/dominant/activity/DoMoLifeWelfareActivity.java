@@ -23,18 +23,16 @@ import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.DMLThemeEntity;
 import com.amkj.dmsh.bean.DMLThemeEntity.DMLThemeBean;
-import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
+import com.amkj.dmsh.dominant.adapter.GoodProductAdapter;
 import com.amkj.dmsh.dominant.adapter.QualityHistoryAdapter;
 import com.amkj.dmsh.dominant.adapter.QualityOsMailHeaderAdapter;
-import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
 import com.amkj.dmsh.dominant.bean.QualityHistoryListEntity;
 import com.amkj.dmsh.dominant.bean.QualityHistoryListEntity.QualityHistoryListBean;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
@@ -43,8 +41,6 @@ import com.google.gson.Gson;
 import com.kingja.loadsir.callback.SuccessCallback;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -61,14 +57,13 @@ import q.rorbin.badgeview.Badge;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.addShopCarGetSku;
 import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
-import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_FORTY;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
 import static com.amkj.dmsh.constant.Url.H_DML_PREVIOUS_THEME;
 import static com.amkj.dmsh.constant.Url.H_DML_RECOMMEND;
@@ -111,13 +106,13 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
     Toolbar tl_quality_bar;
     private int scrollY;
     private float screenHeight;
-    private QualityTypeProductAdapter qualityTypeProductAdapter;
+    private GoodProductAdapter qualityTypeProductAdapter;
     private int page = 1;
     private int themePage = 1;
     private int productPage = 1;
-    private List<LikedProductBean> typeDetails = new ArrayList();
-    private List<DMLThemeBean> themeList = new ArrayList();
-    private List<QualityHistoryListBean> welfarePreviousList = new ArrayList();
+    private List<LikedProductBean> typeDetails = new ArrayList<>();
+    private List<DMLThemeBean> themeList = new ArrayList<>();
+    private List<QualityHistoryListBean> welfarePreviousList = new ArrayList<>();
     //    头部
     private QualityOsMailHeaderAdapter qualityWelfareHeaderAdapter;
     private OverseasHeaderView overseasHeaderView;
@@ -144,13 +139,8 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
                 .setDividerId(R.drawable.item_divider_five_dp)
                 .create());
 
-        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                loadData();
-            }
-        });
-        qualityTypeProductAdapter = new QualityTypeProductAdapter(DoMoLifeWelfareActivity.this, typeDetails);
+        smart_communal_refresh.setOnRefreshListener(refreshLayout -> loadData());
+        qualityTypeProductAdapter = new GoodProductAdapter(DoMoLifeWelfareActivity.this, typeDetails);
         qualityTypeProductAdapter.addHeaderView(headerView);
         communal_recycler.setVerticalScrollBarEnabled(false);
         communal_recycler.setAdapter(qualityTypeProductAdapter);
@@ -192,35 +182,6 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
                 }
             }
         }, communal_recycler);
-        qualityTypeProductAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
-            @Override
-            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                LikedProductBean likedProductBean = (LikedProductBean) view.getTag();
-                if (likedProductBean != null) {
-                    switch (view.getId()) {
-                        case R.id.iv_pro_add_car:
-                            BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
-                            baseAddCarProInfoBean.setProductId(likedProductBean.getId());
-                            baseAddCarProInfoBean.setActivityCode(getStrings(likedProductBean.getActivityCode()));
-                            baseAddCarProInfoBean.setProName(getStrings(likedProductBean.getName()));
-                            baseAddCarProInfoBean.setProPic(getStrings(likedProductBean.getPicUrl()));
-                            addShopCarGetSku(DoMoLifeWelfareActivity.this, baseAddCarProInfoBean, loadHud);
-                            break;
-                    }
-                }
-            }
-        });
-        qualityTypeProductAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                LikedProductBean likedProductBean = (LikedProductBean) view.getTag();
-                if (likedProductBean != null) {
-                    Intent intent = new Intent(DoMoLifeWelfareActivity.this, ShopScrollDetailsActivity.class);
-                    intent.putExtra("productId", String.valueOf(likedProductBean.getId()));
-                    startActivity(intent);
-                }
-            }
-        });
         overseasHeaderView.communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(DoMoLifeWelfareActivity.this));
         overseasHeaderView.communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
@@ -305,7 +266,7 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
     private void getWelfareThemeData() {
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", themePage);
-        params.put("showCount", TOTAL_COUNT_TEN);
+        params.put("showCount", TOTAL_COUNT_FORTY);
         params.put("goodsCurrentPage", 1);
         params.put("goodsShowCount", TOTAL_COUNT_TEN);
         NetLoadUtils.getNetInstance().loadNetDataPost(DoMoLifeWelfareActivity.this, H_DML_THEME
@@ -440,6 +401,8 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
     protected void getData() {
         getWelfareThemeData();
         getPreviousTopic();
+        //购物车数量
+        getCarCount(this);
     }
 
     @OnClick(R.id.iv_img_service)

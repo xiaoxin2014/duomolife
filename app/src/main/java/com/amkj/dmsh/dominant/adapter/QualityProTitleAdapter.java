@@ -16,6 +16,9 @@ import com.google.android.flexbox.FlexboxLayout;
 
 import java.util.List;
 
+import me.jessyan.autosize.utils.AutoSizeUtils;
+
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 
 ;
@@ -37,8 +40,8 @@ public class QualityProTitleAdapter extends BaseQuickAdapter<LikedProductBean, B
 
     @Override
     protected void convert(BaseViewHolder helper, LikedProductBean likedProductBean) {
-        GlideImageLoaderUtil.loadThumbCenterCrop(context, (ImageView) helper.getView(R.id.iv_qt_pro_img)
-                , likedProductBean.getPicUrl(),likedProductBean.getWaterRemark(),true);
+        GlideImageLoaderUtil.loadSquareImg(context, (ImageView) helper.getView(R.id.iv_qt_pro_img)
+                , likedProductBean.getPicUrl(), likedProductBean.getWaterRemark(), AutoSizeUtils.mm2px(mAppContext, 350));
         helper.setGone(R.id.iv_com_pro_tag_out, likedProductBean.getQuantity() < 1)
                 .setText(R.id.tv_qt_pro_descrip, !TextUtils.isEmpty(likedProductBean.getName()) ?
                         getStrings(likedProductBean.getName()) : getStrings(likedProductBean.getTitle()))
@@ -46,23 +49,23 @@ public class QualityProTitleAdapter extends BaseQuickAdapter<LikedProductBean, B
                 .setGone(R.id.iv_pro_add_car, false)
                 .setGone(R.id.tv_qt_pro_name, false);
         FlexboxLayout fbl_market_label = helper.getView(R.id.fbl_market_label);
-        if(!TextUtils.isEmpty(likedProductBean.getActivityTag())||(likedProductBean.getMarketLabelList()!=null
-                &&likedProductBean.getMarketLabelList().size()>0)){
+        if (!TextUtils.isEmpty(likedProductBean.getActivityTag()) || (likedProductBean.getMarketLabelList() != null
+                && likedProductBean.getMarketLabelList().size() > 0)) {
             fbl_market_label.setVisibility(View.VISIBLE);
             fbl_market_label.removeAllViews();
-            if(!TextUtils.isEmpty(likedProductBean.getActivityTag())){
-                fbl_market_label.addView(ProductLabelCreateUtils.createLabelText(context,likedProductBean.getActivityTag(),1));
+            if (!TextUtils.isEmpty(likedProductBean.getActivityTag())) {
+                fbl_market_label.addView(ProductLabelCreateUtils.createLabelText(context, likedProductBean.getActivityTag(), 1));
             }
-            if(likedProductBean.getMarketLabelList()!=null
-                    &&likedProductBean.getMarketLabelList().size()>0){
-                for (MarketLabelBean marketLabelBean:likedProductBean.getMarketLabelList()) {
-                    if(!TextUtils.isEmpty(marketLabelBean.getTitle())){
-                        fbl_market_label.addView(ProductLabelCreateUtils.createLabelText(context,marketLabelBean.getTitle(),0));
+            if (likedProductBean.getMarketLabelList() != null
+                    && likedProductBean.getMarketLabelList().size() > 0) {
+                for (MarketLabelBean marketLabelBean : likedProductBean.getMarketLabelList()) {
+                    if (!TextUtils.isEmpty(marketLabelBean.getTitle())) {
+                        fbl_market_label.addView(ProductLabelCreateUtils.createLabelText(context, marketLabelBean.getTitle(), 0));
                     }
                 }
             }
 
-        }else{
+        } else {
             fbl_market_label.setVisibility(View.GONE);
         }
         helper.itemView.setTag(likedProductBean);

@@ -20,6 +20,9 @@ import com.google.android.flexbox.FlexboxLayout;
 
 import java.util.List;
 
+import me.jessyan.autosize.utils.AutoSizeUtils;
+
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.adClickTotal;
 import static com.amkj.dmsh.constant.ConstantMethod.addShopCarGetSku;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -69,8 +72,8 @@ public class GoodProductAdapter extends BaseMultiItemQuickAdapter<LikedProductBe
                 break;
             //普通商品（product类型）
             case PRODUCT:
-                GlideImageLoaderUtil.loadThumbCenterCrop(context, helper.getView(R.id.iv_qt_pro_img)
-                        , likedProductBean.getPicUrl(), likedProductBean.getWaterRemark(), true);
+                GlideImageLoaderUtil.loadSquareImg(context, helper.getView(R.id.iv_qt_pro_img)
+                        , likedProductBean.getPicUrl(), likedProductBean.getWaterRemark(), AutoSizeUtils.mm2px(mAppContext, 350));
                 helper.setGone(R.id.iv_com_pro_tag_out, likedProductBean.getQuantity() < 1)
                         .setText(R.id.tv_qt_pro_descrip, getStrings(likedProductBean.getSubtitle()))
                         .setText(R.id.tv_qt_pro_name, !TextUtils.isEmpty(likedProductBean.getName()) ?

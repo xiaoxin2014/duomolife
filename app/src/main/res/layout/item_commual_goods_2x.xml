@@ -16,7 +16,7 @@
         <ImageView
             android:id="@+id/iv_qt_pro_img"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/sc_mm_360"
+            android:layout_height="@dimen/sc_mm_350"
             android:foregroundGravity="center"
             android:scaleType="centerCrop"/>
 

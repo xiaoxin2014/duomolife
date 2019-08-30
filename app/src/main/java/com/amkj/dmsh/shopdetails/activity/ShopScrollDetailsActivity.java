@@ -150,7 +150,6 @@ import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODUCT_MORE;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODUCT_TITLE;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getSquareImgUrl;
-import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getWaterMarkImgUrl;
 
 
 /**
@@ -862,7 +861,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             for (int i = 0; i < imageList.size(); i++) {
                 communalADActivityBean = new CommunalADActivityBean();
                 if (i == 0) {
-                    communalADActivityBean.setPicUrl(getWaterMarkImgUrl(getSquareImgUrl(imageList.get(i), screenWith), shopProperty.getWaterRemark()));
+                    communalADActivityBean.setPicUrl(getSquareImgUrl(imageList.get(i), screenWith, shopProperty.getWaterRemark()));
                     if (!TextUtils.isEmpty(shopProperty.getVideoUrl())) {
                         communalADActivityBean.setVideoUrl(shopProperty.getVideoUrl());
                         videoCount++;

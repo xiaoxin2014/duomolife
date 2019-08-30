@@ -21,6 +21,9 @@ import com.google.android.flexbox.FlexboxLayout;
 
 import java.util.List;
 
+import me.jessyan.autosize.utils.AutoSizeUtils;
+
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getSpannableString;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
@@ -50,14 +53,8 @@ public class CatergoryGoodsAdapter extends BaseMultiItemQuickAdapter<LikedProduc
         if (likedProductBean == null) return;
         switch (helper.getItemViewType()) {
             case PRODUCT:
-                String waterRemark = likedProductBean.getWaterRemark();
-                String goodsUrl = likedProductBean.getPicUrl();
-                if (!TextUtils.isEmpty(waterRemark)) {
-                    goodsUrl = GlideImageLoaderUtil.getWaterMarkImgUrl(likedProductBean.getPicUrl(), likedProductBean.getWaterRemark());
-                }
-
                 String economizeNum = getStringsFormat(context, R.string.economize_money, getStrings(likedProductBean.getDecreasePrice()));
-                GlideImageLoaderUtil.loadImage(context, helper.getView(R.id.iv_goods_pic), goodsUrl);
+                GlideImageLoaderUtil.loadSquareImg(context, helper.getView(R.id.iv_goods_pic), likedProductBean.getPicUrl(), likedProductBean.getWaterRemark(), AutoSizeUtils.mm2px(mAppContext, 236));
                 helper.setGone(R.id.iv_com_pro_tag_out, likedProductBean.getQuantity() < 1)
                         .setText(R.id.tv_price, ConstantMethod.getRmbFormat(context, likedProductBean.getPrice()))
                         .setText(R.id.tv_name, getStrings(likedProductBean.getName()))

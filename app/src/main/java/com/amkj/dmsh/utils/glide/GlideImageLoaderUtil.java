@@ -156,9 +156,9 @@ public class GlideImageLoaderUtil {
      * @param iv
      * @param imgUrl
      */
-    public static void loadThumbCenterCrop(Context context, final ImageView iv, String imgUrl, String waterRemark, boolean isDouble) {
+    public static void loadThumbCenterCrop(Context context, final ImageView iv, String imgUrl, String waterRemark) {
         if (null != context && iv != null) {
-            Glide.with(context).load(getThumbImgUrl(imgUrl, waterRemark, isDouble))
+            Glide.with(context).load(getThumbImgUrl(imgUrl, waterRemark))
                     .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA)
                             .centerCrop().error(R.drawable.load_loading_image))
                     .transition(withCrossFade())
@@ -214,27 +214,39 @@ public class GlideImageLoaderUtil {
     }
 
     /**
+     * 加载正方形图片
+     */
+    public static void loadSquareImg(Context context, final ImageView iv, String imgUrl, String waterRemark, int sizeValue) {
+        if (null != context && iv != null) {
+            Glide.with(context).load(getSquareImgUrl(imgUrl, sizeValue, waterRemark))
+                    .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA)
+                            .centerCrop().error(R.drawable.load_loading_image))
+                    .transition(withCrossFade())
+                    .into(iv);
+        }
+    }
+
+    /**
      * 获取缩略图
      *
      * @param imgUrl
      * @return
      */
     public static String getThumbImgUrl(String imgUrl) {
-        return getThumbImgUrl(imgUrl, "", true);
+        return getThumbImgUrl(imgUrl, "");
     }
 
-    public static String getThumbImgUrl(String imgUrl, String waterRemark, boolean isDouble) {
+    public static String getThumbImgUrl(String imgUrl, String waterRemark) {
         TinkerBaseApplicationLike applicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
         String ossDataUrl = applicationLike.getOSSDataUrl();
         if (!TextUtils.isEmpty(imgUrl) && imgUrl.contains(ossDataUrl)) {
             String ossPrefix = "?x-oss-process=image";
             String ossImgResizeOri = "/auto-orient,1";
-            String ossImgDoubleThumb = "/resize,w_400";
             String ossImgThreeThumb = "/resize,w_300";
             if (imgUrl.contains(ossPrefix)) {
-                return imgUrl + (isDouble ? ossImgDoubleThumb : ossImgThreeThumb) + ossImgResizeOri + (!TextUtils.isEmpty(waterRemark) ? ("/" + getStrings(waterRemark)) : "");
+                return imgUrl + ossImgThreeThumb + ossImgResizeOri + (!TextUtils.isEmpty(waterRemark) ? ("/" + getStrings(waterRemark)) : "");
             } else {
-                return imgUrl + ossPrefix + (isDouble ? ossImgDoubleThumb : ossImgThreeThumb) + ossImgResizeOri + (!TextUtils.isEmpty(waterRemark) ? ("/" + getStrings(waterRemark)) : "");
+                return imgUrl + ossPrefix + ossImgThreeThumb + ossImgResizeOri + (!TextUtils.isEmpty(waterRemark) ? ("/" + getStrings(waterRemark)) : "");
             }
         }
         return imgUrl;
@@ -261,17 +273,16 @@ public class GlideImageLoaderUtil {
     }
 
     //裁剪指定尺寸的正方形图片(先缩放成指定尺寸，然后居中裁剪成正方形)
-    public static String getSquareImgUrl(String imgUrl, int sizeValue) {
+    public static String getSquareImgUrl(String imgUrl, int sizeValue, String waterRemark) {
         TinkerBaseApplicationLike applicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-
         String ossDataUrl = applicationLike.getOSSDataUrl();
         if (!TextUtils.isEmpty(imgUrl) && imgUrl.contains(ossDataUrl)) {
             String ossPrefix = "?x-oss-process=image";
             String ossImg = "/resize,m_fill,w_" + sizeValue + ",limit_0/auto-orient,1";
             if (imgUrl.contains(ossPrefix)) {
-                return imgUrl + ossImg;
+                return imgUrl + ossImg + (!TextUtils.isEmpty(waterRemark) ? ("/" + getStrings(waterRemark)) : "");
             } else {
-                return imgUrl + ossPrefix + ossImg;
+                return imgUrl + ossPrefix + ossImg + (!TextUtils.isEmpty(waterRemark) ? ("/" + getStrings(waterRemark)) : "");
             }
         }
         return imgUrl;
