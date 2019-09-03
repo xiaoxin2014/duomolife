@@ -189,7 +189,7 @@ public class CommentDetailsActivity extends BaseActivity {
     }
 
     private void getCommentData() {
-        String url = Url.BASE_URL + Url.Q_COMMENT_DETAILS;
+        String url =  Url.Q_COMMENT_DETAILS;
         Map<String, Object> params = new HashMap<>();
         params.put("comment_id", commentId);
         params.put("currentPage", page);
@@ -248,7 +248,7 @@ public class CommentDetailsActivity extends BaseActivity {
     }
 
     private void setCommentLike(int id) {
-        String url = Url.BASE_URL + Url.FIND_AND_COMMENT_FAV;
+        String url =  Url.FIND_AND_COMMENT_FAV;
         Map<String, Object> params = new HashMap<>();
         //用户id
         params.put("tuid", userId);

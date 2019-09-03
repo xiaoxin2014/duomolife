@@ -1,7 +1,5 @@
 package com.amkj.dmsh.constant;
 
-import android.content.Context;
-
 /**
  * Created by atd48 on 2016/8/27.
  */
@@ -9,32 +7,34 @@ public class Url {
 
     public static String BASE_URL = "https://app.domolife.cn/";
 
-    public Url(Context context, int position) {
-        if (context != null) {
-            if (position == 0) {//正式库
-                BASE_URL = "https://app.domolife.cn/";
-            } else if (position == 1) {//测试库
-                BASE_URL = "http://ts.domolife.cn/";
-            } else if (position == 2) {//钊立
-                BASE_URL = "http://192.168.1.98:8080/";
-            } else if (position == 3) {//泽鑫
+    public static String getUrl(int position) {
+        if (position == 0) {//正式库
+            return BASE_URL = "https://app.domolife.cn/";
+        } else if (position == 1) {//测试库
+            return BASE_URL = "http://ts.domolife.cn/";
+        } else if (position == 2) {//钊立
+            return BASE_URL = "http://192.168.1.98:8080/";
+        } else if (position == 3) {//泽鑫
 //                BASE_URL = "http://192.168.1.180:8080/";
-                BASE_URL = "http://192.168.1.51:8080/";
-            } else if (position == 4) {//泽鑫2
-                BASE_URL = "http://192.168.1.178:9090/";
-            } else if (position == 6) {//预发布
-                BASE_URL = "http://dev.domolife.cn/";
-            } else if (position == 7) {//王凯2
-                BASE_URL = "http://192.168.1.87:8080/";
-            } else if (position == 8) {//王凯1
-                BASE_URL = "http://192.168.1.212:80/";
-            } else if (position == 9) {//鸿星
+            return BASE_URL = "http://192.168.1.51:8080/";
+        } else if (position == 4) {//泽鑫2
+            return BASE_URL = "http://192.168.1.178:9090/";
+        } else if (position == 5) {//预发布
+            return BASE_URL = "http://dev.domolife.cn/";
+        } else if (position == 6) {//王凯2
+            return BASE_URL = "http://192.168.1.87:8080/";
+        } else if (position == 7) {//王凯1
+            return BASE_URL = "http://192.168.1.212:80/";
+        } else if (position == 8) {//鸿星
 //                BASE_URL = "http://192.168.101.12:8080/";
-                BASE_URL = "http://192.168.1.9:8080/";
-            }
+            return BASE_URL = "http://192.168.1.9:8080/";
         }
+        return BASE_URL = "https://app.domolife.cn/";
     }
 
+    public static void setBaseUrl(String baseUrl) {
+        BASE_URL = baseUrl;
+    }
 
     /**
      * 首页
@@ -766,7 +766,7 @@ public class Url {
     //    已购买商品列表界面 广告位
     public static final String FIND_AD2 = "api/website/getAdByFindTopic";
     //    获取商品详情更多评论
-    public static final String GET_PRODUCT_POST= "api/find/post/getProductPost";
+    public static final String GET_PRODUCT_POST = "api/find/post/getProductPost";
 
 
     /**

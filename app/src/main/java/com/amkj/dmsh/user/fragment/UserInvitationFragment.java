@@ -174,7 +174,7 @@ public class UserInvitationFragment extends BaseFragment {
     }
 
     private void getInvitationList() {
-        String url = Url.BASE_URL + Url.USER_INVITATION_LIST;
+        String url =  Url.USER_INVITATION_LIST;
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", page);
         params.put("showCount", TOTAL_COUNT_TEN);
@@ -216,7 +216,7 @@ public class UserInvitationFragment extends BaseFragment {
     //    文章收藏
     private void setArticleCollect(final InvitationDetailBean invitationDetailBean, View view) {
         final TextView tv_collect = (TextView) view;
-        String url = Url.BASE_URL + Url.F_ARTICLE_COLLECT;
+        String url =  Url.F_ARTICLE_COLLECT;
         Map<String, Object> params = new HashMap<>();
         //用户id
         params.put("uid", userId);
@@ -256,7 +256,7 @@ public class UserInvitationFragment extends BaseFragment {
 
     private void setArticleLiked(InvitationDetailBean invitationDetailBean, View view) {
         TextView tv_like = (TextView) view;
-        String url = Url.BASE_URL + Url.F_ARTICLE_DETAILS_FAVOR;
+        String url =  Url.F_ARTICLE_DETAILS_FAVOR;
         Map<String, Object> params = new HashMap<>();
         //用户id
         params.put("tuid", userId);

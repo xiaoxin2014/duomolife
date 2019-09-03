@@ -172,7 +172,7 @@ public class ArticleCommentAdapter extends BaseQuickAdapter<DmlSearchCommentBean
         ReplyCommListBean replyCommListBean = (ReplyCommListBean) view.getTag();
         TextView textView = (TextView) view;
         textView.setSelected(!textView.isSelected());
-        String url = Url.BASE_URL + Url.FIND_AND_COMMENT_FAV;
+        String url =  Url.FIND_AND_COMMENT_FAV;
         Map<String, Object> params = new HashMap<>();
         //用户id
         params.put("tuid", uid);

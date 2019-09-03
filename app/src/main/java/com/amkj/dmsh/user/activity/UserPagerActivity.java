@@ -116,7 +116,7 @@ public class UserPagerActivity extends BaseActivity {
     }
 
     private void getUserData() {
-        String url = Url.BASE_URL + Url.USER_PAGE_INFO;
+        String url =  Url.USER_PAGE_INFO;
         Map<String, Object> params = new HashMap<>();
         params.put("userid", userId);
         if (mineId > 0) {
@@ -213,7 +213,7 @@ public class UserPagerActivity extends BaseActivity {
     }
 
     public void setAttentionFlag() {
-        String url = Url.BASE_URL + Url.UPDATE_ATTENTION;
+        String url =  Url.UPDATE_ATTENTION;
         Map<String, Object> params = new HashMap<>();
         //用户id
         params.put("fuid", mineId);

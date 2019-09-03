@@ -166,7 +166,7 @@ public class QualityGroupShopAllActivity extends BaseActivity {
 
     @Override
     protected void getData() {
-        String url = Url.BASE_URL + Url.GROUP_SHOP_JOIN_ALL;
+        String url =  Url.GROUP_SHOP_JOIN_ALL;
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", page);
         params.put("showCount", TOTAL_COUNT_TWENTY);

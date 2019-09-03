@@ -189,7 +189,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     FlexboxLayout fbl_details_market_label;
     //    标签布局
     @BindView(R.id.ll_layout_pro_sc_tag)
-    RelativeLayout ll_layout_pro_sc_tag;
+    LinearLayout ll_layout_pro_sc_tag;
     @BindView(R.id.flex_product_tag)
     FlexboxLayout flex_product_tag;
     @BindView(R.id.flex_bug_before)
@@ -686,7 +686,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     private void setProductEvaLike(View view) {
         GoodsCommentBean goodsCommentBean = (GoodsCommentBean) view.getTag();
         TextView tv_eva_like = (TextView) view;
-        String url = Url.BASE_URL + Url.SHOP_EVA_LIKE;
+        String url = Url.SHOP_EVA_LIKE;
         Map<String, Object> params = new HashMap<>();
         params.put("id", goodsCommentBean.getId());
         params.put("uid", userId);
@@ -698,7 +698,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
     //获取商品详情
     private void getShopProDetails() {
-        String url = Url.BASE_URL + Url.Q_NEW_SHOP_DETAILS;
+        String url = Url.Q_NEW_SHOP_DETAILS;
         Map<String, Object> params = new HashMap<>();
         params.put("id", productId);
         if (!TextUtils.isEmpty(recommendFlag)) {
@@ -737,7 +737,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
     //获取推荐商品
     private void getGoodsRecommend(final int id) {
-        String url = Url.BASE_URL + Url.Q_SP_DETAIL_RECOMMEND;
+        String url = Url.Q_SP_DETAIL_RECOMMEND;
         Map<String, Object> params = new HashMap<>();
         params.put("id", id);
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
@@ -762,7 +762,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
     //获取推荐文章
     private void getArticalRecommend(final int id) {
-        String url = Url.BASE_URL + Url.Q_SP_DETAIL_TOPIC_RECOMMEND;
+        String url = Url.Q_SP_DETAIL_TOPIC_RECOMMEND;
         Map<String, Object> params = new HashMap<>();
         params.put("id", id);
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
@@ -791,7 +791,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
     //获取组合商品基本信息
     private void getGroupGoods(int id) {
-        String url = Url.BASE_URL + Url.Q_GROUP_GOODS_BASIC;
+        String url = Url.Q_GROUP_GOODS_BASIC;
         Map<String, Object> params = new HashMap<>();
         params.put("productId", id);
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
@@ -817,7 +817,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
     //  获取商品评论
     private void getShopProComment(ShopPropertyBean shopPropertyBean) {
-        String url = Url.BASE_URL + Url.Q_SHOP_DETAILS_COMMENT;
+        String url = Url.Q_SHOP_DETAILS_COMMENT;
         Map<String, Object> params = new HashMap<>();
         params.put("showCount", 1);
         params.put("currentPage", 1);
@@ -1216,7 +1216,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         mFlexProductPoint.setVisibility(mFlexProductPoint.getChildCount() > 0 ? VISIBLE : GONE);
 
         //商品服务标签
-        setSeviceTag(shopProperty, ll_layout_pro_sc_tag, flex_product_tag, true);
+        setSeviceTag(shopProperty, ll_layout_pro_sc_tag, flex_product_tag);
 
         //购前须知标签
         List<String> preSaleInfo = shopProperty.getPreSaleInfo();
@@ -1255,7 +1255,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     }
 
     //商品服务标签
-    private void setSeviceTag(ShopPropertyBean shopProperty, ViewGroup viewGroup, FlexboxLayout flexboxLayout, boolean maxOneLine) {
+    private void setSeviceTag(ShopPropertyBean shopProperty, ViewGroup viewGroup, FlexboxLayout flexboxLayout) {
         try {
             List<TagsBean> tags = shopProperty.getTags();
             String tagIds = shopProperty.getTagIds();
@@ -1267,33 +1267,18 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 }
                 final String[] tagSelected = shopProperty.getTagIds().split(",");
                 flexboxLayout.removeAllViews();
+                int tagLength = 0;
                 for (String aTagSelected : tagSelected) {
                     String tagName = tagMap.get(Integer.parseInt(aTagSelected));
                     if (!TextUtils.isEmpty(tagName)) {
+                        tagLength = tagLength + tagName.length();
                         TextView textView = (TextView) LayoutInflater.from(getActivity()).inflate(R.layout.layout_product_tag, null, false);
                         textView.setLines(1);
                         textView.setText(getStrings(tagName));
                         flexboxLayout.addView(textView);
                     }
                 }
-
-                //限制标签不能超过屏幕外
-                if (maxOneLine && flexboxLayout.getChildCount() > 1) {
-                    ViewTreeObserver observer = flexboxLayout.getViewTreeObserver();
-                    observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                        @Override
-                        public void onGlobalLayout() {
-                            int width = flexboxLayout.getMeasuredWidth();
-                            int max = screenWith - AutoSizeUtils.mm2px(mAppContext, 60) - mIvMoreTag.getWidth();
-                            if (width >= max && flexboxLayout.getChildCount() > 1) {
-                                mIvMoreTag.setVisibility(VISIBLE);
-                                flexboxLayout.removeViewAt(flexboxLayout.getChildCount() - 1);
-                            } else {
-                                flexboxLayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                            }
-                        }
-                    });
-                }
+                mIvMoreTag.setVisibility(tagLength > 20 ? VISIBLE : GONE);
             }
 
             viewGroup.setVisibility(flexboxLayout.getChildCount() > 0 ? VISIBLE : GONE);
@@ -1385,7 +1370,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
     //服务承诺
     private void getServiceData(String productId) {
-        String url = Url.BASE_URL + Url.Q_SP_DETAIL_SERVICE_COMMITMENT;
+        String url = Url.Q_SP_DETAIL_SERVICE_COMMITMENT;
         Map<String, Object> params = new HashMap<>();
         params.put("productId", productId);
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
@@ -1581,7 +1566,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 //          加入购物车
             tv_sp_details_add_car.setEnabled(false);
             //添加商品购物车
-            String url = Url.BASE_URL + Url.Q_SHOP_DETAILS_ADD_CAR;
+            String url = Url.Q_SHOP_DETAILS_ADD_CAR;
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
             params.put("productId", shopDetailsEntity.getShopPropertyBean().getId());
@@ -1689,7 +1674,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
     //收藏商品
     private void goCollectPro() {
-        String url = Url.BASE_URL + Url.Q_SP_DETAIL_PRO_COLLECT;
+        String url = Url.Q_SP_DETAIL_PRO_COLLECT;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
         params.put("object_id", shopPropertyBean.getId());
@@ -1943,7 +1928,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.CustomTransDialog);
                         View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.layout_sevicetag_dialog, communal_recycler_wrap, false);
                         FlexboxLayout flex_communal_tag = dialogView.findViewById(R.id.flex_communal_tag);
-                        setSeviceTag(shopPropertyBean, flex_communal_tag, flex_communal_tag, false);
+                        setSeviceTag(shopPropertyBean, flex_communal_tag, flex_communal_tag);
                         alertDialog = builder.create();
                         alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                         alertDialog.setCanceledOnTouchOutside(true);
@@ -1964,7 +1949,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
     private void getDirectCoupon(int id) {
         if (userId > 0) {
-            String url = Url.BASE_URL + Url.FIND_ARTICLE_COUPON;
+            String url = Url.FIND_ARTICLE_COUPON;
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
             params.put("couponId", id);
@@ -2008,7 +1993,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
     //取消添加通知
     private void addCancelNotice() {
-        String url = Url.BASE_URL + Url.Q_REPLENISHMENT_NOTICE;
+        String url = Url.Q_REPLENISHMENT_NOTICE;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
         params.put("skuId", skuSaleBeanId);

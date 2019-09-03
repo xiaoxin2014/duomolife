@@ -447,7 +447,7 @@ public class QyServiceUtils {
      * 获取订单数据
      */
     private void getIndentProductData(Context activity) {
-        String url = Url.BASE_URL + Url.Q_INQUIRY_ALL_ORDER;
+        String url =  Url.Q_INQUIRY_ALL_ORDER;
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
         params.put("showCount", 5);

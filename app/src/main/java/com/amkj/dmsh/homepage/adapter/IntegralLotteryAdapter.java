@@ -62,7 +62,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.constant.Url.BASE_URL;
 import static com.amkj.dmsh.constant.Url.H_ATTENDANCE_JOIN_IN_INTEGRAL_LOTTERY;
 
 /**
@@ -517,7 +516,7 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
 
         private void joinInIntegralLottery(int activityId, TextView textView) {
             if (userId > 0) {
-                String url = BASE_URL + H_ATTENDANCE_JOIN_IN_INTEGRAL_LOTTERY;
+                String url =  H_ATTENDANCE_JOIN_IN_INTEGRAL_LOTTERY;
                 Map<String, Object> params = new HashMap<>();
                 params.put("uid", userId);
                 params.put("activityId", activityId);

@@ -196,12 +196,12 @@ public class UserFansAttentionActivity extends BaseActivity {
         String url;
         Map<String, Object> params = new HashMap<>();
         if ("fans".equals(type)) {
-            url = Url.BASE_URL + Url.MINE_FANS;
+            url =  Url.MINE_FANS;
             if (userId > 0) {
                 params.put("buid", userId);
             }
         } else {
-            url = Url.BASE_URL + Url.MINE_ATTENTION;
+            url =  Url.MINE_ATTENTION;
             if (userId > 0) {
                 params.put("fuid", userId);
             }

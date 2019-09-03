@@ -94,7 +94,7 @@ public class SearchDetailsUserAdapter extends BaseQuickAdapter<UserAttentionFans
     public void setAttentionFlag(int uid, final View v) {
         final TextView textView = (TextView) v;
         UserAttentionFansBean userAttentionFansBean = (UserAttentionFansBean) v.getTag();
-        String url = Url.BASE_URL + Url.UPDATE_ATTENTION;
+        String url =  Url.UPDATE_ATTENTION;
         Map<String, Object> params = new HashMap<>();
         //用户id
         params.put("fuid", uid);

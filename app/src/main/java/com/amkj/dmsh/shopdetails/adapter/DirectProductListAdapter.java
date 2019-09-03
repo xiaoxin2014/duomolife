@@ -585,7 +585,7 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
     }
 
     private void requestRefundData(final CartProductInfoBean cartProductInfoBean) {
-        String url = Url.BASE_URL + Url.Q_INDENT_APPLY_REFUND_CHECK;
+        String url =  Url.Q_INDENT_APPLY_REFUND_CHECK;
         Map<String, Object> params = new HashMap<>();
         params.put("no", cartProductInfoBean.getOrderNo());
         params.put("userId", userId);

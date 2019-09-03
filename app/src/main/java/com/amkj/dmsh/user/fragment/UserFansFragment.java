@@ -152,7 +152,7 @@ public class UserFansFragment extends BaseFragment {
     }
 
     private void getData() {
-        String url = Url.BASE_URL + Url.MINE_FANS;
+        String url =  Url.MINE_FANS;
         Map<String, Object> params = new HashMap<>();
 //            查看用户ID
         params.put("uid", lookUserId);

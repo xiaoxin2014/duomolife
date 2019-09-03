@@ -302,8 +302,7 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
         if (isAppMainProcess()) {
             if (isDebugTag) {
                 SharedPreferences sharedPreferences = mAppContext.getSharedPreferences("selectedServer", MODE_PRIVATE);
-                int selectServer = sharedPreferences.getInt("selectServer", 0);
-                new Url(mAppContext, selectServer);
+                Url.setBaseUrl(sharedPreferences.getString("selectServerUrl", Url.getUrl(0)));
             }
             initLoadSir();
             //        阿里百川 在异步初始化

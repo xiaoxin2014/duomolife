@@ -80,7 +80,7 @@ public class AppUpdateUtils {
     public void getAppUpdate(Context mContext, boolean isManual) {
         WeakReference<Context> contextWeakReference = new WeakReference<>(mContext);
         context = contextWeakReference.get();
-        String url = Url.BASE_URL + Url.APP_VERSION_INFO;
+        String url =  Url.APP_VERSION_INFO;
         Map<String, Object> params = new HashMap<>();
         params.put("device_type_id", 2);
         NetLoadUtils.getNetInstance().loadNetDataPost(context, url, params, new NetLoadListenerHelper() {

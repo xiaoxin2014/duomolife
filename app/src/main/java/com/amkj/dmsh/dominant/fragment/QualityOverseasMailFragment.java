@@ -194,7 +194,7 @@ public class QualityOverseasMailFragment extends BaseFragment {
 
     //    海外直邮主题商品列表
     private void getOverseasThemeData() {
-        String url = Url.BASE_URL + Url.QUALITY_OVERSEAS_THEME;
+        String url =  Url.QUALITY_OVERSEAS_THEME;
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", themePage);
         params.put("showCount", TOTAL_COUNT_TWENTY);

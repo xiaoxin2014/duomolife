@@ -183,7 +183,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
 
     @Override
     protected void loadData() {
-        String url = Url.BASE_URL + Url.INDENT_INTEGRAL_DETAILS;
+        String url =  Url.INDENT_INTEGRAL_DETAILS;
         Map<String, Object> params = new HashMap<>();
         params.put("no", indentNum);
         params.put("userId", userId);
@@ -395,7 +395,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
     }
 
     private void cancelIntegralIndent(String no) {
-        String url = Url.BASE_URL + Url.Q_INDENT_CANCEL;
+        String url =  Url.Q_INDENT_CANCEL;
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
         params.put("no", no);
@@ -427,7 +427,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
     }
 
     private void confirmOrder(OrderListBean orderListBean) {
-        String url = Url.BASE_URL + Url.Q_INDENT_CONFIRM;
+        String url =  Url.Q_INDENT_CONFIRM;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderListBean.getNo());
         params.put("userId", orderListBean.getUserId());
@@ -450,7 +450,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
     }
 
     private void requestRefundData(OrderListBean indentInfoBean) {
-        String url = Url.BASE_URL + Url.Q_INDENT_APPLY_REFUND_CHECK;
+        String url =  Url.Q_INDENT_APPLY_REFUND_CHECK;
         Map<String, Object> params = new HashMap<>();
         params.put("no", indentInfoBean.getNo());
         params.put("userId", indentInfoBean.getUserId());
@@ -789,7 +789,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
     }
 
     private void paymentIndent() {
-        String url = Url.BASE_URL + Url.Q_PAYMENT_INDENT;
+        String url =  Url.Q_PAYMENT_INDENT;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderListBean.getNo());
         params.put("userId", orderListBean.getUserId());

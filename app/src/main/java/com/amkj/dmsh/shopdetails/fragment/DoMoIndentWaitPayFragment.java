@@ -157,7 +157,7 @@ public class DoMoIndentWaitPayFragment extends BaseFragment {
     }
 
     private void getWaitPayData() {
-        String url = Url.BASE_URL + Url.Q_INQUIRY_WAIT_PAY;
+        String url =  Url.Q_INQUIRY_WAIT_PAY;
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
         params.put("showCount", TOTAL_COUNT_TEN);
@@ -213,7 +213,7 @@ public class DoMoIndentWaitPayFragment extends BaseFragment {
 
     //  取消订单
     private void cancelOrder() {
-        String url = Url.BASE_URL + Url.Q_INDENT_CANCEL;
+        String url =  Url.Q_INDENT_CANCEL;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderBean.getNo());
         params.put("userId", userId);

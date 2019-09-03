@@ -228,7 +228,7 @@ public class SelectedAddressActivity extends BaseActivity {
         if (userId < 1) {
             return;
         }
-        String url = Url.BASE_URL + Url.ADDRESS_LIST;
+        String url =  Url.ADDRESS_LIST;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
         NetLoadUtils.getNetInstance().loadNetDataPost(SelectedAddressActivity.this, url, params, new NetLoadListenerHelper() {

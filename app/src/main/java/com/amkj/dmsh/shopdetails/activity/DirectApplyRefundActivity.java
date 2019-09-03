@@ -847,7 +847,7 @@ public class DirectApplyRefundActivity extends BaseActivity {
     private void refundPrice(final DirectApplyRefundBean refundBean, Map<String, Object> params, final DirectRefundProBean directRefundProBean) {
         String url;
         if (!cancelRefund) {
-            url = Url.BASE_URL + Url.Q_INDENT_APPLY_REFUND_SUB;
+            url =  Url.Q_INDENT_APPLY_REFUND_SUB;
             params.put("no", refundBean.getOrderNo());
             params.put("userId", userId);
             params.put("version", 3);
@@ -873,7 +873,7 @@ public class DirectApplyRefundActivity extends BaseActivity {
             }
             params.put("type", refundBean.getType());
         } else {
-            url = Url.BASE_URL + Url.Q_INDENT_CHANGE_REFUND_SUB;
+            url =  Url.Q_INDENT_CHANGE_REFUND_SUB;
             params.put("orderRefundProductId", refundBean.getOrderRefundProductId());
             if (!TextUtils.isEmpty(refundBean.getImages())) {
                 params.put("images", refundBean.getImages());

@@ -150,7 +150,7 @@ public class UserAttentionFragment extends BaseFragment {
     }
 
     private void getData() {
-        String url = Url.BASE_URL + Url.MINE_ATTENTION;
+        String url =  Url.MINE_ATTENTION;
         Map<String, Object> params = new HashMap<>();
 //            查看用户ID
         params.put("uid", lookUserId);

@@ -1413,7 +1413,7 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
      * @param skuSaleBean
      */
     private void addCancelNotice(SkuSaleBean skuSaleBean) {
-        String url = Url.BASE_URL + Url.Q_REPLENISHMENT_NOTICE;
+        String url =  Url.Q_REPLENISHMENT_NOTICE;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
         params.put("skuId", skuSaleBean.getId());

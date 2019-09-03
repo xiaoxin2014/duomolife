@@ -296,7 +296,7 @@ public class IntegralIndentFragment extends BaseFragment {
      * @param orderListBean
      */
     private void cancelIntegralIndent(OrderListBean orderListBean) {
-        String url = Url.BASE_URL + Url.Q_INDENT_CANCEL;
+        String url =  Url.Q_INDENT_CANCEL;
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
         params.put("no", orderListBean.getNo());
@@ -349,7 +349,7 @@ public class IntegralIndentFragment extends BaseFragment {
 
     private void getIntegralIndentList() {
         if (userId > 0) {
-            String url = Url.BASE_URL + Url.INTEGRAL_INDENT_LIST;
+            String url =  Url.INTEGRAL_INDENT_LIST;
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
             params.put("showCount", TOTAL_COUNT_TEN);
@@ -428,7 +428,7 @@ public class IntegralIndentFragment extends BaseFragment {
      * 取消积分订单
      */
     private void confirmIntegralOrder() {
-        String url = Url.BASE_URL + Url.Q_INDENT_CONFIRM;
+        String url =  Url.Q_INDENT_CONFIRM;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderListBean.getNo());
         params.put("userId", userId);

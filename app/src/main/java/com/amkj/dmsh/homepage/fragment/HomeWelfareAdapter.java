@@ -6,7 +6,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.ViewTreeObserver;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.CommonPagerAdapter;
@@ -80,7 +79,7 @@ public class HomeWelfareAdapter extends CommonPagerAdapter<HomeWelfareBean> {
                 if (goodsBean == null) return;
                 GlideImageLoaderUtil.loadImage(mContext, helper.getView(R.id.iv_goods_pic), goodsBean.getPicUrl());
                 helper.setText(R.id.tv_price, ConstantMethod.getRmbFormat(mContext, goodsBean.getPrice()));
-                FlexboxLayout fbl_label = helper.getView(R.id.fbl_label);
+                FlexboxLayout fbl_label = helper.getView(R.id.fbl_market_label);
                 if (!TextUtils.isEmpty(goodsBean.getActivityTag()) || (goodsBean.getMarketLabelList() != null
                         && goodsBean.getMarketLabelList().size() > 0)) {
                     fbl_label.setVisibility(View.VISIBLE);
@@ -95,23 +94,6 @@ public class HomeWelfareAdapter extends CommonPagerAdapter<HomeWelfareBean> {
                                 fbl_label.addView(ProductLabelCreateUtils.createLabelText(mContext, marketLabelBean.getTitle(), 0));
                             }
                         }
-                    }
-
-                    //限制标签最多显示一行，超出屏幕外的自动移除
-                    if (fbl_label.getChildCount() > 0) {
-                        ViewTreeObserver observer = fbl_label.getViewTreeObserver();
-                        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                            @Override
-                            public void onGlobalLayout() {
-                                int width = fbl_label.getMeasuredWidth();
-                                int max = helper.itemView.getMeasuredWidth();
-                                if (width >= max) {
-                                    fbl_label.removeViewAt(fbl_label.getChildCount() - 1);
-                                } else {
-                                    fbl_label.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                                }
-                            }
-                        });
                     }
                 } else {
                     fbl_label.setVisibility(View.GONE);

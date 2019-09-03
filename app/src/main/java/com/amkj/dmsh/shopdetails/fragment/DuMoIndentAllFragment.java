@@ -265,7 +265,7 @@ public class DuMoIndentAllFragment extends BaseFragment {
     }
 
     private void getAllIndent() {
-        String url = Url.BASE_URL + Url.Q_INQUIRY_ALL_ORDER;
+        String url =  Url.Q_INQUIRY_ALL_ORDER;
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
         params.put("showCount", TOTAL_COUNT_TEN);
@@ -322,7 +322,7 @@ public class DuMoIndentAllFragment extends BaseFragment {
 
     //  订单删除
     private void delOrder() {
-        String url = Url.BASE_URL + Url.Q_INDENT_DEL;
+        String url =  Url.Q_INDENT_DEL;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderBean.getNo());
         params.put("userId", userId);
@@ -344,7 +344,7 @@ public class DuMoIndentAllFragment extends BaseFragment {
     }
 
     private void confirmOrder() {
-        String url = Url.BASE_URL + Url.Q_INDENT_CONFIRM;
+        String url =  Url.Q_INDENT_CONFIRM;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderBean.getNo());
         params.put("userId", userId);
@@ -368,7 +368,7 @@ public class DuMoIndentAllFragment extends BaseFragment {
 
     //  取消订单
     private void cancelOrder() {
-        String url = Url.BASE_URL + Url.Q_INDENT_CANCEL;
+        String url =  Url.Q_INDENT_CANCEL;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderBean.getNo());
         params.put("userId", userId);
@@ -390,7 +390,7 @@ public class DuMoIndentAllFragment extends BaseFragment {
     }
 
     private void getInviteGroupInfo(String no) {
-        String url = Url.BASE_URL + Url.GROUP_MINE_SHARE;
+        String url =  Url.GROUP_MINE_SHARE;
         if (loadHud != null) {
             loadHud.show();
         }

@@ -154,7 +154,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public static final int MINE_REQ_CODE = 13;
     private Map<String, String> params = new HashMap<>();
     private AlertView selectServer;
-    private String[] SERVER = {"正式库", "测试库", "招立", "泽鑫", "泽鑫9090", "修改UID", "预发布","王凯2",  "王凯1", "鸿星"};
+    private String[] SERVER = {"正式库", "测试库", "招立", "泽鑫", "泽鑫9090", "预发布", "王凯2", "王凯1", "鸿星", "修改BaseUrl", "修改UID"};
     private AlertView mAlertViewExt;
     private EditText etName;
     private List<MainIconBean> iconDataList = new ArrayList<>();
@@ -391,7 +391,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      */
     private void getFirstPushInfo() {
         if (userId > 0) {
-            String url = Url.BASE_URL + Url.FIRST_PUSH_INFO;
+            String url =  Url.FIRST_PUSH_INFO;
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
             NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
@@ -444,7 +444,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void getReceivePushInfo(PushInfoEntity pushInfoEntity, SharedPreferences sharedPreferences) {
-        String url = Url.BASE_URL + Url.FIRST_PUSH_INFO_RECEIVE;
+        String url =  Url.FIRST_PUSH_INFO_RECEIVE;
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
         params.put("pushId", pushInfoEntity.getAppPushInfo().getId());
@@ -703,7 +703,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         final SavePersonalInfoBean personalInfo = getPersonalInfo(this);
         if (personalInfo.isLogin()) {
             userId = personalInfo.getUid();
-            String url = Url.BASE_URL + Url.MINE_PAGE_POST;
+            String url =  Url.MINE_PAGE_POST;
             Map<String, Object> params = new HashMap<>();
             params.put("userid", personalInfo.getUid());
             if (!TextUtils.isEmpty(personalInfo.getOpenId())) {
@@ -812,7 +812,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      * 统计登陆时间
      */
     private void getLoginStatusTime() {
-        String url = Url.BASE_URL + Url.H_LOGIN_LAST_TIME;
+        String url =  Url.H_LOGIN_LAST_TIME;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, null);
@@ -822,7 +822,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      * 获取上传统计大小
      */
     private void getUpTotalSize() {
-        String url = Url.BASE_URL + Url.TOTAL_UP_SIZE;
+        String url =  Url.TOTAL_UP_SIZE;
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
@@ -838,7 +838,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void getAddressVersion() {
-        String url = Url.BASE_URL + Url.H_ADDRESS_VERSION;
+        String url =  Url.H_ADDRESS_VERSION;
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
@@ -877,7 +877,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
 
     private void getAddressData() {
-        String url = Url.BASE_URL + Url.H_ADDRESS_DATA;
+        String url =  Url.H_ADDRESS_DATA;
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
@@ -907,7 +907,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void getOSSConfig() {
-        String url = Url.BASE_URL + Url.H_OSS_CONFIG;
+        String url =  Url.H_OSS_CONFIG;
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
@@ -938,7 +938,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             alertData.setCancelStr("取消");
             alertData.setNormalData(SERVER);
             alertData.setFirstDet(true);
-            alertData.setTitle("选择服务器，设置成功后重启生效");
+            alertData.setTitle((String) SharedPreUtils.getParam("selectedServer", "selectServerUrl", Url.getUrl(0)));
             alertSettingBean.setStyle(AlertView.Style.ActionSheet);
             alertSettingBean.setAlertData(alertData);
             selectServer = new AlertView(alertSettingBean, this, (o, position) -> {
@@ -972,10 +972,43 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         mAlertViewExt.addExtView(extView);
                     }
                     mAlertViewExt.show();
+                } else if (position != AlertView.CANCELPOSITION && SERVER[position].contains("BaseUrl")) {
+                    //                    编辑框
+                    selectServer.dismissImmediately();
+                    if (mAlertViewExt == null) {
+                        AlertSettingBean alertSettingBean1 = new AlertSettingBean();
+                        AlertSettingBean.AlertData alertData1 = new AlertSettingBean.AlertData();
+                        alertData1.setCancelStr("取消");
+                        alertData1.setDetermineStr("完成");
+                        alertData1.setFirstDet(true);
+                        alertSettingBean1.setStyle(AlertView.Style.Alert);
+                        alertSettingBean1.setAlertData(alertData1);
+                        mAlertViewExt = new AlertView(alertSettingBean1, MainActivity.this, (o1, position1) -> {
+                            if (o1 == mAlertViewExt) {
+                                closeKeyboard();
+                                if (position1 != AlertView.CANCELPOSITION) {
+                                    SharedPreferences sharedPreferences = getSharedPreferences("selectedServer", MODE_PRIVATE);
+                                    SharedPreferences.Editor edit = sharedPreferences.edit();
+                                    edit.putString("selectServerUrl", Url.getUrl(position));
+                                    edit.commit();
+                                    SharedPreferences loginStatus = getSharedPreferences("loginStatus", MODE_PRIVATE);
+                                    SharedPreferences.Editor loginEdit = loginStatus.edit();
+                                    loginEdit.putBoolean("isLogin", false);
+                                    loginEdit.commit();
+                                    RestartAPPTool.restartAPP(MainActivity.this);
+                                }
+                            }
+                        });
+                        ViewGroup extView = (ViewGroup) LayoutInflater.from(MainActivity.this).inflate(R.layout.alertext_form, null);
+                        etName = (EditText) extView.findViewById(R.id.etName);
+                        etName.setHint("请输入BaseUrl");
+                        mAlertViewExt.addExtView(extView);
+                    }
+                    mAlertViewExt.show();
                 } else if (o.equals(selectServer) && position != AlertView.CANCELPOSITION) {
                     SharedPreferences sharedPreferences = getSharedPreferences("selectedServer", MODE_PRIVATE);
                     SharedPreferences.Editor edit = sharedPreferences.edit();
-                    edit.putInt("selectServer", position);
+                    edit.putString("selectServerUrl", Url.getUrl(position));
                     edit.commit();
                     SharedPreferences loginStatus = getSharedPreferences("loginStatus", MODE_PRIVATE);
                     SharedPreferences.Editor loginEdit = loginStatus.edit();
@@ -1010,9 +1043,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         String saveTime = sp.getString("createTime", "0");
                         String lastShowTime = sp.getString("showTime", "0");
                         String newTime = communalADActivityBean.getCtime();
-                        if (!saveTime.equals(newTime) || (communalADActivityBean.getFrequency_type() == 1 &&
-                                isTimeDayEligibility(lastShowTime, communalADActivityEntity.getSystemTime(),
-                                        communalADActivityBean.getInterval_day()))) {
+                        if (!saveTime.equals(newTime) ||
+                                (communalADActivityBean.getFrequency_type() == 1 && isTimeDayEligibility(lastShowTime, communalADActivityEntity.getSystemTime(), communalADActivityBean.getInterval_day()))) {
                             edit.putString("showTime", communalADActivityEntity.getSystemTime());
                             showAdDialog(communalADActivityBean, saveTime, newTime);
                         }
@@ -1242,7 +1274,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      * 获取统计字段 上传大小
      */
     public void getAppUpdateJson() {
-        String url = Url.BASE_URL + Url.APP_TOTAL_ACTION;
+        String url =  Url.APP_TOTAL_ACTION;
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {

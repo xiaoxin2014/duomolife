@@ -1019,7 +1019,7 @@ public class ConstantMethod {
 
 
     private void setGoodsComment(final Activity context, CommunalComment communalComment) {
-        String url = Url.BASE_URL + Url.GOODS_COMMENT;
+        String url =  Url.GOODS_COMMENT;
         Map<String, Object> params = new HashMap<>();
         //回复评论
         params.put("uid", communalComment.getUserId());
@@ -1076,7 +1076,7 @@ public class ConstantMethod {
     }
 
     private void setDocComment(final Activity context, CommunalComment communalComment) {
-        String url = Url.BASE_URL + Url.FIND_COMMENT;
+        String url =  Url.FIND_COMMENT;
         Map<String, Object> params = new HashMap<>();
         //回复文章或帖子
         params.put("is_reply", communalComment.getIsReply());
@@ -1136,7 +1136,7 @@ public class ConstantMethod {
      * @param communalComment
      */
     private void setAdviceData(final Activity context, CommunalComment communalComment) {
-        String url = Url.BASE_URL + Url.SEARCH_LEAVE_MES;
+        String url =  Url.SEARCH_LEAVE_MES;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", communalComment.getUserId());
         params.put("content", getStrings(communalComment.getContent()));
@@ -1192,7 +1192,7 @@ public class ConstantMethod {
      * @param communalComment
      */
     private void setFeedbackData(final Activity context, CommunalComment communalComment) {
-        String url = Url.BASE_URL + Url.MINE_FEEDBACK;
+        String url =  Url.MINE_FEEDBACK;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", communalComment.getUserId());
         params.put("remark", getStrings(communalComment.getContent()));
@@ -1340,7 +1340,7 @@ public class ConstantMethod {
 
     //    文章分享统计
     public static void addArticleShareCount(Activity activity, int articleId) {
-        String url = Url.BASE_URL + Url.ARTICLE_SHARE_COUNT;
+        String url =  Url.ARTICLE_SHARE_COUNT;
         Map<String, Object> params = new HashMap<>();
         //回复文章或帖子
         params.put("id", articleId);
@@ -1351,7 +1351,7 @@ public class ConstantMethod {
      * 推送点击统计
      */
     public static void totalPushMessage(Context activity, @NonNull String pushId) {
-        String url = Url.BASE_URL + Url.TOTAL_PUSH_INFO;
+        String url =  Url.TOTAL_PUSH_INFO;
         Map<String, Object> params = new HashMap<>();
         //回复文章或帖子
         params.put("pushId", pushId);
@@ -1363,7 +1363,7 @@ public class ConstantMethod {
 
     //    分享成功 奖励
     public static void shareRewardSuccess(int uid, final Activity context) {
-        String url = Url.BASE_URL + Url.SHARE_SUCCESS;
+        String url =  Url.SHARE_SUCCESS;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", uid);
         params.put("version", 2);
@@ -1402,7 +1402,7 @@ public class ConstantMethod {
 
     //      统计文章点击商品
     public static void totalProNum(Activity activity, int productId, int artId) {
-        String url = Url.BASE_URL + Url.TOTAL_PRO_NUM;
+        String url =  Url.TOTAL_PRO_NUM;
         Map<String, Object> params = new HashMap<>();
         //回复文章或帖子
         params.put("product_id", productId);
@@ -1422,7 +1422,7 @@ public class ConstantMethod {
 
     //      统计官方通知点击商品
     public static void totalOfficialProNum(Activity activity, int productId, String officialId) {
-        String url = Url.BASE_URL + Url.TOTAL_OFFICIAL_PRO_NUM;
+        String url =  Url.TOTAL_OFFICIAL_PRO_NUM;
         Map<String, Object> params = new HashMap<>();
         //回复文章或帖子
         params.put("productId", productId);
@@ -1462,7 +1462,7 @@ public class ConstantMethod {
      * @param pushType
      */
     public void clickTotalPush(String pushType, String id) {
-        String url = Url.BASE_URL + Url.TOTAL_JPUSH_COUNT;
+        String url =  Url.TOTAL_JPUSH_COUNT;
         Map<String, Object> params = new HashMap<>();
         params.put("type", pushType);
         if (!TextUtils.isEmpty(id)) {
@@ -1679,7 +1679,7 @@ public class ConstantMethod {
      * @param notificationStatus app 通知开关
      */
     private static void upDeviceInfo(Activity context, String osVersion, String mobileModel, String versionName, int notificationStatus) {
-        String url = Url.BASE_URL + Url.DEVICE_INFO;
+        String url =  Url.DEVICE_INFO;
         Map<String, Object> params = new HashMap<>();
         params.put("device_source", "android");
         params.put("app_version_no", versionName);
@@ -1700,7 +1700,7 @@ public class ConstantMethod {
         }
         loadHud.show();
         //商品详情内容
-        String url = Url.BASE_URL + Url.Q_SHOP_DETAILS_GET_SKU_CAR;
+        String url =  Url.Q_SHOP_DETAILS_GET_SKU_CAR;
         Map<String, Object> params = new HashMap<>();
         params.put("productId", baseAddCarProInfoBean.getProductId());
         params.put("uid", userId);
@@ -1779,7 +1779,7 @@ public class ConstantMethod {
     //加入购物车
     private static void addShopCar(Activity activity, final ShopCarGoodsSku shopCarGoodsSku, final KProgressHUD loadHud) {
         if (userId != 0) {
-            String url = Url.BASE_URL + Url.Q_SHOP_DETAILS_ADD_CAR;
+            String url =  Url.Q_SHOP_DETAILS_ADD_CAR;
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
             params.put("productId", shopCarGoodsSku.getProductId());
@@ -1851,7 +1851,7 @@ public class ConstantMethod {
             }
             return;
         }
-        String url = Url.BASE_URL + Url.H_MES_STATISTICS;
+        String url =  Url.H_MES_STATISTICS;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
         NetLoadUtils.getNetInstance().loadNetDataPost(activity, url, params, new NetLoadListenerHelper() {
@@ -2201,7 +2201,7 @@ public class ConstantMethod {
     public void getNewUserCouponDialog(Activity context) {
         if (NEW_USER_DIALOG && isContextExisted(context)) {
             NEW_USER_DIALOG = false;
-            String url = Url.BASE_URL + Url.H_NEW_USER_COUPON;
+            String url =  Url.H_NEW_USER_COUPON;
             Map<String, Object> params = new HashMap<>();
             params.put("user_id", userId);
             NetLoadUtils.getNetInstance().loadNetDataPost(context, url, params, new NetLoadListenerHelper() {
@@ -2261,7 +2261,7 @@ public class ConstantMethod {
      */
     private void getNewUserCoupon(Activity context, int couponId) {
         if (couponId > 0) {
-            String url = Url.BASE_URL + Url.FIND_ARTICLE_COUPON;
+            String url =  Url.FIND_ARTICLE_COUPON;
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
             params.put("couponId", couponId);

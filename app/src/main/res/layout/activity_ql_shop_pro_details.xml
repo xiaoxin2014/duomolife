@@ -229,7 +229,7 @@
                                     android:scrollbars="none"/>
                             </LinearLayout>
 
-                            <RelativeLayout
+                            <LinearLayout
                                 android:id="@+id/ll_layout_pro_sc_tag"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -243,21 +243,24 @@
                                 <com.google.android.flexbox.FlexboxLayout
                                     xmlns:app="http://schemas.android.com/apk/res-auto"
                                     android:id="@+id/flex_product_tag"
-                                    android:layout_width="wrap_content"
+                                    android:layout_width="0dp"
                                     android:layout_height="@dimen/sc_mm_80"
+                                    android:layout_weight="1"
+                                    android:paddingTop="@dimen/sc_mm_24"
+                                    android:paddingBottom="@dimen/sc_mm_24"
                                     app:dividerDrawable="@drawable/item_divider_product_tag"
+                                    app:flexWrap="wrap"
                                     app:showDivider="middle"/>
 
                                 <ImageView
                                     android:id="@+id/iv_more_tag"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_alignParentRight="true"
-                                    android:layout_centerVertical="true"
-                                    android:paddingTop="@dimen/dp_10"
+                                    android:layout_gravity="center_vertical"
+                                    android:layout_marginLeft="@dimen/sc_mm_20"
                                     android:src="@drawable/right_btn_nor"
                                     android:visibility="gone"/>
-                            </RelativeLayout>
+                            </LinearLayout>
 
                             <LinearLayout
                                 android:id="@+id/ll_pro_buy_before"

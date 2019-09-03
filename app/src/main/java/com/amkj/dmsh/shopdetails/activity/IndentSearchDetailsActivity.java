@@ -377,7 +377,7 @@ public class IndentSearchDetailsActivity extends BaseActivity {
 
     //  订单删除
     private void delOrder() {
-        String url = Url.BASE_URL + Q_INDENT_DEL;
+        String url =  Q_INDENT_DEL;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderBean.getNo());
         params.put("userId", userId);
@@ -399,7 +399,7 @@ public class IndentSearchDetailsActivity extends BaseActivity {
     }
 
     private void confirmOrder() {
-        String url = Url.BASE_URL + Q_INDENT_CONFIRM;
+        String url =  Q_INDENT_CONFIRM;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderBean.getNo());
         params.put("userId", userId);
@@ -423,7 +423,7 @@ public class IndentSearchDetailsActivity extends BaseActivity {
 
     //  取消订单
     private void cancelOrder() {
-        String url = Url.BASE_URL + Q_INDENT_CANCEL;
+        String url =  Q_INDENT_CANCEL;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderBean.getNo());
         params.put("userId", userId);

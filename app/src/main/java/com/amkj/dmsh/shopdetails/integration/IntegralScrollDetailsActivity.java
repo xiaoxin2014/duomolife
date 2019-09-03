@@ -277,7 +277,7 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
      * 商品详情内容
      */
     private void getIntegrationData() {
-        String url = Url.BASE_URL + Url.H_INTEGRAL_DETAILS_GOODS;
+        String url =  Url.H_INTEGRAL_DETAILS_GOODS;
         Map<String, Object> params = new HashMap<>();
         params.put("id", productId);
         if (userId > 0) {
@@ -319,7 +319,7 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
     }
 
     private void getIntegralComment() {
-        String url = Url.BASE_URL + Url.Q_SHOP_DETAILS_COMMENT;
+        String url =  Url.Q_SHOP_DETAILS_COMMENT;
         Map<String, Object> params = new HashMap<>();
         params.put("showCount", 1);
         params.put("currentPage", 1);
@@ -584,7 +584,7 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
      * 积分商品服务承诺
      */
     private void getIntegralProductRule() {
-        String url = Url.BASE_URL + Url.INTEGRAL_PRODUCT_SERVICE;
+        String url =  Url.INTEGRAL_PRODUCT_SERVICE;
         NetLoadUtils.getNetInstance().loadNetDataPost(this,url, new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
@@ -609,7 +609,7 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
     }
 
     private void getIntegration() {
-        String url = Url.BASE_URL + Url.MINE_PAGE;
+        String url =  Url.MINE_PAGE;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url
@@ -805,7 +805,7 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
     private void setProductEvaLike(View view) {
         GoodsCommentBean goodsCommentBean = (GoodsCommentBean) view.getTag();
         TextView tv_eva_like = (TextView) view;
-        String url = Url.BASE_URL + Url.SHOP_EVA_LIKE;
+        String url =  Url.SHOP_EVA_LIKE;
         Map<String, Object> params = new HashMap<>();
         params.put("id", goodsCommentBean.getId());
         params.put("uid", userId);

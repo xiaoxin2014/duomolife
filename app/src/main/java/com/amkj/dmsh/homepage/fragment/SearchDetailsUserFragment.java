@@ -190,7 +190,7 @@ public class SearchDetailsUserFragment extends BaseFragment {
             NetLoadUtils.getNetInstance().showLoadSir(loadService, userAttentionFansList, userSearchEntity);
             return;
         }
-        String url = Url.BASE_URL + Url.H_HOT_SEARCH_USER;
+        String url =  Url.H_HOT_SEARCH_USER;
         Map<String, Object> params = new HashMap<>();
         if (userId > 0) {
             //当前用户ID

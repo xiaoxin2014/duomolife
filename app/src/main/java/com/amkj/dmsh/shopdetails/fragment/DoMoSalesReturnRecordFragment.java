@@ -177,7 +177,7 @@ public class DoMoSalesReturnRecordFragment extends BaseFragment {
     }
 
     private void getSaleReturnRecordData() {
-        String url = Url.BASE_URL + Url.Q_APPLY_AFTER_SALE_REPLY_RECORD;
+        String url =  Url.Q_APPLY_AFTER_SALE_REPLY_RECORD;
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
         params.put("showCount", TOTAL_COUNT_TEN);

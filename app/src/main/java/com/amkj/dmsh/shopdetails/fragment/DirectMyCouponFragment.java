@@ -11,7 +11,6 @@ import android.view.View;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
@@ -24,7 +23,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,8 +31,6 @@ import java.util.Map;
 
 import butterknife.BindView;
 
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -111,47 +107,11 @@ public class DirectMyCouponFragment extends BaseFragment {
                 }
             }
         });
-        TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-        screenHeight = app.getScreenHeight();
-        communal_recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                scrollY += dy;
-                if (!recyclerView.canScrollVertically(-1)) {
-                    scrollY = 0;
-                }
-                if (scrollY > screenHeight * 1.5 && dy < 0) {
-                    if (download_btn_communal.getVisibility() == GONE) {
-                        download_btn_communal.setVisibility(VISIBLE);
-                        download_btn_communal.hide(false);
-                    }
-                    if (!download_btn_communal.isVisible()) {
-                        download_btn_communal.show();
-                    }
-                } else {
-                    if (download_btn_communal.isVisible()) {
-                        download_btn_communal.hide();
-                    }
-                }
-            }
-        });
-        download_btn_communal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) communal_recycler.getLayoutManager();
-                int firstVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition();
-                int mVisibleCount = linearLayoutManager.findLastVisibleItemPosition()
-                        - linearLayoutManager.findFirstVisibleItemPosition() + 1;
-                if (firstVisibleItemPosition > mVisibleCount) {
-                    communal_recycler.scrollToPosition(mVisibleCount);
-                }
-                communal_recycler.smoothScrollToPosition(0);
-            }
-        });
+        setFloatingButton(download_btn_communal, communal_recycler);
     }
 
     private void checkCoupon() {
-        String url = Url.BASE_URL + Url.Q_SHOP_DETAILS_COUPON;
+        String url = Url.Q_SHOP_DETAILS_COUPON;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
         params.put("currentPage", page);
@@ -160,7 +120,6 @@ public class DirectMyCouponFragment extends BaseFragment {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
-                directMyCouponAdapter.loadMoreComplete();
                 if (page == 1) {
                     couponList.clear();
                 }
@@ -169,13 +128,17 @@ public class DirectMyCouponFragment extends BaseFragment {
                 if (directCouponEntity != null) {
                     if (directCouponEntity.getCode().equals(SUCCESS_CODE)) {
                         couponList.addAll(directCouponEntity.getDirectCouponBeanList());
-                        directMyCouponAdapter.notifyDataSetChanged();
+                        directMyCouponAdapter.loadMoreComplete();
                     } else if (!directCouponEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(getActivity(), directCouponEntity.getMsg());
-                    }else{
+                        directMyCouponAdapter.loadMoreFail();
+                    } else {
                         directMyCouponAdapter.loadMoreEnd();
                     }
+                }else {
+                    directMyCouponAdapter.loadMoreEnd();
                 }
+                directMyCouponAdapter.notifyDataSetChanged();
                 NetLoadUtils.getNetInstance().showLoadSir(loadService, couponList, directCouponEntity);
             }
 

@@ -205,7 +205,7 @@ public class QualityOverseasDetailsActivity extends BaseActivity {
 
 
     private void getOverseasThemeDetailsData() {
-        String url = Url.BASE_URL + Url.QUALITY_OVERSEAS_THEME_DETAIL;
+        String url =  Url.QUALITY_OVERSEAS_THEME_DETAIL;
         Map<String, Object> params = new HashMap<>();
         params.put("id", overseasId);
         if (userId > 0) {

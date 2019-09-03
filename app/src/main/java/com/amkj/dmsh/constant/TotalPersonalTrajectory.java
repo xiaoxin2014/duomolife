@@ -39,7 +39,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_NAME;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_NAME_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.UP_TOTAL_SIZE;
 import static com.amkj.dmsh.constant.ConstantVariable.isUpTotalFile;
-import static com.amkj.dmsh.constant.Url.BASE_URL;
 import static com.amkj.dmsh.constant.Url.TOTAL_DATA_UP;
 
 /**
@@ -297,7 +296,7 @@ public class TotalPersonalTrajectory {
     }
 
     private boolean uploadingTotalData(List<Object> jsonStr) {
-        String url = BASE_URL + TOTAL_DATA_UP;
+        String url =  TOTAL_DATA_UP;
         Map<String, Object> params = new HashMap<>();
         params.put("deviceType", "Android");
         params.put("jsonData", JSON.toJSONString(jsonStr));

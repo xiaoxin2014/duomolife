@@ -58,7 +58,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.REFUND_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.REMIND_DELIVERY;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
-import static com.amkj.dmsh.constant.Url.BASE_URL;
 import static com.amkj.dmsh.constant.Url.Q_INQUIRY_WAIT_SEND_EXPEDITING;
 
 
@@ -182,7 +181,7 @@ public class DoMoIndentWaitSendFragment extends BaseFragment {
     }
 
     private void getWaitSendData() {
-        String url = BASE_URL + Url.Q_INQUIRY_WAIT_SEND;
+        String url = Url.Q_INQUIRY_WAIT_SEND;
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
         params.put("showCount", TOTAL_COUNT_TEN);
@@ -214,7 +213,7 @@ public class DoMoIndentWaitSendFragment extends BaseFragment {
                     orderListBeanList.addAll(inquiryOrderEntry.getOrderInquiryDateEntry().getOrderList());
                 } else if (!code.equals(EMPTY_CODE)) {
                     showToast(getActivity(), msg);
-                }else{
+                } else {
                     doMoIndentListAdapter.loadMoreEnd();
                 }
                 doMoIndentListAdapter.notifyDataSetChanged();
@@ -236,13 +235,13 @@ public class DoMoIndentWaitSendFragment extends BaseFragment {
      * @param no
      */
     private void getInviteGroupInfo(String no) {
-        String url = BASE_URL + Url.GROUP_MINE_SHARE;
+        String url =  Url.GROUP_MINE_SHARE;
         if (loadHud != null) {
             loadHud.show();
         }
         Map<String, Object> params = new HashMap<>();
         params.put("orderNo", no);
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),url,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -335,7 +334,7 @@ public class DoMoIndentWaitSendFragment extends BaseFragment {
                 , getStrings(qualityGroupShareBean.getSubtitle())
                 , Url.BASE_SHARE_PAGE_TWO + "m/template/share_template/groupShare.html?id=" + qualityGroupShareBean.getGpInfoId()
                 + "&record=" + qualityGroupShareBean.getGpRecordId(), "pages/groupshare/groupshare?id=" + qualityGroupShareBean.getGpInfoId()
-                + (TextUtils.isEmpty(orderNo) ? "&gpRecordId=" + qualityGroupShareBean.getGpRecordId() : "&order=" + orderNo),qualityGroupShareBean.getGpInfoId());
+                + (TextUtils.isEmpty(orderNo) ? "&gpRecordId=" + qualityGroupShareBean.getGpRecordId() : "&order=" + orderNo), qualityGroupShareBean.getGpInfoId());
     }
 
 

@@ -198,7 +198,7 @@ public class MessageCommentActivity extends BaseActivity {
             NetLoadUtils.getNetInstance().showLoadSirEmpty(loadService);
             return;
         }
-        String url = Url.BASE_URL + Url.H_MES_COMMENT;
+        String url =  Url.H_MES_COMMENT;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
         params.put("currentPage", page);

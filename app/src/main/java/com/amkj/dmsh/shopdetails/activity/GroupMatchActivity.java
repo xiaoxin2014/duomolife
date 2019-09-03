@@ -247,7 +247,7 @@ public class GroupMatchActivity extends BaseActivity {
 
     //获取组合商品详细信息
     private void getGroupGoods(String id) {
-        String url = Url.BASE_URL + Url.Q_GROUP_GOODS_DETAIL;
+        String url =  Url.Q_GROUP_GOODS_DETAIL;
         Map<String, Object> params = new HashMap<>();
         params.put("productId", id);
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {

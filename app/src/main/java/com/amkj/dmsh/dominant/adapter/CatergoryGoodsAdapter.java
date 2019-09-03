@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
@@ -61,7 +60,7 @@ public class CatergoryGoodsAdapter extends BaseMultiItemQuickAdapter<LikedProduc
                         .setGone(R.id.tv_economize_money, !TextUtils.isEmpty(likedProductBean.getDecreasePrice()))
                         .setText(R.id.tv_economize_money, getSpannableString(economizeNum, 1, economizeNum.length() - 1, 0, "#ff5e6b"));
 
-                FlexboxLayout fbl_label = helper.getView(R.id.fbl_label);
+                FlexboxLayout fbl_label = helper.getView(R.id.fbl_market_label);
                 if (!TextUtils.isEmpty(likedProductBean.getActivityTag()) || (likedProductBean.getMarketLabelList() != null
                         && likedProductBean.getMarketLabelList().size() > 0)) {
                     fbl_label.setVisibility(View.VISIBLE);
@@ -77,24 +76,6 @@ public class CatergoryGoodsAdapter extends BaseMultiItemQuickAdapter<LikedProduc
                             }
                         }
                     }
-
-                    //限制标签最多显示一行，超出屏幕外的自动移除
-                    if (fbl_label.getChildCount() > 1) {
-                        ViewTreeObserver observer = fbl_label.getViewTreeObserver();
-                        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                            @Override
-                            public void onGlobalLayout() {
-                                int width = fbl_label.getMeasuredWidth();
-                                int max = helper.itemView.getMeasuredWidth();
-                                if (width >= max && fbl_label.getChildCount() > 1) {
-                                    fbl_label.removeViewAt(fbl_label.getChildCount() - 1);
-                                } else {
-                                    fbl_label.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                                }
-                            }
-                        });
-                    }
-
                 } else {
                     fbl_label.setVisibility(View.GONE);
                 }

@@ -252,7 +252,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
      * 获取结算信息
      */
     private void getProductSettlementInfo() {
-        String url = Url.BASE_URL + Url.INTEGRAL_DIRECT_SETTLEMENT;
+        String url =  Url.INTEGRAL_DIRECT_SETTLEMENT;
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
         if (addressId > 0) {
@@ -380,7 +380,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
         tvIntegralDetailsCreateInt.setEnabled(false);
         String message = edtIntegralProductNote.getText().toString().trim();
         //  创建订单
-        String url = Url.BASE_URL + Url.INTEGRAL_CREATE_INDENT;
+        String url =  Url.INTEGRAL_CREATE_INDENT;
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
         if (addressId > 0) {
@@ -653,7 +653,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
      * 订单取消
      */
     private void cancelIntegralIndent() {
-        String url = Url.BASE_URL + Url.Q_INDENT_CANCEL;
+        String url =  Url.Q_INDENT_CANCEL;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderCreateNo);
         params.put("userId", userId);

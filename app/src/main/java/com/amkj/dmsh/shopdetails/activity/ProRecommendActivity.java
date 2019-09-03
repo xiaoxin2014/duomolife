@@ -197,7 +197,7 @@ public class ProRecommendActivity extends BaseActivity {
      * 获取推荐主题
      */
     private void getTopicRecommend() {
-        String url = Url.BASE_URL + Url.Q_SP_DETAIL_TOPIC_RECOMMEND;
+        String url =  Url.Q_SP_DETAIL_TOPIC_RECOMMEND;
         Map<String, Object> params = new HashMap<>();
         params.put("id", id);
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {

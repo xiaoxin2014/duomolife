@@ -144,7 +144,7 @@ public class DoMoIndentDeliveredFragment extends BaseFragment {
     }
 
     private void getIndentDeliveredData() {
-        String url = Url.BASE_URL + Url.Q_INQUIRY_DEL_IVERED;
+        String url =  Url.Q_INQUIRY_DEL_IVERED;
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
         params.put("showCount", TOTAL_COUNT_TEN);
@@ -193,7 +193,7 @@ public class DoMoIndentDeliveredFragment extends BaseFragment {
     }
 
     private void confirmOrder() {
-        String url = Url.BASE_URL + Url.Q_INDENT_CONFIRM;
+        String url =  Url.Q_INDENT_CONFIRM;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderBean.getNo());
         params.put("userId", userId);

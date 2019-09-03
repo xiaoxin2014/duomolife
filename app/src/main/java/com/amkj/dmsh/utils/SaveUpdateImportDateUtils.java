@@ -66,7 +66,7 @@ public class SaveUpdateImportDateUtils {
      */
     public void getMainIconData(Activity activity) {
         weakReference = new WeakReference<>(activity);
-        String url = Url.BASE_URL + Url.H_BOTTOM_ICON;
+        String url =  Url.H_BOTTOM_ICON;
         Map<String, Object> params = new HashMap<>();
         /**
          * 3.1.8 加入 区分以前底部导航只能加入一个web地址，首页默认为app首页 bug
@@ -139,7 +139,7 @@ public class SaveUpdateImportDateUtils {
      */
     public void getLaunchBanner(Activity activity) {
         weakReference = new WeakReference<>(activity);
-        String url = Url.BASE_URL + Url.H_LAUNCH_AD_DIALOG;
+        String url =  Url.H_LAUNCH_AD_DIALOG;
         SharedPreferences sharedPreferences = weakReference.get().getSharedPreferences("launchAD", Context.MODE_PRIVATE);
         final SharedPreferences.Editor edit = sharedPreferences.edit();
         NetLoadUtils.getNetInstance().loadNetDataPost(weakReference.get(), url, new NetLoadListenerHelper() {

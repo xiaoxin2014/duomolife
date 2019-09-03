@@ -387,7 +387,7 @@ public class QualityOverseasMailActivity extends BaseActivity {
     }
 
     private void getAdTypeData() {
-        String url = Url.BASE_URL + Q_QUALITY_TYPE_AD;
+        String url =  Q_QUALITY_TYPE_AD;
         Map<String, Object> params = new HashMap<>();
         params.put("categoryType", categoryType);
         params.put("categoryId", categoryId);

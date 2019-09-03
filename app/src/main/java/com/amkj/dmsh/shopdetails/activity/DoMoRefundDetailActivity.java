@@ -407,11 +407,11 @@ public class DoMoRefundDetailActivity extends BaseActivity {
             Map<String, Object> params = new HashMap<>();
             if (refundType.equals(REFUND_REPAIR)) {
 //                维修撤销
-                url = Url.BASE_URL + Url.Q_INDENT_REFUND_REPAIR_CANCEL;
+                url =  Url.Q_INDENT_REFUND_REPAIR_CANCEL;
                 cancelRefund(url, params);
             } else if (REFUND_TYPE.equals(refundType)) {
 //                退货退款撤销
-                url = Url.BASE_URL + Url.Q_CANCEL_APPLY;
+                url =  Url.Q_CANCEL_APPLY;
                 cancelRefund(url, params);
             } else {
                 Toast.makeText(this, R.string.refund_type_error, Toast.LENGTH_SHORT).show();

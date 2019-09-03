@@ -179,7 +179,7 @@ public class ShopTimeMyWarmActivity extends BaseActivity {
     }
 
     private void cancelWarm(int productId) {
-        String url = Url.BASE_URL + Url.CANCEL_MINE_WARM;
+        String url =  Url.CANCEL_MINE_WARM;
         Map<String, Object> params = new HashMap<>();
         params.put("m_obj", productId);
         params.put("m_uid", userId);

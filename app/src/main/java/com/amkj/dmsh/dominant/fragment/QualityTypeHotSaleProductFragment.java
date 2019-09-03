@@ -98,7 +98,7 @@ public class QualityTypeHotSaleProductFragment extends BaseFragment {
     }
 
     private void getQualityTypePro() {
-        String url = Url.BASE_URL + Url.QUALITY_HOT_SALE_LIST_NEW;
+        String url =  Url.QUALITY_HOT_SALE_LIST_NEW;
         Map<String, Object> params = new HashMap<>();
         params.put("day", hotSaleDay);
         if("1".equals(hotSaleDay) ){

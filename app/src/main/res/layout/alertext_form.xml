@@ -18,7 +18,6 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:background="@color/white"
-        android:inputType="number"
         android:hint="请输入要添加的标签"
         android:textSize="@dimen/sc_mm_24" />
 

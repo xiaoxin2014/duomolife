@@ -151,7 +151,7 @@ public class DoMoIndentWaitAppraiseFragment extends BaseFragment {
     }
 
     private void getWaitAppraiseData() {
-        String url = Url.BASE_URL + Url.Q_INQUIRY_FINISH;
+        String url =  Url.Q_INQUIRY_FINISH;
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
         params.put("showCount", TOTAL_COUNT_TEN);
@@ -203,7 +203,7 @@ public class DoMoIndentWaitAppraiseFragment extends BaseFragment {
 
     //  订单删除
     private void delOrder() {
-        String url = Url.BASE_URL + Url.Q_INDENT_DEL;
+        String url =  Url.Q_INDENT_DEL;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderBean.getNo());
         params.put("userId", userId);

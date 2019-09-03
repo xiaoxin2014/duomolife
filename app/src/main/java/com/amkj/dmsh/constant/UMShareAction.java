@@ -341,7 +341,7 @@ public class UMShareAction {
         params.put("page", routineUrl);
         params.put("productId", productId);
         params.put("scene", "id=" + productId + "&pid=0");
-        NetLoadUtils.getNetInstance().loadNetDataPost(context, BASE_URL + SHARE_SAVE_IMAGE_URL, params, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(context,  SHARE_SAVE_IMAGE_URL, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 RequestStatus requestStatus = new Gson().fromJson(result, RequestStatus.class);
