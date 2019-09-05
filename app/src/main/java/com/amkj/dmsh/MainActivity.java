@@ -391,7 +391,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      */
     private void getFirstPushInfo() {
         if (userId > 0) {
-            String url =  Url.FIRST_PUSH_INFO;
+            String url = Url.FIRST_PUSH_INFO;
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
             NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
@@ -444,7 +444,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void getReceivePushInfo(PushInfoEntity pushInfoEntity, SharedPreferences sharedPreferences) {
-        String url =  Url.FIRST_PUSH_INFO_RECEIVE;
+        String url = Url.FIRST_PUSH_INFO_RECEIVE;
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
         params.put("pushId", pushInfoEntity.getAppPushInfo().getId());
@@ -703,7 +703,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         final SavePersonalInfoBean personalInfo = getPersonalInfo(this);
         if (personalInfo.isLogin()) {
             userId = personalInfo.getUid();
-            String url =  Url.MINE_PAGE_POST;
+            String url = Url.MINE_PAGE_POST;
             Map<String, Object> params = new HashMap<>();
             params.put("userid", personalInfo.getUid());
             if (!TextUtils.isEmpty(personalInfo.getOpenId())) {
@@ -812,7 +812,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      * 统计登陆时间
      */
     private void getLoginStatusTime() {
-        String url =  Url.H_LOGIN_LAST_TIME;
+        String url = Url.H_LOGIN_LAST_TIME;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, null);
@@ -822,7 +822,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      * 获取上传统计大小
      */
     private void getUpTotalSize() {
-        String url =  Url.TOTAL_UP_SIZE;
+        String url = Url.TOTAL_UP_SIZE;
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
@@ -838,7 +838,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void getAddressVersion() {
-        String url =  Url.H_ADDRESS_VERSION;
+        String url = Url.H_ADDRESS_VERSION;
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
@@ -877,7 +877,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
 
     private void getAddressData() {
-        String url =  Url.H_ADDRESS_DATA;
+        String url = Url.H_ADDRESS_DATA;
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
@@ -907,7 +907,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void getOSSConfig() {
-        String url =  Url.H_OSS_CONFIG;
+        String url = Url.H_OSS_CONFIG;
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
@@ -986,10 +986,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         mAlertViewExt = new AlertView(alertSettingBean1, MainActivity.this, (o1, position1) -> {
                             if (o1 == mAlertViewExt) {
                                 closeKeyboard();
-                                if (position1 != AlertView.CANCELPOSITION) {
+                                if (position1 != AlertView.CANCELPOSITION && !TextUtils.isEmpty(etName.getText().toString())) {
                                     SharedPreferences sharedPreferences = getSharedPreferences("selectedServer", MODE_PRIVATE);
                                     SharedPreferences.Editor edit = sharedPreferences.edit();
-                                    edit.putString("selectServerUrl", Url.getUrl(position));
+                                    edit.putString("selectServerUrl", etName.getText().toString());
                                     edit.commit();
                                     SharedPreferences loginStatus = getSharedPreferences("loginStatus", MODE_PRIVATE);
                                     SharedPreferences.Editor loginEdit = loginStatus.edit();
@@ -1002,6 +1002,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         ViewGroup extView = (ViewGroup) LayoutInflater.from(MainActivity.this).inflate(R.layout.alertext_form, null);
                         etName = (EditText) extView.findViewById(R.id.etName);
                         etName.setHint("请输入BaseUrl");
+                        etName.setText("http://192.168.2.98:8080/");
                         mAlertViewExt.addExtView(extView);
                     }
                     mAlertViewExt.show();
@@ -1274,7 +1275,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      * 获取统计字段 上传大小
      */
     public void getAppUpdateJson() {
-        String url =  Url.APP_TOTAL_ACTION;
+        String url = Url.APP_TOTAL_ACTION;
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {

@@ -13,7 +13,7 @@ public class Url {
         } else if (position == 1) {//测试库
             return BASE_URL = "http://ts.domolife.cn/";
         } else if (position == 2) {//钊立
-            return BASE_URL = "http://192.168.1.98:8080/";
+            return BASE_URL = "http://192.168.2.98:8080/";
         } else if (position == 3) {//泽鑫
 //                BASE_URL = "http://192.168.1.180:8080/";
             return BASE_URL = "http://192.168.1.51:8080/";
