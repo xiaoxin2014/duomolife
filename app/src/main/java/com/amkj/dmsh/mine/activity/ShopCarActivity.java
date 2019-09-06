@@ -55,6 +55,7 @@ import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.constant.RefreshState;
+import com.tencent.bugly.crashreport.CrashReport;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -308,7 +309,7 @@ public class ShopCarActivity extends BaseActivity {
                 }
                 first = false;
             } catch (Exception e) {
-                e.printStackTrace();
+                CrashReport.postCatchedException(new Exception("购物车手动修改数量异常：" + e.getMessage()));
             }
         });
     }
@@ -912,6 +913,8 @@ public class ShopCarActivity extends BaseActivity {
         if (alertDialogHelper != null) {
             alertDialogHelper.dismiss();
         }
+
+        KeyboardUtils.unregisterSoftInputChangedListener(this);
     }
 
     /**

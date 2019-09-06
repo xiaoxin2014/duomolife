@@ -65,6 +65,7 @@ import com.amkj.dmsh.views.RectAddAndSubWriteView;
 import com.google.gson.Gson;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
+import com.tencent.bugly.crashreport.CrashReport;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -320,33 +321,37 @@ public class DirectIndentWriteActivity extends BaseActivity {
         KeyboardUtils.registerSoftInputChangedListener(this, new KeyboardUtils.OnSoftInputChangedListener() {
             @Override
             public void onSoftInputChanged(int height) {
-                if (!first) {//默认会调用一次
-                    if (height == 0) {
-                        //软键盘隐藏
-                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, AutoSizeUtils.mm2px(mAppContext, 98));
-                        mLlWriteCommit.setLayoutParams(params);
-                        if (mNum <= 0) {//最小购买数量为1件
-                            mNum = 1;
-                            pullFootView.rect_indent_number.setNum(mNum);
-                        } else if (mNum > pullFootView.rect_indent_number.getMaxNum()) {
-                            mNum = pullFootView.rect_indent_number.getMaxNum();
-                            pullFootView.rect_indent_number.setNum(mNum);
-                            showImportantToast(DirectIndentWriteActivity.this, R.string.product_sell_out);
-                        }
-                        if (discountBeanList.size() > 0 && discountBeanList.get(0).getCount() != mNum) {
-                            if (loadHud != null) {
-                                loadHud.show();
+                try {
+                    if (!first) {//默认会调用一次
+                        if (height == 0) {
+                            //软键盘隐藏
+                            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, AutoSizeUtils.mm2px(mAppContext, 98));
+                            mLlWriteCommit.setLayoutParams(params);
+                            if (mNum <= 0) {//最小购买数量为1件
+                                mNum = 1;
+                                pullFootView.rect_indent_number.setNum(mNum);
+                            } else if (mNum > pullFootView.rect_indent_number.getMaxNum()) {
+                                mNum = pullFootView.rect_indent_number.getMaxNum();
+                                pullFootView.rect_indent_number.setNum(mNum);
+                                showImportantToast(DirectIndentWriteActivity.this, R.string.product_sell_out);
                             }
-                            discountBeanList.get(0).setCount(mNum);
-                            getIndentDiscounts(false);
+                            if (discountBeanList.size() > 0 && discountBeanList.get(0).getCount() != mNum) {
+                                if (loadHud != null) {
+                                    loadHud.show();
+                                }
+                                discountBeanList.get(0).setCount(mNum);
+                                getIndentDiscounts(false);
+                            }
+                        } else {
+                            //软键盘显示
+                            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0);
+                            mLlWriteCommit.setLayoutParams(params);
                         }
-                    } else {
-                        //软键盘显示
-                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0);
-                        mLlWriteCommit.setLayoutParams(params);
                     }
+                    first = false;
+                } catch (Exception e) {
+                    CrashReport.postCatchedException(new Exception("订单填写手动修改数量异常：" + e.getMessage()));
                 }
-                first = false;
             }
         });
     }
@@ -1533,12 +1538,12 @@ public class DirectIndentWriteActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
+        super.onDestroy();
         if (constantMethod != null) {
             if (constantMethod.alertImportDialogHelper != null) {
                 constantMethod.alertImportDialogHelper.dismiss();
             }
         }
-        super.onDestroy();
         if (payErrorDialogHelper != null
                 && payErrorDialogHelper.getAlertDialog() != null && payErrorDialogHelper.getAlertDialog().isShowing()) {
             payErrorDialogHelper.dismiss();
@@ -1547,6 +1552,8 @@ public class DirectIndentWriteActivity extends BaseActivity {
                 && payCancelDialogHelper.getAlertDialog() != null && payCancelDialogHelper.getAlertDialog().isShowing()) {
             payCancelDialogHelper.dismiss();
         }
+
+        KeyboardUtils.unregisterSoftInputChangedListener(this);
     }
 
     /**
