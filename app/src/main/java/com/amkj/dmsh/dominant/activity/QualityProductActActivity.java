@@ -28,6 +28,8 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
+import com.amkj.dmsh.utils.CountDownTimer;
+import com.amkj.dmsh.utils.CountDownUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
@@ -35,10 +37,8 @@ import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -66,6 +66,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.BASE_SHARE_PAGE_TWO;
 import static com.amkj.dmsh.constant.Url.Q_ACT_PRO_LIST;
+import static com.amkj.dmsh.utils.CountDownUtils.isTimeStart;
 
 
 /**
@@ -265,99 +266,62 @@ public class QualityProductActActivity extends BaseActivity {
 
     //开启倒计时
     private void startCountDownTime(TextView tipView, CountdownView countDownTimeView, UserLikedProductEntity likedProductEntity) {
-        if (!TextUtils.isEmpty(likedProductEntity.getActivityStartTime()) && !TextUtils.isEmpty(likedProductEntity.getActivityEndTime())) {
-            setActCountTime(tipView, countDownTimeView, likedProductEntity);
-            getConstant();
-            constantMethod.createSchedule();
-            constantMethod.setRefreshTimeListener(() -> {
-                addSecond++;
-                setActCountTime(tipView, countDownTimeView, likedProductEntity);
-            });
-        }
-    }
-
-    private void setActCountTime(TextView tipView, CountdownView countDownTimeView, UserLikedProductEntity likedProductEntity) {
-        //已开始未结束
-        if (isTimeStart(likedProductEntity.getCurrentTime(), likedProductEntity.getActivityStartTime())) {
-            tipView.setText(tipView.getId() == R.id.tv_count_time_before_white ? "距结束还有" : "距结束");
-            try {
-                //格式化结束时间
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-                Date dateEnd = formatter.parse(likedProductEntity.getActivityEndTime());
-                Date dateCurrent;
-                if (!TextUtils.isEmpty(likedProductEntity.getCurrentTime())) {
-                    dateCurrent = formatter.parse(likedProductEntity.getCurrentTime());
-                } else {
-                    dateCurrent = new Date();
-                }
-                if ((dateEnd.getTime() + 1000 - dateCurrent.getTime() - addSecond * 1000) > 0) {
-                    countDownTimeView.updateShow((dateEnd.getTime() - dateCurrent.getTime() - addSecond * 1000));
-                } else {
-                    //活动已结束
-                    countDownTimeView.updateShow(0);
-                    if (constantMethod != null) {
-                        constantMethod.stopSchedule();
-                    }
-                    loadData();
-                }
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        } else {
-            //未开始
-            tipView.setText(tipView.getId() == R.id.tv_count_time_before_white ? "距开始还有" : "距开始");
-            try {
-                //格式化结束时间
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-                Date dateStart = formatter.parse(likedProductEntity.getActivityStartTime());
-                Date dateCurrent;
-                if (!TextUtils.isEmpty(likedProductEntity.getCurrentTime())) {
-                    dateCurrent = formatter.parse(likedProductEntity.getCurrentTime());
-                } else {
-                    dateCurrent = new Date();
-                }
-                if (((dateStart.getTime() + 1000 - dateCurrent.getTime() - addSecond * 1000)) > 0) {
-                    countDownTimeView.updateShow((dateStart.getTime() - dateCurrent.getTime() - addSecond * 1000));
-                } else {
-                    //活动已开始
-                    countDownTimeView.updateShow(0);
-                    if (constantMethod != null) {
-                        constantMethod.stopSchedule();
-                    }
-                    loadData();
-                }
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    //判断活动是否开始
-    public boolean isTimeStart(String currentTime, String startTime) {
         try {
-            //格式化开始时间
+            String activityStartTime = likedProductEntity.getActivityStartTime();
+            String activityEndTime = likedProductEntity.getActivityEndTime();
+            String currentTime = likedProductEntity.getCurrentTime();
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-            Date dateStart = formatter.parse(startTime);
-            Date dateCurrent;
-            if (!TextUtils.isEmpty(currentTime)) {
-                dateCurrent = formatter.parse(currentTime);
+            long dateStart = formatter.parse(activityStartTime).getTime();
+            long dateEnd = formatter.parse(activityEndTime).getTime();
+            long dateCurret = !TextUtils.isEmpty(currentTime) ? formatter.parse(currentTime).getTime() : System.currentTimeMillis();
+            //活动未开始
+            if (!isTimeStart(likedProductEntity.getActivityStartTime(), likedProductEntity.getCurrentTime())) {
+                tipView.setText(tipView.getId() == R.id.tv_count_time_before_white ? "距开始还有" : "距开始");
+                CountDownTimer countDownTimer = new CountDownTimer(this, dateStart + 1 - dateCurret, 1000) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+                        countDownTimeView.updateShow(millisUntilFinished);
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        cancel();
+                        //活动已开始
+                        countDownTimeView.updateShow(0);
+                        loadData();
+                    }
+                };
+
+                countDownTimer.start();
+            } else if (!CountDownUtils.isTimeEnd(activityEndTime, currentTime)) {
+                //活动已开始未结束
+                tipView.setText(tipView.getId() == R.id.tv_count_time_before_white ? "距结束还有" : "距结束");
+                CountDownTimer countDownTimer = new CountDownTimer(this, dateEnd + 1 - dateCurret, 1000) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+                        countDownTimeView.updateShow(millisUntilFinished);
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        cancel();
+                        //活动已结束
+                        countDownTimeView.updateShow(0);
+                        loadData();
+                    }
+                };
+
+                countDownTimer.start();
             } else {
-                dateCurrent = new Date();
+                //活动已结束
+                qActivityProView.mRlProductActivityDetail.setVisibility(GONE);
             }
-            if (dateCurrent.getTime() >= dateStart.getTime()) {
-                return true;
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            //活动已结束
+            qActivityProView.mRlProductActivityDetail.setVisibility(GONE);
         }
-        return false;
     }
 
-    private void getConstant() {
-        if (constantMethod == null) {
-            constantMethod = new ConstantMethod();
-        }
-    }
 
     class QActivityProView {
         @BindView(R.id.tv_product_activity_description)

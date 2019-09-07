@@ -74,6 +74,8 @@ import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
 import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean.MarketLabelBean;
+import com.amkj.dmsh.utils.CountDownTimer;
+import com.amkj.dmsh.utils.CountDownUtils;
 import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
@@ -131,7 +133,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeDouble;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTime;
-import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
 import static com.amkj.dmsh.constant.ConstantMethod.showImageActivity;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
@@ -149,6 +150,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.isShowTint;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODUCT_MORE;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODUCT_TITLE;
+import static com.amkj.dmsh.utils.CountDownUtils.isTimeStart;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getSquareImgUrl;
 
 
@@ -346,7 +348,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     private Badge badge;
     //    private View proTitleView;
     private String sharePageUrl = Url.BASE_SHARE_PAGE_TWO + "m/template/common/proprietary.html?id=";
-    private ConstantMethod constantMethod;
     private boolean isWaitSellStatus;
     private ProductTextAdapter presentProAdapter;
     private CommunalDetailAdapter communalDetailAdapter;
@@ -378,6 +379,11 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         dynamicDetails.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext, 22));
         dynamicDetails.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext, 22));
         ct_pro_show_time_detail.dynamicShow(dynamicDetails.build());
+        //设置待售倒计时
+        DynamicConfig.Builder buyDynamic = new DynamicConfig.Builder();
+        buyDynamic.setTimeTextColor(getResources().getColor(R.color.text_normal_red));
+        buyDynamic.setSuffixTextColor(getResources().getColor(R.color.text_black_t));
+        ct_pro_show_time_detail.dynamicShow(buyDynamic.build());
         //设置上面活动倒计时
         DynamicConfig.Builder dynamic = new DynamicConfig.Builder();
         dynamic.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext, 26));
@@ -945,20 +951,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             tv_sp_details_buy_it.setEnabled(false);
             tv_sp_details_add_car.setEnabled(true);
             isWaitSellStatus = true;
-            setCountTime();
-            if (!isEndOrStartTime(shopDetailsEntity.getCurrentTime()
-                    , shopPropertyBean.getStartTime())) {
-                getConstant();
-                constantMethod.createSchedule();
-                constantMethod.setRefreshTimeListener(() -> {
-                    shopPropertyBean.setAddSecond(shopPropertyBean.getAddSecond() + 1);
-                    setCountTime();
-                });
-            } else {
-                if (constantMethod != null) {
-                    constantMethod.stopSchedule();
-                }
-            }
+            startProductDownTime();
         } else {  //        判断库存
             rel_shop_pro_time.setVisibility(View.GONE);
             if (isEndOrStartTime(shopPropertyBean.getStartTime(), shopDetailsEntity.getCurrentTime())) {
@@ -1032,15 +1025,15 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     mRlActivityPrice.setVisibility(VISIBLE);       //限时购价格
                     rl_product_activity_detail.setVisibility(GONE);
                     mLlScroolDetailPrice.setVisibility(GONE); //非限时购价格
-                    startCountDownTime(tv_count_time_before_white, cv_countdownTime_white_hours);//开启倒计时
                     mLlTimeHoursBottom.setVisibility(GONE); //下面的倒计时
                     ll_communal_time_hours.setVisibility(VISIBLE);//上面的倒计时
+                    startActivityDownTime(tv_count_time_before_white, cv_countdownTime_white_hours);//开启倒计时
                     //限时购活动价(未开始时：activityPrice表示活动价；已开始时：price表示活动价)
-                    String price = getRmbFormat(this, isTimeStart(shopDetailsEntity) ? shopProperty.getPrice() : shopProperty.getActivityPrice()) + end;
+                    String price = getRmbFormat(this, isTimeStart(shopDetailsEntity.getShopPropertyBean().getActivityStartTime(), shopDetailsEntity.getCurrentTime()) ? shopProperty.getPrice() : shopProperty.getActivityPrice()) + end;
                     mTvProductMinPrice.setText(getSpannableString(price, 1, price.length() - end.length(), 1.6f, null));
                     mTvProductMartketPrice.setVisibility(getStringChangeDouble(shopProperty.getMarketPrice()) > 0 ? VISIBLE : GONE);//大于0才显示
                     //市场价
-                    if (isTimeStart(shopDetailsEntity)) {
+                    if (isTimeStart(shopDetailsEntity.getShopPropertyBean().getActivityStartTime(), shopDetailsEntity.getCurrentTime())) {
                         //已开始时显示划线价（市场参考价）
                         mTvProductMartketPrice.setText("¥" + getStrings(shopProperty.getMarketPrice()));
                         mTvProductMartketPrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
@@ -1055,17 +1048,17 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     mIvNextIcon.setVisibility(GONE);
                     tv_product_activity_description.setVisibility(VISIBLE);
                     mLlScroolDetailPrice.setVisibility(VISIBLE);
-                    startCountDownTime(tv_count_time_before_white, cv_countdownTime_white_hours);
                     mLlTimeHoursBottom.setVisibility(GONE);
                     ll_communal_time_hours.setVisibility(VISIBLE);
+                    startActivityDownTime(tv_count_time_before_white, cv_countdownTime_white_hours);
                 } else if (activityCode.contains("MJ") || activityCode.contains("MM") || activityCode.contains("MZ")) {
                     ll_communal_time_hours.setVisibility(GONE);
                     mRlActivityPrice.setVisibility(GONE);
                     mIvNextIcon.setVisibility(VISIBLE);
                     tv_product_activity_description.setVisibility(VISIBLE);
                     mLlScroolDetailPrice.setVisibility(VISIBLE);
-                    startCountDownTime(mTvTipsBottom, mCtCountDownBottom);
                     mLlTimeHoursBottom.setVisibility(VISIBLE);
+                    startActivityDownTime(mTvTipsBottom, mCtCountDownBottom);
                 } else {
                     ll_product_activity_detail.setVisibility(GONE);
                     mLlScroolDetailPrice.setVisibility(VISIBLE);
@@ -1085,9 +1078,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 ll_product_activity_detail.setVisibility(GONE);
                 mLlScroolDetailPrice.setVisibility(VISIBLE);
                 mLlTimeHoursBottom.setVisibility(GONE);
-                if (constantMethod != null) {
-                    constantMethod.stopSchedule();
-                }
             }
         }
 
@@ -1095,7 +1085,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         if (!TextUtils.isEmpty(shopPropertyBean.getActivityPrice())
                 && shopDetailsEntity.getShopPropertyBean() != null
                 && shopDetailsEntity.getShopPropertyBean().getActivityStartTime() != null
-                && !isTimeStart(shopDetailsEntity)) {
+                && !isTimeStart(shopDetailsEntity.getShopPropertyBean().getActivityStartTime(), shopDetailsEntity.getCurrentTime())) {
             String priceCHN = String.format(getResources().getString(R.string.money_price_chn)
                     , getStrings(shopPropertyBean.getActivityPrice()));
             String priceDes = String.format(getResources().getString(R.string.text_act_not_start)
@@ -1287,70 +1277,91 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         }
     }
 
-    //开启倒计时
-    private void startCountDownTime(TextView tipView, CountdownView countDownTimeView) {
-        setActCountTime(tipView, countDownTimeView);
-        getConstant();
-        constantMethod.createSchedule();
-        constantMethod.setRefreshTimeListener(() -> {
-            shopPropertyBean.setAddSecond(shopPropertyBean.getAddSecond() + 1);
-            setActCountTime(tipView, countDownTimeView);
-        });
+    //开启活动倒计时
+    private void startActivityDownTime(TextView tipView, CountdownView countDownTimeView) {
+        try {
+            String activityStartTime = shopPropertyBean.getActivityStartTime();
+            String activityEndTime = shopPropertyBean.getActivityEndTime();
+            String currentTime = shopDetailsEntity.getCurrentTime();
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+            long dateStart = formatter.parse(activityStartTime).getTime();
+            long dateEnd = formatter.parse(activityEndTime).getTime();
+            long dateCurret = !TextUtils.isEmpty(currentTime) ? formatter.parse(currentTime).getTime() : System.currentTimeMillis();
+            //活动未开始
+            if (!isTimeStart(shopPropertyBean.getActivityStartTime(), shopDetailsEntity.getCurrentTime())) {
+                tipView.setText(tipView.getId() == R.id.tv_count_time_before_white ? "距开始还有" : "距开始");
+                CountDownTimer countDownTimer = new CountDownTimer(this, dateStart + 1 - dateCurret, 1000) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+                        countDownTimeView.updateShow(millisUntilFinished);
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        cancel();
+                        //活动已开始
+                        countDownTimeView.updateShow(0);
+                        loadData();
+                    }
+                };
+
+                countDownTimer.start();
+            } else if (!CountDownUtils.isTimeEnd(activityEndTime, currentTime)) {
+                //活动已开始未结束
+                tipView.setText(tipView.getId() == R.id.tv_count_time_before_white ? "距结束还有" : "距结束");
+                CountDownTimer countDownTimer = new CountDownTimer(this, dateEnd + 1 - dateCurret, 1000) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+                        countDownTimeView.updateShow(millisUntilFinished);
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        cancel();
+                        //活动已结束
+                        countDownTimeView.updateShow(0);
+                        loadData();
+                    }
+                };
+
+                countDownTimer.start();
+            } else {
+                //活动已结束
+                ll_product_activity_detail.setVisibility(GONE);
+                mLlTimeHoursBottom.setVisibility(GONE);
+            }
+        } catch (Exception e) {
+            ll_product_activity_detail.setVisibility(GONE);
+            mLlTimeHoursBottom.setVisibility(GONE);
+        }
     }
 
-    private void setActCountTime(TextView tipView, CountdownView countDownTimeView) {
-        //已开始未结束
-        if (isTimeStart(shopDetailsEntity)) {
-            tipView.setText(tipView.getId() == R.id.tv_count_time_before_white ? "距结束还有" : "距结束");
-            try {
-                //格式化结束时间
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-                Date dateEnd = formatter.parse(shopPropertyBean.getActivityEndTime());
-                Date dateCurrent;
-                if (!TextUtils.isEmpty(shopDetailsEntity.getCurrentTime())) {
-                    dateCurrent = formatter.parse(shopDetailsEntity.getCurrentTime());
-                } else {
-                    dateCurrent = new Date();
+    //开启商品待售倒计时
+    private void startProductDownTime() {
+        try {
+            tv_pro_time_detail_status.setText("距开售");
+            String startTime = shopPropertyBean.getStartTime();
+            String currentTime = shopDetailsEntity.getCurrentTime();
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+            long dateStart = formatter.parse(startTime).getTime();
+            long dateCurret = !TextUtils.isEmpty(currentTime) ? formatter.parse(currentTime).getTime() : System.currentTimeMillis();
+            CountDownTimer countDownTimer = new CountDownTimer(this, dateStart + 1 - dateCurret, 1000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    ct_pro_show_time_detail.updateShow(millisUntilFinished);
                 }
-                if ((dateEnd.getTime() + 1000 - dateCurrent.getTime() - shopPropertyBean.getAddSecond() * 1000) > 0) {
-                    countDownTimeView.updateShow((dateEnd.getTime() - dateCurrent.getTime() - shopPropertyBean.getAddSecond() * 1000));
-                } else {
-                    //活动已结束
-                    countDownTimeView.updateShow(0);
-                    if (constantMethod != null) {
-                        constantMethod.stopSchedule();
-                    }
+
+                @Override
+                public void onFinish() {
+                    cancel();
+                    //商品已开售
                     loadData();
                 }
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        } else {
-            //未开始
-            tipView.setText(tipView.getId() == R.id.tv_count_time_before_white ? "距开始还有" : "距开始");
-            try {
-                //格式化结束时间
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-                Date dateStart = formatter.parse(shopPropertyBean.getActivityStartTime());
-                Date dateCurrent;
-                if (!TextUtils.isEmpty(shopDetailsEntity.getCurrentTime())) {
-                    dateCurrent = formatter.parse(shopDetailsEntity.getCurrentTime());
-                } else {
-                    dateCurrent = new Date();
-                }
-                if (((dateStart.getTime() + 1000 - dateCurrent.getTime() - shopPropertyBean.getAddSecond() * 1000)) > 0) {
-                    countDownTimeView.updateShow((dateStart.getTime() - dateCurrent.getTime() - shopPropertyBean.getAddSecond() * 1000));
-                } else {
-                    //活动已开始
-                    countDownTimeView.updateShow(0);
-                    if (constantMethod != null) {
-                        constantMethod.stopSchedule();
-                    }
-                    loadData();
-                }
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+            };
+
+            countDownTimer.start();
+        } catch (ParseException e) {
+            rel_shop_pro_time.setVisibility(GONE);
         }
     }
 
@@ -1422,64 +1433,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         });
     }
 
-
-    //判断活动是否开始
-    public boolean isTimeStart(ShopDetailsEntity shopDetailsEntity) {
-        try {
-            //格式化开始时间
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-            Date dateStart = formatter.parse(shopDetailsEntity.getShopPropertyBean().getActivityStartTime());
-            Date dateCurrent;
-            if (!TextUtils.isEmpty(shopDetailsEntity.getCurrentTime())) {
-                dateCurrent = formatter.parse(shopDetailsEntity.getCurrentTime());
-            } else {
-                dateCurrent = new Date();
-            }
-            if (dateCurrent.getTime() >= dateStart.getTime()) {
-                return true;
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    private void setCountTime() {
-        if (shopPropertyBean != null) {
-            try {
-                //格式化开始时间
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-                Date dateStart = formatter.parse(shopPropertyBean.getStartTime());
-                Date dateCurrent;
-                if (!TextUtils.isEmpty(shopDetailsEntity.getCurrentTime())) {
-                    dateCurrent = formatter.parse(shopDetailsEntity.getCurrentTime());
-                } else {
-                    dateCurrent = new Date();
-                }
-                DynamicConfig.Builder dynamic = new DynamicConfig.Builder();
-                dynamic.setTimeTextColor(getResources().getColor(R.color.text_normal_red));
-                dynamic.setSuffixTextColor(getResources().getColor(R.color.text_black_t));
-                ct_pro_show_time_detail.dynamicShow(dynamic.build());
-                ct_pro_show_time_detail.updateShow((dateStart.getTime() - dateCurrent.getTime() - shopPropertyBean.getAddSecond() * 1000));
-                tv_pro_time_detail_status.setText("距开售");
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            if (!isEndOrStartTimeAddSeconds(shopDetailsEntity.getCurrentTime()
-                    , shopPropertyBean.getStartTime()
-                    , shopPropertyBean.getAddSecond())) {
-                ct_pro_show_time_detail.setOnCountdownEndListener(new CountdownView.OnCountdownEndListener() {
-                    @Override
-                    public void onEnd(CountdownView cv) {
-                        cv.setOnCountdownEndListener(null);
-                        loadData();
-                    }
-                });
-            } else {
-                ct_pro_show_time_detail.setOnCountdownEndListener(null);
-            }
-        }
-    }
 
     private void setSkuProp(ShopPropertyBean shopProperty) {
         if (shopProperty.getSkuSale() != null && shopProperty.getSkuSale().size() > 0) {
@@ -2023,12 +1976,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     }
 
 
-    private void getConstant() {
-        if (constantMethod == null) {
-            constantMethod = new ConstantMethod();
-        }
-    }
-
 
     /**
      * 插入一条数据
@@ -2077,16 +2024,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     protected void onPause() {
         super.onPause();
         setTotalData();
-    }
-
-
-    @Override
-    protected void onDestroy() {
-        if (constantMethod != null) {
-            constantMethod.stopSchedule();
-            constantMethod.releaseHandlers();
-        }
-        super.onDestroy();
     }
 
     @Override

@@ -329,7 +329,7 @@ public class GroupMatchActivity extends BaseActivity {
                     new UMShareAction(this,
                             mCombineMainProduct.getPicUrl(), "【组合搭配】" + mCombineMainProduct.getName(),
                             "【组合搭配】" + mCombineMainProduct.getName(),
-                            "https://www.domolife.cn/m/template/common/combination_match?id=" + mProductId,
+                            "https://www.domolife.cn/m/template/common/combination_match.html?id=" + mProductId,
                             "pages/combineGoods/combineGoods?id=" + mProductId, getStringChangeIntegers(mProductId));
                 }
                 break;

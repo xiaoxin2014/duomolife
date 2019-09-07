@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.arch.lifecycle.LifecycleOwner;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -72,6 +73,7 @@ import static com.amkj.dmsh.shopdetails.activity.DirectIndentInvoiceActivity.IND
 import static com.amkj.dmsh.shopdetails.activity.DirectIndentWriteActivity.INDENT_GROUP_SHOP;
 import static com.amkj.dmsh.shopdetails.activity.DirectIndentWriteActivity.INDENT_W_TYPE;
 import static com.amkj.dmsh.shopdetails.activity.DoMoIndentAllActivity.INDENT_TYPE;
+import static com.amkj.dmsh.utils.CountDownUtils.getCoutDownTime;
 
 
 /**
@@ -383,11 +385,10 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
             Date dateStart = formatter.parse(startTime);
             Date dateEnd = formatter.parse(endTime);
             if (currentTime >= dateStart.getTime() && currentTime < dateEnd.getTime()) {
-                CountDownTimer countDownTimer;
-                countDownTimer = new CountDownTimer((LifecycleOwner) context, dateEnd.getTime() - currentTime, 1000) {
+                CountDownTimer countDownTimer = new CountDownTimer((LifecycleOwner) context, dateEnd.getTime() - currentTime, 1000) {
                     @Override
                     public void onTick(long millisUntilFinished) {
-                        helper.setText(R.id.tv_communal_activity_tag_rule, getCoutDownTime(millisUntilFinished));
+                        helper.setText(R.id.tv_communal_activity_tag_rule, "距结束 " + getCoutDownTime(millisUntilFinished, true));
                     }
 
                     @Override
@@ -398,26 +399,27 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                 };
 
                 countDownTimer.start();
+                helper.itemView.setTag(R.id.id_tag, countDownTimer);
             } else {
                 helper.setText(R.id.tv_communal_activity_tag_rule, "");
             }
+
         } catch (Exception e) {
             e.printStackTrace();
             helper.setText(R.id.tv_communal_activity_tag_rule, "");
         }
     }
 
-    private static String getCoutDownTime(long coutTime) {
-        try {
-            int day = (int) (coutTime / (1000 * 60 * 60 * 24));
-            int hour = (int) ((coutTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            int minute = (int) ((coutTime % (1000 * 60 * 60)) / (1000 * 60));
-            int second = (int) ((coutTime % (1000 * 60)) / 1000);
-            return "距结束 " + day + "天" + hour + ":" + minute + ":" + second;
-        } catch (Exception e) {
-            return "";
+    //视图被回收时，取消定时器，防止列表滚动复用导致错乱
+    @Override
+    public void onViewRecycled(@NonNull BaseViewHolder holder) {
+        super.onViewRecycled(holder);
+        Object tag = holder.itemView.getTag(R.id.id_tag);
+        if (tag != null) {
+            ((CountDownTimer) tag).cancel();
         }
     }
+
 
     /**
      * @param helper
