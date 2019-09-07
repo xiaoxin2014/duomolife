@@ -31,17 +31,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.alibaba.baichuan.android.trade.AlibcTrade;
-import com.alibaba.baichuan.android.trade.callback.AlibcTradeCallback;
-import com.alibaba.baichuan.android.trade.model.AlibcShowParams;
-import com.alibaba.baichuan.android.trade.model.OpenType;
-import com.alibaba.baichuan.android.trade.page.AlibcBasePage;
-import com.alibaba.baichuan.android.trade.page.AlibcDetailPage;
-import com.alibaba.baichuan.android.trade.page.AlibcPage;
-import com.alibaba.baichuan.trade.biz.AlibcConstants;
-import com.alibaba.baichuan.trade.biz.context.AlibcTradeResult;
-import com.alibaba.baichuan.trade.biz.login.AlibcLogin;
-import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
 import com.alibaba.fastjson.JSON;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
@@ -104,6 +93,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.WEB_TB_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TMALL_SCHEME;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 import static com.amkj.dmsh.rxeasyhttp.interceptor.MyInterceptor.getCommonApiParameter;
+import static com.amkj.dmsh.utils.BaiChuanUtils.skipAliBC;
 
 /**
  * Created by atd48 on 2016/6/30.
@@ -170,7 +160,8 @@ public class ArticleOfficialActivity extends BaseActivity {
     protected void initViews() {
         Intent intent = getIntent();
         artId = intent.getStringExtra("ArtId");
-        webUrl = "https://www.domolife.cn/m/app/pages/study_detail_app.html?id=" + artId;
+        webUrl = "http://test.domolife.cn/test/app/pages/study_detail_app.html?id=" + artId;
+//        webUrl = "https://www.domolife.cn/m/app/pages/study_detail_app.html?id=" + artId;
         //记录埋点参数sourceId
         ConstantMethod.saveSourceId(getClass().getSimpleName(), String.valueOf(artId));
         WebSettings webSettings = web_communal.getSettings();
@@ -607,82 +598,9 @@ public class ArticleOfficialActivity extends BaseActivity {
     private void jsSkipTaoBao(Map<String, Object> otherData) {
         if (otherData != null) {
             String thirdId = (String) getMapValue(otherData.get("tbThirdId"), "");
-            if (TextUtils.isEmpty(thirdId)) {
-                String tbUrl = (String) getMapValue(otherData.get("tbUrl"), "");
-                if (!TextUtils.isEmpty(tbUrl)) {
-                    skipAliBCWebView(tbUrl, null);
-                }
-            } else {
-                skipAliBCWebView(null, thirdId);
-            }
+            String tbUrl = (String) getMapValue(otherData.get("tbUrl"), "");
+            skipAliBC(this, tbUrl, thirdId, true, false);
         }
-    }
-
-    public void skipAliBCWebView(final String url, final String thirdId) {
-        if (!TextUtils.isEmpty(url) || !TextUtils.isEmpty(thirdId)) {
-            if (userId != 0) {
-                skipNewTaoBao(url, thirdId);
-            } else {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                getLoginStatus(this);
-            }
-        } else {
-            showToast(this, "地址缺失");
-            if (loadHud != null) {
-                loadHud.dismiss();
-            }
-        }
-    }
-
-    private void skipNewTaoBao(final String url, final String thirdId) {
-        AlibcLogin alibcLogin = AlibcLogin.getInstance();
-        alibcLogin.showLogin(new AlibcLoginCallback() {
-            @Override
-            public void onSuccess(int i) {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                skipNewShopDetails(url, thirdId);
-            }
-
-            @Override
-            public void onFailure(int code, String msg) {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                showToast(getActivity(), "登录失败 ");
-            }
-        });
-    }
-
-    private void skipNewShopDetails(String url, String thirdId) {
-        //提供给三方传递配置参数
-        Map<String, String> exParams = new HashMap<>();
-        exParams.put(AlibcConstants.ISV_CODE, "appisvcode");
-        //设置页面打开方式
-        AlibcShowParams showParams = new AlibcShowParams(OpenType.Native, false);
-        //实例化商品详情 itemID打开page
-        AlibcBasePage ordersPage;
-        if (!TextUtils.isEmpty(url)) {
-            ordersPage = new AlibcPage(url.trim());
-        } else {
-            ordersPage = new AlibcDetailPage(thirdId.trim());
-        }
-        AlibcTrade.show(this, ordersPage, showParams, null, exParams, new AlibcTradeCallback() {
-            @Override
-            public void onTradeSuccess(AlibcTradeResult alibcTradeResult) {
-                //打开电商组件，用户操作中成功信息回调。tradeResult：成功信息（结果类型：加购，支付；支付结果）
-//                showToast(context, "获取详情成功");
-            }
-
-            @Override
-            public void onFailure(int code, String msg) {
-                //打开电商组件，用户操作中错误信息回调。code：错误码；msg：错误信息
-//                showToast(ShopTimeScrollDetailsActivity.this, msg);
-            }
-        });
     }
 
 

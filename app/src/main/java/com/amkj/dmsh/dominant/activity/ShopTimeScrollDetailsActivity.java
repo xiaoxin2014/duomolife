@@ -123,10 +123,9 @@ import static com.amkj.dmsh.constant.Url.TIME_WARM_PRO;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_EMPTY_OBJECT;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PROMOTION_TITLE;
+import static com.amkj.dmsh.utils.BaiChuanUtils.skipAliBC;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getWaterMarkImgUrl;
 
-;
-;
 
 public class ShopTimeScrollDetailsActivity extends BaseActivity {
     @BindView(R.id.smart_time_product_details)
@@ -632,7 +631,8 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
     @OnClick({R.id.tv_time_product_details_buy_it})
     void aHeadWatch(View view) {
         if (userId != 0) {
-            skipNewTaoBao();
+            setClickProductTotal();
+            skipAliBC(this, thirdUrl, thirdId, true, false);
             if (productDetailBean != null) {
                 Properties prop = new Properties();
                 prop.setProperty("proName", getStrings(productDetailBean.getName()));
@@ -815,7 +815,6 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
 
     private void skipNewTaoBao() {
         if (!TextUtils.isEmpty(thirdId) || !TextUtils.isEmpty(thirdUrl)) {
-            setClickProductTotal();
             if ((productDetailBean != null && productDetailBean.getTaoBao() == 1)
                     || !TextUtils.isEmpty(thirdId)) {
                 AlibcLogin alibcLogin = AlibcLogin.getInstance();
@@ -894,69 +893,6 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
         params.put("id", productId);
         NetLoadUtils.getNetInstance().loadNetDataPost(this, TIME_PRODUCT_CLICK_TOTAL, params, null);
     }
-
-    public void skipAliBCWebView(final String url) {
-        if (!TextUtils.isEmpty(url)) {
-            if (userId != 0) {
-                skipNewTaoBao(url);
-            } else {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                getLoginStatus(ShopTimeScrollDetailsActivity.this);
-            }
-        } else {
-            showToast(ShopTimeScrollDetailsActivity.this, "地址缺失");
-            if (loadHud != null) {
-                loadHud.dismiss();
-            }
-        }
-    }
-
-    private void skipNewTaoBao(final String url) {
-        AlibcLogin alibcLogin = AlibcLogin.getInstance();
-        alibcLogin.showLogin(new AlibcLoginCallback() {
-            @Override
-            public void onSuccess(int i) {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                skipNewShopDetails(url);
-            }
-
-            @Override
-            public void onFailure(int code, String msg) {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                showToast(ShopTimeScrollDetailsActivity.this, "登录失败 ");
-            }
-        });
-    }
-
-    private void skipNewShopDetails(String url) {
-        //提供给三方传递配置参数
-        Map<String, String> exParams = new HashMap<>();
-        exParams.put(AlibcConstants.ISV_CODE, "appisvcode");
-        //设置页面打开方式
-        AlibcShowParams showParams = new AlibcShowParams(OpenType.Native, false);
-        //实例化商品详情 itemID打开page
-        AlibcBasePage ordersPage = new AlibcPage(url);
-        AlibcTrade.show(ShopTimeScrollDetailsActivity.this, ordersPage, showParams, null, exParams, new AlibcTradeCallback() {
-            @Override
-            public void onTradeSuccess(AlibcTradeResult alibcTradeResult) {
-                //打开电商组件，用户操作中成功信息回调。tradeResult：成功信息（结果类型：加购，支付；支付结果）
-//                showToast(context, "获取详情成功");
-            }
-
-            @Override
-            public void onFailure(int code, String msg) {
-                //打开电商组件，用户操作中错误信息回调。code：错误码；msg：错误信息
-//                showToast(ShopTimeScrollDetailsActivity.this, msg);
-            }
-        });
-    }
-
 
     class PopupWindowView {
         @BindView(R.id.rp_time_pro_warm)

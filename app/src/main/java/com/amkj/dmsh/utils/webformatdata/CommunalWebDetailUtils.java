@@ -7,17 +7,6 @@ import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.View;
 
-import com.alibaba.baichuan.android.trade.AlibcTrade;
-import com.alibaba.baichuan.android.trade.callback.AlibcTradeCallback;
-import com.alibaba.baichuan.android.trade.model.AlibcShowParams;
-import com.alibaba.baichuan.android.trade.model.OpenType;
-import com.alibaba.baichuan.android.trade.page.AlibcBasePage;
-import com.alibaba.baichuan.android.trade.page.AlibcPage;
-import com.alibaba.baichuan.trade.biz.AlibcConstants;
-import com.alibaba.baichuan.trade.biz.context.AlibcTradeResult;
-import com.alibaba.baichuan.trade.biz.core.taoke.AlibcTaokeParams;
-import com.alibaba.baichuan.trade.biz.login.AlibcLogin;
-import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.RequestStatus;
@@ -55,7 +44,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IMG_REGEX_TAG;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_TEXT;
-import static com.amkj.dmsh.constant.ConstantVariable.TAOBAO_APPKEY;
 import static com.amkj.dmsh.constant.ConstantVariable.regexATextUrl;
 import static com.amkj.dmsh.constant.Url.COUPON_PACKAGE;
 import static com.amkj.dmsh.constant.Url.FIND_ARTICLE_COUPON;
@@ -63,6 +51,7 @@ import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPO
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON_PACKAGE;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_GOODS_2X;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_GOODS_3X;
+import static com.amkj.dmsh.utils.BaiChuanUtils.skipAliBC;
 
 /**
  * @author LGuiPeng
@@ -405,13 +394,10 @@ public class CommunalWebDetailUtils {
                             break;
                         case R.id.ll_layout_tb_coupon:
                             CommunalDetailObjectBean couponBean = (CommunalDetailObjectBean) view.getTag();
-                            if (couponBean != null && !TextUtils.isEmpty(couponBean.getCouponUrl())) {
-                                if (loadHud != null) {
-                                    loadHud.dismiss();
-                                }
-                                skipNewTaoBao(mActivity, couponBean.getCouponUrl(), loadHud);
+                            if (couponBean != null) {
+                                skipAliBC(mActivity, couponBean.getCouponUrl(), "", true, true);
                             } else {
-                                showToast(mContext, "数据异常，地址缺失，请刷新重试~");
+                                showToast(mContext, "数据异常，请刷新重试~");
                             }
                             break;
                         case R.id.iv_ql_bl_add_car:
@@ -463,7 +449,7 @@ public class CommunalWebDetailUtils {
                     tbLink = (CommunalDetailObjectBean) view.getTag();
                 }
                 if (tbLink != null) {
-                    skipNewTaoBao(mActivity, tbLink.getUrl(), loadHud);
+                    skipAliBC(mActivity, tbLink.getUrl(), "", true, true);
                 }
                 break;
             default:
@@ -553,68 +539,6 @@ public class CommunalWebDetailUtils {
             @Override
             public void netClose() {
                 showToast(mContext, R.string.unConnectedNetwork);
-            }
-        });
-    }
-
-    /**
-     * 跳转淘宝登录
-     *
-     * @param context
-     * @param url
-     * @param loadHud
-     */
-    private void skipNewTaoBao(Activity context, String url, KProgressHUD loadHud) {
-        AlibcLogin alibcLogin = AlibcLogin.getInstance();
-        alibcLogin.showLogin(new AlibcLoginCallback() {
-            @Override
-            public void onSuccess(int i) {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                skipNewShopDetails(context, url);
-            }
-
-            @Override
-            public void onFailure(int code, String msg) {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                showToast(context, "登录失败 ");
-            }
-        });
-    }
-
-    /**
-     * 跳转阿里百川
-     *
-     * @param activity
-     * @param url
-     */
-    private void skipNewShopDetails(Activity activity, String url) {
-        //提供给三方传递配置参数
-        Map<String, String> exParams = new HashMap<>();
-        exParams.put(AlibcConstants.ISV_CODE, "appisvcode");
-        //设置页面打开方式
-        AlibcShowParams showParams = new AlibcShowParams(OpenType.Native, false);
-        //实例化商品详情 itemID打开page
-        AlibcBasePage ordersPage = new AlibcPage(url);
-        AlibcTaokeParams alibcTaokeParams = new AlibcTaokeParams();
-//        alibcTaokeParams.setPid(TAOBAO_PID);
-//        alibcTaokeParams.setAdzoneid(TAOBAO_ADZONEID);
-        alibcTaokeParams.extraParams = new HashMap<>();
-        alibcTaokeParams.extraParams.put("taokeAppkey", TAOBAO_APPKEY);
-        AlibcTrade.show(activity, ordersPage, showParams, alibcTaokeParams, exParams, new AlibcTradeCallback() {
-            @Override
-            public void onTradeSuccess(AlibcTradeResult alibcTradeResult) {
-                //打开电商组件，用户操作中成功信息回调。tradeResult：成功信息（结果类型：加购，支付；支付结果）
-//                showToast(context, "获取详情成功");
-            }
-
-            @Override
-            public void onFailure(int code, String msg) {
-                //打开电商组件，用户操作中错误信息回调。code：错误码；msg：错误信息
-//                showToast(ShopTimeScrollDetailsActivity.this, msg);
             }
         });
     }

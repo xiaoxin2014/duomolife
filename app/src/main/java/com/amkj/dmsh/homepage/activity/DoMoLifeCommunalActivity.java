@@ -109,6 +109,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.WEB_TAOBAO_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TB_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TMALL_SCHEME;
 import static com.amkj.dmsh.rxeasyhttp.interceptor.MyInterceptor.getCommonApiParameter;
+import static com.amkj.dmsh.utils.BaiChuanUtils.skipAliBC;
 import static com.luck.picture.lib.config.PictureConfigC.CHOOSE_REQUEST;
 
 
@@ -775,6 +776,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
 //        String base64 = Base64.encodeToString(new JSONObject(map).toString().getBytes(), Base64.NO_WRAP);
         webViewJs(getStringsFormat(getActivity(), R.string.web_head_method, new JSONObject(map).toString(), userId == 0 ? "" : String.valueOf(userId)));
     }
+
     /**
      * 跳转应用商店评分
      *
@@ -948,14 +950,8 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
         Map<String, Object> otherData = jsInteractiveBean.getOtherData();
         if (otherData != null) {
             String thirdId = (String) getMapValue(otherData.get("tbThirdId"), "");
-            if (TextUtils.isEmpty(thirdId)) {
-                String tbUrl = (String) getMapValue(otherData.get("tbUrl"), "");
-                if (!TextUtils.isEmpty(tbUrl)) {
-                    skipAliBCWebView(tbUrl, null);
-                }
-            } else {
-                skipAliBCWebView(null, thirdId);
-            }
+            String tbUrl = (String) getMapValue(otherData.get("tbUrl"), "");
+            skipAliBC(this, tbUrl, thirdId,true,false);
         }
     }
 

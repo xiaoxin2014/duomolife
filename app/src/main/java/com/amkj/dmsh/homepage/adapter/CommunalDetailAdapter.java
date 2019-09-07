@@ -16,28 +16,14 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.alibaba.baichuan.android.trade.AlibcTrade;
-import com.alibaba.baichuan.android.trade.callback.AlibcTradeCallback;
-import com.alibaba.baichuan.android.trade.model.AlibcShowParams;
-import com.alibaba.baichuan.android.trade.model.OpenType;
-import com.alibaba.baichuan.android.trade.page.AlibcBasePage;
-import com.alibaba.baichuan.android.trade.page.AlibcPage;
-import com.alibaba.baichuan.trade.biz.AlibcConstants;
-import com.alibaba.baichuan.trade.biz.context.AlibcTradeResult;
-import com.alibaba.baichuan.trade.biz.login.AlibcLogin;
-import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.ImageBean;
-import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.dominant.adapter.CatergoryGoodsAdapter;
 import com.amkj.dmsh.dominant.adapter.GoodProductAdapter;
 import com.amkj.dmsh.find.activity.ImagePagerActivity;
 import com.amkj.dmsh.find.bean.InvitationImgDetailEntity.InvitationImgDetailBean.TagsBean;
-import com.amkj.dmsh.homepage.activity.DoMoLifeCommunalActivity;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.adapter.InvitationProAdapter;
@@ -79,9 +65,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showImageActivity;
-import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.IMG_REGEX_TAG;
-import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_TEXT;
 import static com.amkj.dmsh.constant.ConstantVariable.regexATextUrl;
@@ -563,7 +547,7 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                                     loadHud.show();
                                 }
                                 if (!TextUtils.isEmpty(urlMap.get(key))) {
-                                    skipAliBCWebView(urlMap.get(key));
+                                    setSkipPath(context, urlMap.get(key), false);
                                 } else {
                                     if (loadHud != null) {
                                         loadHud.dismiss();
@@ -622,91 +606,6 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
             }
         }
         return null;
-    }
-
-    public void skipAliBCWebView(final String url) {
-        if (!TextUtils.isEmpty(url)) {
-            if (uid != 0) {
-                skipNewTaoBao(url);
-            } else {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                getLoginStatus();
-            }
-        } else {
-            showToast(context, "地址缺失");
-            if (loadHud != null) {
-                loadHud.dismiss();
-            }
-        }
-    }
-
-    private void skipNewTaoBao(final String url) {
-        if (url.contains(TAOBAO_URL)) {
-            AlibcLogin alibcLogin = AlibcLogin.getInstance();
-            alibcLogin.showLogin(new AlibcLoginCallback() {
-                @Override
-                public void onSuccess(int i) {
-                    if (loadHud != null) {
-                        loadHud.dismiss();
-                    }
-                    skipNewShopDetails(url);
-                }
-
-                @Override
-                public void onFailure(int code, String msg) {
-                    if (loadHud != null) {
-                        loadHud.dismiss();
-                    }
-                    showToast(context, "登录失败 ");
-                }
-            });
-        } else {
-            if (loadHud != null) {
-                loadHud.dismiss();
-            }
-//                     网页地址
-            Intent intent = new Intent();
-            intent.setClass(context, DoMoLifeCommunalActivity.class);
-            intent.putExtra("loadUrl", url);
-            context.startActivity(intent);
-        }
-    }
-
-    private void skipNewShopDetails(String url) {
-        //提供给三方传递配置参数
-        Map<String, String> exParams = new HashMap<>();
-        exParams.put(AlibcConstants.ISV_CODE, "appisvcode");
-        //设置页面打开方式
-        AlibcShowParams showParams = new AlibcShowParams(OpenType.Native, false);
-//        AlibcTradeSDK.setTaokeParams(AlibcTaokeParams taokeParams)
-//        String pidPrefix = AlibcTaokeParams.PID_PREFIX;
-//        mm_113346569_13808180_75190827
-//        AlibcTaokeParams taokeParams = new AlibcTaokeParams("mm_113346569_13808180_75190827", null, null);
-        //实例化商品详情 itemID打开page
-        AlibcBasePage ordersPage = new AlibcPage(url);
-        AlibcTrade.show((Activity) context, ordersPage, showParams, null, exParams, new AlibcTradeCallback() {
-            @Override
-            public void onTradeSuccess(AlibcTradeResult alibcTradeResult) {
-                //打开电商组件，用户操作中成功信息回调。tradeResult：成功信息（结果类型：加购，支付；支付结果）
-            }
-
-            @Override
-            public void onFailure(int code, String msg) {
-                //打开电商组件，用户操作中错误信息回调。code：错误码；msg：错误信息
-            }
-        });
-    }
-
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(context);
-        if (personalInfo.isLogin()) {
-            uid = personalInfo.getUid();
-        } else {
-            Intent intent = new Intent(context, MineLoginActivity.class);
-            ((Activity) context).startActivityForResult(intent, IS_LOGIN_CODE);
-        }
     }
 
     private List<String> getNumber(String str) {
