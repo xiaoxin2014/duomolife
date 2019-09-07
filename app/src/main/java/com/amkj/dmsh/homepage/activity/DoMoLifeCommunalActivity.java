@@ -109,7 +109,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.WEB_TAOBAO_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TB_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TMALL_SCHEME;
 import static com.amkj.dmsh.rxeasyhttp.interceptor.MyInterceptor.getCommonApiParameter;
-import static com.amkj.dmsh.utils.BaiChuanUtils.skipAliBC;
+import static com.amkj.dmsh.dao.BaiChuanDao.skipAliBC;
 import static com.luck.picture.lib.config.PictureConfigC.CHOOSE_REQUEST;
 
 
@@ -951,7 +951,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
         if (otherData != null) {
             String thirdId = (String) getMapValue(otherData.get("tbThirdId"), "");
             String tbUrl = (String) getMapValue(otherData.get("tbUrl"), "");
-            skipAliBC(this, tbUrl, thirdId,true,false);
+            skipAliBC(this, tbUrl, thirdId);
         }
     }
 

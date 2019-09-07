@@ -8,8 +8,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
 
-import com.alibaba.baichuan.trade.biz.login.AlibcLogin;
-import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.address.activity.SelectedAddressActivity;
 import com.amkj.dmsh.address.bean.AddressInfoEntity;
@@ -45,6 +43,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.DELIVERY_ADDRESS;
+import static com.amkj.dmsh.dao.BaiChuanDao.exitTaoBaoAccount;
 import static com.amkj.dmsh.utils.FileCacheUtils.getFolderSize;
 
 
@@ -182,7 +181,7 @@ public class AppDataActivity extends BaseActivity {
                     NEW_USER_DIALOG = true;
                     //调用登出接口
                     ConstantMethod.logout(getActivity(), true);
-                    exitNewTaoBaoAccount();
+                    exitTaoBaoAccount(getActivity());
                 }
 
                 @Override
@@ -192,21 +191,6 @@ public class AppDataActivity extends BaseActivity {
             });
         }
         alertDialogHelper.show();
-    }
-
-    private void exitNewTaoBaoAccount() {
-        AlibcLogin alibcLogin = AlibcLogin.getInstance();
-        alibcLogin.logout(new AlibcLoginCallback() {
-            @Override
-            public void onSuccess(int i) {
-                showToast(AppDataActivity.this, "退出登录成功");
-            }
-
-            @Override
-            public void onFailure(int code, String msg) {
-                showToast(AppDataActivity.this, "退出登录失败 " + code + msg);
-            }
-        });
     }
 
     @Override

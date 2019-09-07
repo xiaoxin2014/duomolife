@@ -123,7 +123,7 @@ import static com.amkj.dmsh.constant.Url.TIME_WARM_PRO;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_EMPTY_OBJECT;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PROMOTION_TITLE;
-import static com.amkj.dmsh.utils.BaiChuanUtils.skipAliBC;
+import static com.amkj.dmsh.dao.BaiChuanDao.skipAliBC;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getWaterMarkImgUrl;
 
 
@@ -632,8 +632,8 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
     void aHeadWatch(View view) {
         if (userId != 0) {
             setClickProductTotal();
-            skipAliBC(this, thirdUrl, thirdId, true, false);
             if (productDetailBean != null) {
+                skipAliBC(this, thirdUrl, thirdId, productDetailBean.getTaoBao() == 1);
                 Properties prop = new Properties();
                 prop.setProperty("proName", getStrings(productDetailBean.getName()));
                 prop.setProperty("proId", String.valueOf(productDetailBean.getId()));

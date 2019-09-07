@@ -16,8 +16,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.alibaba.baichuan.trade.biz.login.AlibcLogin;
-import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
 import com.amkj.dmsh.MainActivity;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
@@ -57,6 +55,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.ACCOUNT_LOGOUT_REASON;
 import static com.amkj.dmsh.constant.Url.ACCOUNT_LOGOUT_REQUEST;
 import static com.amkj.dmsh.constant.Url.ACCOUNT_LOGOUT_TIP;
+import static com.amkj.dmsh.dao.BaiChuanDao.exitTaoBaoAccount;
 
 
 /**
@@ -252,21 +251,11 @@ public class AccountLogoutActivity extends BaseActivity {
      */
     private void setLogoutResult(LogoutAccountResultEntity logoutAccountResultEntity) {
         String logoutReason = "";
-        if(SUCCESS_CODE.equals(logoutAccountResultEntity.getCode())){
+        if (SUCCESS_CODE.equals(logoutAccountResultEntity.getCode())) {
             savePersonalInfoCache(AccountLogoutActivity.this, null);
-            AlibcLogin alibcLogin = AlibcLogin.getInstance();
-            alibcLogin.logout(new AlibcLoginCallback() {
-                @Override
-                public void onSuccess(int i) {
-                }
-
-                @Override
-                public void onFailure(int code, String msg) {
-
-                }
-            });
+            exitTaoBaoAccount(this);
             logoutReason = getStrings(logoutAccountResultEntity.getMsg());
-        }else{
+        } else {
             for (String reasonText : logoutAccountResultEntity.getAccountResultList()) {
                 logoutReason += (!TextUtils.isEmpty(logoutReason) ? "\n" : "") + "· " + reasonText;
             }
@@ -323,10 +312,10 @@ public class AccountLogoutActivity extends BaseActivity {
             fl_account_logout_container.addView(currentView);
             requestData();
         } else if (changCode == 0 && currentPosition > 0) {
-            if(currentPosition == viewList.size()-1){
+            if (currentPosition == viewList.size() - 1) {
                 TinkerBaseApplicationLike tinkerBaseApplicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
                 tinkerBaseApplicationLike.finishToKeepPage(MainActivity.class.getName());
-            }else{
+            } else {
                 currentView = viewList.get(--currentPosition);
                 fl_account_logout_container.addView(currentView);
             }
@@ -415,8 +404,8 @@ public class AccountLogoutActivity extends BaseActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if(resultCode!=RESULT_OK){
-            if(requestCode == IS_LOGIN_CODE){
+        if (resultCode != RESULT_OK) {
+            if (requestCode == IS_LOGIN_CODE) {
                 finish();
                 return;
             }

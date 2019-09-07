@@ -162,8 +162,8 @@ import static com.amkj.dmsh.constant.Url.H_Q_FLOAT_AD;
 import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 import static com.amkj.dmsh.constant.Url.TOTAL_AD_COUNT;
 import static com.amkj.dmsh.constant.Url.TOTAL_AD_DIALOG_COUNT;
-import static com.amkj.dmsh.utils.BaiChuanUtils.isTaoBaoUrl;
-import static com.amkj.dmsh.utils.BaiChuanUtils.skipAliBC;
+import static com.amkj.dmsh.dao.BaiChuanDao.isTaoBaoUrl;
+import static com.amkj.dmsh.dao.BaiChuanDao.skipAliBC;
 import static com.yanzhenjie.permission.AndPermission.getFileUri;
 
 /**
@@ -685,7 +685,7 @@ public class ConstantMethod {
                 if (!isMiniRoutine) {
                     try {
                         if (isTaoBaoUrl("taobao")) {
-                            skipAliBC(context, link, "", true, true);
+                            skipAliBC(context, link, "");
                         } else {
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             if (intent.resolveActivity(context.getPackageManager()) != null) {
@@ -820,12 +820,14 @@ public class ConstantMethod {
         }
         NetLoadUtils.token = (String) SharedPreUtils.getParam(TOKEN, "");
         NetLoadUtils.uid = String.valueOf(SharedPreUtils.getParam("uid", 0));
-        //Token过期,清除本地登录信息
-        savePersonalInfoCache(activity, null);
+
         NetLoadUtils.getNetInstance().loadNetDataPost(activity, Url.LOG_OUT, null, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
+                //清除本地登录信息
+                savePersonalInfoCache(activity, null);
                 if (isHandOperation) {
+                    showToast(activity, "退出登录成功");
                     ((BaseActivity) activity).loadHud.dismiss();
                     activity.finish();
                 }
@@ -834,8 +836,8 @@ public class ConstantMethod {
             @Override
             public void onNotNetOrException() {
                 if (isHandOperation) {
+                    showToast(activity, "退出登录失败 ");
                     ((BaseActivity) activity).loadHud.dismiss();
-                    activity.finish();
                 }
             }
         });

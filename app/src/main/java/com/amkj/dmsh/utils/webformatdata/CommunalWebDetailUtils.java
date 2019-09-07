@@ -51,7 +51,7 @@ import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPO
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON_PACKAGE;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_GOODS_2X;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_GOODS_3X;
-import static com.amkj.dmsh.utils.BaiChuanUtils.skipAliBC;
+import static com.amkj.dmsh.dao.BaiChuanDao.skipAliBC;
 
 /**
  * @author LGuiPeng
@@ -395,7 +395,7 @@ public class CommunalWebDetailUtils {
                         case R.id.ll_layout_tb_coupon:
                             CommunalDetailObjectBean couponBean = (CommunalDetailObjectBean) view.getTag();
                             if (couponBean != null) {
-                                skipAliBC(mActivity, couponBean.getCouponUrl(), "", true, true);
+                                skipAliBC(mActivity, couponBean.getCouponUrl(), "");
                             } else {
                                 showToast(mContext, "数据异常，请刷新重试~");
                             }
@@ -449,7 +449,7 @@ public class CommunalWebDetailUtils {
                     tbLink = (CommunalDetailObjectBean) view.getTag();
                 }
                 if (tbLink != null) {
-                    skipAliBC(mActivity, tbLink.getUrl(), "", true, true);
+                    skipAliBC(mActivity, tbLink.getUrl(), "");
                 }
                 break;
             default:

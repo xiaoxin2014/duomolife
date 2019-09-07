@@ -93,7 +93,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.WEB_TB_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TMALL_SCHEME;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 import static com.amkj.dmsh.rxeasyhttp.interceptor.MyInterceptor.getCommonApiParameter;
-import static com.amkj.dmsh.utils.BaiChuanUtils.skipAliBC;
+import static com.amkj.dmsh.dao.BaiChuanDao.skipAliBC;
 
 /**
  * Created by atd48 on 2016/6/30.
@@ -599,7 +599,7 @@ public class ArticleOfficialActivity extends BaseActivity {
         if (otherData != null) {
             String thirdId = (String) getMapValue(otherData.get("tbThirdId"), "");
             String tbUrl = (String) getMapValue(otherData.get("tbUrl"), "");
-            skipAliBC(this, tbUrl, thirdId, true, false);
+            skipAliBC(this, tbUrl, thirdId);
         }
     }
 

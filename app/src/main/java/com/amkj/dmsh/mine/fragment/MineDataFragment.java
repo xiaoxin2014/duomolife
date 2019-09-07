@@ -17,17 +17,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.ali.auth.third.ui.context.CallbackContext;
-import com.alibaba.baichuan.android.trade.AlibcTrade;
 import com.alibaba.baichuan.android.trade.AlibcTradeSDK;
-import com.alibaba.baichuan.android.trade.callback.AlibcTradeCallback;
-import com.alibaba.baichuan.android.trade.model.AlibcShowParams;
-import com.alibaba.baichuan.android.trade.model.OpenType;
-import com.alibaba.baichuan.android.trade.page.AlibcBasePage;
-import com.alibaba.baichuan.android.trade.page.AlibcMyOrdersPage;
-import com.alibaba.baichuan.trade.biz.AlibcConstants;
-import com.alibaba.baichuan.trade.biz.context.AlibcTradeResult;
-import com.alibaba.baichuan.trade.biz.login.AlibcLogin;
-import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
@@ -99,6 +89,7 @@ import static com.amkj.dmsh.constant.Url.MINE_PAGE;
 import static com.amkj.dmsh.constant.Url.MINE_PAGE_AD;
 import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 import static com.amkj.dmsh.constant.Url.Q_QUERY_INDENT_COUNT;
+import static com.amkj.dmsh.dao.BaiChuanDao.skipNewIndent;
 
 /**
  * Created by atd48 on 2016/8/17.
@@ -237,7 +228,7 @@ public class MineDataFragment extends BaseFragment {
                 Intent intent = new Intent();
                 switch (qualityTypeBean.getId()) {
                     case 0: //淘宝订单
-                        skipNewTaoBao();
+                        skipNewIndent(getActivity());
                         break;
                     case 1: //待付款
                         intent.setClass(getActivity(), DoMoIndentAllActivity.class);
@@ -670,58 +661,6 @@ public class MineDataFragment extends BaseFragment {
                 && !TextUtils.isEmpty(communalUserInfoBean.getNoticeInfo().getAndroid_link())) {
             setSkipPath(getActivity(), communalUserInfoBean.getNoticeInfo().getAndroid_link(), false);
         }
-    }
-
-
-    private void skipNewTaoBao() {
-        /**
-         * 打开电商组件, 使用默认的webview打开
-         *
-         * @param activity             必填
-         * @param tradePage            页面类型,必填，不可为null，详情见下面tradePage类型介绍
-         * @param showParams           show参数
-         * @param taokeParams          淘客参数
-         * @param trackParam           yhhpass参数
-         * @param tradeProcessCallback 交易流程的回调，必填，不允许为null；
-         * @return 0标识跳转到手淘打开了, 1标识用h5打开,-1标识出错
-         */
-        AlibcLogin alibcLogin = AlibcLogin.getInstance();
-        alibcLogin.showLogin(new AlibcLoginCallback() {
-            @Override
-            public void onSuccess(int i) {
-//                showToast(getActivity(), "登录成功");
-                skipNewMyIndent();
-            }
-
-            @Override
-            public void onFailure(int code, String msg) {
-                showToast(getActivity(), "登录失败 ");
-            }
-        });
-    }
-
-    private void skipNewMyIndent() {
-        //提供给三方传递配置参数
-        final Map<String, String> exParams = new HashMap<>();
-        exParams.put(AlibcConstants.ISV_CODE, "appisvcode");
-        //设置页面打开方式
-        final AlibcShowParams showParams = new AlibcShowParams(OpenType.Native, false);
-//        final AlibcShowParams showParams = new AlibcShowParams(OpenType.Native, false);
-        //实例化我的订单打开page
-        final AlibcBasePage ordersPage = new AlibcMyOrdersPage(0, true);
-        AlibcTrade.show(getActivity(), ordersPage, showParams, null, exParams, new AlibcTradeCallback() {
-            @Override
-            public void onTradeSuccess(AlibcTradeResult alibcTradeResult) {
-                //打开电商组件，用户操作中成功信息回调。tradeResult：成功信息（结果类型：加购，支付；支付结果）
-                showToast(getActivity(), "获取订单成功");
-            }
-
-            @Override
-            public void onFailure(int code, String msg) {
-                //打开电商组件，用户操作中错误信息回调。code：错误码；msg：错误信息
-                showToast(getActivity(), msg);
-            }
-        });
     }
 
     @Override
