@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
+import android.webkit.WebChromeClient;
+import android.webkit.WebViewClient;
 
 import com.alibaba.baichuan.android.trade.AlibcTrade;
 import com.alibaba.baichuan.android.trade.callback.AlibcTradeCallback;
@@ -12,7 +14,6 @@ import com.alibaba.baichuan.android.trade.model.OpenType;
 import com.alibaba.baichuan.android.trade.page.AlibcBasePage;
 import com.alibaba.baichuan.android.trade.page.AlibcDetailPage;
 import com.alibaba.baichuan.android.trade.page.AlibcMyOrdersPage;
-import com.alibaba.baichuan.android.trade.page.AlibcPage;
 import com.alibaba.baichuan.trade.biz.AlibcConstants;
 import com.alibaba.baichuan.trade.biz.context.AlibcTradeResult;
 import com.alibaba.baichuan.trade.biz.core.taoke.AlibcTaokeParams;
@@ -31,7 +32,9 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showLoadhud;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.TAOBAO_ADZONEID;
 import static com.amkj.dmsh.constant.ConstantVariable.TAOBAO_APPKEY;
+import static com.amkj.dmsh.constant.ConstantVariable.TAOBAO_PID;
 
 /**
  * Created by xiaoxin on 2019/9/6
@@ -58,7 +61,7 @@ public class BaiChuanDao {
             AlibcLogin alibcLogin = AlibcLogin.getInstance();
             alibcLogin.showLogin(new AlibcLoginCallback() {
                 @Override
-                public void onSuccess(int i) {
+                public void onSuccess(int i, String s, String s1) {
                     dismissLoadhud(context);
                     skipNewShopDetails(context, tbUrl, thirdId, isTbUrl);
                 }
@@ -75,33 +78,32 @@ public class BaiChuanDao {
     //跳转淘宝链接
     private static void skipNewShopDetails(BaseActivity context, String tbUrl, String thirdId, boolean isTbUrl) {
         //提供给三方传递配置参数
-        Map<String, String> exParams = new HashMap<>();
-        exParams.put(AlibcConstants.ISV_CODE, "appisvcode");
+        Map<String, String> trackParams = new HashMap<>();
+        trackParams.put(AlibcConstants.ISV_CODE, "appisvcode");
         //设置页面打开方式
-        AlibcShowParams showParams = new AlibcShowParams(OpenType.Native, false);
+        AlibcShowParams showParams = new AlibcShowParams(OpenType.Native);
         //淘宝客参数
-        AlibcTaokeParams taokeParams = new AlibcTaokeParams();
-//        taokeParams.setPid(TAOBAO_PID);
-//        taokeParams.setAdzoneid(TAOBAO_ADZONEID);
+        AlibcTaokeParams taokeParams = new AlibcTaokeParams("", "", "");
+        taokeParams.setPid(TAOBAO_PID);
+        taokeParams.setAdzoneid(TAOBAO_ADZONEID);
 //        taokeParams.setSubPid();
         taokeParams.extraParams = new HashMap<>();
         taokeParams.extraParams.put("taokeAppkey", TAOBAO_APPKEY);
-        //实例化商品详情 itemID打开page
-        AlibcBasePage alibcBasePage;
         if (!TextUtils.isEmpty(tbUrl)) {
             if (isTaoBaoUrl(tbUrl) || isTbUrl) {
-                alibcBasePage = new AlibcPage(tbUrl.trim());
-                AlibcTrade.show(context, alibcBasePage, showParams, taokeParams, exParams, new AlibcTradeCallback() {
-                    @Override
-                    public void onTradeSuccess(AlibcTradeResult alibcTradeResult) {
-                        //打开电商组件，用户操作中成功信息回调。tradeResult：成功信息（结果类型：加购，支付；支付结果）
-                    }
+                // 以显示传入url的方式打开页面（第二个参数是套件名称）
+                AlibcTrade.openByUrl(context, "", tbUrl, null,
+                        new WebViewClient(), new WebChromeClient(), showParams,
+                        taokeParams, trackParams, new AlibcTradeCallback() {
+                            @Override
+                            public void onTradeSuccess(AlibcTradeResult tradeResult) {
+                            }
 
-                    @Override
-                    public void onFailure(int code, String msg) {
-                        showToast(context, msg);
-                    }
-                });
+                            @Override
+                            public void onFailure(int code, String msg) {
+                                showToast(context, msg);
+                            }
+                        });
             } else {
                 //                     网页地址
                 Intent intent = new Intent();
@@ -110,19 +112,21 @@ public class BaiChuanDao {
                 context.startActivity(intent);
             }
         } else if (!TextUtils.isEmpty(thirdId)) {
-            alibcBasePage = new AlibcDetailPage(thirdId.trim());
-            AlibcTrade.show(context, alibcBasePage, showParams, taokeParams, exParams, new AlibcTradeCallback() {
-                @Override
-                public void onTradeSuccess(AlibcTradeResult alibcTradeResult) {
-                    //打开电商组件，用户操作中成功信息回调。tradeResult：成功信息（结果类型：加购，支付；支付结果）
-//                showToast(context, "获取详情成功");
-                }
+            //实例化商品详情 itemID打开page
+            AlibcBasePage alibcBasePage = new AlibcDetailPage(thirdId.trim());
+            AlibcTrade.openByBizCode(context, alibcBasePage, null, new WebViewClient(),
+                    new WebChromeClient(), "detail", showParams, taokeParams,
+                    trackParams, new AlibcTradeCallback() {
+                        @Override
+                        public void onTradeSuccess(AlibcTradeResult tradeResult) {
+                        }
 
-                @Override
-                public void onFailure(int code, String msg) {
-                    showToast(context, msg);
-                }
-            });
+                        @Override
+                        public void onFailure(int code, String msg) {
+                            // 失败回调信息
+                            showToast(context, msg);
+                        }
+                    });
         } else {
             showToast(context, "地址缺失");
         }
@@ -140,25 +144,26 @@ public class BaiChuanDao {
         //验证淘宝账号
         AlibcLogin alibcLogin = AlibcLogin.getInstance();
         alibcLogin.showLogin(new AlibcLoginCallback() {
-            @Override
-            public void onSuccess(int i) {
+            public void onSuccess(int i, String s, String s1) {
                 dismissLoadhud(context);
-                final Map<String, String> exParams = new HashMap<>();
-                exParams.put(AlibcConstants.ISV_CODE, "appisvcode");
-                final AlibcShowParams showParams = new AlibcShowParams(OpenType.Native, false);
+                final Map<String, String> trackParams = new HashMap<>();
+                trackParams.put(AlibcConstants.ISV_CODE, "appisvcode");
+                final AlibcShowParams showParams = new AlibcShowParams(OpenType.Native);
                 //实例化我的订单打开page
                 final AlibcBasePage ordersPage = new AlibcMyOrdersPage(0, true);
-                AlibcTrade.show(context, ordersPage, showParams, null, exParams, new AlibcTradeCallback() {
-                    @Override
-                    public void onTradeSuccess(AlibcTradeResult alibcTradeResult) {
-                        showToast(context, "获取订单成功");
-                    }
+                AlibcTrade.openByBizCode(context, ordersPage, null, new WebViewClient(),
+                        new WebChromeClient(), "", showParams, null,
+                        trackParams, new AlibcTradeCallback() {
+                            @Override
+                            public void onTradeSuccess(AlibcTradeResult tradeResult) {
+                            }
 
-                    @Override
-                    public void onFailure(int code, String msg) {
-                        showToast(context, msg);
-                    }
-                });
+                            @Override
+                            public void onFailure(int code, String msg) {
+                                // 失败回调信息
+                                showToast(context, msg);
+                            }
+                        });
             }
 
             @Override
@@ -181,7 +186,8 @@ public class BaiChuanDao {
         AlibcLogin alibcLogin = AlibcLogin.getInstance();
         alibcLogin.logout(new AlibcLoginCallback() {
             @Override
-            public void onSuccess(int i) {
+            public void onSuccess(int i, String s, String s1) {
+
             }
 
             @Override

@@ -22,18 +22,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.ali.auth.third.ui.context.CallbackContext;
-import com.alibaba.baichuan.android.trade.AlibcTrade;
 import com.alibaba.baichuan.android.trade.AlibcTradeSDK;
-import com.alibaba.baichuan.android.trade.callback.AlibcTradeCallback;
-import com.alibaba.baichuan.android.trade.model.AlibcShowParams;
-import com.alibaba.baichuan.android.trade.model.OpenType;
-import com.alibaba.baichuan.android.trade.page.AlibcBasePage;
-import com.alibaba.baichuan.android.trade.page.AlibcDetailPage;
-import com.alibaba.baichuan.android.trade.page.AlibcPage;
-import com.alibaba.baichuan.trade.biz.AlibcConstants;
-import com.alibaba.baichuan.trade.biz.context.AlibcTradeResult;
-import com.alibaba.baichuan.trade.biz.login.AlibcLogin;
-import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseFragment;
@@ -49,7 +38,6 @@ import com.amkj.dmsh.dominant.bean.PromotionProductDetailEntity;
 import com.amkj.dmsh.dominant.bean.PromotionProductDetailEntity.PromotionProductDetailBean;
 import com.amkj.dmsh.dominant.bean.PromotionProductDetailEntity.PromotionProductDetailBean.LuckyMoneyBean;
 import com.amkj.dmsh.dominant.fragment.TopRecommendAtTimeEndGroupFragment;
-import com.amkj.dmsh.homepage.activity.DoMoLifeCommunalActivity;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
@@ -120,10 +108,10 @@ import static com.amkj.dmsh.constant.Url.H_TIME_GOODS_DETAILS;
 import static com.amkj.dmsh.constant.Url.TIME_PRODUCT_CLICK_TOTAL;
 import static com.amkj.dmsh.constant.Url.TIME_SHOW_PRO_WARM;
 import static com.amkj.dmsh.constant.Url.TIME_WARM_PRO;
+import static com.amkj.dmsh.dao.BaiChuanDao.skipAliBC;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_EMPTY_OBJECT;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PROMOTION_TITLE;
-import static com.amkj.dmsh.dao.BaiChuanDao.skipAliBC;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getWaterMarkImgUrl;
 
 
@@ -811,78 +799,6 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
         } else {
             ctPromotionProductTime.setOnCountdownEndListener(null);
         }
-    }
-
-    private void skipNewTaoBao() {
-        if (!TextUtils.isEmpty(thirdId) || !TextUtils.isEmpty(thirdUrl)) {
-            if ((productDetailBean != null && productDetailBean.getTaoBao() == 1)
-                    || !TextUtils.isEmpty(thirdId)) {
-                AlibcLogin alibcLogin = AlibcLogin.getInstance();
-                alibcLogin.showLogin(new AlibcLoginCallback() {
-                    @Override
-                    public void onSuccess(int i) {
-                        skipNewShopDetails();
-                    }
-
-                    @Override
-                    public void onFailure(int code, String msg) {
-                        showToast(ShopTimeScrollDetailsActivity.this, "登录失败 ");
-                    }
-                });
-            } else {
-                //                     网页地址
-                Intent intent = new Intent();
-                intent.setClass(ShopTimeScrollDetailsActivity.this, DoMoLifeCommunalActivity.class);
-                intent.putExtra("loadUrl", thirdUrl);
-                startActivity(intent);
-            }
-        } else {
-            showToast(this, "地址缺失");
-        }
-    }
-
-    private void skipNewShopDetails() {
-//                    跳转淘宝商品详情
-        if (TextUtils.isEmpty(thirdId) && TextUtils.isEmpty(thirdUrl)) {
-            showToast(mAppContext, "地址缺失，请联系客服");
-            return;
-        }
-        /**
-         * 打开电商组件, 使用默认的webview打开
-         *
-         * @param activity             必填
-         * @param tradePage            页面类型,必填，不可为null，详情见下面tradePage类型介绍
-         * @param showParams           show参数
-         * @param taokeParams          淘客参数
-         * @param trackParam           yhhpass参数
-         * @param tradeProcessCallback 交易流程的回调，必填，不允许为null；
-         * @return 0标识跳转到手淘打开了, 1标识用h5打开,-1标识出错
-         */
-        //提供给三方传递配置参数
-        Map<String, String> exParams = new HashMap<>();
-        exParams.put(AlibcConstants.ISV_CODE, "appisvcode");
-        //设置页面打开方式
-        AlibcShowParams showParams = new AlibcShowParams(OpenType.Native, false);
-        //实例化商品详情 itemID打开page
-        AlibcBasePage ordersPage = null;
-        if (!TextUtils.isEmpty(thirdId)) {
-            ordersPage = new AlibcDetailPage(thirdId);
-        } else {
-            ordersPage = new AlibcPage(thirdUrl);
-        }
-
-        AlibcTrade.show(ShopTimeScrollDetailsActivity.this, ordersPage, showParams, null, exParams, new AlibcTradeCallback() {
-            @Override
-            public void onTradeSuccess(AlibcTradeResult alibcTradeResult) {
-                //打开电商组件，用户操作中成功信息回调。tradeResult：成功信息（结果类型：加购，支付；支付结果）
-            }
-
-            @Override
-            public void onFailure(int code, String msg) {
-                //打开电商组件，用户操作中错误信息回调。code：错误码；msg：错误信息
-                showToast(ShopTimeScrollDetailsActivity.this, msg);
-            }
-        });
     }
 
     /**
