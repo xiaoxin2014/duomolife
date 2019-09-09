@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.NestedScrollView;
@@ -728,6 +729,12 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                         getGoodsRecommend(shopPropertyBean.getId());
                     } else if (!shopDetailsEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(getActivity(), shopDetailsEntity.getMsg());
+                        if ("32".equals(shopDetailsEntity.getCode())) {
+                            new Handler().postDelayed(() -> {
+                                //商品已下架，关闭页面
+                                finish();
+                            }, 500);
+                        }
                     }
                 }
                 NetLoadUtils.getNetInstance().showLoadSir(loadService, shopDetailsEntity);
@@ -1974,7 +1981,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             getLoginStatus(getActivity());
         }
     }
-
 
 
     /**
