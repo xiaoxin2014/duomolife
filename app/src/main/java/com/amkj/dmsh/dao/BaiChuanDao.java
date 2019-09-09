@@ -59,19 +59,25 @@ public class BaiChuanDao {
             }
             //验证淘宝账号
             AlibcLogin alibcLogin = AlibcLogin.getInstance();
-            alibcLogin.showLogin(new AlibcLoginCallback() {
-                @Override
-                public void onSuccess(int i, String s, String s1) {
-                    dismissLoadhud(context);
-                    skipNewShopDetails(context, tbUrl, thirdId, isTbUrl);
-                }
+            if (alibcLogin.isLogin()) {
+                dismissLoadhud(context);
+                skipNewShopDetails(context, tbUrl, thirdId, isTbUrl);
+            } else {
+                alibcLogin.showLogin(new AlibcLoginCallback() {
+                    @Override
+                    public void onSuccess(int i, String s, String s1) {
+                        dismissLoadhud(context);
+                        skipNewShopDetails(context, tbUrl, thirdId, isTbUrl);
+                    }
 
-                @Override
-                public void onFailure(int code, String msg) {
-                    dismissLoadhud(context);
-                    showToast(context, "登录失败 ");
-                }
-            });
+                    @Override
+                    public void onFailure(int code, String msg) {
+                        dismissLoadhud(context);
+                        showToast(context, "登录失败 ");
+                    }
+                });
+            }
+
         });
     }
 
@@ -82,11 +88,11 @@ public class BaiChuanDao {
         trackParams.put(AlibcConstants.ISV_CODE, "appisvcode");
         //设置页面打开方式
         AlibcShowParams showParams = new AlibcShowParams(OpenType.Native);
-        //淘宝客参数
+//        //淘宝客参数
         AlibcTaokeParams taokeParams = new AlibcTaokeParams("", "", "");
         taokeParams.setPid(TAOBAO_PID);
         taokeParams.setAdzoneid(TAOBAO_ADZONEID);
-//        taokeParams.setSubPid();
+        taokeParams.setSubPid(TAOBAO_PID);
         taokeParams.extraParams = new HashMap<>();
         taokeParams.extraParams.put("taokeAppkey", TAOBAO_APPKEY);
         if (!TextUtils.isEmpty(tbUrl)) {
