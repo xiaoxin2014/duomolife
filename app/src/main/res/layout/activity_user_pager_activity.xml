@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.scwang.smartrefresh.layout.SmartRefreshLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:cube_ptr="http://schemas.android.com/apk/res-auto"
     android:id="@+id/smart_refresh_mine"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <include layout="@layout/layout_refresh_header_gif"/>
 
-    <android.support.design.widget.CoordinatorLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    <android.support.design.widget.CoordinatorLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -28,30 +29,35 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <include layout="@layout/activity_mine_pager_activity_header" />
+                    <include layout="@layout/activity_mine_pager_activity_header"/>
                 </LinearLayout>
 
-                <include layout="@layout/layout_user_page_header" />
+                <include layout="@layout/activity_domolife_header"/>
             </android.support.design.widget.CollapsingToolbarLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
-                android:divider="@drawable/divider_ll_10dp_gray_bg"
-                android:gravity="center_vertical"
-                android:orientation="vertical"
-                android:showDividers="end">
+                android:gravity="center_horizontal">
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
+                <com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout
+                    xmlns:tl="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/communal_stl_tab"
+                    android:layout_width="wrap_content"
                     android:layout_height="@dimen/sc_mm_88"
+                    android:layout_gravity="center"
                     android:background="@color/white"
-                    android:paddingLeft="@dimen/sc_mm_59"
-                    android:paddingRight="@dimen/sc_mm_59">
-
-                    <include layout="@layout/layout_slid_check_blue_un_black" />
-                </RelativeLayout>
+                    tl:tl_indicator_color="@color/tab_color"
+                    tl:tl_indicator_gravity="BOTTOM"
+                    tl:tl_indicator_height="@dimen/dimen_2dp"
+                    tl:tl_indicator_style="NORMAL"
+                    tl:tl_indicator_width_equal_title="true"
+                    tl:tl_tab_padding="@dimen/sc_mm_77"
+                    tl:tl_textBold="SELECT"
+                    tl:tl_textSelectColor="@color/text_login_gray_s"
+                    tl:tl_textUnselectColor="@color/text_login_gray_s"
+                    tl:tl_textsize="15sp"/>
             </LinearLayout>
         </android.support.design.widget.AppBarLayout>
 
@@ -60,7 +66,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbars="none"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
     </android.support.design.widget.CoordinatorLayout>
 </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 

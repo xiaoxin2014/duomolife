@@ -41,9 +41,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
-;
-;
-
 /**
  * @author LGuiPeng
  * @email liuguipeng163@163.com

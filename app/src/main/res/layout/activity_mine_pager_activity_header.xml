@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:attr="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/sc_mm_300"
+                android:layout_height="@dimen/sc_mm_350"
                 android:background="@color/white"
                 android:gravity="center_vertical">
 
@@ -10,67 +10,70 @@
         android:id="@+id/iv_user_header_bg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        />
+        android:scaleType="centerCrop"/>
 
-    <RelativeLayout
-        android:id="@+id/rl_user"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/translucence"
-        android:gravity="center_vertical"
-        android:paddingTop="@dimen/sc_mm_130"
-        android:paddingRight="@dimen/gap_right"
-        >
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/cir_user_avatar"
             android:layout_width="@dimen/sc_mm_130"
             android:layout_height="@dimen/sc_mm_130"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/sc_mm_30"
+            android:layout_marginTop="@dimen/sc_mm_124"
             android:scaleType="centerCrop"
+            android:src="@drawable/default_ava_img"
             attr:civ_border_color="@color/gray_bg"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/sc_mm_70"
-            android:layout_marginRight="@dimen/sc_mm_136"
-            android:layout_toRightOf="@id/cir_user_avatar"
-            android:gravity="center_vertical"
+            android:layout_marginTop="@dimen/sc_mm_28"
+            android:gravity="center"
             android:orientation="horizontal">
 
-            <android.support.text.emoji.widget.EmojiTextView
+            <TextView
                 android:id="@+id/tv_user_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="2"
                 android:textColor="@color/white"
-                android:textSize="@dimen/sc_mm_32"/>
+                android:textSize="@dimen/sc_mm_30"/>
 
             <ImageView
                 android:id="@+id/iv_user_sex"
                 android:layout_width="@dimen/sc_mm_32"
                 android:layout_height="@dimen/sc_mm_32"
-                android:layout_marginLeft="@dimen/sc_mm_10"
-                android:src="@drawable/sel_user_sex"
-                />
+                android:layout_marginLeft="@dimen/sc_mm_12"
+                android:src="@drawable/sel_user_sex"/>
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/tv_user_att_status"
-            android:layout_width="@dimen/sc_mm_126"
-            android:layout_height="@dimen/sc_mm_50"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_gravity="right|center_vertical"
-            android:background="@drawable/border_civ_four_white_solid_trans"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sc_mm_26"
+            android:layout_marginBottom="@dimen/sc_mm_40"
             android:gravity="center"
+            android:orientation="horizontal">
 
-            android:textColor="@color/white"
-            android:textSize="@dimen/sc_mm_26"/>
-    </RelativeLayout>
+            <TextView
+                android:id="@+id/tv_follow_num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="关注"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sc_mm_24"/>
+
+            <TextView
+                android:id="@+id/tv_fans_num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/sc_mm_90"
+                android:text="粉丝"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sc_mm_24"/>
+        </LinearLayout>
+    </LinearLayout>
 </RelativeLayout>
