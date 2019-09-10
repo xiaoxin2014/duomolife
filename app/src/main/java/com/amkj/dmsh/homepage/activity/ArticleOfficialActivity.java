@@ -160,8 +160,8 @@ public class ArticleOfficialActivity extends BaseActivity {
     protected void initViews() {
         Intent intent = getIntent();
         artId = intent.getStringExtra("ArtId");
-        webUrl = "http://test.domolife.cn/test/app/pages/study_detail_app.html?id=" + artId;
-//        webUrl = "https://www.domolife.cn/m/app/pages/study_detail_app.html?id=" + artId;
+//        webUrl = "http://test.domolife.cn/test/app/pages/study_detail_app.html?id=" + artId;
+        webUrl = "https://www.domolife.cn/m/app/pages/study_detail_app.html?id=" + artId;
         //记录埋点参数sourceId
         ConstantMethod.saveSourceId(getClass().getSimpleName(), String.valueOf(artId));
         WebSettings webSettings = web_communal.getSettings();

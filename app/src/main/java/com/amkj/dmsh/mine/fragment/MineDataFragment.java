@@ -89,7 +89,6 @@ import static com.amkj.dmsh.constant.Url.MINE_PAGE;
 import static com.amkj.dmsh.constant.Url.MINE_PAGE_AD;
 import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 import static com.amkj.dmsh.constant.Url.Q_QUERY_INDENT_COUNT;
-import static com.amkj.dmsh.dao.BaiChuanDao.skipNewIndent;
 
 /**
  * Created by atd48 on 2016/8/17.
@@ -154,8 +153,8 @@ public class MineDataFragment extends BaseFragment {
     private IndentTypeAdapter indentTypeAdapter;
     private List<QualityTypeBean> indentTypeList = new ArrayList<>();
     private List<CommunalADActivityBean> adBeanList = new ArrayList<>();
-    private final String[] typeIndentName = {"淘宝订单", "待付款", "待发货", "待收货", "退货/售后"};
-    private final String[] typeIndentPic = {"i_tb_icon", "i_w_pay_icon", "i_w_send_icon", "i_w_appraise_icon", "i_s_af_icon"};
+    private final String[] typeIndentName = {"待付款", "待发货", "待收货", "待点评", "退货/售后"};
+    private final String[] typeIndentPic = {"i_w_pay_icon", "i_w_send_icon", "i_w_appraise_icon", "i_w_evaluate_icon", "i_s_af_icon"};
     //    跳转登录请求码
     private QualityTypeBean qualityTypeBean;
     private String packageName = "";
@@ -227,22 +226,24 @@ public class MineDataFragment extends BaseFragment {
             if (qualityTypeBean != null) {
                 Intent intent = new Intent();
                 switch (qualityTypeBean.getId()) {
-                    case 0: //淘宝订单
-                        skipNewIndent(getActivity());
-                        break;
-                    case 1: //待付款
+                    case 0: //待付款
                         intent.setClass(getActivity(), DoMoIndentAllActivity.class);
                         intent.putExtra("tab", "waitPay");
                         startActivity(intent);
                         break;
-                    case 2: //待发货
+                    case 1: //待发货
                         intent.setClass(getActivity(), DoMoIndentAllActivity.class);
                         intent.putExtra("tab", "waitSend");
                         startActivity(intent);
                         break;
-                    case 3: //待收货
+                    case 2: //待收货
                         intent.setClass(getActivity(), DoMoIndentAllActivity.class);
                         intent.putExtra("tab", "delivered");
+                        startActivity(intent);
+                        break;
+                    case 3: //待评价
+                        intent.setClass(getActivity(), DoMoIndentAllActivity.class);
+                        intent.putExtra("tab", "appraise");
                         startActivity(intent);
                         break;
                     case 4://退货/售后
@@ -448,11 +449,13 @@ public class MineDataFragment extends BaseFragment {
     private void setCountData(DirectIndentCountBean messageTotalBean) {
         if (messageTotalBean != null) {
             //待付款
-            indentTypeList.get(1).setType(messageTotalBean.getWaitPayNum());
+            indentTypeList.get(0).setType(messageTotalBean.getWaitPayNum());
             //待发货
-            indentTypeList.get(2).setType(messageTotalBean.getWaitDeliveryNum());
+            indentTypeList.get(1).setType(messageTotalBean.getWaitDeliveryNum());
             //待收货
-            indentTypeList.get(3).setType(messageTotalBean.getWaitTakeDeliveryNum());
+            indentTypeList.get(2).setType(messageTotalBean.getWaitTakeDeliveryNum());
+            //待评价
+            indentTypeList.get(3).setType(messageTotalBean.getWaitEvaluateNum());
             //退货售后
             indentTypeList.get(4).setType(messageTotalBean.getWaitAfterSaleNum());
         } else {

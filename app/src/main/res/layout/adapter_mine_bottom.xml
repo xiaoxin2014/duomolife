@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/sc_mm_179"
-    android:gravity="center"
-    android:orientation="vertical">
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/sc_mm_179"
+              android:gravity="center"
+              android:orientation="vertical">
 
     <ImageView
         android:id="@+id/iv_mine_type_icon"
         android:layout_width="@dimen/sc_mm_60"
         android:layout_height="@dimen/sc_mm_60"
         android:layout_gravity="center"
-        android:scaleType="fitCenter"
-         />
+        android:scaleType="fitCenter"/>
 
     <TextView
         android:id="@+id/tv_mine_type_title"
@@ -20,5 +18,5 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/sc_mm_24"
         android:textColor="@color/text_login_gray_s"
-        android:textSize="@dimen/sc_mm_24" />
+        android:textSize="@dimen/sc_mm_24"/>
 </LinearLayout>

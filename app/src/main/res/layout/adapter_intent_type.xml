@@ -1,34 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:background="@color/white">
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:background="@color/white">
 
     <LinearLayout
         android:layout_width="@dimen/sc_mm_150"
         android:layout_height="@dimen/sc_mm_140"
         android:gravity="center"
-        android:orientation="vertical"
-        >
+        android:orientation="vertical">
 
-        <FrameLayout
-            android:id="@+id/fl_intent_mes_layout"
-            android:layout_width="@dimen/sc_mm_55"
-            android:layout_height="@dimen/sc_mm_50"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="@dimen/sc_mm_55"
-            >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/img_indent_icon"
-                android:layout_width="@dimen/sc_mm_35"
-                android:layout_height="@dimen/sc_mm_35"
-                android:layout_gravity="bottom|left"
-                android:scaleType="fitCenter"
-                android:src="@drawable/icon_wallet"
-                 />
-        </FrameLayout>
+            <FrameLayout
+                android:id="@+id/fl_intent_mes_layout"
+                android:layout_width="@dimen/sc_mm_55"
+                android:layout_height="@dimen/sc_mm_50"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="@dimen/sc_mm_55">
+
+                <ImageView
+                    android:id="@+id/img_indent_icon"
+                    android:layout_width="@dimen/sc_mm_35"
+                    android:layout_height="@dimen/sc_mm_35"
+                    android:layout_gravity="bottom|left"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/icon_wallet"/>
+            </FrameLayout>
+
+
+            <TextView
+                android:id="@+id/tv_reward"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/sc_mm_15"
+                android:background="@drawable/shap_reward_bg"
+                android:text="有奖励"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sc_mm_18"
+                android:visibility="gone"/>
+        </RelativeLayout>
+
 
         <TextView
             android:id="@+id/tv_intent_type_title"
@@ -38,6 +54,6 @@
             android:gravity="center"
             android:text="淘宝订单"
             android:textColor="@color/text_black_t"
-            android:textSize="@dimen/sc_mm_26" />
+            android:textSize="@dimen/sc_mm_26"/>
     </LinearLayout>
 </LinearLayout>

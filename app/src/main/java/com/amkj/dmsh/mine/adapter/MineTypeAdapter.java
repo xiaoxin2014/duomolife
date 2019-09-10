@@ -17,7 +17,6 @@ import q.rorbin.badgeview.Badge;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getTopBadge;
 
-;
 
 /**
  * @author LGuiPeng

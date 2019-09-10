@@ -91,6 +91,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getVersionName;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
+import static com.amkj.dmsh.constant.ConstantMethod.showImportantToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
@@ -665,6 +666,9 @@ public class AliBCFragment extends BaseFragment {
                         case "getHeaderFromApp":
                             getHeaderFromApp(jsInteractiveBean.getOtherData());
                             break;
+                        case "showToast":
+                            getActivity().runOnUiThread(() -> showImportToast(jsInteractiveBean.getOtherData()));
+                            break;
 //                            刷新设置
                         case "refresh":
                             getActivity().runOnUiThread(new Runnable() {
@@ -776,6 +780,14 @@ public class AliBCFragment extends BaseFragment {
 
 //        String base64 = Base64.encodeToString(new JSONObject(map).toString().getBytes(), Base64.NO_WRAP);
         webViewJs(getStringsFormat(getActivity(), R.string.web_head_method, new JSONObject(map).toString(), userId == 0 ? "" : String.valueOf(userId)));
+    }
+
+    //弹窗
+    public void showImportToast(Map<String, Object> map) {
+        if (map != null) {
+            String msg = (String) map.get("msg");
+            showImportantToast(getActivity(), msg);
+        }
     }
 
     /**

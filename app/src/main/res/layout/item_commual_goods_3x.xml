@@ -23,7 +23,10 @@
 
     <include
         layout="@layout/layout_activity_label"
-        android:paddingLeft="@dimen/sc_mm_12"/>
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/sc_mm_35"
+        android:layout_marginLeft="@dimen/sc_mm_12"
+        android:layout_marginTop="@dimen/sc_mm_16"/>
 
     <TextView
         android:id="@+id/tv_name"

@@ -16,7 +16,6 @@ import com.alibaba.baichuan.android.trade.page.AlibcDetailPage;
 import com.alibaba.baichuan.android.trade.page.AlibcMyOrdersPage;
 import com.alibaba.baichuan.trade.biz.AlibcConstants;
 import com.alibaba.baichuan.trade.biz.context.AlibcTradeResult;
-import com.alibaba.baichuan.trade.biz.core.taoke.AlibcTaokeParams;
 import com.alibaba.baichuan.trade.biz.login.AlibcLogin;
 import com.alibaba.baichuan.trade.biz.login.AlibcLoginCallback;
 import com.amkj.dmsh.base.BaseActivity;
@@ -32,9 +31,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showLoadhud;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.TAOBAO_ADZONEID;
-import static com.amkj.dmsh.constant.ConstantVariable.TAOBAO_APPKEY;
-import static com.amkj.dmsh.constant.ConstantVariable.TAOBAO_PID;
 
 /**
  * Created by xiaoxin on 2019/9/6
@@ -89,18 +85,18 @@ public class BaiChuanDao {
         //设置页面打开方式
         AlibcShowParams showParams = new AlibcShowParams(OpenType.Native);
 //        //淘宝客参数
-        AlibcTaokeParams taokeParams = new AlibcTaokeParams("", "", "");
-        taokeParams.setPid(TAOBAO_PID);
-        taokeParams.setAdzoneid(TAOBAO_ADZONEID);
-        taokeParams.setSubPid(TAOBAO_PID);
-        taokeParams.extraParams = new HashMap<>();
-        taokeParams.extraParams.put("taokeAppkey", TAOBAO_APPKEY);
+//        AlibcTaokeParams taokeParams = new AlibcTaokeParams("", "", "");
+//        taokeParams.setPid(TAOBAO_PID);
+//        taokeParams.setAdzoneid(TAOBAO_ADZONEID);
+//        taokeParams.setSubPid(TAOBAO_PID);
+//        taokeParams.extraParams = new HashMap<>();
+//        taokeParams.extraParams.put("taokeAppkey", TAOBAO_APPKEY);
         if (!TextUtils.isEmpty(tbUrl)) {
             if (isTaoBaoUrl(tbUrl) || isTbUrl) {
                 // 以显示传入url的方式打开页面（第二个参数是套件名称）
                 AlibcTrade.openByUrl(context, "", tbUrl, null,
                         new WebViewClient(), new WebChromeClient(), showParams,
-                        taokeParams, trackParams, new AlibcTradeCallback() {
+                        null, trackParams, new AlibcTradeCallback() {
                             @Override
                             public void onTradeSuccess(AlibcTradeResult tradeResult) {
                             }
@@ -121,7 +117,7 @@ public class BaiChuanDao {
             //实例化商品详情 itemID打开page
             AlibcBasePage alibcBasePage = new AlibcDetailPage(thirdId.trim());
             AlibcTrade.openByBizCode(context, alibcBasePage, null, new WebViewClient(),
-                    new WebChromeClient(), "detail", showParams, taokeParams,
+                    new WebChromeClient(), "detail", showParams, null,
                     trackParams, new AlibcTradeCallback() {
                         @Override
                         public void onTradeSuccess(AlibcTradeResult tradeResult) {
@@ -138,7 +134,7 @@ public class BaiChuanDao {
         }
     }
 
-    //跳转我的淘宝订单
+    //跳转我的淘宝订单(百川4.0暂未开放此功能)
     public static void skipNewIndent(Activity context) {
         showLoadhud(context);
         //验证本地账号

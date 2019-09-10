@@ -34,16 +34,21 @@ public class IndentTypeAdapter extends BaseQuickAdapter<QualityTypeBean, IndentT
     @Override
     protected void convert(BaseViewHolderHelperBind helper, QualityTypeBean qualityTypeBeanBean) {
         ImageView img_indent_icon = helper.getView(R.id.img_indent_icon);
-        Badge badge = helper.badge;
-        if (badge != null) {
-            badge.setBadgeNumber(qualityTypeBeanBean.getType());
-        }
+
+
         try {
             img_indent_icon.setImageResource(context.getResources().getIdentifier(qualityTypeBeanBean.getPicUrl(), "drawable", "com.amkj.dmsh"));
         } catch (Exception e) {
             e.printStackTrace();
         }
-        helper.setText(R.id.tv_intent_type_title, getStrings(qualityTypeBeanBean.getName()));
+        String name = getStrings(qualityTypeBeanBean.getName());
+        helper.setText(R.id.tv_intent_type_title, name);
+        helper.setGone(R.id.tv_reward, "待点评".equals(name) && qualityTypeBeanBean.getType() > 0);//待评价商品数量大于0才显示有奖励
+
+        Badge badge = helper.badge;
+        if (badge != null && !"待点评".equals(name)) {//待点评不显示数量角标
+            badge.setBadgeNumber(qualityTypeBeanBean.getType());
+        }
         helper.itemView.setTag(qualityTypeBeanBean);
     }
 
