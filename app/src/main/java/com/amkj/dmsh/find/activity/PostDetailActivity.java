@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -24,9 +25,11 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.CommunalComment;
 import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dao.SoftApiDao;
@@ -51,6 +54,7 @@ import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.KeyboardUtils;
 import com.amkj.dmsh.utils.WindowUtils;
+import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.itemdecoration.StaggeredDividerItemDecoration;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
@@ -81,6 +85,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getIntegralFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.skipUserCenter;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.COMMENT_TYPE;
@@ -94,6 +99,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_POST_COMMENT;
 import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_POST_CONTENT;
 import static com.amkj.dmsh.constant.Url.BASE_SHARE_PAGE_TWO;
 import static com.amkj.dmsh.constant.Url.F_INVITATION_DETAIL;
+import static com.amkj.dmsh.constant.Url.MINE_INVITATION_DEL;
 import static com.amkj.dmsh.constant.Url.Q_DML_SEARCH_COMMENT;
 
 
@@ -146,6 +152,7 @@ public class PostDetailActivity extends BaseActivity {
     private CommunalDetailAdapter communalDetailAdapter;
     private PostDetailEntity mPostDetailEntity;
     private PostDetailBean mPostDetailBean;
+    private AlertDialogHelper delArticleDialogHelper;
     private String richText = "<p>postText</p>";
     private String richImg = "<p style=\"padding:0;margin:0;\"><img src=\"postImg\" style=\"display:block;width: 100%;\" /></p>";
     private String richLink = "<a href=\"postLink\">网页链接</a>";
@@ -708,6 +715,10 @@ public class PostDetailActivity extends BaseActivity {
         KeyboardUtils.unregisterSoftInputChangedListener(this);
         WindowUtils.closePw(mAlphaPw);
         WindowUtils.closePw(postCommentAdapter.getChildPostCommentPw());
+        if (delArticleDialogHelper != null && delArticleDialogHelper.getAlertDialog() != null
+                && delArticleDialogHelper.getAlertDialog().isShowing()) {
+            delArticleDialogHelper.dismiss();
+        }
     }
 
     /**
@@ -765,5 +776,53 @@ public class PostDetailActivity extends BaseActivity {
     @Override
     public View getTopView() {
         return mRvRecommend;
+    }
+
+    //判断当前是否是自己的帖子（自己的帖子才显示删除按钮）
+    public boolean isMyPost() {
+        return mPostDetailBean != null && userId == mPostDetailBean.getUid();
+    }
+
+    public void showDelDialog(){
+        if (delArticleDialogHelper == null) {
+            delArticleDialogHelper = new AlertDialogHelper(this);
+            delArticleDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
+                    .setMsg("确定删除该篇帖子？").setCancelText("取消").setConfirmText("提交").setCancelable(false)
+                    .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s));
+            delArticleDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                @Override
+                public void confirm() {
+                    delArticle();
+                }
+
+                @Override
+                public void cancel() {
+                }
+            });
+        }
+        delArticleDialogHelper.show();
+    }
+
+
+    private void delArticle() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", mArtId);
+        params.put("uid", userId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, MINE_INVITATION_DEL, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+                if (requestStatus != null) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
+                        EventBus.getDefault().post(new EventMessage(ConstantVariable.DELETE_POST, mArtId));
+                        showToast(getActivity(), "删除帖子完成");
+                        finish();
+                    } else {
+                        showToastRequestMsg(getActivity(), requestStatus);
+                    }
+                }
+            }
+        });
     }
 }

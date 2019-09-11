@@ -68,6 +68,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getTopBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.DELETE_POST;
 import static com.amkj.dmsh.constant.ConstantVariable.DEMO_LIFE_FILE;
 import static com.amkj.dmsh.constant.ConstantVariable.REFRESH_MESSAGE_TOTAL;
 import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
@@ -127,8 +128,7 @@ public class FindFragment extends BaseFragment {
         smart_refresh_find.setOnRefreshListener(refreshLayout -> {
             isUpdateCache = true;
             loadData();
-            //通知当前选中的帖子类型列表刷新
-            EventBus.getDefault().post(new EventMessage(UPDATE_POST_CONTENT, new PostTypeBean(getActivity().getClass().getSimpleName(), titles[vp_post.getCurrentItem()])));
+            updateCurrentPostFragment();
         });
         msgBadge = getTopBadge(getActivity(), fra_find_message_total);
         initPostList();
@@ -304,6 +304,8 @@ public class FindFragment extends BaseFragment {
                 ad_communal_banner.stopTurning();
                 ad_communal_banner.setPointViewVisible(false);
             }
+        } else if (message.type.equals(DELETE_POST)) {
+            updateCurrentPostFragment();
         }
     }
 
@@ -417,5 +419,11 @@ public class FindFragment extends BaseFragment {
             return fragment instanceof FindFragment;
         }
         return false;
+    }
+
+
+    private void updateCurrentPostFragment() {
+        //通知当前选中的帖子类型列表刷新
+        EventBus.getDefault().post(new EventMessage(UPDATE_POST_CONTENT, new PostTypeBean(getActivity().getClass().getSimpleName(), titles[vp_post.getCurrentItem()])));
     }
 }

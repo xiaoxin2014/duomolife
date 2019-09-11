@@ -743,6 +743,8 @@ public class Url {
      */
     //   获取帖子列表
     public static final String GET_POST_LIST = "api/find/post/getPostList";
+    //  个人主页帖子列表
+    public static final String GET_USER_POST_LIST = "api/find/post/getHomePagePostList";
     //   获取热门话题
     public static final String GET_HOT_TOPIC = "api/find/post/getRecommendTopicList";
     //   获取话题分类

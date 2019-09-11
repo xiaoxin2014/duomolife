@@ -31,8 +31,8 @@ import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.message.activity.MessageActivity;
-import com.amkj.dmsh.mine.activity.MineInvitationListActivity;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
+import com.amkj.dmsh.mine.activity.MyPostActivity;
 import com.amkj.dmsh.mine.activity.PersonalBgImgActivity;
 import com.amkj.dmsh.mine.activity.PersonalDataActivity;
 import com.amkj.dmsh.mine.adapter.MineTypeAdapter;
@@ -595,6 +595,7 @@ public class MineDataFragment extends BaseFragment {
             Intent intent = new Intent(getActivity(), UserFansAttentionActivity.class);
             intent.putExtra("type", "fans");
             intent.putExtra("fromPage", "mine");
+            intent.putExtra("userId", userId);
             startActivity(intent);
         } else {
             skipLoginPage();
@@ -608,6 +609,7 @@ public class MineDataFragment extends BaseFragment {
             Intent intent = new Intent(getActivity(), UserFansAttentionActivity.class);
             intent.putExtra("type", "attention");
             intent.putExtra("fromPage", "mine");
+            intent.putExtra("userId", userId);
             startActivity(intent);
         } else {
             skipLoginPage();
@@ -617,7 +619,7 @@ public class MineDataFragment extends BaseFragment {
     //    我的帖子
     @OnClick(R.id.ll_mine_inv_count)
     void skipInvitation(View view) {
-        Intent intent = new Intent(getActivity(), MineInvitationListActivity.class);
+        Intent intent = new Intent(getActivity(), MyPostActivity.class);
         startActivity(intent);
     }
 

@@ -1,11 +1,12 @@
 package com.amkj.dmsh.user.bean;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by atd48 on 2016/9/30.
  */
-public class UserPagerInfoEntity {
+public class UserPagerInfoEntity extends BaseEntity {
 
     /**
      * is_sign : 1
@@ -38,10 +39,6 @@ public class UserPagerInfoEntity {
      * code : 01
      * msg : 请求成功
      */
-
-    private String code;
-    private String msg;
-
     public UserInfoBean getUserInfo() {
         return userInfo;
     }
@@ -50,21 +47,6 @@ public class UserPagerInfoEntity {
         this.userInfo = userInfo;
     }
 
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
 
     public static class UserInfoBean {
         private int is_sign;

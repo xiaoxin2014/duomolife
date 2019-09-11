@@ -32,7 +32,7 @@
                     <include layout="@layout/activity_mine_pager_activity_header"/>
                 </LinearLayout>
 
-                <include layout="@layout/activity_domolife_header"/>
+                <include layout="@layout/layout_userpager_head"/>
             </android.support.design.widget.CollapsingToolbarLayout>
 
             <LinearLayout
@@ -48,6 +48,8 @@
                     android:layout_height="@dimen/sc_mm_88"
                     android:layout_gravity="center"
                     android:background="@color/white"
+                    tl:tl_divider_color="@color/text_gray_c"
+                    tl:tl_divider_width="0.5dp"
                     tl:tl_indicator_color="@color/tab_color"
                     tl:tl_indicator_gravity="BOTTOM"
                     tl:tl_indicator_height="@dimen/dimen_2dp"

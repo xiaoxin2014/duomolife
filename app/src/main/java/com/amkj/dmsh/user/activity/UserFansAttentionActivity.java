@@ -11,7 +11,6 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.homepage.adapter.SearchDetailsUserAdapter;
 import com.amkj.dmsh.mine.bean.UserAttentionFansEntity;
@@ -25,9 +24,6 @@ import com.google.gson.Gson;
 import com.kingja.loadsir.core.Transport;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
-import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,10 +33,7 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
@@ -61,9 +54,8 @@ public class UserFansAttentionActivity extends BaseActivity {
     private List<UserAttentionFansBean> attentionFansList = new ArrayList();
     private SearchDetailsUserAdapter detailsUserAdapter;
     private String type;
+    private int userId;
     private int page = 1;
-    private int scrollY = 0;
-    private float screenHeight;
     private UserAttentionFansEntity userAttentionFansEntity;
 
     @Override
@@ -76,6 +68,7 @@ public class UserFansAttentionActivity extends BaseActivity {
         header_shared.setVisibility(View.INVISIBLE);
         Intent intent = getIntent();
         type = intent.getStringExtra("type");
+        userId = intent.getIntExtra("userId", 0);
         if ("fans".equals(type)) {
             tv_header_titleAll.setText("我的粉丝");
         } else {
@@ -86,61 +79,14 @@ public class UserFansAttentionActivity extends BaseActivity {
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_gray_f_two_px)
-
-
                 .create());
         communal_recycler.setAdapter(detailsUserAdapter);
-        detailsUserAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
-            @Override
-            public void onLoadMoreRequested() {
-                page++;
-                getData();
-            }
+        detailsUserAdapter.setOnLoadMoreListener(() -> {
+            page++;
+            getData();
         }, communal_recycler);
 
-        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                loadData();
-            }
-        });
-        TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-        screenHeight = app.getScreenHeight();
-        communal_recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                scrollY += dy;
-                if (!recyclerView.canScrollVertically(-1)) {
-                    scrollY = 0;
-                }
-                if (scrollY > screenHeight * 1.5 && dy < 0) {
-                    if (download_btn_communal.getVisibility() == GONE) {
-                        download_btn_communal.setVisibility(VISIBLE);
-                        download_btn_communal.hide(false);
-                    }
-                    if (!download_btn_communal.isVisible()) {
-                        download_btn_communal.show();
-                    }
-                } else {
-                    if (download_btn_communal.isVisible()) {
-                        download_btn_communal.hide();
-                    }
-                }
-            }
-        });
-        download_btn_communal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) communal_recycler.getLayoutManager();
-                int firstVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition();
-                int mVisibleCount = linearLayoutManager.findLastVisibleItemPosition()
-                        - linearLayoutManager.findFirstVisibleItemPosition() + 1;
-                if (firstVisibleItemPosition > mVisibleCount) {
-                    communal_recycler.scrollToPosition(mVisibleCount);
-                }
-                communal_recycler.smoothScrollToPosition(0);
-            }
-        });
+        setFloatingButton(download_btn_communal, communal_recycler);
         detailsUserAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -196,12 +142,12 @@ public class UserFansAttentionActivity extends BaseActivity {
         String url;
         Map<String, Object> params = new HashMap<>();
         if ("fans".equals(type)) {
-            url =  Url.MINE_FANS;
+            url = Url.MINE_FANS;
             if (userId > 0) {
                 params.put("buid", userId);
             }
         } else {
-            url =  Url.MINE_ATTENTION;
+            url = Url.MINE_ATTENTION;
             if (userId > 0) {
                 params.put("fuid", userId);
             }
@@ -225,7 +171,7 @@ public class UserFansAttentionActivity extends BaseActivity {
                         attentionFansList.addAll(userAttentionFansEntity.getUserAttentionFansList());
                     } else if (!userAttentionFansEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(UserFansAttentionActivity.this, userAttentionFansEntity.getMsg());
-                    }else{
+                    } else {
                         detailsUserAdapter.loadMoreEnd();
                     }
                 }

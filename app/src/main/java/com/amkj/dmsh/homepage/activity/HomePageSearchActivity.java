@@ -72,18 +72,19 @@ public class HomePageSearchActivity extends BaseActivity {
     private String searchType = "allSearch";
     private String SAVE_NAME = "SearchHistory";
     private HotSearchAdapter hotSearchAdapter;
-//    搜索 获取传递信息参数
+    //    搜索 获取传递信息参数
     public static final String SEARCH_DATA = "searchData";
 
     @Override
     protected int getContentView() {
         return R.layout.activity_communal_search;
     }
+
     @Override
     protected void initViews() {
         Intent intent = getIntent();
         String searchType = intent.getStringExtra(SEARCH_TYPE);
-        if(!TextUtils.isEmpty(searchType)){
+        if (!TextUtils.isEmpty(searchType)) {
             this.searchType = searchType;
         }
         // 搜索框的键盘搜索键点击回调
@@ -115,7 +116,7 @@ public class HomePageSearchActivity extends BaseActivity {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 HotSearchTagBean hotSearchTagBean = (HotSearchTagBean) view.getTag();
-                if(hotSearchTagBean!=null){
+                if (hotSearchTagBean != null) {
                     if (!TextUtils.isEmpty(hotSearchTagBean.getAndroid_link())) {
                         setSkipPath(HomePageSearchActivity.this, hotSearchTagBean.getAndroid_link(), false);
                     } else {
@@ -191,13 +192,13 @@ public class HomePageSearchActivity extends BaseActivity {
             if (dataHistoryList.size() > 0) {
                 ll_search_history.setVisibility(View.VISIBLE);
                 flex_communal_tag.removeAllViews();
-                for (String historyData :dataHistoryList) {
+                for (String historyData : dataHistoryList) {
                     TextView historySearchView = ProductLabelCreateUtils.createHistorySearchRecord(HomePageSearchActivity.this, historyData);
                     historySearchView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             String tag = (String) v.getTag();
-                            if(!TextUtils.isEmpty(tag)){
+                            if (!TextUtils.isEmpty(tag)) {
                                 getTagResult(tag);
                             }
                         }
@@ -243,9 +244,9 @@ public class HomePageSearchActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
-        if(!TextUtils.isEmpty(searchType)
-                &&searchType.equals(SEARCH_ALL)){
-            NetLoadUtils.getNetInstance().loadNetDataPost(this,H_HOT_SEARCH_LIST,new NetLoadListenerHelper(){
+        if (!TextUtils.isEmpty(searchType)
+                && searchType.equals(SEARCH_ALL)) {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this, H_HOT_SEARCH_LIST, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     hotSearchList.clear();
@@ -259,7 +260,7 @@ public class HomePageSearchActivity extends BaseActivity {
                     hotSearchAdapter.notifyDataSetChanged();
                     if (hotSearchList.size() < 1) {
                         ll_search_hot.setVisibility(View.GONE);
-                    }else{
+                    } else {
                         ll_search_hot.setVisibility(View.VISIBLE);
                     }
                 }
@@ -271,7 +272,7 @@ public class HomePageSearchActivity extends BaseActivity {
                     }
                 }
             });
-        }else{
+        } else {
             ll_search_hot.setVisibility(View.GONE);
         }
     }

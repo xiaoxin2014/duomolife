@@ -1,4 +1,4 @@
-package com.amkj.dmsh.find.fragment;
+package com.amkj.dmsh.mine.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -26,7 +26,6 @@ import java.util.Map;
 
 import butterknife.BindView;
 
-import static com.amkj.dmsh.constant.ConstantMethod.getPostType;
 import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
@@ -37,11 +36,11 @@ import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_POST_CONTENT;
  * Version:v4.1.0
  * ClassDescription :话题内容
  */
-public class PostContentFragment extends BaseFragment {
+public class UserPostContentFragment extends BaseFragment {
     @BindView(R.id.rv_topic_content)
     RecyclerView rvTopicContent;
     PostContentAdapter postAdapter;
-    private String topicId;
+    private String userId;
     private int page = 1;
     private String title;
     private PostEntity mPostEntity;
@@ -55,7 +54,7 @@ public class PostContentFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
-        postAdapter = new PostContentAdapter(getActivity(), mPostList, TextUtils.isEmpty(topicId));
+        postAdapter = new PostContentAdapter(getActivity(), mPostList, true);
         StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         layoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
         rvTopicContent.setItemAnimator(null);
@@ -88,12 +87,12 @@ public class PostContentFragment extends BaseFragment {
         Map<String, Object> map = new HashMap<>();
         map.put("currentPage", page);
         map.put("showCount", TOTAL_COUNT_TWENTY);
-        map.put("type", getPostType(title));
-        //topicId不为空时，表示获取该话题相关的帖子
-        if (!TextUtils.isEmpty(topicId)) {
-            map.put("topicId", topicId);
+        map.put("sortType", "最新".equals(title) ? 1 : 2);
+        //userId不为空时，表示获取该话题相关的帖子
+        if (!TextUtils.isEmpty(userId)) {
+            map.put("userId", userId);
         }
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.GET_POST_LIST, map, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.GET_USER_POST_LIST, map, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 mPostEntity = new Gson().fromJson(result, PostEntity.class);
@@ -158,7 +157,7 @@ public class PostContentFragment extends BaseFragment {
     @Override
     protected void getReqParams(Bundle bundle) {
         if (bundle != null) {
-            topicId = bundle.getString("topicId");
+            userId = bundle.getString("userId");
             title = bundle.getString("title");
         }
     }

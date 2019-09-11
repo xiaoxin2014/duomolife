@@ -168,9 +168,6 @@ import static com.yanzhenjie.permission.AndPermission.getFileUri;
 
 /**
  * @author LGuiPeng
- * @email liuguipeng163@163.com
- * created on 2017/3/11
- * class description:帮助类方法
  */
 
 public class ConstantMethod {
@@ -1458,7 +1455,6 @@ public class ConstantMethod {
             context.startActivity(intent);
         }
     }
-
 
     /**
      * 跳转话题详情

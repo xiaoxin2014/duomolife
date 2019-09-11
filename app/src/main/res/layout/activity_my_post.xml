@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/activity_domolife_header"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sc_mm_88"
+        android:background="@color/white"
+        android:gravity="center">
+
+        <com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout
+            xmlns:tl="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/communal_stl_tab"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/sc_mm_88"
+            android:layout_gravity="center"
+            tl:tl_divider_color="@color/text_gray_c"
+            tl:tl_divider_width="0.5dp"
+            tl:tl_indicator_color="@color/tab_color"
+            tl:tl_indicator_gravity="BOTTOM"
+            tl:tl_indicator_height="@dimen/dimen_2dp"
+            tl:tl_indicator_style="NORMAL"
+            tl:tl_indicator_width_equal_title="true"
+            tl:tl_tab_padding="@dimen/sc_mm_77"
+            tl:tl_textBold="SELECT"
+            tl:tl_textSelectColor="@color/text_login_gray_s"
+            tl:tl_textUnselectColor="@color/text_login_gray_s"
+            tl:tl_textsize="15sp"/>
+    </LinearLayout>
+
+
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/smart_refresh_mine"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include layout="@layout/layout_refresh_header_gif"/>
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/vp_user_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="none"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+</LinearLayout>

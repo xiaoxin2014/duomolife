@@ -20,7 +20,6 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.umeng.socialize.bean.SHARE_MEDIA;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import me.jessyan.autosize.AutoSize;
@@ -43,13 +42,6 @@ public class AlertDialogShareHelper {
     private AlertDialog shareAlertDialog;
     private View dialogView;
     private List<ShareIconTitleBean> iconTitleList = new ArrayList<>();
-    private Integer[] shareIcon = {R.drawable.share_wechat_icon, R.drawable.share_circle_icon
-            , R.drawable.share_qq_icon, R.drawable.share_sina_icon
-            , R.drawable.share_copy_icon, R.drawable.share_save_icon, R.drawable.report_post};
-    private String[] shareTitle = {"微信", "微信朋友圈", "QQ", "微博", "复制链接", "保存图片", "举报帖子"};
-    //
-    private SHARE_MEDIA[] sharePlatform = {SHARE_MEDIA.WEIXIN, SHARE_MEDIA.WEIXIN_CIRCLE,
-            SHARE_MEDIA.QQ, SHARE_MEDIA.SINA, SHARE_MEDIA.POCKET, SHARE_MEDIA.MORE, SHARE_MEDIA.TUMBLR};
 
     public AlertDialogShareHelper(Activity context) {
         this(context, false);
@@ -61,43 +53,32 @@ public class AlertDialogShareHelper {
         dialogView = LayoutInflater.from(context).inflate(R.layout.layout_alert_dialog_share, null, false);
         loadView = dialogView.findViewById(R.id.rel_share_loading);
         builder.setCancelable(true);
-//        三个数组必须一一对应
-        if (shareIcon.length == shareTitle.length && sharePlatform.length == shareIcon.length) {
-            List<Integer> shareIcons = new ArrayList<>(Arrays.asList(shareIcon));
-            List<String> shareTitles = new ArrayList<>(Arrays.asList(shareTitle));
-            List<SHARE_MEDIA> shareMedia = new ArrayList<>(Arrays.asList(sharePlatform));
-            if (!showDownImg) {
-                shareIcons.remove(Integer.valueOf(R.drawable.share_save_icon));
-                shareTitles.remove("保存图片");
-                shareMedia.remove(SHARE_MEDIA.MORE);
-            }
 
-            //帖子详情显示举报
-            if (!PostDetailActivity.class.getSimpleName().equals(context.getClass().getSimpleName())) {
-                shareIcons.remove(Integer.valueOf(R.drawable.report_post));
-                shareTitles.remove("举报帖子");
-                shareMedia.remove(SHARE_MEDIA.TUMBLR);
-            }
+        //默认显示微信和朋友圈
+        iconTitleList.add(new ShareIconTitleBean(R.drawable.share_wechat_icon, "微信", SHARE_MEDIA.WEIXIN));
+        iconTitleList.add(new ShareIconTitleBean(R.drawable.share_circle_icon, "微信朋友圈", SHARE_MEDIA.WEIXIN_CIRCLE));
 
-            //晒单成功界面只分享到微信渠道
-            if (JoinSuccessActivity.class.getSimpleName().equals(context.getClass().getSimpleName())) {
-                shareIcons.remove(Integer.valueOf(R.drawable.share_qq_icon));
-                shareTitles.remove("QQ");
-                shareMedia.remove(SHARE_MEDIA.QQ);
-                shareIcons.remove(Integer.valueOf(R.drawable.share_sina_icon));
-                shareTitles.remove("微博");
-                shareMedia.remove(SHARE_MEDIA.SINA);
-            }
-
-            ShareIconTitleBean shareIconTitleBean;
-            for (int i = 0; i < shareIcons.size(); i++) {
-                shareIconTitleBean = new ShareIconTitleBean();
-                shareIconTitleBean.setShareTitle(shareTitles.get(i));
-                shareIconTitleBean.setShareIconResId(shareIcons.get(i));
-                shareIconTitleBean.setSharePlatformType(shareMedia.get(i));
-                iconTitleList.add(shareIconTitleBean);
-            }
+        //晒单成功界面只分享到微信渠道
+        if (!JoinSuccessActivity.class.getSimpleName().equals(context.getClass().getSimpleName())) {
+            iconTitleList.add(new ShareIconTitleBean(R.drawable.share_qq_icon, "QQ", SHARE_MEDIA.QQ));
+            iconTitleList.add(new ShareIconTitleBean(R.drawable.share_sina_icon, "微博", SHARE_MEDIA.SINA));
         }
+
+        if (showDownImg) {
+            iconTitleList.add(new ShareIconTitleBean(R.drawable.share_save_icon, "保存图片", SHARE_MEDIA.MORE));
+        }
+
+        //自己的帖子显示删除按钮
+        if (PostDetailActivity.class.getSimpleName().equals(context.getClass().getSimpleName()) && ((PostDetailActivity) context).isMyPost()) {
+            iconTitleList.add(new ShareIconTitleBean(R.drawable.delete_post, "删除帖子", SHARE_MEDIA.LINE));
+        }
+
+        //不是自己的帖子显示举报按钮
+        if (PostDetailActivity.class.getSimpleName().equals(context.getClass().getSimpleName()) && !((PostDetailActivity) context).isMyPost()) {
+            iconTitleList.add(new ShareIconTitleBean(R.drawable.report_post, "举报帖子", SHARE_MEDIA.TUMBLR));
+        }
+
+
         RecyclerView communal_recycler_wrap = dialogView.findViewById(R.id.communal_recycler_wrap);
         communal_recycler_wrap.setLayoutManager(new GridLayoutManager(context, 3));
         ShareIconTitleAdapter shareIconTitleAdapter = new ShareIconTitleAdapter(iconTitleList);

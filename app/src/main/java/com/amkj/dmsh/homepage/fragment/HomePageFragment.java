@@ -16,7 +16,7 @@ import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
-import com.amkj.dmsh.homepage.activity.HomePageSearchActivity;
+import com.amkj.dmsh.homepage.activity.AllSearchDetailsNewActivity;
 import com.amkj.dmsh.homepage.adapter.HomePageNewAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.HomeCommonEntity;
@@ -210,7 +210,7 @@ public class HomePageFragment extends BaseFragment {
                 startActivity(intent);
                 break;
             case R.id.tv_search:
-                intent = new Intent(getActivity(), HomePageSearchActivity.class);
+                intent = new Intent(getActivity(), AllSearchDetailsNewActivity.class);
                 intent.putExtra(SEARCH_TYPE, SEARCH_ALL);
                 startActivity(intent);
                 break;

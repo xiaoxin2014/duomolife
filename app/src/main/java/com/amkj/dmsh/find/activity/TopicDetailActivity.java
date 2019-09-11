@@ -1,6 +1,7 @@
 package com.amkj.dmsh.find.activity;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.text.emoji.widget.EmojiTextView;
@@ -41,6 +42,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.DELETE_POST;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_POST_CONTENT;
 import static com.amkj.dmsh.constant.Url.BASE_SHARE_PAGE_TWO;
@@ -107,7 +109,7 @@ public class TopicDetailActivity extends BaseActivity {
         mJvpFindVideoPlay.thumbImageView.setScaleType(ImageView.ScaleType.FIT_XY);
         mSmartRefreshLayout.setOnRefreshListener(refreshLayout -> {
             loadData();
-            EventBus.getDefault().post(new EventMessage(UPDATE_POST_CONTENT, new PostTypeBean(getSimpleName(), titles[vp_post.getCurrentItem()])));
+            updateCurrentPostFragment();
         });
 
         //初始化帖子列表
@@ -223,5 +225,18 @@ public class TopicDetailActivity extends BaseActivity {
     @Override
     public View getTopView() {
         return mCardview;
+    }
+
+
+    @Override
+    protected void postEventResult(@NonNull EventMessage message) {
+        if (message.type.equals(DELETE_POST)) {
+            updateCurrentPostFragment();
+        }
+    }
+
+    //通知当前选中的帖子类型列表刷新
+    private void updateCurrentPostFragment() {
+        EventBus.getDefault().post(new EventMessage(UPDATE_POST_CONTENT, new PostTypeBean(getActivity().getClass().getSimpleName(), titles[vp_post.getCurrentItem()])));
     }
 }

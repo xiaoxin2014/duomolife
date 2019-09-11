@@ -53,9 +53,6 @@ import static com.amkj.dmsh.constant.Url.F_ARTICLE_DETAILS_FAVOR;
 import static com.amkj.dmsh.constant.Url.MINE_INVITATION_DEL;
 import static com.amkj.dmsh.constant.Url.MINE_INVITATION_LIST;
 
-;
-;
-
 
 /**
  * @author LGuiPeng

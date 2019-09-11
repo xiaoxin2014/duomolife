@@ -14,6 +14,12 @@ public class ShareIconTitleBean {
     private String shareTitle;
     private SHARE_MEDIA sharePlatformType;
 
+    public ShareIconTitleBean(int shareIconResId, String shareTitle, SHARE_MEDIA sharePlatformType) {
+        this.shareIconResId = shareIconResId;
+        this.shareTitle = shareTitle;
+        this.sharePlatformType = sharePlatformType;
+    }
+
     public int getShareIconResId() {
         return shareIconResId;
     }

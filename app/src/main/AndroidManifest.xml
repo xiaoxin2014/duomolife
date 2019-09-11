@@ -1243,6 +1243,29 @@
             </intent-filter>
         </activity>
 
+        <!--我的帖子-->
+        <activity
+            android:name=".mine.activity.MyPostActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="MyPostActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
+        <!--新版全局搜索-->
+        <activity
+            android:name=".homepage.activity.AllSearchDetailsNewActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/activityTheme">
+            <intent-filter>
+                <action android:name="NewAllSearchDetailsActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
         <!--支付成功-->
         <activity
             android:name=".shopdetails.activity.DirectPaySuccessActivity"

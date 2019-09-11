@@ -52,7 +52,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.shareRewardSuccess;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.constant.Url.BASE_URL;
 import static com.amkj.dmsh.constant.Url.SHARE_SAVE_IMAGE_URL;
 import static com.amkj.dmsh.dao.SoftApiDao.reportIllegal;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.createFilePath;
@@ -176,6 +175,17 @@ public class UMShareAction {
                     //举报帖子
                     case TUMBLR:
                         reportIllegal(context, id, 1);
+                        if (alertDialogShareHelper != null) {
+                            alertDialogShareHelper.dismiss();
+                        }
+                        alertDialogShareHelper.setLoading(1);
+                        isSharing = false;
+                        break;
+                    //删除帖子
+                    case LINE:
+                        if (context instanceof PostDetailActivity) {
+                            ((PostDetailActivity) context).showDelDialog();
+                        }
                         if (alertDialogShareHelper != null) {
                             alertDialogShareHelper.dismiss();
                         }
@@ -341,7 +351,7 @@ public class UMShareAction {
         params.put("page", routineUrl);
         params.put("productId", productId);
         params.put("scene", "id=" + productId + "&pid=0");
-        NetLoadUtils.getNetInstance().loadNetDataPost(context,  SHARE_SAVE_IMAGE_URL, params, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(context, SHARE_SAVE_IMAGE_URL, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 RequestStatus requestStatus = new Gson().fromJson(result, RequestStatus.class);

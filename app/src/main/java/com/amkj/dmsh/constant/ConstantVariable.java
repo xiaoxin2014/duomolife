@@ -372,7 +372,7 @@ public class ConstantVariable {
     public static final String UPDATE_POST_COMMENT = "updatePostComment";
     public static final String UPDATE_SCORE_LIST = "updateScoreList";
     public static final String UPDATE_WAITAPPRAISE_ICON = "updateWaitAppraiseIcon";//刷新全部订单/待评价角标
-    public static final String CHANGE_SKU_NUM ="changeSkuNum";//手动修改数量
+    public static final String DELETE_POST ="deletePost";//手动修改数量
 
 
     /**

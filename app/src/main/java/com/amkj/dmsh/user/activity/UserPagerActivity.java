@@ -2,12 +2,13 @@ package com.amkj.dmsh.user.activity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
@@ -15,7 +16,7 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.find.adapter.PostPagerAdapter;
+import com.amkj.dmsh.find.adapter.UserPostPagerAdapter;
 import com.amkj.dmsh.find.bean.PostTypeBean;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
@@ -42,9 +43,11 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.BASE_RESOURCE_DRAW;
+import static com.amkj.dmsh.constant.ConstantVariable.DELETE_POST;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_POST_CONTENT;
@@ -59,8 +62,8 @@ public class UserPagerActivity extends BaseActivity {
     //高斯模糊背景
     @BindView(R.id.iv_user_header_bg)
     ImageView iv_user_header_bg;
-    @BindView(R.id.tl_normal_bar)
-    Toolbar tl_user_header;
+    @BindView(R.id.rl_head)
+    RelativeLayout tl_user_header;
     //名字 性别
     @BindView(R.id.tv_user_name)
     TextView tv_user_name;
@@ -71,7 +74,7 @@ public class UserPagerActivity extends BaseActivity {
     @BindView(R.id.communal_stl_tab)
     SlidingTabLayout communal_stl_tab;
     @BindView(R.id.vp_user_container)
-    ViewPager vp_user_container;
+    ViewPager vp_post;
     @BindView(R.id.user_appBarLayout)
     AppBarLayout user_appBarLayout;
     @BindView(R.id.tv_follow_num)
@@ -84,6 +87,7 @@ public class UserPagerActivity extends BaseActivity {
     private String userId;
     private UserInfoBean userInfo;
     private String[] titles = {"最新", "最热"};
+    private UserPagerInfoEntity mPagerInfoEntity;
 
     @Override
     protected int getContentView() {
@@ -95,13 +99,14 @@ public class UserPagerActivity extends BaseActivity {
         isLoginStatus();
         Intent intent = getIntent();
         userId = intent.getStringExtra("userId");
+        tl_user_header.setBackgroundResource(R.color.transparent);
         communal_stl_tab.setTextsize(AutoSizeUtils.mm2px(mAppContext, 30));
-        PostPagerAdapter postPagerAdapter = new PostPagerAdapter(getSupportFragmentManager(), userId, titles);
-        vp_user_container.setAdapter(postPagerAdapter);
-        communal_stl_tab.setViewPager(vp_user_container);
+        UserPostPagerAdapter postPagerAdapter = new UserPostPagerAdapter(getSupportFragmentManager(), userId, titles);
+        vp_post.setAdapter(postPagerAdapter);
+        communal_stl_tab.setViewPager(vp_post);
         smart_refresh_mine.setOnRefreshListener(refreshLayout -> {
             loadData();
-            EventBus.getDefault().post(new EventMessage(UPDATE_POST_CONTENT, new PostTypeBean(getSimpleName(), titles[vp_user_container.getCurrentItem()])));
+            updateCurrentPostFragment();
         });
     }
 
@@ -122,23 +127,25 @@ public class UserPagerActivity extends BaseActivity {
             public void onSuccess(String result) {
                 smart_refresh_mine.finishRefresh();
                 Gson gson = new Gson();
-                UserPagerInfoEntity pagerInfoBean = gson.fromJson(result, UserPagerInfoEntity.class);
-                if (pagerInfoBean != null) {
-                    if (pagerInfoBean.getCode().equals(SUCCESS_CODE)) {
-                        userInfo = pagerInfoBean.getUserInfo();
+                mPagerInfoEntity = gson.fromJson(result, UserPagerInfoEntity.class);
+                if (mPagerInfoEntity != null) {
+                    if (mPagerInfoEntity.getCode().equals(SUCCESS_CODE)) {
+                        userInfo = mPagerInfoEntity.getUserInfo();
                         setData(userInfo);
-                    } else if (pagerInfoBean.getCode().equals(EMPTY_CODE)) {
+                    } else if (mPagerInfoEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(UserPagerActivity.this, R.string.userDataNull);
-                        finish();
                     } else {
-                        showToast(UserPagerActivity.this, pagerInfoBean.getMsg());
+                        showToast(UserPagerActivity.this, mPagerInfoEntity.getMsg());
                     }
                 }
+
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, mPagerInfoEntity);
             }
 
             @Override
             public void onNotNetOrException() {
                 smart_refresh_mine.finishRefresh();
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, mPagerInfoEntity);
             }
         });
     }
@@ -199,13 +206,6 @@ public class UserPagerActivity extends BaseActivity {
         }
     }
 
-
-    //    返回
-    @OnClick(R.id.iv_user_back)
-    void goBack(View view) {
-        finish();
-    }
-
     @Override
     public void setStatusBar() {
         ImmersionBar.with(this).titleBar(tl_user_header).keyboardEnable(true).navigationBarEnable(false)
@@ -222,22 +222,42 @@ public class UserPagerActivity extends BaseActivity {
         return smart_refresh_mine;
     }
 
-    @OnClick({R.id.tv_follow_num, R.id.tv_fans_num, R.id.tv_life_back, R.id.tv_header_shared})
+    @OnClick({R.id.tv_follow_num, R.id.tv_fans_num, R.id.tv_life_back, R.id.iv_img_share})
     public void onViewClicked(View view) {
+        Intent intent = null;
         switch (view.getId()) {
             case R.id.tv_follow_num:
-                Intent intent = new Intent(this,UserFansAttentionActivity.class);
-                intent.putExtra("type", "fans");
+                intent = new Intent(this, UserFansAttentionActivity.class);
+                intent.putExtra("type", "follow");
+                intent.putExtra("userId", getStringChangeIntegers(userId));
                 startActivity(intent);
                 break;
             case R.id.tv_fans_num:
+                intent = new Intent(this, UserFansAttentionActivity.class);
+                intent.putExtra("type", "fans");
+                intent.putExtra("userId", getStringChangeIntegers(userId));
+                startActivity(intent);
                 break;
             case R.id.tv_life_back:
                 finish();
                 break;
-            case R.id.tv_header_shared:
+            case R.id.iv_img_share:
+                if (mPagerInfoEntity != null) {
 
+                }
                 break;
         }
+    }
+
+    @Override
+    protected void postEventResult(@NonNull EventMessage message) {
+        if (message.type.equals(DELETE_POST)) {
+            updateCurrentPostFragment();
+        }
+    }
+
+    private void updateCurrentPostFragment() {
+        //通知当前选中的帖子类型列表刷新
+        EventBus.getDefault().post(new EventMessage(UPDATE_POST_CONTENT, new PostTypeBean(getActivity().getClass().getSimpleName(), titles[vp_post.getCurrentItem()])));
     }
 }
