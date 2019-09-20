@@ -1,7 +1,6 @@
 package com.amkj.dmsh.mine.activity;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -12,11 +11,12 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.mine.bean.AuthorizeSuccessOtherData;
 import com.amkj.dmsh.mine.bean.OtherAccountBindEntity;
 import com.amkj.dmsh.mine.bean.OtherAccountBindEntity.OtherAccountBindInfo;
+import com.amkj.dmsh.mine.bean.ThirdInfoEntity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.SharedPreUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.google.gson.Gson;
 import com.umeng.analytics.MobclickAgent;
@@ -54,8 +54,7 @@ import static com.umeng.socialize.bean.SHARE_MEDIA.QQ;
 import static com.umeng.socialize.bean.SHARE_MEDIA.SINA;
 import static com.umeng.socialize.bean.SHARE_MEDIA.WEIXIN;
 
-;
-;
+
 
 public class AccountSafeActivity extends BaseActivity {
     @BindView(R.id.tv_header_shared)
@@ -245,25 +244,24 @@ public class AccountSafeActivity extends BaseActivity {
     //绑定手机
     @OnClick(R.id.rel_mobile_account)
     void bindMobile() {
-//                            跳转绑定手机页面
-        OtherAccountBindInfo accountBind = new OtherAccountBindInfo();
         if (minaData != null) {
-            if (minaData.getUid() != 0) {
-                accountBind.setUid(minaData.getUid());
-            }
-            accountBind.setAvatar(getStrings(minaData.getAvatar()));
-            accountBind.setSex(minaData.getSex());
-            accountBind.setNickname(getStrings(minaData.getNickname()));
-            accountBind.setMobile_verification(minaData.isMobile_verification());
-            accountBind.setMobileNum(minaData.getMobile());
-            accountBind.setMobile(minaData.getMobile());
             Intent intent = new Intent();
-            Bundle bundle = new Bundle();
-            bundle.putParcelable("info", accountBind);
-            intent.putExtras(bundle);
+            //已绑定更换手机号
             if (minaData.isMobile_verification()) {
+                intent.putExtra("uid", String.valueOf(userId));
+                intent.putExtra("mobile", minaData.getMobile());
                 intent.setClass(AccountSafeActivity.this, ChangeMobileActivity.class);
             } else {
+                //去绑定
+                String openId = (String) SharedPreUtils.getParam("OPEN_ID", "");
+                String unionid = (String) SharedPreUtils.getParam("UNION_ID", "0");
+                String accessToken = (String) SharedPreUtils.getParam("ACCESS_TOKEN", "");
+                String loginType = (String) SharedPreUtils.getParam("LOGIN_TYPE", "");
+                intent.putExtra("uid", String.valueOf(userId));
+                intent.putExtra("openId", openId);
+                intent.putExtra("unionid", unionid);
+                intent.putExtra("accessToken", accessToken);
+                intent.putExtra("type", loginType);
                 intent.setClass(AccountSafeActivity.this, BindingMobileActivity.class);
             }
             startActivity(intent);
@@ -296,6 +294,16 @@ public class AccountSafeActivity extends BaseActivity {
         if (TextUtils.isEmpty(accountClickType) || bindAccountType.get(accountClickType) == null) {
             showToast(AccountSafeActivity.this, "账号类型错误，请重新选择！");
             return;
+        }
+
+        if (minaData != null) {
+            boolean wechat = minaData.isWechat();
+            String mobile = minaData.getMobile();
+            //微信登录并且没有绑定手机号
+            if (wechat && TextUtils.isEmpty(mobile)) {
+                showToast(this, "请先绑定手机号");
+                return;
+            }
         }
         if (bindAccountType.get(accountClickType) == 1) {
             cancelText = "取消";
@@ -461,7 +469,7 @@ public class AccountSafeActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
-                AuthorizeSuccessOtherData successOtherData = gson.fromJson(result, AuthorizeSuccessOtherData.class);
+                ThirdInfoEntity successOtherData = gson.fromJson(result, ThirdInfoEntity.class);
                 if (successOtherData != null) {
                     if (successOtherData.getCode().equals(SUCCESS_CODE)) {
 //                            第三方账号登录统计
@@ -572,5 +580,11 @@ public class AccountSafeActivity extends BaseActivity {
                 accountDialogHelper.getAlertDialog().isShowing()) {
             accountDialogHelper.dismiss();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadData();
     }
 }

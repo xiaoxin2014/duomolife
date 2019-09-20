@@ -1,5 +1,7 @@
 package com.amkj.dmsh.mine.bean;
 
+import android.text.TextUtils;
+
 /**
  * @author LGuiPeng
  * @email liuguipeng163@163.com
@@ -16,11 +18,18 @@ public class SavePersonalInfoBean {
     private String openId;
     private String token;
     private long tokenExpireSeconds;
-    /**
-     * 微信专属Id
-     */
-    private String unionId;
+    private String unionId;  //微信专属Id
     private boolean isLogin;
+
+    private String accessToken; //三方登录令牌
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
 
     public SavePersonalInfoBean() {
     }
@@ -102,7 +111,7 @@ public class SavePersonalInfoBean {
     }
 
     public String getUnionId() {
-        return unionId;
+        return TextUtils.isEmpty(unionId) ? "0" : unionId;
     }
 
     public void setUnionId(String unionId) {

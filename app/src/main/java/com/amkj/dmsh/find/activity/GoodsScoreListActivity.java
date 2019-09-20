@@ -156,7 +156,7 @@ public class GoodsScoreListActivity extends BaseActivity {
 
         //初始化热门专题
         mCommunalRecyclerWrap.setLayoutManager(new LinearLayoutManager(this));
-        findHotTopicAdapter = new HotTopicAdapter(this, hotTopicList);
+        findHotTopicAdapter = new HotTopicAdapter(this, hotTopicList,true);
         mCommunalRecyclerWrap.setAdapter(findHotTopicAdapter);
     }
 

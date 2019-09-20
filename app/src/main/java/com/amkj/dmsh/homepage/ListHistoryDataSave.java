@@ -38,10 +38,9 @@ public class ListHistoryDataSave {
         Gson gson = new Gson();
         //转换成json数据，再保存
         String strJson = gson.toJson(dataList);
-        editor.clear();
+        editor.remove(tag);
         editor.putString(tag, strJson);
         editor.commit();
-
     }
 
     /**
@@ -65,7 +64,7 @@ public class ListHistoryDataSave {
     public void delDataList(String tag) {
         //转换成json数据，再保存
         String strJson = "";
-        editor.clear();
+        editor.remove(tag);
         editor.putString(tag, strJson);
         editor.commit();
     }

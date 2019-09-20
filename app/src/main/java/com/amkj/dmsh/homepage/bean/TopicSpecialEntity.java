@@ -1,6 +1,7 @@
 package com.amkj.dmsh.homepage.bean;
 
 import com.amkj.dmsh.base.BaseEntity;
+import com.amkj.dmsh.base.BaseRemoveExistProductBean;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -30,7 +31,7 @@ public class TopicSpecialEntity extends BaseEntity{
         this.topicSpecialBeanList = topicSpecialBeanList;
     }
 
-    public static class TopicSpecialBean {
+    public static class TopicSpecialBean extends BaseRemoveExistProductBean {
         /**
          * flag : 种草营
          * androidLink : app://ArticleOfficialActivity?ArtId=9870
@@ -48,10 +49,20 @@ public class TopicSpecialEntity extends BaseEntity{
         private String iosLink;
         private String description;
         private String ctime;
-        private int id;
         private String title;
+        @SerializedName(value = "pic_url", alternate = "picUrl")
         private String pic_url;
         private String type;
+        @SerializedName(value = "view", alternate = "pv")
+        private String view;
+
+        public String getView() {
+            return view;
+        }
+
+        public void setView(String view) {
+            this.view = view;
+        }
 
         public String getFlag() {
             return flag;
@@ -91,14 +102,6 @@ public class TopicSpecialEntity extends BaseEntity{
 
         public void setCtime(String ctime) {
             this.ctime = ctime;
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public void setId(int id) {
-            this.id = id;
         }
 
         public String getTitle() {

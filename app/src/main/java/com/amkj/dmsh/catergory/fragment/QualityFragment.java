@@ -21,9 +21,9 @@ import com.amkj.dmsh.catergory.bean.CatergoryOneLevelEntity.CatergoryOneLevelBea
 import com.amkj.dmsh.catergory.bean.CatergoryOneLevelEntity.CatergoryOneLevelBean.RelateArticleBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.homepage.activity.AllSearchDetailsNewActivity;
 import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
 import com.amkj.dmsh.homepage.activity.ArticleTypeActivity;
-import com.amkj.dmsh.homepage.activity.HomePageSearchActivity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
@@ -47,8 +47,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.getFloatAd;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_ALL;
-import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_TYPE;
 
 /**
  * Created by xiaoxin on 2019/4/19 0019
@@ -223,8 +221,7 @@ public class QualityFragment extends BaseFragment {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_search:
-                Intent intent = new Intent(getActivity(), HomePageSearchActivity.class);
-                intent.putExtra(SEARCH_TYPE, SEARCH_ALL);
+                Intent intent = new Intent(getActivity(), AllSearchDetailsNewActivity.class);
                 startActivity(intent);
                 break;
             case R.id.iv_float_ad_icon:

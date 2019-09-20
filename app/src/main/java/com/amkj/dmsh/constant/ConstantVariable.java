@@ -183,6 +183,14 @@ public class ConstantVariable {
     public static final String OTHER_QQ = "qq";
     public static final String OTHER_SINA = "sina";
     public static final String OTHER_MOBILE = "mobile";
+
+    /**
+     * 验证码类型
+     */
+    public static final String BIND_PHONE = "remobile";//绑定手机
+    public static final String RESET_PASS = "repass";//重置密码
+    public static final String LOGIN = "login";//重置密码
+
     /**
      * 支付类型
      */
@@ -368,11 +376,15 @@ public class ConstantVariable {
      */
     public static final String UPDATE_CAR_NUM = "updateCarNum";
     public static final String UPDATE_POST_CONTENT = "updatePostContent";
-    public static final String UPDATE_FOLLOW_STATUS = "updateFollowStatus";
+    public static final String UPDATE_FOLLOW_STATUS = "updateFollowStatus";//刷新关注状态
     public static final String UPDATE_POST_COMMENT = "updatePostComment";
     public static final String UPDATE_SCORE_LIST = "updateScoreList";
     public static final String UPDATE_WAITAPPRAISE_ICON = "updateWaitAppraiseIcon";//刷新全部订单/待评价角标
-    public static final String DELETE_POST ="deletePost";//手动修改数量
+    public static final String DELETE_POST = "deletePost";//删除帖子刷新帖子列表
+    public static final String UPDATE_SEARCH_NUM = "updateSearchNum";//刷新搜索结果数量
+    public static final String UPDATE_USER_PAGER = "updateUserPager";//刷新用户主页信息
+    public static final String SEARCH_DATA = "searchData";    //    搜索 获取传递信息参数
+
 
 
     /**
@@ -384,7 +396,7 @@ public class ConstantVariable {
     public static final int PIC_GOODS = 3;//图片商品
 
 
-     /**
+    /**
      * 购物车修改商品的类型
      */
     public static final int ADD_NUM = 0;//增加数量
@@ -392,11 +404,19 @@ public class ConstantVariable {
     public static final int CHANGE_SKU = 2;//修改sku
 
 
-
     public static final int NEW_FANS = 1;//新增粉丝
     public static final int RECOMMEND_FOLLOW = 2;//推荐关注
     public static final int RECOMMEND_FOLLOW_TITLE = 3;//推荐关注头部
 
     public static final String TOPIC_TYPE = "topic";
+
+
+    /**
+     * 搜索类型key
+     */
+    public static final String ALL_SEARCH_KEY = "allSearch";
+    public static final String ARTICLE_SEARCH_KEY = "articleSearch";
+    public static final String TOPIC_SEARCH_KEY = "topicSearch";
+    public static final String USER_SEARCH_KEY = "userSearch";
 
 }

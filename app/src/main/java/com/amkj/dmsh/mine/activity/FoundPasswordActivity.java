@@ -72,7 +72,7 @@ public class FoundPasswordActivity extends BaseActivity {
 
     @Override
     protected int getContentView() {
-        return R.layout.activity_binding_mobile;
+        return R.layout.activity_forget_pwd;
     }
 
     @Override

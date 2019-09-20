@@ -22,9 +22,9 @@ public class Url {
         } else if (position == 5) {//预发布
             return BASE_URL = "http://dev.domolife.cn/";
         } else if (position == 6) {//王凯2
-            return BASE_URL = "http://192.168.1.87:8080/";
+            return BASE_URL = "http://192.168.2.87:8080/";
         } else if (position == 7) {//王凯1
-            return BASE_URL = "http://192.168.1.212:80/";
+            return BASE_URL = "http://192.168.2.212:80/";
         } else if (position == 8) {//鸿星
 //                BASE_URL = "http://192.168.101.12:8080/";
             return BASE_URL = "http://192.168.1.9:8080/";
@@ -67,8 +67,16 @@ public class Url {
     public static final String LOGIN_CHECK_SMS_CODE = "api/my/mobileToLogin";
     //    第三方登录
     public static final String MINE_OTHER_ACCOUNT = "api/my/syncLogin";
-    //账号安全，第三方账号绑定手机
+    //    新版第三方登录
+    public static final String MINE_OTHER_NEW_ACCOUNT = "api/third/thirdLogin";
+    //   账号安全，第三方账号绑定手机
     public static final String MINE_BIND_ACCOUNT_MOBILE = "api/my/syncLoginBindMobile";
+    //   账号安全，微信账号绑定手机
+    public static final String MINE_BIND_WX_MOBILE = "api/third/thirdBindingMobile";
+    //  绑定未注册的手机时设置密码
+    public static final String SETTING_NEW_PWD = "api/third/setThirdToAppPassword";
+
+
     //    首页文章分类列表
     public static final String H_CATEGORY_LIST = "api/home/getNewCategoryList";
     //    首页热门活动列表
@@ -105,8 +113,12 @@ public class Url {
     public static final String H_HOT_ACTIVITY_ADD_LOTTERY = "api/turn/addTurnCount";
     //    获取搜索热门标签
     public static final String H_HOT_SEARCH_LIST = "api/search/getHotSearchLinkList";
+    //    新版搜索热门标签
+    public static final String H_HOT_NEW_SEARCH_LIST = "api/search/getSearchHotWord";
     //    搜索产品
     public static final String H_HOT_SEARCH_PRODUCT = "api/search/searchGoodslist";
+    //    全局搜索
+    public static final String H_HOT_SEARCH_ALL = "api/search/searchContent";
     //    搜索产品类目推荐
     public static final String H_SEARCH_PRODUCT_RECOMMEND = "api/search/searchRecommendCategory";
     //    搜索产品无商品推荐

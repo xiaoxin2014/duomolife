@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/white"
+              android:focusable="true"
+              android:focusableInTouchMode="true"
+              android:orientation="vertical">
+
+    <include layout="@layout/activity_search_header"/>
+
+    <com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout
+        android:id="@+id/sliding_search_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sc_mm_88"
+        android:background="@drawable/border_bottom_line"
+        app:tl_indicator_color="@color/text_login_blue_z"
+        app:tl_indicator_height="@dimen/dimen_2dp"
+        app:tl_indicator_width_equal_title="true"
+        app:tl_tab_space_equal="true"
+        app:tl_textBold="SELECT"
+        app:tl_textSelectColor="@color/text_login_gray_s"
+        app:tl_textUnselectColor="@color/text_login_gray_s"
+        app:tl_textsize="@dimen/sc_mm_30"/>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/vp_search_details_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/gray_bg"/>
+</LinearLayout>

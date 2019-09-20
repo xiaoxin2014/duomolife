@@ -59,8 +59,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.Q_PAY_SUCCESS_AD_DIALOG;
 import static com.amkj.dmsh.constant.Url.Q_PAY_SUCCESS_PRODUCT;
 
-;
-;
 
 
 /**

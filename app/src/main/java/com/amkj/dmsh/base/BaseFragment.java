@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amkj.dmsh.BuildConfig;
@@ -97,9 +98,9 @@ public abstract class BaseFragment extends ImmersionFragment {
                         bundle.putString(key, (String) value);
                     } else if (value instanceof Boolean) {
                         bundle.putBoolean(key, (Boolean) value);
-                    } else if (value instanceof Integer){
+                    } else if (value instanceof Integer) {
                         bundle.putInt(key, (int) value);
-                    }else {
+                    } else {
                         bundle.putParcelable(key, (Parcelable) value);
                     }
                 }
@@ -137,6 +138,7 @@ public abstract class BaseFragment extends ImmersionFragment {
                 }
             }, NetLoadUtils.getNetInstance().getLoadSirCover());
             String hintText;
+            int resId = R.drawable.net_page_bg;
             switch (getClass().getSimpleName()) {
                 case "DoMoIndentDeliveredFragment":
                 case "DoMoIndentWaitAppraiseFragment":
@@ -162,14 +164,33 @@ public abstract class BaseFragment extends ImmersionFragment {
                 case "SpringSaleFragment":
                     hintText = "暂时没有商品哦";
                     break;
+                case "SearchDetailsProductNewFragment":
+                    hintText = "没有找到相关商品\n建议您换个搜索词试试";
+                    resId = R.drawable.search_detail;
+                    break;
+                case "SearchDetailsArticleFragment":
+                    hintText = "没有找到相关种草\n建议您换个搜索词试试";
+                    resId = R.drawable.search_detail;
+                    break;
+                case "SearchDetailsTopicFragment":
+                    hintText = "没有找到相关话题\n建议您换个搜索词试试";
+                    resId = R.drawable.search_detail;
+                    break;
+                case "SearchDetailsUserFragment":
+                    hintText = "没有找到相关用户\n建议您换个搜索词试试";
+                    resId = R.drawable.search_detail;
+                    break;
                 default:
                     hintText = "暂无数据，稍后重试";
                     break;
             }
             String finalHintText = hintText;
+            int finalResId = resId;
             loadService.setCallBack(NetEmptyCallback.class, new Transport() {
                 @Override
                 public void order(Context context, View view) {
+                    ImageView iv_communal_pic = view.findViewById(R.id.iv_communal_pic);
+                    iv_communal_pic.setImageResource(finalResId);
                     TextView tv_communal_net_tint = view.findViewById(R.id.tv_communal_net_tint);
                     tv_communal_net_tint.setText(finalHintText);
                 }
@@ -228,7 +249,6 @@ public abstract class BaseFragment extends ImmersionFragment {
     protected boolean isDataInitiated() {
         return isDataInitiated;
     }
-
 
 
     /**

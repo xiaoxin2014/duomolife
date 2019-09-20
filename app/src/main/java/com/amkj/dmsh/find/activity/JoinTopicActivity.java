@@ -26,7 +26,7 @@ import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.find.bean.PostTypeBean;
+import com.amkj.dmsh.find.bean.EventMessageBean;
 import com.amkj.dmsh.find.bean.TopicDetailEntity;
 import com.amkj.dmsh.homepage.bean.ScoreGoodsEntity.ScoreGoodsBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
@@ -409,7 +409,7 @@ public class JoinTopicActivity extends BaseActivity {
                         if (!TextUtils.isEmpty(topicId)) {
                             //通知话题详情帖子列表刷新
                             String type = getIntent().getStringExtra("type");
-                            EventBus.getDefault().post(new EventMessage(ConstantVariable.UPDATE_POST_CONTENT, new PostTypeBean(TopicDetailActivity.class.getSimpleName(), type)));
+                            EventBus.getDefault().post(new EventMessage(ConstantVariable.UPDATE_POST_CONTENT, new EventMessageBean(TopicDetailActivity.class.getSimpleName(), type)));
                             showToast(getActivity(), "发布成功!" + (requestStatus.getScore() > 0 ? getIntegralFormat(getActivity(), R.string.post_pass_get_score, requestStatus.getScore()) : ""));
                             finish();
                         } else {

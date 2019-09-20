@@ -63,13 +63,13 @@ import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.LITTER_CONSIGN;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.REMIND_DELIVERY;
+import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_DATA;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
 import static com.amkj.dmsh.constant.Url.INDENT_SEARCH;
 import static com.amkj.dmsh.constant.Url.Q_INDENT_CANCEL;
 import static com.amkj.dmsh.constant.Url.Q_INDENT_CONFIRM;
 import static com.amkj.dmsh.constant.Url.Q_INDENT_DEL;
-import static com.amkj.dmsh.homepage.activity.HomePageSearchActivity.SEARCH_DATA;
 
 ;
 ;

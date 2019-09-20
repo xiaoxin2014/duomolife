@@ -12,9 +12,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
-import android.net.Uri;
 import android.os.Environment;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -47,7 +45,6 @@ import com.amkj.dmsh.bean.OSSConfigEntity;
 import com.amkj.dmsh.bean.OSSConfigEntity.OSSConfigBean;
 import com.amkj.dmsh.bean.PushInfoEntity;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.bean.SysNotificationEntity;
 import com.amkj.dmsh.catergory.fragment.QualityFragment;
 import com.amkj.dmsh.constant.AppUpdateUtils;
 import com.amkj.dmsh.constant.ConstantMethod;
@@ -104,7 +101,6 @@ import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.APP_FIRST_TIME
 import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.APP_SAVE_VERSION;
 import static com.amkj.dmsh.constant.ConstantMethod.adDialogClickTotal;
 import static com.amkj.dmsh.constant.ConstantMethod.getDateFormat;
-import static com.amkj.dmsh.constant.ConstantMethod.getDeviceAppNotificationStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeBoolean;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -122,8 +118,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.MAIN_MINE;
 import static com.amkj.dmsh.constant.ConstantVariable.MAIN_QUALITY;
 import static com.amkj.dmsh.constant.ConstantVariable.MAIN_TIME;
 import static com.amkj.dmsh.constant.ConstantVariable.OTHER_WECHAT;
-import static com.amkj.dmsh.constant.ConstantVariable.PUSH_CHECK;
-import static com.amkj.dmsh.constant.ConstantVariable.PUSH_CHECK_TIME;
 import static com.amkj.dmsh.constant.ConstantVariable.REFRESH_MESSAGE_TOTAL;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_TEXT;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
@@ -132,9 +126,9 @@ import static com.amkj.dmsh.constant.ConstantVariable.TOKEN_REFRESH_TIME;
 import static com.amkj.dmsh.constant.ConstantVariable.UP_TOTAL_SIZE;
 import static com.amkj.dmsh.constant.ConstantVariable.isDebugTag;
 import static com.amkj.dmsh.constant.ConstantVariable.isShowTint;
-import static com.amkj.dmsh.constant.Url.APP_SYS_NOTIFICATION;
 import static com.amkj.dmsh.constant.Url.CHECK_CLEAR_USER_DATA;
 import static com.amkj.dmsh.constant.Url.H_AD_DIALOG;
+import static com.amkj.dmsh.dao.SoftApiDao.checkPushPermission;
 import static com.amkj.dmsh.utils.ServiceDownUtils.INSTALL_APP_PROGRESS;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.fileIsExist;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getImageFilePath;
@@ -226,7 +220,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 //            设置分享提示
             setShareTint();
 //            检查推送权限
-            checkPushPermission();
+            checkPushPermission(getActivity());
 //            统计首次安装设备信息
             getFirstInstallInfo();
         }
@@ -312,59 +306,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             initMainPage();
         }
         return isFirstTime;
-    }
-
-    /**
-     * 检查推送权限
-     */
-    private void checkPushPermission() {
-        if (!getDeviceAppNotificationStatus(this)) {
-            NetLoadUtils.getNetInstance().loadNetDataPost(this, APP_SYS_NOTIFICATION, new NetLoadListenerHelper() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    SysNotificationEntity sysNotificationEntity = gson.fromJson(result, SysNotificationEntity.class);
-                    SharedPreferences preferences = getSharedPreferences(PUSH_CHECK, MODE_PRIVATE);
-                    String pushCheckTime = preferences.getString(PUSH_CHECK_TIME, "");
-                    SharedPreferences.Editor edit = preferences.edit();
-                    if (sysNotificationEntity != null && sysNotificationEntity.getSysNotificationBean() != null &&
-                            SUCCESS_CODE.equals(sysNotificationEntity.getCode())) {
-                        SysNotificationEntity.SysNotificationBean sysNotificationBean = sysNotificationEntity.getSysNotificationBean();
-                        if (TextUtils.isEmpty(pushCheckTime) ||
-                                isTimeDayEligibility(pushCheckTime, sysNotificationEntity.getSystemTime(), sysNotificationBean.getIntervalDay())) {
-                            edit.putString(PUSH_CHECK_TIME, sysNotificationEntity.getSystemTime());
-                            edit.apply();
-                            AlertDialogHelper alertDialogHelper = new AlertDialogHelper(MainActivity.this);
-                            alertDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
-                                @Override
-                                public void confirm() {
-                                    // 根据isOpened结果，判断是否需要提醒用户跳转AppInfo页面，去打开App通知权限
-                                    Intent intent = new Intent();
-                                    intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                                    Uri uri = Uri.fromParts("package", getPackageName(), null);
-                                    intent.setData(uri);
-                                    startActivity(intent);
-                                    alertDialogHelper.dismiss();
-                                }
-
-                                @Override
-                                public void cancel() {
-                                    alertDialogHelper.dismiss();
-                                }
-                            });
-                            alertDialogHelper.setTitle("通知提示")
-                                    .setMsg(TextUtils.isEmpty(sysNotificationBean.getContent()) ? "“多么生活”想给您发送通知,方便我们更好的为您服务，限时秒杀不再错过。" :
-                                            sysNotificationBean.getContent())
-                                    .setSingleButton(true)
-                                    .setConfirmText("去设置");
-                            alertDialogHelper.show();
-                        }
-                    } else {
-                        edit.clear().apply();
-                    }
-                }
-            });
-        }
     }
 
 

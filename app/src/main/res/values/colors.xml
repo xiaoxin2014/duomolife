@@ -115,5 +115,6 @@
     <color name="economize_money">#EEEEEE</color>
     <color name="topic_stoke">#E0F0FF</color>
     <color name="tab_color">#70b6fb</color>
+    <color name="login_color">#6aaef4</color>
     <color name="max_score_yellow">#ffae00</color>
 </resources>

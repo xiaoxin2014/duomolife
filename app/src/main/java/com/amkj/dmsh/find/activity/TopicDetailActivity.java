@@ -18,7 +18,7 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.find.adapter.PostPagerAdapter;
-import com.amkj.dmsh.find.bean.PostTypeBean;
+import com.amkj.dmsh.find.bean.EventMessageBean;
 import com.amkj.dmsh.find.bean.TopicDetailEntity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
@@ -237,6 +237,6 @@ public class TopicDetailActivity extends BaseActivity {
 
     //通知当前选中的帖子类型列表刷新
     private void updateCurrentPostFragment() {
-        EventBus.getDefault().post(new EventMessage(UPDATE_POST_CONTENT, new PostTypeBean(getActivity().getClass().getSimpleName(), titles[vp_post.getCurrentItem()])));
+        EventBus.getDefault().post(new EventMessage(UPDATE_POST_CONTENT, new EventMessageBean(getActivity().getClass().getSimpleName(), titles[vp_post.getCurrentItem()])));
     }
 }

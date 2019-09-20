@@ -10,7 +10,7 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.find.adapter.UserPostPagerAdapter;
-import com.amkj.dmsh.find.bean.PostTypeBean;
+import com.amkj.dmsh.find.bean.EventMessageBean;
 import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
@@ -77,6 +77,6 @@ public class MyPostActivity extends BaseActivity {
 
     //通知当前选中的帖子类型列表刷新
     private void updateCurrentPostFragment() {
-        EventBus.getDefault().post(new EventMessage(UPDATE_POST_CONTENT, new PostTypeBean(getActivity().getClass().getSimpleName(), titles[vp_post.getCurrentItem()])));
+        EventBus.getDefault().post(new EventMessage(UPDATE_POST_CONTENT, new EventMessageBean(getActivity().getClass().getSimpleName(), titles[vp_post.getCurrentItem()])));
     }
 }

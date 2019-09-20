@@ -10,7 +10,7 @@ import com.google.gson.annotations.SerializedName;
  * class description:移除相同ID的商品
  */
 public class BaseRemoveExistProductBean extends BaseEntity {
-    @SerializedName(value = "productId",alternate = "id")
+    @SerializedName(value = "id", alternate = {"productId", "uid"})
     private int id;
 
     public int getId() {

@@ -13,7 +13,6 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -79,7 +78,7 @@ public class RegisterAccountActivity extends BaseActivity {
     @BindView(R.id.tv_sms_code)
     public TextView tv_sms_code;
     @BindView(R.id.bt_mine_reg)
-    public Button bt_mine_reg;
+    public TextView bt_mine_reg;
     @BindView(R.id.tv_register_agreement_privacy)
     public TextView tv_register_agreement_privacy;
     @BindView(R.id.reg_req_code_gif_view)
@@ -107,17 +106,15 @@ public class RegisterAccountActivity extends BaseActivity {
                 handler.sendMessage(msg);
             }
         });
-        String s1 = "《多么生活用户注册协议》";
-        String s2 = "《多么生活用户隐私政策》";
-        String text = "注册即表示同意" + s1 +"和" +s2;
+        String s1 = "注册协议";
+        String s2 = "隐私政策";
+        String text = "注册即表示同意多么生活用户" + s1 +"和" +s2;
         Link link1 = new Link(s1);
         Link link2 = new Link(s2);
         //        @用户昵称
-        link1.setTextColor(Color.parseColor("#5faeff"));
-        link1.setUnderlined(false);
+        link1.setTextColor(Color.parseColor("#0a88fa"));
         link1.setHighlightAlpha(0f);
-        link2.setTextColor(Color.parseColor("#5faeff"));
-        link2.setUnderlined(false);
+        link2.setTextColor(Color.parseColor("#0a88fa"));
         link2.setHighlightAlpha(0f);
         LinkBuilder.on(tv_register_agreement_privacy)
                 .setText(text)

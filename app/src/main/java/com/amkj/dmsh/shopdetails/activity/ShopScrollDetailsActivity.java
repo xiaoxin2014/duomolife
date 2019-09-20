@@ -708,9 +708,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         String url = Url.Q_NEW_SHOP_DETAILS;
         Map<String, Object> params = new HashMap<>();
         params.put("id", productId);
-        if (!TextUtils.isEmpty(recommendFlag)) {
-            params.put("recommendFlag", recommendFlag);
-        }
         if (userId > 0) {
             params.put("uid", userId);
         }

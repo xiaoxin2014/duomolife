@@ -715,16 +715,6 @@
         <!--新的粉丝-->
         <!--官方通知详情-->
         <!--搜索详情-->
-        <activity
-            android:name=".homepage.activity.AllSearchDetailsActivity"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            android:theme="@style/activityTheme">
-            <intent-filter>
-                <action android:name="AllSearchDetailsActivity"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </activity>
         <!--搜索无商品好物推荐-->
         <activity
             android:name=".homepage.activity.SearchGoodProMoreActivity"
@@ -788,7 +778,7 @@
         </activity>
         <!--首页 - 搜索 -->
         <activity
-            android:name=".homepage.activity.HomePageSearchActivity"
+            android:name=".homepage.activity.IndentSearchActivity"
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -1264,6 +1254,13 @@
                 <action android:name="NewAllSearchDetailsActivity"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
+        </activity>
+
+        <!--设置密码-->
+        <activity
+            android:name=".mine.activity.SettingPasswordActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/activityTheme">
         </activity>
 
         <!--支付成功-->

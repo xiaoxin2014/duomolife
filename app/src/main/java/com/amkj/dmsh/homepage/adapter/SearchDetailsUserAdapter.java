@@ -14,6 +14,7 @@ import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.mine.bean.UserAttentionFansEntity.UserAttentionFansBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -23,9 +24,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
@@ -47,6 +50,7 @@ public class SearchDetailsUserAdapter extends BaseQuickAdapter<UserAttentionFans
 
     @Override
     protected void convert(BaseViewHolder helper, UserAttentionFansBean userAttentionFansBean) {
+        if (userAttentionFansBean == null) return;
         ImageView search_details_user_header = helper.getView(R.id.search_details_user_header);
         TextView tv_search_details_user_name = helper.getView(R.id.tv_search_details_user_name);
         TextView tv_search_details_attention = helper.getView(R.id.tv_search_details_attention);
@@ -64,13 +68,33 @@ public class SearchDetailsUserAdapter extends BaseQuickAdapter<UserAttentionFans
             tv_search_details_attention.setText("已关注");
         } else {
             tv_search_details_attention.setSelected(false);
-            tv_search_details_attention.setText("+ 关注");
+            tv_search_details_attention.setText("关注");
         }
         tv_search_details_attention.setTag(userAttentionFansBean);
-        tv_search_details_attention.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                isLoginStatus(v);
+        tv_search_details_attention.setOnClickListener(v -> isLoginStatus(v));
+
+        helper.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent();
+            if (userId > 0) {
+                if (type.equals("attention")) {
+                    if (userId != userAttentionFansBean.getBuid()) {
+                        intent.setClass(context, UserPagerActivity.class);
+                        intent.putExtra("userId", String.valueOf(userAttentionFansBean.getBuid()));
+                        context.startActivity(intent);
+                    } else {
+                        showToast(context, R.string.not_attention_self);
+                    }
+                } else {
+                    if (userId != userAttentionFansBean.getFuid()) {
+                        intent.setClass(context, UserPagerActivity.class);
+                        intent.putExtra("userId", String.valueOf(userAttentionFansBean.getFuid()));
+                        context.startActivity(intent);
+                    } else {
+                        showToast(context, R.string.not_attention_self);
+                    }
+                }
+            } else {
+                getLoginStatus(context);
             }
         });
         helper.itemView.setTag(userAttentionFansBean);
@@ -94,7 +118,7 @@ public class SearchDetailsUserAdapter extends BaseQuickAdapter<UserAttentionFans
     public void setAttentionFlag(int uid, final View v) {
         final TextView textView = (TextView) v;
         UserAttentionFansBean userAttentionFansBean = (UserAttentionFansBean) v.getTag();
-        String url =  Url.UPDATE_ATTENTION;
+        String url = Url.UPDATE_ATTENTION;
         Map<String, Object> params = new HashMap<>();
         //用户id
         params.put("fuid", uid);
@@ -111,7 +135,7 @@ public class SearchDetailsUserAdapter extends BaseQuickAdapter<UserAttentionFans
             flag = "add";
         }
         params.put("ftype", flag);
-        NetLoadUtils.getNetInstance().loadNetDataPost(context,url,params, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(context, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -124,7 +148,7 @@ public class SearchDetailsUserAdapter extends BaseQuickAdapter<UserAttentionFans
                             showToast(context, "已关注");
                         } else {
                             textView.setSelected(false);
-                            textView.setText("+ 关注");
+                            textView.setText("关注");
                             showToast(context, "已取消关注");
                         }
                     } else {

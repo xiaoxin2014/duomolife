@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/tv_search_tag"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:background="@drawable/hot_search_textview_bg"
-    android:enabled="true"
-    android:gravity="center"
-    android:text="热门"
-    android:textColor="@color/sel_font_blue_black_sel"
-    android:textSize="@dimen/sc_mm_26" />
+          android:id="@+id/tv_search_tag"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="@dimen/sc_mm_20"
+          android:layout_marginTop="@dimen/sc_mm_10"
+          android:layout_marginBottom="@dimen/sc_mm_10"
+          android:background="@drawable/hot_search_textview_bg"
+          android:enabled="true"
+          android:gravity="center"
+          android:text="热门"
+          android:textColor="@color/sel_font_blue_black_sel"
+          android:textSize="@dimen/sc_mm_26"/>

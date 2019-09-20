@@ -2,7 +2,7 @@ package com.amkj.dmsh.homepage.adapter;
 
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
-import android.widget.ImageView;
+import android.view.View;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
@@ -16,6 +16,7 @@ import java.util.List;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 
 ;
@@ -27,26 +28,51 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
  * class description:请输入类描述
  */
 
-public class SpecialTopicAdapter extends BaseQuickAdapter<TopicSpecialBean, BaseViewHolder> {
+public class SpecialTopicAdapter extends BaseQuickAdapter<TopicSpecialBean, SpecialTopicAdapter.ArticleCoverViewHolder> {
     private final Context context;
 
     public SpecialTopicAdapter(Context context, List<TopicSpecialBean> specialSearList) {
-        super(R.layout.adapter_special_topic, specialSearList);
+        super(R.layout.adapter_home_art, specialSearList);
         this.context = context;
     }
 
     @Override
-    protected void convert(BaseViewHolder helper, TopicSpecialBean topicSpecialBean) {
-        TextView tv_sp_label = helper.getView(R.id.tv_sp_label);
-        GradientDrawable gradientDrawable = new GradientDrawable();
-        gradientDrawable.setCornerRadius(AutoSizeUtils.mm2px(mAppContext,8));
-        gradientDrawable.setColor(0x7f000000);
-        tv_sp_label.setBackground(gradientDrawable);
-        GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.iv_communal_cover_padding)
-                , topicSpecialBean.getPic_url());
-        helper.setText(R.id.tv_sp_label, getStrings(topicSpecialBean.getFlag()))
-                .setText(R.id.tv_search_sp_title, getStrings(topicSpecialBean.getTitle()))
-                .setText(R.id.tv_search_sp_descrip, getStrings(topicSpecialBean.getDescription()));
-        helper.itemView.setTag(topicSpecialBean);
+    protected void convert(ArticleCoverViewHolder helper, TopicSpecialBean item) {
+        if (item == null) return;
+        helper.setGone(R.id.rl_bottom, false);
+        GlideImageLoaderUtil.loadCenterCrop(context, helper.getView(R.id.iv_article_cover), item.getPic_url());
+
+        helper.setText(R.id.tv_article_title, getStrings(item.getTitle()))
+                .setText(R.id.tv_article_descrip, getStrings(item.getDescription()));
+        TextView tvView = helper.getView(R.id.tv_article_view_count);
+        if (getStringChangeIntegers(item.getView()) > 0) {
+            tvView.setVisibility(View.VISIBLE);
+            tvView.setText(String.valueOf(item.getView()));
+        } else {
+            tvView.setVisibility(View.GONE);
+        }
+
+        helper.itemView.setTag(item);
+    }
+
+    public class ArticleCoverViewHolder extends BaseViewHolder {
+        TextView tv_article_view_count;
+
+        public ArticleCoverViewHolder(View view) {
+            super(view);
+            tv_article_view_count = view.findViewById(R.id.tv_article_view_count);
+            if (tv_article_view_count != null) {
+                GradientDrawable drawable = new GradientDrawable();
+                drawable.setShape(GradientDrawable.RECTANGLE);
+                int radius = AutoSizeUtils.mm2px(mAppContext, 40);
+                drawable.setCornerRadius(radius);
+                try {
+                    drawable.setColor(0x7f000000);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                tv_article_view_count.setBackground(drawable);
+            }
+        }
     }
 }

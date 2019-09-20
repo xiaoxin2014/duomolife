@@ -3,12 +3,13 @@ package com.amkj.dmsh.mine.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by atd48 on 2016/10/9.
  */
-public class AuthorizeSuccessOtherData implements Parcelable {
+public class ThirdInfoEntity implements Parcelable {
 
     /**
      * fllow : 0
@@ -32,7 +33,7 @@ public class AuthorizeSuccessOtherData implements Parcelable {
      */
 
     @SerializedName("result")
-    private OtherAccountBean otherAccountBean;
+    private ThirdInfoBean mThirdInfoBean;
     /**
      * result : {"fllow":0,"uid":23287,"sex":0,"nickname":"虫子","last_login_time":0,"status":1,"fans":1,"device_type":"web","score":0,"reg_time":0,"remindtime":30,"avatar":"头像路径","type":"wechat","reg_ip":"116.25.96.117","mobile_verification":true,"rtime":"2016-08-29 11:01:21","openid":"oux9Ws1BCXjM331J7aAdaZVt1oic","login":0}
      * code : 01
@@ -42,12 +43,12 @@ public class AuthorizeSuccessOtherData implements Parcelable {
     private String code;
     private String msg;
 
-    public OtherAccountBean getOtherAccountBean() {
-        return otherAccountBean;
+    public ThirdInfoBean getThirdInfoBean() {
+        return mThirdInfoBean;
     }
 
-    public void setOtherAccountBean(OtherAccountBean otherAccountBean) {
-        this.otherAccountBean = otherAccountBean;
+    public void setThirdInfoBean(ThirdInfoBean thirdInfoBean) {
+        this.mThirdInfoBean = thirdInfoBean;
     }
 
     public String getCode() {
@@ -66,9 +67,9 @@ public class AuthorizeSuccessOtherData implements Parcelable {
         this.msg = msg;
     }
 
-    public static class OtherAccountBean implements Parcelable {
+    public static class ThirdInfoBean implements Parcelable {
         private int fllow;
-        private int uid;
+        private String uid;
         private int sex;
         private String nickname;
         private int last_login_time;
@@ -81,13 +82,30 @@ public class AuthorizeSuccessOtherData implements Parcelable {
         private String avatar;
         private String type;
         private String reg_ip;
-        private boolean mobile_verification;
         private String rtime;
         private String openid;
+        private String unionid;//微信专属
         private int login;
         private String mobile;
         private String token;
-        private long tokenExpireSeconds;
+        private String tokenExpireSeconds;
+        private String isNeedBinding;
+
+        public String getUnionid() {
+            return unionid;
+        }
+
+        public void setUnionid(String unionid) {
+            this.unionid = unionid;
+        }
+
+        public boolean isNeedBinding() {
+            return "1".equals(isNeedBinding);
+        }
+
+        public void setIsNeedBinding(String isNeedBinding) {
+            this.isNeedBinding = isNeedBinding;
+        }
 
         public String getToken() {
             return token;
@@ -98,11 +116,7 @@ public class AuthorizeSuccessOtherData implements Parcelable {
         }
 
         public long getTokenExpireSeconds() {
-            return tokenExpireSeconds;
-        }
-
-        public void setTokenExpireSeconds(long tokenExpireSeconds) {
-            this.tokenExpireSeconds = tokenExpireSeconds;
+            return ConstantMethod.getStringChangeLong(tokenExpireSeconds);
         }
 
         public String getMobile() {
@@ -121,11 +135,11 @@ public class AuthorizeSuccessOtherData implements Parcelable {
             this.fllow = fllow;
         }
 
-        public int getUid() {
+        public String getUid() {
             return uid;
         }
 
-        public void setUid(int uid) {
+        public void setUid(String uid) {
             this.uid = uid;
         }
 
@@ -225,14 +239,6 @@ public class AuthorizeSuccessOtherData implements Parcelable {
             this.reg_ip = reg_ip;
         }
 
-        public boolean isMobile_verification() {
-            return mobile_verification;
-        }
-
-        public void setMobile_verification(boolean mobile_verification) {
-            this.mobile_verification = mobile_verification;
-        }
-
         public String getRtime() {
             return rtime;
         }
@@ -257,7 +263,7 @@ public class AuthorizeSuccessOtherData implements Parcelable {
             this.login = login;
         }
 
-        public OtherAccountBean() {
+        public ThirdInfoBean() {
         }
 
         @Override
@@ -268,7 +274,7 @@ public class AuthorizeSuccessOtherData implements Parcelable {
         @Override
         public void writeToParcel(Parcel dest, int flags) {
             dest.writeInt(this.fllow);
-            dest.writeInt(this.uid);
+            dest.writeString(this.uid);
             dest.writeInt(this.sex);
             dest.writeString(this.nickname);
             dest.writeInt(this.last_login_time);
@@ -281,18 +287,17 @@ public class AuthorizeSuccessOtherData implements Parcelable {
             dest.writeString(this.avatar);
             dest.writeString(this.type);
             dest.writeString(this.reg_ip);
-            dest.writeByte(this.mobile_verification ? (byte) 1 : (byte) 0);
             dest.writeString(this.rtime);
             dest.writeString(this.openid);
             dest.writeInt(this.login);
             dest.writeString(this.mobile);
             dest.writeString(this.token);
-            dest.writeLong(this.tokenExpireSeconds);
+            dest.writeString(this.tokenExpireSeconds);
         }
 
-        protected OtherAccountBean(Parcel in) {
+        protected ThirdInfoBean(Parcel in) {
             this.fllow = in.readInt();
-            this.uid = in.readInt();
+            this.uid = in.readString();
             this.sex = in.readInt();
             this.nickname = in.readString();
             this.last_login_time = in.readInt();
@@ -305,24 +310,23 @@ public class AuthorizeSuccessOtherData implements Parcelable {
             this.avatar = in.readString();
             this.type = in.readString();
             this.reg_ip = in.readString();
-            this.mobile_verification = in.readByte() != 0;
             this.rtime = in.readString();
             this.openid = in.readString();
             this.login = in.readInt();
             this.mobile = in.readString();
             this.token = in.readString();
-            this.tokenExpireSeconds = in.readLong();
+            this.tokenExpireSeconds = in.readString();
         }
 
-        public static final Creator<OtherAccountBean> CREATOR = new Creator<OtherAccountBean>() {
+        public static final Creator<ThirdInfoBean> CREATOR = new Creator<ThirdInfoBean>() {
             @Override
-            public OtherAccountBean createFromParcel(Parcel source) {
-                return new OtherAccountBean(source);
+            public ThirdInfoBean createFromParcel(Parcel source) {
+                return new ThirdInfoBean(source);
             }
 
             @Override
-            public OtherAccountBean[] newArray(int size) {
-                return new OtherAccountBean[size];
+            public ThirdInfoBean[] newArray(int size) {
+                return new ThirdInfoBean[size];
             }
         };
     }
@@ -334,29 +338,29 @@ public class AuthorizeSuccessOtherData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(this.otherAccountBean, flags);
+        dest.writeParcelable(this.mThirdInfoBean, flags);
         dest.writeString(this.code);
         dest.writeString(this.msg);
     }
 
-    public AuthorizeSuccessOtherData() {
+    public ThirdInfoEntity() {
     }
 
-    protected AuthorizeSuccessOtherData(Parcel in) {
-        this.otherAccountBean = in.readParcelable(OtherAccountBean.class.getClassLoader());
+    protected ThirdInfoEntity(Parcel in) {
+        this.mThirdInfoBean = in.readParcelable(ThirdInfoBean.class.getClassLoader());
         this.code = in.readString();
         this.msg = in.readString();
     }
 
-    public static final Creator<AuthorizeSuccessOtherData> CREATOR = new Creator<AuthorizeSuccessOtherData>() {
+    public static final Creator<ThirdInfoEntity> CREATOR = new Creator<ThirdInfoEntity>() {
         @Override
-        public AuthorizeSuccessOtherData createFromParcel(Parcel source) {
-            return new AuthorizeSuccessOtherData(source);
+        public ThirdInfoEntity createFromParcel(Parcel source) {
+            return new ThirdInfoEntity(source);
         }
 
         @Override
-        public AuthorizeSuccessOtherData[] newArray(int size) {
-            return new AuthorizeSuccessOtherData[size];
+        public ThirdInfoEntity[] newArray(int size) {
+            return new ThirdInfoEntity[size];
         }
     };
 }

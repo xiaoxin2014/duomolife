@@ -1,7 +1,7 @@
 package com.amkj.dmsh.homepage.bean;
 
+import com.amkj.dmsh.base.BaseRemoveExistProductBean;
 import com.amkj.dmsh.base.BaseTimeEntity;
-import com.amkj.dmsh.dominant.bean.QualityGoodProductEntity.Attribute;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -32,7 +32,7 @@ public class CommunalADActivityEntity extends BaseTimeEntity{
         this.communalADActivityBeanList = communalADActivityBeanList;
     }
 
-    public static class CommunalADActivityBean extends Attribute {
+    public static class CommunalADActivityBean extends BaseRemoveExistProductBean {
 
         /**
          * beginTime :

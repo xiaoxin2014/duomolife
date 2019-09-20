@@ -1,6 +1,7 @@
 package com.amkj.dmsh.find.bean;
 
 import com.amkj.dmsh.base.BaseEntity;
+import com.amkj.dmsh.base.BaseRemoveExistProductBean;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
  * ClassDescription :新版发现-热门话题  /分类话题列表
  */
 
-public class HotTopicEntity extends BaseEntity{
+public class HotTopicEntity extends BaseEntity {
 
     /**
      * result : [{"img_url":"http://image.domolife.cn/platform/sF8YYfFwxA1511248274657.jpg","istop":0,"participants_number":0,"id":1,"title":"剁手双十二","content":"千万好礼等你来"}]
@@ -29,7 +30,7 @@ public class HotTopicEntity extends BaseEntity{
         this.hotTopicList = hotTopicList;
     }
 
-    public static class HotTopicBean {
+    public static class HotTopicBean extends BaseRemoveExistProductBean {
 
         /**
          * id : 1
@@ -40,19 +41,19 @@ public class HotTopicEntity extends BaseEntity{
          * score : 1
          */
 
-        private int id;
         private String title;
         private String content;
         private int postNum;
-        private int participantNum;
+        private int participantNum;//参与人数
         private int score;
+        private int pickedCount;//精选内容条数
 
-        public int getId() {
-            return id;
+        public int getPickedCount() {
+            return pickedCount;
         }
 
-        public void setId(int id) {
-            this.id = id;
+        public void setPickedCount(int pickedCount) {
+            this.pickedCount = pickedCount;
         }
 
         public String getTitle() {

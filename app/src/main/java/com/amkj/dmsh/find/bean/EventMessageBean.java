@@ -4,13 +4,13 @@ package com.amkj.dmsh.find.bean;
  * Created by xiaoxin on 2019/7/26
  * Version:v4.1.0
  */
-public class PostTypeBean {
+public class EventMessageBean {
     private String simpleName;
-    private String title;
+    private Object msg;
 
-    public PostTypeBean(String simpleName, String title) {
+    public EventMessageBean(String simpleName, Object msg) {
         this.simpleName = simpleName;
-        this.title = title;
+        this.msg = msg;
     }
 
     public String getSimpleName() {
@@ -21,11 +21,11 @@ public class PostTypeBean {
         this.simpleName = simpleName;
     }
 
-    public String getTitle() {
-        return title;
+    public Object getmsg() {
+        return msg;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setmsg(String msg) {
+        this.msg = msg;
     }
 }

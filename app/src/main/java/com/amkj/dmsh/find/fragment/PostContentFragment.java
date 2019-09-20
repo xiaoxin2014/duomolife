@@ -14,7 +14,7 @@ import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.find.adapter.PostContentAdapter;
 import com.amkj.dmsh.find.bean.PostEntity;
 import com.amkj.dmsh.find.bean.PostEntity.PostBean;
-import com.amkj.dmsh.find.bean.PostTypeBean;
+import com.amkj.dmsh.find.bean.EventMessageBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.google.gson.Gson;
@@ -141,8 +141,8 @@ public class PostContentFragment extends BaseFragment {
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
         if (message.type.equals(UPDATE_POST_CONTENT)) {
-            PostTypeBean postTypeBean = (PostTypeBean) message.result;
-            if (isContextExisted(getActivity()) && getActivity().getClass().getSimpleName().equals(postTypeBean.getSimpleName()) && title.equals(postTypeBean.getTitle())) {
+            EventMessageBean postTypeBean = (EventMessageBean) message.result;
+            if (isContextExisted(getActivity()) && getActivity().getClass().getSimpleName().equals(postTypeBean.getSimpleName()) && title.equals(postTypeBean.getmsg())) {
                 page = 1;
                 loadData();
             }

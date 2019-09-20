@@ -16,7 +16,7 @@ public class RequestStatus extends BaseEntity {
     //    分享奖励 图片地址
     private String src;
     //    新人专享 封面图
-    @SerializedName(value = "imgUrl",alternate = "picUrl")
+    @SerializedName(value = "imgUrl", alternate = "picUrl")
     private String imgUrl;
     private int orderRefundProductId;
     private String version;
@@ -24,11 +24,11 @@ public class RequestStatus extends BaseEntity {
     private String description;
     private int isNotice;
     //    新人优惠
-    private int couponId ;
-//    新人类型
-    private int userType  ;
+    private int couponId;
+    //    新人类型
+    private int userType;
 
-//    <--评分晒单成功-->
+    //    <--评分晒单成功-->
     //    奖励积分数量
     private int score;
     //    分享提示
@@ -192,8 +192,10 @@ public class RequestStatus extends BaseEntity {
     }
 
     public class Result {
-        private String code;
-        private String msg;
+        @SerializedName(value = "resultCode", alternate = "code;")
+        private String resultCode;
+        @SerializedName(value = "resultMsg", alternate = "msg")
+        private String resultMsg;
         private String nickname;
         private String invitation_content;
         private String username;
@@ -202,10 +204,10 @@ public class RequestStatus extends BaseEntity {
         private int cartNumber;
         private int remindtime;
         private boolean hadRemind;
-        private String resultCode;
-        private String resultMsg;
+
         private int collectSize;
         private String imgUrl;
+
 
         public String getImgUrl() {
             return imgUrl;
@@ -301,22 +303,6 @@ public class RequestStatus extends BaseEntity {
 
         public void setUsername(String username) {
             this.username = username;
-        }
-
-        public String getCode() {
-            return code;
-        }
-
-        public void setCode(String code) {
-            this.code = code;
-        }
-
-        public String getMsg() {
-            return msg;
-        }
-
-        public void setMsg(String msg) {
-            this.msg = msg;
         }
 
     }

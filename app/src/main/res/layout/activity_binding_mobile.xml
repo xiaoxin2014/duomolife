@@ -1,123 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:focusable="true"
-    android:background="@color/white"
-    android:focusableInTouchMode="true"
-    android:orientation="vertical">
-    <include layout="@layout/activity_duomolife_blue_header"/>
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/light_gray_f"
+              android:focusable="true"
+              android:focusableInTouchMode="true"
+              android:orientation="vertical">
+
+    <include layout="@layout/activity_domolife_header"/>
+
     <LinearLayout
-        android:visibility="visible"
-        android:layout_width="match_parent"
-        android:background="@drawable/login_bg"
-        android:orientation="vertical"
-        android:paddingLeft="@dimen/sc_mm_120"
-        android:paddingRight="@dimen/sc_mm_120"
         android:id="@+id/ll_phone_unBind"
-        android:layout_height="match_parent">
-        <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+
+        <EditText
+            android:id="@+id/edit_binding_mobile"
             android:layout_width="match_parent"
-            android:layout_marginTop="@dimen/sc_mm_114"
-            android:layout_height="wrap_content">
-            <EditText
-                android:layout_centerVertical="true"
-                android:layout_width="match_parent"
-                android:textColor="@color/home_text_color"
-                android:textSize="@dimen/sc_mm_32"
-                android:inputType="number|phone"
-                android:hint="手机号"
-                android:singleLine="true"
-                android:background="@drawable/border_bottom_line"
-                android:id="@+id/edit_binding_mobile"
-                android:maxLength="11"
-                android:minHeight="@dimen/sc_mm_115"
-                android:textColorHint="@color/text_gray_hint_n"
-                android:gravity="center_vertical"
-                android:layout_height="wrap_content"/>
-        </RelativeLayout>
+            android:layout_height="@dimen/sc_mm_104"
+            android:background="@drawable/border_bottom_line"
+            android:gravity="center_vertical"
+            android:hint="请输入绑定手机号"
+            android:inputType="number|phone"
+            android:maxLength="11"
+            android:paddingLeft="@dimen/sc_mm_30"
+            android:singleLine="true"
+            android:textColor="@color/home_text_color"
+            android:textColorHint="@color/text_gray_c"
+            android:textSize="@dimen/sc_mm_30"/>
+
         <LinearLayout
             android:layout_width="match_parent"
+            android:layout_height="@dimen/sc_mm_104"
+            android:background="@color/white"
+            android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:background="@drawable/border_bottom_line"
-            android:layout_height="wrap_content">
+            android:paddingLeft="@dimen/sc_mm_30"
+            android:paddingRight="@dimen/sc_mm_30">
 
             <EditText
-                android:layout_width="wrap_content"
+                android:id="@+id/edit_get_code"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:singleLine="true"
-                android:textColor="@color/home_text_color"
-                android:textSize="@dimen/sc_mm_32"
+                android:background="@null"
+                android:gravity="center_vertical"
+                android:hint="请输入验证码"
                 android:inputType="number|phone"
                 android:maxLength="6"
-                android:background="@drawable/border_bottom_line"
-                android:id="@+id/edit_get_code"
-                android:gravity="center_vertical"
-                android:hint="验证码"
-                android:textColorHint="@color/text_gray_hint_n"
-                android:minHeight="@dimen/sc_mm_115"
-                android:layout_height="wrap_content"/>
+                android:singleLine="true"
+                android:textColor="@color/home_text_color"
+                android:textColorHint="@color/text_gray_c"
+                android:textSize="@dimen/sc_mm_30"/>
+
             <FrameLayout
                 android:layout_width="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical">
+
                 <TextView
-                    android:gravity="center_vertical"
-                    android:layout_width="wrap_content"
-                    android:paddingRight="@dimen/gap_right"
-                    android:textSize="@dimen/sc_mm_24"
-                    android:text="发送验证码"
-                    android:lines="1"
-                    android:visibility="visible"
-                    android:layout_gravity="center"
                     android:id="@+id/tv_bind_send_code"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/sc_mm_110"
+                    android:layout_gravity="center"
+                    android:gravity="center_vertical"
+                    android:lines="1"
+                    android:paddingRight="@dimen/gap_right"
+                    android:text="获取验证码"
                     android:textColor="@color/selector_font_blue_hint_gray"
-                    android:layout_height="@dimen/sc_mm_110"/>
+                    android:textSize="@dimen/sc_mm_26"
+                    android:visibility="visible"/>
+
                 <ProgressBar
                     android:id="@+id/reg_bind_code_gif_view"
                     android:layout_width="@dimen/sc_mm_60"
-                    android:paddingRight="@dimen/gap_right"
                     android:layout_height="@dimen/sc_mm_60"
                     android:layout_gravity="center"
-                    android:visibility="gone"
+                    android:indeterminateBehavior="repeat"
                     android:indeterminateDrawable="@drawable/anim_loading_flower_rotate"
-                    android:indeterminateBehavior="repeat" />
+                    android:paddingRight="@dimen/gap_right"
+                    android:visibility="gone"/>
             </FrameLayout>
         </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:id="@+id/ll_bind_mobile_set_password"
-            android:layout_height="wrap_content">
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <EditText
-                    android:background="@drawable/border_bottom_line"
-                    android:layout_centerVertical="true"
-                    android:layout_width="match_parent"
-                    android:textColor="@color/home_text_color"
-                    android:textSize="@dimen/sc_mm_32"
-                    android:singleLine="true"
-                    android:inputType="textPassword"
-                    android:id="@+id/edit_bind_set_password_new"
-                    android:gravity="center_vertical"
-                    android:textColorHint="@color/text_gray_hint_n"
-                    android:hint="@string/PasswordRule"
-                    android:layout_height="wrap_content"
-                    android:minHeight="@dimen/sc_mm_115"/>
-            </RelativeLayout>
-        </LinearLayout>
+
         <TextView
-            android:layout_marginTop="@dimen/sc_mm_126"
-            android:layout_width="match_parent"
             android:id="@+id/tv_bind_mobile_click"
-            android:text="绑定手机号"
-            android:visibility="visible"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/sc_mm_80"
+            android:layout_marginLeft="@dimen/sc_mm_30"
+            android:layout_marginTop="@dimen/sc_mm_20"
+            android:layout_marginRight="@dimen/sc_mm_30"
+            android:layout_marginBottom="@dimen/sc_mm_25"
+            android:background="@drawable/shap_confirm_bg"
             android:gravity="center"
+            android:text="同意协议并绑定"
+            android:textColor="@color/white"
             android:textSize="@dimen/sc_mm_32"
-            android:background="@drawable/login_bt_bg"
-            android:textColor="@color/text_login_gray_s"
-            android:layout_height="@dimen/sc_mm_90" />
+            android:visibility="visible"/>
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_agree"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/sc_mm_30"
+        android:layout_marginRight="@dimen/sc_mm_30"
+        android:textColor="@color/text_login_gray_s"
+        android:textSize="@dimen/sc_mm_24"/>
 </LinearLayout>

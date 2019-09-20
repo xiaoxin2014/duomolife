@@ -12,12 +12,15 @@ import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.find.adapter.PostContentAdapter;
+import com.amkj.dmsh.find.bean.EventMessageBean;
 import com.amkj.dmsh.find.bean.PostEntity;
 import com.amkj.dmsh.find.bean.PostEntity.PostBean;
-import com.amkj.dmsh.find.bean.PostTypeBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.user.bean.UserPagerInfoEntity;
 import com.google.gson.Gson;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,6 +33,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_POST_CONTENT;
+import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_USER_PAGER;
 
 /**
  * Created by xiaoxin on 2019/7/9
@@ -102,6 +106,11 @@ public class UserPostContentFragment extends BaseFragment {
                 int positionStart = mPostList.size();
                 if (mPostEntity != null) {
                     String code = mPostEntity.getCode();
+                    UserPagerInfoEntity.UserInfoBean homeUserInfo = mPostEntity.getHomeUserInfo();
+                    //刷新用户主页信息
+                    if (homeUserInfo != null) {
+                        EventBus.getDefault().post(new EventMessage(UPDATE_USER_PAGER, homeUserInfo));
+                    }
                     List<PostBean> postList = mPostEntity.getPostList();
                     if (postList != null && postList.size() > 0) {
                         mPostList.addAll(postList);
@@ -140,8 +149,8 @@ public class UserPostContentFragment extends BaseFragment {
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
         if (message.type.equals(UPDATE_POST_CONTENT)) {
-            PostTypeBean postTypeBean = (PostTypeBean) message.result;
-            if (isContextExisted(getActivity()) && getActivity().getClass().getSimpleName().equals(postTypeBean.getSimpleName()) && title.equals(postTypeBean.getTitle())) {
+            EventMessageBean postTypeBean = (EventMessageBean) message.result;
+            if (isContextExisted(getActivity()) && getActivity().getClass().getSimpleName().equals(postTypeBean.getSimpleName()) && title.equals(postTypeBean.getmsg())) {
                 page = 1;
                 loadData();
             }

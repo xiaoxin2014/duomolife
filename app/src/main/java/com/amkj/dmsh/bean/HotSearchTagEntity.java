@@ -60,16 +60,22 @@ public class HotSearchTagEntity {
          */
 
         private int total;
+        @SerializedName(value = "tag_name", alternate = "wordName")
         private String tag_name;
         private int is_recommend;
         private int tagProperty;
         private int id;
         private int status;
         private int app_skip_id;
-        private String ios_link;
         private int tagType;
+        @SerializedName(value = "android_link", alternate = "androidLink")
         private String android_link;
         private int object_id;
+
+
+        public HotSearchTagBean(String tag_name) {
+            this.tag_name = tag_name;
+        }
 
         public int getTotal() {
             return total;
@@ -125,14 +131,6 @@ public class HotSearchTagEntity {
 
         public void setApp_skip_id(int app_skip_id) {
             this.app_skip_id = app_skip_id;
-        }
-
-        public String getIos_link() {
-            return ios_link;
-        }
-
-        public void setIos_link(String ios_link) {
-            this.ios_link = ios_link;
         }
 
         public int getTagType() {

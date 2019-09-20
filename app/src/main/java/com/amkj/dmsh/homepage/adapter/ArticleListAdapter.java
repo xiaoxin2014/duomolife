@@ -41,6 +41,8 @@ public class ArticleListAdapter extends BaseQuickAdapter<CommunalArticleBean, Ar
 
     @Override
     protected void convert(ArticleCoverViewHolder helper, CommunalArticleBean communalArticleBean) {
+        if (communalArticleBean == null) return;
+        helper.setGone(R.id.rl_bottom, true);
         GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.iv_article_cover), communalArticleBean.getPath());
         helper.setText(R.id.tv_article_title, getStrings(communalArticleBean.getTitle()))
                 .setText(R.id.tv_article_descrip, getStrings(communalArticleBean.getDigest()))
@@ -81,13 +83,14 @@ public class ArticleListAdapter extends BaseQuickAdapter<CommunalArticleBean, Ar
 
     public class ArticleCoverViewHolder extends BaseViewHolder {
         TextView tv_article_view_count;
+
         public ArticleCoverViewHolder(View view) {
             super(view);
             tv_article_view_count = view.findViewById(R.id.tv_article_view_count);
-            if(tv_article_view_count!=null){
+            if (tv_article_view_count != null) {
                 GradientDrawable drawable = new GradientDrawable();
                 drawable.setShape(GradientDrawable.RECTANGLE);
-                int radius = AutoSizeUtils.mm2px(mAppContext,40);
+                int radius = AutoSizeUtils.mm2px(mAppContext, 40);
                 drawable.setCornerRadius(radius);
                 try {
                     drawable.setColor(0x7f000000);

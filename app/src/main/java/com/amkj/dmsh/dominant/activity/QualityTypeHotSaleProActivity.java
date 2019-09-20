@@ -32,8 +32,6 @@ import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import org.greenrobot.eventbus.EventBus;
@@ -106,12 +104,9 @@ public class QualityTypeHotSaleProActivity extends BaseActivity {
         tl_quality_bar.setSelected(true);
         iv_img_service.setImageResource(R.drawable.shop_car_gray_icon);
         stdDominantHotSale.setTextsize(AutoSizeUtils.mm2px(mAppContext, 28));
-        smart_refresh_hot_sale.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                loadData();
-                EventBus.getDefault().post(new EventMessage("refresh", "hotSaleData"));
-            }
+        smart_refresh_hot_sale.setOnRefreshListener(refreshLayout -> {
+            loadData();
+            EventBus.getDefault().post(new EventMessage("refresh", "hotSaleData"));
         });
         relCommunalBanner.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override

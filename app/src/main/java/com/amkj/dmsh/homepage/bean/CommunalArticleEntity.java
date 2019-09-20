@@ -58,6 +58,7 @@ public class CommunalArticleEntity extends BaseEntity{
         private String description;
         private String title;
         private int uid;
+        @SerializedName(value = "path", alternate = {"picUrl", "pic_url"})
         private String path;
         private int view;
         private int category_id;
@@ -67,8 +68,26 @@ public class CommunalArticleEntity extends BaseEntity{
         private int comment;
         private int id;
         private int collect;
+        private String androidLink;
+        private String iosLink;
         private boolean isFavor;
         private boolean isCollect;
+
+        public String getAndroidLink() {
+            return androidLink;
+        }
+
+        public void setAndroidLink(String androidLink) {
+            this.androidLink = androidLink;
+        }
+
+        public String getIosLink() {
+            return iosLink;
+        }
+
+        public void setIosLink(String iosLink) {
+            this.iosLink = iosLink;
+        }
 
         public boolean isFavor() {
             return isFavor;

@@ -259,9 +259,6 @@ public class ConstantMethod {
 
     /**
      * String转换成int
-     *
-     * @param text
-     * @return
      */
     public static int getStringChangeIntegers(String text) {
         if (TextUtils.isEmpty(text)) {
@@ -279,9 +276,6 @@ public class ConstantMethod {
 
     /**
      * String转换成double(先去掉中文和货币符号)
-     *
-     * @param text
-     * @return
      */
     public static double getStringChangeDouble(String text) {
         if (TextUtils.isEmpty(text)) {
@@ -299,9 +293,6 @@ public class ConstantMethod {
 
     /**
      * String转换成boolean
-     *
-     * @param text
-     * @return
      */
     public static boolean getStringChangeBoolean(String text) {
         if (TextUtils.isEmpty(text)) {
@@ -312,6 +303,22 @@ public class ConstantMethod {
             } catch (NumberFormatException e) {
                 e.printStackTrace();
                 return false;
+            }
+        }
+    }
+
+    /**
+     * String转换成boolean
+     */
+    public static long getStringChangeLong(String text) {
+        if (TextUtils.isEmpty(text)) {
+            return 0;
+        } else {
+            try {
+                return Long.parseLong(text);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                return 0;
             }
         }
     }
@@ -1922,7 +1929,7 @@ public class ConstantMethod {
             //        友盟统计
             MobclickAgent.onProfileSignIn(String.valueOf(savePersonalInfo.getUid()));
             //        绑定JPush
-            bindJPush(savePersonalInfo.getUid());
+            bindJPush(String.valueOf(savePersonalInfo.getUid()));
             QyServiceUtils.getQyInstance().loginQyUserInfo(applicationContext, savePersonalInfo.getUid()
                     , savePersonalInfo.getNickName(), savePersonalInfo.getPhoneNum(), savePersonalInfo.getAvatar());
 
@@ -1946,6 +1953,14 @@ public class ConstantMethod {
             }
             if (!TextUtils.isEmpty(savePersonalInfo.getUnionId())) {
                 edit.putString("UNION_ID", getStrings(savePersonalInfo.getUnionId()));
+            }
+
+            if (!TextUtils.isEmpty(savePersonalInfo.getAccessToken())) {
+                edit.putString("ACCESS_TOKEN", getStrings(savePersonalInfo.getAccessToken()));
+            }
+
+            if (!TextUtils.isEmpty(savePersonalInfo.getLoginType())) {
+                edit.putString("LOGIN_TYPE", getStrings(savePersonalInfo.getLoginType()));
             }
             edit.commit();
         } else {
@@ -1991,11 +2006,11 @@ public class ConstantMethod {
      *
      * @param uid
      */
-    public static void bindJPush(int uid) {
+    public static void bindJPush(String uid) {
         TagAliasBean tagAliasBean = new TagAliasBean();
         tagAliasBean.action = ACTION_SET;
         tagAliasBean.isAliasAction = true;
-        tagAliasBean.alias = String.valueOf(uid);
+        tagAliasBean.alias = uid;
         TagAliasOperatorHelper.getInstance().handleAction(getApplicationContext(), sequence, tagAliasBean);
         if (ConstantVariable.isDebugTag) {
 //                测试版本删除tag跟alias
@@ -2990,7 +3005,7 @@ public class ConstantMethod {
      */
     public static void showToastRequestMsg(Context context, RequestStatus requestStatus) {
         showToast(context, requestStatus == null ? "操作失败！" :
-                requestStatus.getResult() != null ? getStrings(requestStatus.getResult().getMsg()) : getStrings(requestStatus.getMsg()));
+                requestStatus.getResult() != null ? getStrings(requestStatus.getResult().getResultMsg()) : getStrings(requestStatus.getMsg()));
     }
 
     /**

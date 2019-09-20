@@ -91,10 +91,10 @@ public class PostContentAdapter extends BaseQuickAdapter<PostBean, BaseViewHolde
         tvFavor.setOnClickListener(v -> favorPost(context, item, tvFavor));
 
         helper.getView(R.id.tv_topic_name).setOnClickListener(v -> {
-            skipTopicDetail(context, String.valueOf(item.getTopicId()));
+            skipTopicDetail(context, item.getTopicId());
         });
         helper.itemView.setOnClickListener(v -> {
-            skipPostDetail(context, String.valueOf(item.getId()), item.getArticletype());
+            skipPostDetail(context,String.valueOf(item.getId()), item.getArticletype());
         });
         helper.itemView.setTag(item);
     }

@@ -137,24 +137,14 @@ public class SearchGoodProMoreActivity extends BaseActivity {
                                 showToast(SearchGoodProMoreActivity.this, likedProduct.getMsg());
                             }
                         }
-                        NetLoadUtils.getNetInstance().showLoadSir(loadService, productSearList, likedProduct);
                         adapterProduct.notifyDataSetChanged();
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, productSearList, likedProduct);
                     }
 
                     @Override
                     public void onNotNetOrException() {
                         smart_communal_refresh.finishRefresh();
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, productSearList, likedProduct);
-                    }
-
-                    @Override
-                    public void netClose() {
-                        showToast(SearchGoodProMoreActivity.this, R.string.unConnectedNetwork);
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
-                        showToast(SearchGoodProMoreActivity.this, R.string.invalidData);
                     }
                 });
     }
@@ -165,4 +155,13 @@ public class SearchGoodProMoreActivity extends BaseActivity {
     }
 
 
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
+
+    @Override
+    public View getLoadView() {
+        return smart_communal_refresh;
+    }
 }

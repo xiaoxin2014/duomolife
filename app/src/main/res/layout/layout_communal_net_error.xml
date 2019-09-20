@@ -36,10 +36,23 @@
             android:id="@+id/tv_communal_net_tint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/sc_mm_30"
+            android:layout_marginTop="@dimen/sc_mm_50"
             android:gravity="center"
             android:textColor="@color/text_login_gray_s"
-            android:textSize="@dimen/sc_mm_32"/>
+            android:textSize="@dimen/sc_mm_28"/>
+
+        <TextView
+            android:id="@+id/tv_filter"
+            android:layout_width="@dimen/sc_mm_200"
+            android:layout_height="@dimen/sc_mm_68"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/sc_mm_30"
+            android:background="@drawable/shap_filter_bg"
+            android:gravity="center"
+            android:text="去筛选一下>"
+            android:textColor="@color/text_normal_red"
+            android:textSize="@dimen/sc_mm_28"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/tv_communal_net_reason"

@@ -69,23 +69,41 @@
                     android:layout_marginRight="@dimen/sc_mm_30"
                     android:src="@drawable/default_ava_img"/>
 
-                <TextView
-                    android:id="@+id/tv_mine_name"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:id="@+id/ll_user_name"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/sc_mm_138"
                     android:layout_toRightOf="@+id/iv_mine_header"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:text="@string/defaul"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/sc_mm_34"/>
+                    android:orientation="horizontal">
+
+                    <android.support.text.emoji.widget.EmojiTextView
+                        android:id="@+id/tv_mine_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="@string/defaul"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sc_mm_34"/>
+
+                    <TextView
+                        android:id="@+id/tv_bind_phone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/sc_mm_30"
+                        android:drawableLeft="@drawable/bind_phone"
+                        android:drawablePadding="@dimen/sc_mm_5"
+                        android:text="关联手机账号"
+                        android:textColor="@color/text_white_transcurent"
+                        android:textSize="@dimen/sc_mm_26"/>
+                </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/rel_integral_more"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/tv_mine_name"
+                    android:layout_below="@+id/ll_user_name"
                     android:layout_marginTop="@dimen/sc_mm_10"
                     android:layout_toRightOf="@+id/iv_mine_header"
                     android:gravity="center_vertical"
@@ -211,7 +229,6 @@
                     </LinearLayout>
                 </LinearLayout>
             </RelativeLayout>
-
         </RelativeLayout>
 
         <RelativeLayout

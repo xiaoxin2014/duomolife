@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Paint;
 import android.support.annotation.NonNull;
+import android.support.text.emoji.widget.EmojiTextView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,13 +25,13 @@ import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
 import com.amkj.dmsh.bean.MessageBean;
-import com.amkj.dmsh.bean.QualityTypeEntity;
 import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.message.activity.MessageActivity;
+import com.amkj.dmsh.mine.activity.BindingMobileActivity;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.activity.MyPostActivity;
 import com.amkj.dmsh.mine.activity.PersonalBgImgActivity;
@@ -51,6 +52,7 @@ import com.amkj.dmsh.shopdetails.bean.DirectIndentCountEntity;
 import com.amkj.dmsh.shopdetails.bean.DirectIndentCountEntity.DirectIndentCountBean;
 import com.amkj.dmsh.user.activity.UserFansAttentionActivity;
 import com.amkj.dmsh.utils.ImageConverterUtils;
+import com.amkj.dmsh.utils.SharedPreUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.bigkoo.convenientbanner.ConvenientBanner;
@@ -80,6 +82,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.BASE_RESOURCE_DRAW;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.OTHER_WECHAT;
 import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
@@ -89,6 +92,7 @@ import static com.amkj.dmsh.constant.Url.MINE_PAGE;
 import static com.amkj.dmsh.constant.Url.MINE_PAGE_AD;
 import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 import static com.amkj.dmsh.constant.Url.Q_QUERY_INDENT_COUNT;
+import static com.amkj.dmsh.dao.SoftApiDao.checkPushPermission;
 
 /**
  * Created by atd48 on 2016/8/17.
@@ -107,7 +111,7 @@ public class MineDataFragment extends BaseFragment {
     ImageView iv_mine_header;
     //名字
     @BindView(R.id.tv_mine_name)
-    TextView tv_mine_name;
+    EmojiTextView tv_mine_name;
     //粉丝数
     @BindView(R.id.tv_mine_fans_count)
     TextView tv_mine_fans_count;
@@ -141,6 +145,8 @@ public class MineDataFragment extends BaseFragment {
     public ConvenientBanner ad_mine;
     @BindView(R.id.tv_personal_data_sup)
     public TextView tv_personal_data_sup;
+    @BindView(R.id.tv_bind_phone)
+    TextView mTvBindPhone;
     private CommunalUserInfoBean communalUserInfoBean;
     private MineTypeAdapter typeMineAdapter;
     private List<MineTypeBean> mineTypeList = new ArrayList<>();
@@ -174,6 +180,8 @@ public class MineDataFragment extends BaseFragment {
         isLoginStatus();
         tv_personal_data_sup.getPaint().setAntiAlias(true);//抗锯齿
         tv_personal_data_sup.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG); //下划线
+        mTvBindPhone.getPaint().setAntiAlias(true);
+        mTvBindPhone.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
         GridLayoutManager manager = new GridLayoutManager(getActivity(), 4);
         communal_recycler_wrap.setLayoutManager(manager);
         communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
@@ -211,7 +219,7 @@ public class MineDataFragment extends BaseFragment {
 //        我的订单模块
         indentTypeList = new ArrayList<>();
         for (int i = 0; i < typeIndentName.length; i++) {
-            qualityTypeBean = new QualityTypeEntity.QualityTypeBean();
+            qualityTypeBean = new QualityTypeBean();
             qualityTypeBean.setName(typeIndentName[i]);
             qualityTypeBean.setPicUrl(typeIndentPic[i]);
             qualityTypeBean.setId(i);
@@ -297,6 +305,8 @@ public class MineDataFragment extends BaseFragment {
         //刷新我的界面
         getLoginStatus();
         getMineAd();
+        //检查推送权限
+        checkPushPermission(getActivity());
     }
 
 
@@ -324,6 +334,8 @@ public class MineDataFragment extends BaseFragment {
         tv_mine_fans_count.setText(String.valueOf(communalUserInfoBean.getFans()));
         tv_mine_inv_count.setText(String.valueOf(communalUserInfoBean.getDocumentcount()));
         tv_mine_score.setText(String.valueOf(communalUserInfoBean.getScore()));
+        //微信登录并且没有绑定手机号
+        mTvBindPhone.setVisibility(communalUserInfoBean.isWechat() && TextUtils.isEmpty(communalUserInfoBean.getMobile()) ? View.VISIBLE : View.GONE);
         GlideImageLoaderUtil.loadHeaderImg(getActivity(), iv_mine_header, !TextUtils.isEmpty(communalUserInfoBean.getAvatar())
                 ? ImageConverterUtils.getFormatImg(communalUserInfoBean.getAvatar()) : "");
         GlideImageLoaderUtil.loadImage(getActivity(), iv_mine_page_bg, !TextUtils.isEmpty(communalUserInfoBean.getBgimg_url())
@@ -668,6 +680,25 @@ public class MineDataFragment extends BaseFragment {
         }
     }
 
+    //微信登录绑定手机号
+    @OnClick(R.id.tv_bind_phone)
+    void bindPhone(View view) {
+        if (userId > 0) {
+            String openId = (String) SharedPreUtils.getParam("OPEN_ID", "");
+            String unionid = (String) SharedPreUtils.getParam("UNION_ID", "0");
+            String accessToken = (String) SharedPreUtils.getParam("ACCESS_TOKEN", "");
+            Intent intent = new Intent(getActivity(), BindingMobileActivity.class);
+            intent.putExtra("uid", String.valueOf(userId));
+            intent.putExtra("openId", openId);
+            intent.putExtra("unionid", unionid);
+            intent.putExtra("accessToken", accessToken);
+            intent.putExtra("type", OTHER_WECHAT);
+            startActivity(intent);
+        } else {
+            getLoginStatus();
+        }
+    }
+
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
         if (START_AUTO_PAGE_TURN.equals(message.type)) {
@@ -794,4 +825,5 @@ public class MineDataFragment extends BaseFragment {
             typeMineAdapter.notifyItemChanged(position);
         }
     }
+
 }

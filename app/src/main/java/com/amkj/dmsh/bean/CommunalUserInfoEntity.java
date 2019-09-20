@@ -4,11 +4,14 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.amkj.dmsh.base.BaseEntity;
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.mine.bean.MineBabyEntity.BabyBean;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
+
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 
 /**
  * Created by atd48 on 2016/9/26.
@@ -55,7 +58,7 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
         private String serverTime;
         private int is_sign;
         private int fllow;
-        private int uid;
+        private String uid;
         private int sex;
         private String nickname;
         private int last_login_time;
@@ -75,8 +78,8 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
         private String device_type;
         private boolean baby_verification;
         private String token;
-        private long tokenExpireSeconds;
-        private long expireTime;
+        private String tokenExpireSeconds;
+        private String expireTime;
         private String qq;
         private String avatar;
         private int firstAppLogin;
@@ -85,6 +88,9 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
         private String idcard;
         private String real_name;
         private String interests;
+        private int is_wechat;
+        private String isResetPassword;
+
 
         private int approve;
         private List<BabyBean> babys;
@@ -118,12 +124,21 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
 
         private NoticeInfoBean noticeInfo;
 
-        public long getExpireTime() {
-            return expireTime * 1000;
+
+        public boolean isResetPassword() {
+            return "1".equals(isResetPassword);
         }
 
-        public void setExpireTime(long expireTime) {
-            this.expireTime = expireTime;
+        public void setIsResetPassword(String isResetPassword) {
+            this.isResetPassword = isResetPassword;
+        }
+
+        public long getExpireTime() {
+            return ConstantMethod.getStringChangeLong(expireTime) * 1000;
+        }
+
+        public boolean isWechat() {
+            return is_wechat == 1;
         }
 
         public static CommunalUserInfoBean objectFromData(String str) {
@@ -132,12 +147,9 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
         }
 
         public long getTokenExpireSeconds() {
-            return tokenExpireSeconds * 1000;
+            return ConstantMethod.getStringChangeLong(tokenExpireSeconds) * 1000;
         }
 
-        public void setTokenExpireSeconds(long tokenExpireSeconds) {
-            this.tokenExpireSeconds = tokenExpireSeconds;
-        }
 
         public int getApprove() {
             return approve;
@@ -292,10 +304,10 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
         }
 
         public int getUid() {
-            return uid;
+            return getStringChangeIntegers(uid);
         }
 
-        public void setUid(int uid) {
+        public void setUid(String uid) {
             this.uid = uid;
         }
 
@@ -607,7 +619,7 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
             dest.writeString(this.serverTime);
             dest.writeInt(this.is_sign);
             dest.writeInt(this.fllow);
-            dest.writeInt(this.uid);
+            dest.writeString(this.uid);
             dest.writeInt(this.sex);
             dest.writeString(this.nickname);
             dest.writeInt(this.last_login_time);
@@ -627,7 +639,7 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
             dest.writeString(this.device_type);
             dest.writeByte(this.baby_verification ? (byte) 1 : (byte) 0);
             dest.writeString(this.token);
-            dest.writeLong(this.tokenExpireSeconds);
+            dest.writeString(this.tokenExpireSeconds);
             dest.writeString(this.qq);
             dest.writeString(this.avatar);
             dest.writeInt(this.firstAppLogin);
@@ -654,7 +666,7 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
             this.serverTime = in.readString();
             this.is_sign = in.readInt();
             this.fllow = in.readInt();
-            this.uid = in.readInt();
+            this.uid = in.readString();
             this.sex = in.readInt();
             this.nickname = in.readString();
             this.last_login_time = in.readInt();
@@ -674,7 +686,7 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
             this.device_type = in.readString();
             this.baby_verification = in.readByte() != 0;
             this.token = in.readString();
-            this.tokenExpireSeconds = in.readLong();
+            this.tokenExpireSeconds = in.readString();
             this.qq = in.readString();
             this.avatar = in.readString();
             this.firstAppLogin = in.readInt();

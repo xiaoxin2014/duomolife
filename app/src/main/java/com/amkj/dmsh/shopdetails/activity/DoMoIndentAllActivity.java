@@ -9,7 +9,7 @@ import android.view.View;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.homepage.activity.HomePageSearchActivity;
+import com.amkj.dmsh.homepage.activity.IndentSearchActivity;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.adapter.IndentPagerAdapter;
 import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
@@ -130,7 +130,7 @@ public class DoMoIndentAllActivity extends BaseActivity {
 
     @OnClick(R.id.iv_indent_search)
     void skipSearch(View view) {
-        Intent intent = new Intent(DoMoIndentAllActivity.this, HomePageSearchActivity.class);
+        Intent intent = new Intent(DoMoIndentAllActivity.this, IndentSearchActivity.class);
         intent.putExtra(SEARCH_TYPE, SEARCH_INDENT);
         startActivity(intent);
     }

@@ -1,5 +1,6 @@
 package com.amkj.dmsh.find.activity;
 
+import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -18,9 +19,9 @@ import com.amkj.dmsh.find.bean.HotTopicEntity;
 import com.amkj.dmsh.find.bean.HotTopicEntity.HotTopicBean;
 import com.amkj.dmsh.find.bean.TopicCaterGoryEntity;
 import com.amkj.dmsh.find.bean.TopicCaterGoryEntity.TopicCaterGoryBean;
+import com.amkj.dmsh.homepage.activity.AllSearchDetailsNewActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.views.EditTextWithClear;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ public class TopicCatergoryActivity extends BaseActivity {
     @BindView(R.id.tv_life_back)
     TextView mIvBack;
     @BindView(R.id.et_search)
-    EditTextWithClear mEtSearch;
+    TextView mEtSearch;
     @BindView(R.id.rv_catergory)
     RecyclerView mRvCatergory;
     @BindView(R.id.rv_topic)
@@ -175,6 +176,9 @@ public class TopicCatergoryActivity extends BaseActivity {
                 finish();
                 break;
             case R.id.et_search:
+                Intent intent = new Intent(this, AllSearchDetailsNewActivity.class);
+                intent.putExtra("defaultTab", "2");
+                startActivity(intent);
                 break;
         }
     }

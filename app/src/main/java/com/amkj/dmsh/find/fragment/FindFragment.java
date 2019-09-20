@@ -28,7 +28,7 @@ import com.amkj.dmsh.find.adapter.PostContentAdapter;
 import com.amkj.dmsh.find.adapter.PostPagerAdapter;
 import com.amkj.dmsh.find.bean.HotTopicEntity;
 import com.amkj.dmsh.find.bean.HotTopicEntity.HotTopicBean;
-import com.amkj.dmsh.find.bean.PostTypeBean;
+import com.amkj.dmsh.find.bean.EventMessageBean;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.message.activity.MessageActivity;
@@ -95,7 +95,7 @@ public class FindFragment extends BaseFragment {
     //    热门话题
     @BindView(R.id.ll_find_hot_topic)
     public LinearLayout ll_find_hot_topic;
-    @BindView(R.id.communal_recycler_wrap)
+    @BindView(R.id.rv_topic)
     public RecyclerView communal_recycler_wrap;
     @BindView(R.id.find_container)
     public ViewPager vp_post;
@@ -134,7 +134,7 @@ public class FindFragment extends BaseFragment {
         initPostList();
         //初始化热门专题
         communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(getActivity()));
-        findHotTopicAdapter = new HotTopicAdapter(getActivity(), hotTopicList);
+        findHotTopicAdapter = new HotTopicAdapter(getActivity(), hotTopicList,true);
         communal_recycler_wrap.setAdapter(findHotTopicAdapter);
     }
 
@@ -424,6 +424,6 @@ public class FindFragment extends BaseFragment {
 
     private void updateCurrentPostFragment() {
         //通知当前选中的帖子类型列表刷新
-        EventBus.getDefault().post(new EventMessage(UPDATE_POST_CONTENT, new PostTypeBean(getActivity().getClass().getSimpleName(), titles[vp_post.getCurrentItem()])));
+        EventBus.getDefault().post(new EventMessage(UPDATE_POST_CONTENT, new EventMessageBean(getActivity().getClass().getSimpleName(), titles[vp_post.getCurrentItem()])));
     }
 }

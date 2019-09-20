@@ -34,6 +34,7 @@ public class UserPagerInfoEntity extends BaseEntity {
 
     @SerializedName("result")
     private UserInfoBean userInfo;
+
     /**
      * result : {"is_sign":1,"fllow":14,"uid":23291,"sex":0,"baby_verification":false,"nickname":"18123961075","last_login_time":0,"status":1,"fans":4,"device_type":"web","is_disable":1,"score":110,"reg_time":0,"remindtime":30,"avatar":"http://tva1.sinaimg.cn/crop.0.0.180.180.50/6e6f989cjw1e8qgp5bmzyj2050050aa8.jpg","reg_ip":"0:0:0:0:0:0:0:1","mobile_verification":true,"flag":true,"rtime":"2016-08-31 19:39:07","login":0,"mobile":"18123961075"}
      * code : 01
@@ -50,6 +51,7 @@ public class UserPagerInfoEntity extends BaseEntity {
 
     public static class UserInfoBean {
         private int is_sign;
+        @SerializedName(value = "fllow", alternate = "focusNum")
         private int fllow;
         private int uid;
         private int sex;
@@ -57,6 +59,7 @@ public class UserPagerInfoEntity extends BaseEntity {
         private String nickname;
         private int last_login_time;
         private int status;
+        @SerializedName(value = "fans", alternate = "fansNum")
         private int fans;
         private String device_type;
         private int is_disable;
@@ -72,6 +75,16 @@ public class UserPagerInfoEntity extends BaseEntity {
         private String mobile;
         private String signature;
         private String bgimg_url;
+        private int isFocus;
+
+
+        public boolean isFocus() {
+            return isFocus == 1;
+        }
+
+        public void setIsFocus(boolean isFocus) {
+            this.isFocus = isFocus ? 1 : 0;
+        }
 
         public String getBgimg_url() {
             return bgimg_url;
@@ -225,14 +238,6 @@ public class UserPagerInfoEntity extends BaseEntity {
             this.mobile_verification = mobile_verification;
         }
 
-        public boolean isFlag() {
-            return flag;
-        }
-
-        public void setFlag(boolean flag) {
-            this.flag = flag;
-        }
-
         public String getRtime() {
             return rtime;
         }
@@ -257,4 +262,6 @@ public class UserPagerInfoEntity extends BaseEntity {
             this.mobile = mobile;
         }
     }
+
+
 }

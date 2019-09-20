@@ -18,7 +18,6 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.mine.CountDownHelper;
-import com.amkj.dmsh.mine.bean.OtherAccountBindEntity.OtherAccountBindInfo;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.KeyboardUtils;
@@ -70,8 +69,8 @@ public class ChangeMobileActivity extends BaseActivity {
     //    等待窗口
     @BindView(R.id.reg_change_code_gif_view)
     ProgressBar reg_change_code_gif_view;
-    private OtherAccountBindInfo infoObject;
-    private int uid;
+    private String uid;
+    private String oldMobile;
     private String phoneNumber;
     private CountDownHelper countDownHelper;
     private AlertDialogHelper alertDialogHelper;
@@ -87,8 +86,12 @@ public class ChangeMobileActivity extends BaseActivity {
         tv_header_shared.setCompoundDrawables(null, null, null, null);
         tv_header_shared.setText("完成");
         Intent intent = getIntent();
-        infoObject = intent.getExtras().getParcelable("info");
-        uid = infoObject.getUid();
+        if (getIntent() != null) {
+            uid= intent.getStringExtra("uid");
+            oldMobile= intent.getStringExtra("mobile");
+        } else {
+            finish();
+        }
         //注册短信回调
         SMSSDK.registerEventHandler(new EventHandler() {
             @Override
@@ -100,7 +103,7 @@ public class ChangeMobileActivity extends BaseActivity {
                 handler.sendMessage(msg);
             }
         });
-        tv_mine_per_cm.setText("当前绑定 " + getStrings(infoObject.getMobile()));
+        tv_mine_per_cm.setText("当前绑定 " + oldMobile);
         KeyboardUtils.registerSoftInputChangedListener(this, new KeyboardUtils.OnSoftInputChangedListener() {
             @Override
             public void onSoftInputChanged(int height) {
@@ -208,9 +211,9 @@ public class ChangeMobileActivity extends BaseActivity {
         String newPhoneNumber = et_change_mobile.getText().toString().trim();
         Map<String, Object> params = new HashMap<>();
         params.put("id", uid);
-        params.put("oldMobile", infoObject.getMobileNum());
+        params.put("oldMobile", oldMobile);
         params.put("newMobile", newPhoneNumber);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,MINE_CHANGE_MOBILE,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, MINE_CHANGE_MOBILE, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -223,7 +226,7 @@ public class ChangeMobileActivity extends BaseActivity {
                         showToast(ChangeMobileActivity.this, "更换手机成功");
                         finish();
                     } else {
-                        showException(requestStatus.getResult()!=null?requestStatus.getResult().getMsg():requestStatus.getMsg());
+                        showException(requestStatus.getResult() != null ? requestStatus.getResult().getResultMsg() : requestStatus.getMsg());
                     }
                 }
             }
@@ -242,7 +245,7 @@ public class ChangeMobileActivity extends BaseActivity {
 
             @Override
             public void netClose() {
-                showToast(ChangeMobileActivity.this,R.string.unConnectedNetwork);
+                showToast(ChangeMobileActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
@@ -291,6 +294,7 @@ public class ChangeMobileActivity extends BaseActivity {
         }
         countDownHelper.setSmsCountDown(tv_change_send_code);
     }
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (ev.getAction() == MotionEvent.ACTION_DOWN) {

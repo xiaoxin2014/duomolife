@@ -34,11 +34,11 @@
         android:layout_width="@dimen/sc_mm_126"
         android:layout_height="@dimen/sc_mm_50"
         android:layout_gravity="center"
-        android:background="@drawable/sel_attention_border"
+        android:background="@drawable/shap_follow_bg"
         android:button="@null"
         android:checked="true"
         android:gravity="center"
         android:text="关注"
-        android:textColor="@color/attention_selector_text_gray_blue"
+        android:textColor="@color/sel_follow"
         android:textSize="@dimen/sc_mm_26"/>
 </LinearLayout>

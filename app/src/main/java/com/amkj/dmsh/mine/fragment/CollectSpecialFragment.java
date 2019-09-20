@@ -15,7 +15,6 @@ import com.amkj.dmsh.homepage.bean.TopicSpecialEntity;
 import com.amkj.dmsh.homepage.bean.TopicSpecialEntity.TopicSpecialBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
@@ -75,9 +74,6 @@ public class CollectSpecialFragment extends BaseFragment {
         smart_communal_refresh.setOnRefreshListener(refreshLayout -> loadData());
         topicListAdapter = new SpecialTopicAdapter(getActivity(), topicBeanList);
         communal_recycler.setAdapter(topicListAdapter);
-        communal_recycler.addItemDecoration(new ItemDecoration.Builder()
-                // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_ten_dp).create());
         topicListAdapter.setOnItemClickListener((adapter, view, position) -> {
             TopicSpecialBean topicDetailBean = (TopicSpecialBean) view.getTag();
             if (topicDetailBean != null) {

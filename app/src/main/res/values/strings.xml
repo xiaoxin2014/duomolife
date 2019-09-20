@@ -275,4 +275,6 @@
     <string name="award_desc2">认真参与讨论可获得%d积分哦~</string>
     <string name="post_pass_get_score">奖励%d积分~</string>
     <string name="min_buy_num">最少购买1件</string>
+    <string name="no_search_result">没有找到“%s”相关</string>
+    <string name="picked_num">%d条精选内容</string>
 </resources>

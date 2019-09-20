@@ -8,49 +8,38 @@ import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.constant.ConstantVariable;
-import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.dao.SoftApiDao;
 import com.amkj.dmsh.find.adapter.UserPostPagerAdapter;
-import com.amkj.dmsh.find.bean.PostTypeBean;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
-import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.find.bean.EventMessageBean;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.user.bean.UserPagerInfoEntity;
 import com.amkj.dmsh.user.bean.UserPagerInfoEntity.UserInfoBean;
 import com.amkj.dmsh.utils.ImageConverterUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
-import com.google.gson.Gson;
 import com.gyf.barlibrary.ImmersionBar;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.umeng.socialize.UMShareAPI;
 
 import org.greenrobot.eventbus.EventBus;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.BASE_RESOURCE_DRAW;
 import static com.amkj.dmsh.constant.ConstantVariable.DELETE_POST;
-import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_FOLLOW_STATUS;
 import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_POST_CONTENT;
+import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_USER_PAGER;
 
 
 /**
@@ -81,13 +70,14 @@ public class UserPagerActivity extends BaseActivity {
     TextView mTvFollowNum;
     @BindView(R.id.tv_fans_num)
     TextView mTvFansNum;
+    @BindView(R.id.tv_follow)
+    TextView mTvFollow;
+    @BindView(R.id.ll_user_info)
+    LinearLayout mLlUserInfo;
     private Bitmap bitmap;
-    private int IS_ATTENTION_REQ_CODE = 10;
-    private int mineId = 0;
     private String userId;
-    private UserInfoBean userInfo;
     private String[] titles = {"最新", "最热"};
-    private UserPagerInfoEntity mPagerInfoEntity;
+    private UserInfoBean userInfoBean;
 
     @Override
     protected int getContentView() {
@@ -96,7 +86,6 @@ public class UserPagerActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
-        isLoginStatus();
         Intent intent = getIntent();
         userId = intent.getStringExtra("userId");
         tl_user_header.setBackgroundResource(R.color.transparent);
@@ -105,96 +94,36 @@ public class UserPagerActivity extends BaseActivity {
         vp_post.setAdapter(postPagerAdapter);
         communal_stl_tab.setViewPager(vp_post);
         smart_refresh_mine.setOnRefreshListener(refreshLayout -> {
-            loadData();
+            smart_refresh_mine.finishRefresh(1000);
             updateCurrentPostFragment();
+        });
+
+        //收缩时，0到-390   展开时，-390到0
+        user_appBarLayout.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
+            int abs = Math.abs(verticalOffset);
+            int totalScrollRange = appBarLayout.getTotalScrollRange();
+            float v = abs * 1.0f / totalScrollRange * 1.0f;
+            mLlUserInfo.setAlpha(1 - v);
         });
     }
 
     @Override
     protected void loadData() {
-        getUserData();
+
     }
 
-    private void getUserData() {
-        String url = Url.USER_PAGE_INFO;
-        Map<String, Object> params = new HashMap<>();
-        params.put("userid", userId);
-        if (mineId > 0) {
-            params.put("uid", mineId);
-        }
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                smart_refresh_mine.finishRefresh();
-                Gson gson = new Gson();
-                mPagerInfoEntity = gson.fromJson(result, UserPagerInfoEntity.class);
-                if (mPagerInfoEntity != null) {
-                    if (mPagerInfoEntity.getCode().equals(SUCCESS_CODE)) {
-                        userInfo = mPagerInfoEntity.getUserInfo();
-                        setData(userInfo);
-                    } else if (mPagerInfoEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(UserPagerActivity.this, R.string.userDataNull);
-                    } else {
-                        showToast(UserPagerActivity.this, mPagerInfoEntity.getMsg());
-                    }
-                }
-
-                NetLoadUtils.getNetInstance().showLoadSir(loadService, mPagerInfoEntity);
-            }
-
-            @Override
-            public void onNotNetOrException() {
-                smart_refresh_mine.finishRefresh();
-                NetLoadUtils.getNetInstance().showLoadSir(loadService, mPagerInfoEntity);
-            }
-        });
-    }
-
-    private void isLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            //登陆成功，加载信息
-            mineId = personalInfo.getUid();
-        }
-    }
-
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(this);
-        if (personalInfo.isLogin()) {
-            mineId = personalInfo.getUid();
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(this, MineLoginActivity.class);
-            startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != RESULT_OK) {
-            return;
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == IS_ATTENTION_REQ_CODE) {
-            getLoginStatus();
-            loadData();
-        } else if (requestCode == ConstantVariable.IS_LOGIN_CODE) {
-            getLoginStatus();
-        }
-
-        UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
-    }
-
-    private void setData(final UserInfoBean userInfoBean) {
+    private void setData() {
         GlideImageLoaderUtil.loadHeaderImg(UserPagerActivity.this, cir_user_avatar, !TextUtils.isEmpty(userInfoBean.getAvatar())
                 ? ImageConverterUtils.getFormatImg(userInfoBean.getAvatar()) : "");
         GlideImageLoaderUtil.loadCenterCrop(UserPagerActivity.this, iv_user_header_bg, !TextUtils.isEmpty(userInfoBean.getBgimg_url())
                 ? ImageConverterUtils.getFormatImg(userInfoBean.getBgimg_url()) : BASE_RESOURCE_DRAW + R.drawable.mine_no_login_bg);
         tv_user_name.setText(getStrings(userInfoBean.getNickname()));
-        iv_user_sex.setSelected(userInfo.getSex() == 0);
-        iv_user_sex.setVisibility(0 <= userInfo.getSex() && userInfo.getSex() < 2 ? View.VISIBLE : View.GONE);
+        iv_user_sex.setSelected(userInfoBean.getSex() == 0);
+        iv_user_sex.setVisibility(0 <= userInfoBean.getSex() && userInfoBean.getSex() < 2 ? View.VISIBLE : View.GONE);
         mTvFollowNum.setText(("关注 " + userInfoBean.getFllow()));
         mTvFansNum.setText(("粉丝 " + userInfoBean.getFans()));
+        mTvFollow.setSelected(userInfoBean.isFocus());
+        mTvFollow.setText(userInfoBean.isFocus() ? "已关注" : "+ 关注");
     }
 
     @Override
@@ -222,13 +151,13 @@ public class UserPagerActivity extends BaseActivity {
         return smart_refresh_mine;
     }
 
-    @OnClick({R.id.tv_follow_num, R.id.tv_fans_num, R.id.tv_life_back, R.id.iv_img_share})
+    @OnClick({R.id.tv_follow_num, R.id.tv_fans_num, R.id.tv_life_back, R.id.iv_img_share, R.id.tv_follow})
     public void onViewClicked(View view) {
         Intent intent = null;
         switch (view.getId()) {
             case R.id.tv_follow_num:
                 intent = new Intent(this, UserFansAttentionActivity.class);
-                intent.putExtra("type", "follow");
+                intent.putExtra("type", "attention");
                 intent.putExtra("userId", getStringChangeIntegers(userId));
                 startActivity(intent);
                 break;
@@ -242,22 +171,37 @@ public class UserPagerActivity extends BaseActivity {
                 finish();
                 break;
             case R.id.iv_img_share:
-                if (mPagerInfoEntity != null) {
+                if (userInfoBean != null) {
 
                 }
+                break;
+            case R.id.tv_follow:
+                SoftApiDao.followUser(this, getStringChangeIntegers(userId), mTvFollow, null);
                 break;
         }
     }
 
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
-        if (message.type.equals(DELETE_POST)) {
+        String type = message.type;
+        if (DELETE_POST.equals(type)) {
             updateCurrentPostFragment();
+        } else if (UPDATE_FOLLOW_STATUS.equals(type)) {
+            userInfoBean.setIsFocus((boolean) message.result);
+            setData();
+        } else if (UPDATE_USER_PAGER.equals(type)) {
+            userInfoBean = (UserInfoBean) message.result;
+            setData();
+            if (userInfoBean != null) {
+                NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
+            } else {
+                NetLoadUtils.getNetInstance().showLoadSirLoadFailed(loadService);
+            }
         }
     }
 
     private void updateCurrentPostFragment() {
         //通知当前选中的帖子类型列表刷新
-        EventBus.getDefault().post(new EventMessage(UPDATE_POST_CONTENT, new PostTypeBean(getActivity().getClass().getSimpleName(), titles[vp_post.getCurrentItem()])));
+        EventBus.getDefault().post(new EventMessage(UPDATE_POST_CONTENT, new EventMessageBean(getActivity().getClass().getSimpleName(), titles[vp_post.getCurrentItem()])));
     }
 }

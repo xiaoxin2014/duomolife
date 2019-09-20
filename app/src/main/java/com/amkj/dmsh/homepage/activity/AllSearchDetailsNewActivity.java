@@ -1,7 +1,7 @@
 package com.amkj.dmsh.homepage.activity;
 
 import android.content.Context;
-import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -10,32 +10,39 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.find.bean.EventMessageBean;
 import com.amkj.dmsh.homepage.ListHistoryDataSave;
-import com.amkj.dmsh.homepage.adapter.SearchTabPageAdapter;
+import com.amkj.dmsh.homepage.adapter.SearchTabPageNewAdapter;
+import com.amkj.dmsh.homepage.fragment.SearchDetailsArticleFragment;
+import com.amkj.dmsh.homepage.fragment.SearchDetailsProductNewFragment;
+import com.amkj.dmsh.homepage.fragment.SearchDetailsTopicFragment;
+import com.amkj.dmsh.homepage.fragment.SearchDetailsUserFragment;
 import com.amkj.dmsh.utils.KeyboardUtils;
 import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Map;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import me.jessyan.autosize.utils.AutoSizeUtils;
 
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.homepage.activity.HomePageSearchActivity.SEARCH_DATA;
+import static com.amkj.dmsh.constant.ConstantVariable.ALL_SEARCH_KEY;
+import static com.amkj.dmsh.constant.ConstantVariable.ARTICLE_SEARCH_KEY;
+import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_DATA;
+import static com.amkj.dmsh.constant.ConstantVariable.TOPIC_SEARCH_KEY;
+import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_SEARCH_NUM;
+import static com.amkj.dmsh.constant.ConstantVariable.USER_SEARCH_KEY;
 
-;
 
 public class AllSearchDetailsNewActivity extends BaseActivity {
     @BindView(R.id.et_search_input)
@@ -44,50 +51,43 @@ public class AllSearchDetailsNewActivity extends BaseActivity {
     SlidingTabLayout sliding_search_bar;
     @BindView(R.id.vp_search_details_container)
     ViewPager vp_search_details_container;
-    private String searchDate;
     private LinkedList<String> dataHistoryList = new LinkedList<>();
-    private String SAVE_TYPE = "allSearch";
     private String SAVE_NAME = "SearchHistory";
-    private Map<String, String> params;
+    private String defaultTab;//默认选中tab位置
+    private SearchTabPageNewAdapter searchTabPageAdapter;
+    private String[] title = {"商品", "种草", "话题", "用户"};
 
     @Override
     protected int getContentView() {
-        return R.layout.activity_search_details;
+        return R.layout.activity_search_new_details;
     }
 
     @Override
     protected void initViews() {
+        if (getIntent() != null) {
+            defaultTab = getIntent().getStringExtra("defaultTab");
+        }
         et_search_input.setFocusableInTouchMode(true);
-        Intent intent = getIntent();
-        searchDate = intent.getStringExtra(SEARCH_DATA);
-        String keyWord = getStrings(searchDate);
-        et_search_input.setText(keyWord);
-        et_search_input.setSelection(keyWord.length());
-        params = new HashMap<>();
-        params.put(SEARCH_DATA, searchDate);
-//        插入历史记录
-        insertHistoryData(searchDate);
-        sliding_search_bar.setTextsize(AutoSizeUtils.mm2px(mAppContext, 26));
-        sliding_search_bar.setIndicatorHeight(AutoSizeUtils.mm2px(mAppContext, 2));
-        SearchTabPageAdapter searchTabPageAdapter = new SearchTabPageAdapter(getSupportFragmentManager(), params);
+        searchTabPageAdapter = new SearchTabPageNewAdapter(getSupportFragmentManager());
         vp_search_details_container.setAdapter(searchTabPageAdapter);
+        vp_search_details_container.setOffscreenPageLimit(searchTabPageAdapter.getCount() - 1);
         sliding_search_bar.setViewPager(vp_search_details_container);
+        vp_search_details_container.setCurrentItem(getStringChangeIntegers(defaultTab));
         // 搜索框的键盘搜索键点击回调
         et_search_input.setOnKeyListener(new View.OnKeyListener() {// 输入完后按键盘上的搜索键
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 EditText view = (EditText) v;
-                searchDate = view.getText().toString().trim();
+                String searchDate = view.getText().toString().trim();
                 if (keyCode == KeyEvent.KEYCODE_ENTER
                         && event.getAction() == KeyEvent.ACTION_DOWN) {// 修改回车键功能
                     // 先隐藏键盘
                     KeyboardUtils.hideSoftInput(AllSearchDetailsNewActivity.this);
                     //跳转页面，模糊搜索
                     if (!TextUtils.isEmpty(searchDate)) {
-                        params.put(SEARCH_DATA, searchDate);
-                        EventBus.getDefault().post(new EventMessage(SEARCH_DATA, searchDate));
+                        EventBus.getDefault().post(new EventMessage(SEARCH_DATA, new EventMessageBean(getCurrentFragment(), searchDate)));
                         insertHistoryData(searchDate);
                     } else {
-                        showToast(AllSearchDetailsNewActivity.this, "你输入为空，请重新输入！");
+                        showToast(AllSearchDetailsNewActivity.this, "请输入搜索内容");
                     }
                 }
                 return false;
@@ -107,7 +107,7 @@ public class AllSearchDetailsNewActivity extends BaseActivity {
         if (!TextUtils.isEmpty(text)) {
             dataHistoryList.clear();
             ListHistoryDataSave listHistoryDataSave = new ListHistoryDataSave(AllSearchDetailsNewActivity.this, SAVE_NAME);
-            dataHistoryList.addAll(listHistoryDataSave.<String>getDataList(SAVE_TYPE));
+            dataHistoryList.addAll(listHistoryDataSave.<String>getDataList(getSearchType()));
             if (dataHistoryList.size() > 0) {
                 Iterator iterator = dataHistoryList.listIterator();
                 boolean hasNext = iterator.hasNext();
@@ -126,7 +126,7 @@ public class AllSearchDetailsNewActivity extends BaseActivity {
             } else {
                 dataHistoryList.addFirst(text);
             }
-            listHistoryDataSave.setDataList(SAVE_TYPE, dataHistoryList);
+            listHistoryDataSave.setDataList(getSearchType(), dataHistoryList);
         } else {
             showToast(this, "请输入搜索内容");
         }
@@ -179,5 +179,59 @@ public class AllSearchDetailsNewActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         KeyboardUtils.unregisterSoftInputChangedListener(this);
+    }
+
+    //返回当前搜索类型在本地所对应的的key
+    private String getSearchType() {
+        switch (vp_search_details_container.getCurrentItem()) {
+            case 0:
+                return ALL_SEARCH_KEY;
+            case 1:
+                return ARTICLE_SEARCH_KEY;
+            case 2:
+                return TOPIC_SEARCH_KEY;
+            case 3:
+                return USER_SEARCH_KEY;
+            default:
+                return ALL_SEARCH_KEY;
+        }
+    }
+
+    //获取当前tab类名
+    private String getCurrentFragment() {
+        switch (vp_search_details_container.getCurrentItem()) {
+            case 0:
+                return SearchDetailsProductNewFragment.class.getSimpleName();
+            case 1:
+                return SearchDetailsArticleFragment.class.getSimpleName();
+            case 2:
+                return SearchDetailsTopicFragment.class.getSimpleName();
+            case 3:
+                return SearchDetailsUserFragment.class.getSimpleName();
+            default:
+                return "";
+        }
+    }
+
+    public String getKewords() {
+        return et_search_input.getText().toString().trim();
+    }
+
+    public void updateKewords(String keywords) {
+        et_search_input.setText(keywords);
+    }
+
+    @Override
+    protected void postEventResult(@NonNull EventMessage message) {
+        if (UPDATE_SEARCH_NUM.equals(message.type)) {
+            List<String> numList = (List<String>) message.result;
+            //修改tab的数量（当前tab或者数量为0时不用显示数量）
+            for (int i = 0; i < sliding_search_bar.getTabCount(); i++) {
+                int num = getStringChangeIntegers(numList.get(i));
+                String pageTitle = title[i];
+                TextView titleView = sliding_search_bar.getTitleView(i);
+                titleView.setText((pageTitle + (num == 0 ? "" : "·" + (num > 99 ? "99+" : String.valueOf(num)))));
+            }
+        }
     }
 }

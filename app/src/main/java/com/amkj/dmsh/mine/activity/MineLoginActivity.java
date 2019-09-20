@@ -27,12 +27,11 @@ import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.PasswordEncrypt;
 import com.amkj.dmsh.mine.CountDownHelper;
-import com.amkj.dmsh.mine.bean.AuthorizeSuccessOtherData;
-import com.amkj.dmsh.mine.bean.AuthorizeSuccessOtherData.OtherAccountBean;
 import com.amkj.dmsh.mine.bean.LoginPhoneCodeEntity;
 import com.amkj.dmsh.mine.bean.LoginPhoneCodeEntity.LoginPhoneCodeBean;
 import com.amkj.dmsh.mine.bean.OtherAccountBindEntity.OtherAccountBindInfo;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.mine.bean.ThirdInfoEntity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
@@ -54,11 +53,13 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 import static com.amkj.dmsh.constant.ConstantMethod.bindJPush;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.savePersonalInfoCache;
 import static com.amkj.dmsh.constant.ConstantMethod.setDeviceInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.toMD5;
+import static com.amkj.dmsh.constant.ConstantVariable.LOGIN;
 import static com.amkj.dmsh.constant.ConstantVariable.OTHER_QQ;
 import static com.amkj.dmsh.constant.ConstantVariable.OTHER_SINA;
 import static com.amkj.dmsh.constant.ConstantVariable.OTHER_WECHAT;
@@ -69,13 +70,12 @@ import static com.amkj.dmsh.constant.ConstantVariable.WEB_TYPE_REG_AGREEMENT;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_VALUE_TYPE;
 import static com.amkj.dmsh.constant.Url.LOGIN_ACCOUNT;
 import static com.amkj.dmsh.constant.Url.LOGIN_CHECK_SMS_CODE;
-import static com.amkj.dmsh.constant.Url.MINE_OTHER_ACCOUNT;
+import static com.amkj.dmsh.constant.Url.MINE_OTHER_NEW_ACCOUNT;
 import static com.amkj.dmsh.constant.Url.REQ_SEND_SMS_CODE;
 import static com.umeng.socialize.bean.SHARE_MEDIA.QQ;
 import static com.umeng.socialize.bean.SHARE_MEDIA.SINA;
 import static com.umeng.socialize.bean.SHARE_MEDIA.WEIXIN;
 
-;
 
 /**
  * @author LGuiPeng
@@ -121,7 +121,7 @@ public class MineLoginActivity extends BaseActivity {
     public ProgressBar reg_login_code_gif_view;
     @BindView(R.id.tv_agreement_privacy)
     public TextView tv_agreement_privacy;
-    private boolean isPhoneLogin;
+    private boolean isPhoneLogin = true;//默认为手机验证码登录
     private CountDownHelper countDownHelper;
     private AlertDialogHelper weChatDialogHelper;
     private AlertDialogHelper sinaDialogHelper;
@@ -140,17 +140,15 @@ public class MineLoginActivity extends BaseActivity {
         tv_blue_title.setVisibility(View.INVISIBLE);
         iv_blue_back.setVisibility(View.INVISIBLE);
         loadHud.setCancellable(true);
-        String s1 = "《多么生活用户注册协议》";
-        String s2 = "《多么生活用户隐私政策》";
-        String text = "登录即表示同意" + s1 + "和" + s2;
+        String s1 = "注册协议";
+        String s2 = "隐私政策";
+        String text = "登录即表示同意多么生活用户" + s1 + "和" + s2;
         Link link1 = new Link(s1);
         Link link2 = new Link(s2);
         //        @用户昵称
-        link1.setTextColor(Color.parseColor("#5faeff"));
-        link1.setUnderlined(false);
+        link1.setTextColor(Color.parseColor("#0a88fa"));
         link1.setHighlightAlpha(0f);
-        link2.setTextColor(Color.parseColor("#5faeff"));
-        link2.setUnderlined(false);
+        link2.setTextColor(Color.parseColor("#0a88fa"));
         link2.setHighlightAlpha(0f);
         LinkBuilder.on(tv_agreement_privacy)
                 .setText(text)
@@ -322,28 +320,24 @@ public class MineLoginActivity extends BaseActivity {
         public void onComplete(SHARE_MEDIA platform, int action, Map<String, String> data) {
             if (data != null) {
                 final OtherAccountBindInfo info = new OtherAccountBindInfo();
+                info.setAccessToken(data.get("accessToken"));
+                info.setUnionId(data.get("uid"));
+                //openId三端都要传，uid只有微信有值，其他的传"0"
                 switch (platform) {
                     case WEIXIN:
-                        info.setOpenid(data.get("openid"));
-                        info.setUnionId(getStrings(data.get("uid")));
                         info.setType(OTHER_WECHAT);
-                        info.setNickname(data.get("name"));
-                        info.setAvatar(!TextUtils.isEmpty(data.get("iconurl")) ? data.get("iconurl") : "");
-                        bindOtherAccount(info);
+                        info.setOpenid(data.get("openid"));
+                        thirdLogin(info);
                         break;
                     case QQ:
-                        info.setOpenid(data.get("uid"));
                         info.setType(OTHER_QQ);
-                        info.setNickname(data.get("name"));
-                        info.setAvatar(!TextUtils.isEmpty(data.get("iconurl")) ? data.get("iconurl") : "");
-                        bindOtherAccount(info);
+                        info.setOpenid(data.get("uid"));
+                        thirdLogin(info);
                         break;
                     case SINA:
-                        info.setOpenid(data.get("uid"));
                         info.setType(OTHER_SINA);
-                        info.setNickname(data.get("name"));
-                        info.setAvatar(!TextUtils.isEmpty(data.get("iconurl ")) ? data.get("iconurl ") : "");
-                        bindOtherAccount(info);
+                        info.setOpenid(data.get("uid"));
+                        thirdLogin(info);
                         break;
                 }
             }
@@ -378,88 +372,64 @@ public class MineLoginActivity extends BaseActivity {
         UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
     }
 
-    /**
-     * 绑定第三方账号
-     *
-     * @param otherAccountBindInfo
-     */
-    private void bindOtherAccount(final OtherAccountBindInfo otherAccountBindInfo) {
+    private void thirdLogin(OtherAccountBindInfo otherAccountBindInfo) {
         Map<String, Object> params = new HashMap<>();
-        params.put("openid", otherAccountBindInfo.getOpenid());
         params.put("type", otherAccountBindInfo.getType());
-        params.put("nickname", otherAccountBindInfo.getNickname());
-        params.put("avatar", otherAccountBindInfo.getAvatar());
-        //        v3.2.0 加入参数 1  同意协议政策
-        params.put("approve", 1);
-        if (OTHER_WECHAT.equals(otherAccountBindInfo.getType())) {
-            params.put("unionid", otherAccountBindInfo.getUnionId());
-        }
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, MINE_OTHER_ACCOUNT, params, new NetLoadListenerHelper() {
+        params.put("unionid", otherAccountBindInfo.getUnionId());
+        params.put("openid", otherAccountBindInfo.getOpenid());
+        params.put("accessToken", otherAccountBindInfo.getAccessToken());
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, MINE_OTHER_NEW_ACCOUNT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
                 Gson gson = new Gson();
-                AuthorizeSuccessOtherData accountInfo = gson.fromJson(result, AuthorizeSuccessOtherData.class);
-                if (accountInfo != null) {
-                    OtherAccountBean otherAccountBean = accountInfo.getOtherAccountBean();
-                    if (accountInfo.getCode().equals(SUCCESS_CODE) && otherAccountBean != null) {
-                        if (otherAccountBean.isMobile_verification()) {
-                            showToast(MineLoginActivity.this, R.string.login_success);
-//                            绑定JPush
-                            bindJPush(otherAccountBean.getUid());
-//                           保存个人信息
-                            StatConfig.setCustomUserId(MineLoginActivity.this, String.valueOf(otherAccountBean.getUid()));
-                            //        友盟统计
-                            MobclickAgent.onProfileSignIn(String.valueOf(otherAccountBean.getUid()));
-
-                            SavePersonalInfoBean savePersonalInfo = new SavePersonalInfoBean();
-                            savePersonalInfo.setAvatar(getStrings(otherAccountBean.getAvatar()));
-                            savePersonalInfo.setNickName(getStrings(otherAccountBean.getNickname()));
-                            savePersonalInfo.setUid(otherAccountBean.getUid());
-                            savePersonalInfo.setPhoneNum(getStrings(otherAccountBean.getMobile()));
-                            savePersonalInfo.setOpenId(getStrings(otherAccountBindInfo.getOpenid()));
-                            savePersonalInfo.setLoginType(getStrings(otherAccountBindInfo.getType()));
-                            savePersonalInfo.setToken(getStrings(otherAccountBean.getToken()));
-                            savePersonalInfo.setTokenExpireSeconds(System.currentTimeMillis() + otherAccountBean.getTokenExpireSeconds());
-                            if (OTHER_WECHAT.equals(getStrings(otherAccountBindInfo.getType()))) {
-                                savePersonalInfo.setUnionId(getStrings(otherAccountBindInfo.getUnionId()));
-                            }
-                            savePersonalInfo.setLogin(true);
-                            savePersonalInfoCache(MineLoginActivity.this, savePersonalInfo);
-//                            跳转传递信息
-                            Intent data = new Intent();
-                            Bundle bundle = new Bundle();
-                            CommunalUserInfoEntity communalUserInfoEntity = new CommunalUserInfoEntity();
-                            CommunalUserInfoBean communalUserInfoBean = new CommunalUserInfoBean();
-                            communalUserInfoBean.setAvatar(otherAccountBean.getAvatar());
-                            communalUserInfoBean.setUid(otherAccountBean.getUid());
-                            communalUserInfoBean.setNickname(otherAccountBean.getNickname());
-                            communalUserInfoEntity.setCommunalUserInfoBean(communalUserInfoBean);
-                            bundle.putParcelable("AccountInf", communalUserInfoEntity);
-                            data.putExtras(bundle);
-                            setResult(RESULT_OK, data);
-                            finish();
-                        } else {
-//                            跳转绑定手机页面
-                            OtherAccountBindInfo accountBind = new OtherAccountBindInfo();
-                            accountBind.setAvatar(getStrings(otherAccountBean.getAvatar()));
-                            accountBind.setSex(otherAccountBean.getSex());
-                            accountBind.setNickname(getStrings(otherAccountBean.getNickname()));
-                            accountBind.setType(getStrings(otherAccountBean.getType()));
-                            accountBind.setOpenid(getStrings(otherAccountBean.getOpenid()));
-                            if (OTHER_WECHAT.equals(getStrings(otherAccountBean.getType()))) {
-                                accountBind.setUnionId(getStrings(otherAccountBindInfo.getUnionId()));
-                            }
-                            accountBind.setMobile_verification(false);
-                            Intent intent = new Intent(MineLoginActivity.this, BindingMobileActivity.class);
-                            intent.putExtra("info", accountBind);
-                            startActivity(intent);
-                        }
+                ThirdInfoEntity accountInfo = gson.fromJson(result, ThirdInfoEntity.class);
+                if (accountInfo != null && accountInfo.getThirdInfoBean() != null) {
+                    ThirdInfoEntity.ThirdInfoBean thirdInfoBean = accountInfo.getThirdInfoBean();
+                    if (accountInfo.getCode().equals(SUCCESS_CODE) && !TextUtils.isEmpty(thirdInfoBean.getToken())) {
+                        showToast(MineLoginActivity.this, R.string.login_success);
+                        //绑定JPush
+                        bindJPush(thirdInfoBean.getUid());
+                        StatConfig.setCustomUserId(MineLoginActivity.this, thirdInfoBean.getUid());
+                        //友盟统计
+                        MobclickAgent.onProfileSignIn(thirdInfoBean.getUid());
+                        //保存个人信息
+                        SavePersonalInfoBean savePersonalInfo = new SavePersonalInfoBean();
+                        savePersonalInfo.setLogin(true);
+                        savePersonalInfo.setUid(getStringChangeIntegers(thirdInfoBean.getUid()));
+                        savePersonalInfo.setLoginType(otherAccountBindInfo.getType());
+                        savePersonalInfo.setOpenId(otherAccountBindInfo.getOpenid());
+                        savePersonalInfo.setUnionId(otherAccountBindInfo.getUnionId());
+                        savePersonalInfo.setAccessToken(otherAccountBindInfo.getAccessToken());
+                        savePersonalInfo.setToken(thirdInfoBean.getToken());
+                        savePersonalInfo.setTokenExpireSeconds(System.currentTimeMillis() + thirdInfoBean.getTokenExpireSeconds());
+                        savePersonalInfoCache(MineLoginActivity.this, savePersonalInfo);
+                        //跳转传递信息
+                        Intent data = new Intent();
+                        Bundle bundle = new Bundle();
+                        CommunalUserInfoEntity communalUserInfoEntity = new CommunalUserInfoEntity();
+                        CommunalUserInfoBean communalUserInfoBean = new CommunalUserInfoBean();
+                        communalUserInfoBean.setUid(thirdInfoBean.getUid());
+                        communalUserInfoEntity.setCommunalUserInfoBean(communalUserInfoBean);
+                        bundle.putParcelable("AccountInf", communalUserInfoEntity);
+                        data.putExtras(bundle);
+                        setResult(RESULT_OK, data);
+                        finish();
+                    } else if ("39".equals(accountInfo.getCode())) {
+                        //跳转绑定手机页面
+                        Intent intent = new Intent(MineLoginActivity.this, BindingMobileActivity.class);
+                        intent.putExtra("openId", otherAccountBindInfo.getOpenid());
+                        intent.putExtra("unionid", otherAccountBindInfo.getUnionId());
+                        intent.putExtra("uid", thirdInfoBean.getUid());
+                        intent.putExtra("accessToken", otherAccountBindInfo.getAccessToken());
+                        intent.putExtra("type", otherAccountBindInfo.getType());
+                        startActivity(intent);
                     } else {
                         showToast(MineLoginActivity.this, accountInfo.getMsg());
                     }
+                }
+
+                if (loadHud != null) {
+                    loadHud.dismiss();
                 }
             }
 
@@ -469,30 +439,19 @@ public class MineLoginActivity extends BaseActivity {
                     loadHud.dismiss();
                 }
             }
-
-            @Override
-            public void netClose() {
-                showToast(MineLoginActivity.this, R.string.unConnectedNetwork);
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                showToast(MineLoginActivity.this, R.string.do_failed);
-            }
         });
     }
 
     private void reqSMSCode(String phoneNumber) {
         Map<String, Object> params = new HashMap<>();
-        String smsType = "login";
         params.put("mobile", phoneNumber);
-        params.put("smsType", smsType);
+        params.put("smsType", LOGIN);
         long currentTimeMillis = System.currentTimeMillis();
         /**
          * 3.1.2加入校验码 避免发送验证码被刷库
          */
 //        校验token
-        params.put("verify_token", toMD5("" + currentTimeMillis + smsType + phoneNumber + "Domolife2018"));
+        params.put("verify_token", toMD5("" + currentTimeMillis + LOGIN + phoneNumber + "Domolife2018"));
 //        时间戳
         params.put("unixtime", currentTimeMillis);
         NetLoadUtils.getNetInstance().loadNetDataPost(MineLoginActivity.this, REQ_SEND_SMS_CODE,
@@ -515,11 +474,11 @@ public class MineLoginActivity extends BaseActivity {
                                         }
                                         countDownHelper.setSmsCountDown(tv_login_send_code, getResources().getString(R.string.send_sms), 60);
                                     } else {
-                                        showException(resultData.getMsg());
+                                        showException(resultData.getResultMsg());
                                     }
                                 }
                             } else {
-                                showException(requestStatus.getResult() != null ? requestStatus.getResult().getMsg() : requestStatus.getMsg());
+                                showException(requestStatus.getResult() != null ? requestStatus.getResult().getResultMsg() : requestStatus.getMsg());
                             }
                         }
                     }
@@ -527,16 +486,6 @@ public class MineLoginActivity extends BaseActivity {
                     @Override
                     public void onNotNetOrException() {
                         loadHud.dismiss();
-                    }
-
-                    @Override
-                    public void netClose() {
-                        showToast(MineLoginActivity.this, R.string.unConnectedNetwork);
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
-                        showException(getResources().getString(R.string.do_failed));
                     }
                 });
     }
@@ -564,7 +513,7 @@ public class MineLoginActivity extends BaseActivity {
         Map<String, Object> params = new HashMap<>();
         params.put("mobile", phoneNumber);
         params.put("checkcode", smsCode);
-        params.put("smsType", "login");
+        params.put("smsType", LOGIN);
         //        v3.2.0 加入参数 1  同意协议政策
         params.put("approve", 1);
         NetLoadUtils.getNetInstance().loadNetDataPost(MineLoginActivity.this, LOGIN_CHECK_SMS_CODE,
@@ -617,17 +566,17 @@ public class MineLoginActivity extends BaseActivity {
             ll_account_pas_way.setVisibility(View.GONE);
             ll_mobile_num_way.setVisibility(View.VISIBLE);
             tv_ming_login_forget_password.setVisibility(View.GONE);
-            tv_tv_mine_change_login_way.setText("密码登录");
+            tv_tv_mine_change_login_way.setText("账号密码登录");
         } else {
             isPhoneLogin = false;
             ll_account_pas_way.setVisibility(View.VISIBLE);
             ll_mobile_num_way.setVisibility(View.GONE);
             tv_ming_login_forget_password.setVisibility(View.VISIBLE);
-            tv_tv_mine_change_login_way.setText("验证码登录");
+            tv_tv_mine_change_login_way.setText("短信验证码登录");
         }
     }
 
-    @OnClick({R.id.ll_layout_weChat, R.id.rImg_login_way_weChat, R.id.tv_login_way_weChat})
+    @OnClick({R.id.rImg_login_way_weChat})
     void openWeChat(View view) {
         if (weChatDialogHelper == null) {
             weChatDialogHelper = new AlertDialogHelper(MineLoginActivity.this);
@@ -648,7 +597,7 @@ public class MineLoginActivity extends BaseActivity {
         weChatDialogHelper.show();
     }
 
-    @OnClick({R.id.ll_layout_qq, R.id.rImg_login_way_qq, R.id.tv_login_way_qq})
+    @OnClick({R.id.rImg_login_way_qq})
     void openQQ(View view) {
         if (qqDialogHelper == null) {
             qqDialogHelper = new AlertDialogHelper(MineLoginActivity.this);
@@ -669,7 +618,7 @@ public class MineLoginActivity extends BaseActivity {
         qqDialogHelper.show();
     }
 
-    @OnClick({R.id.ll_layout_weiBo, R.id.rImg_login_way_weiBo, R.id.tv_login_way_weiBo})
+    @OnClick({R.id.rImg_login_way_weiBo})
     void openSina(View view) {
         if (sinaDialogHelper == null) {
             sinaDialogHelper = new AlertDialogHelper(this);

@@ -66,22 +66,7 @@
                             android:scrollbars="none"
                             android:visibility="gone"/>
 
-                        <LinearLayout
-                            android:id="@+id/ll_find_hot_topic"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@color/white"
-                            android:orientation="vertical"
-                            android:paddingLeft="@dimen/sc_mm_30"
-                            android:paddingTop="@dimen/sc_mm_32"
-                            android:paddingRight="@dimen/sc_mm_30"
-                            android:paddingBottom="@dimen/sc_mm_22"
-                            android:visibility="gone">
-
-                            <include layout="@layout/layout_find_hot_topic_header"/>
-
-                            <include layout="@layout/layout_communal_recycler_wrap"/>
-                        </LinearLayout>
+                        <include layout="@layout/layout_find_hot_topic"/>
                     </LinearLayout>
 
 

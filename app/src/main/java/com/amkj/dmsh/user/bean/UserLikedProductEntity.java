@@ -234,7 +234,7 @@ public class UserLikedProductEntity extends BaseEntity implements Comparable<Use
         private int favorNum;
         private String savename;
         private String ext;
-        @SerializedName(value = "type_id", alternate = "itemTypeId")
+        @SerializedName(value = "type_id", alternate = {"itemTypeId", "typeId"})
         private int type_id = 1;//默认类型是自营商品
         private int commentNum;
         @SerializedName(value = "picUrl", alternate = {"path", "pic_url"})
