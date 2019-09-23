@@ -55,7 +55,6 @@ import static com.umeng.socialize.bean.SHARE_MEDIA.SINA;
 import static com.umeng.socialize.bean.SHARE_MEDIA.WEIXIN;
 
 
-
 public class AccountSafeActivity extends BaseActivity {
     @BindView(R.id.tv_header_shared)
     TextView tv_share;
@@ -297,10 +296,8 @@ public class AccountSafeActivity extends BaseActivity {
         }
 
         if (minaData != null) {
-            boolean wechat = minaData.isWechat();
-            String mobile = minaData.getMobile();
-            //微信登录并且没有绑定手机号
-            if (wechat && TextUtils.isEmpty(mobile)) {
+            //没有绑定手机号
+            if (TextUtils.isEmpty(minaData.getMobile())) {
                 showToast(this, "请先绑定手机号");
                 return;
             }

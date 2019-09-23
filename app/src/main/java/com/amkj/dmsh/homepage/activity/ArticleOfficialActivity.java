@@ -340,9 +340,9 @@ public class ArticleOfficialActivity extends BaseActivity {
         if (!TextUtils.isEmpty(this.refreshStatus)) {
             smart_web_refresh.setEnableRefresh(this.refreshStatus.contains("1"));
         } else {
-            smart_web_refresh.setEnableRefresh(refreshStatus == 1);
-        }
+        smart_web_refresh.setEnableRefresh(refreshStatus == 1);
     }
+}
 
     private String getRandomString(int length) { //length表示生成字符串的长度
         String base = "abcdefghijklmnopqrstuvwxyz0123456789";

@@ -59,13 +59,15 @@ public class EditorSelectAdapter extends BaseQuickAdapter<EditorBean, BaseViewHo
         rvPicGoods.setLayoutManager(new LinearLayoutManager(context));
         rvPicGoods.setNestedScrollingEnabled(false);
         //手动修改itemtype，显示立即购买按钮
-        List<CommunalDetailObjectBean> webDetailsFormatDataList = CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(item.getContent());
-        for (int i = 0; i < webDetailsFormatDataList.size(); i++) {
-            int itemType = webDetailsFormatDataList.get(i).getItemType();
-            if (itemType == TYPE_GOODS_IMG)
-                webDetailsFormatDataList.get(i).setItemType(TYPE_GOODS_IMG_DIRECT_BUY);
+        List<CommunalDetailObjectBean> dataList = CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(item.getContent());
+        for (CommunalDetailObjectBean objectBean : dataList) {
+            if (objectBean.getItemType() == TYPE_GOODS_IMG) {
+                objectBean.setItemType(TYPE_GOODS_IMG_DIRECT_BUY);
+            }
+            //添加小编精选标志
+            objectBean.setEditor(true);
         }
-        CommunalDetailAdapter communalDetailAdapter = new CommunalDetailAdapter(context, webDetailsFormatDataList);
+        CommunalDetailAdapter communalDetailAdapter = new CommunalDetailAdapter(context, dataList);
         communalDetailAdapter.setEnableLoadMore(false);
         communalDetailAdapter.setOnItemClickListener((adapter, view, position) -> {
             CommunalDetailObjectBean communalDetailBean = (CommunalDetailObjectBean) view.getTag();

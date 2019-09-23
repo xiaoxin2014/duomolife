@@ -90,6 +90,7 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
         private String interests;
         private int is_wechat;
         private String isResetPassword;
+        private String isBindingWx;
 
 
         private int approve;
@@ -124,6 +125,9 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
 
         private NoticeInfoBean noticeInfo;
 
+        public boolean isBindingWx() {
+            return "1".equals(isBindingWx);
+        }
 
         public boolean isResetPassword() {
             return "1".equals(isResetPassword);

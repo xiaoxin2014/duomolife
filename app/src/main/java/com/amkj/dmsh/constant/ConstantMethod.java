@@ -1612,7 +1612,7 @@ public class ConstantMethod {
     }
 
     /**
-     * 上传设备信息
+     * 更新设备信息
      *
      * @param osVersion          系统版本
      * @param mobileModel        手机型号
@@ -1923,8 +1923,8 @@ public class ConstantMethod {
     public static void savePersonalInfoCache(Context context, SavePersonalInfoBean savePersonalInfo) {
         Context applicationContext = context.getApplicationContext();
         if (savePersonalInfo != null && savePersonalInfo.isLogin()) {
-            userId = savePersonalInfo.getUid();
-//            登录成功 三方账号登录
+            userId = savePersonalInfo.getUid();//如果用微信登录，会有一个uid,绑定一个已注册手机会发生账号迁移生成一个新的uid，所以这里需要更新静态变量uid
+            //登录成功 三方账号登录
             StatConfig.setCustomUserId(applicationContext, String.valueOf(savePersonalInfo.getUid()));
             //        友盟统计
             MobclickAgent.onProfileSignIn(String.valueOf(savePersonalInfo.getUid()));
@@ -1958,18 +1958,14 @@ public class ConstantMethod {
             if (!TextUtils.isEmpty(savePersonalInfo.getAccessToken())) {
                 edit.putString("ACCESS_TOKEN", getStrings(savePersonalInfo.getAccessToken()));
             }
-
-            if (!TextUtils.isEmpty(savePersonalInfo.getLoginType())) {
-                edit.putString("LOGIN_TYPE", getStrings(savePersonalInfo.getLoginType()));
-            }
             edit.commit();
         } else {
             userId = 0;
-//            七鱼注销
+            //            七鱼注销
             QyServiceUtils.getQyInstance().logoutQyUser(applicationContext);
             //            注销账号 关闭账号统计
             MobclickAgent.onProfileSignOff();
-//            解绑JPush
+            //            解绑JPush
             unBindJPush();
             //清除登录状态
             SharedPreUtils.clearAll();

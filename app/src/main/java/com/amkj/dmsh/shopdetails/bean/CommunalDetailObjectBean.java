@@ -17,6 +17,7 @@ import java.util.List;
 public class CommunalDetailObjectBean implements MultiItemEntity {
     private boolean firstLinePadding;
     private boolean isPost;  //是否是帖子富文本
+    private boolean isEditor;  //是否是小编精选富文本
     private int itemType;
     //    正常文本，网址
     private String content;
@@ -104,6 +105,14 @@ public class CommunalDetailObjectBean implements MultiItemEntity {
 
     public CommunalDetailObjectBean(String content) {
         this.content = content;
+    }
+
+    public boolean isEditor() {
+        return isEditor;
+    }
+
+    public void setEditor(boolean editor) {
+        isEditor = editor;
     }
 
     public boolean isPost() {

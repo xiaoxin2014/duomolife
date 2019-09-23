@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
@@ -19,6 +20,7 @@ import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.rxeasyhttp.EasyHttp;
 import com.amkj.dmsh.utils.FileCacheUtils;
+import com.amkj.dmsh.utils.SharedPreUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.bumptech.glide.load.engine.cache.InternalCacheDiskCacheFactory;
@@ -72,6 +74,7 @@ public class AppDataActivity extends BaseActivity {
     private List<File> files = new ArrayList<>();
     private boolean isPause;
     private AlertDialogHelper alertDialogHelper;
+    private String mobile;
 
     @Override
     protected int getContentView() {
@@ -85,6 +88,11 @@ public class AppDataActivity extends BaseActivity {
         header_shared.setVisibility(View.INVISIBLE);
         setLayoutUI();
         getCacheStatic();
+
+        if (getIntent() != null) {
+            Intent intent = getIntent();
+            mobile = intent.getStringExtra("mobile");
+        }
     }
 
     /**
@@ -218,6 +226,22 @@ public class AppDataActivity extends BaseActivity {
     @OnClick(R.id.tv_mine_setting_account_safe)
     void setAccountSafe(View view) {
         Intent intent = new Intent(AppDataActivity.this, AccountSafeActivity.class);
+        String loginType = (String) SharedPreUtils.getParam("LOGIN_TYPE", "");
+        String openId = (String) SharedPreUtils.getParam("OPEN_ID", "");
+        String unionid = (String) SharedPreUtils.getParam("UNION_ID", "0");
+        String accessToken = (String) SharedPreUtils.getParam("ACCESS_TOKEN", "");
+        //微信登录并且未绑定手机时，不可进入账户安全
+        if (TextUtils.isEmpty(mobile)) {
+            //去绑定
+            intent.putExtra("uid", String.valueOf(userId));
+            intent.putExtra("openId", openId);
+            intent.putExtra("unionid", unionid);
+            intent.putExtra("accessToken", accessToken);
+            intent.putExtra("type", loginType);
+            intent.setClass(this, BindingMobileActivity.class);
+        } else {
+            intent.setClass(this, AccountSafeActivity.class);
+        }
         startActivity(intent);
     }
 

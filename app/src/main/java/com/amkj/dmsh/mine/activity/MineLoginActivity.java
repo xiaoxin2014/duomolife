@@ -56,7 +56,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.bindJPush;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.savePersonalInfoCache;
-import static com.amkj.dmsh.constant.ConstantMethod.setDeviceInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.toMD5;
 import static com.amkj.dmsh.constant.ConstantVariable.LOGIN;
@@ -252,11 +251,6 @@ public class MineLoginActivity extends BaseActivity {
         savePersonalInfo.setToken(getStrings(communalUserInfoBean.getToken()));
         savePersonalInfo.setTokenExpireSeconds(System.currentTimeMillis() + communalUserInfoBean.getTokenExpireSeconds());
         savePersonalInfoCache(MineLoginActivity.this, savePersonalInfo);
-// 上传设备信息
-        setDeviceInfo(this, communalUserInfoBean.getApp_version_no()
-                , communalUserInfoBean.getDevice_model()
-                , communalUserInfoBean.getDevice_sys_version()
-                , communalUserInfoBean.getSysNotice());
         resultForBackData(communalUserInfoEntity);
     }
 
@@ -339,6 +333,10 @@ public class MineLoginActivity extends BaseActivity {
                         info.setOpenid(data.get("uid"));
                         thirdLogin(info);
                         break;
+                }
+            }else {
+                if (loadHud != null) {
+                    loadHud.dismiss();
                 }
             }
         }
@@ -565,13 +563,11 @@ public class MineLoginActivity extends BaseActivity {
             isPhoneLogin = true;
             ll_account_pas_way.setVisibility(View.GONE);
             ll_mobile_num_way.setVisibility(View.VISIBLE);
-            tv_ming_login_forget_password.setVisibility(View.GONE);
             tv_tv_mine_change_login_way.setText("账号密码登录");
         } else {
             isPhoneLogin = false;
             ll_account_pas_way.setVisibility(View.VISIBLE);
             ll_mobile_num_way.setVisibility(View.GONE);
-            tv_ming_login_forget_password.setVisibility(View.VISIBLE);
             tv_tv_mine_change_login_way.setText("短信验证码登录");
         }
     }

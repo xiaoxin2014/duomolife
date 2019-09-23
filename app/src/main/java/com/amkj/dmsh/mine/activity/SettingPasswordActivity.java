@@ -36,8 +36,6 @@ public class SettingPasswordActivity extends BaseActivity {
     TextView mTvLifeBack;
     @BindView(R.id.tv_header_title)
     TextView mTvHeaderTitle;
-    @BindView(R.id.tv_header_shared)
-    TextView mTvHeaderShared;
     @BindView(R.id.tl_normal_bar)
     Toolbar mTlNormalBar;
     @BindView(R.id.et_password)
@@ -55,7 +53,6 @@ public class SettingPasswordActivity extends BaseActivity {
     @Override
     protected void initViews() {
         mTvHeaderTitle.setText("设置新密码");
-        mTvHeaderShared.setVisibility(View.GONE);
         mTlNormalBar.setSelected(true);
         if (getIntent() != null) {
             phoneNum = getIntent().getStringExtra("phoneNum");
@@ -71,9 +68,10 @@ public class SettingPasswordActivity extends BaseActivity {
 
     }
 
-    @OnClick({R.id.tv_life_back, R.id.tv_confirm})
+    @OnClick({R.id.tv_life_back, R.id.tv_confirm, R.id.tv_skip})
     public void onViewClicked(View view) {
         switch (view.getId()) {
+            case R.id.tv_skip:
             case R.id.tv_life_back:
                 finish();
                 break;

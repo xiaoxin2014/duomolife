@@ -480,7 +480,7 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                             }
                         }
 
-                        //帖子详情内容间距，颜色以以及超链接处理
+                        //帖子详情内容间距，颜色以及超链接处理
                         if (detailObjectBean.isPost()) {
                             FrameLayout.LayoutParams layoutParams1 = (FrameLayout.LayoutParams) tv_content_type.getLayoutParams();
                             layoutParams1.setMargins(0, 0, 0, 0);
@@ -489,6 +489,11 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                             tv_content_type.setLayoutParams(layoutParams1);
                         }
 
+                        if (detailObjectBean.isEditor()) {
+                            tv_content_type.setTextColor(context.getResources().getColor(R.color.text_login_gray_s));
+                            tv_content_type.setTextSize(14);
+                            tv_content_type.setLineSpacing(AutoSizeUtils.mm2px(mAppContext, 12), 1.0f);
+                        }
                         RichText.initCacheDir(context);
                         //硬件加速不能关闭，会对图片展示不兼容
                         tv_content_type.setLayerType(View.LAYER_TYPE_SOFTWARE, null);

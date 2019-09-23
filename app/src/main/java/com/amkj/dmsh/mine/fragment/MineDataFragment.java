@@ -39,7 +39,9 @@ import com.amkj.dmsh.mine.activity.PersonalDataActivity;
 import com.amkj.dmsh.mine.adapter.MineTypeAdapter;
 import com.amkj.dmsh.mine.bean.MineTypeEntity;
 import com.amkj.dmsh.mine.bean.MineTypeEntity.MineTypeBean;
+import com.amkj.dmsh.mine.bean.OtherAccountBindEntity.OtherAccountBindInfo;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.mine.bean.ThirdInfoEntity;
 import com.amkj.dmsh.network.NetCacheLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
@@ -61,6 +63,11 @@ import com.bigkoo.convenientbanner.holder.Holder;
 import com.google.gson.Gson;
 import com.gyf.barlibrary.ImmersionBar;
 import com.qiyukf.unicorn.api.UnreadCountChangeListener;
+import com.umeng.analytics.MobclickAgent;
+import com.umeng.socialize.UMAuthListener;
+import com.umeng.socialize.UMShareAPI;
+import com.umeng.socialize.UMShareConfig;
+import com.umeng.socialize.bean.SHARE_MEDIA;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -77,6 +84,7 @@ import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.MINE_BOTTOM_TY
 import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.setDeviceInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -87,12 +95,14 @@ import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOKEN_EXPIRE_LOG_OUT;
+import static com.amkj.dmsh.constant.Url.MINE_BIND_ACCOUNT;
 import static com.amkj.dmsh.constant.Url.MINE_BOTTOM_DATA;
 import static com.amkj.dmsh.constant.Url.MINE_PAGE;
 import static com.amkj.dmsh.constant.Url.MINE_PAGE_AD;
 import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 import static com.amkj.dmsh.constant.Url.Q_QUERY_INDENT_COUNT;
 import static com.amkj.dmsh.dao.SoftApiDao.checkPushPermission;
+import static com.umeng.socialize.bean.SHARE_MEDIA.WEIXIN;
 
 /**
  * Created by atd48 on 2016/8/17.
@@ -212,7 +222,12 @@ public class MineDataFragment extends BaseFragment {
         typeMineAdapter.setOnItemClickListener((adapter, view, position) -> {
             MineTypeBean mineTypeBean = (MineTypeBean) view.getTag();
             if (mineTypeBean != null) {
-                setSkipPath(getActivity(), mineTypeBean.getAndroidUrl(), false);
+                if (mineTypeBean.getAndroidUrl().equals("app://AppDataActivity") && communalUserInfoBean != null) {
+                    String mobile = communalUserInfoBean.getMobile();
+                    setSkipPath(getActivity(), "app://AppDataActivity?mobile=" + mobile, false);
+                } else {
+                    setSkipPath(getActivity(), mineTypeBean.getAndroidUrl(), false);
+                }
             }
         });
 
@@ -305,8 +320,6 @@ public class MineDataFragment extends BaseFragment {
         //刷新我的界面
         getLoginStatus();
         getMineAd();
-        //检查推送权限
-        checkPushPermission(getActivity());
     }
 
 
@@ -334,8 +347,16 @@ public class MineDataFragment extends BaseFragment {
         tv_mine_fans_count.setText(String.valueOf(communalUserInfoBean.getFans()));
         tv_mine_inv_count.setText(String.valueOf(communalUserInfoBean.getDocumentcount()));
         tv_mine_score.setText(String.valueOf(communalUserInfoBean.getScore()));
-        //微信登录并且没有绑定手机号
-        mTvBindPhone.setVisibility(communalUserInfoBean.isWechat() && TextUtils.isEmpty(communalUserInfoBean.getMobile()) ? View.VISIBLE : View.GONE);
+        boolean bindingWx = communalUserInfoBean.isBindingWx();
+        if (!bindingWx) {//没有绑定微信
+            mTvBindPhone.setText("关联微信账号");
+            mTvBindPhone.setVisibility(View.VISIBLE);
+        } else if (TextUtils.isEmpty(communalUserInfoBean.getMobile())) {//没有绑定手机号
+            mTvBindPhone.setText("关联手机账号");
+            mTvBindPhone.setVisibility(View.VISIBLE);
+        } else {
+            mTvBindPhone.setVisibility(View.GONE);
+        }
         GlideImageLoaderUtil.loadHeaderImg(getActivity(), iv_mine_header, !TextUtils.isEmpty(communalUserInfoBean.getAvatar())
                 ? ImageConverterUtils.getFormatImg(communalUserInfoBean.getAvatar()) : "");
         GlideImageLoaderUtil.loadImage(getActivity(), iv_mine_page_bg, !TextUtils.isEmpty(communalUserInfoBean.getBgimg_url())
@@ -388,6 +409,11 @@ public class MineDataFragment extends BaseFragment {
         super.onActivityResult(requestCode, resultCode, data);
         try {
             CallbackContext.onActivityResult(requestCode, resultCode, data);
+            //每次登录成功判断是否是新人
+            if (requestCode == IS_LOGIN_CODE && userId > 0) {
+                ConstantMethod constantMethod = new ConstantMethod();
+                constantMethod.getNewUserCouponDialog(getActivity());
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -400,6 +426,8 @@ public class MineDataFragment extends BaseFragment {
     @Override
     protected void loadData() {
         getBottomTypeNetData();
+        //检查推送权限
+        checkPushPermission(getActivity());
     }
 
     private void isLoginStatus() {
@@ -501,6 +529,9 @@ public class MineDataFragment extends BaseFragment {
                                 ll_mine_login.setVisibility(View.VISIBLE);
                                 setData(communalUserInfoBean);
                                 getDoMeIndentDataCount();
+                                setDeviceInfo(getActivity(), communalUserInfoBean.getApp_version_no()
+                                        , communalUserInfoBean.getDevice_model()
+                                        , communalUserInfoBean.getDevice_sys_version(), communalUserInfoBean.getSysNotice());
                             } else {
                                 setErrorUserData();
                                 showToast(getActivity(), minePageData.getMsg());
@@ -680,24 +711,117 @@ public class MineDataFragment extends BaseFragment {
         }
     }
 
-    //微信登录绑定手机号
+    //微信登录绑定手机号或者绑定微信
     @OnClick(R.id.tv_bind_phone)
     void bindPhone(View view) {
         if (userId > 0) {
-            String openId = (String) SharedPreUtils.getParam("OPEN_ID", "");
-            String unionid = (String) SharedPreUtils.getParam("UNION_ID", "0");
-            String accessToken = (String) SharedPreUtils.getParam("ACCESS_TOKEN", "");
-            Intent intent = new Intent(getActivity(), BindingMobileActivity.class);
-            intent.putExtra("uid", String.valueOf(userId));
-            intent.putExtra("openId", openId);
-            intent.putExtra("unionid", unionid);
-            intent.putExtra("accessToken", accessToken);
-            intent.putExtra("type", OTHER_WECHAT);
-            startActivity(intent);
+            if (communalUserInfoBean != null) {
+                boolean bindingWx = communalUserInfoBean.isBindingWx();
+                if (!bindingWx) {
+                    //绑定微信
+                    UMShareConfig config = new UMShareConfig();
+                    config.isNeedAuthOnGetUserInfo(true);
+                    UMShareAPI.get(getActivity()).setShareConfig(config);
+                    // 打开微信授权
+                    UMShareAPI.get(getActivity()).getPlatformInfo(getActivity(), WEIXIN, getDataInfoListener);
+                } else {
+                    //绑定手机
+                    String openId = (String) SharedPreUtils.getParam("OPEN_ID", "");
+                    String unionid = (String) SharedPreUtils.getParam("UNION_ID", "0");
+                    String accessToken = (String) SharedPreUtils.getParam("ACCESS_TOKEN", "");
+                    Intent intent = new Intent(getActivity(), BindingMobileActivity.class);
+                    intent.putExtra("uid", String.valueOf(userId));
+                    intent.putExtra("openId", openId);
+                    intent.putExtra("unionid", unionid);
+                    intent.putExtra("accessToken", accessToken);
+                    intent.putExtra("type", OTHER_WECHAT);
+                    startActivity(intent);
+                }
+            }
+
         } else {
             getLoginStatus();
         }
     }
+
+    UMAuthListener getDataInfoListener = new UMAuthListener() {
+        @Override
+        public void onStart(SHARE_MEDIA share_media) {
+            if (loadHud != null) {
+                loadHud.show();
+            }
+        }
+
+        @Override
+        public void onComplete(SHARE_MEDIA platform, int action, Map<String, String> data) {
+            loadHud.dismiss();
+            if (data != null) {
+                if (WEIXIN == platform) {
+                    final OtherAccountBindInfo info = new OtherAccountBindInfo();
+                    info.setOpenid(data.get("openid"));
+                    info.setUnionId(getStrings(data.get("uid")));
+                    info.setType(OTHER_WECHAT);
+                    info.setNickname(data.get("name"));
+                    info.setAvatar(!TextUtils.isEmpty(data.get("iconurl")) ? data.get("iconurl") : "");
+                    bindOtherAccount(info);
+                }
+            }
+        }
+
+        @Override
+        public void onError(SHARE_MEDIA platform, int action, Throwable t) {
+            showToast(getActivity(), "授权失败");
+            if (loadHud != null) {
+                loadHud.dismiss();
+            }
+        }
+
+        @Override
+        public void onCancel(SHARE_MEDIA platform, int action) {
+            showToast(getActivity(), "授权取消");
+            if (loadHud != null) {
+                loadHud.dismiss();
+            }
+        }
+    };
+
+    /**
+     * 绑定第三方账号
+     *
+     * @param otherAccountBindInfo
+     */
+    private void bindOtherAccount(OtherAccountBindInfo otherAccountBindInfo) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("openid", otherAccountBindInfo.getOpenid());
+        params.put("type", otherAccountBindInfo.getType());
+        if (OTHER_WECHAT.equals(otherAccountBindInfo.getType())) {
+            params.put("unionid", otherAccountBindInfo.getUnionId());
+        }
+        params.put("nickname", otherAccountBindInfo.getNickname());
+        params.put("avatar", otherAccountBindInfo.getAvatar());
+        params.put("id", userId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), MINE_BIND_ACCOUNT, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                ThirdInfoEntity successOtherData = gson.fromJson(result, ThirdInfoEntity.class);
+                if (successOtherData != null) {
+                    if (successOtherData.getCode().equals(SUCCESS_CODE)) {
+                        showToast(getActivity(), successOtherData.getMsg());
+                        /**
+                         * 第三方账号登录统计
+                         * 3.2.0 修改为统计自己传入的参数 以前版本根据后台返回的数据类型进行跟uid进行统计
+                         */
+                        MobclickAgent.onProfileSignIn(getStrings(otherAccountBindInfo.getType()), String.valueOf(userId));
+                        mTvBindPhone.setVisibility(View.GONE);
+                    } else {
+                        showToast(getActivity(), successOtherData.getMsg());
+                    }
+                }
+            }
+        });
+    }
+
 
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
