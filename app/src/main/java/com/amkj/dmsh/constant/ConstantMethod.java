@@ -2204,7 +2204,7 @@ public class ConstantMethod {
      * @param context
      * @param couponId
      */
-    private void getNewUserCoupon(Activity context, int couponId) {
+    public static void getNewUserCoupon(Activity context, int couponId) {
         if (couponId > 0) {
             String url = Url.FIND_ARTICLE_COUPON;
             Map<String, Object> params = new HashMap<>();

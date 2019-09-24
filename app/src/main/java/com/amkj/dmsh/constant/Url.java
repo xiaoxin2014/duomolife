@@ -718,7 +718,7 @@ public class Url {
     //  自营商品优惠券领取
     public static final String FIND_ARTICLE_COUPON = "api/my/coupon/receiveCoupon";
     //    优惠券礼包领取
-    public static final String COUPON_PACKAGE = "api/my/coupon/sendCouponPackage";
+    public static final String FIND_COUPON_PACKAGE = "api/my/coupon/sendCouponPackage";
     //  文章评论列表
     public static final String FIND_INVI_COMMENT_LIST = "api/find/getFindCommentList";
     //  发现-推荐

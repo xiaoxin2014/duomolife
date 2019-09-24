@@ -1,22 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:gravity="center"
-    android:layout_height="wrap_content">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center">
 
     <ImageView
         android:id="@+id/iv_dialog_image_close"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:src="@mipmap/ad_dialog_close" />
+        android:layout_alignParentRight="true"
+        android:src="@mipmap/ad_dialog_close"/>
 
     <ImageView
         android:id="@+id/iv_dialog_image_show"
-        android:layout_below="@id/iv_dialog_image_close"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/iv_dialog_image_close"
         android:adjustViewBounds="true"
-        android:scaleType="fitXY" />
+        android:scaleType="fitXY"/>
+
+    <TextView
+        android:id="@+id/tv_dialog_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/iv_dialog_image_close"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="@dimen/sc_mm_20"
+        android:layout_marginTop="@dimen/sc_mm_45"
+        android:layout_marginRight="@dimen/sc_mm_20"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="2"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sc_mm_32"
+        android:visibility="gone"/>
 </RelativeLayout>

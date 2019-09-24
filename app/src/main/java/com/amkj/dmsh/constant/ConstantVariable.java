@@ -419,4 +419,12 @@ public class ConstantVariable {
     public static final String TOPIC_SEARCH_KEY = "topicSearch";
     public static final String USER_SEARCH_KEY = "userSearch";
 
+
+    /**
+     * 口令红包类型
+     */
+    public static final String COUPON= "1";//优惠券
+    public static final String COUPON_PACKAGE = "2";//优惠前礼包
+    public static final String SKIP_LINK = "3";//跳转链接
+
 }

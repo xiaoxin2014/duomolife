@@ -100,6 +100,15 @@ public class AllSearchEntity extends BaseTimeEntity {
         private List<HotTopicBean> topicList;
         private List<PostBean> postList;
         private List<UserSearchBean> userList;
+        private WatchwordBean watchword;
+
+        public WatchwordBean getWatchword() {
+            return watchword;
+        }
+
+        public void setWatchword(WatchwordBean watchword) {
+            this.watchword = watchword;
+        }
 
         public String getGoodsCount() {
             return goodsCount;
@@ -189,155 +198,69 @@ public class AllSearchEntity extends BaseTimeEntity {
             this.userList = userList;
         }
 
-        public static class GoodsListBean {
+        public static class WatchwordBean {
             /**
-             * activityCode :
-             * activityName :
-             * activityTag :
-             * id : 14040
-             * path : http://image.domolife.cn/platform/eaPc8d354s1539136369596.jpg
-             * price : 99
-             * quantity : 1376
-             * subTitle : 给孩子备好全年无忧的健康奶
-             * title : 认养一头牛  纯牛奶250ml*12盒/箱
-             * typeId : 1
-             * waterRemark :
-             * marketLabelList : [{"id":"9","title":"爆品"}]
+             * objId : 582
+             * type : 1
+             * imgUrl : http://image.domolife.cn/platform/2PZfJazcKh1569037576307.png
+             * iosLink :
+             * androidLink :
+             * webLink :
              */
 
-            private String activityCode;
-            private String activityName;
-            private String activityTag;
-            private String id;
-            private String path;
-            private String price;
-            private String quantity;
-            private String subTitle;
-            private String title;
-            private String typeId;
-            private String waterRemark;
-            private List<MarketLabelListBean> marketLabelList;
+            private String objId;
+            private String type;
+            private String imgUrl;
+            private String iosLink;
+            private String androidLink;
+            private String webLink;
 
-            public String getActivityCode() {
-                return activityCode;
+            public String getObjId() {
+                return objId;
             }
 
-            public void setActivityCode(String activityCode) {
-                this.activityCode = activityCode;
+            public void setObjId(String objId) {
+                this.objId = objId;
             }
 
-            public String getActivityName() {
-                return activityName;
+            public String getType() {
+                return type;
             }
 
-            public void setActivityName(String activityName) {
-                this.activityName = activityName;
+            public void setType(String type) {
+                this.type = type;
             }
 
-            public String getActivityTag() {
-                return activityTag;
+            public String getImgUrl() {
+                return imgUrl;
             }
 
-            public void setActivityTag(String activityTag) {
-                this.activityTag = activityTag;
+            public void setImgUrl(String imgUrl) {
+                this.imgUrl = imgUrl;
             }
 
-            public String getId() {
-                return id;
+            public String getIosLink() {
+                return iosLink;
             }
 
-            public void setId(String id) {
-                this.id = id;
+            public void setIosLink(String iosLink) {
+                this.iosLink = iosLink;
             }
 
-            public String getPath() {
-                return path;
+            public String getAndroidLink() {
+                return androidLink;
             }
 
-            public void setPath(String path) {
-                this.path = path;
+            public void setAndroidLink(String androidLink) {
+                this.androidLink = androidLink;
             }
 
-            public String getPrice() {
-                return price;
+            public String getWebLink() {
+                return webLink;
             }
 
-            public void setPrice(String price) {
-                this.price = price;
-            }
-
-            public String getQuantity() {
-                return quantity;
-            }
-
-            public void setQuantity(String quantity) {
-                this.quantity = quantity;
-            }
-
-            public String getSubTitle() {
-                return subTitle;
-            }
-
-            public void setSubTitle(String subTitle) {
-                this.subTitle = subTitle;
-            }
-
-            public String getTitle() {
-                return title;
-            }
-
-            public void setTitle(String title) {
-                this.title = title;
-            }
-
-            public String getTypeId() {
-                return typeId;
-            }
-
-            public void setTypeId(String typeId) {
-                this.typeId = typeId;
-            }
-
-            public String getWaterRemark() {
-                return waterRemark;
-            }
-
-            public void setWaterRemark(String waterRemark) {
-                this.waterRemark = waterRemark;
-            }
-
-            public List<MarketLabelListBean> getMarketLabelList() {
-                return marketLabelList;
-            }
-
-            public void setMarketLabelList(List<MarketLabelListBean> marketLabelList) {
-                this.marketLabelList = marketLabelList;
-            }
-
-            public static class MarketLabelListBean {
-                /**
-                 * id : 9
-                 * title : 爆品
-                 */
-
-                private String id;
-                private String title;
-
-                public String getId() {
-                    return id;
-                }
-
-                public void setId(String id) {
-                    this.id = id;
-                }
-
-                public String getTitle() {
-                    return title;
-                }
-
-                public void setTitle(String title) {
-                    this.title = title;
-                }
+            public void setWebLink(String webLink) {
+                this.webLink = webLink;
             }
         }
     }

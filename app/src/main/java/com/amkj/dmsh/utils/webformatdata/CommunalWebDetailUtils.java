@@ -45,7 +45,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IMG_REGEX_TAG;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_TEXT;
 import static com.amkj.dmsh.constant.ConstantVariable.regexATextUrl;
-import static com.amkj.dmsh.constant.Url.COUPON_PACKAGE;
+import static com.amkj.dmsh.constant.Url.FIND_COUPON_PACKAGE;
 import static com.amkj.dmsh.constant.Url.FIND_ARTICLE_COUPON;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON_PACKAGE;
@@ -511,7 +511,7 @@ public class CommunalWebDetailUtils {
         Map<String, Object> params = new HashMap<>();
         params.put("uId", userId);
         params.put("cpId", couponId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(mContext, COUPON_PACKAGE, params, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(mContext, FIND_COUPON_PACKAGE, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {

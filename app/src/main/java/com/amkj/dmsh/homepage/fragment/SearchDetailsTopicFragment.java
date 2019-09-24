@@ -112,6 +112,7 @@ public class SearchDetailsTopicFragment extends BaseSearchDetailFragment {
                         if (allSearchEntity != null && allSearchEntity.getSearchBean() != null) {
                             String code = allSearchEntity.getCode();
                             searchBean = allSearchEntity.getSearchBean();
+                            setWordData(searchBean.getWatchword());
                             List<HotTopicBean> topicList = searchBean.getTopicList();
                             List<PostBean> postList = searchBean.getPostList();
                             if (topicList != null && topicList.size() > 0) {

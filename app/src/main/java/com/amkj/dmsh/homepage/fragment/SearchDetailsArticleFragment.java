@@ -95,6 +95,7 @@ public class SearchDetailsArticleFragment extends BaseSearchDetailFragment {
                         if (allSearchEntity != null && allSearchEntity.getSearchBean() != null) {
                             String code = allSearchEntity.getCode();
                             searchBean = allSearchEntity.getSearchBean();
+                            setWordData(searchBean.getWatchword());
                             List<TopicSpecialBean> topics = searchBean.getDocumentList();
                             if (code.equals(SUCCESS_CODE) && topics != null && topics.size() > 0) {
                                 specialSearList.addAll(removeExistUtils.removeExistList(searchBean.getDocumentList()));

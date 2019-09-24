@@ -291,6 +291,7 @@ public class SoftApiDao {
     }
 
 
+    //检查推送权限
     public static void checkPushPermission(Activity activity) {
         if (isContextExisted(activity) && !getDeviceAppNotificationStatus(activity)) {
             NetLoadUtils.getNetInstance().loadNetDataPost(activity, APP_SYS_NOTIFICATION, new NetLoadListenerHelper() {

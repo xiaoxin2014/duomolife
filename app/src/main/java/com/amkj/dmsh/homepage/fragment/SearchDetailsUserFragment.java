@@ -81,6 +81,7 @@ public class SearchDetailsUserFragment extends BaseSearchDetailFragment {
                         if (allSearchEntity != null && allSearchEntity.getSearchBean() != null) {
                             String code = allSearchEntity.getCode();
                             searchBean = allSearchEntity.getSearchBean();
+                            setWordData(searchBean.getWatchword());
                             List<UserSearchBean> userSearchList = searchBean.getUserList();
                             if (SUCCESS_CODE.equals(code) && userSearchList != null && userSearchList.size() > 0) {
                                 List<UserSearchBean> list = removeExistUtils.removeExistList(userSearchList);

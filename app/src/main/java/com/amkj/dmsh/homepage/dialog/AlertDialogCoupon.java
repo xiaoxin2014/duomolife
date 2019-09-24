@@ -1,18 +1,24 @@
-package com.amkj.dmsh.utils.alertdialog;
+package com.amkj.dmsh.homepage.dialog;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.support.annotation.NonNull;
+import android.content.Intent;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.bean.CouponListEntity.CouponListBean.CouponBean;
+import com.amkj.dmsh.homepage.adapter.CouponListAdapter;
+import com.amkj.dmsh.shopdetails.activity.DirectMyCouponActivity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import me.jessyan.autosize.AutoSize;
 import me.jessyan.autosize.utils.AutoSizeUtils;
@@ -21,84 +27,55 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
 
 /**
- * @author LGuiPeng
- * @email liuguipeng163@163.com
- * created on 2018/8/16
- * version 3.1.5
- * class description:弹窗广告
+ * Created by xiaoxin on 2019/9/23
+ * Version:v4.2.2
+ * ClassDescription :口令红包-领取优惠券弹窗
  */
-public class AlertDialogImage {
+public class AlertDialogCoupon {
 
     private Context context;
-    private ImageView iv_ad_image;
-    private AlertImageClickListener alertImageClickListener;
+    private RecyclerView rvCoupon;
     private AlertDialog imageAlertDialog;
     private View dialogView;
-    private TextView tv_text;
     private boolean isFirstSet;
+    private CouponListAdapter mCouponListAdapter;
+    private List<CouponBean> couponList = new ArrayList<>();
     private ImageView iv_dialog_image_close;
 
-    public AlertDialogImage(Context context) {
+    public AlertDialogCoupon(Context context) {
         if (!isContextExisted(context)) {
             return;
         }
         this.context = context;
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        dialogView = LayoutInflater.from(context).inflate(R.layout.layout_alert_dialog_image, null, false);
-        iv_ad_image = dialogView.findViewById(R.id.iv_dialog_image_show);
-        tv_text = dialogView.findViewById(R.id.tv_dialog_text);
+        dialogView = LayoutInflater.from(context).inflate(R.layout.layout_dialog_coupon_get_success, null, false);
+        rvCoupon = dialogView.findViewById(R.id.rv_coupon);
         iv_dialog_image_close = dialogView.findViewById(R.id.iv_dialog_image_close);
-        iv_dialog_image_close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismiss();
-            }
-        });
+        iv_dialog_image_close.setOnClickListener(v -> dismiss());
         builder.setCancelable(true);
         imageAlertDialog = builder.create();
-        iv_ad_image.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (alertImageClickListener != null) {
-                    alertImageClickListener.imageClick();
-                }
-            }
+        dialogView.setOnClickListener(v -> {
+            dismiss();
+            Intent intent = new Intent(context, DirectMyCouponActivity.class);
+            context.startActivity(intent);
         });
+        mCouponListAdapter = new CouponListAdapter(couponList);
+        rvCoupon.setLayoutManager(new LinearLayoutManager(context));
+        rvCoupon.setAdapter(mCouponListAdapter);
         isFirstSet = true;
     }
 
-    public void setImage(@NonNull Bitmap bitmap) {
-        try {
-            if (isContextExisted(context)) {
-                iv_ad_image.setImageBitmap(bitmap);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    public void setCouponList(List<CouponBean> list) {
+        couponList.clear();
+        if (list != null) {
+            couponList.addAll(list);
         }
-    }
-
-    public void setImageResource(@NonNull int resouce) {
-        if (isContextExisted(context)) {
-            iv_ad_image.setImageResource(resouce);
-        }
-    }
-
-    public void setDialogText(String text) {
-        tv_text.setVisibility(View.VISIBLE);
-        tv_text.setText(text);
+        mCouponListAdapter.notifyDataSetChanged();
     }
 
     //隐藏关闭按钮
     public void hideCloseBtn() {
         iv_dialog_image_close.setVisibility(View.GONE);
-    }
-
-    public void setAlertClickListener(AlertImageClickListener alertImageClickListener) {
-        this.alertImageClickListener = alertImageClickListener;
-    }
-
-    public interface AlertImageClickListener {
-        void imageClick();
     }
 
     /**

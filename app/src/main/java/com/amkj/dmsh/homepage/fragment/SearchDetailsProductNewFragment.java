@@ -104,6 +104,7 @@ public class SearchDetailsProductNewFragment extends BaseSearchDetailFragment {
                         allSearchEntity = gson.fromJson(result, AllSearchEntity.class);
                         if (allSearchEntity != null && allSearchEntity.getSearchBean() != null) {
                             searchBean = allSearchEntity.getSearchBean();
+                            setWordData(searchBean.getWatchword());
                             if (allSearchEntity.getCode().equals(SUCCESS_CODE)) {
                                 productSearList.addAll(removeExistUtils.removeExistList(searchBean.getGoodsList()));
                             } else if (!allSearchEntity.getCode().equals(EMPTY_CODE)) {

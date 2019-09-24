@@ -2,6 +2,7 @@ package com.amkj.dmsh.homepage.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +15,9 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.AllSearchEntity;
+import com.amkj.dmsh.bean.AllSearchEntity.AllSearchBean.WatchwordBean;
+import com.amkj.dmsh.bean.CouponListEntity;
+import com.amkj.dmsh.bean.CouponListEntity.CouponListBean;
 import com.amkj.dmsh.bean.HotSearchTagEntity;
 import com.amkj.dmsh.bean.HotSearchTagEntity.HotSearchTagBean;
 import com.amkj.dmsh.bean.QualityTypeEntity;
@@ -23,10 +27,13 @@ import com.amkj.dmsh.homepage.ListHistoryDataSave;
 import com.amkj.dmsh.homepage.activity.AllSearchDetailsNewActivity;
 import com.amkj.dmsh.homepage.activity.SearchGoodProMoreActivity;
 import com.amkj.dmsh.homepage.adapter.HotSearchAdapter;
+import com.amkj.dmsh.homepage.dialog.AlertDialogCoupon;
 import com.amkj.dmsh.netloadpage.NetEmptyCallback;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.RemoveExistUtils;
+import com.amkj.dmsh.utils.alertdialog.AlertDialogImage;
+import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.google.android.flexbox.FlexWrap;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.gson.Gson;
@@ -45,16 +52,26 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 import static android.view.View.VISIBLE;
+import static com.amkj.dmsh.constant.ConstantMethod.dismissLoadhud;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
+import static com.amkj.dmsh.constant.ConstantMethod.showLoadhud;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_CHILD;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_ID;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_NAME;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_TYPE;
+import static com.amkj.dmsh.constant.ConstantVariable.COUPON;
+import static com.amkj.dmsh.constant.ConstantVariable.COUPON_PACKAGE;
 import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_DATA;
+import static com.amkj.dmsh.constant.ConstantVariable.SKIP_LINK;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_SEARCH_NUM;
+import static com.amkj.dmsh.constant.Url.FIND_ARTICLE_COUPON;
+import static com.amkj.dmsh.constant.Url.FIND_COUPON_PACKAGE;
 import static com.amkj.dmsh.constant.Url.H_HOT_NEW_SEARCH_LIST;
 import static com.amkj.dmsh.constant.Url.QUALITY_SHOP_TYPE;
 
@@ -100,6 +117,9 @@ public abstract class BaseSearchDetailFragment extends BaseFragment {
     protected AllSearchEntity.AllSearchBean searchBean;
     protected RemoveExistUtils removeExistUtils = new RemoveExistUtils();
     protected RemoveExistUtils removeExistTopicUtils = new RemoveExistUtils();
+    private AlertDialogImage mSearchDialogImage;
+    private AlertDialogImage mFailDialogImage;
+    private AlertDialogCoupon mSucessDialogImage;
 
 
     @Override
@@ -116,13 +136,13 @@ public abstract class BaseSearchDetailFragment extends BaseFragment {
 
         hotSearchAdapter = new HotSearchAdapter(hotSearchList);
         historySearchAdapter = new HotSearchAdapter(historySearchList);
-        initSearchRv(rvHotSearch, hotSearchAdapter);
-        initSearchRv(rvHistorySearch, historySearchAdapter);
+        initKeywordRv(rvHotSearch, hotSearchAdapter);
+        initKeywordRv(rvHistorySearch, historySearchAdapter);
 
         initRv();
     }
 
-    private void initSearchRv(RecyclerView recyclerView, HotSearchAdapter searchAdapter) {
+    private void initKeywordRv(RecyclerView recyclerView, HotSearchAdapter searchAdapter) {
         recyclerView.setNestedScrollingEnabled(false);
         FlexboxLayoutManager manager = new FlexboxLayoutManager(getActivity());
         manager.setFlexWrap(FlexWrap.WRAP);
@@ -327,6 +347,130 @@ public abstract class BaseSearchDetailFragment extends BaseFragment {
 
     protected abstract String getSearchKey();
 
+    //口令红包结果
+    protected void setWordData(WatchwordBean watchwordBean) {
+        if (watchwordBean != null) {
+            String type = watchwordBean.getType();
+            String imgUrl = watchwordBean.getImgUrl();
+            switch (type) {
+                case COUPON:
+                case COUPON_PACKAGE:
+                    if (isContextExisted(getActivity())) {
+                        GlideImageLoaderUtil.loadFinishImgDrawable(getActivity(), imgUrl, new GlideImageLoaderUtil.ImageLoaderFinishListener() {
+                            @Override
+                            public void onSuccess(Bitmap bitmap) {
+                                if (mSearchDialogImage == null) {
+                                    mSearchDialogImage = new AlertDialogImage(getActivity());
+                                    mSearchDialogImage.hideCloseBtn();
+                                    mSearchDialogImage.setAlertClickListener(() -> {
+                                        mSearchDialogImage.dismiss();
+                                        openCoupon(getStringChangeIntegers(watchwordBean.getObjId()), type);
+                                    });
+                                }
+                                mSearchDialogImage.setImage(bitmap);
+                                mSearchDialogImage.show();
+                            }
+
+                            @Override
+                            public void onError() {
+
+                            }
+                        });
+                    }
+                    break;
+                case SKIP_LINK:
+                    setSkipPath(getActivity(), watchwordBean.getAndroidLink(), false);
+                    break;
+            }
+        }
+    }
+
+    //点击打开优惠券(礼包)
+    private void openCoupon(int couponId, String type) {
+        if (couponId > 0) {
+            if (userId > 0) {
+                showLoadhud(getActivity());
+                if (COUPON.equals(type)) {
+                    getCoupon(couponId);
+                } else {
+                    getCouponPackage(couponId);
+                }
+            } else {
+                getLoginStatus(this);
+            }
+        }
+    }
+
+    //领取优惠券
+    public void getCoupon(int couponId) {
+        Map<String, Object> params = new HashMap<>();
+        //优惠券
+        params.put("userId", userId);
+        params.put("couponId", couponId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), FIND_ARTICLE_COUPON, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                dismissLoadhud(getActivity());
+                Gson gson = new Gson();
+                CouponListEntity couponListEntity = gson.fromJson(result, CouponListEntity.class);
+                if (couponListEntity != null && couponListEntity.getResult() != null) {
+                    String code = couponListEntity.getCode();
+                    CouponListBean couponListBean = couponListEntity.getResult();
+                    String resultCode = couponListBean.getCode();
+                    showCouponList(couponListBean, !SUCCESS_CODE.equals(code) || !SUCCESS_CODE.equals(resultCode));
+                }
+            }
+        });
+    }
+
+    //领取优惠券
+    public void getCouponPackage(int couponId) {
+        Map<String, Object> params = new HashMap<>();
+        //优惠券礼包
+        params.put("uId", userId);
+        params.put("cpId", couponId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), FIND_COUPON_PACKAGE, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                dismissLoadhud(getActivity());
+                Gson gson = new Gson();
+                CouponListBean couponListBean = gson.fromJson(result, CouponListBean.class);
+                if (couponListBean != null) {
+                    String code = couponListBean.getCode();
+                    showCouponList(couponListBean, !SUCCESS_CODE.equals(code));
+                }
+            }
+        });
+    }
+
+
+    /**
+     * @param isFailure 是否领取成功
+     */
+    private void showCouponList(CouponListBean couponListBean, boolean isFailure) {
+        //领取失败
+        if (isFailure) {
+            if (mFailDialogImage == null) {
+                mFailDialogImage = new AlertDialogImage(getActivity());
+                mFailDialogImage.hideCloseBtn();
+                mFailDialogImage.setAlertClickListener(() -> {
+                    mFailDialogImage.dismiss();
+                });
+                mFailDialogImage.setImageResource(R.drawable.get_coupon_fail);
+            }
+            mFailDialogImage.setDialogText(couponListBean.getMsg());
+            mFailDialogImage.show();
+        } else {
+            //领取成功
+            if (mSucessDialogImage == null) {
+                mSucessDialogImage = new AlertDialogCoupon(getActivity());
+                mSucessDialogImage.hideCloseBtn();
+            }
+            mSucessDialogImage.setCouponList(couponListBean.getResult());
+            mSucessDialogImage.show();
+        }
+    }
+
     @Override
     protected boolean isAddLoad() {
         return true;
@@ -342,6 +486,22 @@ public abstract class BaseSearchDetailFragment extends BaseFragment {
         super.getReqParams(bundle);
         if (bundle != null) {
             mTitle = (String) bundle.get("title");
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mFailDialogImage != null && mFailDialogImage.isShowing()) {
+            mFailDialogImage.dismiss();
+        }
+
+        if (mSucessDialogImage != null && mSucessDialogImage.isShowing()) {
+            mSucessDialogImage.dismiss();
+        }
+
+        if (mSearchDialogImage != null && mSearchDialogImage.isShowing()) {
+            mSearchDialogImage.dismiss();
         }
     }
 }
