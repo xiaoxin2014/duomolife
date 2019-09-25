@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
@@ -156,12 +157,16 @@ public class WelcomeLaunchActivity extends BaseActivity {
     }
 
     private void setSkipLocalPath(String link) {
-//        启东广告点击统计
-        adClickTotal(this,launcherAdId);
-        getWindow().setFlags(
-                WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-        setSkipPath(WelcomeLaunchActivity.this, link, false);
+//        启动广告点击统计
+        adClickTotal(this, launcherAdId);
+        //延迟关闭页面，否则广告接口无法统计到
+        new Handler().postDelayed(() -> {
+            getWindow().setFlags(
+                    WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+            setSkipPath(WelcomeLaunchActivity.this, link, false);
+        }, 100);
+
     }
 
     @Override
@@ -184,7 +189,7 @@ public class WelcomeLaunchActivity extends BaseActivity {
      * 设置启动图片
      */
     private void setLaunchImage() {
-        if (!TextUtils.isEmpty(imgPath)&&sharedPreferences!=null) {
+        if (!TextUtils.isEmpty(imgPath) && sharedPreferences != null) {
             showSeconds = sharedPreferences.getString(TimeKey, "5");
             GlideImageLoaderUtil.loadCenterCropListener(WelcomeLaunchActivity.this, iv_launch_wel_page
                     , "file://" + imgPath, new GlideImageLoaderUtil.ImageLoaderListener() {

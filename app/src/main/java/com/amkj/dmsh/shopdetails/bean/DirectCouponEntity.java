@@ -16,7 +16,7 @@ import java.util.List;
  * class description:请输入类描述
  */
 
-public class DirectCouponEntity extends BaseEntity{
+public class DirectCouponEntity extends BaseEntity {
 
     /**
      * result : [{"amount":300,"id":1,"status":0,"endTime":"2018-11-02 00:00:00","beOverdue":"0","startTime":"2016-11-02 11:52","startFee":100,"type":"活动"},{"amount":300,"id":2,"status":0,"endTime":"2022-11-30 00:00:00","beOverdue":"0","startTime":"2016-11-01 10:51","startFee":100,"type":"新注册用户"},{"amount":500,"id":3,"status":0,"endTime":"2016-11-30 00:00:00","beOverdue":"0","startTime":"2016-11-01 00:00","startFee":500,"type":"邀请好友"},{"amount":100,"id":4,"status":0,"endTime":"2018-11-02 00:00:00","beOverdue":"0","startTime":"2016-11-02 11:52","startFee":300,"type":"活动"},{"amount":100,"id":5,"status":0,"endTime":"2018-11-02 00:00:00","beOverdue":"0","startTime":"2016-11-02 11:52","startFee":300,"type":"活动"},{"amount":100,"id":6,"status":0,"endTime":"2018-11-02 00:00:00","beOverdue":"0","startTime":"2016-11-02 11:52","startFee":300,"type":"活动"},{"amount":100,"id":7,"status":0,"endTime":"2018-11-02 00:00:00","beOverdue":"0","startTime":"2016-11-02 11:52","startFee":300,"type":"活动"},{"amount":500,"id":8,"status":0,"endTime":"2016-11-30 00:00:00","beOverdue":"0","startTime":"2016-11-01 00:00","startFee":500,"type":"新注册用户"},{"amount":500,"id":9,"status":0,"endTime":"2016-11-30 00:00:00","beOverdue":"0","startTime":"2016-11-01 00:00","startFee":500,"type":"新注册用户"},{"amount":500,"id":10,"status":0,"endTime":"2016-11-30 00:00:00","beOverdue":"0","startTime":"2016-11-01 00:00","startFee":500,"type":"新注册用户"}]
@@ -45,16 +45,15 @@ public class DirectCouponEntity extends BaseEntity{
          * startFee : 100
          * type : 活动
          */
-
-        private Double amount;
+        private String amount;
         private int id;
         private int status;
-        @SerializedName(value = "end_time",alternate = "endTime")
+        @SerializedName(value = "end_time", alternate = "endTime")
         private String endTime;
         private String beOverdue;
-        @SerializedName(value = "start_time",alternate = "startTime")
+        @SerializedName(value = "start_time", alternate = "startTime")
         private String startTime;
-        @SerializedName(value = "start_fee",alternate = "startFee")
+        @SerializedName(value = "start_fee", alternate = "startFee")
         private Double startFee;
         private String type;
         private int itemType;
@@ -103,11 +102,11 @@ public class DirectCouponEntity extends BaseEntity{
             this.android_link = android_link;
         }
 
-        public Double getAmount() {
+        public String getAmount() {
             return amount;
         }
 
-        public void setAmount(Double amount) {
+        public void setAmount(String amount) {
             this.amount = amount;
         }
 
@@ -250,7 +249,7 @@ public class DirectCouponEntity extends BaseEntity{
 
         @Override
         public void writeToParcel(Parcel dest, int flags) {
-            dest.writeDouble(this.amount);
+            dest.writeString(this.amount);
             dest.writeInt(this.id);
             dest.writeInt(this.status);
             dest.writeString(this.endTime);
@@ -272,7 +271,7 @@ public class DirectCouponEntity extends BaseEntity{
         }
 
         protected DirectCouponBean(Parcel in) {
-            this.amount = in.readDouble();
+            this.amount = in.readString();
             this.id = in.readInt();
             this.status = in.readInt();
             this.endTime = in.readString();

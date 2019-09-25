@@ -362,11 +362,11 @@ public abstract class BaseSearchDetailFragment extends BaseFragment {
                                 if (mSearchDialogImage == null) {
                                     mSearchDialogImage = new AlertDialogImage(getActivity());
                                     mSearchDialogImage.hideCloseBtn();
-                                    mSearchDialogImage.setAlertClickListener(() -> {
-                                        mSearchDialogImage.dismiss();
-                                        openCoupon(getStringChangeIntegers(watchwordBean.getObjId()), type);
-                                    });
                                 }
+                                mSearchDialogImage.setAlertClickListener(() -> {
+                                    mSearchDialogImage.dismiss();
+                                    openCoupon(getStringChangeIntegers(watchwordBean.getObjId()), type);
+                                });
                                 mSearchDialogImage.setImage(bitmap);
                                 mSearchDialogImage.show();
                             }
@@ -404,7 +404,6 @@ public abstract class BaseSearchDetailFragment extends BaseFragment {
     //领取优惠券
     public void getCoupon(int couponId) {
         Map<String, Object> params = new HashMap<>();
-        //优惠券
         params.put("userId", userId);
         params.put("couponId", couponId);
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), FIND_ARTICLE_COUPON, params, new NetLoadListenerHelper() {

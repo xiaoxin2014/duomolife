@@ -161,7 +161,6 @@ import static com.amkj.dmsh.constant.UMShareAction.routineId;
 import static com.amkj.dmsh.constant.Url.H_Q_FLOAT_AD;
 import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 import static com.amkj.dmsh.constant.Url.TOTAL_AD_COUNT;
-import static com.amkj.dmsh.constant.Url.TOTAL_AD_DIALOG_COUNT;
 import static com.amkj.dmsh.dao.BaiChuanDao.isTaoBaoUrl;
 import static com.amkj.dmsh.dao.BaiChuanDao.skipAliBC;
 import static com.yanzhenjie.permission.AndPermission.getFileUri;
@@ -1373,29 +1372,17 @@ public class ConstantMethod {
     }
 
     //    统计广告点击
-
-    /**
-     * 3.1.9 adId （objectId 改为 id）
-     *
-     * @param adId
-     */
     public static void adClickTotal(Activity activity, int adId) {
-        Map<String, Object> params = new HashMap<>();
-        //回复文章或帖子
-        params.put("id", adId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(activity, TOTAL_AD_COUNT, params, null);
+        adClickTotal(activity, adId, 0);
     }
 
-    /**
-     * 启动弹窗统计
-     *
-     * @param adId
-     */
-    public static void adDialogClickTotal(Activity activity, int adId) {
+    //    统计广告点击
+    public static void adClickTotal(Activity activity, int adId, int type) {
         Map<String, Object> params = new HashMap<>();
         //回复文章或帖子
         params.put("id", adId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(activity, TOTAL_AD_DIALOG_COUNT, params, null);
+        params.put("type", type);
+        NetLoadUtils.getNetInstance().loadNetDataPost(activity, TOTAL_AD_COUNT, params, null);
     }
 
     /**

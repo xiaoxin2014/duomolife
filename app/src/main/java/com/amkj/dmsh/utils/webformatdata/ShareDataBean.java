@@ -15,13 +15,8 @@ public class ShareDataBean {
     private String urlLink;
     //    回调传的Id--> 奖励 没有该值 分享不会回调获取奖励
     private int backId;
+    private String platform;//h5分享平台（多个平台用逗号隔开）
 
-    /**
-     * @param imgUrl
-     * @param title
-     * @param description
-     * @param urlLink
-     */
     public ShareDataBean(String imgUrl, String title, String description, String urlLink) {
         this.imgUrl = imgUrl;
         this.title = title;
@@ -29,37 +24,40 @@ public class ShareDataBean {
         this.urlLink = urlLink;
     }
 
-    /**
-     * @param imgUrl
-     * @param title
-     * @param description
-     * @param urlLink
-     * @param backId
-     */
     public ShareDataBean(String imgUrl, String title, String description, String urlLink, int backId) {
         this.imgUrl = imgUrl;
         this.title = title;
         this.description = description;
         this.urlLink = urlLink;
         this.backId = backId;
-        this.routineUrl = routineUrl;
     }
 
-
-    /**
-     * @param imgUrl
-     * @param title
-     * @param description
-     * @param urlLink
-     * @param backId
-     */
     public ShareDataBean(String imgUrl, String title, String description, String urlLink, String routineUrl, int backId) {
         this.imgUrl = imgUrl;
         this.title = title;
         this.description = description;
         this.urlLink = urlLink;
-        this.backId = backId;
         this.routineUrl = routineUrl;
+        this.backId = backId;
+    }
+
+    public ShareDataBean(String imgUrl, String title, String description, String urlLink, String routineUrl, int backId, String platform) {
+        this.imgUrl = imgUrl;
+        this.title = title;
+        this.description = description;
+        this.urlLink = urlLink;
+        this.routineUrl = routineUrl;
+        this.backId = backId;
+        this.platform = platform;
+    }
+
+
+    public String getPlatform() {
+        return platform;
+    }
+
+    public void setPlatform(String platform) {
+        this.platform = platform;
     }
 
     public String getImgUrl() {

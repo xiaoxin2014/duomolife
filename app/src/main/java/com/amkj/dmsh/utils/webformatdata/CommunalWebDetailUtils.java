@@ -34,7 +34,6 @@ import java.util.regex.Pattern;
 import cn.jzvd.Jzvd;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.addArticleShareCount;
 import static com.amkj.dmsh.constant.ConstantMethod.addShopCarGetSku;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getNumber;
@@ -45,13 +44,13 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IMG_REGEX_TAG;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_TEXT;
 import static com.amkj.dmsh.constant.ConstantVariable.regexATextUrl;
-import static com.amkj.dmsh.constant.Url.FIND_COUPON_PACKAGE;
 import static com.amkj.dmsh.constant.Url.FIND_ARTICLE_COUPON;
+import static com.amkj.dmsh.constant.Url.FIND_COUPON_PACKAGE;
+import static com.amkj.dmsh.dao.BaiChuanDao.skipAliBC;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON_PACKAGE;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_GOODS_2X;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_GOODS_3X;
-import static com.amkj.dmsh.dao.BaiChuanDao.skipAliBC;
 
 /**
  * @author LGuiPeng
@@ -555,12 +554,12 @@ public class CommunalWebDetailUtils {
                     , shareDataBean.getImgUrl()
                     , getStrings(shareDataBean.getTitle())
                     , getStrings(shareDataBean.getDescription())
-                    , getStrings(shareDataBean.getUrlLink()), shareDataBean.getRoutineUrl(), shareDataBean.getBackId());
-            if (shareDataBean.getBackId() > 0) {
-                umShareAction.setOnShareSuccessListener(() ->
-                        addArticleShareCount(activity, shareDataBean.getBackId())
-                );
-            }
+                    , getStrings(shareDataBean.getUrlLink()), shareDataBean.getRoutineUrl(), shareDataBean.getBackId(), -1, shareDataBean.getPlatform());
+//            if (shareDataBean.getBackId() > 0) {
+//                umShareAction.setOnShareSuccessListener(() ->
+//                        addArticleShareCount(activity, shareDataBean.getBackId())
+//                );
+//            }
         }
     }
 }

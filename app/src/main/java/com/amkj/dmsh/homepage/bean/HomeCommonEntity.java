@@ -46,6 +46,7 @@ public class HomeCommonEntity extends BaseEntity {
          * showType : string
          */
 
+        private int id;
         private String color;
         private String icon;
         private String link;
@@ -55,6 +56,13 @@ public class HomeCommonEntity extends BaseEntity {
         private String description;
         private List<ProductInfoListBean> productInfoList;
 
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
 
         public List<ProductInfoListBean> getProductInfoList() {
             return productInfoList;

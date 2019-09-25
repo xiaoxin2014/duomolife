@@ -38,8 +38,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
-;
-;
 
 /**
  * @author LGuiPeng
@@ -58,7 +56,7 @@ public class DirectMyCouponFragment extends BaseFragment {
     @BindView(R.id.download_btn_communal)
     public FloatingActionButton download_btn_communal;
     private String couponStatus;
-    private List<DirectCouponBean> couponList = new ArrayList();
+    private List<DirectCouponBean> couponList = new ArrayList<>();
     private int page = 1;
     private DirectMyCouponAdapter directMyCouponAdapter;
     private int scrollY;

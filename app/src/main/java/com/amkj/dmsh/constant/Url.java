@@ -187,8 +187,6 @@ public class Url {
     public static final String TOTAL_OFFICIAL_PRO_NUM = "api/goods/addCommProductNum";
     //    统计广告点击
     public static final String TOTAL_AD_COUNT = "api/home/addAdClickCount";
-    //    弹窗广告
-    public static final String TOTAL_AD_DIALOG_COUNT = "api/home/addMarketingAdClickCount";
     //    统计极光消息打开数目
     public static final String TOTAL_JPUSH_COUNT = "api/home/addPushClickNum";
     //    官方详情

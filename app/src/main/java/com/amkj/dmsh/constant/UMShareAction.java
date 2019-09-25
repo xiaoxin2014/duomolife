@@ -29,7 +29,6 @@ import com.amkj.dmsh.find.activity.PostDetailActivity;
 import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.utils.AsyncUtils;
 import com.amkj.dmsh.utils.FileStreamUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogShareHelper;
@@ -79,18 +78,7 @@ public class UMShareAction {
 
 
     /**
-     * UMImage image = new UMImage(ShareActivity.this, "imageurl");//网络图片
-     * UMImage image = new UMImage(ShareActivity.this, file);//本地文件
-     * UMImage image = new UMImage(ShareActivity.this, R.drawable.xxx);//资源文件
-     * UMImage image = new UMImage(ShareActivity.this, bitmap);//bitmap文件
-     * UMImage image = new UMImage(ShareActivity.this, byte[]);//字节流
      * 分享内容
-     *
-     * @param context
-     * @param imgUrl
-     * @param title
-     * @param description
-     * @param urlLink
      */
     public UMShareAction(final BaseActivity context, String imgUrl,
                          final String title, final String description, final String urlLink, int id) {
@@ -99,33 +87,49 @@ public class UMShareAction {
 
 
     /**
-     * 分享内容 加载图片
-     *
-     * @param context
-     * @param imgUrl
-     * @param title
-     * @param description
-     * @param urlLink     正常地址
-     * @param routineUrl  小程序地址
+     * 分享内容,带小程序
      */
     public UMShareAction(final BaseActivity context, String imgUrl,
                          final String title, final String description, final String urlLink, String routineUrl, int id) {
-        this(context, imgUrl, title, description, urlLink, routineUrl, id, false);
+        this(context, imgUrl, title, description, urlLink, routineUrl, id, false, -1, "");
+    }
+
+    /**
+     * 分享内容,可保存图片
+     */
+    public UMShareAction(final BaseActivity context, String imgUrl,
+                         final String title, final String description, final String urlLink, String routineUrl, int id, boolean isSaveImg) {
+        this(context, imgUrl, title, description, urlLink, routineUrl, id, isSaveImg, -1, "");
+    }
+
+    /**
+     * 从H5分享内容
+     */
+    public UMShareAction(final BaseActivity context, String imgUrl,
+                         final String title, final String description, final String urlLink, String routineUrl, int id, int shareType, String h5Platform) {
+        this(context, imgUrl, title, description, urlLink, routineUrl, id, false, shareType, h5Platform);
     }
 
 
     /**
-     * @param context
+     * UMImage image = new UMImage(ShareActivity.this, "imageurl");//网络图片
+     * UMImage image = new UMImage(ShareActivity.this, file);//本地文件
+     * UMImage image = new UMImage(ShareActivity.this, R.drawable.xxx);//资源文件
+     * UMImage image = new UMImage(ShareActivity.this, bitmap);//bitmap文件
+     * UMImage image = new UMImage(ShareActivity.this, byte[]);//字节流
+     *
      * @param imgUrl      图片地址
      * @param title       标题
      * @param description 分享副标题
      * @param urlLink     正常跳转地址
      * @param routineUrl  小程序地址
      * @param isSaveImg   是否展示保存图片
+     * @param h5Platform  H5分享平台（不为空表示是从h5打开分享的）
+     * @param shareTpe    获取分享类型(统计用户分享行为专用字段)
      */
     public UMShareAction(final BaseActivity context, String imgUrl,
                          final String title, final String description, final String urlLink, String routineUrl
-            , int productId, boolean isSaveImg) {
+            , int productId, boolean isSaveImg, int shareTpe, String h5Platform) {
         this.context = context;
         this.title = title;
         this.id = productId;
@@ -135,8 +139,7 @@ public class UMShareAction {
 
         //如果是自营商品详情页面，则分享弹窗显示保存图片按钮
         if (alertDialogShareHelper == null) {
-            alertDialogShareHelper = new AlertDialogShareHelper(context, !TextUtils.isEmpty(routineUrl)
-                    && isSaveImg && productId > 0 && context.getClass().getSimpleName().equals(ShopScrollDetailsActivity.class.getSimpleName()));
+            alertDialogShareHelper = new AlertDialogShareHelper(context, !TextUtils.isEmpty(routineUrl) && isSaveImg && productId > 0, h5Platform);
         }
         alertDialogShareHelper.show();
         alertDialogShareHelper.setAlertSelectShareListener(shareIconTitleBean -> {
@@ -196,7 +199,7 @@ public class UMShareAction {
                     default:
                         SHARE_MEDIA sharePlatformType = shareIconTitleBean.getSharePlatformType();
                         //统计用户分享行为
-                        statisticsShare(context, id, title, 1, sharePlatformType);
+                        statisticsShare(context, id, title, shareTpe, sharePlatformType);
                         View view = context.getTopView();
                         if (view != null && TextUtils.isEmpty(imgUrl)) {
                             if (context instanceof DoMoLifeWelfareDetailsActivity) {
@@ -218,7 +221,7 @@ public class UMShareAction {
                                     mBitmap = bitmap;
                                     setLoadImageShare(sharePlatformType, new UMImage(context, bitmap), context, urlLink, title, description);
                                 }
-                            }.excueTask(), 100);
+                            }.excueTask(), 200);
                         } else {
                             if (!TextUtils.isEmpty(imgUrl)) {
                                 //        加载图片
@@ -437,7 +440,7 @@ public class UMShareAction {
             }
 
             //文章分享统计
-            if (needStatistics(context)) {
+            if (needStatistics(context) && id > 0) {
                 ConstantMethod.addArticleShareCount(context, id);
             }
 
@@ -474,20 +477,19 @@ public class UMShareAction {
      * @param objId    对应的内容ID，如-分享文章类型，则传文章ID，对于一些固定的专区，如每周优选，传0即可
      * @param ObjName  分享对象名称， 如分享文章类型，则传文章标题
      * @param platform 要分享的平台
-     * @param status   分享状态 （0-取消，1-成功） 如果不能获取到分享是否被取消，则固定传1
      */
-    private void statisticsShare(Activity activity, int objId, String ObjName, int status, SHARE_MEDIA platform) {
-        int shareType = getShareType(activity.getClass().getSimpleName());
-        if (shareType == -1) {
+    private void statisticsShare(Activity activity, int objId, String ObjName, int shareType, SHARE_MEDIA platform) {
+        int type = (shareType == -1 ? getShareType(activity.getClass().getSimpleName()) : shareType);
+        if (type == -1) {
             return;
         }
         Map<String, Object> map = new HashMap<>();
-        map.put("shareType", shareType);
+        map.put("shareType", type);
         map.put("objId", objId);
         map.put("road", getShareRoad(platform));
         map.put("objName", ObjName);
-        map.put("status", status);
-        NetLoadUtils.getNetInstance().loadNetDataPost(context, Url.STATISTICS_SHARE, map, null);
+        map.put("status", 1);//分享状态 （0-取消，1-成功） 如果不能获取到分享是否被取消，则固定传1
+        NetLoadUtils.getNetInstance().loadNetDataPost(activity, Url.STATISTICS_SHARE, map, null);
     }
 
     /**
@@ -576,8 +578,6 @@ public class UMShareAction {
                 return 12;
             case "QualityWeekOptimizedActivity"://每周优选
                 return 13;
-            case "DoMoLifeCommunalActivity"://公共web
-                return 14;
             default:
                 return -1;
         }

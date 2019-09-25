@@ -99,7 +99,7 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.APP_FIRST_TIMES;
 import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.APP_SAVE_VERSION;
-import static com.amkj.dmsh.constant.ConstantMethod.adDialogClickTotal;
+import static com.amkj.dmsh.constant.ConstantMethod.adClickTotal;
 import static com.amkj.dmsh.constant.ConstantMethod.getDateFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeBoolean;
@@ -1012,13 +1012,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     alertDialogAdImage = new AlertDialogImage(MainActivity.this);
                 }
                 alertDialogAdImage.show();
-                alertDialogAdImage.setAlertClickListener(new AlertDialogImage.AlertImageClickListener() {
-                    @Override
-                    public void imageClick() {
-                        alertDialogAdImage.dismiss();
-                        adDialogClickTotal(getActivity(), communalADActivityBean.getId());
-                        setSkipPath(MainActivity.this, communalADActivityBean.getAndroidLink(), false);
-                    }
+                alertDialogAdImage.setAlertClickListener(() -> {
+                    alertDialogAdImage.dismiss();
+                    adClickTotal(getActivity(), communalADActivityBean.getId(), 1);
+                    setSkipPath(MainActivity.this, communalADActivityBean.getAndroidLink(), false);
                 });
                 alertDialogAdImage.setImage(bitmap);
             }

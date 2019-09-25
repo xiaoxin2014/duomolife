@@ -44,6 +44,7 @@ import com.alibaba.fastjson.JSON;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseFragment;
+import com.amkj.dmsh.bean.H5ShareBean;
 import com.amkj.dmsh.constant.AppUpdateUtils;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.UMShareAction;
@@ -58,6 +59,7 @@ import com.amkj.dmsh.utils.SharedPreUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
 import com.amkj.dmsh.views.HtmlWebView;
+import com.google.gson.Gson;
 import com.gyf.barlibrary.ImmersionBar;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfigC;
@@ -67,7 +69,6 @@ import com.scwang.smartrefresh.layout.constant.RefreshState;
 import com.umeng.socialize.UMShareAPI;
 import com.yanzhenjie.permission.Permission;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
@@ -101,8 +102,8 @@ import static com.amkj.dmsh.constant.ConstantVariable.WEB_JD_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TAOBAO_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TB_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TMALL_SCHEME;
-import static com.amkj.dmsh.rxeasyhttp.interceptor.MyInterceptor.getCommonApiParameter;
 import static com.amkj.dmsh.dao.BaiChuanDao.skipAliBC;
+import static com.amkj.dmsh.rxeasyhttp.interceptor.MyInterceptor.getCommonApiParameter;
 import static com.luck.picture.lib.config.PictureConfigC.CHOOSE_REQUEST;
 
 ;
@@ -1183,23 +1184,13 @@ public class AliBCFragment extends BaseFragment {
 
     private void setShareData(String shareData) {
         try {
-            JSONObject jsonObject = new JSONObject(shareData);
-            String title = jsonObject.getString("title");
-            String imageUrl = jsonObject.getString("imageUrl");
-            String content = jsonObject.getString("content");
-            String url = jsonObject.getString("url");
-            String routineUrl = null;
-            try {
-                routineUrl = jsonObject.getString("routineUrl");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            new UMShareAction((BaseActivity) getActivity()
-                    , imageUrl
-                    , TextUtils.isEmpty(title) ? "多么生活" : title
-                    , TextUtils.isEmpty(content) ? "" : content
-                    , url, routineUrl, 1);
-        } catch (JSONException e) {
+            H5ShareBean shareBean = new Gson().fromJson(shareData, H5ShareBean.class);
+            UMShareAction umShareAction = new UMShareAction((BaseActivity) getActivity()
+                    , shareBean.getImageUrl()
+                    , TextUtils.isEmpty(shareBean.getTitle()) ? "多么生活" : shareBean.getTitle()
+                    , TextUtils.isEmpty(shareBean.getDescription()) ? "" : shareBean.getDescription()
+                    , shareBean.getUrl(), shareBean.getRoutineUrl(), shareBean.getObjId(), shareBean.getShareType(), shareBean.getPlatform());
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

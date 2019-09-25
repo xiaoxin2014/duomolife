@@ -65,7 +65,7 @@ public class DirectMyCouponAdapter extends BaseMultiItemQuickAdapter<DirectCoupo
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            helper.setText(R.id.tv_coupon_money, String.valueOf(directCouponBean.getAmount()))
+            helper.setText(R.id.tv_coupon_money, getStrings(directCouponBean.getAmount()))
                     .setGone(R.id.view_coupon, helper.getLayoutPosition() - getHeaderLayoutCount() == 0)
                     .setGone(R.id.iv_due_soon_expire, directCouponBean.isSoonExpire())
                     .setText(R.id.tv_coupon_start_fee, directCouponBean.getStartFee() > 0 ? "满" + directCouponBean.getStartFee() + "可使用" : "无门槛")
@@ -102,12 +102,12 @@ public class DirectMyCouponAdapter extends BaseMultiItemQuickAdapter<DirectCoupo
                     helper.setGone(R.id.rImg_coupon_tag, false);
                     tv_coupon_status.setVisibility(View.GONE);
                     helper.tv_coupon_used.setVisibility("checkCoupon".equals(couponStatus) ? View.VISIBLE : View.GONE);
-                } else if (directCouponBean.getBeOverdue().equals("1")){
+                } else if (directCouponBean.getBeOverdue().equals("1")) {
                     helper.setGone(R.id.rImg_coupon_tag, true)
                             .setImageResource(R.id.rImg_coupon_tag, R.drawable.coupon_icon_due_soon);
                     tv_coupon_status.setVisibility(View.VISIBLE);
                     tv_coupon_status.setText("已过期");
-                }else if (directCouponBean.getBeOverdue().equals("2")){
+                } else if (directCouponBean.getBeOverdue().equals("2")) {
                     helper.setGone(R.id.rImg_coupon_tag, true)
                             .setImageResource(R.id.rImg_coupon_tag, R.drawable.coupon_icon_invalid);
                     tv_coupon_status.setVisibility(View.VISIBLE);

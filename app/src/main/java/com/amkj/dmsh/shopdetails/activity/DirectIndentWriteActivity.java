@@ -1358,7 +1358,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                 case DIRECT_COUPON_REQ:
                     //            获取优惠券
                     couponId = data.getIntExtra("couponId", -1);
-                    double couponAmount = data.getDoubleExtra("couponAmount", 0);
+                    String couponAmount = data.getStringExtra("couponAmount");
                     pullFootView.tv_direct_product_favorable.setText(couponId < 1 ? "不使用优惠券" : "-¥" + couponAmount);
                     getIndentDiscounts(true);
                     break;

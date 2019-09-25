@@ -41,6 +41,7 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.bean.H5ShareBean;
 import com.amkj.dmsh.constant.AppUpdateUtils;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.UMShareAction;
@@ -56,13 +57,13 @@ import com.amkj.dmsh.utils.SharedPreUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
 import com.amkj.dmsh.views.HtmlWebView;
+import com.google.gson.Gson;
 import com.gyf.barlibrary.ImmersionBar;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfigC;
 import com.luck.picture.lib.entity.LocalMediaC;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.constant.RefreshState;
-import com.tencent.bugly.crashreport.CrashReport;
 import com.umeng.socialize.UMShareAPI;
 import com.yanzhenjie.permission.Permission;
 
@@ -569,32 +570,40 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
         public JsData(Activity context) {
             this.context = context;
         }
-        //        跳转页面
 
+        //        跳转页面
         @JavascriptInterface
         public void skipPage(String result) {
             setSkipPath(context, result, false);
         }
-        //分享
 
+        //分享
         @JavascriptInterface
         public void sharePage(String result) {
-            if (!TextUtils.isEmpty(result)) {
-                Message message = handler.obtainMessage();
-                message.obj = result;
-                handler.sendMessage(message);
-            } else {
-                showToast(context, "数据为空");
-            }
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (!TextUtils.isEmpty(result)) {
+                        H5ShareBean shareBean = new Gson().fromJson(result, H5ShareBean.class);
+                        UMShareAction umShareAction = new UMShareAction(getActivity()
+                                , shareBean.getImageUrl()
+                                , TextUtils.isEmpty(shareBean.getTitle()) ? "多么生活" : shareBean.getTitle()
+                                , TextUtils.isEmpty(shareBean.getDescription()) ? "" : shareBean.getDescription()
+                                , shareBean.getUrl(), shareBean.getRoutineUrl(), shareBean.getObjId(), shareBean.getShareType(), shareBean.getPlatform());
+                    } else {
+                        showToast(context, "数据为空");
+                    }
+                }
+            });
         }
-        //        获取当前用户uid
 
+        //        获取当前用户uid
         @JavascriptInterface
         public void getUserIdFromAndroid() {
             getUserId();
         }
-        //      跳转阿里百川
 
+        //      跳转阿里百川
         @JavascriptInterface
         public void skipAlibc(String urlType) {
             if (!TextUtils.isEmpty(urlType)) {
@@ -604,8 +613,8 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                 BaiChuanDao.skipAliBC(getActivity(), url, thirdId);
             }
         }
-        //      跳转客服
 
+        //      跳转客服
         @JavascriptInterface
         public void skipService() {
             QyServiceUtils qyServiceUtils = QyServiceUtils.getQyInstance();
@@ -1173,9 +1182,6 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        if (handler != null) {
-            handler.removeCallbacksAndMessages(null);
-        }
         if (web_communal != null) {
             web_communal.removeAllViews();
             web_communal.destroy();
@@ -1191,37 +1197,6 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
         }
         super.onDestroy();
     }
-
-    Handler handler = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message msg) {
-            String shareData = (String) msg.obj;
-            if (!TextUtils.isEmpty(shareData)) {
-                try {
-                    Map<String, Object> jsonObject = JSON.parseObject(shareData);
-                    String title = (String) jsonObject.get("objName");
-                    String imageUrl = (String) jsonObject.get("imageUrl");
-                    String content = (String) jsonObject.get("content");
-                    String url = (String) jsonObject.get("url");
-                    int objId = -1;
-                    try {
-                        objId = Integer.parseInt((String) jsonObject.get("objId"));
-                    } catch (NumberFormatException e) {
-                        CrashReport.postCatchedException(new NumberFormatException("-----自定义异常：解析objId格式化错误-----" + "h5传过来的json信息：" + shareData));
-                    }
-                    String routineUrl = (String) jsonObject.get("routineUrl");
-                    UMShareAction umShareAction = new UMShareAction(DoMoLifeCommunalActivity.this
-                            , imageUrl
-                            , TextUtils.isEmpty(title) ? "多么生活" : title
-                            , TextUtils.isEmpty(content) ? "" : content
-                            , url, routineUrl, objId);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            return false;
-        }
-    });
 
     /**
      * 关闭web界面

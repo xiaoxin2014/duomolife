@@ -26,6 +26,6 @@ public class CouponListAdapter extends BaseQuickAdapter<CouponBean, BaseViewHold
         if (item == null) return;
         helper.setText(R.id.tv_mount, getStrings(item.getAmount()));
         helper.setText(R.id.tv_name, getStrings(item.getCouponTitle()));
-        helper.setText(R.id.tv_condition, "0".equals(item.getUseRange()) ? "全场可用" : "仅限部分商品可用");
+        helper.setText(R.id.tv_condition, getStrings(item.getCouponDesc()));
     }
 }

@@ -100,14 +100,14 @@ public class CouponListEntity {
             private String couponId;
             private String amount;
             private String couponTitle;
-            private String useRange;
+            private String couponDesc;
 
-            public String getUseRange() {
-                return useRange;
+            public String getCouponDesc() {
+                return couponDesc;
             }
 
-            public void setUseRange(String useRange) {
-                this.useRange = useRange;
+            public void setCouponDesc(String couponDesc) {
+                this.couponDesc = couponDesc;
             }
 
             public String getId() {

@@ -218,9 +218,9 @@ public class HomeDefalutFragment extends BaseFragment {
             HomeCommonBean homeCommonBean = (HomeCommonBean) view.getTag();
             if (homeCommonBean != null) {
                 setSkipPath(getActivity(), homeCommonBean.getLink(), false);
+                ConstantMethod.adClickTotal(getActivity(), homeCommonBean.getId());
             }
         });
-
 
         //初始化专区适配器
         GridLayoutManager speicalZoneManager = new GridLayoutManager(getActivity()

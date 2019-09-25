@@ -35,10 +35,12 @@ import com.alibaba.fastjson.JSON;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
+import com.amkj.dmsh.bean.H5ShareBean;
 import com.amkj.dmsh.constant.AppUpdateUtils;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalComment;
 import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.dao.SoftApiDao;
 import com.amkj.dmsh.dominant.bean.DmlSearchCommentEntity.DmlSearchCommentBean;
 import com.amkj.dmsh.homepage.bean.JsInteractiveBean;
@@ -46,9 +48,8 @@ import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.SharedPreUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
-import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
-import com.amkj.dmsh.utils.webformatdata.ShareDataBean;
 import com.amkj.dmsh.views.HtmlWebView;
+import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.constant.RefreshState;
@@ -91,9 +92,9 @@ import static com.amkj.dmsh.constant.ConstantVariable.WEB_JD_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TAOBAO_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TB_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TMALL_SCHEME;
+import static com.amkj.dmsh.dao.BaiChuanDao.skipAliBC;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 import static com.amkj.dmsh.rxeasyhttp.interceptor.MyInterceptor.getCommonApiParameter;
-import static com.amkj.dmsh.dao.BaiChuanDao.skipAliBC;
 
 /**
  * Created by atd48 on 2016/6/30.
@@ -146,8 +147,8 @@ public class ArticleOfficialActivity extends BaseActivity {
     private float locationY;
     private String errorUrl;
     private String refreshStatus;
-    private ShareDataBean mShareDataBean;
     private AlertDialogHelper alertDialogHelper;
+    private H5ShareBean mShareBean;
 
 
     @Override
@@ -340,9 +341,9 @@ public class ArticleOfficialActivity extends BaseActivity {
         if (!TextUtils.isEmpty(this.refreshStatus)) {
             smart_web_refresh.setEnableRefresh(this.refreshStatus.contains("1"));
         } else {
-        smart_web_refresh.setEnableRefresh(refreshStatus == 1);
+            smart_web_refresh.setEnableRefresh(refreshStatus == 1);
+        }
     }
-}
 
     private String getRandomString(int length) { //length表示生成字符串的长度
         String base = "abcdefghijklmnopqrstuvwxyz0123456789";
@@ -409,16 +410,16 @@ public class ArticleOfficialActivity extends BaseActivity {
         @JavascriptInterface
         public void sharePage(String result) {
             runOnUiThread(() -> {
-                Map map = (Map) JSON.parse(result);
-                String title = (String) map.get("objName");
-//                String imageUrl = (String) map.get("imageUrl");
-                String content = (String) map.get("content");
-                String url = (String) map.get("url");
-                int objId = getStringChangeIntegers((String) map.get("objId"));
-                String routineUrl = (String) map.get("routineUrl");
-                CommunalWebDetailUtils.getCommunalWebInstance()
-                        .setShareData(getActivity(), new ShareDataBean(""
-                                , title, content, url, routineUrl, objId));
+                if (!TextUtils.isEmpty(result)) {
+                    H5ShareBean shareBean = new Gson().fromJson(result, H5ShareBean.class);
+                    UMShareAction umShareAction = new UMShareAction(getActivity()
+                            , ""
+                            , shareBean.getTitle()
+                            , shareBean.getDescription()
+                            , shareBean.getUrl(), shareBean.getRoutineUrl(), shareBean.getObjId(), shareBean.getShareType(), shareBean.getPlatform());
+                } else {
+                    showToast(getActivity(), "数据为空");
+                }
             });
         }
 
@@ -588,8 +589,9 @@ public class ArticleOfficialActivity extends BaseActivity {
         String url = (String) map.get("url");
         int objId = (int) map.get("objId");
         String routineUrl = (String) map.get("routineUrl");
-        mShareDataBean = new ShareDataBean(imageUrl
-                , title, content, url, routineUrl, objId);
+        int shareType = (int) map.get("shareType");
+        String platform = (String) map.get("platform");
+        mShareBean = new H5ShareBean(title, imageUrl, content, url, routineUrl, String.valueOf(objId), shareType, platform);
     }
 
     /**
@@ -731,8 +733,14 @@ public class ArticleOfficialActivity extends BaseActivity {
                 break;
             case R.id.iv_img_share:
             case R.id.iv_img_share2:
-                CommunalWebDetailUtils.getCommunalWebInstance()
-                        .setShareData(getActivity(), mShareDataBean);
+                if (mShareBean != null) {
+                    UMShareAction umShareAction = new UMShareAction(this
+                            , ""
+                            , getStrings(mShareBean.getTitle())
+                            , getStrings(mShareBean.getDescription())
+                            , getStrings(mShareBean.getUrl()), mShareBean.getRoutineUrl(), mShareBean.getObjId(), mShareBean.getShareType(), mShareBean.getPlatform());
+                }
+
                 break;
             case R.id.tv_publish_comment:
                 if (userId > 0) {
