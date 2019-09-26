@@ -36,7 +36,7 @@
     <string name="PasswordInconformity">密码必须是6-20个英文和数字组合组成</string>
     <string name="PasswordRule">密码为6-20个英文和数字组合组成</string>
     <string name="GetSmsCodeSuccess">获取验证码成功</string>
-    <string name="personal_name_hint">昵称由2-20个字组成</string>
+    <string name="personal_name_hint">昵称由2-10个字组成</string>
     <string name="personal_name_more_hint">字数超过限定</string>
     <string name="text_fonts_empty">请输入字符</string>
     <string name="buy_go_it">立即购买</string>

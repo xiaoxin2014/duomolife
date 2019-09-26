@@ -3,7 +3,6 @@ package com.amkj.dmsh.mine.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.text.emoji.widget.EmojiEditText;
-import android.text.Editable;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
@@ -17,9 +16,7 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.utils.ByteLimitWatcher;
 import com.amkj.dmsh.utils.KeyboardUtils;
-import com.amkj.dmsh.utils.TextWatchListener;
 import com.google.gson.Gson;
 
 import java.util.HashMap;
@@ -29,7 +26,6 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
-import static com.amkj.dmsh.constant.ConstantMethod.setEtFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
@@ -44,17 +40,12 @@ import static com.amkj.dmsh.constant.Url.MINE_CHANGE_DATA;
 public class SettingPersonalNameActivity extends BaseActivity {
     @BindView(R.id.edit_personal_name)
     EmojiEditText edit_personal_name;
-    @BindView(R.id.tv_personal_name_length)
-    TextView tv_personal_name_length;
     @BindView(R.id.tv_header_title)
     TextView tv_header_titleAll;
     @BindView(R.id.tv_header_shared)
     TextView header_shared;
     private String name;
     private final String NAME = "name";
-    private final int maxLength = 20;
-    private final int maxByteLength = 60;
-    private int textRemainLength;
 
     @Override
     protected int getContentView() {
@@ -72,10 +63,7 @@ public class SettingPersonalNameActivity extends BaseActivity {
         if (!TextUtils.isEmpty(name)) {
             edit_personal_name.setText(name);
             edit_personal_name.setSelection(name.length());
-            textRemainLength = maxLength - edit_personal_name.getText().toString().getBytes().length / 3;
-            tv_personal_name_length.setText(String.valueOf(textRemainLength < 0 ? 0 : textRemainLength));
         }
-        setEtFilter(edit_personal_name);
         KeyboardUtils.registerSoftInputChangedListener(this, new KeyboardUtils.OnSoftInputChangedListener() {
             @Override
             public void onSoftInputChanged(int height) {
@@ -100,14 +88,6 @@ public class SettingPersonalNameActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
-        ByteLimitWatcher byteLimitWatcher = new ByteLimitWatcher(edit_personal_name, new TextWatchListener() {
-            @Override
-            public void afterTextChanged(Editable s) {
-                textRemainLength = maxLength - s.toString().getBytes().length / 3;
-                tv_personal_name_length.setText(String.valueOf(textRemainLength < 0 ? 0 : textRemainLength));
-            }
-        }, maxByteLength);
-        edit_personal_name.addTextChangedListener(byteLimitWatcher);
     }
 
 
@@ -115,10 +95,10 @@ public class SettingPersonalNameActivity extends BaseActivity {
     void saveName(View view) {
         String name = edit_personal_name.getText().toString().trim();
         if (!TextUtils.isEmpty(name)) {
-            if (name.getBytes().length / 3 < 2) {
+            if (name.length()< 2) {
                 showToast(this, R.string.personal_name_hint);
             } else {
-                if (name.getBytes().length / 3 > maxLength) {
+                if (name.length()> 10) {
                     showToast(this, R.string.personal_name_more_hint);
                 } else {
                     if (loadHud != null) {
@@ -161,16 +141,6 @@ public class SettingPersonalNameActivity extends BaseActivity {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                showToast(SettingPersonalNameActivity.this,R.string.do_failed);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(SettingPersonalNameActivity.this,R.string.unConnectedNetwork);
             }
         });
     }

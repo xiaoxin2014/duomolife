@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.text.emoji.widget.EmojiTextView;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -78,7 +79,7 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
     @BindView(R.id.rImg_personal_header)
     ImageView rImg_personal_header;
     @BindView(R.id.tv_per_data_name)
-    TextView tv_per_data_name;
+    EmojiTextView tv_per_data_name;
     @BindView(R.id.tv_per_data_sex)
     TextView tv_per_data_sex;
     @BindView(R.id.tv_per_data_birth)

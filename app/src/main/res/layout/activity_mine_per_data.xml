@@ -97,7 +97,9 @@
                         android:textColor="@color/text_black_t"
                         android:textSize="@dimen/sc_mm_28" />
 
-                    <TextView
+                    <android.support.text.emoji.widget.EmojiTextView
+                        android:ellipsize="end"
+                        android:maxLength="10"
                         android:id="@+id/tv_per_data_name"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"

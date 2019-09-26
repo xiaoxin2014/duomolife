@@ -82,22 +82,26 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
+                        android:maxLength="10"
                         android:maxLines="1"
                         android:text="@string/defaul"
                         android:textColor="@color/white"
                         android:textSize="@dimen/sc_mm_34"/>
 
                     <TextView
-                        android:visibility="gone"
                         android:id="@+id/tv_bind_phone"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/sc_mm_30"
+                        android:layout_marginRight="@dimen/sc_mm_20"
                         android:drawableLeft="@drawable/bind_phone"
                         android:drawablePadding="@dimen/sc_mm_5"
+                        android:ellipsize="end"
+                        android:maxLines="1"
                         android:text="关联手机账号"
                         android:textColor="@color/text_white_transcurent"
-                        android:textSize="@dimen/sc_mm_26"/>
+                        android:textSize="@dimen/sc_mm_26"
+                        android:visibility="gone"/>
                 </LinearLayout>
 
                 <LinearLayout
