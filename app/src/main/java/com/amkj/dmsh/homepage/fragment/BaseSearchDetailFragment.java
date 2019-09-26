@@ -355,28 +355,38 @@ public abstract class BaseSearchDetailFragment extends BaseFragment {
             switch (type) {
                 case COUPON:
                 case COUPON_PACKAGE:
-                    if (isContextExisted(getActivity())) {
-                        GlideImageLoaderUtil.loadFinishImgDrawable(getActivity(), imgUrl, new GlideImageLoaderUtil.ImageLoaderFinishListener() {
-                            @Override
-                            public void onSuccess(Bitmap bitmap) {
-                                if (mSearchDialogImage == null) {
-                                    mSearchDialogImage = new AlertDialogImage(getActivity());
-                                    mSearchDialogImage.hideCloseBtn();
-                                }
-                                mSearchDialogImage.setAlertClickListener(() -> {
-                                    mSearchDialogImage.dismiss();
-                                    openCoupon(getStringChangeIntegers(watchwordBean.getObjId()), type);
-                                });
-                                mSearchDialogImage.setImage(bitmap);
-                                mSearchDialogImage.show();
-                            }
-
-                            @Override
-                            public void onError() {
-
-                            }
-                        });
+                    if (mSearchDialogImage == null) {
+                        mSearchDialogImage = new AlertDialogImage(getActivity());
+                        mSearchDialogImage.hideCloseBtn();
                     }
+                    mSearchDialogImage.setAlertClickListener(() -> {
+                        mSearchDialogImage.dismiss();
+                        openCoupon(getStringChangeIntegers(watchwordBean.getObjId()), type);
+                    });
+
+                    //如果有返回图片
+                    if (!TextUtils.isEmpty(imgUrl)) {
+                        if (isContextExisted(getActivity())) {
+                            GlideImageLoaderUtil.loadFinishImgDrawable(getActivity(), imgUrl, new GlideImageLoaderUtil.ImageLoaderFinishListener() {
+                                @Override
+                                public void onSuccess(Bitmap bitmap) {
+                                    mSearchDialogImage.setImage(bitmap);
+                                    mSearchDialogImage.show();
+                                }
+
+                                @Override
+                                public void onError() {
+                                    mSearchDialogImage.setImageResource(R.drawable.red_packet);
+                                    mSearchDialogImage.show();
+                                }
+                            });
+                        }
+                    } else {
+                        //没有返回加载本地
+                        mSearchDialogImage.setImageResource(R.drawable.red_packet);
+                        mSearchDialogImage.show();
+                    }
+
                     break;
                 case SKIP_LINK:
                     setSkipPath(getActivity(), watchwordBean.getAndroidLink(), false);

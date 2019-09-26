@@ -177,7 +177,7 @@ public class TopicDetailActivity extends BaseActivity {
             case R.id.tv_header_shared:
                 if (topicDetailEntity != null) {
                     UMShareAction umShareAction = new UMShareAction(getActivity()
-                            , ""
+                            , topicDetailEntity.getImgUrl()
                             , topicDetailEntity.getTitle()
                             , topicDetailEntity.getContent()
                             , BASE_SHARE_PAGE_TWO + "m/template/find_template/themeDetails.html" + "?id=" + topicDetailEntity.getId()

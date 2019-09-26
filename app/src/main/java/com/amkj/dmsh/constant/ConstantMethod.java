@@ -1381,7 +1381,9 @@ public class ConstantMethod {
         Map<String, Object> params = new HashMap<>();
         //回复文章或帖子
         params.put("id", adId);
-        params.put("type", type);
+        if (type != 0) {
+            params.put("type", type);
+        }
         NetLoadUtils.getNetInstance().loadNetDataPost(activity, TOTAL_AD_COUNT, params, null);
     }
 

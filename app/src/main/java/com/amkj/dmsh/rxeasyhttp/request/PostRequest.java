@@ -86,7 +86,7 @@ public class PostRequest extends BaseBodyRequest<PostRequest> {
     public <T> Disposable execute(Context context, CallBackProxy<? extends ApiResult<T>, T> proxy) {
         Observable<CacheResult<T>> observable;
         if (context instanceof BaseActivity) {
-            observable = build().toObservable(generateRequest(), proxy).compose(RxLife.with(((BaseActivity) context)).bindToLifecycle());
+            observable = build().toObservable(generateRequest(), proxy).compose(RxLife.with(((BaseActivity) context)).bindOnDestroy());
         } else {
             observable = build().toObservable(generateRequest(), proxy);
         }

@@ -28,12 +28,22 @@ public class TopicDetailEntity extends BaseEntity {
     private String reminder;//编辑框导语
     private String videoUrl;
     private String firstImgUrl;
+    private String imgUrl;
     private int participantNum;
     private int nicePostNum;
     private int isFocus;
     private int score;
     private String rewardTip;//奖励提示
     private String isProductTopic;//是否是商品晒单话题
+
+
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
+    }
 
     public boolean isProductTopic() {
         return isProductTopic.equals("1");

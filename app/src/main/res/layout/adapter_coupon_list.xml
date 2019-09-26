@@ -20,6 +20,8 @@
         android:textSize="@dimen/sc_mm_34"/>
 
     <TextView
+        android:layout_alignBaseline="@+id/tv_rmb"
+        android:text="100"
         android:id="@+id/tv_mount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -27,9 +29,10 @@
         android:layout_marginBottom="@dimen/sc_mm_32"
         android:layout_toRightOf="@+id/tv_rmb"
         android:textColor="@color/dialog_red"
-        android:textSize="@dimen/sc_mm_86"/>
+        android:textSize="@dimen/sc_mm_70"/>
 
     <TextView
+        android:layout_marginRight="@dimen/sc_mm_10"
         android:id="@+id/tv_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -42,12 +45,14 @@
         android:textSize="@dimen/sc_mm_24"/>
 
     <TextView
+        android:layout_marginRight="@dimen/sc_mm_10"
+        android:layout_alignBaseline="@+id/tv_mount"
         android:id="@+id/tv_condition"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginLeft="@dimen/sc_mm_16"
-        android:layout_marginTop="@dimen/sc_mm_16"
+        android:layout_marginTop="@dimen/sc_mm_6"
         android:layout_marginBottom="@dimen/sc_mm_34"
         android:layout_toRightOf="@+id/tv_mount"
         android:ellipsize="end"
