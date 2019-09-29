@@ -32,7 +32,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.MINE_CHANGE_DATA;
 
-;
 
 /**
  * Created by atd48 on 2016/8/18.

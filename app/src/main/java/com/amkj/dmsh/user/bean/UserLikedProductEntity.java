@@ -241,6 +241,7 @@ public class UserLikedProductEntity extends BaseEntity implements Comparable<Use
         private String picUrl;
         @SerializedName(value = "price", alternate = "preferentialPrice")
         private String price;
+        @SerializedName(value = "subtitle", alternate = "subTitle")
         private String subtitle;
         private int quantity = 1;
         private int itemType;

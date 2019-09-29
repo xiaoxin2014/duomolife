@@ -458,6 +458,7 @@ public class ArticleOfficialActivity extends BaseActivity {
                             break;
                         case "alibcUrl":
                             jsSkipTaoBao(jsInteractiveBean.getOtherData());
+                            break;
                         case "navigationBar":
                             runOnUiThread(() -> jsSetNavBar(jsInteractiveBean.getOtherData()));
                             break;

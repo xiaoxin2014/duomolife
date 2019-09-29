@@ -74,7 +74,9 @@ public class PostEntity extends BaseEntity {
         private String favorNum;
         private String isFavor;
         private int articletype;
+        @SerializedName(value = "coverWidth", alternate = "coverwidth")
         private int coverWidth;
+        @SerializedName(value = "coverHeight", alternate = "coverheight")
         private int coverHeight;
         private String topicId;
 

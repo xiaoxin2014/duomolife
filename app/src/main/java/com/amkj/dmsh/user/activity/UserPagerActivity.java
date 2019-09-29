@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.dao.SoftApiDao;
 import com.amkj.dmsh.find.adapter.UserPostPagerAdapter;
 import com.amkj.dmsh.find.bean.EventMessageBean;
@@ -40,6 +41,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.DELETE_POST;
 import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_FOLLOW_STATUS;
 import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_POST_CONTENT;
 import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_USER_PAGER;
+import static com.amkj.dmsh.constant.Url.BASE_SHARE_PAGE_TWO;
 
 
 /**
@@ -172,7 +174,11 @@ public class UserPagerActivity extends BaseActivity {
                 break;
             case R.id.iv_img_share:
                 if (userInfoBean != null) {
-
+                    new UMShareAction(this, userInfoBean.getAvatar(),
+                            "快来多么生活看看我的分享吧~",
+                            "幸福生活美美哒~",
+                            BASE_SHARE_PAGE_TWO + "m/template/mine/other_finds.html?fuid=" + userId,
+                            getStringChangeIntegers(userId));
                 }
                 break;
             case R.id.tv_follow:
