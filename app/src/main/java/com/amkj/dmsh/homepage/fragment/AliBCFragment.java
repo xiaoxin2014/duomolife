@@ -50,6 +50,7 @@ import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.homepage.bean.JsInteractiveBean;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
+import com.amkj.dmsh.shopdetails.activity.DirectIndentWriteActivity;
 import com.amkj.dmsh.utils.CalendarReminderUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
 import com.amkj.dmsh.utils.Log;
@@ -748,6 +749,10 @@ public class AliBCFragment extends BaseFragment {
                         case "notificationStatus":
                             notificationStatusCallback();
                             break;
+                        //跳转订单填写页面
+                        case "skipIndentWrite":
+                            skipIndentWrite(jsInteractiveBean.getOtherData());
+                            break;
                         default:
                             jsInteractiveEmpty(null);
                             break;
@@ -758,6 +763,18 @@ public class AliBCFragment extends BaseFragment {
             } catch (Exception e) {
                 jsInteractiveException(null);
                 e.printStackTrace();
+            }
+        }
+    }
+
+    //跳转订单填写
+    private void skipIndentWrite(Map<String, Object> data) {
+        if (data != null) {
+            String goods = (String) data.get("goods");
+            if (!TextUtils.isEmpty(goods)) {
+                Intent intent = new Intent(getActivity(), DirectIndentWriteActivity.class);
+                intent.putExtra("goods", goods);
+                startActivity(intent);
             }
         }
     }

@@ -2,7 +2,6 @@ package com.amkj.dmsh.mine.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Parcelable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -156,7 +155,7 @@ public class ShopCarActivity extends BaseActivity {
     private UserLikedProductEntity likedProduct;
     private AlertDialogHelper alertDialogHelper;
     private ShopCarEntity mShopCarNewInfoEntity;
-    private boolean first=true;
+    private boolean first = true;
     private int mNum;
     private int mPosition;
 
@@ -553,10 +552,10 @@ public class ShopCarActivity extends BaseActivity {
                 Intent intent = new Intent(ShopCarActivity.this, DirectIndentWriteActivity.class);
                 if (settlementGoods.size() > 0 || combineGoods.size() > 0) {
                     if (settlementGoods.size() > 0) {
-                        intent.putParcelableArrayListExtra("goods", (ArrayList<? extends Parcelable>) settlementGoods);
+                        intent.putExtra("goods", new Gson().toJson(settlementGoods));
                     }
                     if (combineGoods.size() > 0) {
-                        intent.putParcelableArrayListExtra("combineGoods", (ArrayList<? extends Parcelable>) combineGoods);
+                        intent.putExtra("combineGoods", new Gson().toJson(combineGoods));
                     }
                     startActivity(intent);
                 } else {

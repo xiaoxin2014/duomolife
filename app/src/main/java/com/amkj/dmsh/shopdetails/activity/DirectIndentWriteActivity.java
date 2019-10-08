@@ -68,6 +68,7 @@ import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.RectAddAndSubWriteView;
 import com.amkj.dmsh.views.bottomdialog.SkuDialog;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 import com.tencent.bugly.crashreport.CrashReport;
@@ -209,10 +210,27 @@ public class DirectIndentWriteActivity extends BaseActivity {
         tv_header_titleAll.setText("订单填写");
         header_shared.setVisibility(View.INVISIBLE);
         Intent intent = getIntent();
-        passGoods = intent.getParcelableArrayListExtra("goods");
-        combineGoods = intent.getParcelableArrayListExtra("combineGoods");
-        groupShopDetailsBean = intent.getParcelableExtra("gpShopInfo");
-        orderNo = intent.getStringExtra("orderNo");
+        try {
+            Gson gson = new Gson();
+            String goodsJson = intent.getStringExtra("goods");
+            String combineGoodsJson = intent.getStringExtra("combineGoods");
+            String gpShopInfo = intent.getStringExtra("gpShopInfo");
+            if (!TextUtils.isEmpty(goodsJson)) {
+                passGoods = gson.fromJson(goodsJson, new TypeToken<List<CartInfoBean>>() {
+                }.getType());
+            }
+            if (!TextUtils.isEmpty(combineGoodsJson)) {
+                combineGoods = gson.fromJson(combineGoodsJson, new TypeToken<List<CombineGoodsBean>>() {
+                }.getType());
+            }
+            if (!TextUtils.isEmpty(gpShopInfo)) {
+                groupShopDetailsBean = gson.fromJson(gpShopInfo, GroupShopDetailsBean.class);
+            }
+            orderNo = intent.getStringExtra("orderNo");
+        } catch (Exception e) {
+            showToast(this, "商品信息有误，请重试");
+            finish();
+        }
 //        地址栏
         View headerView = LayoutInflater.from(this).inflate(R.layout.layout_direct_indent_write_header_address, (ViewGroup) communal_recycler.getParent(), false);
         pullHeaderView = new PullHeaderView();
@@ -235,7 +253,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
             }
         });
 
-        if (passGoods != null || combineGoods != null || orderNo != null) {
+        if ((passGoods != null && passGoods.size() > 0) || (combineGoods != null && combineGoods.size() > 0) || !TextUtils.isEmpty(orderNo)) {
             if (passGoods != null) {
                 discountBeanList.clear();
                 for (int i = 0; i < passGoods.size(); i++) {

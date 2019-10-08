@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AlertDialog;
@@ -1609,7 +1608,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 //            结算商品 跳转订单填写
             Intent intent = new Intent(getActivity(), DirectIndentWriteActivity.class);
             intent.putExtra("uid", userId);
-            intent.putParcelableArrayListExtra("goods", (ArrayList<? extends Parcelable>) settlementGoods);
+            intent.putExtra("goods", new Gson().toJson(settlementGoods));
             startActivity(intent);
         } else {
             if (skuDialog != null) {

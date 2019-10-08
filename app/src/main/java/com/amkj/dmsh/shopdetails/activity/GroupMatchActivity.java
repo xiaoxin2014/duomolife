@@ -1,7 +1,6 @@
 package com.amkj.dmsh.shopdetails.activity;
 
 import android.content.Intent;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -247,7 +246,7 @@ public class GroupMatchActivity extends BaseActivity {
 
     //获取组合商品详细信息
     private void getGroupGoods(String id) {
-        String url =  Url.Q_GROUP_GOODS_DETAIL;
+        String url = Url.Q_GROUP_GOODS_DETAIL;
         Map<String, Object> params = new HashMap<>();
         params.put("productId", id);
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
@@ -402,7 +401,7 @@ public class GroupMatchActivity extends BaseActivity {
 
         combineGoods.add(combineGoodsBean);
         Intent intent = new Intent(this, DirectIndentWriteActivity.class);
-        intent.putParcelableArrayListExtra("combineGoods", (ArrayList<? extends Parcelable>) combineGoods);
+        intent.putExtra("combineGoods", new Gson().toJson(combineGoods));
         startActivity(intent);
     }
 

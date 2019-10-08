@@ -2,7 +2,6 @@ package com.amkj.dmsh.dominant.activity;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -1008,9 +1007,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                 }
             } else if (shopDetailsEntity != null && shopDetailsEntity.getGroupShopDetailsBean() != null) {
                 Intent intent = new Intent(QualityGroupShopDetailActivity.this, DirectIndentWriteActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putParcelable("gpShopInfo", shopDetailsEntity.getGroupShopDetailsBean());
-                intent.putExtras(bundle);
+                intent.putExtra("gpShopInfo", new Gson().toJson(shopDetailsEntity.getGroupShopDetailsBean()));
                 startActivity(intent);
             }
         } else {
@@ -1078,9 +1075,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                             groupShopDetailsBean.setGpStatus(2);
                             groupShopDetailsBean.setGpRecordId(groupShopjoinBean.getGpRecordId());
                             Intent intent = new Intent(QualityGroupShopDetailActivity.this, DirectIndentWriteActivity.class);
-                            Bundle bundle = new Bundle();
-                            bundle.putParcelable("gpShopInfo", groupShopDetailsBean);
-                            intent.putExtras(bundle);
+                            intent.putExtra("gpShopInfo", new Gson().toJson(groupShopDetailsBean));
                             startActivity(intent);
                         } else if (joinType.equals(shareJoinGroup) && qualityGroupShareEntity != null) {
                             QualityGroupShareBean qualityGroupShareBean = qualityGroupShareEntity.getQualityGroupShareBean();
@@ -1097,9 +1092,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                             groupShopDetailsBean.setName(qualityGroupShareBean.getName());
                             groupShopDetailsBean.setGpPrice(qualityGroupShareBean.getGpPrice());
                             Intent intent = new Intent(QualityGroupShopDetailActivity.this, DirectIndentWriteActivity.class);
-                            Bundle bundle = new Bundle();
-                            bundle.putParcelable("gpShopInfo", groupShopDetailsBean);
-                            intent.putExtras(bundle);
+                            intent.putExtra("gpShopInfo", new Gson().toJson(groupShopDetailsBean));
                             startActivity(intent);
                         }
                     } else {
