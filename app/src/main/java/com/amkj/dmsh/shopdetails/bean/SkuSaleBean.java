@@ -3,6 +3,8 @@ package com.amkj.dmsh.shopdetails.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by xiaoxin on 2019/6/17
  * Version:v4.1.0
@@ -21,10 +23,13 @@ public class SkuSaleBean implements Parcelable {
      * newUserTag : null
      */
 
+    @SerializedName(value = "id")
     private int id;
     private int productId;
     private String price;
+    @SerializedName(value = "quantity")
     private int quantity;
+    @SerializedName(value = "propValues")
     private String propValues;  //sku，多个propValueId之间用逗号隔开   例如L,白色
     private int type;
     private int isNotice;

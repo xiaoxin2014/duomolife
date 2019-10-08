@@ -1,8 +1,11 @@
 package com.amkj.dmsh.shopdetails.bean;
 
+import android.text.TextUtils;
+
+import com.amkj.dmsh.shopdetails.bean.GroupGoodsEntity.GroupGoodsBean.CombineCommonBean;
+import com.amkj.dmsh.shopdetails.bean.IndentWriteEntity.IndentWriteBean.PrerogativeActivityInfo.GoodsListBean;
 import com.amkj.dmsh.shopdetails.bean.ShopDetailsEntity.ShopPropertyBean.CombineProductInfoBean;
 import com.amkj.dmsh.shopdetails.bean.ShopDetailsEntity.ShopPropertyBean.PresentProductInfoBean;
-import com.amkj.dmsh.shopdetails.bean.GroupGoodsEntity.GroupGoodsBean.CombineCommonBean;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -99,6 +102,23 @@ public class EditGoodsSkuEntity {
                 setShopCarEdit(true);
                 this.skuId = CombineCommonBean.getSkuId();
             }
+            this.isCombine = true;
+        }
+
+
+        public EditGoodsSkuBean(GoodsListBean goodsListBean) {
+            if (TextUtils.isEmpty(goodsListBean.getPicUrl())) {
+                this.picUrl = goodsListBean.getPicUrl();
+            }
+
+            if (!TextUtils.isEmpty(goodsListBean.getProductName())) {
+                this.productName = goodsListBean.getProductName();
+            }
+            this.id = goodsListBean.getProductId();
+//            this.quantity = goodsListBean.get();
+            this.skuSale = goodsListBean.getSkuSale();
+            this.propvalues = goodsListBean.getPropValues();
+            this.props = goodsListBean.getProps();
             this.isCombine = true;
         }
 

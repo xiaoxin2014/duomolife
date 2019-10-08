@@ -251,6 +251,7 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                         case 5:
                         case 6:
                         case 8:
+                        case 10:
                             helper.setText(R.id.tv_communal_activity_tag_rule, getStrings(activityInfoData.getActivityRule()));
                             break;
                         //不显示规则，显示倒计时，可以进入专场

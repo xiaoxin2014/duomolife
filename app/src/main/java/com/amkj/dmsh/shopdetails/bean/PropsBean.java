@@ -3,6 +3,8 @@ package com.amkj.dmsh.shopdetails.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by xiaoxin on 2019/6/17
  * Version:v4.1.0
@@ -15,6 +17,7 @@ public class PropsBean implements Parcelable {
      * praentId : 0
      */
 
+    @SerializedName(value = "propId")
     private int propId;  //属性id
     private String propName;//属性名称
     private int praentId;
@@ -43,6 +46,7 @@ public class PropsBean implements Parcelable {
         this.praentId = praentId;
     }
 
+
     @Override
     public int describeContents() {
         return 0;
@@ -64,7 +68,7 @@ public class PropsBean implements Parcelable {
         this.praentId = in.readInt();
     }
 
-    public static final Parcelable.Creator<PropsBean> CREATOR = new Parcelable.Creator<PropsBean>() {
+    public static final Creator<PropsBean> CREATOR = new Creator<PropsBean>() {
         @Override
         public PropsBean createFromParcel(Parcel source) {
             return new PropsBean(source);

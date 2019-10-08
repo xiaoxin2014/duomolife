@@ -40,9 +40,12 @@ import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.adapter.DirectProductListAdapter;
 import com.amkj.dmsh.shopdetails.adapter.IndentDiscountAdapter;
 import com.amkj.dmsh.shopdetails.bean.CombineGoodsBean;
+import com.amkj.dmsh.shopdetails.bean.EditGoodsSkuEntity.EditGoodsSkuBean;
 import com.amkj.dmsh.shopdetails.bean.IndentProDiscountBean;
 import com.amkj.dmsh.shopdetails.bean.IndentWriteEntity;
 import com.amkj.dmsh.shopdetails.bean.IndentWriteEntity.IndentWriteBean;
+import com.amkj.dmsh.shopdetails.bean.IndentWriteEntity.IndentWriteBean.PrerogativeActivityInfo;
+import com.amkj.dmsh.shopdetails.bean.IndentWriteEntity.IndentWriteBean.PrerogativeActivityInfo.GoodsListBean;
 import com.amkj.dmsh.shopdetails.bean.IndentWriteEntity.IndentWriteBean.ProductsBean;
 import com.amkj.dmsh.shopdetails.bean.IndentWriteEntity.IndentWriteBean.ProductsBean.ProductInfoBean;
 import com.amkj.dmsh.shopdetails.bean.IndentWriteEntity.IndentWriteBean.UserCouponInfoBean;
@@ -53,6 +56,7 @@ import com.amkj.dmsh.shopdetails.bean.QualityCreateWeChatPayIndentBean;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateWeChatPayIndentBean.ResultBean.PayKeyBean;
 import com.amkj.dmsh.shopdetails.bean.ShopCarGoodsSkuTransmit;
 import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
+import com.amkj.dmsh.shopdetails.dialog.AlertDialogPurchase;
 import com.amkj.dmsh.shopdetails.integration.bean.AddressListEntity;
 import com.amkj.dmsh.shopdetails.payutils.AliPay;
 import com.amkj.dmsh.shopdetails.payutils.UnionPay;
@@ -62,6 +66,7 @@ import com.amkj.dmsh.utils.TextWatchListener;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.RectAddAndSubWriteView;
+import com.amkj.dmsh.views.bottomdialog.SkuDialog;
 import com.google.gson.Gson;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
@@ -183,6 +188,9 @@ public class DirectIndentWriteActivity extends BaseActivity {
     private List<ProductInfoBean> productInfoList = new ArrayList<>();
     private int mNum;
     private boolean first = true;
+    private AlertDialogPurchase mAlertDialogPurchase;
+    //选中的加价购商品id
+    private int purchaseProductId;
 
 
     @Override
@@ -430,8 +438,64 @@ public class DirectIndentWriteActivity extends BaseActivity {
         }
     }
 
+    //显示加价购弹窗
+    private void showPurchaseDialog(IndentWriteBean indentWriteBean) {
+        PrerogativeActivityInfo purchaseBean = indentWriteBean.getPurchaseBean();
+        if (purchaseBean != null) {
+            List<GoodsListBean> goodsList = purchaseBean.getGoodsList();
+            if (goodsList != null && goodsList.size() > 0) {
+                if (mAlertDialogPurchase == null) {
+                    mAlertDialogPurchase = new AlertDialogPurchase(this);
+                }
+                mAlertDialogPurchase.setAddOrderListener(() -> {
+                    mAlertDialogPurchase.dismiss();
+                    int currentItem = mAlertDialogPurchase.getCurrentItem();
+                    GoodsListBean goodsListBean = goodsList.get(currentItem);
+                    List<SkuSaleBean> skuSale = goodsListBean.getSkuSale();
+                    if (skuSale == null) return;
+                    //有多个sku
+                    if (skuSale.size() > 1) {
+                        EditGoodsSkuBean editGoodsSkuBean = new EditGoodsSkuBean(goodsListBean);
+                        SkuDialog skuDialog = new SkuDialog(this);
+                        editGoodsSkuBean.setShowBottom(true);
+                        skuDialog.refreshView(editGoodsSkuBean);
+                        skuDialog.show();
+                        skuDialog.getGoodsSKu(shopCarGoodsSku -> {
+                            if (shopCarGoodsSku != null) {
+                                //重新获取结算信息
+                                increasePurchase(goodsListBean.getProductId(), shopCarGoodsSku.getSaleSkuId());
+                            }
+                        });
+                        //只有一个sku
+                    } else if (skuSale.size() == 1) {
+                        SkuSaleBean skuSaleBean = skuSale.get(0);
+                        //重新获取结算信息
+                        increasePurchase(goodsListBean.getProductId(), skuSaleBean.getId());
+                    }
+                });
+                mAlertDialogPurchase.show();
+                mAlertDialogPurchase.updateData(purchaseBean);
+            }
+        }
+    }
+
+
+    //加入加价购商品并重新获取结算信息
+    private void increasePurchase(int productId, int SaleSkuId) {
+        loadHud.show();
+        IndentProDiscountBean indentProBean = new IndentProDiscountBean();
+        indentProBean.setId(productId);
+        indentProBean.setSaleSkuId(SaleSkuId);
+        indentProBean.setCount(1);
+        indentProBean.setIsPrerogative(1);
+        discountBeanList.add(indentProBean);
+        purchaseProductId = productId;//记录选中的加价购商品id
+        getIndentDiscounts(false);
+    }
+
     //设置所有结算信息
     private void setDiscountsInfo(IndentWriteBean indentWriteBean) {
+        showPurchaseDialog(indentWriteBean);
         //实名制相关
         isReal = indentWriteBean.isReal();
         tv_indent_write_commit.setEnabled(indentWriteBean.getAllProductNotBuy() == 0);
@@ -454,7 +518,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
 
         List<ProductsBean> products = indentWriteBean.getProducts();
         //组装创建订单商品信息并更新结算商品信息
-        List[] indentInfo = ShopCarDao.getIndentGoodsInfo(products);
+        List[] indentInfo = ShopCarDao.getIndentGoodsInfo(products, purchaseProductId);
         discountBeanList = indentInfo[0];
         combineGoods = indentInfo[1];
         //组装商品展示信息
@@ -1551,6 +1615,10 @@ public class DirectIndentWriteActivity extends BaseActivity {
         if (payCancelDialogHelper != null
                 && payCancelDialogHelper.getAlertDialog() != null && payCancelDialogHelper.getAlertDialog().isShowing()) {
             payCancelDialogHelper.dismiss();
+        }
+
+        if (mAlertDialogPurchase != null && mAlertDialogPurchase.isShowing()) {
+            mAlertDialogPurchase.dismiss();
         }
 
         KeyboardUtils.unregisterSoftInputChangedListener(this);

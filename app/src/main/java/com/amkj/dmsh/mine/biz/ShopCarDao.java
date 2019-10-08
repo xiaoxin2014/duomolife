@@ -430,8 +430,13 @@ public class ShopCarDao {
         }
     }
 
-    //获取创建订单商品信息
-    public static List[] getIndentGoodsInfo(List<ProductsBean> products) {
+    /**
+     * 获取创建订单商品信息
+     *
+     * @param purchaseProductId 不为0表示包含加价购商品
+     */
+    public static List[] getIndentGoodsInfo(List<ProductsBean> products, int purchaseProductId) {
+
         List[] info = new List[2];
         List<CombineGoodsBean> combineGoodsList = new ArrayList<>();//组合商品信息
         List<IndentProDiscountBean> goodsList = new ArrayList<>();//普通商品信息
@@ -466,6 +471,10 @@ public class ShopCarDao {
                     indentProDiscountBean.setId(productInfoBean.getId());
                     indentProDiscountBean.setCount(productInfoBean.getCount());
                     indentProDiscountBean.setCartId(productInfoBean.getCartId());
+                    if (purchaseProductId != 0 && purchaseProductId == productInfoBean.getId()) {
+                        indentProDiscountBean.setIsPrerogative(1);
+                        productInfoBean.setIsPrerogative(1);
+                    }
                     goodsList.add(indentProDiscountBean);
                 }
 
@@ -492,10 +501,12 @@ public class ShopCarDao {
                     jsonObject.put("zhPrice", productInfoBean.getZhPrice());
                 }
 
-                if (activityInfo != null && (productInfoBean.getCombineMainId() != 0 || productInfoBean.getCombineMatchId() != 0)) {
-                    jsonObject.put("activityCode", activityInfo.getActivityCode());
+                //组合商品或者加价购商品获取优惠券时需要传activityCode
+                if (activityInfo != null) {
+                    if (productInfoBean.getCombineMainId() != 0 || productInfoBean.getCombineMatchId() != 0 || productInfoBean.isPrerogative()){
+                        jsonObject.put("activityCode", activityInfo.getActivityCode());
+                    }
                 }
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }

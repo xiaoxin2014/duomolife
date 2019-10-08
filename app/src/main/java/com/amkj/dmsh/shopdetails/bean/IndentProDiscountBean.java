@@ -11,6 +11,16 @@ public class IndentProDiscountBean {
     private int saleSkuId;
     private int count;
     private int cartId;
+    private int isPrerogative;
+
+
+    public int getIsPrerogative() {
+        return isPrerogative;
+    }
+
+    public void setIsPrerogative(int isPrerogative) {
+        this.isPrerogative = isPrerogative;
+    }
 
     public int getCartId() {
         return cartId;

@@ -6,6 +6,7 @@
     <color name="bg_color">#F2F2F2</color>
     <color name="home_text_color">#6a6969</color>
     <color name="login_text_color">#8d8d8d</color>
+    <color name="login_text_color_gray">#d8d8d8</color>
     <color name="text_name">#8e8e8e</color>
     <color name="text_time">#929292</color>
     <color name="transparent_header">#7fffffff</color>

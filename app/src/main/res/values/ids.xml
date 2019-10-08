@@ -20,7 +20,7 @@
     <item type="id" name="statusbarutil_translucent_view" />
     <item name="time_due" type="id"/>
     <item name="tag_obj" type="id"/>
-    <item name="main_page" type="id">mainPage</item>
+    <item name="main_page" type="id"/>
     <!--身份证识别-->
     <item name="id_tag" type="id"/>
 </resources>

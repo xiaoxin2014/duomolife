@@ -5,6 +5,7 @@ import android.os.Parcelable;
 import android.text.TextUtils;
 
 import com.amkj.dmsh.base.BaseTimeEntity;
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.mine.bean.ActivityInfoBean;
 
 import java.util.List;
@@ -56,6 +57,15 @@ public class IndentWriteEntity extends BaseTimeEntity {
         private UserCouponInfoBean userCouponInfo;
         private List<PriceInfoBean> priceInfos;
         private List<ProductsBean> products;
+        private PrerogativeActivityInfo prerogativeActivityInfo;
+
+        public PrerogativeActivityInfo getPurchaseBean() {
+            return prerogativeActivityInfo;
+        }
+
+        public void setPrerogativeActivityInfo(PrerogativeActivityInfo prerogativeActivityInfo) {
+            this.prerogativeActivityInfo = prerogativeActivityInfo;
+        }
 
         public String getRealName() {
             return realName;
@@ -286,6 +296,16 @@ public class IndentWriteEntity extends BaseTimeEntity {
                 //存储活动信息
                 private ActivityInfoBean activityInfoBean;
 
+                //是否是加价购商品
+                private int isPrerogative;
+
+                public boolean isPrerogative() {
+                    return isPrerogative==1;
+                }
+
+                public void setIsPrerogative(int isPrerogative) {
+                    this.isPrerogative = isPrerogative;
+                }
 
                 public String getZhPrice() {
                     return zhPrice;
@@ -448,7 +468,6 @@ public class IndentWriteEntity extends BaseTimeEntity {
                 }
 
 
-
                 public static class PresentInfo implements Parcelable {
 
                     /**
@@ -581,6 +600,133 @@ public class IndentWriteEntity extends BaseTimeEntity {
                         return new ProductInfoBean[size];
                     }
                 };
+            }
+        }
+
+        public static class PrerogativeActivityInfo {
+            private String activityText;
+            private String activityCode;
+
+            public String getActivityText() {
+                return activityText;
+            }
+
+            public void setActivityText(String activityText) {
+                this.activityText = activityText;
+            }
+
+            public String getActivityCode() {
+                return activityCode;
+            }
+
+            public void setActivityCode(String activityCode) {
+                this.activityCode = activityCode;
+            }
+
+            private List<GoodsListBean> goodsList;
+
+            public List<GoodsListBean> getGoodsList() {
+                return goodsList;
+            }
+
+            public void setGoodsList(List<GoodsListBean> goodsList) {
+                this.goodsList = goodsList;
+            }
+
+            public static class GoodsListBean {
+                /**
+                 * productId : 7270
+                 * productName : 正宗海鸭蛋广西北海红树湾咸鸭蛋 60g*8枚 标准蛋
+                 * picUrl : http://image.domolife.cn/platform/20170516/20170516183411499.jpg
+                 * price : 专享价：￥2元起
+                 * discountPrice : 比单独购买少￥26元起
+                 * skuSale : [{"id":"1217","price":"2","quantity":"5","propValues":"8237"}]
+                 * props : [{"propId":"1","propName":"默认"}]
+                 * propValues : [{"propId":"1","propValueId":"8237","propValueName":"默认","propValueUrl":""}]
+                 */
+
+                private String productId;
+                private String productName;
+                private String subTitle;
+                private String picUrl;
+                private String price;
+                private String discountPrice;
+                private List<SkuSaleBean> skuSale;
+                private List<PropsBean> props;
+                private List<PropvaluesBean> propValues;
+
+
+                public String getSubTitle() {
+                    return TextUtils.isEmpty(subTitle) ? "" : subTitle + " • ";
+                }
+
+                public void setSubTitle(String subTitle) {
+                    this.subTitle = subTitle;
+                }
+
+                public int getProductId() {
+                    return ConstantMethod.getStringChangeIntegers(productId);
+                }
+
+                public void setProductId(String productId) {
+                    this.productId = productId;
+                }
+
+                public String getProductName() {
+                    return productName;
+                }
+
+                public void setProductName(String productName) {
+                    this.productName = productName;
+                }
+
+                public String getPicUrl() {
+                    return picUrl;
+                }
+
+                public void setPicUrl(String picUrl) {
+                    this.picUrl = picUrl;
+                }
+
+                public String getPrice() {
+                    return price;
+                }
+
+                public void setPrice(String price) {
+                    this.price = price;
+                }
+
+                public String getDiscountPrice() {
+                    return discountPrice;
+                }
+
+                public void setDiscountPrice(String discountPrice) {
+                    this.discountPrice = discountPrice;
+                }
+
+                public List<SkuSaleBean> getSkuSale() {
+                    return skuSale;
+                }
+
+                public void setSkuSale(List<SkuSaleBean> skuSale) {
+                    this.skuSale = skuSale;
+                }
+
+                public List<PropsBean> getProps() {
+                    return props;
+                }
+
+                public void setProps(List<PropsBean> props) {
+                    this.props = props;
+                }
+
+                public List<PropvaluesBean> getPropValues() {
+                    return propValues;
+                }
+
+                public void setPropValues(List<PropvaluesBean> propValues) {
+                    this.propValues = propValues;
+                }
             }
         }
     }
