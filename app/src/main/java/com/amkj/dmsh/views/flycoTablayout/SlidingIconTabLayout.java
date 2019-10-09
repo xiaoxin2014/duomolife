@@ -126,6 +126,7 @@ public class SlidingIconTabLayout extends HorizontalScrollView implements ViewPa
     private int mLastScrollX;
     private int mHeight;
     private boolean mSnapOnTabClick;
+    private String fontColor;
 
     public SlidingIconTabLayout(Context context) {
         this(context, null, 0);
@@ -217,7 +218,7 @@ public class SlidingIconTabLayout extends HorizontalScrollView implements ViewPa
     /**
      * 关联ViewPager,用于不想在ViewPager适配器中设置HomeNavbarList数据的情况
      */
-    public void setViewPager(ViewPager vp, List<HomeCommonBean> list) {
+    public void setViewPager(ViewPager vp, List<HomeCommonBean> list, String fontColor) {
         if (vp == null || vp.getAdapter() == null) {
             throw new IllegalStateException("ViewPager or ViewPager adapter can not be NULL !");
         }
@@ -231,8 +232,11 @@ public class SlidingIconTabLayout extends HorizontalScrollView implements ViewPa
         }
 
         this.mViewPager = vp;
+        this.fontColor = fontColor;
         HomeNavbarList = new ArrayList<>();
-        HomeNavbarList.addAll(list);
+        if (list != null && list.size() > 0) {
+            HomeNavbarList.addAll(list);
+        }
         this.mViewPager.removeOnPageChangeListener(this);
         this.mViewPager.addOnPageChangeListener(this);
         notifyDataSetChanged();
@@ -366,8 +370,14 @@ public class SlidingIconTabLayout extends HorizontalScrollView implements ViewPa
                             if (!homeCommonBean.getColor().startsWith("#")) {
                                 textColor = "#" + textColor;
                             }
+
                             tv_tab_title.setTextColor(i == mCurrentTab ? mTextSelectColor : Color.parseColor(textColor));
                         }
+
+                        if (!TextUtils.isEmpty(fontColor)) {
+                            tv_tab_title.setTextColor(Color.parseColor(fontColor));
+                        }
+
                         tv_tab_title.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTextsize);
                         tv_tab_title.setPadding((int) mTabPadding, 0, (int) mTabPadding, 0);
                         if (mTextAllCaps) {
@@ -426,7 +436,13 @@ public class SlidingIconTabLayout extends HorizontalScrollView implements ViewPa
                 if (!homeCommonBean.getColor().startsWith("#")) {
                     textColor = "#" + textColor;
                 }
+
                 tv_tab_title.setTextColor(isSelect ? mTextSelectColor : Color.parseColor(textColor));
+            }
+
+
+            if (!TextUtils.isEmpty(fontColor)) {
+                tv_tab_title.setTextColor(Color.parseColor(fontColor));
             }
 //            }
 //            tv_tab_title.setTypeface(Typeface.defaultFromStyle(isSelect ? Typeface.BOLD : Typeface.NORMAL));//加粗

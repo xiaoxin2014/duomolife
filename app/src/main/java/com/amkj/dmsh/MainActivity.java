@@ -9,6 +9,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
@@ -208,7 +209,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 //            获取地址版本
             getAddressVersion();
 //            获取图标更新
-            SaveUpdateImportDateUtils.getUpdateDataUtilsInstance().getMainIconData(this);
+            SaveUpdateImportDateUtils.getUpdateDataUtilsInstance().getMainIconData(this, 3);
 //            获取push信息
             getFirstPushInfo();
 //            获取更新
@@ -434,6 +435,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             if (mainNavEntity != null && mainNavEntity.getMainNavBeanList().size() == 5
                     && !isTimeExpress(mainNavEntity)) {
                 setDynamicMal(mainNavEntity.getMainNavBeanList());
+                //设置底部导航颜色
+                if (!TextUtils.isEmpty(mainNavEntity.getBgColor())) {
+                    rp_bottom_main.setBackgroundColor(Color.parseColor(mainNavEntity.getBgColor()));
+                }else {
+                    rp_bottom_main.setBackground(getResources().getDrawable(R.drawable.border_top_line));
+                }
             } else {
                 setNorMal();
             }
@@ -586,6 +593,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             rb.setTextColor(getResources().getColorStateList(R.color.sel_text_gray_light_blue));
             setNormalIcon(i, rb);
         }
+
+        rp_bottom_main.setBackground(getResources().getDrawable(R.drawable.border_top_line));
     }
 
     /**
@@ -1276,7 +1285,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void goBack() {
-        SaveUpdateImportDateUtils.getUpdateDataUtilsInstance().getMainIconData(this);
+        SaveUpdateImportDateUtils.getUpdateDataUtilsInstance().getMainIconData(this, 3);
         SaveUpdateImportDateUtils.getUpdateDataUtilsInstance().getLaunchBanner(this);
         if (alertDialogHelper == null) {
             alertDialogHelper = new AlertDialogHelper(MainActivity.this);

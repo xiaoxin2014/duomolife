@@ -1,5 +1,7 @@
 package com.amkj.dmsh.homepage.bean;
 
+import android.text.TextUtils;
+
 import com.amkj.dmsh.base.BaseEntity;
 
 import java.util.List;
@@ -19,6 +21,32 @@ public class HomeCommonEntity extends BaseEntity {
 
     private String sysTime;
     private List<HomeCommonBean> guidanceInfoList;
+    private String bgColor = "";
+    private String fontColor = "";
+
+    public String getFontColor() {
+        if (TextUtils.isEmpty(fontColor)) {
+            return "";
+        } else {
+            return fontColor.startsWith("#") ? fontColor : "#" + fontColor;
+        }
+    }
+
+    public void setFontColor(String fontColor) {
+        this.fontColor = fontColor;
+    }
+
+    public String getBgColor() {
+        if (TextUtils.isEmpty(bgColor)) {
+            return "";
+        } else {
+            return bgColor.startsWith("#") ? bgColor : "#" + bgColor;
+        }
+    }
+
+    public void setBgColor(String bgColor) {
+        this.bgColor = bgColor;
+    }
 
     public String getSysTime() {
         return sysTime;

@@ -1,5 +1,7 @@
 package com.amkj.dmsh.bean;
 
+import android.text.TextUtils;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -27,6 +29,20 @@ public class MainNavEntity {
     private String code;
     @SerializedName("result")
     private List<MainNavBean> mainNavBeanList;
+    private String bgColor;
+
+
+    public String getBgColor() {
+        if (TextUtils.isEmpty(bgColor)) {
+            return "";
+        } else {
+            return bgColor.startsWith("#") ? bgColor : "#" + bgColor;
+        }
+    }
+
+    public void setBgColor(String bgColor) {
+        this.bgColor = bgColor;
+    }
 
     public String getCurrentTime() {
         return currentTime;

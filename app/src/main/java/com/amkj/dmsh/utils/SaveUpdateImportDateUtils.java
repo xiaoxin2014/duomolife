@@ -63,15 +63,17 @@ public class SaveUpdateImportDateUtils {
 
     /**
      * 获取底部导航栏数据
+     * v4.3.1 版本开始支持配置底部导航栏颜色
+     * 先请求version=3，请求成功判断过期时间，如果未过期保存数据，如果过期请求version=2（未过期保存数据，过期直接清除本地数据）
      */
-    public void getMainIconData(Activity activity) {
+    public void getMainIconData(Activity activity, int version) {
         weakReference = new WeakReference<>(activity);
-        String url =  Url.H_BOTTOM_ICON;
+        String url = Url.H_BOTTOM_ICON;
         Map<String, Object> params = new HashMap<>();
         /**
          * 3.1.8 加入 区分以前底部导航只能加入一个web地址，首页默认为app首页 bug
          */
-        params.put("version", 2);
+        params.put("version", version);
         SharedPreferences sharedPreferences = activity.getSharedPreferences("MainNav", MODE_PRIVATE);
         NetLoadUtils.getNetInstance().loadNetDataPost(weakReference.get(), url, params, new NetLoadListenerHelper() {
             @Override
@@ -94,8 +96,12 @@ public class SaveUpdateImportDateUtils {
                             saveImageToFile(activity, mainNavBean.getPicUrlSecond());
                         }
                     } else {
-                        if (sharedPreferences != null) {
-                            clearData(sharedPreferences.edit());
+                        if (version == 3) {
+                            getMainIconData(activity, 2);
+                        } else {
+                            if (sharedPreferences != null) {
+                                clearData(sharedPreferences.edit());
+                            }
                         }
                     }
                 }
@@ -139,7 +145,7 @@ public class SaveUpdateImportDateUtils {
      */
     public void getLaunchBanner(Activity activity) {
         weakReference = new WeakReference<>(activity);
-        String url =  Url.H_LAUNCH_AD_DIALOG;
+        String url = Url.H_LAUNCH_AD_DIALOG;
         SharedPreferences sharedPreferences = weakReference.get().getSharedPreferences("launchAD", Context.MODE_PRIVATE);
         final SharedPreferences.Editor edit = sharedPreferences.edit();
         NetLoadUtils.getNetInstance().loadNetDataPost(weakReference.get(), url, new NetLoadListenerHelper() {
@@ -175,10 +181,11 @@ public class SaveUpdateImportDateUtils {
 
     /**
      * 清除数据
+     *
      * @param edit
      */
     private void clearData(SharedPreferences.Editor edit) {
-        if(edit!=null){
+        if (edit != null) {
             edit.clear().apply();
         }
     }
@@ -189,7 +196,7 @@ public class SaveUpdateImportDateUtils {
             return;
         }
         final String pic_url = communalADActivityBean.getPicUrl();
-        if(weakReference.get()!=null){
+        if (weakReference.get() != null) {
             GlideImageLoaderUtil.saveImageToFile(weakReference.get(), pic_url, "launch_ad", new GlideImageLoaderUtil.OriginalLoaderFinishListener() {
                 @Override
                 public void onSuccess(File file) {

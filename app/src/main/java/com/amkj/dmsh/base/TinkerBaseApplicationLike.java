@@ -371,7 +371,7 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
      * @param activity
      */
     private void saveUpdateDate(Activity activity) {
-        SaveUpdateImportDateUtils.getUpdateDataUtilsInstance().getMainIconData(activity);
+        SaveUpdateImportDateUtils.getUpdateDataUtilsInstance().getMainIconData(activity,3);
         SaveUpdateImportDateUtils.getUpdateDataUtilsInstance().getLaunchBanner(activity);
     }
 

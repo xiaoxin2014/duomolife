@@ -1,10 +1,12 @@
 package com.amkj.dmsh.homepage.fragment;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -140,13 +142,33 @@ public class HomePageFragment extends BaseFragment {
                     if (ERROR_CODE.equals(code)) {
                         ConstantMethod.showToast(mHomeNavbarEntity.getMsg());
                     } else {
+                        String bgColor = mHomeNavbarEntity.getBgColor();
+                        String fontColor = mHomeNavbarEntity.getFontColor();
+                        //设置导航栏颜色
+                        if (!TextUtils.isEmpty(bgColor)) {
+                            mTablayoutHome.setBackgroundColor(Color.parseColor(bgColor));
+                            mTbHomeNew.setBackgroundColor(Color.parseColor(bgColor));
+                            ImmersionBar.with(HomePageFragment.this).titleBar(mTbHomeNew).keyboardEnable(true).navigationBarEnable(false)
+                                    .statusBarDarkFont(true).statusBarColor(bgColor).init();
+                            mIvMessage.setSelected(true);
+                            mIvHomeShopCar.setSelected(true);
+                        }
+
+                        //设置tab指示器颜色
+                        if (!TextUtils.isEmpty(fontColor)) {
+                            mTablayoutHome.setIndicatorColor(Color.parseColor(fontColor));
+                            mTablayoutHome.setTextUnselectColor(Color.parseColor(fontColor));
+                            mTablayoutHome.setTextSelectColor(Color.parseColor(fontColor));
+                        }
+
+                        //设置导航栏适配器
                         if (goodsNavbarList != null && goodsNavbarList.size() > 0) {
                             mGoodsNavbarList.clear();
                             mGoodsNavbarList.addAll(goodsNavbarList);
                             HomePageNewAdapter homePageNewAdapter = new HomePageNewAdapter(HomePageFragment.this.getChildFragmentManager(), mGoodsNavbarList);
                             mVpHome.setAdapter(homePageNewAdapter);
                             mVpHome.setOffscreenPageLimit(mGoodsNavbarList.size() - 1);
-                            mTablayoutHome.setViewPager(mVpHome, mGoodsNavbarList);
+                            mTablayoutHome.setViewPager(mVpHome, mGoodsNavbarList,fontColor);
                             mVpHome.setCurrentItem(0);
                         }
                     }

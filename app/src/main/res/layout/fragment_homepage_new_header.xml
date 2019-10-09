@@ -20,7 +20,7 @@
             android:layout_height="@dimen/sc_mm_54"
             android:paddingTop="@dimen/sc_mm_12"
             android:paddingRight="@dimen/sc_mm_12"
-            android:src="@drawable/new_message"/>
+            android:src="@drawable/selector_home_msg"/>
     </FrameLayout>
 
     <TextView
@@ -50,6 +50,6 @@
             android:layout_height="@dimen/sc_mm_54"
             android:paddingTop="@dimen/sc_mm_12"
             android:paddingRight="@dimen/sc_mm_12"
-            android:src="@drawable/new_cart"/>
+            android:src="@drawable/selector_home_shopcar"/>
     </FrameLayout>
 </LinearLayout>
