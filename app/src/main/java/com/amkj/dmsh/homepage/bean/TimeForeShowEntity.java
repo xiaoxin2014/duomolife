@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by LGuipeng on 2016/9/12.
  */
-public class TimeForeShowEntity extends BaseTimeEntity{
+public class TimeForeShowEntity extends BaseTimeEntity {
 
     /**
      * result : [{"endTime":"string","flashBuyClickCount":"string","id":0,"isRemind":0,"marketPrice":"string","maxPrice":"string","name":"string","path":"string","picUrl":"string","previsionFlag":0,"price":"string","quantity":0,"startTime":"string","subtitle":"string","title":"string"}]
@@ -17,7 +17,7 @@ public class TimeForeShowEntity extends BaseTimeEntity{
 
     @SerializedName("topic")
     private TimeTopicBean timeTopicBean;
-    @SerializedName(value = "result",alternate = "productInfoInfoList")
+    @SerializedName(value = "result", alternate = "productInfoInfoList")
     private List<TimeForeShowBean> timeForeShowList;
 
     public TimeTopicBean getTimeTopicBean() {
@@ -36,7 +36,7 @@ public class TimeForeShowEntity extends BaseTimeEntity{
         this.timeForeShowList = timeForeShowList;
     }
 
-    public static class TimeTopicBean extends BaseTimeProductTopicBean{
+    public static class TimeTopicBean extends BaseTimeProductTopicBean {
         /**
          * id : 0
          * picUrl : string
@@ -62,7 +62,7 @@ public class TimeForeShowEntity extends BaseTimeEntity{
         }
     }
 
-    public static class TimeForeShowBean extends BaseTimeProductTopicBean{
+    public static class TimeForeShowBean extends BaseTimeProductTopicBean {
         /**
          * endTime : string
          * flashBuyClickCount : string
@@ -86,15 +86,32 @@ public class TimeForeShowEntity extends BaseTimeEntity{
         private int isRemind;
         private String marketPrice;
         private String maxPrice;
-        @SerializedName(value = "name",alternate = "title")
+        @SerializedName(value = "name", alternate = "title")
         private String name;
-        @SerializedName(value = "picUrl",alternate = "path")
+        @SerializedName(value = "picUrl", alternate = "path")
         private String picUrl;
         private int previsionFlag;
         private String price;
         private int quantity;
         private String startTime;
         private String subtitle;
+        private String isTaoBao;//淘你所爱商品标志
+
+        public String getIsTaoBao() {
+            return isTaoBao;
+        }
+
+        public void setIsTaoBao(String isTaoBao) {
+            this.isTaoBao = isTaoBao;
+        }
+
+        public boolean isTaoBao() {
+            return "1".equals(isTaoBao);
+        }
+
+        public void setTaoBao(String taoBao) {
+            isTaoBao = taoBao;
+        }
 
         public String getEndTime() {
             return endTime;
@@ -193,7 +210,7 @@ public class TimeForeShowEntity extends BaseTimeEntity{
         }
     }
 
-    public static class TimeShaftBean extends BaseTimeProductTopicBean{
+    public static class TimeShaftBean extends BaseTimeProductTopicBean {
         private String timeDayWeek;
         private String timeDayHour;
 

@@ -160,6 +160,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
     private CommunalDetailAdapter contentOfficialAdapter;
     //产品Id
     private String productId;
+    private String isTaobao;
     private String thirdUrl;
     private String thirdId;
     private CustomPopWindow mCustomPopWindow;
@@ -186,6 +187,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
         tvHeaderTitle.setText("详情");
         Intent intent = getIntent();
         productId = intent.getStringExtra("productId");
+        isTaobao = intent.getStringExtra("isTaobao");
         communalRecyclerWrap.setLayoutManager(new LinearLayoutManager(ShopTimeScrollDetailsActivity.this));
         communalRecyclerWrap.setNestedScrollingEnabled(false);
         contentOfficialAdapter = new CommunalDetailAdapter(ShopTimeScrollDetailsActivity.this, itemBodyList);
@@ -546,6 +548,12 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
 //            底栏
             tvTimeProductDetailsWarm.setVisibility(View.VISIBLE);
             tvTimeProductDetailsWarm.setText(productDetailBean.isRemind() ? "取消提醒" : "设置提醒");
+        }
+
+        //淘你所爱商品只要上架了就可以参团，不用管开始时间和结束时间
+        if ("1".equals(isTaobao)){
+            tvTimeProductDetailsBuyIt.setEnabled(true);
+            tvTimeProductDetailsBuyIt.setText("我要跟团");
         }
         setCountTime();
         if (!isEndOrStartTime(productDetailEntity.getSystemTime(), productDetailBean.getEndTime())) {
