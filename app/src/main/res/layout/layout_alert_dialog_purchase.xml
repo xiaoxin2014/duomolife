@@ -37,7 +37,7 @@
                 android:paddingTop="@dimen/sc_mm_40"
                 android:paddingRight="@dimen/sc_mm_40"
                 android:paddingBottom="@dimen/sc_mm_40"
-                android:src="@drawable/common_back_btn_nor"/>
+                android:src="@drawable/selector_left_arrow"/>
 
             <android.support.v4.view.ViewPager
                 android:id="@+id/vp_goods"
@@ -52,7 +52,7 @@
                 android:paddingTop="@dimen/sc_mm_40"
                 android:paddingRight="@dimen/sc_mm_20"
                 android:paddingBottom="@dimen/sc_mm_40"
-                android:src="@drawable/common_back_btn_nor_right"/>
+                android:src="@drawable/selector_right_arrow"/>
         </LinearLayout>
 
 

@@ -79,7 +79,7 @@ public class AlertDialogPurchase {
 
             @Override
             public void onPageSelected(int i) {
-                updateGoodInfo(goodList.get(i));
+                updateGoodInfo(goodList.get(i), i);
             }
 
             @Override
@@ -121,16 +121,18 @@ public class AlertDialogPurchase {
         goodList.clear();
         goodList.addAll(purchaseBean.getGoodsList());
         mPurchaseCoverAdapter.notifyDataSetChanged();
-        updateGoodInfo(goodList.get(0));
+        updateGoodInfo(goodList.get(0), 0);
         mIvLeft.setVisibility(goodList.size() > 1 ? View.VISIBLE : View.GONE);
         mIvRight.setVisibility(goodList.size() > 1 ? View.VISIBLE : View.GONE);
     }
 
-    private void updateGoodInfo(GoodsListBean goodsListBean) {
+    private void updateGoodInfo(GoodsListBean goodsListBean, int currentItem) {
         mTvTitle.setText(getStrings(goodsListBean.getSubTitle() + goodsListBean.getProductName()));
         String priceText = "专享价¥" + getStrings(goodsListBean.getPrice());
         mTvDicountPrice.setText(getSpannableString(priceText, 3, priceText.length(), -1, "#ff5e6b"));
         mTvDicountInfo.setText(getStrings(goodsListBean.getDiscountPrice()));
+        mIvLeft.setEnabled(currentItem != 0);
+        mIvRight.setEnabled(currentItem!=goodList.size()-1);
     }
 
     public int getCurrentItem() {

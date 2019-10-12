@@ -9,9 +9,7 @@
     <RelativeLayout
         android:id="@+id/rl_toolbar2"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/sc_mm_88"
-        android:layout_marginTop="@dimen/sc_mm_40"
-        android:gravity="center_vertical"
+        android:layout_height="@dimen/sc_mm_168"
         android:orientation="horizontal">
 
         <ImageView
@@ -19,9 +17,12 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true"
             android:gravity="center_vertical"
             android:paddingLeft="@dimen/sc_mm_20"
-            android:paddingRight="@dimen/sc_mm_20"
+            android:paddingTop="@dimen/sc_mm_30"
+            android:paddingRight="@dimen/sc_mm_30"
+            android:paddingBottom="@dimen/sc_mm_40"
             android:src="@drawable/transparent_back"
             android:textColor="@color/home_text_color"
             android:textSize="@dimen/sc_mm_32"/>
@@ -29,27 +30,33 @@
         <ImageView
             android:id="@+id/iv_img_service2"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_alignParentRight="true"
-            android:layout_centerInParent="true"
-            android:paddingLeft="@dimen/sc_mm_20"
+            android:layout_alignParentBottom="true"
+           android:paddingLeft="@dimen/sc_mm_20"
             android:paddingRight="@dimen/sc_mm_20"
+            android:paddingTop="@dimen/sc_mm_30"
+            android:paddingBottom="@dimen/sc_mm_40"
             android:src="@drawable/transparent_shopcar"/>
 
         <ImageView
             android:id="@+id/iv_img_share2"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_toLeftOf="@id/iv_img_service2"
+            android:layout_alignParentBottom="true"
+            android:layout_toLeftOf="@+id/iv_img_service2"
+            android:paddingLeft="@dimen/sc_mm_40"
+            android:paddingTop="@dimen/sc_mm_30"
+            android:paddingBottom="@dimen/sc_mm_40"
             android:src="@drawable/transparent_share"/>
     </RelativeLayout>
 
     <LinearLayout
-        android:alpha="0"
-        android:background="@color/white"
         android:id="@+id/rl_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:alpha="0"
+        android:background="@color/white"
         android:orientation="vertical">
 
         <View

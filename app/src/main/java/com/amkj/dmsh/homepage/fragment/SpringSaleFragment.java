@@ -220,6 +220,7 @@ public class SpringSaleFragment extends BaseFragment {
                     TimeForeShowBean timeForeShowBean = (TimeForeShowBean) baseTimeProductTopicBean;
                     intent.setClass(getActivity(), ShopTimeScrollDetailsActivity.class);
                     intent.putExtra("productId", String.valueOf(timeForeShowBean.getId()));
+                    intent.putExtra("isTaobao", timeForeShowBean.getIsTaoBao());
                     startActivity(intent);
                     break;
                 case TYPE_1:
@@ -452,12 +453,16 @@ public class SpringSaleFragment extends BaseFragment {
                         if (timeForeShowEntity != null) {
                             if (timeForeShowEntity.getCode().equals(SUCCESS_CODE)) {
                                 NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
-                                if (timeForeShowEntity.getTimeForeShowList() != null
-                                        && timeForeShowEntity.getTimeForeShowList().size() > 0) {
+                                List<TimeForeShowBean> timeForeShowList = timeForeShowEntity.getTimeForeShowList();
+                                if (timeForeShowList != null
+                                        && timeForeShowList.size() > 0) {
                                     BaseTimeProductTopicBean baseTimeProductTopicBean = new BaseTimeProductTopicBean();
                                     baseTimeProductTopicBean.setItemType(TYPE_4);
                                     saleTimeTotalList.add(baseTimeProductTopicBean);
-                                    saleTimeTotalList.addAll(timeForeShowEntity.getTimeForeShowList());
+                                    for (TimeForeShowBean timeForeShowBean : timeForeShowList) {
+                                        timeForeShowBean.setTaoBao("1");//设置淘你所爱商品标志
+                                    }
+                                    saleTimeTotalList.addAll(timeForeShowList);
                                 }
                                 springSaleRecyclerAdapter.notifyDataSetChanged();
                             }

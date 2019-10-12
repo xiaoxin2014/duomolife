@@ -107,7 +107,7 @@ public class EditGoodsSkuEntity {
 
 
         public EditGoodsSkuBean(GoodsListBean goodsListBean) {
-            if (TextUtils.isEmpty(goodsListBean.getPicUrl())) {
+            if (!TextUtils.isEmpty(goodsListBean.getPicUrl())) {
                 this.picUrl = goodsListBean.getPicUrl();
             }
 

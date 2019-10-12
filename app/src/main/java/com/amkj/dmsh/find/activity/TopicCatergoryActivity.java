@@ -41,8 +41,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
  * ClassDescription :发现-主题分类
  */
 public class TopicCatergoryActivity extends BaseActivity {
-    @BindView(R.id.tv_life_back)
-    TextView mIvBack;
     @BindView(R.id.et_search)
     TextView mEtSearch;
     @BindView(R.id.rv_catergory)
@@ -169,10 +167,10 @@ public class TopicCatergoryActivity extends BaseActivity {
         });
     }
 
-    @OnClick({R.id.tv_life_back, R.id.et_search})
+    @OnClick({R.id.iv_back, R.id.et_search})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.tv_life_back:
+            case R.id.iv_back:
                 finish();
                 break;
             case R.id.et_search:
