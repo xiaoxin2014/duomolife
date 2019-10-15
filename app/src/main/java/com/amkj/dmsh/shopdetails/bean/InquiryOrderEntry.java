@@ -121,7 +121,16 @@ public class InquiryOrderEntry extends BaseEntity {
             private boolean isBaskReader;
             private List<GoodsBean> goods;
             private int second;
-        private String maxRewardTip;
+            private String maxRewardTip;
+            private int needComment;//是否显示待评价按钮
+
+            public boolean isNeedComment() {
+                return needComment == 1;
+            }
+
+            public void setNeedComment(int needComment) {
+                this.needComment = needComment;
+            }
 
             public String getMaxRewardTip() {
                 return maxRewardTip;
@@ -130,6 +139,7 @@ public class InquiryOrderEntry extends BaseEntity {
             public void setMaxRewardTip(String maxRewardTip) {
                 this.maxRewardTip = maxRewardTip;
             }
+
             //是否显示赠品物流
             private int isShowPresentLogistics;
 

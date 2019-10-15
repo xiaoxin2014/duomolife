@@ -132,6 +132,15 @@ public class IndentInfoDetailEntity extends BaseEntity {
             private List<GoodsDetailBean> goodDetails;
             @SerializedName("priceInfo")
             private List<PriceInfoBean> priceInfoList;
+            private int needComment;//是否显示待评价按钮
+
+            public boolean isNeedComment() {
+                return needComment == 1;
+            }
+
+            public void setNeedComment(int needComment) {
+                this.needComment = needComment;
+            }
 
             public boolean isWaitDeliveryFlag() {
                 return waitDeliveryFlag;

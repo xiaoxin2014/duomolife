@@ -1,7 +1,11 @@
 package com.amkj.dmsh.shopdetails.adapter;
 
 import android.app.Activity;
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.LifecycleObserver;
+import android.arch.lifecycle.OnLifecycleEvent;
 import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -68,8 +72,8 @@ import static com.amkj.dmsh.shopdetails.activity.DoMoIndentAllActivity.INDENT_TY
  * @author Liuguipeng
  * 订单列表
  */
-public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoIndentListAdapter.IndentListViewHolder> implements View.OnClickListener {
-    private final Activity context;
+public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoIndentListAdapter.IndentListViewHolder> implements View.OnClickListener, LifecycleObserver {
+    private final AppCompatActivity context;
     private final LayoutInflater layoutInflater;
     private final List<OrderListBean> orderList;
     private OnClickViewListener listener;
@@ -78,11 +82,12 @@ public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoI
     private ConstantMethod constantMethod;
     private PopupWindow mPw;
 
-    public DoMoIndentListAdapter(Activity context, List<OrderListBean> orderList) {
+    public DoMoIndentListAdapter(Activity activity, List<OrderListBean> orderList) {
         super(R.layout.layout_communal_recycler_wrap, orderList);
-        this.context = context;
+        this.context = ((AppCompatActivity) activity);
+        context.getLifecycle().addObserver(this);
         this.orderList = orderList;
-        layoutInflater = LayoutInflater.from(context);
+        layoutInflater = LayoutInflater.from(activity);
         getConstant();
     }
 
@@ -328,8 +333,8 @@ public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoI
                 }
                 GoodsBean finalGoodsBean = goodsBean;
                 int finalNoShowEvaluateNum = noShowEvaluateNum;
-                intentFView.ll_indent_bottom.setVisibility(finalNoShowEvaluateNum > 0 ? View.VISIBLE : View.GONE);
-                intentFView.tv_max_reward.setVisibility(finalNoShowEvaluateNum > 0 ? View.VISIBLE : View.GONE);
+                intentFView.ll_indent_bottom.setVisibility(orderListBean.isNeedComment() ? View.VISIBLE : View.GONE);
+                intentFView.tv_max_reward.setVisibility(orderListBean.isNeedComment() ? View.VISIBLE : View.GONE);
                 intentFView.tv_border_second_blue.setOnClickListener(v -> {
                     int joinCount = (int) SharedPreUtils.getParam(DEMO_LIFE_FILE, "IndentJoinCount", 0);
                     if (joinCount < 2) {
@@ -485,5 +490,12 @@ public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoI
                         .create());
             }
         }
+    }
+
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    private void onDestroy() {
+        WindowUtils.closePw(mPw);
+        context.getLifecycle().removeObserver(this);
     }
 }

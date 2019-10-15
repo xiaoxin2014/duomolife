@@ -827,7 +827,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
                                         num++;
                                     }
                                 }
-                                if (num == combineProductInfoList.size()){
+                                if (num == combineProductInfoList.size()) {
                                     noShowEvaluateNum++;
                                     orderProductInfoBean = bean;
                                 }
@@ -835,7 +835,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
                         }
                     }
                 }
-                tv_indent_border_second_blue.setVisibility(noShowEvaluateNum > 0 ? View.VISIBLE : GONE);
+                tv_indent_border_second_blue.setVisibility(orderDetailBean.isNeedComment() ? View.VISIBLE : GONE);
                 int finalNoShowEvaluateNum = noShowEvaluateNum;
                 OrderProductInfoBean finalOrderProductInfoBean = orderProductInfoBean;
                 tv_indent_border_second_blue.setOnClickListener(v -> {
