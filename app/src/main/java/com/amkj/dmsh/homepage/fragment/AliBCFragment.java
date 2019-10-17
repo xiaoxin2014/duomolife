@@ -541,10 +541,11 @@ public class AliBCFragment extends BaseFragment {
                 }
                 mPb.setVisibility(View.INVISIBLE);
             } else if (mPb != null) {
-                if (View.INVISIBLE == mPb.getVisibility()) {
-                    mPb.setVisibility(View.VISIBLE);
-                }
-                mPb.setProgress(newProgress);
+                //fragment暂时先去掉进度
+//                if (View.INVISIBLE == mPb.getVisibility()) {
+//                    mPb.setVisibility(View.VISIBLE);
+//                }
+//                mPb.setProgress(newProgress);
 
                 //手动刷新时不要显示进度
                 if (RefreshState.Refreshing.equals(smart_web_fragment_refresh.getState())) {
@@ -1317,5 +1318,10 @@ public class AliBCFragment extends BaseFragment {
 //            默认黑色字体，白色背景，透明度为0
             setWebFragmentStatusBar(1, "#ffffff", 0);
         }
+    }
+
+    @Override
+    protected boolean isLazy() {
+        return false;
     }
 }
