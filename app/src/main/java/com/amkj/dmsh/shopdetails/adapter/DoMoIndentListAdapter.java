@@ -333,8 +333,11 @@ public class DoMoIndentListAdapter extends BaseQuickAdapter<OrderListBean, DoMoI
                 }
                 GoodsBean finalGoodsBean = goodsBean;
                 int finalNoShowEvaluateNum = noShowEvaluateNum;
-                intentFView.ll_indent_bottom.setVisibility(orderListBean.isNeedComment() ? View.VISIBLE : View.GONE);
-                intentFView.tv_max_reward.setVisibility(orderListBean.isNeedComment() ? View.VISIBLE : View.GONE);
+                //是否显示评价按钮
+                boolean showEvaluate = orderListBean.getNeedComment() == -1 ? finalNoShowEvaluateNum > 0 : orderListBean.isNeedComment();
+                intentFView.ll_indent_bottom.setVisibility(showEvaluate ? View.VISIBLE : View.GONE);
+                intentFView.tv_max_reward.setVisibility(showEvaluate ? View.VISIBLE : View.GONE);
+
                 intentFView.tv_border_second_blue.setOnClickListener(v -> {
                     int joinCount = (int) SharedPreUtils.getParam(DEMO_LIFE_FILE, "IndentJoinCount", 0);
                     if (joinCount < 2) {

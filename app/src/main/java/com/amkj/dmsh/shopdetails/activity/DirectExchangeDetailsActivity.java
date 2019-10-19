@@ -835,9 +835,10 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
                         }
                     }
                 }
-                tv_indent_border_second_blue.setVisibility(orderDetailBean.isNeedComment() ? View.VISIBLE : GONE);
                 int finalNoShowEvaluateNum = noShowEvaluateNum;
                 OrderProductInfoBean finalOrderProductInfoBean = orderProductInfoBean;
+                boolean showEvaluate = orderDetailBean.getNeedComment() == -1 ? finalNoShowEvaluateNum > 0 : orderDetailBean.isNeedComment();
+                tv_indent_border_second_blue.setVisibility(showEvaluate ? View.VISIBLE : GONE);
                 tv_indent_border_second_blue.setOnClickListener(v -> {
                     if (finalNoShowEvaluateNum == 1) {
                         //直接跳转评分界面

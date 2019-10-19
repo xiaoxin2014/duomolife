@@ -122,10 +122,14 @@ public class InquiryOrderEntry extends BaseEntity {
             private List<GoodsBean> goods;
             private int second;
             private String maxRewardTip;
-            private int needComment;//是否显示待评价按钮
+            private int needComment=-1;//是否显示待评价按钮
 
             public boolean isNeedComment() {
                 return needComment == 1;
+            }
+
+            public int getNeedComment() {
+                return needComment;
             }
 
             public void setNeedComment(int needComment) {

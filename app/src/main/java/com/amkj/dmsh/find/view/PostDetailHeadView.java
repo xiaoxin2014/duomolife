@@ -25,6 +25,7 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
 import static com.amkj.dmsh.constant.ConstantMethod.skipUserCenter;
 
 /**
@@ -70,7 +71,9 @@ public class PostDetailHeadView extends LinearLayout {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_life_back:
-                mActivity.finish();
+                if(isContextExisted(mActivity)){
+                    mActivity.finish();
+                }
                 break;
             case R.id.iv_head2:
                 skipUserCenter(mActivity, postDetailBean.getUid());

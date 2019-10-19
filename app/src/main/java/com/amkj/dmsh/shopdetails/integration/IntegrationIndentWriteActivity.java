@@ -426,37 +426,38 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
             public void onSuccess(String result) {
                 tvIntegralDetailsCreateInt.setEnabled(true);
                 Gson gson = new Gson();
-                if (!TextUtils.isEmpty(payType)) {
-                    IntegrationIndentEntity indentEntity = gson.fromJson(result, IntegrationIndentEntity.class);
-                    if (indentEntity != null && indentEntity.getResult() != null) {
-                        IntegrationIndentBean indentBean = indentEntity.getResult();
-                        if (SUCCESS_CODE.equals(indentEntity.getCode())) {
-                            orderCreateNo = indentBean.getNo();
-                            String payKey = indentBean.getPayKey();
-                            if (!TextUtils.isEmpty(payKey)&&!TextUtils.isEmpty(payType)) {
-                                //返回成功，调起微信支付接口
-                                switch (payType) {
-                                    case PAY_WX_PAY:
-                                        doWXPay(gson.fromJson(payKey, PayKeyBean.class));
-                                        break;
-                                    case PAY_ALI_PAY:
-                                        doAliPay(payKey);
-                                        break;
-                                    case PAY_UNION_PAY:
-                                        PayKeyBean payKeyBean = gson.fromJson(payKey, PayKeyBean.class);
-                                        unionPay(payKeyBean.getPaymentUrl());
-                                        break;
-                                }
-                            } else {
+                IntegrationIndentEntity indentEntity = gson.fromJson(result, IntegrationIndentEntity.class);
+                if (indentEntity != null && indentEntity.getResult() != null) {
+                    IntegrationIndentBean indentBean = indentEntity.getResult();
+                    if (SUCCESS_CODE.equals(indentEntity.getCode())) {
+                        orderCreateNo = indentBean.getNo();
+                        String payKey = indentBean.getPayKey();
+                        //纯积分兑换
+                        if (TextUtils.isEmpty(payType)){
+                            if (!TextUtils.isEmpty(orderCreateNo)){
                                 skipDirectIndent();
                             }
-                        } else {
-                            showToast(IntegrationIndentWriteActivity.this, indentBean == null ?
-                                    indentEntity.getMsg() : indentBean.getMsg());
+                        }else {
+                            //返回成功，调起微信支付接口
+                            switch (payType) {
+                                case PAY_WX_PAY:
+                                    doWXPay(gson.fromJson(payKey, PayKeyBean.class));
+                                    break;
+                                case PAY_ALI_PAY:
+                                    doAliPay(payKey);
+                                    break;
+                                case PAY_UNION_PAY:
+                                    PayKeyBean payKeyBean = gson.fromJson(payKey, PayKeyBean.class);
+                                    unionPay(payKeyBean.getPaymentUrl());
+                                    break;
+                            }
                         }
                     } else {
-                        showToast(IntegrationIndentWriteActivity.this, "创建订单失败，请重新提交订单");
+                        showToast(IntegrationIndentWriteActivity.this, indentBean == null ?
+                                indentEntity.getMsg() : indentBean.getMsg());
                     }
+                } else {
+                    showToast(IntegrationIndentWriteActivity.this, "创建订单失败，请重新提交订单");
                 }
             }
 

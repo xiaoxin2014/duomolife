@@ -132,7 +132,11 @@ public class IndentInfoDetailEntity extends BaseEntity {
             private List<GoodsDetailBean> goodDetails;
             @SerializedName("priceInfo")
             private List<PriceInfoBean> priceInfoList;
-            private int needComment;//是否显示待评价按钮
+            private int needComment=-1;//是否显示待评价按钮
+
+            public int getNeedComment() {
+                return needComment;
+            }
 
             public boolean isNeedComment() {
                 return needComment == 1;

@@ -7,6 +7,7 @@ import com.amkj.dmsh.base.BaseEntity;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.annotations.SerializedName;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -103,7 +104,7 @@ public class DirectCouponEntity extends BaseEntity {
         }
 
         public String getAmount() {
-            return amount;
+            return new BigDecimal(amount).stripTrailingZeros().toPlainString();
         }
 
         public void setAmount(String amount) {
