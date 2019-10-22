@@ -3,6 +3,7 @@ package com.amkj.dmsh.views;
 import android.app.Activity;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.webkit.WebView;
 
 import me.jessyan.autosize.AutoSize;
@@ -63,5 +64,24 @@ public class HtmlWebView extends WebView {
         super.setOverScrollMode(mode);
 
         AutoSize.autoConvertDensityOfGlobal((Activity) getContext());
+    }
+
+
+    //修复viewpager嵌套webview时，webview嵌套横向滑动的组件和viewpager发生滑动冲突
+    @Override
+    protected void onOverScrolled(int scrollX, int scrollY, boolean clampedX, boolean clampedY) {
+        requestDisallowInterceptTouchEvent(false);//为false时表示父控件viewpager拦截子控件的事件，滑动交给父控件处理
+        super.onOverScrolled(scrollX, scrollY, clampedX, clampedY);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        super.onTouchEvent(event);
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            requestDisallowInterceptTouchEvent(true);//为true时表示父控件viewpager不拦截子控件的事件，滑动交给子控件处理
+            return true;
+        }
+
+        return true;
     }
 }
