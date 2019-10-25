@@ -60,26 +60,32 @@ public class PostDetailHeadView extends LinearLayout {
     public void updateData(BaseActivity activity, PostDetailBean postDetailBean) {
         //设置用户信息
         mActivity = activity;
-        this.postDetailBean = postDetailBean;
-        GlideImageLoaderUtil.loadRoundImg(mActivity, mIvHead, postDetailBean.getAvatar(), AutoSizeUtils.mm2px(mAppContext, 70), R.drawable.default_ava_img);
-        mTvUserName.setText(getStrings(postDetailBean.getNickname()));
-        mTvFollow.setText(postDetailBean.isFlag() ? "已关注" : "关注");
-        mTvFollow.setSelected(postDetailBean.isFlag());
+        if (postDetailBean != null) {
+            this.postDetailBean = postDetailBean;
+            GlideImageLoaderUtil.loadRoundImg(mActivity, mIvHead, postDetailBean.getAvatar(), AutoSizeUtils.mm2px(mAppContext, 70), R.drawable.default_ava_img);
+            mTvUserName.setText(getStrings(postDetailBean.getNickname()));
+            mTvFollow.setText(postDetailBean.isFlag() ? "已关注" : "关注");
+            mTvFollow.setSelected(postDetailBean.isFlag());
+        }
     }
 
     @OnClick({R.id.tv_life_back, R.id.iv_head2, R.id.tv_follow2, R.id.iv_img_share})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_life_back:
-                if(isContextExisted(mActivity)){
+                if (isContextExisted(mActivity)) {
                     mActivity.finish();
                 }
                 break;
             case R.id.iv_head2:
-                skipUserCenter(mActivity, postDetailBean.getUid());
+                if (postDetailBean != null) {
+                    skipUserCenter(mActivity, postDetailBean.getUid());
+                }
                 break;
             case R.id.tv_follow2:
-                SoftApiDao.followUser(mActivity, postDetailBean.getUid(), (TextView) view,null);
+                if (postDetailBean != null) {
+                    SoftApiDao.followUser(mActivity, postDetailBean.getUid(), (TextView) view, null);
+                }
                 break;
             case R.id.iv_img_share:
                 if (postDetailBean != null) {
