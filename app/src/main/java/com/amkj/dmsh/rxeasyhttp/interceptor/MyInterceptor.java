@@ -6,7 +6,6 @@ import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 
-import com.alibaba.fastjson.JSON;
 import com.amkj.dmsh.BuildConfig;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
@@ -63,6 +62,7 @@ public class MyInterceptor implements Interceptor {
         }
 
         Response response = null;
+        String responseInfo = "";
         try {
             String DomoJson = new JSONObject(newMap).toString();
             //添加公共请求参数
@@ -81,15 +81,7 @@ public class MyInterceptor implements Interceptor {
             }
 
             response = chain.proceed(builder.build());
-            String responseInfo = response.peekBody(1024 * 1024).string();
-            Map<String, Object> responseMap = JSON.parseObject(responseInfo);
-
-            //如果Token校验失败，就不要传uid和token
-            if ("52".equals(responseMap.get("code"))) {
-                builder.removeHeader("domo-custom");
-                builder.addHeader("domo-custom", getBase64(mDomoCommon));
-                response = chain.proceed(builder.build());
-            }
+            responseInfo = response.peekBody(1024 * 1024).string();
             //打印响应结果
             httpLog(request, DomoJson, responseInfo);
         } catch (Exception e) {

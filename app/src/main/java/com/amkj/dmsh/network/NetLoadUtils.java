@@ -70,6 +70,8 @@ public class NetLoadUtils<T, E extends BaseEntity> {
     private static boolean confirmIng = true;  //避免确认token过期接口重复调用
     public static String token;
     public static String uid;
+    private AlertDialogHelper mNotificationAlertDialogHelper;
+    private long mLastTime;
 
     private NetLoadUtils() {
     }
@@ -90,8 +92,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
      * @param url
      * @param netLoadListener
      */
-    public void
-    loadNetDataPost(Activity context, String url, NetLoadListener netLoadListener) {
+    public void loadNetDataPost(Activity context, String url, NetLoadListener netLoadListener) {
         //调用接口之前判断token是否过期,如果登录条件下过期，不调用接口
         if (checkTokenExpire(context, url)) {
             loadNetDataPost(context, url, null, netLoadListener);
@@ -139,6 +140,16 @@ public class NetLoadUtils<T, E extends BaseEntity> {
                 public void onSuccess(String result) {
                     if (weakReference.get() != null) {
                         try {
+                            //token校验失败，调用登出接口并重新登录
+                            BaseEntity baseEntity = new Gson().fromJson(result, BaseEntity.class);
+                            if (baseEntity != null) {
+                                String code = baseEntity.getCode();
+                                if ("52".equals(code)) {
+                                    loginOut(context);
+                                    netLoadListener.onNotNetOrException();
+                                    return;
+                                }
+                            }
                             if (netLoadListener != null) {
                                 netLoadListener.onSuccess(result);
                             }
@@ -656,33 +667,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
                     if (tokenExpireBean.getStatus() == 1) {
                         SharedPreUtils.setParam(TOKEN_EXPIRE_TIME, System.currentTimeMillis() + tokenExpireBean.getExpireTime());
                     } else {
-                        //判断条件是为了避免重复调用
-                        if (ConstantMethod.userId > 0) {
-                            //调用登出接口
-                            ConstantMethod.logout(mContext, false);
-                            //通知我的界面刷新
-                            EventBus.getDefault().post(new EventMessage(ConstantVariable.TOKEN_EXPIRE_LOG_OUT, ""));
-                            //提示用户登录
-                            AlertDialogHelper notificationAlertDialogHelper = new AlertDialogHelper(mContext);
-                            notificationAlertDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
-                                @Override
-                                public void confirm() {
-                                    ConstantMethod.getLoginStatus(mContext);
-                                }
-
-                                @Override
-                                public void cancel() {
-                                    notificationAlertDialogHelper.dismiss();
-                                }
-                            });
-
-                            notificationAlertDialogHelper.setTitle("提醒")
-                                    .setMsg("长期未登录，请重新登录")
-                                    .setCancelText("取消")
-                                    .setMsgTextGravity(Gravity.CENTER)
-                                    .setConfirmText("登录");
-                            notificationAlertDialogHelper.show();
-                        }
+                        loginOut(mContext);
                     }
                 }
                 confirmIng = true;
@@ -696,4 +681,38 @@ public class NetLoadUtils<T, E extends BaseEntity> {
         });
     }
 
+    //提示登录
+    private void loginOut(Activity mContext) {
+        //判断条件是为了避免重复调用
+        long currentTime = System.currentTimeMillis();
+        if (ConstantMethod.userId > 0 && currentTime - mLastTime > 3000) {
+            mLastTime = System.currentTimeMillis();
+            //调用登出接口
+            ConstantMethod.logout(mContext, false);
+            //通知我的界面刷新
+            EventBus.getDefault().post(new EventMessage(ConstantVariable.TOKEN_EXPIRE_LOG_OUT, ""));
+            //提示用户登录
+            if (mNotificationAlertDialogHelper == null) {
+                mNotificationAlertDialogHelper = new AlertDialogHelper(mContext);
+                mNotificationAlertDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                    @Override
+                    public void confirm() {
+                        ConstantMethod.getLoginStatus(mContext);
+                    }
+
+                    @Override
+                    public void cancel() {
+                        mNotificationAlertDialogHelper.dismiss();
+                    }
+                });
+
+                mNotificationAlertDialogHelper.setTitle("提醒")
+                        .setMsg("长期未登录，请重新登录")
+                        .setCancelText("取消")
+                        .setMsgTextGravity(Gravity.CENTER)
+                        .setConfirmText("登录");
+            }
+            mNotificationAlertDialogHelper.show();
+        }
+    }
 }

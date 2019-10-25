@@ -819,7 +819,7 @@ public class ConstantMethod {
      */
     public static void logout(Activity activity, boolean isHandOperation) {
         if (isHandOperation) {
-            ((BaseActivity) activity).loadHud.show();
+            showLoadhud(activity);
         }
         NetLoadUtils.token = (String) SharedPreUtils.getParam(TOKEN, "");
         NetLoadUtils.uid = String.valueOf(SharedPreUtils.getParam("uid", 0));
@@ -831,7 +831,7 @@ public class ConstantMethod {
                 savePersonalInfoCache(activity, null);
                 if (isHandOperation) {
                     showToast(activity, "退出登录成功");
-                    ((BaseActivity) activity).loadHud.dismiss();
+                    dismissLoadhud(activity);
                     activity.finish();
                 }
             }
@@ -840,7 +840,7 @@ public class ConstantMethod {
             public void onNotNetOrException() {
                 if (isHandOperation) {
                     showToast(activity, "退出登录失败 ");
-                    ((BaseActivity) activity).loadHud.dismiss();
+                    dismissLoadhud(activity);
                 }
             }
         });
