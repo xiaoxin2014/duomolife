@@ -783,20 +783,20 @@ public class AliBCFragment extends BaseFragment {
     //获取Header头
     public void getHeaderFromApp(Map<String, Object> data) {
         Map<String, Object> map = getCommonApiParameter(getActivity());
-        if (data != null && data.get("mustLogin") != null) {
-            int mustLogin = ((int) data.get("mustLogin"));
-            if (mustLogin == 1) {
-                if (userId > 0) {
-                    //登录情况下传uid和token
-                    map.put("uid", ConstantMethod.userId);
-                    String token = (String) SharedPreUtils.getParam(TOKEN, "");
-                    map.put("token", token);
-                } else {
-                    getLoginStatus(this);
-                }
-            }
+        //登录情况下传uid和token
+        if (userId > 0) {
+            map.put("uid", ConstantMethod.userId);
+            String token = (String) SharedPreUtils.getParam(TOKEN, "");
+            map.put("token", token);
         }
 
+        if (data != null && data.get("mustLogin") != null) {
+            int mustLogin = ((int) data.get("mustLogin"));
+            //强制登录并且未登录
+            if (mustLogin == 1 && userId <= 0) {
+                getLoginStatus(this);
+            }
+        }
 //        String base64 = Base64.encodeToString(new JSONObject(map).toString().getBytes(), Base64.NO_WRAP);
         webViewJs(getStringsFormat(getActivity(), R.string.web_head_method, new JSONObject(map).toString(), userId == 0 ? "" : String.valueOf(userId)));
     }

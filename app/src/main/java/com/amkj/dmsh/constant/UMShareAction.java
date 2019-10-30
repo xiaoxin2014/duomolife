@@ -7,6 +7,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
@@ -46,11 +47,14 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import static android.content.Context.MODE_PRIVATE;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.shareRewardSuccess;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.isDebugTag;
 import static com.amkj.dmsh.constant.Url.SHARE_SAVE_IMAGE_URL;
 import static com.amkj.dmsh.dao.SoftApiDao.reportIllegal;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.createFilePath;
@@ -291,11 +295,15 @@ public class UMShareAction {
                     umMin.setPath(routineUrl);
                     //小程序页面路径
                     umMin.setUserName(routineId);
-                    if (Url.BASE_URL.equals("http://ts.domolife.cn/")) {
-                        // 测试环境下设置成开发版
-                        com.umeng.socialize.Config.setMiniTest();
-                    } else if (Url.BASE_URL.equals("http://dev.domolife.cn/")) {
-                        com.umeng.socialize.Config.setMiniPreView();
+                    if (isDebugTag) {
+                        SharedPreferences sharedPreferences = mAppContext.getSharedPreferences("selectedServer", MODE_PRIVATE);
+                        String baseUrl = sharedPreferences.getString("selectServerUrl", Url.getUrl(0));
+                        //预发布环境为体验版，正式库为正式版，其他所有地址为开发版
+                        if ("http://dev.domolife.cn/".equals(baseUrl)) {
+                            com.umeng.socialize.Config.setMiniPreView();
+                        } else if (!"https://app.domolife.cn/".equals(baseUrl)) {
+                            com.umeng.socialize.Config.setMiniTest();
+                        }
                     }
 
                     // 小程序原始id,在微信平台查询
