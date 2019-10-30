@@ -170,7 +170,6 @@ public class PostDetailActivity extends BaseActivity {
             finish();
         }
 
-
         mArtId = getIntent().getStringExtra("ArtId");
         mArticletype = getIntent().getIntExtra("articletype", 0);
         //记录埋点参数sourceId
@@ -182,6 +181,7 @@ public class PostDetailActivity extends BaseActivity {
         });
 
         //动态设置头部
+        mPostDetailHeadview.init(this);
         LinearLayout llHeadUser = mPostDetailHeadview.findViewById(R.id.ll_head_user);
         mRvRecommend.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -198,7 +198,6 @@ public class PostDetailActivity extends BaseActivity {
                 }
             }
         });
-
 
         //初始化帖子详情
         View view = LayoutInflater.from(this).inflate(R.layout.view_post_detail, (ViewGroup) mRvRecommend.getParent(), false);
@@ -783,7 +782,7 @@ public class PostDetailActivity extends BaseActivity {
         return mPostDetailBean != null && userId == mPostDetailBean.getUid();
     }
 
-    public void showDelDialog(){
+    public void showDelDialog() {
         if (delArticleDialogHelper == null) {
             delArticleDialogHelper = new AlertDialogHelper(this);
             delArticleDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)

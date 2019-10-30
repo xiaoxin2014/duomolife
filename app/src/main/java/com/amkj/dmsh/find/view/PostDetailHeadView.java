@@ -54,7 +54,10 @@ public class PostDetailHeadView extends LinearLayout {
         super(context, attrs);
         View headView = LayoutInflater.from(context).inflate(R.layout.layout_post_detail_head, this, true);
         ButterKnife.bind(this, headView);
+    }
 
+    public void init(BaseActivity activity) {
+        mActivity = activity;
     }
 
     public void updateData(BaseActivity activity, PostDetailBean postDetailBean) {
