@@ -805,7 +805,9 @@ public class AliBCFragment extends BaseFragment {
     public void showImportToast(Map<String, Object> map) {
         if (map != null) {
             String msg = (String) map.get("msg");
-            showImportantToast(getActivity(), msg);
+            if (!TextUtils.isEmpty(msg)){
+                showImportantToast(getActivity(), msg);
+            }
         }
     }
 

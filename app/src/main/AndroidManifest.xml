@@ -883,7 +883,12 @@
         <activity
             android:name=".mine.activity.MineLoginActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="MineLoginActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
         <!--注册账号-->
         <activity
             android:name=".mine.activity.RegisterAccountActivity"

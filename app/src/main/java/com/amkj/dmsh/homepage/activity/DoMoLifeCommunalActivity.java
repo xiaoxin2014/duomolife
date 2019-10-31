@@ -793,7 +793,9 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
     public void showImportToast(Map<String, Object> map) {
         if (map != null) {
             String msg = (String) map.get("msg");
-            showImportantToast(this, msg);
+            if (!TextUtils.isEmpty(msg)){
+                showImportantToast(getActivity(), msg);
+            }
         }
     }
 
