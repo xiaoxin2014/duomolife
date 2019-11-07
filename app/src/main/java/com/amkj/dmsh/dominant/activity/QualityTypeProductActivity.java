@@ -62,7 +62,7 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
+
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_CHILD;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_ID;
@@ -222,7 +222,6 @@ public class QualityTypeProductActivity extends BaseActivity {
             }
         });
         typeSortView = LayoutInflater.from(QualityTypeProductActivity.this).inflate(R.layout.layout_type_sort_text_header, null, false);
-        totalPersonalTrajectory = insertNewTotalData(this, String.valueOf(categoryId));
         removeExistUtils = new RemoveExistUtils();
     }
 
@@ -319,7 +318,6 @@ public class QualityTypeProductActivity extends BaseActivity {
             categoryId = qualityTypeBean.getId();
             qualityTypeBeans.clear();
             qualityTypeBeans.addAll(productTypeList);
-            addTotalData();
 //            重新设置child数据
             page = 1;
             categoryChildId = -1;
@@ -835,25 +833,5 @@ public class QualityTypeProductActivity extends BaseActivity {
     @OnClick(R.id.tv_ql_type_back)
     void goBack(View view) {
         finish();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        addTotalData();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        addTotalData();
-    }
-
-    private void addTotalData() {
-        if (totalPersonalTrajectory != null) {
-            Map<String, String> totalMap = new HashMap<>();
-            totalMap.put("categoryId", String.valueOf(categoryId));
-            totalPersonalTrajectory.stopTotal(totalMap);
-        }
     }
 }

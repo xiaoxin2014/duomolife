@@ -8,7 +8,6 @@ import android.text.TextUtils;
 
 import com.amkj.dmsh.MainActivity;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.TotalPersonalTrajectory;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.utils.Log;
 import com.tencent.bugly.beta.tinker.TinkerManager;
@@ -17,17 +16,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
 import cn.jpush.android.api.JPushInterface;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.installApps;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
-import static com.amkj.dmsh.constant.ConstantMethod.totalPushMessage;
 import static com.amkj.dmsh.constant.ConstantVariable.BROADCAST_NOTIFY;
-import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_NAME_TYPE;
 
 ;
 
@@ -100,14 +95,6 @@ public class JPUshMessageReceiver extends BroadcastReceiver {
                 } else {
                     newTaskActivity(context);
                     setSkipPath(context, json.getString("androidLink"), false);
-                }
-                if (!TextUtils.isEmpty("pushId")) {
-                    totalPushMessage(context, pushId);
-                    TotalPersonalTrajectory totalPersonalTrajectory = new TotalPersonalTrajectory(context);
-                    Map<String, String> totalMap = new HashMap<>();
-                    totalMap.put("pushId", pushId);
-                    totalMap.put(TOTAL_NAME_TYPE, "pushInfoTotal");
-                    totalPersonalTrajectory.saveTotalDataToFile(totalMap);
                 }
             } catch (JSONException e) {
                 newTaskActivity(context);

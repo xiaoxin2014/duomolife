@@ -54,7 +54,7 @@ import q.rorbin.badgeview.Badge;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
+
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
@@ -219,7 +219,7 @@ public class DoMoLifeWelfareFragment extends BaseFragment {
         badge = ConstantMethod.getBadge(getActivity(), fl_header_service);
         //          关闭手势滑动
         dr_communal_pro.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.END);
-        totalPersonalTrajectory = insertNewTotalData(getActivity());
+
     }
 
     //    商品列表

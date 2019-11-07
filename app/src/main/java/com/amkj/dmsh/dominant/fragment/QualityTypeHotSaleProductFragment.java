@@ -28,7 +28,6 @@ import java.util.Map;
 import butterknife.BindView;
 
 import static android.app.Activity.RESULT_OK;
-import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
@@ -72,7 +71,6 @@ public class QualityTypeHotSaleProductFragment extends BaseFragment {
         qualityTypeProductAdapter = new GoodProductAdapter(getActivity(), likedProductBeans);
         communal_recycler.setAdapter(qualityTypeProductAdapter);
         qualityTypeProductAdapter.setEnableLoadMore(false);
-        totalPersonalTrajectory = insertNewTotalData(getActivity());
         removeExistUtils = new RemoveExistUtils();
     }
 

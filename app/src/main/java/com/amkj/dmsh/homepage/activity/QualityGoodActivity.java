@@ -31,7 +31,6 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-import static com.amkj.dmsh.constant.ConstantMethod.insertFragmentNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
 import static com.amkj.dmsh.constant.Url.QUALITY_SHOP_GOODS_PRO;
@@ -97,7 +96,6 @@ public class QualityGoodActivity extends BaseActivity {
             page++;
             getGoodsPro();
         }, communal_recycler);
-        totalPersonalTrajectory = insertFragmentNewTotalData(getActivity(), this.getClass().getSimpleName());
         removeExistUtils = new RemoveExistUtils();
     }
 

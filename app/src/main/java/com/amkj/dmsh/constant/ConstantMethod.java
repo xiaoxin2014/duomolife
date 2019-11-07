@@ -150,7 +150,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.REGEX_URL;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOKEN;
 import static com.amkj.dmsh.constant.ConstantVariable.TOKEN_EXPIRE_TIME;
-import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_NAME_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_C_WELFARE;
 import static com.amkj.dmsh.constant.TagAliasOperatorHelper.ACTION_CLEAN;
 import static com.amkj.dmsh.constant.TagAliasOperatorHelper.ACTION_DELETE;
@@ -493,46 +492,7 @@ public class ConstantMethod {
         return strings1.toArray(new String[strings1.size()]);
     }
 
-    /**
-     * 插入一条数据 fragment
-     */
-    public static TotalPersonalTrajectory insertFragmentNewTotalData(Context context, String typeName) {
-        return insertFragmentNewTotalData(context, typeName, null);
-    }
 
-    public static TotalPersonalTrajectory insertFragmentNewTotalData(Context context, String typeName, String relateId) {
-        TotalPersonalTrajectory totalPersonalTrajectory = new TotalPersonalTrajectory(context);
-        Map<String, String> totalMap = new HashMap<>();
-        totalMap.put(TOTAL_NAME_TYPE, typeName);
-        if (!TextUtils.isEmpty(relateId)) {
-            totalMap.put("relate_id", relateId);
-            totalPersonalTrajectory.saveTotalDataToFile(totalMap);
-        }
-        totalPersonalTrajectory.saveTotalDataToFile(totalMap);
-        return totalPersonalTrajectory;
-    }
-
-    /**
-     * 插入一条数据 activity
-     */
-    public static TotalPersonalTrajectory insertNewTotalData(Context context) {
-        return insertNewTotalData(context, null);
-    }
-
-    /**
-     * 插入一条数据 activity
-     */
-    public static TotalPersonalTrajectory insertNewTotalData(Context context, String relateId) {
-        TotalPersonalTrajectory totalPersonalTrajectory = new TotalPersonalTrajectory(context);
-        if (!TextUtils.isEmpty(relateId)) {
-            Map<String, String> totalMap = new HashMap<>();
-            totalMap.put("relate_id", relateId);
-            totalPersonalTrajectory.saveTotalDataToFile(totalMap);
-        } else {
-            totalPersonalTrajectory.saveTotalDataToFile(null);
-        }
-        return totalPersonalTrajectory;
-    }
 
     /**
      * 是否从轮播图跳转商品详情
@@ -543,18 +503,7 @@ public class ConstantMethod {
      * @param isCloseActivity 跳转是否关闭界面
      */
     public static void setSkipPath(Context context, String link, boolean isBannerPage, boolean isCloseActivity) {
-        if (isBannerPage) {
-            if (getStrings(link).contains("app://ShopScrollDetailsActivity?productId=")) {
-                TotalPersonalTrajectory totalPersonalTrajectory = new TotalPersonalTrajectory(context);
-                Map<String, String> totalMap = new HashMap<>();
-                totalMap.put("productId", getNumber(link));
-                totalMap.put(TOTAL_NAME_TYPE, "BannerProduct");
-                totalPersonalTrajectory.saveTotalDataToFile(totalMap);
-            }
-            setSkipPath(context, link, isCloseActivity);
-        } else {
-            setSkipPath(context, link, isCloseActivity);
-        }
+        setSkipPath(context, link, isCloseActivity);
     }
 
     /**
@@ -1729,11 +1678,6 @@ public class ConstantMethod {
                     if (status != null) {
                         if (status.getCode().equals(SUCCESS_CODE)) {
                             showToast(activity, activity.getString(R.string.AddCarSuccess));
-                            TotalPersonalTrajectory totalPersonalTrajectory = new TotalPersonalTrajectory(activity);
-                            Map<String, String> totalMap = new HashMap<>();
-                            totalMap.put("productId", String.valueOf(shopCarGoodsSku.getProductId()));
-                            totalMap.put(TOTAL_NAME_TYPE, "addCartSuccess");
-                            totalPersonalTrajectory.saveTotalDataToFile(totalMap);
                             //通知刷新购物车数量
                             getCarCount(activity);
                         } else {

@@ -48,7 +48,6 @@ import butterknife.ButterKnife;
 
 import static android.app.Activity.RESULT_OK;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
-import static com.amkj.dmsh.constant.ConstantMethod.insertFragmentNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_ID;
@@ -148,7 +147,6 @@ public class QualityOverseasMailFragment extends BaseFragment {
                 .create());
         qualityOsMailHeaderAdapter = new QualityOsMailHeaderAdapter(getActivity(), themeList, "overseas");
         overseasHeaderView.communal_recycler_wrap.setAdapter(qualityOsMailHeaderAdapter);
-        totalPersonalTrajectory = insertFragmentNewTotalData(getActivity(), this.getClass().getSimpleName(), categoryId);
         removeExistUtils = new RemoveExistUtils();
     }
 
@@ -385,18 +383,6 @@ public class QualityOverseasMailFragment extends BaseFragment {
                 overseasHeaderView.ad_communal_banner.setCanScroll(false);
                 overseasHeaderView.ad_communal_banner.stopTurning();
                 overseasHeaderView.ad_communal_banner.setPointViewVisible(false);
-            }
-        }
-    }
-
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (!isVisibleToUser) {
-            if (totalPersonalTrajectory != null) {
-                Map<String, String> map = new HashMap<>();
-                map.put("categoryId", categoryId);
-                totalPersonalTrajectory.stopTotal(map);
             }
         }
     }

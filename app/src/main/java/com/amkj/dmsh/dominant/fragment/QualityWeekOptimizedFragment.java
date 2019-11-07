@@ -54,7 +54,6 @@ import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.addShopCarGetSku;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
@@ -202,7 +201,6 @@ public class QualityWeekOptimizedFragment extends BaseFragment {
             }
         });
         badge = getBadge(getActivity(), fl_header_service);
-        totalPersonalTrajectory = insertNewTotalData(getActivity());
     }
 
 

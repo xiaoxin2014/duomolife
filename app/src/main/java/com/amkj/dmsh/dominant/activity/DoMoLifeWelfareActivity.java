@@ -58,7 +58,7 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
-import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
+
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
@@ -232,7 +232,6 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
         badge = ConstantMethod.getBadge(DoMoLifeWelfareActivity.this, fl_header_service);
         //          关闭手势滑动
         dr_communal_pro.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.END);
-        totalPersonalTrajectory = insertNewTotalData(DoMoLifeWelfareActivity.this);
     }
 
     //    商品列表

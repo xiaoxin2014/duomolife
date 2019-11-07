@@ -83,7 +83,7 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
+
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
 import static com.amkj.dmsh.constant.ConstantMethod.totalWelfareProNum;
@@ -334,7 +334,6 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
         badge = ConstantMethod.getBadge(DmlLifeSearchDetailActivity.this, fl_header_service);
         //          关闭手势滑动
         dl_ql_search.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.END);
-        totalPersonalTrajectory = insertNewTotalData(DmlLifeSearchDetailActivity.this, searchId);
         tv_publish_comment.setText(R.string.comment_article_hint);
         KeyboardUtils.registerSoftInputChangedListener(this, new KeyboardUtils.OnSoftInputChangedListener() {
             @Override
@@ -848,26 +847,6 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
     public class CommentCountView {
         @BindView(R.id.tv_comm_comment_count)
         TextView tv_comm_comment_count;
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (totalPersonalTrajectory != null) {
-            Map<String, String> totalMap = new HashMap<>();
-            totalMap.put("relate_id", searchId);
-            totalPersonalTrajectory.stopTotal(totalMap);
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (totalPersonalTrajectory != null) {
-            Map<String, String> totalMap = new HashMap<>();
-            totalMap.put("relate_id", searchId);
-            totalPersonalTrajectory.stopTotal(totalMap);
-        }
     }
 
     @Override

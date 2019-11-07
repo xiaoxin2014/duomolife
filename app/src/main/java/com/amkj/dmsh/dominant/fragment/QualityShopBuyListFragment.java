@@ -64,7 +64,7 @@ import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.addShopCarGetSku;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
+
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -343,7 +343,6 @@ public class QualityShopBuyListFragment extends BaseFragment {
                         if (descriptionBeanList != null) {
                             itemDescriptionList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(descriptionBeanList));
                         }
-                        totalPersonalTrajectory = insertNewTotalData(getActivity(), String.valueOf(shopBuyDetailBean.getId()));
                         getBuyListRecommend(shopBuyDetailBean.getId());
                     } else if (!shopDetailsEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(getActivity(), shopDetailsEntity.getMsg());

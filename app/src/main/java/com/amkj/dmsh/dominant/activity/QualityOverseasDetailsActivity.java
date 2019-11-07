@@ -58,7 +58,7 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
+
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
@@ -174,7 +174,6 @@ public class QualityOverseasDetailsActivity extends BaseActivity {
             }
         });
         badge = ConstantMethod.getBadge(QualityOverseasDetailsActivity.this, fl_header_service);
-        totalPersonalTrajectory = insertNewTotalData(QualityOverseasDetailsActivity.this, overseasId);
     }
 
     @OnClick(R.id.tv_life_back)
@@ -392,26 +391,6 @@ public class QualityOverseasDetailsActivity extends BaseActivity {
                     }
                 }
             });
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (totalPersonalTrajectory != null) {
-            Map<String, String> totalMap = new HashMap<>();
-            totalMap.put("relate_id", overseasId);
-            totalPersonalTrajectory.stopTotal(totalMap);
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (totalPersonalTrajectory != null) {
-            Map<String, String> totalMap = new HashMap<>();
-            totalMap.put("relate_id", overseasId);
-            totalPersonalTrajectory.stopTotal(totalMap);
         }
     }
 

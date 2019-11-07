@@ -378,26 +378,6 @@ public class QualityProductActActivity extends BaseActivity {
         }
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (totalPersonalTrajectory != null) {
-            Map<String, String> totalMap = new HashMap<>();
-            totalMap.put("relate_id", activityCode);
-            totalPersonalTrajectory.stopTotal(totalMap);
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (totalPersonalTrajectory != null) {
-            Map<String, String> totalMap = new HashMap<>();
-            totalMap.put("relate_id", activityCode);
-            totalPersonalTrajectory.stopTotal(totalMap);
-        }
-    }
-
 
     @Override
     protected void postEventResult(@NonNull EventMessage message) {

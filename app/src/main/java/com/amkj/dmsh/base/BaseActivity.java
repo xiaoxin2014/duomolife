@@ -16,7 +16,6 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.BuildConfig;
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.TotalPersonalTrajectory;
 import com.amkj.dmsh.find.activity.TopicDetailActivity;
 import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
 import com.amkj.dmsh.netloadpage.NetEmptyCallback;
@@ -51,13 +50,11 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
 
 
 public abstract class BaseActivity extends AppCompatActivity {
     public KProgressHUD loadHud;
-    public TotalPersonalTrajectory totalPersonalTrajectory;
     public LoadService loadService;
     public Map<String, Object> commonMap = new HashMap<>();
     private String mSimpleName;
@@ -175,9 +172,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         MobclickAgent.onResume(this);
 //        腾讯分析
         StatService.onResume(this);
-        if (totalPersonalTrajectory == null) {
-            totalPersonalTrajectory = new TotalPersonalTrajectory(this);
-        }
         if (ToastUtils.getToast() == null) {
             // 因为吐司只有初始化的时候才会判断通知权限有没有开启，根据这个通知开关来显示原生的吐司还是兼容的吐司
             ToastUtils.init(TinkerManager.getApplication());
@@ -195,45 +189,12 @@ public abstract class BaseActivity extends AppCompatActivity {
         JzvdStd.releaseAllVideos();
 //        避免播放 置于后台，释放滚动
         EventBus.getDefault().post(new EventMessage(START_AUTO_PAGE_TURN, START_AUTO_PAGE_TURN));
-        saveTotalData();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
 
-        saveTotalData();
-    }
-
-    /**
-     * 保存统计数据
-     */
-    private void saveTotalData() {
-        String simpleName = getClass().getSimpleName();
-        if (totalPersonalTrajectory != null) {
-            switch (getStrings(simpleName)) {
-                /**
-                 * 商品详情 订单填写 多么定制 必买清单（历史清单） 福利社专题 种草营 自定义专区
-                 * 海外直邮 营销活动 帖子详情 帖子文章 文章详情 分类详情
-                 */
-                case "ShopScrollDetailsActivity":
-                case "DmlOptimizedSelDetailActivity":
-                case "QualityShopHistoryListActivity":
-                case "DoMoLifeWelfareDetailsActivity":
-                case "DmlLifeSearchDetailActivity":
-                case "QualityCustomTopicActivity":
-                case "QualityOverseasDetailsActivity":
-                case "QualityProductActActivity":
-                case "PostDetailActivity":
-                case "ArticleInvitationDetailsActivity":
-                case "ArticleOfficialActivity":
-                case "QualityTypeProductActivity":
-                    break;
-                default:
-                    totalPersonalTrajectory.stopTotal();
-                    break;
-            }
-        }
     }
 
     @Override

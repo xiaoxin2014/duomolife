@@ -57,7 +57,7 @@ import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
+
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
@@ -186,7 +186,7 @@ public class QualityNewProFragment extends BaseFragment {
         ButterKnife.bind(popupWindowView, productPopWindow);
         popupWindowView.initView();
         badge = ConstantMethod.getBadge(getActivity(), fl_header_service);
-        totalPersonalTrajectory = insertNewTotalData(getActivity());
+
     }
 
     @Override

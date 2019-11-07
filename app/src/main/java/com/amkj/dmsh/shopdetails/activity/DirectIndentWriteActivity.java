@@ -956,7 +956,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
                     //返回成功，调起微信支付接口
                     doWXPay(qualityWeChatIndent.getResult().getPayKey());
                     orderCreateNo = qualityWeChatIndent.getResult().getNo();
-                    recordIndentTrack(orderCreateNo);
                 } else {
                     showImportantToast(DirectIndentWriteActivity.this, qualityWeChatIndent.getResult() == null ? qualityWeChatIndent.getMsg() : qualityWeChatIndent.getResult().getMsg());
 //                            赠品送完刷新数据
@@ -972,7 +971,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
                     //返回成功，调起支付宝支付接口
                     doAliPay(qualityAliPayIndent.getResult().getPayKey());
                     orderCreateNo = qualityAliPayIndent.getResult().getNo();
-                    recordIndentTrack(orderCreateNo);
                 } else {
                     //                            赠品送完刷新数据
                     if (qualityAliPayIndent.getResult() != null) {
@@ -987,7 +985,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
                 if (qualityUnionIndent.getCode().equals(SUCCESS_CODE)) {
                     //返回成功，调起微信支付接口
                     orderCreateNo = qualityUnionIndent.getQualityCreateUnionPayIndent().getNo();
-                    recordIndentTrack(orderCreateNo);
                     unionPay(qualityUnionIndent);
                 } else {
                     showImportantToast(DirectIndentWriteActivity.this, qualityUnionIndent.getQualityCreateUnionPayIndent() != null &&
@@ -1021,13 +1018,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
         }
     }
 
-    private void recordIndentTrack(String orderNo) {
-        if (totalPersonalTrajectory != null) {
-            Map<String, String> totalMap = new HashMap<>();
-            totalMap.put("order_no", orderNo);
-            totalPersonalTrajectory.stopTotal(totalMap);
-        }
-    }
 
     private void doAliPay(String pay_param) {
         new AliPay(this, pay_param, new AliPay.AliPayResultCallBack() {
@@ -1048,9 +1038,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
                     }
                 } else {
                     skipDirectIndent();
-                }
-                if (totalPersonalTrajectory != null) {
-                    totalPersonalTrajectory.getFileTotalTrajectory();
                 }
             }
 
@@ -1104,9 +1091,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
                     }
                 } else {
                     skipDirectIndent();
-                }
-                if (totalPersonalTrajectory != null) {
-                    totalPersonalTrajectory.getFileTotalTrajectory();
                 }
             }
 
@@ -1172,9 +1156,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
                                 } else {
                                     skipDirectIndent();
                                 }
-                            }
-                            if (totalPersonalTrajectory != null) {
-                                totalPersonalTrajectory.getFileTotalTrajectory();
                             }
                         }
 

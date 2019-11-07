@@ -61,7 +61,7 @@ import static com.amkj.dmsh.R.id.tv_communal_pro_tag;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
+
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
 import static com.amkj.dmsh.constant.ConstantMethod.totalProNum;
@@ -190,7 +190,6 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
         //          关闭手势滑动
         dr_welfare_detail_pro.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.END);
         badge = getBadge(DmlOptimizedSelDetailActivity.this, fl_header_service);
-        totalPersonalTrajectory = insertNewTotalData(DmlOptimizedSelDetailActivity.this, optimizedId);
     }
 
     @Override
@@ -349,26 +348,6 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
             dr_welfare_detail_pro.closeDrawers();
         } else {
             dr_welfare_detail_pro.openDrawer(ll_communal_pro_list);
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (totalPersonalTrajectory != null) {
-            Map<String, String> totalMap = new HashMap<>();
-            totalMap.put("relate_id", optimizedId);
-            totalPersonalTrajectory.stopTotal(totalMap);
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (totalPersonalTrajectory != null) {
-            Map<String, String> totalMap = new HashMap<>();
-            totalMap.put("relate_id", optimizedId);
-            totalPersonalTrajectory.stopTotal(totalMap);
         }
     }
 

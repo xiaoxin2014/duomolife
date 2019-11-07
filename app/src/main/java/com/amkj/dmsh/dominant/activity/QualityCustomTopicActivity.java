@@ -57,7 +57,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getIntegralFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
+
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DOUBLE_INTEGRAL_TYPE;
@@ -156,7 +156,6 @@ public class QualityCustomTopicActivity extends BaseActivity {
             }
         }, communal_recycler);
         badge = getBadge(QualityCustomTopicActivity.this, fl_header_service);
-        totalPersonalTrajectory = insertNewTotalData(QualityCustomTopicActivity.this, productType);
     }
 
     @Override
@@ -447,26 +446,6 @@ public class QualityCustomTopicActivity extends BaseActivity {
                     , "我在多么生活发现这几样好物，性价比不错，还包邮"
                     , Url.BASE_SHARE_PAGE_TWO + "m/template/goods/CustomZone.html?id=" + productType
                     , "pages/handpick/handpick?id=" + productType, getStringChangeIntegers(productType));
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (totalPersonalTrajectory != null) {
-            Map<String, String> totalMap = new HashMap<>();
-            totalMap.put("relate_id", productType);
-            totalPersonalTrajectory.stopTotal(totalMap);
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (totalPersonalTrajectory != null) {
-            Map<String, String> totalMap = new HashMap<>();
-            totalMap.put("relate_id", productType);
-            totalPersonalTrajectory.stopTotal(totalMap);
         }
     }
 

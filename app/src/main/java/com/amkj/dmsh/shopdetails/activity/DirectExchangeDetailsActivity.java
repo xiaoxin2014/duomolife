@@ -1247,9 +1247,6 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
 
     private void skipDirectIndent() {
         new Handler().postDelayed(() -> {
-            if (totalPersonalTrajectory != null) {
-                totalPersonalTrajectory.getFileTotalTrajectory();
-            }
             Intent intent = new Intent(DirectExchangeDetailsActivity.this, DirectPaySuccessActivity.class);
             intent.putExtra("indentNo", orderNo);
             intent.putExtra(INDENT_PRODUCT_TYPE, INDENT_PROPRIETOR_PRODUCT);
@@ -1321,9 +1318,6 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
                             }
                             showToast(DirectExchangeDetailsActivity.this, "支付成功");
                             if (!TextUtils.isEmpty(webResultValue) && "1".equals(webResultValue)) {
-                                if (totalPersonalTrajectory != null) {
-                                    totalPersonalTrajectory.getFileTotalTrajectory();
-                                }
                                 loadData();
                             } else {
                                 skipDirectIndent();

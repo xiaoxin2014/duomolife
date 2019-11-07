@@ -39,7 +39,7 @@ import butterknife.OnClick;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
-import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
+
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
@@ -142,7 +142,6 @@ public class QualityNewUserFragment extends BaseFragment {
             page++;
             getNewUserCouponProduct();
         }, communal_recycler);
-        totalPersonalTrajectory = insertNewTotalData(getActivity());
     }
 
     @Override

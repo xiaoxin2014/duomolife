@@ -13,7 +13,6 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -124,7 +123,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.REGEX_TEXT;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOKEN_EXPIRE_TIME;
 import static com.amkj.dmsh.constant.ConstantVariable.TOKEN_REFRESH_TIME;
-import static com.amkj.dmsh.constant.ConstantVariable.UP_TOTAL_SIZE;
 import static com.amkj.dmsh.constant.ConstantVariable.isDebugTag;
 import static com.amkj.dmsh.constant.ConstantVariable.isShowTint;
 import static com.amkj.dmsh.constant.Url.CHECK_CLEAR_USER_DATA;
@@ -214,10 +212,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             getFirstPushInfo();
 //            获取更新
             AppUpdateUtils.getInstance().getAppUpdate(MainActivity.this);
-//            统计字段数据更新
-            getAppUpdateJson();
-//            统计数据上传大小
-            getUpTotalSize();
 //            设置分享提示
             setShareTint();
 //            检查推送权限
@@ -768,25 +762,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, null);
     }
 
-    /**
-     * 获取上传统计大小
-     */
-    private void getUpTotalSize() {
-        String url = Url.TOTAL_UP_SIZE;
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                if (requestStatus != null) {
-                    if (requestStatus.getCode().equals(SUCCESS_CODE) && requestStatus.getResult() != null) {
-                        UP_TOTAL_SIZE = requestStatus.getResult().getCollectSize() > 0 ? requestStatus.getResult().getCollectSize() : 50;
-                    }
-                }
-            }
-        });
-    }
-
     private void getAddressVersion() {
         String url = Url.H_ADDRESS_VERSION;
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, new NetLoadListenerHelper() {
@@ -1216,25 +1191,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             changePage(mainIconBean);
         }
         isChecked = false;
-    }
-
-    /**
-     * 获取统计字段 上传大小
-     */
-    public void getAppUpdateJson() {
-        String url = Url.APP_TOTAL_ACTION;
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                TotalActionEntity totalActionEntity = TotalActionEntity.objectFromData(result);
-                List<TotalActionEntity.TotalActionBean> totalActionList = totalActionEntity.getTotalActionList();
-                File trajectoryFile = createFiles(new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + "trajectory"));
-                File file = new File(trajectoryFile.getAbsolutePath() + "/" + "total" + ".txt");
-                for (TotalActionEntity.TotalActionBean totalActionBean : totalActionList) {
-                    FileStreamUtils.writeFileFromString(file.getAbsolutePath(), "," + totalActionBean.getName() + "," + totalActionBean.getId() + "\n", true);
-                }
-            }
-        });
     }
 
     private File createFiles(File file) {

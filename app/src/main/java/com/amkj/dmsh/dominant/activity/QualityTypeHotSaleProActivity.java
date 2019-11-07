@@ -48,7 +48,7 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
-import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
+
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
@@ -119,7 +119,6 @@ public class QualityTypeHotSaleProActivity extends BaseActivity {
             }
         });
         badge = getBadge(QualityTypeHotSaleProActivity.this, fl_header_service);
-        totalPersonalTrajectory = insertNewTotalData(QualityTypeHotSaleProActivity.this);
     }
 
     @Override

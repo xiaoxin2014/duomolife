@@ -38,7 +38,6 @@ import q.rorbin.badgeview.Badge;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
-import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
@@ -89,7 +88,6 @@ public class QualityTypeHotSaleProFragment extends BaseFragment {
             EventBus.getDefault().post(new EventMessage("refresh", "hotSaleData"));
         });
         badge = getBadge(getActivity(), fl_header_service);
-        totalPersonalTrajectory = insertNewTotalData(getActivity());
     }
 
     @Override

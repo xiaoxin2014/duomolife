@@ -64,7 +64,6 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
@@ -209,7 +208,6 @@ public class QualityNewProActivity extends BaseActivity {
         ButterKnife.bind(popupWindowView, productPopWindow);
         popupWindowView.initView();
         badge = ConstantMethod.getBadge(QualityNewProActivity.this, fl_header_service);
-        totalPersonalTrajectory = insertNewTotalData(QualityNewProActivity.this);
     }
 
     @Override

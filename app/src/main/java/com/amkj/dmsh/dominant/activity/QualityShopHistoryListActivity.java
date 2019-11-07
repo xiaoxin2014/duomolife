@@ -60,7 +60,6 @@ import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.addShopCarGetSku;
 import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
@@ -216,7 +215,6 @@ public class QualityShopHistoryListActivity extends BaseActivity {
             }
         });
         badge = ConstantMethod.getBadge(QualityShopHistoryListActivity.this, fl_header_service);
-        totalPersonalTrajectory = insertNewTotalData(QualityShopHistoryListActivity.this, listId);
     }
 
 
@@ -398,26 +396,6 @@ public class QualityShopHistoryListActivity extends BaseActivity {
                     , "必买清单"
                     , "集结各路口碑好货，为你精选出必买的家居、母婴优品，不踩雷，买得更顺心。"
                     , Url.BASE_SHARE_PAGE_TWO + "m/template/goods/must_buy.html", shopBuyDetailBean.getId());
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (totalPersonalTrajectory != null) {
-            Map<String, String> totalMap = new HashMap<>();
-            totalMap.put("relate_id", listId);
-            totalPersonalTrajectory.stopTotal(totalMap);
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (totalPersonalTrajectory != null) {
-            Map<String, String> totalMap = new HashMap<>();
-            totalMap.put("relate_id", listId);
-            totalPersonalTrajectory.stopTotal(totalMap);
         }
     }
 

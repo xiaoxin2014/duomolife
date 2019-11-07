@@ -34,7 +34,6 @@ import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.TabEntity;
-import com.amkj.dmsh.constant.TotalPersonalTrajectory;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.activity.DirectProductEvaluationActivity;
@@ -144,7 +143,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
 import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_NAME_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
 import static com.amkj.dmsh.constant.ConstantVariable.isShowTint;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
@@ -611,7 +609,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             }
         });
         badge = getBadge(getActivity(), fl_header_service).setBadgeGravity(Gravity.END | Gravity.TOP);
-        insertNewTotalData();
 
         //初始化组合商品列表
         LinearLayoutManager groupManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
@@ -1547,11 +1544,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     RequestStatus status = gson.fromJson(result, RequestStatus.class);
                     if (status != null) {
                         if (status.getCode().equals(SUCCESS_CODE)) {
-                            TotalPersonalTrajectory totalPersonalTrajectory = new TotalPersonalTrajectory(getActivity());
-                            Map<String, String> totalMap = new HashMap<>();
-                            totalMap.put("productId", String.valueOf(shopPropertyBean.getId()));
-                            totalMap.put(TOTAL_NAME_TYPE, "addCartSuccess");
-                            totalPersonalTrajectory.saveTotalDataToFile(totalMap);
                             showToast(getActivity(), getString(R.string.AddCarSuccess));
                             //通知刷新购物车数量
                             getCarCount(getActivity());
@@ -1737,20 +1729,8 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             default:
                 break;
         }
-
-
     }
 
-    private void setTotalData() {
-        if (totalPersonalTrajectory != null) {
-            Map<String, String> totalMap = new HashMap<>();
-            totalMap.put("productId", productId);
-            if (!TextUtils.isEmpty(recommendType)) {
-                totalMap.put(TOTAL_NAME_TYPE, recommendType);
-            }
-            totalPersonalTrajectory.stopTotal(totalMap);
-        }
-    }
 
     //推荐跳转更多推荐
     private void skipMoreRecommend(ShopRecommendHotTopicBean shopRecommendHotTopicBean) {
@@ -1978,20 +1958,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         }
     }
 
-
-    /**
-     * 插入一条数据
-     */
-    private void insertNewTotalData() {
-        if (totalPersonalTrajectory == null) {
-            totalPersonalTrajectory = new TotalPersonalTrajectory(getActivity());
-        }
-        Map<String, String> totalMap = new HashMap<>();
-        totalMap.put("relate_id", productId);
-        totalPersonalTrajectory.saveTotalDataToFile(totalMap);
-    }
-
-
     private void stopScrollBanner() {
         banner_ql_sp_pro_details.setCanScroll(false);
         banner_ql_sp_pro_details.setPointViewVisible(false);
@@ -2014,18 +1980,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 }
             }
         }, 5 * 1000);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        setTotalData();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        setTotalData();
     }
 
     @Override

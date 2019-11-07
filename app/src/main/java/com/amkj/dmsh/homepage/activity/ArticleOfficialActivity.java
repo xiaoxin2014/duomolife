@@ -59,7 +59,6 @@ import com.umeng.socialize.UMShareAPI;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -795,27 +794,6 @@ public class ArticleOfficialActivity extends BaseActivity {
     private void transmitUid() {
         webViewJs(getIntegralFormat(this, R.string.web_uid_method, userId));
     }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        insertTotalData();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        insertTotalData();
-    }
-
-    private void insertTotalData() {
-        if (totalPersonalTrajectory != null) {
-            Map<String, String> totalMap = new HashMap<>();
-            totalMap.put("relate_id", artId);
-            totalPersonalTrajectory.stopTotal(totalMap);
-        }
-    }
-
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {

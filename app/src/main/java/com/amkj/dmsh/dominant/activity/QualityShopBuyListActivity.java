@@ -69,7 +69,7 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.addShopCarGetSku;
 import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
+
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -373,7 +373,6 @@ public class QualityShopBuyListActivity extends BaseActivity {
                         if (descriptionBeanList != null) {
                             itemDescriptionList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(descriptionBeanList));
                         }
-                        totalPersonalTrajectory = insertNewTotalData(QualityShopBuyListActivity.this, String.valueOf(shopBuyDetailBean.getId()));
                         getBuyListRecommend(shopBuyDetailBean.getId());
                     } else if (!shopDetailsEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(QualityShopBuyListActivity.this, shopDetailsEntity.getMsg());

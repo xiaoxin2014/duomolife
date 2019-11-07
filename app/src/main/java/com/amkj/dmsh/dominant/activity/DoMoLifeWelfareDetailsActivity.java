@@ -81,7 +81,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
+
 import static com.amkj.dmsh.constant.ConstantMethod.saveSourceId;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
@@ -288,7 +288,6 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
         //          关闭手势滑动
         dr_welfare_detail_pro.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.END);
         badge = getBadge(DoMoLifeWelfareDetailsActivity.this, fl_header_service);
-        totalPersonalTrajectory = insertNewTotalData(DoMoLifeWelfareDetailsActivity.this, welfareId);
         tv_publish_comment.setText(R.string.comment_article_hint);
         KeyboardUtils.registerSoftInputChangedListener(this, new KeyboardUtils.OnSoftInputChangedListener() {
             @Override
@@ -723,16 +722,6 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
             } else {
                 getLoginStatus(DoMoLifeWelfareDetailsActivity.this);
             }
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (totalPersonalTrajectory != null) {
-            Map<String, String> totalMap = new HashMap<>();
-            totalMap.put("relate_id", welfareId);
-            totalPersonalTrajectory.stopTotal(totalMap);
         }
     }
 

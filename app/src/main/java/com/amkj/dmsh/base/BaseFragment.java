@@ -16,7 +16,6 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.BuildConfig;
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.TotalPersonalTrajectory;
 import com.amkj.dmsh.netloadpage.NetEmptyCallback;
 import com.amkj.dmsh.netloadpage.NetLoadCallback;
 import com.amkj.dmsh.network.NetLoadUtils;
@@ -71,7 +70,6 @@ public abstract class BaseFragment extends ImmersionFragment {
     protected boolean isVisibleToUser; //当前界面对用户是否可见
     protected boolean isDataInitiated; //是否已经加载过数据（保证数据只会加载一次）
     protected boolean isLazy = true;          //当前Fragment是否需要使用懒加载方式
-    public TotalPersonalTrajectory totalPersonalTrajectory;
     public LoadService loadService;
     private int scrollY;
 
@@ -374,29 +372,6 @@ public abstract class BaseFragment extends ImmersionFragment {
         MobclickAgent.onPageStart(getClass().getName());
     }
 
-    /**
-     * 分类 海外直邮活动专区
-     *
-     * @param hidden 是否隐藏
-     */
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
-        if (hidden) {
-            if (totalPersonalTrajectory != null) {
-                switch (getClass().getSimpleName()) {
-                    case "QualityNormalFragment":
-                    case "QualityOverseasMailFragment":
-                        break;
-                    default:
-                        totalPersonalTrajectory.stopTotal();
-                        break;
-                }
-            }
-        } else {
-            totalPersonalTrajectory = new TotalPersonalTrajectory(this.getContext(), this.getClass().getSimpleName());
-        }
-    }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -434,15 +409,11 @@ public abstract class BaseFragment extends ImmersionFragment {
         JzvdStd.releaseAllVideos();
         //        避免播放 置于后台，释放滚动
         EventBus.getDefault().post(new EventMessage(START_AUTO_PAGE_TURN, START_AUTO_PAGE_TURN));
-        if (totalPersonalTrajectory != null) {
-            totalPersonalTrajectory.stopTotal();
-        }
     }
 
     @Override
     public void onVisible() {
         AutoSize.autoConvertDensityOfGlobal(getActivity());
-        totalPersonalTrajectory = new TotalPersonalTrajectory(getContext(), getClass().getSimpleName());
     }
 
     protected String getSimpleName() {

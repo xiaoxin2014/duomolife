@@ -689,26 +689,6 @@ public class PostDetailActivity extends BaseActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        if (totalPersonalTrajectory != null) {
-            Map<String, String> totalMap = new HashMap<>();
-            totalMap.put("relate_id", mArtId);
-            totalPersonalTrajectory.stopTotal(totalMap);
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (totalPersonalTrajectory != null) {
-            Map<String, String> totalMap = new HashMap<>();
-            totalMap.put("relate_id", mArtId);
-            totalPersonalTrajectory.stopTotal(totalMap);
-        }
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
         KeyboardUtils.unregisterSoftInputChangedListener(this);
