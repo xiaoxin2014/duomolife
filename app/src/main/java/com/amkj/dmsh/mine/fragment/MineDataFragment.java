@@ -28,6 +28,7 @@ import com.amkj.dmsh.bean.MessageBean;
 import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.homepage.activity.AttendanceActivity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.message.activity.MessageActivity;
@@ -155,6 +156,10 @@ public class MineDataFragment extends BaseFragment {
     public ConvenientBanner ad_mine;
     @BindView(R.id.tv_personal_data_sup)
     public TextView tv_personal_data_sup;
+    @BindView(R.id.rel_personal_data_sup)
+    public RelativeLayout rel_personal_data_sup;
+    @BindView(R.id.tv_mine_get_score_more)
+    public TextView tv_mine_get_score_more;
     @BindView(R.id.tv_bind_phone)
     TextView mTvBindPhone;
     private CommunalUserInfoBean communalUserInfoBean;
@@ -188,8 +193,8 @@ public class MineDataFragment extends BaseFragment {
     @Override
     protected void initViews() {
         isLoginStatus();
-        tv_personal_data_sup.getPaint().setAntiAlias(true);//抗锯齿
-        tv_personal_data_sup.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG); //下划线
+        tv_mine_get_score_more.getPaint().setAntiAlias(true);//抗锯齿
+        tv_mine_get_score_more.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG); //下划线
         mTvBindPhone.getPaint().setAntiAlias(true);
         mTvBindPhone.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
         GridLayoutManager manager = new GridLayoutManager(getActivity(), 4);
@@ -363,11 +368,10 @@ public class MineDataFragment extends BaseFragment {
                 ? ImageConverterUtils.getFormatImg(communalUserInfoBean.getBgimg_url()) : BASE_RESOURCE_DRAW + R.drawable.mine_no_login_bg);
         setBottomTypeCount(communalUserInfoBean);
         if (communalUserInfoBean.getNoticeInfo() != null && !TextUtils.isEmpty(communalUserInfoBean.getNoticeInfo().getContent())) {
-            tv_personal_data_sup.setVisibility(View.VISIBLE);
-            //完善资料获取积分
-//            tv_personal_data_sup.setText(getStrings(communalUserInfoBean.getNoticeInfo().getContent()));
+            rel_personal_data_sup.setVisibility(View.VISIBLE);
+            tv_personal_data_sup.setText(getStrings(communalUserInfoBean.getNoticeInfo().getContent()));
         } else {
-            tv_personal_data_sup.setVisibility(View.GONE);
+            rel_personal_data_sup.setVisibility(View.GONE);
         }
     }
 
@@ -616,7 +620,7 @@ public class MineDataFragment extends BaseFragment {
         }
         ll_mine_login.setVisibility(View.GONE);
         ll_mime_no_login.setVisibility(View.VISIBLE);
-        tv_personal_data_sup.setVisibility(View.GONE);
+        rel_personal_data_sup.setVisibility(View.GONE);
         GlideImageLoaderUtil.loadCenterCrop(getActivity(), iv_mine_page_bg, BASE_RESOURCE_DRAW + R.drawable.mine_no_login_bg);
     }
 
@@ -701,6 +705,13 @@ public class MineDataFragment extends BaseFragment {
             intent.putExtra("imgUrl", getStrings(communalUserInfoBean.getBgimg_url()));
             startActivity(intent);
         }
+    }
+
+    //    跳转签到
+    @OnClick(R.id.rel_integral_more)
+    void skipAtt(View view) {
+        Intent intent = new Intent(getActivity(), AttendanceActivity.class);
+        startActivity(intent);
     }
 
     @OnClick(R.id.tv_personal_data_sup)

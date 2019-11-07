@@ -131,11 +131,11 @@
                         android:textStyle="bold"/>
 
                     <TextView
-                        android:id="@+id/tv_personal_data_sup"
+                        android:id="@+id/tv_mine_get_score_more"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingLeft="@dimen/gap_left"
-                        android:text="完善资料奖励积分"
+                        android:text="获取更多积分"
                         android:textColor="@color/text_white_transcurent"
                         android:textSize="@dimen/sc_mm_22"/>
                 </LinearLayout>

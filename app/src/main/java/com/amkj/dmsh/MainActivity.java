@@ -201,7 +201,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             if (isDebugTag) {
                 getSelectedDialog();
             }
-//            打开app时间统计
 //            加载OSS配置  (备注：做统计使用，保留该接口调用)
             getOSSConfig();
 //            获取地址版本

@@ -18,6 +18,34 @@
 
             <include layout="@layout/layout_mine_head"/>
 
+            <RelativeLayout
+                android:id="@+id/rel_personal_data_sup"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/sc_mm_90"
+                android:background="#e4f0fe"
+                android:paddingLeft="@dimen/sc_mm_30"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/iv_personal_data_sup"
+                    android:layout_width="@dimen/sc_mm_40"
+                    android:layout_height="@dimen/sc_mm_40"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/mine_tips"/>
+
+                <TextView
+                    android:id="@+id/tv_personal_data_sup"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/sc_mm_20"
+                    android:layout_toRightOf="@+id/iv_personal_data_sup"
+                    android:ellipsize="end"
+                    android:gravity="center_vertical"
+                    android:maxLines="2"
+                    android:textColor="@color/text_login_gray_s"
+                    android:textSize="@dimen/sc_mm_28"/>
+            </RelativeLayout>
+
             <android.support.v7.widget.CardView
                 xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
