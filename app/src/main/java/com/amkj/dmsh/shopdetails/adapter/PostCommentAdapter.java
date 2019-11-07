@@ -93,7 +93,7 @@ public class PostCommentAdapter extends BaseQuickAdapter<PostCommentBean, BaseVi
                 @Override
                 protected void convert(BaseViewHolder helper, ReplyCommListBean item) {
                     if (item == null) return;
-                    GlideImageLoaderUtil.loadRoundImg(context, helper.getView(R.id.civ_comm_comment_inner_avatar), item.getAvatar(), AutoSizeUtils.mm2px(mAppContext, 50));
+                    GlideImageLoaderUtil.loadRoundImg(context, helper.getView(R.id.civ_comm_comment_inner_avatar), item.getAvatar(), AutoSizeUtils.mm2px(mAppContext, 50), R.drawable.default_ava_img);
                     helper.setText(R.id.tv_comm_comment_inner_name, getStrings(item.getNickname() + (item.isReplyMain() ? "" : " 回复 " + item.getNickname1())))
                             .setText(R.id.tv_comm_comment_inner_content, getStrings(item.getContent()));
                     helper.getView(R.id.civ_comm_comment_inner_avatar).setOnClickListener(v -> skipUserCenter(context, item.getUid()));

@@ -11,12 +11,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.base.TinkerBaseApplicationLike;
+import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
@@ -30,6 +31,7 @@ import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
+import com.amkj.dmsh.utils.CountDownTimer;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
@@ -38,7 +40,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,10 +51,10 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import q.rorbin.badgeview.Badge;
 
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
+import static com.amkj.dmsh.constant.ConstantMethod.getIntegralFormat;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.insertNewTotalData;
@@ -66,6 +67,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
+import static com.amkj.dmsh.constant.Url.GET_SHOPPING_REWARD;
 import static com.amkj.dmsh.constant.Url.Q_CUSTOM_PRO_COVER;
 import static com.amkj.dmsh.constant.Url.Q_CUSTOM_PRO_LIST;
 
@@ -97,16 +99,16 @@ public class QualityCustomTopicActivity extends BaseActivity {
     @BindView(R.id.tl_quality_bar)
     Toolbar tl_quality_bar;
     private int page = 1;
-    private int scrollY;
-    private float screenHeight;
     private GoodProductAdapter qualityCustomTopicAdapter;
     private List<LikedProductBean> customProList = new ArrayList();
     private List<CommunalDetailObjectBean> descriptionList = new ArrayList();
     private QNewProView qNewProView;
+    private IntegralView mIntegralView;
     private Badge badge;
     private String productType;
     private String showType;
-    private View headerView;
+    private View headViewCover;
+    private View headViewIntegral;
     private CommunalDetailAdapter communalDetailAdapter;
     private UserLikedProductEntity userLikedProductEntity;
     private GridLayoutManager mGridLayoutManager;
@@ -128,52 +130,19 @@ public class QualityCustomTopicActivity extends BaseActivity {
         tv_header_titleAll.setText("");
         tl_quality_bar.setSelected(true);
         iv_img_service.setImageResource(R.drawable.shop_car_gray_icon);
+        smart_communal_refresh.setOnRefreshListener(refreshLayout -> loadData());
+        setFloatingButton(download_btn_communal, communal_recycler);
+
+        //初始化封面信息
+        headViewCover = LayoutInflater.from(QualityCustomTopicActivity.this).inflate(R.layout.layout_communal_detail_scroll_rec_cover_wrap, null, false);
+        qNewProView = new QNewProView();
+        ButterKnife.bind(qNewProView, headViewCover);
+        qNewProView.initViews();
+
+        //初始化商品列表
         mGridLayoutManager = new GridLayoutManager(QualityCustomTopicActivity.this, 2);
         communal_recycler.setLayoutManager(mGridLayoutManager);
-
-        smart_communal_refresh.setOnRefreshListener(refreshLayout -> loadData());
-        TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-        screenHeight = app.getScreenHeight();
-        communal_recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                scrollY += dy;
-                if (!recyclerView.canScrollVertically(-1)) {
-                    scrollY = 0;
-                }
-                if (scrollY > screenHeight * 1.5 && dy < 0) {
-                    if (download_btn_communal.getVisibility() == GONE) {
-                        download_btn_communal.setVisibility(VISIBLE);
-                        download_btn_communal.hide(false);
-                    }
-                    if (!download_btn_communal.isVisible()) {
-                        download_btn_communal.show();
-                    }
-                } else {
-                    if (download_btn_communal.isVisible()) {
-                        download_btn_communal.hide();
-                    }
-                }
-            }
-        });
-        download_btn_communal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) communal_recycler.getLayoutManager();
-                int firstVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition();
-                int mVisibleCount = linearLayoutManager.findLastVisibleItemPosition()
-                        - linearLayoutManager.findFirstVisibleItemPosition() + 1;
-                if (firstVisibleItemPosition > mVisibleCount) {
-                    communal_recycler.scrollToPosition(mVisibleCount);
-                }
-                communal_recycler.smoothScrollToPosition(0);
-            }
-        });
         qualityCustomTopicAdapter = new GoodProductAdapter(QualityCustomTopicActivity.this, customProList);
-        headerView = LayoutInflater.from(QualityCustomTopicActivity.this).inflate(R.layout.layout_communal_detail_scroll_rec_cover_wrap, null, false);
-        qNewProView = new QNewProView();
-        ButterKnife.bind(qNewProView, headerView);
-        qNewProView.initViews();
         communal_recycler.setAdapter(qualityCustomTopicAdapter);
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
@@ -260,7 +229,7 @@ public class QualityCustomTopicActivity extends BaseActivity {
                             qNewProView.communal_recycler_wrap.setVisibility(View.GONE);
                         }
                         if (qualityCustomTopicAdapter.getHeaderLayoutCount() < 1) {
-                            qualityCustomTopicAdapter.addHeaderView(headerView);
+                            qualityCustomTopicAdapter.addHeaderView(headViewCover);
                             qualityCustomTopicAdapter.notifyDataSetChanged();
                         }
                     } else {
@@ -324,6 +293,23 @@ public class QualityCustomTopicActivity extends BaseActivity {
                             } else {
                                 showToast(QualityCustomTopicActivity.this, userLikedProductEntity.getMsg());
                             }
+
+                            if (headViewIntegral != null) {
+                                qualityCustomTopicAdapter.removeHeaderView(headViewIntegral);
+                            }
+
+                            //判断是否有积分奖励(该专区有奖励并且当天没有领取奖励)
+                            if (userLikedProductEntity.isUserHaveReward()) {
+                                headViewIntegral = LayoutInflater.from(QualityCustomTopicActivity.this).inflate(R.layout.layout_get_integral_header, null, false);
+                                mIntegralView = new IntegralView();
+                                ButterKnife.bind(mIntegralView, headViewIntegral);
+                                mIntegralView.mTvBrowse.setVisibility(View.VISIBLE);
+                                mIntegralView.mTvBrowse.setVisibility(View.VISIBLE);
+                                mIntegralView.mTvIntegralRule.setText(getStrings(userLikedProductEntity.getRewardInfo()));
+                                mIntegralView.mViewTime = userLikedProductEntity.getViewTime();
+                                qualityCustomTopicAdapter.addHeaderView(headViewIntegral, 0);
+                            }
+
                             qualityCustomTopicAdapter.notifyDataSetChanged();
                         }
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, customProList.size() > 0 || descriptionList.size() > 0, userLikedProductEntity);
@@ -336,6 +322,74 @@ public class QualityCustomTopicActivity extends BaseActivity {
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, customProList.size() > 0 || descriptionList.size() > 0, userLikedProductEntity);
                     }
                 });
+    }
+
+    private void getReward() {
+        Map<String, Object> map = new HashMap<>();
+        if (userId > 0) {
+            map.put("uid", userId);
+        }
+        map.put("zoneId", productType);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, GET_SHOPPING_REWARD, map, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                RequestStatus requestStatus = new Gson().fromJson(result, RequestStatus.class);
+                if (requestStatus != null) {
+                    String code = requestStatus.getCode();
+                    if (SUCCESS_CODE.equals(code)) {
+                        mIntegralView.mTvIntegralRule.setText("积分奖励已到账");
+                    } else {
+                        mIntegralView.mTvIntegralRule.setText(getStrings(requestStatus.getMsg()));
+                    }
+                } else {
+                    mIntegralView.mTvIntegralRule.setText("积分发放失败");
+                }
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                mIntegralView.mTvIntegralRule.setText("积分发放失败");
+            }
+        });
+
+    }
+
+    class IntegralView {
+        @BindView(R.id.ll_get_integral_header)
+        LinearLayout mLLHeader;
+        @BindView(R.id.tv_integral_rule)
+        TextView mTvIntegralRule;
+        @BindView(R.id.tv_browse)
+        TextView mTvBrowse;
+        private int mViewTime;
+
+        @OnClick(R.id.tv_browse)
+        void startBrowse(View view) {
+            if (userId > 0) {
+                mTvBrowse.setVisibility(View.GONE);
+                CountDownTimer countDownTimer = new CountDownTimer(getActivity(), mViewTime * 1000 + 300, 1000) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+                        int second = (int) (millisUntilFinished / 1000);
+                        if (second > 0) {
+                            mTvIntegralRule.setText(getIntegralFormat(getActivity(), R.string.shoppig_reward_rule, second));
+                        }
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        cancel();
+                        mLLHeader.setSelected(true);
+                        mTvIntegralRule.setText("积分奖励发放中...");
+                        getReward();
+                    }
+                };
+
+                countDownTimer.start();
+            } else {
+                getLoginStatus(getActivity());
+            }
+        }
     }
 
 
@@ -370,6 +424,7 @@ public class QualityCustomTopicActivity extends BaseActivity {
             communal_recycler_wrap.setAdapter(communalDetailAdapter);
         }
     }
+
 
     @OnClick(R.id.iv_img_service)
     void skipShopCar(View view) {

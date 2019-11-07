@@ -45,6 +45,45 @@ public class UserLikedProductEntity extends BaseEntity implements Comparable<Use
     //position(用于排序)
     private int position;
 
+
+    //自定义专区逛一逛得积分专用参数
+    private int isUserHaveReward;
+    private String rewardInfo;
+    private int viewTime;
+    private int isReward;
+
+    public boolean isUserHaveReward() {
+        return isUserHaveReward == 1;
+    }
+
+    public void setIsUserHaveReward(int isUserHaveReward) {
+        this.isUserHaveReward = isUserHaveReward;
+    }
+
+    public String getRewardInfo() {
+        return rewardInfo.replaceAll("<br>", "\n");
+    }
+
+    public void setRewardInfo(String rewardInfo) {
+        this.rewardInfo = rewardInfo;
+    }
+
+    public int getViewTime() {
+        return viewTime;
+    }
+
+    public void setViewTime(int viewTime) {
+        this.viewTime = viewTime;
+    }
+
+    public boolean isReward() {
+        return isReward == 1;
+    }
+
+    public void setIsReward(int isReward) {
+        this.isReward = isReward;
+    }
+
     public int getPosition() {
         return position;
     }

@@ -219,6 +219,8 @@ public class Url {
     public static final String EDITOR_COMMENT_FAVOR = "api/redactorpickedcomment/favor";
     //    小编精选留言列表
     public static final String EDITOR_COMMENT_LIST = "api/redactorpickedcomment/getCommentList";
+    //    获取自定义专区（逛一逛得积分）奖励
+    public static final String GET_SHOPPING_REWARD = "api/goods/greate/grantViewReward";
 
     /**
      * 大改版首页

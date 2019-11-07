@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:background="@color/gray_bg"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/ll_get_integral_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/sc_mm_10"
+        android:background="@drawable/selector_shopping_bg"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/sc_mm_30"
+        android:paddingBottom="@dimen/sc_mm_30">
+
+        <TextView
+            android:id="@+id/tv_integral_rule"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/sc_mm_30"
+            android:layout_marginRight="@dimen/sc_mm_30"
+            android:gravity="center"
+            android:lineSpacingExtra="@dimen/sc_mm_12"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sc_mm_32"/>
+
+        <TextView
+            android:id="@+id/tv_browse"
+            android:layout_width="@dimen/sc_mm_260"
+            android:layout_height="@dimen/sc_mm_50"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/sc_mm_20"
+            android:background="@drawable/browse_bg"
+            android:gravity="center"
+            android:text="开始浏览"
+            android:textColor="#fa515f"
+            android:textSize="@dimen/sc_mm_30"/>
+    </LinearLayout>
+</LinearLayout>
