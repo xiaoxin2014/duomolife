@@ -226,6 +226,8 @@ public class RegisterAccountActivity extends BaseActivity {
                                 savePersonalInfoBean.setPhoneNum(getStrings(registerUserInfoBean.getMobile()));
                                 savePersonalInfoBean.setUid(registerUserInfoBean.getUid());
                                 savePersonalInfoBean.setLogin(true);
+                                savePersonalInfoBean.setToken(registerUserInfoBean.getToken());
+                                savePersonalInfoBean.setTokenExpireSeconds(System.currentTimeMillis() + registerUserInfoBean.getTokenExpireSeconds());
                                 savePersonalInfoCache(RegisterAccountActivity.this, savePersonalInfoBean);
                                 Intent intent = new Intent(RegisterAccountActivity.this, RegisterSelSexActivity.class);
                                 startActivity(intent);

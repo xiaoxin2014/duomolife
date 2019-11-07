@@ -234,7 +234,7 @@ public class AliBCFragment extends BaseFragment {
             @Override
             public void onPageFinished(final WebView view, final String url) {
 //                    是否显示顶部导航栏
-                if (RefreshState.Refreshing.equals(smart_web_fragment_refresh.getState())) {
+                if (smart_web_fragment_refresh != null && RefreshState.Refreshing.equals(smart_web_fragment_refresh.getState())) {
                     smart_web_fragment_refresh.finishRefresh();
                 }
                 super.onPageFinished(view, url);
@@ -805,7 +805,7 @@ public class AliBCFragment extends BaseFragment {
     public void showImportToast(Map<String, Object> map) {
         if (map != null) {
             String msg = (String) map.get("msg");
-            if (!TextUtils.isEmpty(msg)){
+            if (!TextUtils.isEmpty(msg)) {
                 showImportantToast(getActivity(), msg);
             }
         }

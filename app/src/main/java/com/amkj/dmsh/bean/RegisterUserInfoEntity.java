@@ -3,6 +3,7 @@ package com.amkj.dmsh.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -85,9 +86,18 @@ public class RegisterUserInfoEntity implements Parcelable {
         private int reg_time;
         private String device_type;
         private boolean baby_verification;
-        private String token;
         private String qq;
         private String avatar;
+        private String token;
+        private String tokenExpireSeconds;
+
+        public long getTokenExpireSeconds() {
+            return ConstantMethod.getStringChangeLong(tokenExpireSeconds);
+        }
+
+        public void setTokenExpireSeconds(String tokenExpireSeconds) {
+            this.tokenExpireSeconds = tokenExpireSeconds;
+        }
 
         public String getAvatar() {
             return avatar;
