@@ -5,7 +5,6 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -62,6 +61,7 @@ import com.amkj.dmsh.shopdetails.payutils.AliPay;
 import com.amkj.dmsh.shopdetails.payutils.UnionPay;
 import com.amkj.dmsh.shopdetails.payutils.WXPay;
 import com.amkj.dmsh.utils.CommunalCopyTextUtils;
+import com.amkj.dmsh.utils.LifecycleHandler;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.CustomPopWindow;
@@ -1246,7 +1246,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
     }
 
     private void skipDirectIndent() {
-        new Handler().postDelayed(() -> {
+        new LifecycleHandler(this).postDelayed(() -> {
             Intent intent = new Intent(DirectExchangeDetailsActivity.this, DirectPaySuccessActivity.class);
             intent.putExtra("indentNo", orderNo);
             intent.putExtra(INDENT_PRODUCT_TYPE, INDENT_PROPRIETOR_PRODUCT);

@@ -3,6 +3,7 @@ package com.amkj.dmsh.homepage.activity;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.net.http.SslError;
@@ -41,6 +42,7 @@ import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalComment;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.UMShareAction;
+import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dao.SoftApiDao;
 import com.amkj.dmsh.dominant.bean.DmlSearchCommentEntity.DmlSearchCommentBean;
 import com.amkj.dmsh.homepage.bean.JsInteractiveBean;
@@ -71,6 +73,7 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getIntegralFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getMapValue;
@@ -91,6 +94,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.WEB_JD_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TAOBAO_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TB_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TMALL_SCHEME;
+import static com.amkj.dmsh.constant.ConstantVariable.isDebugTag;
 import static com.amkj.dmsh.dao.BaiChuanDao.skipAliBC;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 import static com.amkj.dmsh.rxeasyhttp.interceptor.MyInterceptor.getCommonApiParameter;
@@ -160,8 +164,15 @@ public class ArticleOfficialActivity extends BaseActivity {
     protected void initViews() {
         Intent intent = getIntent();
         artId = intent.getStringExtra("ArtId");
-//        webUrl = "http://test.domolife.cn/test/app/pages/study_detail_app.html?id=" + artId;
         webUrl = "https://www.domolife.cn/m/app/pages/study_detail_app.html?id=" + artId;
+        if (isDebugTag){
+            SharedPreferences sharedPreferences = mAppContext.getSharedPreferences("selectedServer", MODE_PRIVATE);
+            String baseUrl = sharedPreferences.getString("selectServerUrl", Url.getUrl(0));
+            if (!"https://app.domolife.cn/".equals(baseUrl)) {
+                webUrl = "http://test.domolife.cn/test/app/pages/study_detail_app.html?id=" + artId;
+            }
+        }
+
 //        webUrl = "http://test.domolife.cn/test/template/activity/mutually.html";
 
         //记录埋点参数sourceId

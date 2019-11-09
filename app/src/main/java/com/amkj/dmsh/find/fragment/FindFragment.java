@@ -1,7 +1,6 @@
 package com.amkj.dmsh.find.fragment;
 
 import android.content.Intent;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -26,14 +25,15 @@ import com.amkj.dmsh.find.activity.TopicCatergoryActivity;
 import com.amkj.dmsh.find.adapter.HotTopicAdapter;
 import com.amkj.dmsh.find.adapter.PostContentAdapter;
 import com.amkj.dmsh.find.adapter.PostPagerAdapter;
+import com.amkj.dmsh.find.bean.EventMessageBean;
 import com.amkj.dmsh.find.bean.HotTopicEntity;
 import com.amkj.dmsh.find.bean.HotTopicEntity.HotTopicBean;
-import com.amkj.dmsh.find.bean.EventMessageBean;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.message.activity.MessageActivity;
 import com.amkj.dmsh.network.NetCacheLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.LifecycleHandler;
 import com.amkj.dmsh.utils.SharedPreUtils;
 import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
 import com.amkj.dmsh.views.guideview.Component;
@@ -218,7 +218,7 @@ public class FindFragment extends BaseFragment {
 
                 findHotTopicAdapter.notifyDataSetChanged();
                 ll_find_hot_topic.setVisibility(hotTopicList.size() == 0 ? View.GONE : View.VISIBLE);
-                new Handler().postDelayed(() -> {
+                new LifecycleHandler(getActivity()).postDelayed(() -> {
                     if (!RefreshState.Refreshing.equals(smart_refresh_find.getState())) {
                         showGuideView1();
                     }

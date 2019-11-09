@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
@@ -15,6 +14,7 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.utils.LifecycleHandler;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 
 import java.util.regex.Matcher;
@@ -160,7 +160,7 @@ public class WelcomeLaunchActivity extends BaseActivity {
 //        启动广告点击统计
         adClickTotal(this, launcherAdId);
         //延迟关闭页面，否则广告接口无法统计到
-        new Handler().postDelayed(() -> {
+        new LifecycleHandler(this).postDelayed(() -> {
             getWindow().setFlags(
                     WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN,
                     WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);

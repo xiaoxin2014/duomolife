@@ -62,12 +62,24 @@ public class MarqueeTextEntity {
          */
 
         private int id;
+        @SerializedName(value = "show_count", alternate = "showCount")
         private int show_count;
         private String content;
+        private String android_link;
+
 
         public static MarqueeTextBean objectFromData(String str) {
 
             return new Gson().fromJson(str, MarqueeTextBean.class);
+        }
+
+
+        public String getAndroid_link() {
+            return android_link;
+        }
+
+        public void setAndroid_link(String android_link) {
+            this.android_link = android_link;
         }
 
         public int getId() {

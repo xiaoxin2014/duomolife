@@ -11,7 +11,6 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -32,6 +31,7 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.AsyncUtils;
 import com.amkj.dmsh.utils.FileStreamUtils;
+import com.amkj.dmsh.utils.LifecycleHandler;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogShareHelper;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.views.HtmlWebView;
@@ -214,7 +214,7 @@ public class UMShareAction {
                                 ((HtmlWebView) view).scrollTo(0, 0);
                             }
                             //滚动截屏
-                            new Handler().postDelayed(() -> new AsyncUtils<Bitmap>(context) {
+                            new LifecycleHandler(context).postDelayed(() -> new AsyncUtils<Bitmap>(context) {
                                 @Override
                                 public Bitmap runOnIO() {
                                     return GlideImageLoaderUtil.getBitmapFromView(view);

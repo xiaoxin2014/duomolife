@@ -31,6 +31,7 @@ import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.homepage.activity.AttendanceActivity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
+import com.amkj.dmsh.homepage.bean.MarqueeTextEntity;
 import com.amkj.dmsh.message.activity.MessageActivity;
 import com.amkj.dmsh.mine.activity.BindingMobileActivity;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
@@ -367,9 +368,11 @@ public class MineDataFragment extends BaseFragment {
         GlideImageLoaderUtil.loadImage(getActivity(), iv_mine_page_bg, !TextUtils.isEmpty(communalUserInfoBean.getBgimg_url())
                 ? ImageConverterUtils.getFormatImg(communalUserInfoBean.getBgimg_url()) : BASE_RESOURCE_DRAW + R.drawable.mine_no_login_bg);
         setBottomTypeCount(communalUserInfoBean);
-        if (communalUserInfoBean.getNoticeInfo() != null && !TextUtils.isEmpty(communalUserInfoBean.getNoticeInfo().getContent())) {
+        List<MarqueeTextEntity.MarqueeTextBean> noticeInfoList = communalUserInfoBean.getNoticeInfoList();
+        if (noticeInfoList != null && noticeInfoList.size() > 0) {
+            MarqueeTextEntity.MarqueeTextBean marqueeTextBean = noticeInfoList.get(0);
             rel_personal_data_sup.setVisibility(View.VISIBLE);
-            tv_personal_data_sup.setText(getStrings(communalUserInfoBean.getNoticeInfo().getContent()));
+            tv_personal_data_sup.setText(getStrings(marqueeTextBean.getContent()));
         } else {
             rel_personal_data_sup.setVisibility(View.GONE);
         }

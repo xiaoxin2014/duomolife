@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import com.amkj.dmsh.base.BaseEntity;
 import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.homepage.bean.MarqueeTextEntity;
 import com.amkj.dmsh.mine.bean.MineBabyEntity.BabyBean;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
@@ -124,6 +125,17 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
          */
 
         private NoticeInfoBean noticeInfo;
+
+        private List<MarqueeTextEntity.MarqueeTextBean> noticeInfoList;
+
+
+        public List<MarqueeTextEntity.MarqueeTextBean> getNoticeInfoList() {
+            return noticeInfoList;
+        }
+
+        public void setNoticeInfoList(List<MarqueeTextEntity.MarqueeTextBean> noticeInfoList) {
+            this.noticeInfoList = noticeInfoList;
+        }
 
         public boolean isBindingWx() {
             return "1".equals(isBindingWx);

@@ -3,7 +3,6 @@ package com.amkj.dmsh.shopdetails.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -62,6 +61,7 @@ import com.amkj.dmsh.shopdetails.payutils.AliPay;
 import com.amkj.dmsh.shopdetails.payutils.UnionPay;
 import com.amkj.dmsh.shopdetails.payutils.WXPay;
 import com.amkj.dmsh.utils.KeyboardUtils;
+import com.amkj.dmsh.utils.LifecycleHandler;
 import com.amkj.dmsh.utils.TextWatchListener;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
@@ -1179,7 +1179,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
             Intent intent = new Intent(this, DirectExchangeDetailsActivity.class);
             intent.putExtra("orderNo", orderCreateNo);
             //延时跳转到订单详情页面（因为线程问题，立即跳转可能会失效）
-            new Handler().postDelayed(() -> {
+            new LifecycleHandler(this).postDelayed(() -> {
                 startActivity(intent);
                 finish();
             }, 500);
@@ -1349,7 +1349,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
             intent.putExtra("orderNo", orderNo);
         }
 
-        new Handler().postDelayed(() -> {
+        new LifecycleHandler(this).postDelayed(() -> {
             startActivity(intent);
             finish();
         }, 500);
@@ -1375,7 +1375,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
         }
 
         //延时跳转到支付成功页面（因为线程问题，立即跳转可能会失效）
-        new Handler().postDelayed(new Runnable() {
+        new LifecycleHandler(this).postDelayed(new Runnable() {
             @Override
             public void run() {
                 startActivity(intent);

@@ -1,7 +1,6 @@
 package com.amkj.dmsh.find.activity;
 
 import android.content.Intent;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -31,6 +30,7 @@ import com.amkj.dmsh.homepage.bean.ScoreGoodsEntity;
 import com.amkj.dmsh.homepage.bean.ScoreGoodsEntity.ScoreGoodsBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.LifecycleHandler;
 import com.amkj.dmsh.utils.SharedPreUtils;
 import com.amkj.dmsh.utils.WindowUtils;
 import com.amkj.dmsh.views.guideview.Component;
@@ -270,7 +270,7 @@ public class GoodsScoreListActivity extends BaseActivity {
                 mLlFindHotTopic.setVisibility(hotTopicList.size() == 0 ? View.GONE : View.VISIBLE);
                 findHotTopicAdapter.notifyDataSetChanged();
                 NetLoadUtils.getNetInstance().showLoadSir(loadService, hotTopicList.size() > 0 || mGoodsList.size() > 0, mScoreGoodsEntity);
-                new Handler().postDelayed(() -> showGuideView(), 500);
+                new LifecycleHandler(getActivity()).postDelayed(() -> showGuideView(), 500);
             }
 
             @Override
