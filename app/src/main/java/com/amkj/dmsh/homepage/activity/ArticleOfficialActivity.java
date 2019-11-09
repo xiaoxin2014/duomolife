@@ -549,7 +549,7 @@ public class ArticleOfficialActivity extends BaseActivity {
             }
         }
 //        String base64 = Base64.encodeToString(new JSONObject(map).toString().getBytes(), Base64.NO_WRAP);
-        webViewJs(getStringsFormat(getActivity(), R.string.web_head_method, new JSONObject(map).toString(), userId == 0 ? "" : String.valueOf(userId)));
+        webViewJs(getStringsFormat(getActivity(), R.string.web_head_method, new JSONObject(map).toString(), userId == 0 ? "0" : String.valueOf(userId)));
     }
 
     //加入购物车
@@ -819,7 +819,13 @@ public class ArticleOfficialActivity extends BaseActivity {
                 }
             }
         }
-        return super.dispatchTouchEvent(ev);
+        try {
+            return super.dispatchTouchEvent(ev);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
     // Return whether touch the view.
