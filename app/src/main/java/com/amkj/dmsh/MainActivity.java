@@ -431,7 +431,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 //设置底部导航颜色
                 if (!TextUtils.isEmpty(mainNavEntity.getBgColor())) {
                     rp_bottom_main.setBackgroundColor(Color.parseColor(mainNavEntity.getBgColor()));
-                }else {
+                } else {
                     rp_bottom_main.setBackground(getResources().getDrawable(R.drawable.border_top_line));
                 }
             } else {
@@ -1283,7 +1283,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }
             }
         }
-        return super.dispatchTouchEvent(ev);
+
+        try {
+            return super.dispatchTouchEvent(ev);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
     // Return whether touch the view.

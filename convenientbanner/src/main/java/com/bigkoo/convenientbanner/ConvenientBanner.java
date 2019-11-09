@@ -80,9 +80,9 @@ public class ConvenientBanner<T> extends RelativeLayout {
     }
 
 
-    public ConvenientBanner setPages(Context context,CBViewHolderCreator holderCreator, List<T> datas) {
+    public ConvenientBanner setPages(Context context, CBViewHolderCreator holderCreator, List<T> datas) {
         this.mDatas = datas;
-        pageAdapter = new CBPageAdapter(context,holderCreator, mDatas, canLoop);
+        pageAdapter = new CBPageAdapter(context, holderCreator, mDatas, canLoop);
         viewPager.setAdapter(pageAdapter);
 
         if (page_indicatorId != null)
@@ -257,8 +257,8 @@ public class ConvenientBanner<T> extends RelativeLayout {
      * @return
      */
     public ConvenientBanner startTurning(long autoTurningTime) {
-        if(mDatas.size()>1){
-            if(!isCanScroll){
+        if (mDatas.size() > 1) {
+            if (!isCanScroll) {
                 return this;
             }
             if (autoTurningTime < 0) return this;
@@ -272,7 +272,7 @@ public class ConvenientBanner<T> extends RelativeLayout {
             turning = true;
             postDelayed(adSwitchTask, autoTurningTime);
             setPointViewVisible(true);
-        }else{
+        } else {
             hScrollLinearLayoutManager.setScrollEnabled(false);
             setPointViewVisible(false);
             stopTurning();
@@ -303,7 +303,14 @@ public class ConvenientBanner<T> extends RelativeLayout {
             // 停止翻页
             if (canTurn) stopTurning();
         }
-        return super.dispatchTouchEvent(ev);
+
+        try {
+            return super.dispatchTouchEvent(ev);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
     static class AdSwitchTask implements Runnable {

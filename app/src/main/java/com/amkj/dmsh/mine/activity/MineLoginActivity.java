@@ -713,7 +713,13 @@ public class MineLoginActivity extends BaseActivity {
                 );
             }
         }
-        return super.dispatchTouchEvent(ev);
+        try {
+            return super.dispatchTouchEvent(ev);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
     // Return whether touch the view.

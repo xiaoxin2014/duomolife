@@ -64,7 +64,6 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static android.widget.LinearLayout.SHOW_DIVIDER_END;
@@ -1117,7 +1116,13 @@ public class DoMoRefundDetailActivity extends BaseActivity {
                 }
             }
         }
-        return super.dispatchTouchEvent(ev);
+        try {
+            return super.dispatchTouchEvent(ev);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
     // Return whether touch the view.

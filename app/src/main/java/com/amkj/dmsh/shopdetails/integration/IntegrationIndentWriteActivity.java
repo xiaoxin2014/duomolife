@@ -433,11 +433,11 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
                         orderCreateNo = indentBean.getNo();
                         String payKey = indentBean.getPayKey();
                         //纯积分兑换
-                        if (TextUtils.isEmpty(payType)){
-                            if (!TextUtils.isEmpty(orderCreateNo)){
+                        if (TextUtils.isEmpty(payType)) {
+                            if (!TextUtils.isEmpty(orderCreateNo)) {
                                 skipDirectIndent();
                             }
-                        }else {
+                        } else {
                             //返回成功，调起微信支付接口
                             switch (payType) {
                                 case PAY_WX_PAY:
@@ -686,7 +686,13 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
                 }
             }
         }
-        return super.dispatchTouchEvent(ev);
+        try {
+            return super.dispatchTouchEvent(ev);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
     // Return whether touch the view.

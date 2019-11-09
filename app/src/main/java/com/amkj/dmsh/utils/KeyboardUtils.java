@@ -303,7 +303,7 @@ public final class KeyboardUtils {
                     );
                 }
             }
-            return super.dispatchTouchEvent(ev);
+            try {             return super.dispatchTouchEvent(ev);         } catch (Exception e) {             return false;         }
         }
         // Return whether touch the view.
         private boolean isShouldHideKeyboard(View v, MotionEvent event) {
