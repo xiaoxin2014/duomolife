@@ -66,6 +66,7 @@ public class MarqueeTextEntity {
         private int show_count;
         private String content;
         private String android_link;
+        private int displayType;//0每次都显示，1只显示一次
 
 
         public static MarqueeTextBean objectFromData(String str) {
@@ -73,6 +74,13 @@ public class MarqueeTextEntity {
             return new Gson().fromJson(str, MarqueeTextBean.class);
         }
 
+        public int getDisplayType() {
+            return displayType;
+        }
+
+        public void setDisplayType(int displayType) {
+            this.displayType = displayType;
+        }
 
         public String getAndroid_link() {
             return android_link;

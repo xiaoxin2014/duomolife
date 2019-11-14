@@ -463,7 +463,7 @@ public class CommunalWebDetailUtils {
     /**
      * 获取优惠券 单张
      */
-    private void getDirectCoupon(Context mContext, int id, KProgressHUD loadHud) {
+    public void getDirectCoupon(Context mContext, int id, KProgressHUD loadHud) {
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
         params.put("couponId", id);

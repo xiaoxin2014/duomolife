@@ -514,6 +514,8 @@ public class Url {
     public static final String Q_SHOP_DETAILS_COUPON = "api/my/coupon/getNewMyCouponList";
     //自选优惠券
     public static final String Q_SELF_SHOP_DETAILS_COUPON = "api/my/coupon/choiceSelfCouponV2";
+    //优惠券专区
+    public static final String Q_COUPON_ZONE= "api/activity/zone/getApiCouponZoneInfo";
     //    订单优惠信息 新版
     public static final String INDENT_DISCOUNTS_INFO = "api/goods/order/getOrderSettleInfoNew";
     //    订单优惠信息 大营销中心新版

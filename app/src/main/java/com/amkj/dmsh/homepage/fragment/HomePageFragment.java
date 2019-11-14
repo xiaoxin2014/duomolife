@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -19,23 +18,20 @@ import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
-import com.amkj.dmsh.constant.RollingMsgHolderView;
+import com.amkj.dmsh.homepage.RollMsgIdDataSave;
 import com.amkj.dmsh.homepage.activity.AllSearchDetailsNewActivity;
 import com.amkj.dmsh.homepage.adapter.HomePageNewAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.HomeCommonEntity;
 import com.amkj.dmsh.homepage.bean.HomeCommonEntity.HomeCommonBean;
 import com.amkj.dmsh.homepage.bean.MarqueeTextEntity;
+import com.amkj.dmsh.homepage.bean.MarqueeTextEntity.MarqueeTextBean;
 import com.amkj.dmsh.message.activity.MessageActivity;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.utils.LifecycleHandler;
+import com.amkj.dmsh.views.MarqueeTextView;
 import com.amkj.dmsh.views.flycoTablayout.SlidingIconTabLayout;
-import com.bigkoo.convenientbanner.ConvenientBanner;
-import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
-import com.bigkoo.convenientbanner.holder.Holder;
-import com.bigkoo.convenientbanner.listener.OnPageChangeListener;
 import com.google.gson.Gson;
 import com.gyf.barlibrary.ImmersionBar;
 
@@ -54,6 +50,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.adClickTotal;
 import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatAd;
 import static com.amkj.dmsh.constant.ConstantMethod.getMessageCount;
+import static com.amkj.dmsh.constant.ConstantMethod.getRollMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getTopBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
@@ -93,15 +90,14 @@ public class HomePageFragment extends BaseFragment {
     //    跑马灯布局
     @BindView(R.id.ll_home_marquee)
     LinearLayout ll_home_marquee;
-    @BindView(R.id.cb_banner)
-    ConvenientBanner mCbBanner;
+    @BindView(R.id.tv_marquee_text)
+    MarqueeTextView mTvMarqueeText;
     private Badge badgeCart;
     private Badge badgeMsg;
     private List<HomeCommonBean> mGoodsNavbarList = new ArrayList<>();
     private HomeCommonEntity mHomeNavbarEntity;
     private boolean isAutoClose;
     private boolean isFirst = true;
-    private CBViewHolderCreator cbViewHolderCreator;
 
 
     @Override
@@ -115,8 +111,6 @@ public class HomePageFragment extends BaseFragment {
         badgeCart = getTopBadge(getActivity(), mFlShopCar);
         mTablayoutHome.setTextsize(AutoSizeUtils.mm2px(mAppContext, 30));
         mTablayoutHome.setTabPadding(AutoSizeUtils.mm2px(mAppContext, 1));
-
-
     }
 
     @Override
@@ -148,35 +142,35 @@ public class HomePageFragment extends BaseFragment {
                 if (mHomeNavbarEntity != null) {
                     List<HomeCommonBean> goodsNavbarList = mHomeNavbarEntity.getResult();
                     String code = mHomeNavbarEntity.getCode();
-                            if (ERROR_CODE.equals(code)) {
-                                ConstantMethod.showToast(mHomeNavbarEntity.getMsg());
-                            } else {
-                                String bgColor = mHomeNavbarEntity.getBgColor();
-                                String fontColor = mHomeNavbarEntity.getFontColor();
-                                //设置导航栏颜色
-                                if (!TextUtils.isEmpty(bgColor)) {
-                                    mTablayoutHome.setBackgroundColor(Color.parseColor(bgColor));
-                                    mTbHomeNew.setBackgroundColor(Color.parseColor(bgColor));
-                                    ImmersionBar.with(HomePageFragment.this).titleBar(mTbHomeNew).keyboardEnable(true).navigationBarEnable(false)
-                                            .statusBarDarkFont(true).statusBarColor(bgColor).init();
-                                    mIvMessage.setSelected(true);
-                                    mIvHomeShopCar.setSelected(true);
-                                }
+                    if (ERROR_CODE.equals(code)) {
+                        ConstantMethod.showToast(mHomeNavbarEntity.getMsg());
+                    } else {
+                        String bgColor = mHomeNavbarEntity.getBgColor();
+                        String fontColor = mHomeNavbarEntity.getFontColor();
+                        //设置导航栏颜色
+                        if (!TextUtils.isEmpty(bgColor)) {
+                            mTablayoutHome.setBackgroundColor(Color.parseColor(bgColor));
+                            mTbHomeNew.setBackgroundColor(Color.parseColor(bgColor));
+                            ImmersionBar.with(HomePageFragment.this).titleBar(mTbHomeNew).keyboardEnable(true).navigationBarEnable(false)
+                                    .statusBarDarkFont(true).statusBarColor(bgColor).init();
+                            mIvMessage.setSelected(true);
+                            mIvHomeShopCar.setSelected(true);
+                        }
 
-                                //设置tab指示器颜色
-                                if (!TextUtils.isEmpty(fontColor)) {
-                                    mTablayoutHome.setIndicatorColor(Color.parseColor(fontColor));
-                                    mTablayoutHome.setTextUnselectColor(Color.parseColor(fontColor));
-                                    mTablayoutHome.setTextSelectColor(Color.parseColor(fontColor));
-                                }
+                        //设置tab指示器颜色
+                        if (!TextUtils.isEmpty(fontColor)) {
+                            mTablayoutHome.setIndicatorColor(Color.parseColor(fontColor));
+                            mTablayoutHome.setTextUnselectColor(Color.parseColor(fontColor));
+                            mTablayoutHome.setTextSelectColor(Color.parseColor(fontColor));
+                        }
 
-                                //设置导航栏适配器
-                                if (goodsNavbarList != null && goodsNavbarList.size() > 0) {
-                                    mGoodsNavbarList.clear();
-                                    mGoodsNavbarList.addAll(goodsNavbarList);
-                                    HomePageNewAdapter homePageNewAdapter = new HomePageNewAdapter(HomePageFragment.this.getChildFragmentManager(), mGoodsNavbarList);
-                                    mVpHome.setAdapter(homePageNewAdapter);
-                                    mVpHome.setOffscreenPageLimit(mGoodsNavbarList.size() - 1);
+                        //设置导航栏适配器
+                        if (goodsNavbarList != null && goodsNavbarList.size() > 0) {
+                            mGoodsNavbarList.clear();
+                            mGoodsNavbarList.addAll(goodsNavbarList);
+                            HomePageNewAdapter homePageNewAdapter = new HomePageNewAdapter(HomePageFragment.this.getChildFragmentManager(), mGoodsNavbarList);
+                            mVpHome.setAdapter(homePageNewAdapter);
+                            mVpHome.setOffscreenPageLimit(mGoodsNavbarList.size() - 1);
                             mTablayoutHome.setViewPager(mVpHome, mGoodsNavbarList, fontColor);
                             mVpHome.setCurrentItem(0);
                         }
@@ -202,52 +196,14 @@ public class HomePageFragment extends BaseFragment {
                 MarqueeTextEntity marqueeTextEntity = MarqueeTextEntity.objectFromData(result);
                 if (marqueeTextEntity != null) {
                     if (marqueeTextEntity.getCode().equals(SUCCESS_CODE)) {
-                        List<MarqueeTextEntity.MarqueeTextBean> marqueeTextList = marqueeTextEntity.getMarqueeTextList();
+                        List<MarqueeTextBean> marqueeTextList = marqueeTextEntity.getMarqueeTextList();
                         if (marqueeTextList != null && marqueeTextList.size() > 0) {
-                            ll_home_marquee.setVisibility(View.VISIBLE);
-                            int maxLenth = 0;
-                            for (int i = 0; i < marqueeTextList.size(); i++) {
-                                String content = marqueeTextList.get(i).getContent();
-                                if (content.length() > maxLenth) {
-                                    maxLenth = content.length();
-                                }
+                            String rollMsg = getRollMsg(getActivity(), marqueeTextList, ll_home_marquee);
+                            if (!TextUtils.isEmpty(rollMsg)) {
+                                ll_home_marquee.setVisibility(View.VISIBLE);
+                                mTvMarqueeText.setText(rollMsg);
+                                RollMsgIdDataSave.getSingleton().saveMsgId(marqueeTextList);
                             }
-                            if (cbViewHolderCreator == null) {
-                                cbViewHolderCreator = new CBViewHolderCreator() {
-                                    @Override
-                                    public Holder createHolder(View itemView) {
-                                        return new RollingMsgHolderView(itemView, getActivity());
-                                    }
-
-                                    @Override
-                                    public int getLayoutId() {
-                                        return R.layout.item_roll_msg;
-                                    }
-                                };
-                            }
-
-                            long turnTime = 300 * maxLenth * marqueeTextList.get(0).getShow_count();//每条消息展示的时间
-                            mCbBanner.setPages(getActivity(), cbViewHolderCreator, marqueeTextList).setCanLoop(false)
-                                    .setPointViewVisible(false).setCanScroll(true)
-                                    .startTurning(turnTime);
-                            mCbBanner.setOnPageChangeListener(new OnPageChangeListener() {
-                                @Override
-                                public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-
-                                }
-
-                                @Override
-                                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-
-                                }
-
-                                @Override
-                                public void onPageSelected(int index) {
-                                    if (index == marqueeTextList.size() - 1) {
-                                        new LifecycleHandler(getActivity()).postDelayed(() -> ll_home_marquee.setVisibility(View.GONE), turnTime);
-                                    }
-                                }
-                            });
                         } else {
                             ll_home_marquee.setVisibility(View.GONE);
                         }

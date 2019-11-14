@@ -1660,6 +1660,4 @@ public class DirectIndentWriteActivity extends BaseActivity {
         }
         return false;
     }
-
-
 }

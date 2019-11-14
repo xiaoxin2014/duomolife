@@ -192,7 +192,7 @@ public class RequestStatus extends BaseEntity {
     }
 
     public class Result {
-        @SerializedName(value = "resultCode", alternate = "code;")
+        @SerializedName(value = "resultCode", alternate = "code")
         private String resultCode;
         @SerializedName(value = "resultMsg", alternate = "msg")
         private String resultMsg;

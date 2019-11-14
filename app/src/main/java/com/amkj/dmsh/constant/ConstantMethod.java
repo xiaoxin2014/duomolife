@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.app.Service;
+import android.arch.lifecycle.LifecycleOwner;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -55,8 +56,10 @@ import com.amkj.dmsh.find.activity.ImagePagerActivity;
 import com.amkj.dmsh.find.activity.JoinTopicActivity;
 import com.amkj.dmsh.find.activity.PostDetailActivity;
 import com.amkj.dmsh.find.activity.TopicDetailActivity;
+import com.amkj.dmsh.homepage.RollMsgIdDataSave;
 import com.amkj.dmsh.homepage.activity.DoMoLifeCommunalActivity;
 import com.amkj.dmsh.homepage.activity.DoMoLifeLotteryActivity;
+import com.amkj.dmsh.homepage.bean.MarqueeTextEntity.MarqueeTextBean;
 import com.amkj.dmsh.homepage.bean.ScoreGoodsEntity;
 import com.amkj.dmsh.homepage.bean.ScoreGoodsEntity.ScoreGoodsBean;
 import com.amkj.dmsh.message.bean.MessageTotalEntity;
@@ -75,6 +78,7 @@ import com.amkj.dmsh.shopdetails.bean.ShopCarGoodsSku;
 import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
 import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
+import com.amkj.dmsh.utils.LifecycleHandler;
 import com.amkj.dmsh.utils.MarketUtils;
 import com.amkj.dmsh.utils.SharedPreUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
@@ -358,8 +362,6 @@ public class ConstantMethod {
 
     /**
      * 带货币单位价格格式化
-     *
-     * @return
      */
     public static CharSequence getRmbFormat(Context context, String priceText) {
         return getRmbFormat(context, priceText, true);
@@ -491,7 +493,6 @@ public class ConstantMethod {
         List<String> strings1 = new ArrayList<>(stringSet);
         return strings1.toArray(new String[strings1.size()]);
     }
-
 
 
     /**
@@ -3234,6 +3235,7 @@ public class ConstantMethod {
                 .build();
     }
 
+    //显示loading
     public static void showLoadhud(Activity context) {
         KProgressHUD loadHud = ((BaseActivity) context).loadHud;
         if (isContextExisted(context) && loadHud != null && !loadHud.isShowing()) {
@@ -3241,11 +3243,43 @@ public class ConstantMethod {
         }
     }
 
-
+    //隐藏loading
     public static void dismissLoadhud(Activity context) {
         KProgressHUD loadHud = ((BaseActivity) context).loadHud;
         if (isContextExisted(context) && loadHud != null && loadHud.isShowing()) {
             loadHud.dismiss();
         }
+    }
+
+    //拼装滚动通知内容，并计算滚动时间
+    public static String getRollMsg(LifecycleOwner activity, List<MarqueeTextBean> marqueeTextList, ViewGroup viewGroup) {
+        StringBuffer msg = new StringBuffer();
+        try {
+            int totalBlankLength = 0;
+            for (MarqueeTextBean marqueeTextBean : marqueeTextList) {
+                int displayType = marqueeTextBean.getDisplayType();
+                int id = marqueeTextBean.getId();
+                //如果是1直接显示，如果是0判断之前有没有显示过
+                if (displayType == 0 || !RollMsgIdDataSave.getSingleton().containId(id)) {
+                    String content = marqueeTextBean.getContent();
+                    int show_count = marqueeTextBean.getShow_count();
+                    for (int j = 0; j < show_count; j++) {
+                        msg.append(content);
+                        int blankLength = 30 - content.length();
+                        for (int k = 0; k < (blankLength < 10 ? 10 : blankLength); k++) {
+                            msg.append("   ");
+                            totalBlankLength += 3;
+                        }
+                    }
+                }
+            }
+            //根据通知的长度计算滚动时间，滚动结束隐藏通知
+            long totalTime = 300 * (int) ((msg.length() - totalBlankLength) + totalBlankLength * 1.0f / 3);
+            new LifecycleHandler(activity).postDelayed(() -> viewGroup.setVisibility(View.GONE), totalTime);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return msg.toString();
     }
 }

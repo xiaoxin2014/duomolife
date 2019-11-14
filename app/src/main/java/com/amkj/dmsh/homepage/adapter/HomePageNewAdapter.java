@@ -7,6 +7,7 @@ import android.text.TextUtils;
 
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.dominant.activity.DoMoLifeWelfareDetailsFragment;
+import com.amkj.dmsh.dominant.fragment.CouponZoneFragment;
 import com.amkj.dmsh.dominant.fragment.DmlOptimizedSelFragment;
 import com.amkj.dmsh.dominant.fragment.DoMoLifeWelfareFragment;
 import com.amkj.dmsh.dominant.fragment.QualityCustomTopicFragment;
@@ -45,7 +46,7 @@ public class HomePageNewAdapter extends FragmentPagerAdapter {
     private final List<HomeCommonBean> mHomeCommonBeanList;
     private String[] actionArrays = {"app://HomeDefalutFragment", "app://QualityNewUserActivity", "app://QualityTypeHotSaleProActivity", "app://QualityNewProActivity", "app://HomeCouponGetActivity", "app://DmlOptimizedSelActivity",
             "app://DoMoLifeWelfareActivity", "app://EditorSelectActivity", "app://WholePointSpikeProductActivity", "app://QualityGroupShopActivity", "app://DoMoLifeWelfareDetailsActivity", "app://DuomoLifeActivity",
-            "app://QualityCustomTopicActivity", "app://QualityWeekOptimizedActivity", "app://QualityShopBuyListActivity", "app://ArticleTypeActivity"};
+            "app://QualityCustomTopicActivity", "app://QualityWeekOptimizedActivity", "app://QualityShopBuyListActivity", "app://ArticleTypeActivity","app://CouponZoneActivity"};
     private String prefix = "app://";
 
     public HomePageNewAdapter(FragmentManager fm, List<HomeCommonBean> homeCommonBeanList) {
@@ -99,6 +100,8 @@ public class HomePageNewAdapter extends FragmentPagerAdapter {
                         return BaseFragment.newInstance(QualityCustomTopicFragment.class, urlParams, null);
                     case "app://ArticleTypeActivity"://种草特辑(文章分类)
                         return BaseFragment.newInstance(ArticleTypeFragment.class, urlParams, null);
+                    case "app://CouponZoneActivity"://优惠券专区
+                        return BaseFragment.newInstance(CouponZoneFragment.class, urlParams, null);
                     default:
                         return BaseFragment.newInstance(HomeDefalutFragment.class, null, null);
                 }

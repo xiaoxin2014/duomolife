@@ -1,10 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:focusableInTouchMode="true"
-    android:focusable="true"
-    android:orientation="vertical">
-    <include layout="@layout/layout_ql_cart_share_header" />
-    <include layout="@layout/layout_communal_smart_refresh_recycler_float_loading" />
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:focusable="true"
+              android:focusableInTouchMode="true"
+              android:orientation="vertical">
+
+    <include layout="@layout/layout_ql_cart_share_header"/>
+
+    <include layout="@layout/layout_get_integral_header"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <include layout="@layout/layout_communal_refresh_recycler_base"/>
+
+        <include layout="@layout/layout_communal_floating"/>
+    </FrameLayout>
 </LinearLayout>

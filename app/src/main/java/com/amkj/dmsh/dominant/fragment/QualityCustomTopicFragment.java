@@ -26,6 +26,7 @@ import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.CountDownTimer;
+import com.amkj.dmsh.utils.LifecycleHandler;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
@@ -47,6 +48,7 @@ import butterknife.OnClick;
 import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getIntegralFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.getSpannableString;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -73,21 +75,28 @@ public class QualityCustomTopicFragment extends BaseFragment {
     RecyclerView communal_recycler;
     //    滚动至顶部
     @BindView(R.id.download_btn_communal)
-    public FloatingActionButton download_btn_communal;
+    FloatingActionButton download_btn_communal;
     @BindView(R.id.tl_quality_bar)
     Toolbar mTlQualityBar;
+    @BindView(R.id.ll_get_integral_header)
+    LinearLayout mLLHeader;
+    @BindView(R.id.tv_integral_rule)
+    TextView mTvIntegralRule;
+    @BindView(R.id.tv_browse)
+    TextView mTvBrowse;
+
+    private int mViewTime = 30;
     private int page = 1;
     private GoodProductAdapter qualityCustomTopicAdapter;
     private List<LikedProductBean> customProList = new ArrayList<>();
     private List<CommunalDetailObjectBean> descriptionList = new ArrayList<>();
     private QNewProView qNewProView;
-    private IntegralView mIntegralView;
     private String productType;
     private View headViewCover;
-    private View headViewIntegral;
     private CommunalDetailAdapter communalDetailAdapter;
     private UserLikedProductEntity userLikedProductEntity;
     private GridLayoutManager mGridLayoutManager;
+    private CountDownTimer mCountDownTimer;
 
     @Override
     protected int getContentView() {
@@ -199,6 +208,7 @@ public class QualityCustomTopicFragment extends BaseFragment {
 
             @Override
             public void onNotNetOrException() {
+                getQualityCustomPro();
                 if (qualityCustomTopicAdapter.getHeaderLayoutCount() > 0) {
                     qualityCustomTopicAdapter.removeAllHeaderView();
                 }
@@ -234,22 +244,23 @@ public class QualityCustomTopicFragment extends BaseFragment {
                                 showToast(getActivity(), userLikedProductEntity.getMsg());
                             }
 
-                            if (headViewIntegral != null) {
-                                qualityCustomTopicAdapter.removeHeaderView(headViewIntegral);
-                            }
 
                             //判断是否有积分奖励(该专区有奖励并且当天没有领取奖励)
                             if (userLikedProductEntity.isUserHaveReward()) {
-                                headViewIntegral = LayoutInflater.from(getActivity()).inflate(R.layout.layout_get_integral_header, null, false);
-                                mIntegralView = new IntegralView();
-                                ButterKnife.bind(mIntegralView, headViewIntegral);
-                                mIntegralView.mTvBrowse.setVisibility(View.VISIBLE);
-                                mIntegralView.mTvBrowse.setVisibility(View.VISIBLE);
-                                mIntegralView.mTvIntegralRule.setText(getStrings(userLikedProductEntity.getRewardInfo()));
-                                mIntegralView.mViewTime = userLikedProductEntity.getViewTime();
-                                qualityCustomTopicAdapter.addHeaderView(headViewIntegral, 0);
+                                mLLHeader.setVisibility(View.VISIBLE);
+                                mLLHeader.setSelected(false);
+                                //判断倒计时是否结束，如果没有结束继续倒计时
+                                if (mCountDownTimer != null) {
+                                    mTvBrowse.setVisibility(View.GONE);
+                                } else {
+                                    mTvBrowse.setVisibility(View.VISIBLE);
+                                    String rewardInfo = getStrings(userLikedProductEntity.getRewardInfo());
+                                    mTvIntegralRule.setText(getSpannableString(rewardInfo, rewardInfo.indexOf("\n"), rewardInfo.length(), 0.87f, ""));
+                                    mViewTime = userLikedProductEntity.getViewTime();
+                                }
+                            } else {
+                                mLLHeader.setVisibility(View.GONE);
                             }
-
                             qualityCustomTopicAdapter.notifyDataSetChanged();
                         }
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, customProList.size() > 0 || descriptionList.size() > 0, userLikedProductEntity);
@@ -273,65 +284,30 @@ public class QualityCustomTopicFragment extends BaseFragment {
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), GET_SHOPPING_REWARD, map, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
+                mCountDownTimer = null;
                 RequestStatus requestStatus = new Gson().fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     String code = requestStatus.getCode();
                     if (SUCCESS_CODE.equals(code)) {
-                        mIntegralView.mTvIntegralRule.setText("积分奖励已到账");
+                        mTvIntegralRule.setText("积分奖励已到账");
                     } else {
-                        mIntegralView.mTvIntegralRule.setText(getStrings(requestStatus.getMsg()));
+                        mTvIntegralRule.setText(getStrings(requestStatus.getMsg()));
                     }
                 } else {
-                    mIntegralView.mTvIntegralRule.setText("积分发放失败");
+                    mTvIntegralRule.setText("积分发放失败");
                 }
+                //3秒后隐藏活动信息
+                new LifecycleHandler(getActivity()).postDelayed(() -> mLLHeader.setVisibility(View.GONE), 3000);
             }
 
             @Override
             public void onNotNetOrException() {
-                mIntegralView.mTvIntegralRule.setText("积分发放失败");
+                mCountDownTimer = null;
+                mTvIntegralRule.setText("积分发放失败");
             }
         });
 
     }
-
-    class IntegralView {
-        @BindView(R.id.ll_get_integral_header)
-        LinearLayout mLLHeader;
-        @BindView(R.id.tv_integral_rule)
-        TextView mTvIntegralRule;
-        @BindView(R.id.tv_browse)
-        TextView mTvBrowse;
-        private int mViewTime;
-
-        @OnClick(R.id.tv_browse)
-        void startBrowse(View view) {
-            if (userId > 0) {
-                mTvBrowse.setVisibility(View.GONE);
-                CountDownTimer countDownTimer = new CountDownTimer(getActivity(), mViewTime * 1000 + 300, 1000) {
-                    @Override
-                    public void onTick(long millisUntilFinished) {
-                        int second = (int) (millisUntilFinished / 1000);
-                        if (second > 0) {
-                            mTvIntegralRule.setText(getIntegralFormat(getActivity(), R.string.shoppig_reward_rule, second));
-                        }
-                    }
-
-                    @Override
-                    public void onFinish() {
-                        cancel();
-                        mLLHeader.setSelected(true);
-                        mTvIntegralRule.setText("积分奖励发放中...");
-                        getReward();
-                    }
-                };
-
-                countDownTimer.start();
-            } else {
-                getLoginStatus(getActivity());
-            }
-        }
-    }
-
 
     class QNewProView {
         @BindView(R.id.iv_communal_cover_wrap)
@@ -362,6 +338,34 @@ public class QualityCustomTopicFragment extends BaseFragment {
                 }
             });
             communal_recycler_wrap.setAdapter(communalDetailAdapter);
+        }
+    }
+
+    @OnClick(R.id.tv_browse)
+    void startBrowse(View view) {
+        if (userId > 0) {
+            mTvBrowse.setVisibility(View.GONE);
+            mCountDownTimer = new CountDownTimer(getActivity(), mViewTime * 1000 + 300, 1000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    int second = (int) (millisUntilFinished / 1000);
+                    if (second > 0) {
+                        mTvIntegralRule.setText(getIntegralFormat(getActivity(), R.string.shoppig_reward_rule, second));
+                    }
+                }
+
+                @Override
+                public void onFinish() {
+                    cancel();
+                    mLLHeader.setSelected(true);
+                    mTvIntegralRule.setText("积分奖励发放中...");
+                    getReward();
+                }
+            };
+
+            mCountDownTimer.start();
+        } else {
+            getLoginStatus(getActivity());
         }
     }
 

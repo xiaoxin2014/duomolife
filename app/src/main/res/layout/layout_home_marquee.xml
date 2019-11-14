@@ -15,25 +15,16 @@
         android:layout_marginRight="@dimen/sc_mm_16"
         android:src="@drawable/marquee_not"/>
 
-    <com.bigkoo.convenientbanner.ConvenientBanner
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/cb_banner"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <com.amkj.dmsh.views.MarqueeTextView
+        android:id="@+id/tv_marquee_text"
+        android:layout_width="0px"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
-        app:canLoop="false"/>
-
-    <!--<com.amkj.dmsh.views.MarqueeTextView-->
-        <!--android:id="@+id/tv_marquee_text"-->
-        <!--android:layout_width="0px"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_weight="1"-->
-        <!--android:ellipsize="marquee"-->
-        <!--android:marqueeRepeatLimit="1"-->
-        <!--android:singleLine="true"-->
-        <!--android:textColor="@color/text_login_gray_s"-->
-        <!--android:textSize="@dimen/sc_mm_24"-->
-        <!--android:visibility="gone"/>-->
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="1"
+        android:singleLine="true"
+        android:textColor="@color/text_login_gray_s"
+        android:textSize="@dimen/sc_mm_24"/>
 
     <View
         android:layout_width="@dimen/sc_mm_2"

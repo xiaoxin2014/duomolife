@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/rl_coupon_one"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/sc_mm_710"
+    android:layout_height="@dimen/sc_mm_180"
+    android:layout_marginLeft="@dimen/sc_mm_20"
+    android:layout_marginRight="@dimen/sc_mm_20"
+    android:layout_marginBottom="@dimen/sc_mm_30"
+    android:background="@drawable/coupon_item_bg">
+
+    <TextView
+        android:maxLines="1"
+        android:id="@+id/tv_amount"
+        android:layout_width="@dimen/sc_mm_200"
+        android:layout_height="match_parent"
+        android:ellipsize="end"
+        android:gravity="center_horizontal|bottom"
+        android:paddingBottom="@dimen/sc_mm_25"
+        android:text="@string/defaul"
+        android:textColor="@color/text_black_t"
+        android:textSize="@dimen/sc_mm_80"
+        android:textStyle="bold"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="@dimen/sc_mm_160"
+        android:layout_toRightOf="@+id/tv_amount"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@string/defaul"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_30"/>
+
+        <TextView
+            android:id="@+id/tv_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sc_mm_12"
+            android:background="@drawable/shap_coupon_bg2"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@string/defaul"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_24"/>
+
+        <TextView
+            android:id="@+id/tv_edition"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sc_mm_12"
+            android:ellipsize="end"
+            android:text="@string/defaul"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_24"/>
+    </LinearLayout>
+</RelativeLayout>

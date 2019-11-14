@@ -1268,6 +1268,19 @@
             android:theme="@style/activityTheme">
         </activity>
 
+        <!--优惠券专区-->
+        <activity
+            android:name=".dominant.activity.CouponZoneActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/activityTheme">
+            <intent-filter>
+                <action android:name="CouponZoneActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+
+
         <!--支付成功-->
         <activity
             android:name=".shopdetails.activity.DirectPaySuccessActivity"

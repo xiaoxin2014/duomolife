@@ -386,7 +386,6 @@ public class ConstantVariable {
     public static final String SEARCH_DATA = "searchData";    //    搜索 获取传递信息参数
 
 
-
     /**
      * 商品item类型
      */
@@ -423,8 +422,16 @@ public class ConstantVariable {
     /**
      * 口令红包类型
      */
-    public static final String COUPON= "1";//优惠券
+    public static final String COUPON = "1";//优惠券
     public static final String COUPON_PACKAGE = "2";//优惠前礼包
     public static final String SKIP_LINK = "3";//跳转链接
+
+    /**
+     * 优惠券专区样式
+     */
+    public static final int COUPON_COVER = 0;//封面
+    public static final int COUPON_ONE_COLUMN = 1;//一列
+    public static final int COUPON_THREE_COLUMN = 3;//三列
+
 
 }

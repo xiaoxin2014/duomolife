@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/sc_mm_5"
+    android:background="@color/light_gray_f"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sc_mm_210"
+        android:background="@drawable/coupon_item_bg2"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sc_mm_20"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@string/defaul"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_60"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tv_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="6666"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_24"/>
+
+        <ImageView
+            android:id="@+id/iv_get"
+            android:layout_width="@dimen/sc_mm_170"
+            android:layout_height="@dimen/sc_mm_36"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/sc_mm_30"
+            android:src="@drawable/coupon_get_now"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/sc_mm_16"
+        android:layout_marginTop="@dimen/sc_mm_10"
+        android:layout_marginRight="@dimen/sc_mm_16"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="@string/defaul"
+        android:textColor="@color/text_black_t"
+        android:textSize="@dimen/sc_mm_24"/>
+
+    <TextView
+        android:id="@+id/tv_edition"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/sc_mm_16"
+        android:layout_marginTop="@dimen/sc_mm_10"
+        android:layout_marginRight="@dimen/sc_mm_16"
+        android:layout_marginBottom="@dimen/sc_mm_10"
+        android:ellipsize="end"
+        android:lineSpacingExtra="@dimen/sc_mm_8"
+        android:maxLines="2"
+        android:text="@string/defaul"
+        android:textColor="@color/text_black_t"
+        android:textSize="@dimen/sc_mm_20"/>
+</LinearLayout>
