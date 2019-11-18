@@ -118,12 +118,12 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
         KeyboardUtils.registerSoftInputChangedListener(this, new KeyboardUtils.OnSoftInputChangedListener() {
             @Override
             public void onSoftInputChanged(int height) {
-                if(height>0){
-                    if(ll_communal_multi_time.getVisibility() == View.VISIBLE){
+                if (height > 0) {
+                    if (ll_communal_multi_time.getVisibility() == View.VISIBLE) {
                         ll_communal_multi_time.setVisibility(View.GONE);
                         isSelected = true;
                     }
-                }else{
+                } else {
                     ll_address_create.requestFocus();
                 }
             }
@@ -216,20 +216,26 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
         }
         if (myAddress.getAddress_com().length() < 1 || myAddress.getAddress().length() < 1
                 || myAddress.getConsignee().length() < 1 || myAddress.getMobile().length() < 1) {
-            showToast(getBaseContext(), "请完整填写收货人资料");
+            showToast(this, "请完整填写收货人资料");
         } else {
             String mobilePhone = myAddress.getMobile();
-            if (mobilePhone.length() == 11) {
-                if (addressId != 0) {
-//            修改地址
-                    alterAddress(myAddress);
-                } else {
-//            添加地址
-                    addAddress(myAddress);
-                }
+            if (mobilePhone.startsWith("1")) {            //手机号
+                editAddress(myAddress);
+            } else if (!mobilePhone.startsWith("-")) {                //固话
+                editAddress(myAddress);
             } else {
-                showToast(this, "手机号码有错，请重新输入");
+                showToast(this, "联系方式有误，请重新输入");
             }
+        }
+    }
+
+    private void editAddress(AddressInfoBean myAddress) {
+        if (addressId != 0) {
+//            修改地址
+            alterAddress(myAddress);
+        } else {
+//            添加地址
+            addAddress(myAddress);
         }
     }
 
@@ -301,7 +307,7 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
 //        纤细街道地址
         params.put("address", myAddress.getAddress());
         params.put("isDefault", myAddress.getStatus());
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,EDIT_ADDRESS,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, EDIT_ADDRESS, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -320,7 +326,7 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
 
             @Override
             public void netClose() {
-                showToast(AddressNewCreatedActivity.this,R.string.unConnectedNetwork);
+                showToast(AddressNewCreatedActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
@@ -435,9 +441,9 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
 
     @OnClick(R.id.tv_address_district)
     void selectedAddress() {
-        if(KeyboardUtils.isSoftInputVisible(this)){
+        if (KeyboardUtils.isSoftInputVisible(this)) {
             KeyboardUtils.hideSoftInput(this);
-        }else{
+        } else {
             setAddressDialog();
         }
     }
@@ -489,7 +495,7 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
             if (isShouldHideKeyboard(v, ev)) {
                 InputMethodManager imm =
                         (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                if(imm!=null){
+                if (imm != null) {
                     imm.hideSoftInputFromWindow(v.getWindowToken(),
                             InputMethodManager.HIDE_NOT_ALWAYS);
                 }
@@ -518,5 +524,4 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
         }
         return false;
     }
-
 }

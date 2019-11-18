@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/light_gray_f"
-    android:focusable="true"
-    android:focusableInTouchMode="true"
-    android:id="@+id/ll_address_create"
-    android:orientation="vertical">
+              android:id="@+id/ll_address_create"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/light_gray_f"
+              android:focusable="true"
+              android:focusableInTouchMode="true"
+              android:orientation="vertical">
 
-    <include layout="@layout/activity_domolife_header" />
+    <include layout="@layout/activity_domolife_header"/>
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -20,83 +20,92 @@
             android:layout_height="wrap_content"
             android:background="@color/white"
             android:divider="@drawable/divider_ll_10dp_gray_bg"
-            android:showDividers="middle"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:showDividers="middle">
+
             <LinearLayout
                 android:layout_width="match_parent"
-                android:orientation="vertical"
+                android:layout_height="wrap_content"
                 android:divider="@drawable/item_divider_gray_f_two_px"
-                android:showDividers="middle"
-                android:layout_height="wrap_content">
+                android:orientation="vertical"
+                android:showDividers="middle">
+
                 <EditText
-                    android:layout_width="match_parent"
-                    android:gravity="center_vertical"
-                    android:background="@color/white"
-                    android:hint="收件人"
-                    android:singleLine="true"
                     android:id="@+id/et_address_consignee"
-                    android:textColorHint="@color/text_gray_hint_n"
-                    android:textColor="@color/text_black_t"
-                    android:paddingLeft="@dimen/gap_left"
-                    android:textSize="@dimen/sc_mm_30"
-                    android:layout_height="@dimen/sc_mm_104" />
-                <EditText
                     android:layout_width="match_parent"
-                    android:gravity="center_vertical"
+                    android:layout_height="@dimen/sc_mm_104"
                     android:background="@color/white"
+                    android:gravity="center_vertical"
+                    android:hint="收件人"
+                    android:paddingLeft="@dimen/gap_left"
                     android:singleLine="true"
-                    android:hint="手机号"
-                    android:textSize="@dimen/sc_mm_30"
-                    android:id="@+id/et_address_mobile"
-                    android:inputType="phone"
-                    android:textColorHint="@color/text_gray_hint_n"
                     android:textColor="@color/text_black_t"
-                    android:paddingLeft="@dimen/gap_left"
-                    android:layout_height="@dimen/sc_mm_104" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:gravity="center_vertical"
-                    android:background="@color/white"
-                    android:hint="所在地区"
-                    android:textSize="@dimen/sc_mm_30"
-                    android:id="@+id/tv_address_district"
                     android:textColorHint="@color/text_gray_hint_n"
-                    android:textColor="@color/text_black_t"
-                    android:paddingLeft="@dimen/gap_left"
-                    android:layout_height="@dimen/sc_mm_104" />
+                    android:textSize="@dimen/sc_mm_30"/>
+
                 <EditText
+                    android:id="@+id/et_address_mobile"
                     android:layout_width="match_parent"
+                    android:layout_height="@dimen/sc_mm_104"
+                    android:background="@color/white"
+                    android:digits="0123456789-"
                     android:gravity="center_vertical"
-                    android:background="@color/white"
-                    android:hint="详细地址"
-                    android:textSize="@dimen/sc_mm_30"
-                    android:id="@+id/et_address_detail_district"
+                    android:hint="手机号或者固定电话"
+                    android:inputType="phone"
+                    android:paddingLeft="@dimen/gap_left"
+                    android:singleLine="true"
+                    android:textColor="@color/text_black_t"
                     android:textColorHint="@color/text_gray_hint_n"
-                    android:textColor="@color/text_black_t"
-                    android:paddingLeft="@dimen/gap_left"
-                    android:minHeight="@dimen/sc_mm_150"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:id="@+id/rel_address_default"
-                android:layout_height="@dimen/sc_mm_104">
-                <CheckBox
-                    android:layout_width="wrap_content"
-                    android:paddingLeft="@dimen/gap_left"
+                    android:textSize="@dimen/sc_mm_30"/>
+
+                <TextView
+                    android:id="@+id/tv_address_district"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/sc_mm_104"
                     android:background="@color/white"
+                    android:gravity="center_vertical"
+                    android:hint="所在地区"
+                    android:paddingLeft="@dimen/gap_left"
                     android:textColor="@color/text_black_t"
-                    android:textSize="@dimen/sc_mm_30"
+                    android:textColorHint="@color/text_gray_hint_n"
+                    android:textSize="@dimen/sc_mm_30"/>
+
+                <EditText
+                    android:id="@+id/et_address_detail_district"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:gravity="center_vertical"
+                    android:hint="详细地址"
+                    android:minHeight="@dimen/sc_mm_150"
+                    android:paddingLeft="@dimen/gap_left"
+                    android:textColor="@color/text_black_t"
+                    android:textColorHint="@color/text_gray_hint_n"
+                    android:textSize="@dimen/sc_mm_30"/>
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/rel_address_default"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/sc_mm_104">
+
+                <CheckBox
                     android:id="@+id/cb_address_default"
-                    android:text="设为默认地址"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:background="@color/white"
+                    android:button="@null"
                     android:drawableLeft="@drawable/selector_address_red"
                     android:drawablePadding="@dimen/sc_mm_15"
                     android:gravity="center_vertical"
-                    android:button="@null"
-                    android:layout_centerVertical="true"
-                    android:layout_height="match_parent" />
+                    android:paddingLeft="@dimen/gap_left"
+                    android:text="设为默认地址"
+                    android:textColor="@color/text_black_t"
+                    android:textSize="@dimen/sc_mm_30"/>
             </RelativeLayout>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
+
     <include layout="@layout/layout_communal_time_multi"/>
 </LinearLayout>
