@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.GradientDrawable;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AlertDialog;
@@ -75,6 +74,7 @@ import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean.MarketLabelBean;
 import com.amkj.dmsh.utils.CountDownTimer;
 import com.amkj.dmsh.utils.CountDownUtils;
+import com.amkj.dmsh.utils.LifecycleHandler;
 import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
@@ -723,7 +723,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     } else if (!shopDetailsEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(getActivity(), shopDetailsEntity.getMsg());
                         if ("32".equals(shopDetailsEntity.getCode())) {
-                            new Handler().postDelayed(() -> {
+                            new LifecycleHandler(getActivity()).postDelayed(() -> {
                                 //商品已下架，关闭页面
                                 finish();
                             }, 500);
@@ -1729,15 +1729,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             default:
                 break;
         }
-    }
-
-
-    //推荐跳转更多推荐
-    private void skipMoreRecommend(ShopRecommendHotTopicBean shopRecommendHotTopicBean) {
-        Intent intent = new Intent(ShopScrollDetailsActivity.this, ProRecommendActivity.class);
-        intent.putExtra("recommendType", shopRecommendHotTopicBean.getType());
-        intent.putExtra("id", String.valueOf(shopRecommendHotTopicBean.getId()));
-        startActivity(intent);
     }
 
     @OnClick({R.id.iv_life_back, R.id.ll_product_activity_detail, R.id.tv_sp_details_service,

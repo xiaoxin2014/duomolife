@@ -3,7 +3,6 @@ package com.amkj.dmsh.shopdetails.integration;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -42,6 +41,7 @@ import com.amkj.dmsh.shopdetails.payutils.AliPay;
 import com.amkj.dmsh.shopdetails.payutils.UnionPay;
 import com.amkj.dmsh.shopdetails.payutils.WXPay;
 import com.amkj.dmsh.utils.KeyboardUtils;
+import com.amkj.dmsh.utils.LifecycleHandler;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.google.gson.Gson;
 import com.klinker.android.link_builder.Link;
@@ -602,7 +602,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
      * 跳转支付完成页面
      */
     private void skipDirectIndent() {
-        new Handler().postDelayed(() -> {
+        new LifecycleHandler(this).postDelayed(() -> {
             Intent intent = new Intent(getActivity(), DirectPaySuccessActivity.class);
             intent.putExtra("indentNo", orderCreateNo);
             intent.putExtra(INDENT_PRODUCT_TYPE, INDENT_INTEGRAL_PRODUCT);
