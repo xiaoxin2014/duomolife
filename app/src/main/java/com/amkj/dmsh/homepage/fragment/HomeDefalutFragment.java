@@ -241,7 +241,6 @@ public class HomeDefalutFragment extends BaseFragment {
         mRvSpecialZone.setNestedScrollingEnabled(false);
         mRvSpecialZone.setAdapter(mHomeZoneAdapter);
 
-
         //初始化精选专题（福利社）适配器
         mHomeWelfareAdapter = new HomeWelfareAdapter(getActivity(), mThemeList);
         mVpFelware.setAdapter(mHomeWelfareAdapter);
@@ -260,7 +259,6 @@ public class HomeDefalutFragment extends BaseFragment {
         qualityGoodNewProAdapter = new GoodProductAdapter((getActivity()), goodsProList);
         mRvNice.setAdapter(qualityGoodNewProAdapter);
 
-
         //初始化文章适配器
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         mRvArtical.setLayoutManager(linearLayoutManager);
@@ -274,7 +272,6 @@ public class HomeDefalutFragment extends BaseFragment {
             }
         });
         mRvArtical.setAdapter(homeArticleAdapter);
-
 
         //获取首页分类商品适配器
         LinearLayoutManager productManager = new LinearLayoutManager(getActivity());

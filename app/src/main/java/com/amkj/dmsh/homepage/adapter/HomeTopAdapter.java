@@ -45,7 +45,7 @@ public class HomeTopAdapter extends BaseQuickAdapter<HomeCommonBean, BaseViewHol
                 mAppContext, 45));
         holder.setText(R.id.tv_name, getStrings(homeTopBean.getName()));
         holder.setText(R.id.tv_bubble, homeTopBean.getDescription());
-        holder.setVisible(R.id.tv_bubble, TextUtils.isEmpty(homeTopBean.getDescription()) ? false : true);
+        holder.setVisible(R.id.tv_bubble, !TextUtils.isEmpty(homeTopBean.getDescription()));
 
         View itemView = holder.itemView;
         itemView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {

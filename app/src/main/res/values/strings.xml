@@ -278,4 +278,5 @@
     <string name="no_search_result">没有找到“%s”相关</string>
     <string name="picked_num">%d条精选内容</string>
     <string name="shoppig_reward_rule">还有%d秒就可获得奖励</string>
+    <string name="my_coupon">我的优惠券</string>
 </resources>
