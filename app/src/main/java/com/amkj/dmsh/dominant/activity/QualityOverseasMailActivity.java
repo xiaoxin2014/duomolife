@@ -16,7 +16,6 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.DMLThemeEntity;
 import com.amkj.dmsh.bean.DMLThemeEntity.DMLThemeBean;
@@ -24,7 +23,6 @@ import com.amkj.dmsh.bean.DMLThemeEntity.DMLThemeBean.DMLGoodsBean;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
-import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.adapter.GoodProductAdapter;
 import com.amkj.dmsh.dominant.adapter.QualityOsMailHeaderAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
@@ -64,8 +62,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
-import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.QUALITY_OVERSEAS_LIST;
@@ -335,24 +331,6 @@ public class QualityOverseasMailActivity extends BaseActivity {
     }
 
     @Override
-    protected void postEventResult(@NonNull EventMessage message) {
-        if (START_AUTO_PAGE_TURN.equals(message.type)) {
-            if (adBeanList.size() > 0 && overseasHeaderView.ad_communal_banner != null && !overseasHeaderView.ad_communal_banner.isTurning()) {
-                overseasHeaderView.ad_communal_banner.setCanScroll(true);
-                overseasHeaderView.ad_communal_banner.startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
-                overseasHeaderView.ad_communal_banner.setPointViewVisible(true);
-            }
-        } else if (STOP_AUTO_PAGE_TURN.equals(message.type)) {
-            if (overseasHeaderView.ad_communal_banner != null && overseasHeaderView.ad_communal_banner.isTurning()) {
-                overseasHeaderView.ad_communal_banner.setCanScroll(false);
-                overseasHeaderView.ad_communal_banner.stopTurning();
-                overseasHeaderView.ad_communal_banner.setPointViewVisible(false);
-            }
-        }
-    }
-
-
-    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
             return;
@@ -417,7 +395,7 @@ public class QualityOverseasMailActivity extends BaseActivity {
                             };
                         }
                         overseasHeaderView.ad_communal_banner.setPages(QualityOverseasMailActivity.this, cbViewHolderCreator, adBeanList).setCanLoop(true)
-                                .setPointViewVisible(true).setCanScroll(true).setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
+                                .setPointViewVisible(true).setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
                                 .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
                     } else {
                         if (adBeanList.size() < 1) {

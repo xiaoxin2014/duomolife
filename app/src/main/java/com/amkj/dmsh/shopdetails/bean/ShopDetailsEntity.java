@@ -1,5 +1,7 @@
 package com.amkj.dmsh.shopdetails.bean;
 
+import android.text.TextUtils;
+
 import com.amkj.dmsh.base.BaseEntity;
 import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean.MarketLabelBean;
@@ -89,7 +91,6 @@ public class ShopDetailsEntity extends BaseEntity {
 
         //自定义字段
         private long addSecond;
-
 
 
         public boolean isHasPresent() {
@@ -250,6 +251,10 @@ public class ShopDetailsEntity extends BaseEntity {
 
         public String getVideoUrl() {
             return videoUrl;
+        }
+
+        public boolean haveVideo() {
+            return !TextUtils.isEmpty(videoUrl);
         }
 
         public void setVideoUrl(String videoUrl) {

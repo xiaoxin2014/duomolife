@@ -13,7 +13,6 @@ import android.view.View;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.QualityTypeEntity;
 import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean;
@@ -62,7 +61,6 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_CHILD;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_ID;
@@ -70,8 +68,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_NAME;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
-import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.QUALITY_CATEGORY_TYPE;
@@ -446,7 +442,7 @@ public class QualityTypeProductActivity extends BaseActivity {
                             };
                         }
                         qTypeView.ad_communal_banner.setPages(QualityTypeProductActivity.this, cbViewHolderCreator, adBeanList).setCanLoop(true)
-                                .setPointViewVisible(true).setCanScroll(true).setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
+                                .setPointViewVisible(true).setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
                                 .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
                     }
                     if (adBeanList.size() > 0) {
@@ -811,23 +807,6 @@ public class QualityTypeProductActivity extends BaseActivity {
             }
         }
         childProductTypeAdapter.notifyDataSetChanged();
-    }
-
-    @Override
-    protected void postEventResult(@NonNull EventMessage message) {
-        if (START_AUTO_PAGE_TURN.equals(message.type)) {
-            if (adBeanList.size() > 0 && qTypeView.ad_communal_banner != null && !qTypeView.ad_communal_banner.isTurning()) {
-                qTypeView.ad_communal_banner.setCanScroll(true);
-                qTypeView.ad_communal_banner.startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
-                qTypeView.ad_communal_banner.setPointViewVisible(true);
-            }
-        } else if (STOP_AUTO_PAGE_TURN.equals(message.type)) {
-            if (qTypeView.ad_communal_banner != null && !qTypeView.ad_communal_banner.isTurning()) {
-                qTypeView.ad_communal_banner.setCanScroll(false);
-                qTypeView.ad_communal_banner.stopTurning();
-                qTypeView.ad_communal_banner.setPointViewVisible(false);
-            }
-        }
     }
 
     @OnClick(R.id.tv_ql_type_back)

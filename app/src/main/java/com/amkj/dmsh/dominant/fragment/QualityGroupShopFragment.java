@@ -51,8 +51,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
-import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.GROUP_SHOP_JOIN_INDEX;
@@ -309,20 +307,6 @@ public class QualityGroupShopFragment extends BaseFragment {
         if (message.type.equals("refreshGroupShop")) {
             page = 1;
             loadData();
-        } else if (START_AUTO_PAGE_TURN.equals(message.type)) {
-            if (adBeanList.size() > 0 && groupShopHeaderView.ad_communal_banner != null
-                    && !groupShopHeaderView.ad_communal_banner.isTurning()) {
-                groupShopHeaderView.ad_communal_banner.setCanScroll(true);
-                groupShopHeaderView.ad_communal_banner.startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
-                groupShopHeaderView.ad_communal_banner.setPointViewVisible(true);
-            }
-        } else if (STOP_AUTO_PAGE_TURN.equals(message.type)) {
-            if (groupShopHeaderView.ad_communal_banner != null
-                    && groupShopHeaderView.ad_communal_banner.isTurning()) {
-                groupShopHeaderView.ad_communal_banner.setCanScroll(false);
-                groupShopHeaderView.ad_communal_banner.stopTurning();
-                groupShopHeaderView.ad_communal_banner.setPointViewVisible(false);
-            }
         }
     }
 

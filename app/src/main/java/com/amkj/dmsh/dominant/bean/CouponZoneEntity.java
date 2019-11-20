@@ -90,16 +90,8 @@ public class CouponZoneEntity extends BaseTimeEntity {
         private String couponDesc;
         private int isHave;
         private int isOverLimit;
-        private int isAlreadyGet;//自定义字段，是否已领取该优惠券
         private int itemType = 3;
 
-        public boolean isAlreadyGet() {
-            return isAlreadyGet == 1;
-        }
-
-        public void setIsAlreadyGet(int isAlreadyGet) {
-            this.isAlreadyGet = isAlreadyGet;
-        }
 
         public void setItemType(int itemType) {
             this.itemType = itemType;

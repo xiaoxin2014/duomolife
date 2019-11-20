@@ -1,8 +1,13 @@
 package com.bigkoo.convenientbanner;
 
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.LifecycleObserver;
+import android.arch.lifecycle.LifecycleOwner;
+import android.arch.lifecycle.OnLifecycleEvent;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -29,7 +34,7 @@ import java.util.List;
  *
  * @author Sai 支持自动翻页
  */
-public class ConvenientBanner<T> extends RelativeLayout {
+public class ConvenientBanner<T> extends RelativeLayout implements LifecycleObserver {
     private List<T> mDatas;
     private int[] page_indicatorId;
     private ArrayList<ImageView> mPointViews = new ArrayList<ImageView>();
@@ -40,12 +45,12 @@ public class ConvenientBanner<T> extends RelativeLayout {
     private boolean turning;
     private boolean canTurn = false;
     private boolean canLoop = true;
-    private boolean isCanScroll = true;
     private CBLoopScaleHelper cbLoopScaleHelper;
     private CBPageChangeListener pageChangeListener;
     private OnPageChangeListener onPageChangeListener;
     private AdSwitchTask adSwitchTask;
-    private HScrollLinearLayoutManager hScrollLinearLayoutManager;
+    private boolean isVertical = false;
+    private LifecycleOwner lifecycleOwner;
 
     public enum PageIndicatorAlign {
         ALIGN_PARENT_LEFT, ALIGN_PARENT_RIGHT, CENTER_HORIZONTAL
@@ -68,28 +73,37 @@ public class ConvenientBanner<T> extends RelativeLayout {
     private void init(Context context) {
         View hView = LayoutInflater.from(context).inflate(
                 R.layout.include_viewpager, this, true);
-        viewPager = hView.findViewById(R.id.cbLoopViewPager);
-        loPageTurningPoint = hView
+        viewPager = (CBLoopViewPager) hView.findViewById(R.id.cbLoopViewPager);
+        loPageTurningPoint = (ViewGroup) hView
                 .findViewById(R.id.loPageTurningPoint);
-        hScrollLinearLayoutManager = new HScrollLinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
-        hScrollLinearLayoutManager.setScrollEnabled(isCanScroll);
-        viewPager.setLayoutManager(hScrollLinearLayoutManager);
+
+        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+        viewPager.setLayoutManager(linearLayoutManager);
+
         cbLoopScaleHelper = new CBLoopScaleHelper();
 
         adSwitchTask = new AdSwitchTask(this);
     }
 
+    public ConvenientBanner setLayoutManager(RecyclerView.LayoutManager layoutManager) {
+        viewPager.setLayoutManager(layoutManager);
+        return this;
+    }
 
-    public ConvenientBanner setPages(Context context, CBViewHolderCreator holderCreator, List<T> datas) {
+    public ConvenientBanner setPages(LifecycleOwner lifecycleOwner, CBViewHolderCreator holderCreator, List<T> datas) {
         this.mDatas = datas;
-        pageAdapter = new CBPageAdapter(context, holderCreator, mDatas, canLoop);
+        pageAdapter = new CBPageAdapter(holderCreator, mDatas, canLoop);
         viewPager.setAdapter(pageAdapter);
 
         if (page_indicatorId != null)
             setPageIndicator(page_indicatorId);
+
         cbLoopScaleHelper.setFirstItemPos(canLoop ? mDatas.size() : 0);
         cbLoopScaleHelper.attachToRecyclerView(viewPager);
 
+        //添加生命周期监听
+        this.lifecycleOwner = lifecycleOwner;
+        lifecycleOwner.getLifecycle().addObserver(this);
         return this;
     }
 
@@ -105,17 +119,6 @@ public class ConvenientBanner<T> extends RelativeLayout {
     }
 
 
-    public boolean isCanScroll() {
-        return hScrollLinearLayoutManager.canScrollHorizontally();
-    }
-
-    public ConvenientBanner setCanScroll(boolean isScroll) {
-        isCanScroll = isScroll;
-        hScrollLinearLayoutManager.setScrollEnabled(isScroll);
-        return this;
-    }
-
-
     /**
      * 通知数据变化
      */
@@ -123,6 +126,7 @@ public class ConvenientBanner<T> extends RelativeLayout {
         viewPager.getAdapter().notifyDataSetChanged();
         if (page_indicatorId != null)
             setPageIndicator(page_indicatorId);
+        cbLoopScaleHelper.setCurrentItem(canLoop ? mDatas.size() : 0);
     }
 
     /**
@@ -156,7 +160,7 @@ public class ConvenientBanner<T> extends RelativeLayout {
             mPointViews.add(pointView);
             loPageTurningPoint.addView(pointView);
         }
-        pageChangeListener = new CBPageChangeListener(mPointViews,
+        pageChangeListener = new CBPageChangeListener(loPageTurningPoint, mPointViews,
                 page_indicatorId);
         cbLoopScaleHelper.setOnPageChangeListener(pageChangeListener);
         if (onPageChangeListener != null)
@@ -212,8 +216,8 @@ public class ConvenientBanner<T> extends RelativeLayout {
      *
      * @return
      */
-    public ConvenientBanner setCurrentItem(int position) {
-        cbLoopScaleHelper.setCurrentItem(canLoop ? mDatas.size() + position : position);
+    public ConvenientBanner setCurrentItem(int position, boolean smoothScroll) {
+        cbLoopScaleHelper.setCurrentItem(canLoop ? mDatas.size() + position : position, smoothScroll);
         return this;
     }
 
@@ -235,13 +239,14 @@ public class ConvenientBanner<T> extends RelativeLayout {
      * @return
      */
     public ConvenientBanner setPageIndicatorAlign(PageIndicatorAlign align) {
-        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) loPageTurningPoint.getLayoutParams();
+        LayoutParams layoutParams = (LayoutParams) loPageTurningPoint.getLayoutParams();
         layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT, align == PageIndicatorAlign.ALIGN_PARENT_LEFT ? RelativeLayout.TRUE : 0);
         layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, align == PageIndicatorAlign.ALIGN_PARENT_RIGHT ? RelativeLayout.TRUE : 0);
         layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL, align == PageIndicatorAlign.CENTER_HORIZONTAL ? RelativeLayout.TRUE : 0);
         loPageTurningPoint.setLayoutParams(layoutParams);
         return this;
     }
+
 
     /***
      * 是否开启了翻页
@@ -257,26 +262,16 @@ public class ConvenientBanner<T> extends RelativeLayout {
      * @return
      */
     public ConvenientBanner startTurning(long autoTurningTime) {
-        if (mDatas.size() > 1) {
-            if (!isCanScroll) {
-                return this;
-            }
-            if (autoTurningTime < 0) return this;
-            //如果是正在翻页的话先停掉
-            if (turning) {
-                stopTurning();
-            }
-            //设置可以翻页并开启翻页
-            canTurn = true;
-            this.autoTurningTime = autoTurningTime;
-            turning = true;
-            postDelayed(adSwitchTask, autoTurningTime);
-            setPointViewVisible(true);
-        } else {
-            hScrollLinearLayoutManager.setScrollEnabled(false);
-            setPointViewVisible(false);
+        if (autoTurningTime < 0 || mDatas == null || mDatas.size() <= 1) return this;
+        //如果是正在翻页的话先停掉
+        if (turning) {
             stopTurning();
         }
+        //设置可以翻页并开启翻页
+        canTurn = true;
+        this.autoTurningTime = autoTurningTime;
+        turning = true;
+        postDelayed(adSwitchTask, autoTurningTime);
         return this;
     }
 
@@ -291,7 +286,11 @@ public class ConvenientBanner<T> extends RelativeLayout {
         removeCallbacks(adSwitchTask);
     }
 
+
     //触碰控件的时候，翻页应该停止，离开的时候如果之前是开启了翻页的话则重新启动翻页
+
+    float startX, startY;
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
 
@@ -304,13 +303,7 @@ public class ConvenientBanner<T> extends RelativeLayout {
             if (canTurn) stopTurning();
         }
 
-        try {
-            return super.dispatchTouchEvent(ev);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return false;
+        return super.dispatchTouchEvent(ev);
     }
 
     static class AdSwitchTask implements Runnable {
@@ -335,10 +328,21 @@ public class ConvenientBanner<T> extends RelativeLayout {
         }
     }
 
-//    @Override
-//    protected void onAttachedToWindow() {
-//        super.onAttachedToWindow();
-//        startTurning(autoTurningTime);
-//    }
 
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    private void onDestroy() {
+        lifecycleOwner.getLifecycle().removeObserver(this);
+    }
+
+    //获得焦点开始翻页
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    private void onResume() {
+        startTurning();
+    }
+
+    //失去焦点停止翻页
+    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    private void onPause() {
+        stopTurning();
+    }
 }

@@ -92,8 +92,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.BASE_RESOURCE_DRAW;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.OTHER_WECHAT;
-import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
-import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOKEN_EXPIRE_LOG_OUT;
 import static com.amkj.dmsh.constant.Url.MINE_BIND_ACCOUNT;
@@ -607,7 +605,7 @@ public class MineDataFragment extends BaseFragment {
                 }
             };
         }
-        ad_mine.setPages(getActivity(), cbViewHolderCreator, adBeanList).setCanLoop(true).setPointViewVisible(true).setCanScroll(true)
+        ad_mine.setPages(getActivity(), cbViewHolderCreator, adBeanList).setCanLoop(true).setPointViewVisible(true)
                 .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
                 .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
     }
@@ -837,19 +835,7 @@ public class MineDataFragment extends BaseFragment {
 
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
-        if (START_AUTO_PAGE_TURN.equals(message.type)) {
-            if (adBeanList.size() > 0 && ad_mine != null && !ad_mine.isTurning()) {
-                ad_mine.setCanScroll(true);
-                ad_mine.startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
-                ad_mine.setPointViewVisible(true);
-            }
-        } else if (STOP_AUTO_PAGE_TURN.equals(message.type)) {
-            if (ad_mine != null && ad_mine.isTurning()) {
-                ad_mine.setCanScroll(false);
-                ad_mine.stopTurning();
-                ad_mine.setPointViewVisible(false);
-            }
-        } else if (TOKEN_EXPIRE_LOG_OUT.equals(message.type)) {
+       if (TOKEN_EXPIRE_LOG_OUT.equals(message.type)) {
             setErrorUserData();
         }
     }

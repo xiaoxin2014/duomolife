@@ -50,7 +50,6 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
 
 
 public abstract class BaseActivity extends AppCompatActivity {
@@ -187,8 +186,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         StatService.onPause(this);
 
         JzvdStd.releaseAllVideos();
-//        避免播放 置于后台，释放滚动
-        EventBus.getDefault().post(new EventMessage(START_AUTO_PAGE_TURN, START_AUTO_PAGE_TURN));
     }
 
     @Override

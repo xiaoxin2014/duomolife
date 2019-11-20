@@ -71,8 +71,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DELETE_POST;
 import static com.amkj.dmsh.constant.ConstantVariable.DEMO_LIFE_FILE;
 import static com.amkj.dmsh.constant.ConstantVariable.REFRESH_MESSAGE_TOTAL;
-import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
-import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_POST_CONTENT;
 
@@ -134,7 +132,7 @@ public class FindFragment extends BaseFragment {
         initPostList();
         //初始化热门专题
         communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(getActivity()));
-        findHotTopicAdapter = new HotTopicAdapter(getActivity(), hotTopicList,true);
+        findHotTopicAdapter = new HotTopicAdapter(getActivity(), hotTopicList, true);
         communal_recycler_wrap.setAdapter(findHotTopicAdapter);
     }
 
@@ -173,7 +171,7 @@ public class FindFragment extends BaseFragment {
                             cbViewHolderCreator = new CBViewHolderCreator() {
                                 @Override
                                 public Holder createHolder(View itemView) {
-                                    return new CommunalAdHolderView(itemView, getActivity(), true);
+                                    return new CommunalAdHolderView(itemView, getActivity(), ad_communal_banner, true);
                                 }
 
                                 @Override
@@ -182,7 +180,7 @@ public class FindFragment extends BaseFragment {
                                 }
                             };
                         }
-                        ad_communal_banner.setPages(getActivity(), cbViewHolderCreator, adBeanList).setCanLoop(true).setPointViewVisible(true).setCanScroll(true)
+                        ad_communal_banner.setPages(getActivity(), cbViewHolderCreator, adBeanList).setCanLoop(true).setPointViewVisible(true)
                                 .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
                                 .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
                     } else {
@@ -292,18 +290,6 @@ public class FindFragment extends BaseFragment {
     protected void postEventResult(@NonNull EventMessage message) {
         if (message.type.equals(REFRESH_MESSAGE_TOTAL)) {
             getMessageCount(getActivity(), msgBadge);
-        } else if (START_AUTO_PAGE_TURN.equals(message.type)) {
-            if (adBeanList.size() > 0 && ad_communal_banner != null && !ad_communal_banner.isTurning()) {
-                ad_communal_banner.setCanScroll(true);
-                ad_communal_banner.startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
-                ad_communal_banner.setPointViewVisible(true);
-            }
-        } else if (STOP_AUTO_PAGE_TURN.equals(message.type)) {
-            if (ad_communal_banner != null && ad_communal_banner.isTurning()) {
-                ad_communal_banner.setCanScroll(false);
-                ad_communal_banner.stopTurning();
-                ad_communal_banner.setPointViewVisible(false);
-            }
         } else if (message.type.equals(DELETE_POST)) {
             updateCurrentPostFragment();
         }

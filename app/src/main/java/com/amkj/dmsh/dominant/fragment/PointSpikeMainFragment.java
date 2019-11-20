@@ -1,6 +1,7 @@
 package com.amkj.dmsh.dominant.fragment;
 
 import android.app.Activity;
+import android.arch.lifecycle.LifecycleOwner;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
 import android.view.View;
@@ -209,8 +210,8 @@ public class PointSpikeMainFragment extends BaseFragment {
                                     }
                                 };
                             }
-                            adPointSpike.setPages(activityWeakReference.get(), cbViewHolderCreator, adBeanList).setCanLoop(true)
-                                    .setPointViewVisible(true).setCanScroll(true)
+                            adPointSpike.setPages((LifecycleOwner) activityWeakReference.get(), cbViewHolderCreator, adBeanList).setCanLoop(true)
+                                    .setPointViewVisible(true)
                                     .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
                                     .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
                         }else{

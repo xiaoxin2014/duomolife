@@ -225,7 +225,7 @@ public class WholePointSpikeProductActivity extends BaseActivity {
                                 };
                             }
                             adPointSpike.setPages(WholePointSpikeProductActivity.this, cbViewHolderCreator, adBeanList).setCanLoop(true)
-                                    .setPointViewVisible(true).setCanScroll(true)
+                                    .setPointViewVisible(true)
                                     .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
                                     .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
                         }

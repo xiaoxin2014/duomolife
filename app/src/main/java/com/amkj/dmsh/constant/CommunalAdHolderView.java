@@ -6,20 +6,16 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.views.JzVideo.JzVideoPlayerStatus;
+import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.Holder;
-
-import org.greenrobot.eventbus.EventBus;
 
 import static com.amkj.dmsh.constant.ConstantMethod.adClickTotal;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
-import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
-import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
 
 
 /**
@@ -30,14 +26,22 @@ import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
  * class description:广告轮播图片 视频播放
  */
 public class CommunalAdHolderView extends Holder<CommunalADActivityBean> {
-    private final Activity context;
-    private final boolean isShowProduct;
+    private Activity context;
+    private boolean isShowProduct;
+    private ConvenientBanner convenientBanner;
     private ImageView iv_ad_image;
     private JzVideoPlayerStatus jvp_ad_video_play;
 
     public CommunalAdHolderView(View itemView, Activity context, boolean isShowProduct) {
         super(itemView);
         this.context = context;
+        this.isShowProduct = isShowProduct;
+    }
+
+    public CommunalAdHolderView(View itemView, Activity context, ConvenientBanner convenientBanner, boolean isShowProduct) {
+        super(itemView);
+        this.context = context;
+        this.convenientBanner = convenientBanner;
         this.isShowProduct = isShowProduct;
     }
 
@@ -57,12 +61,21 @@ public class CommunalAdHolderView extends Holder<CommunalADActivityBean> {
             jvp_ad_video_play.setVideoStatusListener(new JzVideoPlayerStatus.VideoStatusListener() {
                 @Override
                 public void startTurning() {
-                    EventBus.getDefault().post(new EventMessage(START_AUTO_PAGE_TURN, START_AUTO_PAGE_TURN));
+                    //视频暂停时恢复翻页
+                    if (convenientBanner != null) {
+                        convenientBanner.startTurning();
+                        convenientBanner.setPointViewVisible(true);
+                    }
+
                 }
 
                 @Override
                 public void stopTurning() {
-                    EventBus.getDefault().post(new EventMessage(STOP_AUTO_PAGE_TURN, STOP_AUTO_PAGE_TURN));
+                    //视频播放时停止翻页
+                    if (convenientBanner != null) {
+                        convenientBanner.stopTurning();
+                        convenientBanner.setPointViewVisible(false);
+                    }
                 }
             });
             if (!isShowProduct) {

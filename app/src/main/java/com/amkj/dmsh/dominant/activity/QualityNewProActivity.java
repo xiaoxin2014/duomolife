@@ -68,8 +68,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
-import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.Q_NEW_PRO_AD;
@@ -255,7 +253,7 @@ public class QualityNewProActivity extends BaseActivity {
                             };
                         }
                         qNewProView.ad_communal_banner.setPages(QualityNewProActivity.this, cbViewHolderCreator, adBeanList).setCanLoop(true)
-                                .setPointViewVisible(true).setCanScroll(true).setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
+                                .setPointViewVisible(true).setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
                                 .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
                     }
                     qualityTypeProductAdapter.removeAllFooterView();
@@ -474,19 +472,7 @@ public class QualityNewProActivity extends BaseActivity {
 
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
-        if (START_AUTO_PAGE_TURN.equals(message.type)) {
-            if (adBeanList.size() > 0 && qNewProView.ad_communal_banner != null && !qNewProView.ad_communal_banner.isTurning()) {
-                qNewProView.ad_communal_banner.setCanScroll(true);
-                qNewProView.ad_communal_banner.startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
-                qNewProView.ad_communal_banner.setPointViewVisible(true);
-            }
-        } else if (STOP_AUTO_PAGE_TURN.equals(message.type)) {
-            if (qNewProView.ad_communal_banner != null && qNewProView.ad_communal_banner.isTurning()) {
-                qNewProView.ad_communal_banner.setCanScroll(false);
-                qNewProView.ad_communal_banner.stopTurning();
-                qNewProView.ad_communal_banner.setPointViewVisible(false);
-            }
-        } else if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
+      if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
             if (badge!=null){
                 badge.setBadgeNumber((int) message.result);
             }

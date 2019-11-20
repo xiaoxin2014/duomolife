@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
-import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
@@ -57,12 +56,9 @@ import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
-import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.Q_NEW_PRO_AD;
@@ -228,7 +224,7 @@ public class QualityNewProFragment extends BaseFragment {
                             };
                         }
                         qNewProView.ad_communal_banner.setPages(getActivity(), cbViewHolderCreator, adBeanList).setCanLoop(true)
-                                .setPointViewVisible(true).setCanScroll(true).setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
+                                .setPointViewVisible(true).setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
                                 .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
                     }
                     qualityTypeProductAdapter.removeAllFooterView();
@@ -418,23 +414,6 @@ public class QualityNewProFragment extends BaseFragment {
             tv_ql_new_pro_time_tag.setText((getStrings(qNewProTimeShaftBean.getNewReleaseDay()) + "天"));
             tv_ql_new_pro_time_tag.setSelected(qNewProTimeShaftBean.isSelected());
             helper.itemView.setTag(qNewProTimeShaftBean);
-        }
-    }
-
-    @Override
-    protected void postEventResult(@NonNull EventMessage message) {
-        if (START_AUTO_PAGE_TURN.equals(message.type)) {
-            if (adBeanList.size() > 0 && qNewProView.ad_communal_banner != null && !qNewProView.ad_communal_banner.isTurning()) {
-                qNewProView.ad_communal_banner.setCanScroll(true);
-                qNewProView.ad_communal_banner.startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
-                qNewProView.ad_communal_banner.setPointViewVisible(true);
-            }
-        } else if (STOP_AUTO_PAGE_TURN.equals(message.type)) {
-            if (qNewProView.ad_communal_banner != null && qNewProView.ad_communal_banner.isTurning()) {
-                qNewProView.ad_communal_banner.setCanScroll(false);
-                qNewProView.ad_communal_banner.stopTurning();
-                qNewProView.ad_communal_banner.setPointViewVisible(false);
-            }
         }
     }
 }

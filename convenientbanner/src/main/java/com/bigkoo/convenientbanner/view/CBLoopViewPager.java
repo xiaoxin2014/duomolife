@@ -1,18 +1,8 @@
 package com.bigkoo.convenientbanner.view;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
-
-import com.bigkoo.convenientbanner.adapter.CBPageAdapter;
-import com.bigkoo.convenientbanner.listener.OnItemClickListener;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class CBLoopViewPager extends RecyclerView {
@@ -25,11 +15,11 @@ public class CBLoopViewPager extends RecyclerView {
         super(context);
     }
 
-    public CBLoopViewPager(Context context, @Nullable AttributeSet attrs) {
+    public CBLoopViewPager(Context context,AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public CBLoopViewPager(Context context, @Nullable AttributeSet attrs, int defStyle) {
+    public CBLoopViewPager(Context context,AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 

@@ -4,7 +4,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.bigkoo.convenientbanner.listener.OnItemClickListener;
 import com.bigkoo.convenientbanner.utils.ScreenUtil;
 
 /**

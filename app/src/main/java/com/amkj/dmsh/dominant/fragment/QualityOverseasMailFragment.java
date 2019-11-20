@@ -2,7 +2,6 @@ package com.amkj.dmsh.dominant.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,7 +12,6 @@ import android.widget.RelativeLayout;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
-import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.DMLThemeEntity;
 import com.amkj.dmsh.bean.DMLThemeEntity.DMLThemeBean;
 import com.amkj.dmsh.bean.DMLThemeEntity.DMLThemeBean.DMLGoodsBean;
@@ -54,8 +52,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_ID;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
-import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.QUALITY_OVERSEAS_LIST;
@@ -336,7 +332,7 @@ public class QualityOverseasMailFragment extends BaseFragment {
                             };
                         }
                         overseasHeaderView.ad_communal_banner.setPages(getActivity(), cbViewHolderCreator, adBeanList).setCanLoop(true)
-                                .setPointViewVisible(true).setCanScroll(true).setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
+                                .setPointViewVisible(true).setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
                                 .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
                     } else {
                         if (adBeanList.size() < 1) {
@@ -368,22 +364,5 @@ public class QualityOverseasMailFragment extends BaseFragment {
         public RelativeLayout rel_communal_banner;
         @BindView(R.id.ad_communal_banner)
         public ConvenientBanner ad_communal_banner;
-    }
-
-    @Override
-    protected void postEventResult(@NonNull EventMessage message) {
-        if (START_AUTO_PAGE_TURN.equals(message.type)) {
-            if (adBeanList.size() > 0 && overseasHeaderView.ad_communal_banner != null && !overseasHeaderView.ad_communal_banner.isTurning()) {
-                overseasHeaderView.ad_communal_banner.setCanScroll(true);
-                overseasHeaderView.ad_communal_banner.startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
-                overseasHeaderView.ad_communal_banner.setPointViewVisible(true);
-            }
-        } else if (STOP_AUTO_PAGE_TURN.equals(message.type)) {
-            if (overseasHeaderView.ad_communal_banner != null && overseasHeaderView.ad_communal_banner.isTurning()) {
-                overseasHeaderView.ad_communal_banner.setCanScroll(false);
-                overseasHeaderView.ad_communal_banner.stopTurning();
-                overseasHeaderView.ad_communal_banner.setPointViewVisible(false);
-            }
-        }
     }
 }

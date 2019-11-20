@@ -1,6 +1,7 @@
 package com.amkj.dmsh.dominant.adapter;
 
 import android.app.Activity;
+import android.arch.lifecycle.LifecycleOwner;
 import android.content.Intent;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -75,8 +76,8 @@ public class HomeCatergoryAdapter extends BaseQuickAdapter<UserLikedProductEntit
                 adBeanList.add(communalADActivityBean);
             }
 
-            convenientBanner.setPages(mContext, cbViewHolderCreator, adBeanList).setCanLoop(true)
-                    .setPointViewVisible(true).setCanScroll(true)
+            convenientBanner.setPages((LifecycleOwner) mContext, cbViewHolderCreator, adBeanList).setCanLoop(true)
+                    .setPointViewVisible(true)
                     .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
                     .startTurning(getShowNumber("5") * 1000);
         } else {

@@ -78,6 +78,14 @@ public class CommunalADActivityEntity extends BaseTimeEntity{
         private String description;
         private String icon;
 
+        public CommunalADActivityBean() {
+        }
+
+        public CommunalADActivityBean(String picUrl, String videoUrl) {
+            this.picUrl = picUrl;
+            this.videoUrl = videoUrl;
+        }
+
         public String getIcon() {
             return icon;
         }

@@ -337,7 +337,7 @@ public class HomeDefalutFragment extends BaseFragment {
                     cbViewHolderCreator = new CBViewHolderCreator() {
                         @Override
                         public Holder createHolder(View itemView) {
-                            return new CommunalAdHolderView(itemView, getActivity(), true);
+                            return new CommunalAdHolderView(itemView, getActivity(), mCbBanner, true);
                         }
 
                         @Override
@@ -347,7 +347,7 @@ public class HomeDefalutFragment extends BaseFragment {
                     };
                 }
                 mCbBanner.setPages(getActivity(), cbViewHolderCreator, adBeanList).setCanLoop(true)
-                        .setPointViewVisible(true).setCanScroll(true)
+                        .setPointViewVisible(true)
                         .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
                         .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
             } else {

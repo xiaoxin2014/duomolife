@@ -86,7 +86,6 @@ import com.amkj.dmsh.views.flycoTablayout.listener.OnTabSelectListener;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
-import com.bigkoo.convenientbanner.listener.OnItemClickListener;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.gson.Gson;
@@ -140,8 +139,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.RECOMMEND_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
-import static com.amkj.dmsh.constant.ConstantVariable.START_AUTO_PAGE_TURN;
-import static com.amkj.dmsh.constant.ConstantVariable.STOP_AUTO_PAGE_TURN;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
 import static com.amkj.dmsh.constant.ConstantVariable.isShowTint;
@@ -149,7 +146,6 @@ import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODUCT_MORE;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODUCT_TITLE;
 import static com.amkj.dmsh.utils.CountDownUtils.isTimeStart;
-import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getSquareImgUrl;
 
 
 /**
@@ -854,39 +850,17 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
     private void setProductData(final ShopPropertyBean shopProperty) {
         if (shopProperty == null) return;
-        String[] images = shopProperty.getImages().split(",");
-//        视频video
+        //轮播位（包含图片以及视频）
         imagesVideoList.clear();
-//        赠品优惠券
-        presentProductInfoBeans.clear();
-        CommunalADActivityBean communalADActivityBean;
-        List<String> imageList = new ArrayList<>();
-        int videoCount = 0;
-        if (images.length != 0) {
-            imageList.addAll(Arrays.asList(images));
-            for (int i = 0; i < imageList.size(); i++) {
-                communalADActivityBean = new CommunalADActivityBean();
-                if (i == 0) {
-                    communalADActivityBean.setPicUrl(getSquareImgUrl(imageList.get(i), screenWith, shopProperty.getWaterRemark()));
-                    if (!TextUtils.isEmpty(shopProperty.getVideoUrl())) {
-                        communalADActivityBean.setVideoUrl(shopProperty.getVideoUrl());
-                        videoCount++;
-                    }
-                } else {
-                    communalADActivityBean.setPicUrl(imageList.get(i));
-                }
-                imagesVideoList.add(communalADActivityBean);
-            }
-        } else {
-            communalADActivityBean = new CommunalADActivityBean();
-            communalADActivityBean.setPicUrl(getStrings(shopProperty.getImages()));
-            if (!TextUtils.isEmpty(shopProperty.getVideoUrl())) {
-                communalADActivityBean.setVideoUrl(shopProperty.getVideoUrl());
-            }
-            imageList.add(getStrings(shopProperty.getImages()));
-            imagesVideoList.add(communalADActivityBean);
+        List<String> imageList = Arrays.asList(shopProperty.getImages().split(","));
+        if (shopProperty.haveVideo()) {
+            imagesVideoList.add(new CommunalADActivityBean("", shopProperty.getVideoUrl()));
         }
-//         轮播图
+
+        for (int i = 0; i < imageList.size(); i++) {
+            imagesVideoList.add(new CommunalADActivityBean(imageList.get(i), ""));
+        }
+
         if (cbViewHolderCreator == null) {
             cbViewHolderCreator = new CBViewHolderCreator() {
                 @Override
@@ -900,26 +874,18 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 }
             };
         }
-        banner_ql_sp_pro_details.setPages(getActivity(), cbViewHolderCreator, imagesVideoList).setCanScroll(true).setCanLoop(false)
+        banner_ql_sp_pro_details.setPages(this, cbViewHolderCreator, imagesVideoList).setCanLoop(false)
                 .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius});
-        int finalVideoCount = videoCount;
-        banner_ql_sp_pro_details.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(int position) {
-                if (imagesVideoList.size() > position) {
-                    CommunalADActivityBean communalADActivityBean = imagesVideoList.get(position);
-                    if (!TextUtils.isEmpty(communalADActivityBean.getVideoUrl())) {
-                        return;
-                    }
-                    if (position - finalVideoCount < 0) {
-                        return;
-                    }
-                    if (imageList.size() > 0 && position < imageList.size()) {
-                        showImageActivity(getActivity(), IMAGE_DEF,
-                                position - finalVideoCount,
-                                imageList);
-                    }
+        banner_ql_sp_pro_details.setOnItemClickListener(position -> {
+            if (imagesVideoList.size() > position) {
+                CommunalADActivityBean communalADActivityBean = imagesVideoList.get(position);
+                if (!TextUtils.isEmpty(communalADActivityBean.getVideoUrl())) {
+                    return;
                 }
+
+                showImageActivity(getActivity(), IMAGE_DEF,
+                        position - (shopProperty.haveVideo() ? 1 : 0),
+                        imageList);
             }
         });
 
@@ -1106,7 +1072,8 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         }
 
 
-        //优惠券
+        //赠品以及优惠券
+        presentProductInfoBeans.clear();
         if (shopProperty.getCouponJsonList() != null) {
             PresentProductInfoBean presentProductInfoBean;
             for (int i = 0; i < shopProperty.getCouponJsonList().size(); i++) {
@@ -1949,16 +1916,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         }
     }
 
-    private void stopScrollBanner() {
-        banner_ql_sp_pro_details.setCanScroll(false);
-        banner_ql_sp_pro_details.setPointViewVisible(false);
-    }
-
-    private void openScrollBanner() {
-        banner_ql_sp_pro_details.setCanScroll(true);
-        banner_ql_sp_pro_details.setPointViewVisible(true);
-    }
-
 
     @Override
     protected void onResume() {
@@ -1975,19 +1932,10 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
-        if (START_AUTO_PAGE_TURN.equals(message.type)) {
-            if (banner_ql_sp_pro_details != null && !banner_ql_sp_pro_details.isCanScroll()) {
-                openScrollBanner();
-            }
-        } else if (STOP_AUTO_PAGE_TURN.equals(message.type)) {
-            if (banner_ql_sp_pro_details != null && banner_ql_sp_pro_details.isCanScroll()) {
-                stopScrollBanner();
-            }
-        } else if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
+        if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
             if (badge != null) {
                 badge.setBadgeNumber((int) message.result);
             }
         }
     }
-
 }
