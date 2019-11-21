@@ -128,6 +128,8 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
     private String alignGravity = "text-align:";
     private String alignRight = "right";
     private String alignCenter = "center";
+    //    透明色
+    private String transparent = "transparent";
     //    末尾结束符
     private String endStyle = ";";
     private String endDash = "\"";
@@ -376,8 +378,10 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                     content = content.replaceAll(pTagStart, rTagStart);
                     content = content.replaceAll(pTagEnd, rTagEnd);
                     content = content.replaceAll(blankStyle, " ");
+                    //richtext暂不支持transparent,使用透明色代替
+                    content = content.replaceAll(transparent, "#00000000");
 
-//                匹配图片地址
+                    //                匹配图片地址
                     Matcher imgIsFind = Pattern.compile(IMG_REGEX_TAG).matcher(content);
                     isImageTag = imgIsFind.find();
                     if (isImageTag) {
