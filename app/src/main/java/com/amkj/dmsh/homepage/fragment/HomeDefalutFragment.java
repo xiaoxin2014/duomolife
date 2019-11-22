@@ -169,6 +169,7 @@ public class HomeDefalutFragment extends BaseFragment {
     private boolean isUpdateCache;
     private CommonPagerAdapter mHomeWelfareAdapter;
     private boolean isFirst = true;
+    private GridLayoutManager mTopManager;
 
     @Override
     protected int getContentView() {
@@ -209,9 +210,10 @@ public class HomeDefalutFragment extends BaseFragment {
             download_btn_communal.hide(false);
         });
         //初始化Top适配器
-        LinearLayoutManager topManager = new LinearLayoutManager(getActivity()
-                , LinearLayoutManager.HORIZONTAL, false);
-        mRvTop.setLayoutManager(topManager);
+        mTopManager = new GridLayoutManager(getActivity(), 5);
+//        LinearLayoutManager topManager = new LinearLayoutManager(getActivity()
+//                , LinearLayoutManager.HORIZONTAL, false);
+        mRvTop.setLayoutManager(mTopManager);
         mHomeTopAdapter = new HomeTopAdapter(getActivity(), mTopList);
         mRvTop.setAdapter(mHomeTopAdapter);
         mHomeTopAdapter.setOnItemClickListener((adapter, view, position) -> {
@@ -368,6 +370,8 @@ public class HomeDefalutFragment extends BaseFragment {
                         for (int i = 0; i < (topList.size() > 5 ? 5 : topList.size()); i++) {
                             mTopList.add(topList.get(i));
                         }
+
+                        mTopManager.setSpanCount(mTopList.size());
                         mHomeTopAdapter.notifyDataSetChanged();
                     }
                 }

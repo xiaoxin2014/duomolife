@@ -146,6 +146,7 @@ import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODUCT_MORE;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODUCT_TITLE;
 import static com.amkj.dmsh.utils.CountDownUtils.isTimeStart;
+import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getSquareImgUrl;
 
 
 /**
@@ -858,7 +859,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         }
 
         for (int i = 0; i < imageList.size(); i++) {
-            imagesVideoList.add(new CommunalADActivityBean(imageList.get(i), ""));
+            imagesVideoList.add(new CommunalADActivityBean(getSquareImgUrl(imageList.get(i), screenWith, shopProperty.getWaterRemark()), ""));
         }
 
         if (cbViewHolderCreator == null) {

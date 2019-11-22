@@ -39,6 +39,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.COUPON_COVER;
 import static com.amkj.dmsh.constant.ConstantVariable.COUPON_ONE_COLUMN;
 import static com.amkj.dmsh.constant.ConstantVariable.COUPON_THREE_COLUMN;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
+import static com.amkj.dmsh.constant.Url.BASE_SHARE_PAGE_TWO;
 
 /**
  * Created by xiaoxin on 2019/11/10
@@ -183,7 +184,7 @@ public class CouponZoneActivity extends BaseActivity {
                     new UMShareAction(this, mCouponZoneEntity.getCover(),
                             "有钱任性，优惠券免费领",
                             "先领券后下单，部分活动商品可叠加使用，真正折上折。",
-                            "http://test.domolife.cn/test/template/20191111/couponZone.html?id=" + mCouponZoneEntity.getId(),
+                            BASE_SHARE_PAGE_TWO + "m/template/20191111/couponZone.html?id=" + mCouponZoneEntity.getId(),
                             mCouponZoneEntity.getId());
 
                 }

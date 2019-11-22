@@ -21,6 +21,7 @@ import android.widget.ScrollView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.RequestStatus;
+import com.amkj.dmsh.dominant.activity.CouponZoneActivity;
 import com.amkj.dmsh.dominant.activity.DoMoLifeWelfareDetailsActivity;
 import com.amkj.dmsh.dominant.activity.QualityCustomTopicActivity;
 import com.amkj.dmsh.dominant.activity.QualityNewUserActivity;
@@ -640,12 +641,13 @@ public class UMShareAction {
         return localContentValues;
     }
 
-
     private int getDefaultCover(Activity context) {
         if (context instanceof QualityNewUserActivity) {
             return R.drawable.newuser_top_img;
         } else if (context instanceof JoinSuccessActivity) {
             return R.drawable.share_post_default;
+        } else if (context instanceof CouponZoneActivity) {
+            return R.drawable.coupon_default;
         } else {
             return R.drawable.domolife_logo;
         }
