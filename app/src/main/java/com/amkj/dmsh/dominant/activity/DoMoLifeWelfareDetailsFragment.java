@@ -78,7 +78,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.saveSourceId;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
-import static com.amkj.dmsh.constant.ConstantMethod.totalWelfareProNum;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.COMMENT_TOPIC_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_COMMENT_TOTAL_COUNT;
@@ -89,6 +88,7 @@ import static com.amkj.dmsh.constant.Url.FIND_AND_COMMENT_FAV;
 import static com.amkj.dmsh.constant.Url.H_DML_THEME_DETAIL;
 import static com.amkj.dmsh.constant.Url.Q_DML_SEARCH_COMMENT;
 import static com.amkj.dmsh.constant.Url.SHARE_COMMUNAL_ARTICLE;
+import static com.amkj.dmsh.dao.AddClickDao.totalWelfareProNum;
 import static com.amkj.dmsh.utils.CommunalCopyTextUtils.showPopWindow;
 
 /**

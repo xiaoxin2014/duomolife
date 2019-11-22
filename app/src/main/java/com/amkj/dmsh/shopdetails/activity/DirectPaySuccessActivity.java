@@ -44,7 +44,6 @@ import butterknife.OnClick;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static com.amkj.dmsh.constant.ConstantMethod.adClickTotal;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -58,7 +57,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.RECOMMEND_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.Q_PAY_SUCCESS_AD_DIALOG;
 import static com.amkj.dmsh.constant.Url.Q_PAY_SUCCESS_PRODUCT;
-
+import static com.amkj.dmsh.dao.AddClickDao.adClickTotal;
 
 
 /**

@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.text.TextUtils;
 
 import com.amkj.dmsh.MainActivity;
-import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.utils.Log;
 import com.tencent.bugly.beta.tinker.TinkerManager;
@@ -23,6 +22,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.installApps;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantVariable.BROADCAST_NOTIFY;
+import static com.amkj.dmsh.dao.AddClickDao.clickTotalPush;
 
 ;
 
@@ -86,8 +86,7 @@ public class JPUshMessageReceiver extends BroadcastReceiver {
                     e.printStackTrace();
                 }
                 if (!TextUtils.isEmpty(pushType)) {
-                    ConstantMethod constantMethod = new ConstantMethod();
-                    constantMethod.clickTotalPush(pushType, objId);
+                   clickTotalPush(pushType, objId);
                 }
                 if (!TextUtils.isEmpty(pushType) && "999".equals(pushType)) { //跳转客服
                     QyServiceUtils qyServiceUtils = QyServiceUtils.getQyInstance();

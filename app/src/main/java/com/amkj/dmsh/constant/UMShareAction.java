@@ -57,6 +57,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.isDebugTag;
 import static com.amkj.dmsh.constant.Url.SHARE_SAVE_IMAGE_URL;
+import static com.amkj.dmsh.dao.AddClickDao.addArticleShareCount;
 import static com.amkj.dmsh.dao.SoftApiDao.reportIllegal;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.createFilePath;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.fileIsExist;
@@ -450,7 +451,7 @@ public class UMShareAction {
 
             //文章分享统计
             if (needStatistics(context) && id > 0) {
-                ConstantMethod.addArticleShareCount(context, id);
+                addArticleShareCount(context, id);
             }
 
             ConstantMethod.recycleBitmap(mBitmap);

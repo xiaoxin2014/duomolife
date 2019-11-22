@@ -88,6 +88,7 @@ import static com.amkj.dmsh.constant.Url.H_AD_LIST;
 import static com.amkj.dmsh.constant.Url.H_DML_THEME;
 import static com.amkj.dmsh.constant.Url.QUALITY_SHOP_GOODS_PRO;
 import static com.amkj.dmsh.constant.Url.Q_PRODUCT_TYPE_LIST;
+import static com.amkj.dmsh.dao.AddClickDao.adClickTotal;
 
 
 /**
@@ -220,7 +221,7 @@ public class HomeDefalutFragment extends BaseFragment {
             HomeCommonBean homeCommonBean = (HomeCommonBean) view.getTag();
             if (homeCommonBean != null) {
                 setSkipPath(getActivity(), homeCommonBean.getLink(), false);
-                ConstantMethod.adClickTotal(getActivity(), homeCommonBean.getId());
+             adClickTotal(getActivity(), homeCommonBean.getId());
             }
         });
 

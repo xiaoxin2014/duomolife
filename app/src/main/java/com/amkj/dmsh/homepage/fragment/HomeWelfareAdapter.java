@@ -28,6 +28,7 @@ import java.util.List;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
+import static com.amkj.dmsh.dao.AddClickDao.totalWelfareProNum;
 
 /**
  * Created by xiaoxin on 2019/4/14 0014
@@ -111,7 +112,7 @@ public class HomeWelfareAdapter extends CommonPagerAdapter<HomeWelfareBean> {
                 //记录埋点参数sourceId(福利社专题对应的ID)
                 ConstantMethod.saveSourceId(HomeDefalutFragment.class.getSimpleName(), String.valueOf(item.getId()));
                 //统计福利社点击商品
-                ConstantMethod.totalWelfareProNum(mContext, goodsBean.getId(), item.getId());
+              totalWelfareProNum(mContext, goodsBean.getId(), item.getId());
             }
         });
         rvTopicGoods.setAdapter(topicGoodsAdapter);

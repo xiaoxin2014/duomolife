@@ -13,9 +13,9 @@ import com.amkj.dmsh.views.JzVideo.JzVideoPlayerStatus;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.Holder;
 
-import static com.amkj.dmsh.constant.ConstantMethod.adClickTotal;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
+import static com.amkj.dmsh.dao.AddClickDao.adClickTotal;
 
 
 /**

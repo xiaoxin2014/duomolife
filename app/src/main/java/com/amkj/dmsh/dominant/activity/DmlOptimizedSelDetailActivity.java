@@ -64,11 +64,11 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
-import static com.amkj.dmsh.constant.ConstantMethod.totalProNum;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.Q_DML_OPTIMIZED_DETAIL;
+import static com.amkj.dmsh.dao.AddClickDao.totalProNum;
 
 /**
  * @author LGuiPeng

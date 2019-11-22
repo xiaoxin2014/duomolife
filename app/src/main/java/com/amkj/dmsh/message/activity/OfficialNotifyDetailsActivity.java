@@ -42,11 +42,11 @@ import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
-import static com.amkj.dmsh.constant.ConstantMethod.totalOfficialProNum;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.H_MES_OFFICIAL_DETAILS;
+import static com.amkj.dmsh.dao.AddClickDao.totalOfficialProNum;
 
 ;
 ;

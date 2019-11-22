@@ -27,8 +27,8 @@ import static com.amkj.dmsh.MainActivity.ImgKey;
 import static com.amkj.dmsh.MainActivity.LauncherAdIdKey;
 import static com.amkj.dmsh.MainActivity.SkipUrlKey;
 import static com.amkj.dmsh.MainActivity.TimeKey;
-import static com.amkj.dmsh.constant.ConstantMethod.adClickTotal;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
+import static com.amkj.dmsh.dao.AddClickDao.adClickTotal;
 
 ;
 
@@ -47,7 +47,6 @@ public class WelcomeLaunchActivity extends BaseActivity {
     //    启动页
     @BindView(R.id.iv_launch_wel_page)
     ImageView iv_launch_wel_page;
-
     @BindView(R.id.reg_req_code_gif_skip)
     ProgressBar reg_req_code_gif_skip;
     @BindView(R.id.fl_skip)

@@ -39,8 +39,8 @@ public class MessageNotifyAdapter extends BaseQuickAdapter<MessageNotifyBean, Ba
     protected void convert(BaseViewHolder helper, MessageNotifyBean messageIndentBean) {
         ImageView iv_mes_notify_cover_pro = helper.getView(R.id.iv_mes_notify_cover_pro);
         ImageView iv_mes_notify_cover_icon = helper.getView(R.id.iv_mes_notify_cover_icon);
-        helper.setGone(R.id.fl_mes_sys, true)
-                .setText(R.id.tv_mes_notify_look, !TextUtils.isEmpty(messageIndentBean.getButtonName()) ? messageIndentBean.getButtonName() : "立即查看");
+        helper.setGone(R.id.fl_mes_sys, true);
+        helper.setText(R.id.tv_mes_notify_look, !TextUtils.isEmpty(messageIndentBean.getButtonName()) ? messageIndentBean.getButtonName() : "立即查看");
         switch (getStrings(messageIndentBean.getObj())) {
             case "goods":
                 GlideImageLoaderUtil.loadCenterCrop(context, iv_mes_notify_cover_pro, messageIndentBean.getImage());
@@ -67,13 +67,13 @@ public class MessageNotifyAdapter extends BaseQuickAdapter<MessageNotifyBean, Ba
                         .setText(R.id.tv_mes_notify_look, "联系客服");
                 break;
             case "platformnotice":
-                helper.setGone(R.id.fl_mes_sys, false)
-                        .setText(R.id.tv_mes_notify_look, "查看更多");
+                helper.setGone(R.id.fl_mes_sys, false);
                 break;
             default:
                 helper.setGone(R.id.fl_mes_sys, false);
                 break;
         }
+
         if (messageIndentBean.getProductPriceBean() != null
                 && !TextUtils.isEmpty(messageIndentBean.getTitle())) {
             ProductPriceBean productPriceBean = messageIndentBean.getProductPriceBean();

@@ -31,6 +31,7 @@ import java.util.Map;
 
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
 import static com.amkj.dmsh.constant.Url.H_DML_THEME;
+import static com.amkj.dmsh.dao.AddClickDao.totalWelfareProNum;
 
 /**
  * @author LGuiPeng
@@ -91,7 +92,7 @@ public class QualityOsMailHeaderAdapter extends BaseQuickAdapter<DMLThemeBean, B
                 //记录埋点参数sourceId(福利社专题对应的ID)
                 ConstantMethod.saveSourceId(context.getClass().getSimpleName(), String.valueOf(dMLThemeBean.getId()));
                 //统计福利社点击商品
-                ConstantMethod.totalWelfareProNum(context, dMLGoodsBean.getId(), dMLThemeBean.getId());
+                totalWelfareProNum(context, dMLGoodsBean.getId(), dMLThemeBean.getId());
             }
         });
         horGvAdapter.setOnLoadMoreListener(() -> {

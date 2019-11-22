@@ -43,6 +43,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.H_MES_NOTIFY;
+import static com.amkj.dmsh.dao.AddClickDao.addNotifyMsgClick;
 
 ;
 
@@ -99,7 +100,11 @@ public class MessageSysMesActivity extends BaseActivity {
                             setSkipPath(MessageSysMesActivity.this, messageNotifyBean.getAndroidLink(), false);
                             break;
                     }
+
+                    //统计消息点击
+                    addNotifyMsgClick(getActivity(), messageNotifyBean);
                 }
+
             }
         });
         messageNotifyAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
@@ -208,7 +213,7 @@ public class MessageSysMesActivity extends BaseActivity {
                                 messageNotifyList.addAll(messageOfficialEntity.getMessageNotifyList());
                             } else if (messageOfficialEntity.getCode().equals(EMPTY_CODE)) {
                                 messageNotifyAdapter.loadMoreEnd();
-                            }else{
+                            } else {
                                 showToast(MessageSysMesActivity.this, messageOfficialEntity.getMsg());
                             }
                         }
@@ -234,6 +239,7 @@ public class MessageSysMesActivity extends BaseActivity {
                     }
                 });
     }
+
 
     @OnClick(R.id.tv_life_back)
     void goBack(View view) {

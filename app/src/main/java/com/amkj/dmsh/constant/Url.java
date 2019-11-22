@@ -187,6 +187,10 @@ public class Url {
     public static final String TOTAL_OFFICIAL_PRO_NUM = "api/goods/addCommProductNum";
     //    统计广告点击
     public static final String TOTAL_AD_COUNT = "api/home/addAdClickCount";
+    //    统计通知消息点击
+    public static final String TOTAL_NOTIFY_MSG_COUNT = "api/message/addClickNumByPlatform";
+    //    统计活动消息点击
+    public static final String TOTAL_ACTIVITY_MSG_COUNT = "api/message/addClickNumByActivityInfo";
     //    统计极光消息打开数目
     public static final String TOTAL_JPUSH_COUNT = "api/home/addPushClickNum";
     //    官方详情
@@ -361,7 +365,7 @@ public class Url {
     //限时特惠 主题详情推荐商品列表
     public static final String H_TIME_BRAND_DETAILS_REC = "api/goods/flashSale/topic/getGoods";
     //    限时特惠 新
-//    限时特惠时间轴
+    //    限时特惠时间轴
     public static final String TIME_SHOW_SHAFT = "api/goods/flashSale/getTimeAxisV2";
     //    限时特惠 商品列表
     public static final String TIME_SHOW_PRODUCT_TOPIC_SHAFT = "api/goods/flashSale/getNewFlashSaleGoodsV2";

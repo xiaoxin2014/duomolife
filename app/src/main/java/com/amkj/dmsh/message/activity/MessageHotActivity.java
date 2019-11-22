@@ -40,6 +40,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.H_MES_OFFICIAL;
+import static com.amkj.dmsh.dao.AddClickDao.addActivityMsgClick;
 
 ;
 
@@ -100,6 +101,8 @@ public class MessageHotActivity extends BaseActivity {
                         messageOfficialBean.setRead(!messageOfficialBean.isRead());
                         messageArticleList.set(position, messageOfficialBean);
                         messageOfficialAdapter.notifyItemChanged(position);
+                        //未读的情况下统计消息点击
+                        addActivityMsgClick(getActivity(), messageOfficialBean.getId());
                     }
                 }
             }
@@ -205,7 +208,7 @@ public class MessageHotActivity extends BaseActivity {
                                 messageArticleList.addAll(messageOfficialEntity.getMessageOfficialList());
                             } else if (messageOfficialEntity.getCode().equals(EMPTY_CODE)) {
                                 messageOfficialAdapter.loadMoreEnd();
-                            }else{
+                            } else {
                                 showToast(MessageHotActivity.this, messageOfficialEntity.getMsg());
                             }
                         }
@@ -231,6 +234,7 @@ public class MessageHotActivity extends BaseActivity {
                     }
                 });
     }
+
 
     @OnClick(R.id.tv_life_back)
     void goBack(View view) {

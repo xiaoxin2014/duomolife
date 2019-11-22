@@ -31,7 +31,6 @@ import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -163,7 +162,6 @@ import static com.amkj.dmsh.constant.TagAliasOperatorHelper.sequence;
 import static com.amkj.dmsh.constant.UMShareAction.routineId;
 import static com.amkj.dmsh.constant.Url.H_Q_FLOAT_AD;
 import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
-import static com.amkj.dmsh.constant.Url.TOTAL_AD_COUNT;
 import static com.amkj.dmsh.dao.BaiChuanDao.isTaoBaoUrl;
 import static com.amkj.dmsh.dao.BaiChuanDao.skipAliBC;
 import static com.yanzhenjie.permission.AndPermission.getFileUri;
@@ -841,11 +839,6 @@ public class ConstantMethod {
         return argMap;
     }
 
-    private static void skipMainActivity(Context context) {
-        Intent intent = new Intent(context, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
-    }
 
     public static Badge getTopBadge(Context context, View view) {
         return getBadge(context, view, 0, 0);
@@ -1215,42 +1208,6 @@ public class ConstantMethod {
                 , firstShowPosition, new ImagePagerActivity.ImageSize(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
     }
 
-    /**
-     * 默认图片 文字描述
-     *
-     * @param context
-     * @param content
-     * @return
-     */
-    public static View getEmptyView(Context context, String content) {
-        View view = LayoutInflater.from(context).inflate(R.layout.layout_communal_empty, null, false);
-        TextView tv_communal_empty = (TextView) view.findViewById(R.id.tv_communal_empty);
-        tv_communal_empty.setText(String.format(content, R.string.no_found_content));
-        return view;
-    }
-
-    //    文章分享统计
-    public static void addArticleShareCount(Activity activity, int articleId) {
-        String url = Url.ARTICLE_SHARE_COUNT;
-        Map<String, Object> params = new HashMap<>();
-        //回复文章或帖子
-        params.put("id", articleId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(activity, url, params, null);
-    }
-
-    /**
-     * 推送点击统计
-     */
-    public static void totalPushMessage(Context activity, @NonNull String pushId) {
-        String url = Url.TOTAL_PUSH_INFO;
-        Map<String, Object> params = new HashMap<>();
-        //回复文章或帖子
-        params.put("pushId", pushId);
-        if (userId > 0) {
-            params.put("uid", userId);
-        }
-        NetLoadUtils.getNetInstance().loadNetDataPost(activity, url, params, null);
-    }
 
     //    分享成功 奖励
     public static void shareRewardSuccess(int uid, final Activity context) {
@@ -1291,66 +1248,6 @@ public class ConstantMethod {
         });
     }
 
-    //      统计文章点击商品
-    public static void totalProNum(Activity activity, int productId, int artId) {
-        String url = Url.TOTAL_PRO_NUM;
-        Map<String, Object> params = new HashMap<>();
-        //回复文章或帖子
-        params.put("product_id", productId);
-        params.put("doc_id", artId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(activity, url, params, null);
-    }
-
-    //      统计福利社点击商品
-    public static void totalWelfareProNum(Activity activity, int productId, int topId) {
-        String url = Url.TOTAL_WELFARE_PRO_NUM;
-        Map<String, Object> params = new HashMap<>();
-        //回复文章或帖子
-        params.put("productId", productId);
-        params.put("topId", topId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(activity, url, params, null);
-    }
-
-    //      统计官方通知点击商品
-    public static void totalOfficialProNum(Activity activity, int productId, String officialId) {
-        String url = Url.TOTAL_OFFICIAL_PRO_NUM;
-        Map<String, Object> params = new HashMap<>();
-        //回复文章或帖子
-        params.put("productId", productId);
-        params.put("cId", officialId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(activity, url, params, null);
-    }
-
-    //    统计广告点击
-    public static void adClickTotal(Activity activity, int adId) {
-        adClickTotal(activity, adId, 0);
-    }
-
-    //    统计广告点击
-    public static void adClickTotal(Activity activity, int adId, int type) {
-        Map<String, Object> params = new HashMap<>();
-        //回复文章或帖子
-        params.put("id", adId);
-        if (type != 0) {
-            params.put("type", type);
-        }
-        NetLoadUtils.getNetInstance().loadNetDataPost(activity, TOTAL_AD_COUNT, params, null);
-    }
-
-    /**
-     * 统计JPush打开数目
-     *
-     * @param pushType
-     */
-    public void clickTotalPush(String pushType, String id) {
-        String url = Url.TOTAL_JPUSH_COUNT;
-        Map<String, Object> params = new HashMap<>();
-        params.put("type", pushType);
-        if (!TextUtils.isEmpty(id)) {
-            params.put("id", id);
-        }
-        NetLoadUtils.getNetInstance().loadNetDataPost(mAppContext, url, params, null);
-    }
 
     /**
      * @param context
@@ -1426,6 +1323,13 @@ public class ConstantMethod {
             intent.putExtra("reminder", mScoreGoodsEntity.getContentReminder());
             activity.startActivity(intent);
         }
+    }
+
+    //跳转首页
+    private static void skipMainActivity(Context context) {
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
     }
 
     //    获取系统权限
@@ -2759,20 +2663,6 @@ public class ConstantMethod {
         } catch (Exception e) {
             showToast(context, hintText);
         }
-    }
-
-    /**
-     * 跳转应用宝下载中心
-     *
-     * @param context
-     */
-    private static void skipDownStore(Context context) {
-        String DownUriAddress = "http://app.qq.com/#id=detail&appid=1101070898";
-        Intent intent = new Intent();
-        intent.setAction("android.intent.action.VIEW");
-        Uri content_url = Uri.parse(DownUriAddress);
-        intent.setData(content_url);
-        context.startActivity(intent);
     }
 
     /**
