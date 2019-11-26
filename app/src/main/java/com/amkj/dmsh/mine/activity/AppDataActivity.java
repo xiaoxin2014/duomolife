@@ -14,13 +14,12 @@ import com.amkj.dmsh.address.activity.SelectedAddressActivity;
 import com.amkj.dmsh.address.bean.AddressInfoEntity;
 import com.amkj.dmsh.address.bean.AddressInfoEntity.AddressInfoBean;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.dao.UserDao;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.rxeasyhttp.EasyHttp;
 import com.amkj.dmsh.utils.FileCacheUtils;
-import com.amkj.dmsh.utils.SharedPreUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.bumptech.glide.load.engine.cache.InternalCacheDiskCacheFactory;
@@ -45,7 +44,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.DELIVERY_ADDRESS;
-import static com.amkj.dmsh.dao.BaiChuanDao.exitTaoBaoAccount;
+import static com.amkj.dmsh.dao.UserDao.logout;
 import static com.amkj.dmsh.utils.FileCacheUtils.getFolderSize;
 
 
@@ -188,8 +187,7 @@ public class AppDataActivity extends BaseActivity {
                 public void confirm() {
                     NEW_USER_DIALOG = true;
                     //调用登出接口
-                    ConstantMethod.logout(getActivity(), true);
-                    exitTaoBaoAccount(getActivity());
+                logout(getActivity(), true);
                 }
 
                 @Override
@@ -225,24 +223,14 @@ public class AppDataActivity extends BaseActivity {
     //  账户安全
     @OnClick(R.id.tv_mine_setting_account_safe)
     void setAccountSafe(View view) {
-        Intent intent = new Intent(AppDataActivity.this, AccountSafeActivity.class);
-        String loginType = (String) SharedPreUtils.getParam("LOGIN_TYPE", "");
-        String openId = (String) SharedPreUtils.getParam("OPEN_ID", "");
-        String unionid = (String) SharedPreUtils.getParam("UNION_ID", "0");
-        String accessToken = (String) SharedPreUtils.getParam("ACCESS_TOKEN", "");
         //微信登录并且未绑定手机时，不可进入账户安全
         if (TextUtils.isEmpty(mobile)) {
-            //去绑定
-            intent.putExtra("uid", String.valueOf(userId));
-            intent.putExtra("openId", openId);
-            intent.putExtra("unionid", unionid);
-            intent.putExtra("accessToken", accessToken);
-            intent.putExtra("type", loginType);
-            intent.setClass(this, BindingMobileActivity.class);
+            UserDao.bindPhoneByWx(this);
         } else {
+            Intent intent = new Intent();
             intent.setClass(this, AccountSafeActivity.class);
+            startActivity(intent);
         }
-        startActivity(intent);
     }
 
     //    消息推送

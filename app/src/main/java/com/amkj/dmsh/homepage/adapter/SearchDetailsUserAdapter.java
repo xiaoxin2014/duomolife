@@ -25,12 +25,12 @@ import java.util.List;
 import java.util.Map;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.dao.UserDao.getPersonalInfo;
 
 ;
 

@@ -52,6 +52,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOKEN_EXPIRE_TIME;
+import static com.amkj.dmsh.dao.UserDao.logout;
 import static com.amkj.dmsh.rxeasyhttp.cache.model.CacheMode.CACHEANDREMOTE;
 import static com.amkj.dmsh.rxeasyhttp.cache.model.CacheMode.FIRSTREMOTE;
 import static com.amkj.dmsh.rxeasyhttp.cache.model.CacheMode.ONLYCACHE;
@@ -688,7 +689,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
         if (ConstantMethod.userId > 0 && currentTime - mLastTime > 3000) {
             mLastTime = System.currentTimeMillis();
             //调用登出接口
-            ConstantMethod.logout(mContext, false);
+            logout(mContext, false);
             //通知我的界面刷新
             EventBus.getDefault().post(new EventMessage(ConstantVariable.TOKEN_EXPIRE_LOG_OUT, ""));
             //提示用户登录

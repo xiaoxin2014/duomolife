@@ -20,13 +20,12 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.bean.RegisterUserInfoEntity;
-import com.amkj.dmsh.bean.RegisterUserInfoEntity.RegisterUserInfoBean;
+import com.amkj.dmsh.bean.LoginDataEntity;
 import com.amkj.dmsh.constant.PasswordEncrypt;
 import com.amkj.dmsh.constant.Sha1Md5;
+import com.amkj.dmsh.dao.UserDao;
 import com.amkj.dmsh.mine.CountDownHelper;
 import com.amkj.dmsh.mine.bean.RegisterPhoneStatus;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.NetWorkUtils;
@@ -49,7 +48,6 @@ import cn.smssdk.SMSSDK;
 import static com.amkj.dmsh.constant.ConstantMethod.disposeMessageCode;
 import static com.amkj.dmsh.constant.ConstantMethod.getDeviceId;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.savePersonalInfoCache;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TYPE_PRIVACY_POLICY;
@@ -58,7 +56,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.WEB_VALUE_TYPE;
 import static com.amkj.dmsh.constant.Url.CHECK_PHONE_IS_REG;
 import static com.amkj.dmsh.constant.Url.USER_REGISTER_ACCOUNT;
 
-;
+
 /**
  * @author LGuiPeng
  * @email liuguipeng163@163.com
@@ -84,7 +82,6 @@ public class RegisterAccountActivity extends BaseActivity {
     @BindView(R.id.reg_req_code_gif_view)
     public ProgressBar reg_req_code_gif_view;
     private boolean flag;
-    private RegisterUserInfoBean registerUserInfoBean;
     private CountDownHelper countDownHelper;
     private AlertDialogHelper alertDialogHelper;
 
@@ -108,7 +105,7 @@ public class RegisterAccountActivity extends BaseActivity {
         });
         String s1 = "注册协议";
         String s2 = "隐私政策";
-        String text = "注册即表示同意多么生活用户" + s1 +"和" +s2;
+        String text = "注册即表示同意多么生活用户" + s1 + "和" + s2;
         Link link1 = new Link(s1);
         Link link2 = new Link(s2);
         //        @用户昵称
@@ -214,26 +211,17 @@ public class RegisterAccountActivity extends BaseActivity {
                             loadHud.dismiss();
                         }
                         Gson gson = new Gson();
-                        RegisterUserInfoEntity registerUserInfoEntity = gson.fromJson(result, RegisterUserInfoEntity.class);
-                        if (registerUserInfoEntity != null) {
-                            String backCode = registerUserInfoEntity.getCode();
-                            registerUserInfoBean = registerUserInfoEntity.getRegisterUserInfoBean();
-                            if (backCode.equals(SUCCESS_CODE)) {
-//                        保存个人信息
-                                SavePersonalInfoBean savePersonalInfoBean = new SavePersonalInfoBean();
-                                savePersonalInfoBean.setAvatar(getStrings(registerUserInfoBean.getAvatar()));
-                                savePersonalInfoBean.setNickName(getStrings(registerUserInfoBean.getNickname()));
-                                savePersonalInfoBean.setPhoneNum(getStrings(registerUserInfoBean.getMobile()));
-                                savePersonalInfoBean.setUid(registerUserInfoBean.getUid());
-                                savePersonalInfoBean.setLogin(true);
-                                savePersonalInfoBean.setToken(registerUserInfoBean.getToken());
-                                savePersonalInfoBean.setTokenExpireSeconds(System.currentTimeMillis() + registerUserInfoBean.getTokenExpireSeconds());
-                                savePersonalInfoCache(RegisterAccountActivity.this, savePersonalInfoBean);
+                        LoginDataEntity loginDataEntity = gson.fromJson(result, LoginDataEntity.class);
+                        if (loginDataEntity != null) {
+                            String code = loginDataEntity.getCode();
+                            if (SUCCESS_CODE.equals(code)) {
+                                //跳转选择性别
                                 Intent intent = new Intent(RegisterAccountActivity.this, RegisterSelSexActivity.class);
                                 startActivity(intent);
-                                finish();
+                                //保存个人信息
+                                UserDao.loginSuccessSetData(getActivity(), loginDataEntity, null);
                             } else {
-                                showException(registerUserInfoEntity.getMsg());
+                                showException(loginDataEntity.getMsg());
                             }
                         }
                     }
@@ -377,7 +365,7 @@ public class RegisterAccountActivity extends BaseActivity {
             showToast(this, R.string.PasswordLessSix);
             return;
         }
-        if(!PasswordEncrypt.isPwEligibility(password)){
+        if (!PasswordEncrypt.isPwEligibility(password)) {
             showToast(this, R.string.PasswordInconformity);
             return;
         }

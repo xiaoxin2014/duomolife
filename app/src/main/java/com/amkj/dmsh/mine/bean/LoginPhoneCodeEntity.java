@@ -1,6 +1,6 @@
 package com.amkj.dmsh.mine.bean;
 
-import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
+import com.amkj.dmsh.bean.LoginDataEntity.LoginDataBean;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -54,16 +54,16 @@ public class LoginPhoneCodeEntity {
          * resultMsg : 验证成功
          */
         @SerializedName("object")
-        private CommunalUserInfoBean communalUserInfoBean;
+        private LoginDataBean mLoginDataBean;
         private String resultCode;
         private String resultMsg;
 
-        public CommunalUserInfoBean getCommunalUserInfoBean() {
-            return communalUserInfoBean;
+        public LoginDataBean getCommunalUserInfoBean() {
+            return mLoginDataBean;
         }
 
-        public void setCommunalUserInfoBean(CommunalUserInfoBean communalUserInfoBean) {
-            this.communalUserInfoBean = communalUserInfoBean;
+        public void setCommunalUserInfoBean(LoginDataBean loginDataBean) {
+            this.mLoginDataBean = loginDataBean;
         }
 
         public String getResultCode() {

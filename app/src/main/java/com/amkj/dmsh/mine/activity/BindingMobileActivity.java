@@ -3,8 +3,6 @@ package com.amkj.dmsh.mine.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -17,12 +15,12 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.bean.CommunalUserInfoEntity;
-import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
+import com.amkj.dmsh.bean.LoginDataEntity;
 import com.amkj.dmsh.bean.RequestStatus;
+import com.amkj.dmsh.dao.UserDao;
 import com.amkj.dmsh.mine.CountDownHelper;
+import com.amkj.dmsh.mine.bean.OtherAccountBindEntity.OtherAccountBindInfo;
 import com.amkj.dmsh.mine.bean.RegisterPhoneStatus;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
@@ -38,13 +36,10 @@ import butterknife.OnClick;
 
 import static com.amkj.dmsh.constant.ConstantMethod.dismissLoadhud;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.savePersonalInfoCache;
 import static com.amkj.dmsh.constant.ConstantMethod.showLoadhud;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.toMD5;
 import static com.amkj.dmsh.constant.ConstantVariable.BIND_PHONE;
-import static com.amkj.dmsh.constant.ConstantVariable.R_LOGIN_BACK_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.R_LOGIN_BACK_DATA_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TYPE_PRIVACY_POLICY;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TYPE_REG_AGREEMENT;
@@ -287,14 +282,14 @@ public class BindingMobileActivity extends BaseActivity {
             public void onSuccess(String result) {
                 dismissLoadhud(getActivity());
                 Gson gson = new Gson();
-                CommunalUserInfoEntity communalUserInfoEntity = gson.fromJson(result, CommunalUserInfoEntity.class);
-                if (communalUserInfoEntity != null) {
-                    String backCode = communalUserInfoEntity.getCode();
-                    CommunalUserInfoBean communalUserInfo = communalUserInfoEntity.getCommunalUserInfoBean();
-                    if (backCode.equals(SUCCESS_CODE)) {
+                LoginDataEntity loginDataEntity = gson.fromJson(result, LoginDataEntity.class);
+                if (loginDataEntity != null) {
+                    String code = loginDataEntity.getCode();
+                    LoginDataEntity.LoginDataBean loginDataBean = loginDataEntity.getLoginDataBean();
+                    if (SUCCESS_CODE.equals(code)) {
                         showToast(BindingMobileActivity.this, "绑定成功");
                         //绑定未注册手机设置密码
-                        if (communalUserInfo.isResetPassword()) {
+                        if (loginDataBean.isResetPassword()) {
                             Intent intent = new Intent(getActivity(), SettingPasswordActivity.class);
                             intent.putExtra("phoneNum", phoneNumber);
                             intent.putExtra("openid", openId);
@@ -302,26 +297,9 @@ public class BindingMobileActivity extends BaseActivity {
                             startActivity(intent);
                         }
                         //保存个人信息（绑定成功即登录状态）
-                        SavePersonalInfoBean savePersonalInfoBean = new SavePersonalInfoBean();
-                        savePersonalInfoBean.setLogin(true);
-                        savePersonalInfoBean.setLoginType(type);
-                        savePersonalInfoBean.setPhoneNum(phoneNumber);
-                        savePersonalInfoBean.setUid(communalUserInfo.getUid());
-                        savePersonalInfoBean.setOpenId(openId);
-                        savePersonalInfoBean.setUnionId(unionid);
-                        savePersonalInfoBean.setAccessToken(accessToken);
-                        savePersonalInfoBean.setToken(communalUserInfo.getToken());
-                        savePersonalInfoBean.setTokenExpireSeconds(System.currentTimeMillis() + communalUserInfo.getTokenExpireSeconds());
-                        savePersonalInfoCache(BindingMobileActivity.this, savePersonalInfoBean);
-                        Intent intent = new Intent();
-                        intent.setAction(R_LOGIN_BACK_CODE);
-                        Bundle bundle = new Bundle();
-                        bundle.putParcelable(R_LOGIN_BACK_DATA_CODE, communalUserInfoEntity);
-                        intent.putExtras(bundle);
-                        LocalBroadcastManager.getInstance(BindingMobileActivity.this).sendBroadcast(intent);
-                        finish();
+                        UserDao.loginSuccessSetData(getActivity(), loginDataEntity, new OtherAccountBindInfo(type, openId, unionid, accessToken));
                     } else {
-                        showException(communalUserInfoEntity.getMsg());
+                        showException(loginDataEntity.getMsg());
                     }
                 }
             }

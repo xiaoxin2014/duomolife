@@ -47,7 +47,6 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.savePersonalInfoCache;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
@@ -55,7 +54,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.ACCOUNT_LOGOUT_REASON;
 import static com.amkj.dmsh.constant.Url.ACCOUNT_LOGOUT_REQUEST;
 import static com.amkj.dmsh.constant.Url.ACCOUNT_LOGOUT_TIP;
-import static com.amkj.dmsh.dao.BaiChuanDao.exitTaoBaoAccount;
+import static com.amkj.dmsh.dao.UserDao.savePersonalInfoCache;
 
 
 /**
@@ -253,7 +252,6 @@ public class AccountLogoutActivity extends BaseActivity {
         String logoutReason = "";
         if (SUCCESS_CODE.equals(logoutAccountResultEntity.getCode())) {
             savePersonalInfoCache(AccountLogoutActivity.this, null);
-            exitTaoBaoAccount(this);
             logoutReason = getStrings(logoutAccountResultEntity.getMsg());
         } else {
             for (String reasonText : logoutAccountResultEntity.getAccountResultList()) {

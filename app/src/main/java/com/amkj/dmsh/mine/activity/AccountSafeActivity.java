@@ -11,9 +11,9 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.RequestStatus;
+import com.amkj.dmsh.dao.UserDao;
 import com.amkj.dmsh.mine.bean.OtherAccountBindEntity;
 import com.amkj.dmsh.mine.bean.OtherAccountBindEntity.OtherAccountBindInfo;
-import com.amkj.dmsh.mine.bean.ThirdInfoEntity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.SharedPreUtils;
@@ -45,6 +45,8 @@ import static com.amkj.dmsh.constant.ConstantVariable.OTHER_QQ;
 import static com.amkj.dmsh.constant.ConstantVariable.OTHER_SINA;
 import static com.amkj.dmsh.constant.ConstantVariable.OTHER_WECHAT;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.TOKEN;
+import static com.amkj.dmsh.constant.ConstantVariable.TOKEN_EXPIRE_TIME;
 import static com.amkj.dmsh.constant.Url.ACCOUNT_UNBIND_SINA_QQ;
 import static com.amkj.dmsh.constant.Url.ACCOUNT_UNBIND_WECHAT;
 import static com.amkj.dmsh.constant.Url.MINE_BIND_ACCOUNT;
@@ -244,26 +246,17 @@ public class AccountSafeActivity extends BaseActivity {
     @OnClick(R.id.rel_mobile_account)
     void bindMobile() {
         if (minaData != null) {
-            Intent intent = new Intent();
             //已绑定更换手机号
             if (minaData.isMobile_verification()) {
+                Intent intent = new Intent();
                 intent.putExtra("uid", String.valueOf(userId));
                 intent.putExtra("mobile", minaData.getMobile());
                 intent.setClass(AccountSafeActivity.this, ChangeMobileActivity.class);
+                startActivity(intent);
             } else {
                 //去绑定
-                String openId = (String) SharedPreUtils.getParam("OPEN_ID", "");
-                String unionid = (String) SharedPreUtils.getParam("UNION_ID", "0");
-                String accessToken = (String) SharedPreUtils.getParam("ACCESS_TOKEN", "");
-                String loginType = (String) SharedPreUtils.getParam("LOGIN_TYPE", "");
-                intent.putExtra("uid", String.valueOf(userId));
-                intent.putExtra("openId", openId);
-                intent.putExtra("unionid", unionid);
-                intent.putExtra("accessToken", accessToken);
-                intent.putExtra("type", loginType);
-                intent.setClass(AccountSafeActivity.this, BindingMobileActivity.class);
+                UserDao.bindPhoneByWx(this);
             }
-            startActivity(intent);
         }
     }
 
@@ -466,19 +459,24 @@ public class AccountSafeActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
-                ThirdInfoEntity successOtherData = gson.fromJson(result, ThirdInfoEntity.class);
-                if (successOtherData != null) {
-                    if (successOtherData.getCode().equals(SUCCESS_CODE)) {
-//                            第三方账号登录统计
-                        showToast(AccountSafeActivity.this, successOtherData.getMsg());
+                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+                if (requestStatus != null) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
+                        //第三方账号登录统计
+                        showToast(AccountSafeActivity.this, requestStatus.getMsg());
                         bindAccountType.put(otherAccountBindInfo.getType(), 1);
+                        //更新本地Token信息
+                        if (!TextUtils.isEmpty(requestStatus.getToken())) {
+                            SharedPreUtils.setParam(TOKEN, getStrings(requestStatus.getToken()));
+                            SharedPreUtils.setParam(TOKEN_EXPIRE_TIME, System.currentTimeMillis() + requestStatus.getTokenExpireSeconds());
+                        }
                         /**
                          * 3.2.0 修改为统计自己传入的参数 以前版本根据后台返回的数据类型进行跟uid进行统计
                          */
                         MobclickAgent.onProfileSignIn(getStrings(otherAccountBindInfo.getType()), String.valueOf(userId));
                         loadData();
                     } else {
-                        showToast(AccountSafeActivity.this, successOtherData.getMsg());
+                        showToast(AccountSafeActivity.this, requestStatus.getMsg());
                     }
                 }
             }

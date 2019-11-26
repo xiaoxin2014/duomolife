@@ -3,8 +3,6 @@ package com.amkj.dmsh.mine.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -20,9 +18,8 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
-import com.amkj.dmsh.bean.CommunalUserInfoEntity;
-import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
+import com.amkj.dmsh.bean.LoginDataEntity;
+import com.amkj.dmsh.dao.UserDao;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.ByteLimitWatcher;
@@ -38,13 +35,9 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
-import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.savePersonalInfoCache;
 import static com.amkj.dmsh.constant.ConstantMethod.setEtFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.R_LOGIN_BACK_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.R_LOGIN_BACK_DATA_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.MINE_CHANGE_DATA;
 
@@ -109,9 +102,9 @@ public class RegisterSelSexActivity extends BaseActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 String text = s.toString().trim();
-                if(!TextUtils.isEmpty(text)&&text.length()>0){
+                if (!TextUtils.isEmpty(text) && text.length() > 0) {
                     tv_register_data_confirm.setEnabled(true);
-                }else{
+                } else {
                     tv_register_data_confirm.setEnabled(false);
                 }
             }
@@ -161,35 +154,24 @@ public class RegisterSelSexActivity extends BaseActivity {
             if (loadHud != null) {
                 loadHud.show();
             }
-            NetLoadUtils.getNetInstance().loadNetDataPost(this,MINE_CHANGE_DATA,params,new NetLoadListenerHelper(){
+            NetLoadUtils.getNetInstance().loadNetDataPost(this, MINE_CHANGE_DATA, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     if (loadHud != null) {
                         loadHud.dismiss();
                     }
                     Gson gson = new Gson();
-                    CommunalUserInfoEntity communalUserInfoEntity = gson.fromJson(result, CommunalUserInfoEntity.class);
-                    if (communalUserInfoEntity != null) {
-                        if (communalUserInfoEntity.getCode().equals(SUCCESS_CODE)) {
+                    LoginDataEntity loginDataEntity = gson.fromJson(result, LoginDataEntity.class);
+                    if (loginDataEntity != null) {
+                        if (loginDataEntity.getCode().equals(SUCCESS_CODE)) {
                             showToast(RegisterSelSexActivity.this, R.string.saveSuccess);
                             if (userId < 1) {
-                                CommunalUserInfoBean communalUserInfoBean = communalUserInfoEntity.getCommunalUserInfoBean();
-                                SavePersonalInfoBean savePersonalInfoBean = new SavePersonalInfoBean();
-                                savePersonalInfoBean.setAvatar(getStrings(communalUserInfoBean.getAvatar()));
-                                savePersonalInfoBean.setNickName(getStrings(communalUserInfoBean.getNickname()));
-                                savePersonalInfoBean.setPhoneNum(getStrings(communalUserInfoBean.getMobile()));
-                                savePersonalInfoBean.setUid(communalUserInfoBean.getUid());
-                                savePersonalInfoBean.setLogin(true);
-                                savePersonalInfoCache(RegisterSelSexActivity.this, savePersonalInfoBean);
+                                UserDao.loginSuccessSetData(getActivity(), loginDataEntity, null);
+                            } else {
+                                finish();
                             }
-                            Intent intent = new Intent();
-                            intent.setAction(R_LOGIN_BACK_CODE);
-                            Bundle bundle  = new Bundle();
-                            bundle.putParcelable(R_LOGIN_BACK_DATA_CODE,communalUserInfoEntity);
-                            intent.putExtras(bundle);
-                            LocalBroadcastManager.getInstance(RegisterSelSexActivity.this).sendBroadcast(intent);
                         } else {
-                            showToast(RegisterSelSexActivity.this, communalUserInfoEntity.getMsg());
+                            showToast(RegisterSelSexActivity.this, loginDataEntity.getMsg());
                         }
                     }
                 }
@@ -225,6 +207,7 @@ public class RegisterSelSexActivity extends BaseActivity {
             return super.onKeyDown(keyCode, event);
         }
     }
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (ev.getAction() == MotionEvent.ACTION_DOWN) {

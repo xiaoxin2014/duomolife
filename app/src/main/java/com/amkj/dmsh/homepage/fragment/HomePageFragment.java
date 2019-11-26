@@ -1,5 +1,6 @@
 package com.amkj.dmsh.homepage.fragment;
 
+import android.arch.lifecycle.LifecycleOwner;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
@@ -8,6 +9,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -30,6 +32,7 @@ import com.amkj.dmsh.message.activity.MessageActivity;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.LifecycleHandler;
 import com.amkj.dmsh.views.MarqueeTextView;
 import com.amkj.dmsh.views.flycoTablayout.SlidingIconTabLayout;
 import com.google.gson.Gson;
@@ -49,7 +52,6 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatAd;
 import static com.amkj.dmsh.constant.ConstantMethod.getMessageCount;
-import static com.amkj.dmsh.constant.ConstantMethod.getRollMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getTopBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
@@ -309,5 +311,37 @@ public class HomePageFragment extends BaseFragment {
                 badgeCart.setBadgeNumber((int) message.result);
             }
         }
+    }
+
+    //拼装滚动通知内容，并计算滚动时间
+    private String getRollMsg(LifecycleOwner activity, List<MarqueeTextBean> marqueeTextList, ViewGroup viewGroup) {
+        StringBuffer msg = new StringBuffer();
+        try {
+            int totalBlankLength = 0;
+            for (MarqueeTextBean marqueeTextBean : marqueeTextList) {
+                int displayType = marqueeTextBean.getDisplayType();
+                int id = marqueeTextBean.getId();
+                //如果是1直接显示，如果是0判断之前有没有显示过
+                if (displayType == 0 || !RollMsgIdDataSave.getSingleton().containId(id)) {
+                    String content = marqueeTextBean.getContent();
+                    int show_count = marqueeTextBean.getShow_count();
+                    for (int j = 0; j < show_count; j++) {
+                        msg.append(content);
+                        int blankLength = 30 - content.length();
+                        for (int k = 0; k < (blankLength < 10 ? 10 : blankLength); k++) {
+                            msg.append("   ");
+                            totalBlankLength += 3;
+                        }
+                    }
+                }
+            }
+            //根据通知的长度计算滚动时间，滚动结束隐藏通知
+            long totalTime = 300 * (int) ((msg.length() - totalBlankLength) + totalBlankLength * 1.0f / 3);
+            new LifecycleHandler(activity).postDelayed(() -> viewGroup.setVisibility(View.GONE), totalTime);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return msg.toString();
     }
 }

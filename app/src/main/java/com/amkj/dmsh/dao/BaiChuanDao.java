@@ -184,7 +184,7 @@ public class BaiChuanDao {
     }
 
     //退出淘宝账号
-    public static void exitTaoBaoAccount(Activity context) {
+    public static void exitTaoBaoAccount() {
         AlibcLogin alibcLogin = AlibcLogin.getInstance();
         alibcLogin.logout(new AlibcLoginCallback() {
             @Override

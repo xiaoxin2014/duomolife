@@ -189,7 +189,7 @@ public class ConstantVariable {
      */
     public static final String BIND_PHONE = "remobile";//绑定手机
     public static final String RESET_PASS = "repass";//重置密码
-    public static final String LOGIN = "login";//重置密码
+    public static final String LOGIN = "login";//登录
 
     /**
      * 支付类型

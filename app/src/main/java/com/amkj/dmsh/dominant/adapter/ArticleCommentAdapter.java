@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.activity.CommentDetailsActivity;
@@ -35,9 +34,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_COMMENT_TOTAL_COUNT;
+import static com.amkj.dmsh.dao.UserDao.getPersonalInfo;
 
 ;
 
@@ -153,7 +152,7 @@ public class ArticleCommentAdapter extends BaseQuickAdapter<DmlSearchCommentBean
     }
 
     public void isLoginStatus(View v, List<ReplyCommListBean> replyCommList) {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(context);
+        SavePersonalInfoBean personalInfo = getPersonalInfo(context);
         if (personalInfo.isLogin()) {
             //登陆成功，加载信息
             int uid = personalInfo.getUid();

@@ -54,6 +54,13 @@ public class OtherAccountBindEntity extends BaseEntity {
         private boolean isMobile_verification;
         private String accessToken;
 
+        public OtherAccountBindInfo(String type, String openid, String unionId, String accessToken) {
+            this.openid = openid;
+            this.unionId = unionId;
+            this.type = type;
+            this.accessToken = accessToken;
+        }
+
         public String getAccessToken() {
             return accessToken;
         }

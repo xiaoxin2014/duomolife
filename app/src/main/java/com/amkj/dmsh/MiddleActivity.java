@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
-import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.homepage.activity.DoMoLifeCommunalActivity;
 import com.amkj.dmsh.homepage.activity.DoMoLifeLotteryActivity;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
@@ -17,6 +16,7 @@ import com.microquation.linkedme.android.util.LinkProperties;
 import java.util.HashMap;
 
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
+import static com.amkj.dmsh.dao.UserDao.getPersonalInfo;
 import static com.amkj.dmsh.homepage.activity.DoMoLifeLotteryActivity.LOTTERY_URL;
 
 ;
@@ -81,7 +81,7 @@ public class MiddleActivity extends AppCompatActivity {
     }
 
     private void getLoginStatus(String skipPage) {
-        SavePersonalInfoBean personalInfo = ConstantMethod.getPersonalInfo(this);
+        SavePersonalInfoBean personalInfo = getPersonalInfo(this);
         if (personalInfo.isLogin()) {
             uid = personalInfo.getUid();
             if (skipPage.equals("lottery")) {

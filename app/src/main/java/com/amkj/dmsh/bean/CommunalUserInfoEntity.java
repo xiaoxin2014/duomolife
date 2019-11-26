@@ -19,32 +19,8 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
  */
 public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
 
-    /**
-     * is_sign : 0
-     * fllow : 0
-     * uid : 23287
-     * sex : 0
-     * nickname : 虫子
-     * last_login_time : 0
-     * status : 1
-     * fans : 1
-     * device_type : web
-     * score : 0
-     * reg_time : 0
-     * remindtime : 30
-     * reg_ip : 116.25.96.117
-     * rtime : 2016-08-29 11:01:21
-     * login : 0
-     */
-
     @SerializedName("result")
     private CommunalUserInfoBean communalUserInfoBean;
-
-    /**
-     * result : {"is_sign":0,"fllow":0,"uid":23287,"sex":0,"nickname":"虫子","last_login_time":0,"status":1,"fans":1,"device_type":"web","score":0,"reg_time":0,"remindtime":30,"reg_ip":"116.25.96.117","rtime":"2016-08-29 11:01:21","login":0}
-     * code : 01
-     * msg : 请求成功
-     */
 
     public CommunalUserInfoBean getCommunalUserInfoBean() {
         return communalUserInfoBean;
@@ -92,41 +68,22 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
         private int is_wechat;
         private String isResetPassword;
         private String isBindingWx;
-
-
         private int approve;
         private List<BabyBean> babys;
-
-        /**
-         * cartTotal：购物车数量
-         * couponTotal：优惠券数量
-         * jfTotal：积分订单数量
-         *
-         * @return
-         */
         private int cartTotal;
         private int couponTotal;
         private int jfTotal;
-        /**
-         * app_version_no : 3.1.3
-         * device_source : ios
-         * device_model : iphone6sp
-         * device_sys_version : 10.3.2
-         * sysNotice 1 | 0
-         */
-
         private String app_version_no;
         private String device_source;
         private String device_model;
         private String device_sys_version;
         private int sysNotice;
-        /**
-         * noticeInfo : {"group_id":"4","ios_link":"app://DMLGoodsProductsInfoViewController","web_pc_link":"sdf","android_link":"app://ShopScrollDetailsActivity","web_link":"http://www.domolife.cn/m/template/common/proprietary.html","content":"sd8asa"}
-         */
-
         private NoticeInfoBean noticeInfo;
-
         private List<MarqueeTextEntity.MarqueeTextBean> noticeInfoList;
+
+        //三方登录专属字段
+        private String isNeedBinding;
+        private String openId;
 
 
         public List<MarqueeTextEntity.MarqueeTextBean> getNoticeInfoList() {
@@ -512,6 +469,22 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
 
         public void setNoticeInfo(NoticeInfoBean noticeInfo) {
             this.noticeInfo = noticeInfo;
+        }
+
+        public String getIsNeedBinding() {
+            return isNeedBinding;
+        }
+
+        public void setIsNeedBinding(String isNeedBinding) {
+            this.isNeedBinding = isNeedBinding;
+        }
+
+        public String getOpenId() {
+            return openId;
+        }
+
+        public void setOpenId(String openId) {
+            this.openId = openId;
         }
 
         public static class NoticeInfoBean implements Parcelable {

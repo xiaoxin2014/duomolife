@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.app.Service;
-import android.arch.lifecycle.LifecycleOwner;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -55,19 +54,15 @@ import com.amkj.dmsh.find.activity.ImagePagerActivity;
 import com.amkj.dmsh.find.activity.JoinTopicActivity;
 import com.amkj.dmsh.find.activity.PostDetailActivity;
 import com.amkj.dmsh.find.activity.TopicDetailActivity;
-import com.amkj.dmsh.homepage.RollMsgIdDataSave;
 import com.amkj.dmsh.homepage.activity.DoMoLifeCommunalActivity;
 import com.amkj.dmsh.homepage.activity.DoMoLifeLotteryActivity;
-import com.amkj.dmsh.homepage.bean.MarqueeTextEntity.MarqueeTextBean;
 import com.amkj.dmsh.homepage.bean.ScoreGoodsEntity;
 import com.amkj.dmsh.homepage.bean.ScoreGoodsEntity.ScoreGoodsBean;
 import com.amkj.dmsh.message.bean.MessageTotalEntity;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
-import com.amkj.dmsh.release.bean.RelevanceProEntity.RelevanceProBean;
 import com.amkj.dmsh.rxeasyhttp.utils.DeviceUtils;
 import com.amkj.dmsh.shopdetails.activity.DirectMyCouponActivity;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
@@ -77,9 +72,7 @@ import com.amkj.dmsh.shopdetails.bean.ShopCarGoodsSku;
 import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
 import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
-import com.amkj.dmsh.utils.LifecycleHandler;
 import com.amkj.dmsh.utils.MarketUtils;
-import com.amkj.dmsh.utils.SharedPreUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogImage;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
@@ -93,8 +86,6 @@ import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.tencent.mm.opensdk.modelbiz.WXLaunchMiniProgram;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
-import com.tencent.stat.StatConfig;
-import com.umeng.analytics.MobclickAgent;
 import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Permission;
@@ -113,7 +104,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -151,14 +141,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.REGEX_SPACE_CHAR;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_TEXT;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_URL;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.TOKEN;
-import static com.amkj.dmsh.constant.ConstantVariable.TOKEN_EXPIRE_TIME;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_C_WELFARE;
-import static com.amkj.dmsh.constant.TagAliasOperatorHelper.ACTION_CLEAN;
-import static com.amkj.dmsh.constant.TagAliasOperatorHelper.ACTION_DELETE;
-import static com.amkj.dmsh.constant.TagAliasOperatorHelper.ACTION_SET;
-import static com.amkj.dmsh.constant.TagAliasOperatorHelper.TagAliasBean;
-import static com.amkj.dmsh.constant.TagAliasOperatorHelper.sequence;
 import static com.amkj.dmsh.constant.UMShareAction.routineId;
 import static com.amkj.dmsh.constant.Url.H_Q_FLOAT_AD;
 import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
@@ -760,39 +743,6 @@ public class ConstantMethod {
         }
     }
 
-    /**
-     * 调用登出接口,清除后台记录的token信息
-     *
-     * @param isHandOperation 是否是手动退出登录
-     */
-    public static void logout(Activity activity, boolean isHandOperation) {
-        if (isHandOperation) {
-            showLoadhud(activity);
-        }
-        NetLoadUtils.token = (String) SharedPreUtils.getParam(TOKEN, "");
-        NetLoadUtils.uid = String.valueOf(SharedPreUtils.getParam("uid", 0));
-
-        NetLoadUtils.getNetInstance().loadNetDataPost(activity, Url.LOG_OUT, null, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                //清除本地登录信息
-                savePersonalInfoCache(activity, null);
-                if (isHandOperation) {
-                    showToast(activity, "退出登录成功");
-                    dismissLoadhud(activity);
-                    activity.finish();
-                }
-            }
-
-            @Override
-            public void onNotNetOrException() {
-                if (isHandOperation) {
-                    showToast(activity, "退出登录失败 ");
-                    dismissLoadhud(activity);
-                }
-            }
-        });
-    }
 
 
     /**
@@ -1753,127 +1703,6 @@ public class ConstantMethod {
     }
 
     /**
-     * 保存个人信息
-     *
-     * @param context
-     * @param savePersonalInfo
-     */
-    public static void savePersonalInfoCache(Context context, SavePersonalInfoBean savePersonalInfo) {
-        Context applicationContext = context.getApplicationContext();
-        if (savePersonalInfo != null && savePersonalInfo.isLogin()) {
-            userId = savePersonalInfo.getUid();//如果用微信登录，会有一个uid,绑定一个已注册手机会发生账号迁移生成一个新的uid，所以这里需要更新静态变量uid
-            //登录成功 三方账号登录
-            StatConfig.setCustomUserId(applicationContext, String.valueOf(savePersonalInfo.getUid()));
-            //        友盟统计
-            MobclickAgent.onProfileSignIn(String.valueOf(savePersonalInfo.getUid()));
-            //        绑定JPush
-            bindJPush(String.valueOf(savePersonalInfo.getUid()));
-            QyServiceUtils.getQyInstance().loginQyUserInfo(applicationContext, savePersonalInfo.getUid()
-                    , savePersonalInfo.getNickName(), savePersonalInfo.getPhoneNum(), savePersonalInfo.getAvatar());
-
-            SharedPreferences loginStatus = applicationContext.getSharedPreferences("loginStatus", MODE_PRIVATE);
-            SharedPreferences.Editor edit = loginStatus.edit();
-            edit.putBoolean("isLogin", true);
-            edit.putInt("uid", savePersonalInfo.getUid());
-            edit.putString("nickName", getStrings(savePersonalInfo.getNickName()));
-            edit.putString("avatar", getStrings(savePersonalInfo.getAvatar()));
-            edit.putString("P_NUM", getStrings(savePersonalInfo.getPhoneNum()));
-            //先判空再存，避免token被清空
-            if (!TextUtils.isEmpty(savePersonalInfo.getToken())) {
-                edit.putString(TOKEN, getStrings(savePersonalInfo.getToken()));
-                edit.putLong(TOKEN_EXPIRE_TIME, savePersonalInfo.getTokenExpireSeconds());
-            }
-            if (!TextUtils.isEmpty(savePersonalInfo.getOpenId())) {
-                edit.putString("OPEN_ID", getStrings(savePersonalInfo.getOpenId()));
-            }
-            if (!TextUtils.isEmpty(savePersonalInfo.getLoginType())) {
-                edit.putString("LOGIN_TYPE", getStrings(savePersonalInfo.getLoginType()));
-            }
-            if (!TextUtils.isEmpty(savePersonalInfo.getUnionId())) {
-                edit.putString("UNION_ID", getStrings(savePersonalInfo.getUnionId()));
-            }
-
-            if (!TextUtils.isEmpty(savePersonalInfo.getAccessToken())) {
-                edit.putString("ACCESS_TOKEN", getStrings(savePersonalInfo.getAccessToken()));
-            }
-            edit.commit();
-        } else {
-            userId = 0;
-            //            七鱼注销
-            QyServiceUtils.getQyInstance().logoutQyUser(applicationContext);
-            //            注销账号 关闭账号统计
-            MobclickAgent.onProfileSignOff();
-            //            解绑JPush
-            unBindJPush();
-            //清除登录状态
-            SharedPreUtils.clearAll();
-        }
-    }
-
-    /**
-     * 获取个人信息
-     *
-     * @param context
-     * @return
-     */
-    public static SavePersonalInfoBean getPersonalInfo(Context context) {
-        SharedPreferences loginStatus = context.getSharedPreferences("loginStatus", MODE_PRIVATE);
-        SavePersonalInfoBean savePersonalInfo = new SavePersonalInfoBean();
-        if (loginStatus.getBoolean("isLogin", false)) {
-            savePersonalInfo.setUid(loginStatus.getInt("uid", 0));
-            savePersonalInfo.setNickName(loginStatus.getString("nickName", ""));
-            savePersonalInfo.setAvatar(loginStatus.getString("avatar", ""));
-            savePersonalInfo.setPhoneNum(loginStatus.getString("P_NUM", ""));
-            savePersonalInfo.setLoginType(loginStatus.getString("LOGIN_TYPE", ""));
-            savePersonalInfo.setOpenId(loginStatus.getString("OPEN_ID", ""));
-            savePersonalInfo.setUnionId(loginStatus.getString("UNION_ID", ""));
-            savePersonalInfo.setLogin(true);
-            userId = savePersonalInfo.getUid();
-        } else {
-            userId = 0;
-        }
-        return savePersonalInfo;
-    }
-
-    /**
-     * 绑定JPush
-     *
-     * @param uid
-     */
-    public static void bindJPush(String uid) {
-        TagAliasBean tagAliasBean = new TagAliasBean();
-        tagAliasBean.action = ACTION_SET;
-        tagAliasBean.isAliasAction = true;
-        tagAliasBean.alias = uid;
-        TagAliasOperatorHelper.getInstance().handleAction(getApplicationContext(), sequence, tagAliasBean);
-        if (ConstantVariable.isDebugTag) {
-//                测试版本删除tag跟alias
-            tagAliasBean.action = ACTION_SET;
-            tagAliasBean.isAliasAction = false;
-            Set<String> setString = new HashSet<>();
-            setString.add("test");
-            tagAliasBean.tags = setString;
-            TagAliasOperatorHelper.getInstance().handleAction(getApplicationContext(), sequence, tagAliasBean);
-        }
-    }
-
-    /**
-     * 解绑JPush
-     */
-    public static void unBindJPush() {
-        TagAliasBean tagAliasBean = new TagAliasBean();
-        tagAliasBean.action = ACTION_DELETE;
-        tagAliasBean.isAliasAction = true;
-        TagAliasOperatorHelper.getInstance().handleAction(getApplicationContext(), sequence, tagAliasBean);
-        if (ConstantVariable.isDebugTag) {
-//                测试版本删除tag跟alias
-            tagAliasBean.action = ACTION_CLEAN;
-            tagAliasBean.isAliasAction = false;
-            TagAliasOperatorHelper.getInstance().handleAction(getApplicationContext(), sequence, tagAliasBean);
-        }
-    }
-
-    /**
      * 格式化浮点型数字
      *
      * @param discountPrice
@@ -1892,51 +1721,6 @@ public class ConstantMethod {
         } else {
             return 0 + "." + remainder / 10 + (remainder % 10 != 0 ? remainder % 10 : "");
         }
-    }
-
-    /**
-     * @param totalRelevanceProBeans 关联商品总数
-     * @param relevanceProBeans      已选择关联商品
-     * @return
-     */
-    public static List<RelevanceProBean> changeRelevanceProduct(List<RelevanceProBean> totalRelevanceProBeans,
-                                                                List<RelevanceProBean> relevanceProBeans) {
-        if (totalRelevanceProBeans != null) {
-            if (relevanceProBeans != null && relevanceProBeans.size() > 0) {
-                for (RelevanceProBean relevanceProBean : totalRelevanceProBeans) {
-                    for (RelevanceProBean relevancePro : relevanceProBeans) {
-                        if (relevanceProBean.getId() == relevancePro.getId()) {
-                            relevanceProBean.setSelPro(true);
-                            break;
-                        } else {
-                            relevanceProBean.setSelPro(false);
-                        }
-                    }
-                }
-            } else {
-                for (RelevanceProBean relevanceProBean : totalRelevanceProBeans) {
-                    relevanceProBean.setSelPro(false);
-                }
-            }
-        }
-        return totalRelevanceProBeans;
-    }
-
-    public static List<RelevanceProBean> selRelevanceProduct(List<RelevanceProBean> selectProductBeans) {
-        List<RelevanceProBean> relevanceProBeanList = new ArrayList<>();
-        for (RelevanceProBean relevanceProBean : selectProductBeans) {
-            boolean isAdd = false;
-            for (RelevanceProBean relevancePro : relevanceProBeanList) {
-                if (relevancePro.getId() == relevanceProBean.getId()) {
-                    isAdd = true;
-                    break;
-                }
-            }
-            if (!isAdd) {
-                relevanceProBeanList.add(relevanceProBean);
-            }
-        }
-        return relevanceProBeanList;
     }
 
     /**
@@ -3141,35 +2925,5 @@ public class ConstantMethod {
         }
     }
 
-    //拼装滚动通知内容，并计算滚动时间
-    public static String getRollMsg(LifecycleOwner activity, List<MarqueeTextBean> marqueeTextList, ViewGroup viewGroup) {
-        StringBuffer msg = new StringBuffer();
-        try {
-            int totalBlankLength = 0;
-            for (MarqueeTextBean marqueeTextBean : marqueeTextList) {
-                int displayType = marqueeTextBean.getDisplayType();
-                int id = marqueeTextBean.getId();
-                //如果是1直接显示，如果是0判断之前有没有显示过
-                if (displayType == 0 || !RollMsgIdDataSave.getSingleton().containId(id)) {
-                    String content = marqueeTextBean.getContent();
-                    int show_count = marqueeTextBean.getShow_count();
-                    for (int j = 0; j < show_count; j++) {
-                        msg.append(content);
-                        int blankLength = 30 - content.length();
-                        for (int k = 0; k < (blankLength < 10 ? 10 : blankLength); k++) {
-                            msg.append("   ");
-                            totalBlankLength += 3;
-                        }
-                    }
-                }
-            }
-            //根据通知的长度计算滚动时间，滚动结束隐藏通知
-            long totalTime = 300 * (int) ((msg.length() - totalBlankLength) + totalBlankLength * 1.0f / 3);
-            new LifecycleHandler(activity).postDelayed(() -> viewGroup.setVisibility(View.GONE), totalTime);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
-        return msg.toString();
-    }
 }

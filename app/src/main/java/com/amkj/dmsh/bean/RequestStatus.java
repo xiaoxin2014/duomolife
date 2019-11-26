@@ -1,6 +1,7 @@
 package com.amkj.dmsh.bean;
 
 import com.amkj.dmsh.base.BaseEntity;
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
@@ -42,9 +43,21 @@ public class RequestStatus extends BaseEntity {
     //    话题名称
     private String topicTitle;
 
+    //    token相关
+    private String token;
+    private String tokenExpireSeconds;
+
 
     public static RequestStatus objectFromData(String str) {
         return new Gson().fromJson(str, RequestStatus.class);
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public long getTokenExpireSeconds() {
+        return ConstantMethod.getStringChangeLong(tokenExpireSeconds) * 1000;
     }
 
     public String getTopicTitle() {

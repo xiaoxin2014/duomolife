@@ -26,13 +26,14 @@ import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
 import com.amkj.dmsh.bean.MessageBean;
 import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean;
+import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.dao.UserDao;
 import com.amkj.dmsh.homepage.activity.AttendanceActivity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.message.activity.MessageActivity;
-import com.amkj.dmsh.mine.activity.BindingMobileActivity;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.activity.MyPostActivity;
 import com.amkj.dmsh.mine.activity.PersonalBgImgActivity;
@@ -42,7 +43,6 @@ import com.amkj.dmsh.mine.bean.MineTypeEntity;
 import com.amkj.dmsh.mine.bean.MineTypeEntity.MineTypeBean;
 import com.amkj.dmsh.mine.bean.OtherAccountBindEntity.OtherAccountBindInfo;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
-import com.amkj.dmsh.mine.bean.ThirdInfoEntity;
 import com.amkj.dmsh.network.NetCacheLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
@@ -82,7 +82,6 @@ import butterknife.OnClick;
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
 import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.MINE_BOTTOM_TYPE;
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.setDeviceInfo;
@@ -93,7 +92,9 @@ import static com.amkj.dmsh.constant.ConstantVariable.BASE_RESOURCE_DRAW;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.OTHER_WECHAT;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.TOKEN;
 import static com.amkj.dmsh.constant.ConstantVariable.TOKEN_EXPIRE_LOG_OUT;
+import static com.amkj.dmsh.constant.ConstantVariable.TOKEN_EXPIRE_TIME;
 import static com.amkj.dmsh.constant.Url.MINE_BIND_ACCOUNT;
 import static com.amkj.dmsh.constant.Url.MINE_BOTTOM_DATA;
 import static com.amkj.dmsh.constant.Url.MINE_PAGE;
@@ -101,6 +102,7 @@ import static com.amkj.dmsh.constant.Url.MINE_PAGE_AD;
 import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 import static com.amkj.dmsh.constant.Url.Q_QUERY_INDENT_COUNT;
 import static com.amkj.dmsh.dao.SoftApiDao.checkPushPermission;
+import static com.amkj.dmsh.dao.UserDao.getPersonalInfo;
 import static com.umeng.socialize.bean.SHARE_MEDIA.WEIXIN;
 
 /**
@@ -735,17 +737,7 @@ public class MineDataFragment extends BaseFragment {
                     // 打开微信授权
                     UMShareAPI.get(getActivity()).getPlatformInfo(getActivity(), WEIXIN, getDataInfoListener);
                 } else {
-                    //绑定手机
-                    String openId = (String) SharedPreUtils.getParam("OPEN_ID", "");
-                    String unionid = (String) SharedPreUtils.getParam("UNION_ID", "0");
-                    String accessToken = (String) SharedPreUtils.getParam("ACCESS_TOKEN", "");
-                    Intent intent = new Intent(getActivity(), BindingMobileActivity.class);
-                    intent.putExtra("uid", String.valueOf(userId));
-                    intent.putExtra("openId", openId);
-                    intent.putExtra("unionid", unionid);
-                    intent.putExtra("accessToken", accessToken);
-                    intent.putExtra("type", OTHER_WECHAT);
-                    startActivity(intent);
+                    UserDao.bindPhoneByWx(getActivity());
                 }
             }
 
@@ -814,10 +806,15 @@ public class MineDataFragment extends BaseFragment {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
-                ThirdInfoEntity successOtherData = gson.fromJson(result, ThirdInfoEntity.class);
-                if (successOtherData != null) {
-                    if (successOtherData.getCode().equals(SUCCESS_CODE)) {
-                        showToast(getActivity(), successOtherData.getMsg());
+                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+                if (requestStatus != null) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
+                        showToast(getActivity(), requestStatus.getMsg());
+                        //更新本地Token信息
+                        if (!TextUtils.isEmpty(requestStatus.getToken())) {
+                            SharedPreUtils.setParam(TOKEN, getStrings(requestStatus.getToken()));
+                            SharedPreUtils.setParam(TOKEN_EXPIRE_TIME, System.currentTimeMillis() + requestStatus.getTokenExpireSeconds());
+                        }
                         /**
                          * 第三方账号登录统计
                          * 3.2.0 修改为统计自己传入的参数 以前版本根据后台返回的数据类型进行跟uid进行统计
@@ -825,7 +822,7 @@ public class MineDataFragment extends BaseFragment {
                         MobclickAgent.onProfileSignIn(getStrings(otherAccountBindInfo.getType()), String.valueOf(userId));
                         mTvBindPhone.setVisibility(View.GONE);
                     } else {
-                        showToast(getActivity(), successOtherData.getMsg());
+                        showToast(getActivity(), requestStatus.getMsg());
                     }
                 }
             }
@@ -835,7 +832,7 @@ public class MineDataFragment extends BaseFragment {
 
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
-       if (TOKEN_EXPIRE_LOG_OUT.equals(message.type)) {
+        if (TOKEN_EXPIRE_LOG_OUT.equals(message.type)) {
             setErrorUserData();
         }
     }

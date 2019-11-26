@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static com.amkj.dmsh.constant.ConstantMethod.getPersonalInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showImageActivity;
@@ -44,6 +43,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.skipTopicDetail;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_URL;
 import static com.amkj.dmsh.constant.ConstantVariable.TOPIC_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
+import static com.amkj.dmsh.dao.UserDao.getPersonalInfo;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 
 ;
