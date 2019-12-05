@@ -70,11 +70,9 @@ import butterknife.OnClick;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.getDataFormatWeek;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.isEmptyStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTime;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
@@ -98,6 +96,8 @@ import static com.amkj.dmsh.constant.Url.H_ATTENDANCE_RULE;
 import static com.amkj.dmsh.constant.Url.H_ATTENDANCE_WARM;
 import static com.amkj.dmsh.constant.Url.H_INTEGRAL_PRODUCT_FILTRATE;
 import static com.amkj.dmsh.constant.Url.Q_CUSTOM_PRO_LIST;
+import static com.amkj.dmsh.utils.TimeUtils.getDataFormatWeek;
+import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTime;
 
 
 /**
@@ -474,7 +474,7 @@ public class AttendanceActivity extends BaseActivity {
                         int lotteryStatus = 0;//0 已结束 1 待开始 2 进行中
                         for (int i = 0; i < integralLotteryList.size(); i++) {
                             PreviousInfoBean previousInfoBean = integralLotteryList.get(i);
-                            previousInfoBean.setmCurrentTime(integralLotteryEntity.getSystemTime());
+                            previousInfoBean.setmCurrentTime(integralLotteryEntity.getCurrentTime());
                             if (integralLotteryList.size() >= 2) {
                                 if (lotteryStatus < 2 && isEndOrStartTime(previousInfoBean.getmCurrentTime(), previousInfoBean.getStartTime())
                                         && isEndOrStartTime(previousInfoBean.getEndTime(), previousInfoBean.getmCurrentTime())) {

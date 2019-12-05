@@ -1,6 +1,7 @@
 package com.amkj.dmsh.dominant.bean;
 
-import com.amkj.dmsh.base.BaseEntity;
+import com.amkj.dmsh.base.BaseTimeEntity;
+import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
  * class description:请输入类描述
  */
 
-public class QualityGroupEntity extends BaseEntity{
+public class QualityGroupEntity extends BaseTimeEntity {
 
     /**
      * result : [{"gpCount":0,"gpPicUrl":"http://img.domolife.cn/platform/nDWisknfCA.jpg","gpSkuId":121,"propValueId":"25","productSkuValue":"颜色:白色","gpProductQuantity":12,"gpType":"2人团","price":399,"subtitle":null,"name":"韩国Ifam森林儿童玩具整理架构成1","gpPrice":12.3},{"gpCount":0,"gpPicUrl":"http://img.domolife.cn/platform/nDWisknfCA.jpg","gpEndTime":"2017-06-16 00:00:00","gpStartTime":"2017-06-01 00:00:00","gpSkuId":121,"propValueId":"25","productSkuValue":"颜色:白色","gpProductQuantity":12,"gpType":"2人团","price":399,"subtitle":null,"name":"韩国Ifam森林儿童玩具整理架构成1","gpPrice":12.3},{"gpCount":0,"gpPicUrl":"http://img.domolife.cn/platform/nDWisknfCA.jpg","gpEndTime":"2017-05-04 00:00:00","gpStartTime":"2017-05-01 00:00:00","gpSkuId":121,"propValueId":"25","productSkuValue":"颜色:白色","gpProductQuantity":12,"gpType":"2人团","price":399,"subtitle":null,"name":"韩国Ifam森林儿童玩具整理架构成1","gpPrice":12.3},{"gpCount":0,"gpPicUrl":"http://img.domolife.cn/platform/zE7p3MbArW.jpg","gpEndTime":"2017-06-08 10:17:57","gpStartTime":"2017-06-01 02:06:06","gpSkuId":127,"picUrl":"http://img.domolife.cn/platform/20170225/20170225203425782.jpg","propValueId":"34","productSkuValue":"颜色:米色","gpProductQuantity":123,"gpType":"2人团","price":260,"subtitle":null,"name":"韩国Ifam森林儿童边角架玩具整理架构成3","gpPrice":12.12},{"gpCount":0,"gpPicUrl":"http://img.domolife.cn/platform/nDWisknfCA.jpg","gpSkuId":121,"propValueId":"25","productSkuValue":"颜色:白色","gpProductQuantity":12,"gpType":"2人团","price":399,"subtitle":null,"name":"韩国Ifam森林儿童玩具整理架构成1","gpPrice":12.3},{"gpCount":1,"gpPicUrl":"http://img.domolife.cn/platform/nDWisknfCA.jpg","gpSkuId":121,"propValueId":"25","productSkuValue":"颜色:白色","gpProductQuantity":12,"gpType":"2人团","price":399,"subtitle":null,"name":"韩国Ifam森林儿童玩具整理架构成1","gpPrice":12.3},{"gpCount":0,"gpPicUrl":"http://img.domolife.cn/platform/nDWisknfCA.jpg","gpSkuId":121,"propValueId":"25","productSkuValue":"颜色:白色","gpProductQuantity":12,"gpType":"2人团","price":399,"subtitle":null,"name":"韩国Ifam森林儿童玩具整理架构成1","gpPrice":12.3},{"gpCount":0,"gpPicUrl":"http://img.domolife.cn/platform/nDWisknfCA.jpg","gpSkuId":121,"propValueId":"25","productSkuValue":"颜色:白色","gpProductQuantity":12,"gpType":"2人团","price":399,"subtitle":null,"name":"韩国Ifam森林儿童玩具整理架构成1","gpPrice":12.3},{"gpCount":0,"gpPicUrl":"http://img.domolife.cn/platform/nDWisknfCA.jpg","gpSkuId":121,"propValueId":"25","productSkuValue":"颜色:白色","gpProductQuantity":12,"gpType":"2人团","price":399,"subtitle":null,"name":"韩国Ifam森林儿童玩具整理架构成1","gpPrice":12.3},{"gpCount":0,"gpPicUrl":"http://img.domolife.cn/platform/nDWisknfCA.jpg","gpSkuId":121,"propValueId":"25","productSkuValue":"颜色:白色","gpProductQuantity":12,"gpType":"2人团","price":399,"subtitle":null,"name":"韩国Ifam森林儿童玩具整理架构成1","gpPrice":12.3},{"gpCount":12,"gpPicUrl":"http://img.domolife.cn/platform/nDWisknfCA.jpg","gpEndTime":"2017-06-16 00:00:00","gpStartTime":"2017-06-01 00:00:00","gpSkuId":121,"propValueId":"25","productSkuValue":"颜色:白色","gpProductQuantity":12,"gpType":"2人团","price":399,"subtitle":null,"name":"韩国Ifam森林儿童玩具整理架构成1","gpPrice":12.3}]
@@ -21,17 +22,8 @@ public class QualityGroupEntity extends BaseEntity{
      * code : 01
      */
 
-    private String currentTime;
     @SerializedName("result")
     private List<QualityGroupBean> qualityGroupBeanList;
-
-    public String getCurrentTime() {
-        return currentTime;
-    }
-
-    public void setCurrentTime(String currentTime) {
-        this.currentTime = currentTime;
-    }
 
     public List<QualityGroupBean> getQualityGroupBeanList() {
         return qualityGroupBeanList;
@@ -41,7 +33,7 @@ public class QualityGroupEntity extends BaseEntity{
         this.qualityGroupBeanList = qualityGroupBeanList;
     }
 
-    public static class QualityGroupBean {
+    public static class QualityGroupBean extends BaseTimeEntity implements MultiItemEntity {
         /**
          * gpCount : 0
          * gpPicUrl : http://img.domolife.cn/platform/nDWisknfCA.jpg
@@ -60,6 +52,7 @@ public class QualityGroupEntity extends BaseEntity{
          */
 
         private String propValueId;
+        private String productId;
         private String productSkuValue;
         private String price;
         private String subtitle;
@@ -67,7 +60,7 @@ public class QualityGroupEntity extends BaseEntity{
         private String picUrl;
         private String images;
         private String coverImage;
-        private int gpCount;
+        private String gpCount;
         private int gpSkuId;
         private int gpInfoId;
         private int gpProductQuantity;
@@ -76,9 +69,32 @@ public class QualityGroupEntity extends BaseEntity{
         private String gpPicUrl;
         private String gpEndTime;
         private String gpStartTime;
-        private String currentTime;
         private int range;
         private long addSecond;
+        private String typeTitle;
+
+        private int itemType;
+
+
+        public String getProductId() {
+            return productId;
+        }
+
+        public void setProductId(String productId) {
+            this.productId = productId;
+        }
+
+        public void setItemType(int itemType) {
+            this.itemType = itemType;
+        }
+
+        public String getTypeTitle() {
+            return typeTitle;
+        }
+
+        public void setTypeTitle(String typeTitle) {
+            this.typeTitle = typeTitle;
+        }
 
         public long getAddSecond() {
             return addSecond;
@@ -94,14 +110,6 @@ public class QualityGroupEntity extends BaseEntity{
 
         public void setGpInfoId(int gpInfoId) {
             this.gpInfoId = gpInfoId;
-        }
-
-        public String getCurrentTime() {
-            return currentTime;
-        }
-
-        public void setCurrentTime(String currentTime) {
-            this.currentTime = currentTime;
         }
 
         public String getImages() {
@@ -120,11 +128,11 @@ public class QualityGroupEntity extends BaseEntity{
             this.coverImage = coverImage;
         }
 
-        public int getGpCount() {
+        public String getGpCount() {
             return gpCount;
         }
 
-        public void setGpCount(int gpCount) {
+        public void setGpCount(String gpCount) {
             this.gpCount = gpCount;
         }
 
@@ -238,6 +246,11 @@ public class QualityGroupEntity extends BaseEntity{
 
         public void setRange(int range) {
             this.range = range;
+        }
+
+        @Override
+        public int getItemType() {
+            return itemType;
         }
     }
 }

@@ -44,6 +44,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
+import com.amkj.dmsh.bean.CouponEntity;
 import com.amkj.dmsh.bean.HomeQualityFloatAdEntity;
 import com.amkj.dmsh.bean.ImageBean;
 import com.amkj.dmsh.bean.MessageBean;
@@ -76,6 +77,7 @@ import com.amkj.dmsh.utils.MarketUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogImage;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.amkj.dmsh.views.bottomdialog.SkuDialog;
 import com.google.gson.Gson;
 import com.hjq.toast.ToastUtils;
@@ -98,11 +100,8 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -742,7 +741,6 @@ public class ConstantMethod {
             activity.startActivityForResult(intent, IS_LOGIN_CODE);
         }
     }
-
 
 
     /**
@@ -1798,7 +1796,19 @@ public class ConstantMethod {
 //                                                    领取优惠券
                                                     case 2:
                                                     case 3:
-                                                        getNewUserCoupon(context, requestStatus.getCouponId());
+                                                        CommunalWebDetailUtils.getCommunalWebInstance().getDirectCoupon(context,
+                                                                requestStatus.getCouponId(), null, new CommunalWebDetailUtils.GetCouponListener() {
+                                                                    @Override
+                                                                    public void onSuccess(CouponEntity.CouponListEntity couponListEntity) {
+                                                                        Intent intent = new Intent(context, DirectMyCouponActivity.class);
+                                                                        context.startActivity(intent);
+                                                                    }
+
+                                                                    @Override
+                                                                    public void onFailure(CouponEntity.CouponListEntity couponListEntity) {
+
+                                                                    }
+                                                                });
                                                         break;
                                                 }
                                                 alertDialogImage.dismiss();
@@ -1817,36 +1827,6 @@ public class ConstantMethod {
                     }
                 }
             });
-        }
-    }
-
-    /**
-     * 领取新人优惠券
-     *
-     * @param context
-     * @param couponId
-     */
-    public static void getNewUserCoupon(Activity context, int couponId) {
-        if (couponId > 0) {
-            String url = Url.FIND_ARTICLE_COUPON;
-            Map<String, Object> params = new HashMap<>();
-            params.put("userId", userId);
-            params.put("couponId", couponId);
-            NetLoadUtils.getNetInstance().loadNetDataPost(context, url, params, new NetLoadListenerHelper() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                    if (requestStatus != null) {
-                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                            showToastRequestMsg(context, requestStatus);
-                            Intent intent = new Intent(context, DirectMyCouponActivity.class);
-                            context.startActivity(intent);
-                        }
-                    }
-                }
-            });
-
         }
     }
 
@@ -2023,347 +2003,6 @@ public class ConstantMethod {
             return defaultSecond;
         } else {
             return defaultSecond;
-        }
-    }
-
-    /**
-     * @param time           时间参数
-     * @param timeSwitchover 切换时间格式
-     * @return
-     */
-    public static String getDateFormat(String time, String timeSwitchover) {
-        if (!TextUtils.isEmpty(time)) {
-            try {
-                SimpleDateFormat timeReceiveFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-                Date date = timeReceiveFormat.parse(time);
-                SimpleDateFormat timeFormat = new SimpleDateFormat(!TextUtils.isEmpty(timeSwitchover)
-                        ? timeSwitchover : "yyyy-MM-dd", Locale.CHINA);
-                return timeFormat.format(date);
-            } catch (Exception e) {
-                e.printStackTrace();
-                return "";
-            }
-        } else {
-            return "";
-        }
-    }
-
-    /**
-     * 时间转换格式 默认当前时间跟转换时间 为年-月-日
-     *
-     * @param time
-     * @param timeSwitchover
-     * @return
-     */
-    public static String getDateFormat(String time, String currentSwitchover, String timeSwitchover) {
-        if (!TextUtils.isEmpty(time)) {
-            try {
-                SimpleDateFormat timeReceiveFormat = new SimpleDateFormat(TextUtils.isEmpty(currentSwitchover) ? "yyyy-MM-dd HH:mm:ss" : currentSwitchover, Locale.CHINA);
-                Date date = timeReceiveFormat.parse(time);
-                SimpleDateFormat timeFormat = new SimpleDateFormat(!TextUtils.isEmpty(timeSwitchover)
-                        ? timeSwitchover : "yyyy-MM-dd", Locale.CHINA);
-                return timeFormat.format(date);
-            } catch (Exception e) {
-                e.printStackTrace();
-                return "";
-            }
-        } else {
-            return "";
-        }
-    }
-
-    /**
-     * 时间获取毫秒
-     *
-     * @param time
-     * @return
-     */
-    public static long getDateMilliSecond(String time) {
-        if (!TextUtils.isEmpty(time)) {
-            try {
-                SimpleDateFormat timeReceiveFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-                Date date = timeReceiveFormat.parse(time);
-                return date.getTime();
-            } catch (Exception e) {
-                e.printStackTrace();
-                return 0;
-            }
-        } else {
-            return 0;
-        }
-    }
-
-    /**
-     * 获取毫秒 空值为当前默认时间
-     *
-     * @param time
-     * @return
-     */
-    public static long getDateMilliSecondSystemTime(String time) {
-        if (!TextUtils.isEmpty(time)) {
-            try {
-                SimpleDateFormat timeReceiveFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-                Date date = timeReceiveFormat.parse(time);
-                return date.getTime();
-            } catch (Exception e) {
-                e.printStackTrace();
-                return new Date().getTime();
-            }
-        } else {
-            return new Date().getTime();
-        }
-    }
-
-    /**
-     * 判断是否是同一年份
-     *
-     * @param t1
-     * @param t2
-     * @return
-     */
-    public static boolean isTimeSameYear(String t1, String t2) {
-        if (!TextUtils.isEmpty(t1) && !TextUtils.isEmpty(t2)) {
-            try {
-                SimpleDateFormat timeReceiveFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-                Date d1 = timeReceiveFormat.parse(t1);
-                Date d2 = timeReceiveFormat.parse(t2);
-                SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy", Locale.CHINA);
-                return timeFormat.format(d1).equals(timeFormat.format(d2));
-            } catch (Exception e) {
-                e.printStackTrace();
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * 时分秒获取 时
-     *
-     * @param time
-     * @return
-     */
-    private static int getDataFormatHour(String time) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss", Locale.CHINA);
-        try {
-            Date date = simpleDateFormat.parse(time);
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(date);
-            return calendar.get(Calendar.HOUR_OF_DAY);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return 0;
-    }
-
-    /**
-     * 获取当前星期几
-     *
-     * @param time
-     * @return
-     */
-    public static int getDataFormatWeek(String time) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-        try {
-            Calendar calendar = Calendar.getInstance();
-            if (TextUtils.isEmpty(time)) {
-                Date date = calendar.getTime();
-                time = simpleDateFormat.format(date);
-            }
-            Date date = simpleDateFormat.parse(time);
-            calendar.setTime(date);
-            int day = calendar.get(Calendar.DAY_OF_MONTH);
-            calendar.set(Calendar.DAY_OF_MONTH, day);  //指定日
-            int week = calendar.get(Calendar.DAY_OF_WEEK) - 1;
-            switch (week) {
-                case 0:
-                    week = 7;
-                    break;
-            }
-            return week;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return 0;
-    }
-
-    /**
-     * 时间是否已结束
-     *
-     * @param t1 当前时间
-     * @param t2 结束时间
-     * @return
-     */
-    public static boolean isEndOrStartTime(String t1, String t2) {
-        if (!TextUtils.isEmpty(t1) && !TextUtils.isEmpty(t2)) {
-            try {
-                SimpleDateFormat timeReceiveFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-                Date d1 = timeReceiveFormat.parse(t1);
-                Date d2 = timeReceiveFormat.parse(t2);
-                return d1.getTime() >= d2.getTime();
-            } catch (Exception e) {
-                e.printStackTrace();
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * 获取当前时间 "yyyy-MM-dd HH:mm:ss"
-     *
-     * @return
-     */
-    public static String getCurrentTime() {
-        SimpleDateFormat timeReceiveFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-        return timeReceiveFormat.format(Calendar.getInstance().getTime());
-    }
-
-    /**
-     * 时间是否已结束
-     *
-     * @param t1        开始时间
-     * @param t2        结束时间
-     * @param addSecond 时间展示
-     * @return
-     */
-    public static boolean isEndOrEndTimeAddSeconds(String t1, String t2, long addSecond) {
-        if (!TextUtils.isEmpty(t1) && !TextUtils.isEmpty(t2)) {
-            try {
-                SimpleDateFormat timeReceiveFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-                Date d1 = timeReceiveFormat.parse(t1);
-                Date d2 = timeReceiveFormat.parse(t2);
-                return d1.getTime() >= (d2.getTime() + addSecond * 1000);
-            } catch (Exception e) {
-                e.printStackTrace();
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * 时间是否已结束
-     *
-     * @param t1        开始时间
-     * @param t2        结束时间
-     * @param addSecond 时间展示
-     * @return
-     */
-    public static boolean isEndOrStartTimeAddSeconds(String t1, String t2, long addSecond) {
-        if (!TextUtils.isEmpty(t1) && !TextUtils.isEmpty(t2)) {
-            try {
-                SimpleDateFormat timeReceiveFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-                Date d1 = timeReceiveFormat.parse(t1);
-                Date d2 = timeReceiveFormat.parse(t2);
-                return (d1.getTime() + addSecond * 1000) >= d2.getTime();
-            } catch (Exception e) {
-                e.printStackTrace();
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * date 时间对比
-     *
-     * @param t1
-     * @param t2
-     * @param addSecond
-     * @return
-     */
-    public static boolean isEndOrStartTimeAddSeconds(Date t1, Date t2, long addSecond) {
-        if (t1 != null && t2 != null) {
-            try {
-                return (t1.getTime() + addSecond * 1000) >= t2.getTime();
-            } catch (Exception e) {
-                e.printStackTrace();
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-
-    public static Date timeFormatSwitch(String t1) {
-        if (!TextUtils.isEmpty(t1)) {
-            try {
-                SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-                Date d1 = timeFormat.parse(t1);
-                return d1;
-            } catch (Exception e) {
-                e.printStackTrace();
-                return new Date();
-            }
-        } else {
-            return new Date();
-        }
-    }
-
-    /**
-     * 对比两个时间是否是同一天
-     *
-     * @param t1
-     * @param t2
-     * @return
-     */
-    public static boolean isSameTimeDay(String t1, String t2) {
-        return isSameTimeDay("yyyy-MM-dd HH:mm:ss", t1, t2);
-    }
-
-    /**
-     * @param formatType 数据格式类型
-     * @param t1
-     * @param t2
-     * @return
-     */
-    public static boolean isSameTimeDay(String formatType, String t1, String t2) {
-        if (!TextUtils.isEmpty(t1) && !TextUtils.isEmpty(t2)) {
-            try {
-                SimpleDateFormat timeFormat = new SimpleDateFormat(TextUtils.isEmpty(formatType) ? "yyyy-MM-dd HH:mm:ss" : formatType, Locale.CHINA);
-                Date d1 = timeFormat.parse(t1);
-                Date d2 = timeFormat.parse(t2);
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(d1);
-                int day1 = calendar.get(Calendar.DAY_OF_MONTH);
-                calendar.setTime(d2);
-                int day2 = calendar.get(Calendar.DAY_OF_MONTH);
-                return day1 == day2;
-            } catch (Exception e) {
-                e.printStackTrace();
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * @param t1          起始时间
-     * @param t2          当前时间
-     * @param intervalDay 间隔天数
-     * @return
-     */
-    public static boolean isTimeDayEligibility(String t1, String t2, int intervalDay) {
-        if (!TextUtils.isEmpty(t1) && !TextUtils.isEmpty(t2)) {
-            try {
-                SimpleDateFormat timeFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
-                Date d1 = timeFormat.parse(t1);
-                long milliseconds = d1.getTime() + intervalDay * 24 * 60 * 60 * 1000;
-                d1.setTime(milliseconds);
-                Date d2 = timeFormat.parse(t2);
-                return d1.getTime() <= d2.getTime();
-            } catch (Exception e) {
-                e.printStackTrace();
-                return false;
-            }
-        } else {
-            return false;
         }
     }
 

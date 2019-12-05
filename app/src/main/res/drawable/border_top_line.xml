@@ -3,14 +3,14 @@
     <item>
         <shape
             android:shape="rectangle">
-            <solid android:color="@color/light_gray_f" />
+            <solid android:color="@color/light_gray_f"/>
         </shape>
     </item>
 
-    <item android:top="1dp">
+    <item android:top="1mm">
         <shape
             android:shape="rectangle">
-            <solid android:color="@color/white" />
+            <solid android:color="@color/white"/>
         </shape>
     </item>
 </layer-list>

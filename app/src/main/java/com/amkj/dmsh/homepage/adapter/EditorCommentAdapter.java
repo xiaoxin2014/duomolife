@@ -5,17 +5,17 @@ import android.support.annotation.Nullable;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.bean.EditorCommentEntity.EditorCommentBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.amkj.dmsh.bean.EditorCommentEntity.EditorCommentBean;
 import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
-import static com.amkj.dmsh.constant.ConstantMethod.getDateFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.utils.TimeUtils.getDateFormat;
 
 /**
  * Created by xiaoxin on 2019/3/16 0016

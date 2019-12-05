@@ -32,6 +32,7 @@ public class H5ShareBean {
     private String objName;
     private String objId;
     private String platform;
+    private String turnId;
 
     public H5ShareBean(String title, String imageUrl, String content, String url, String routineUrl, String objId, int shareType, String platform) {
         this.title = title;
@@ -54,6 +55,14 @@ public class H5ShareBean {
         this.platform = platform;
     }
 
+
+    public String getTurnId() {
+        return turnId;
+    }
+
+    public void setTurnId(String turnId) {
+        this.turnId = turnId;
+    }
 
     public String getDescription() {
         return TextUtils.isEmpty(description) ? content : description;

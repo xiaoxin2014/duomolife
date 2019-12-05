@@ -32,7 +32,6 @@ import butterknife.OnClick;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTime;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.COUPON_COVER;
@@ -40,6 +39,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.COUPON_ONE_COLUMN;
 import static com.amkj.dmsh.constant.ConstantVariable.COUPON_THREE_COLUMN;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
 import static com.amkj.dmsh.constant.Url.BASE_SHARE_PAGE_TWO;
+import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTime;
 
 /**
  * Created by xiaoxin on 2019/11/10
@@ -147,7 +147,7 @@ public class CouponZoneActivity extends BaseActivity {
                                 showToast(getActivity(), mCouponZoneEntity.getMsg());
                             }
                             mGridLayoutManager.setSpanCount(3);
-                            mCouponZoneAdapter.setStart(isEndOrStartTime(mCouponZoneEntity.getSystemTime(), startTime));
+                            mCouponZoneAdapter.setStart(isEndOrStartTime(mCouponZoneEntity.getCurrentTime(), startTime));
                             mCouponZoneAdapter.notifyDataSetChanged();
                         }
 

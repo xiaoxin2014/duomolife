@@ -58,11 +58,11 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.isEmptyStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.H_ATTENDANCE_JOIN_IN_INTEGRAL_LOTTERY;
+import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTimeAddSeconds;
 
 /**
  * @author LGuiPeng

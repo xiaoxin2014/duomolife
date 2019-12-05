@@ -399,6 +399,7 @@
             android:name=".dominant.activity.QualityGroupShopActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:exported="false"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="QualityGroupShopActivity"/>
@@ -806,15 +807,6 @@
             </intent-filter>
         </activity>
         <!--全部拼团商品-->
-        <activity
-            android:name=".dominant.activity.QualityGroupShopAllActivity"
-            android:exported="false"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="QualityGroupShopAllActivity"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </activity>
         <!--商品评论 更多评论-->
         <activity
             android:name=".dominant.activity.DirectProductEvaluationActivity"

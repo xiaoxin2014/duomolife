@@ -9,7 +9,8 @@ import android.view.View;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.bean.RequestStatus;
+import com.amkj.dmsh.bean.CouponEntity;
+import com.amkj.dmsh.bean.CouponEntity.CouponListEntity;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.constant.ConstantVariable;
@@ -39,10 +40,10 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IMG_REGEX_TAG;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_TEXT;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.regexATextUrl;
 import static com.amkj.dmsh.constant.Url.FIND_ARTICLE_COUPON;
 import static com.amkj.dmsh.constant.Url.FIND_COUPON_PACKAGE;
@@ -464,6 +465,10 @@ public class CommunalWebDetailUtils {
      * 获取优惠券 单张
      */
     public void getDirectCoupon(Context mContext, int id, KProgressHUD loadHud) {
+        getDirectCoupon(mContext, id, loadHud, null);
+    }
+
+    public void getDirectCoupon(Context mContext, int id, KProgressHUD loadHud, GetCouponListener getCouponListener) {
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
         params.put("couponId", id);
@@ -473,10 +478,17 @@ public class CommunalWebDetailUtils {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                if (requestStatus != null) {
-                    showToastRequestMsg(mContext, requestStatus);
+                CouponEntity couponEntity = new Gson().fromJson(result, CouponEntity.class);
+
+                if (getCouponListener == null) {
+                    showToast(mContext, couponEntity == null ? "操作失败！" :
+                            couponEntity.getResult() != null ? getStrings(couponEntity.getResult().getMsg()) : getStrings(couponEntity.getMsg()));
+                } else if (couponEntity != null && couponEntity.getResult() != null) {
+                    if (SUCCESS_CODE.equals(couponEntity.getMsg()) && SUCCESS_CODE.equals(couponEntity.getResult().getMsg())) {
+                        getCouponListener.onSuccess(couponEntity.getResult());
+                    } else {
+                        getCouponListener.onFailure(couponEntity.getResult());
+                    }
                 }
             }
 
@@ -491,22 +503,17 @@ public class CommunalWebDetailUtils {
             public void onError(Throwable throwable) {
                 showToast(mContext, R.string.Get_Coupon_Fail);
             }
-
-            @Override
-            public void netClose() {
-                showToast(mContext, R.string.unConnectedNetwork);
-            }
         });
     }
 
     /**
-     * 获取优惠券礼包 多张
-     *
-     * @param mContext
-     * @param couponId
-     * @param loadHud
+     * 获取优惠券 礼包
      */
-    private void getDirectCouponPackage(Context mContext, int couponId, KProgressHUD loadHud) {
+    public void getDirectCouponPackage(Context mContext, int couponId, KProgressHUD loadHud) {
+        getDirectCouponPackage(mContext, couponId, loadHud, null);
+    }
+
+    public void getDirectCouponPackage(Context mContext, int couponId, KProgressHUD loadHud, GetCouponListener getCouponListener) {
         Map<String, Object> params = new HashMap<>();
         params.put("uId", userId);
         params.put("cpId", couponId);
@@ -517,9 +524,16 @@ public class CommunalWebDetailUtils {
                     loadHud.dismiss();
                 }
                 Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                if (requestStatus != null) {
-                    showToastRequestMsg(mContext, requestStatus);
+                CouponListEntity couponListEntity = gson.fromJson(result, CouponListEntity.class);
+                if (getCouponListener == null) {
+                    showToast(mContext, couponListEntity.getMsg());
+                } else if (couponListEntity != null) {
+                    String code = couponListEntity.getCode();
+                    if (SUCCESS_CODE.equals(code)) {
+                        getCouponListener.onSuccess(couponListEntity);
+                    } else {
+                        getCouponListener.onFailure(couponListEntity);
+                    }
                 }
             }
 
@@ -533,11 +547,6 @@ public class CommunalWebDetailUtils {
             @Override
             public void onError(Throwable throwable) {
                 showToast(mContext, R.string.Get_Coupon_Fail);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(mContext, R.string.unConnectedNetwork);
             }
         });
     }
@@ -561,5 +570,13 @@ public class CommunalWebDetailUtils {
 //                );
 //            }
         }
+    }
+
+    public interface GetCouponListener {
+        //领取成功
+        void onSuccess(CouponListEntity couponListEntity);
+
+        //领取失败
+        void onFailure(CouponListEntity couponListEntity);
     }
 }

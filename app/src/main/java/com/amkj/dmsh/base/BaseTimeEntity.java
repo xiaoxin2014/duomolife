@@ -13,11 +13,11 @@ public class BaseTimeEntity extends BaseEntity{
     @SerializedName(value = "sysTime",alternate = "currentTime")
     private String systemTime;
 
-    public String getSystemTime() {
+    public String getCurrentTime() {
         return systemTime;
     }
 
-    public void setSystemTime(String systemTime) {
+    public void setCurrentTime(String systemTime) {
         this.systemTime = systemTime;
     }
 }

@@ -1,4 +1,4 @@
-package com.amkj.dmsh.homepage.activity;
+package com.amkj.dmsh.homepage.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;

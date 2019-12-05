@@ -1,6 +1,6 @@
 package com.amkj.dmsh.dominant.bean;
 
-import com.amkj.dmsh.base.BaseEntity;
+import com.amkj.dmsh.base.BaseTimeEntity;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
@@ -13,7 +13,7 @@ import java.util.List;
  * class description:请输入类描述
  */
 
-public class QualityGroupShareEntity extends BaseEntity{
+public class QualityGroupShareEntity extends BaseTimeEntity {
 
     /**
      * result : {"leftParticipant":1,"gpCount":12,"gpPicUrl":"http://img.domolife.cn/platform/ZZWGaMTANz.jpg","gpStartTime":"2017-06-21 11:52:48","gpInfoId":1,"productSkuValue":"默认:蓝色","uid":27928,"gpProductQuantity":75,"gpType":"2人团","price":"1098.0","coverImage":"http://img.domolife.cn/platform/3atQYAZQ4X1497410876254.jpeg","gpInfoStartTime":"2017-06-01 00:00:00","gpInfoEndTime":"2017-06-27 00:00:00","quantityStatus":{"quantityStatusMsg":"库存足够，可开团和参团","quantityStatusId":1002},"gpRecordId":"38","images":"http://img.domolife.cn/platform/F4bZMMKEFF1497410875842.jpeg,http://img.domolife.cn/platform/NBCDtS3nBa1497410876188.jpeg,http://img.domolife.cn/platform/3atQYAZQ4X1497410876254.jpeg","productId":4282,"gpProductId":17,"gpEndTime":"2017-06-22 11:52:48","memberCount":2,"gpSkuId":112,"avatar":["http://img.domolife.cn/201704191717321905157574.png"],"skuQuantity":1004,"propValueId":"5","goodsAreaLabel":"拼团","subtitle":null,"name":"北鼎K206钻石电热水壶礼盒装","gpPrice":"0.01"}
@@ -24,7 +24,6 @@ public class QualityGroupShareEntity extends BaseEntity{
 
     @SerializedName("result")
     private QualityGroupShareBean qualityGroupShareBean;
-    private String currentTime;
     private long second;
 
     public QualityGroupShareBean getQualityGroupShareBean() {
@@ -33,14 +32,6 @@ public class QualityGroupShareEntity extends BaseEntity{
 
     public void setQualityGroupShareBean(QualityGroupShareBean qualityGroupShareBean) {
         this.qualityGroupShareBean = qualityGroupShareBean;
-    }
-
-    public String getCurrentTime() {
-        return currentTime;
-    }
-
-    public void setCurrentTime(String currentTime) {
-        this.currentTime = currentTime;
     }
 
     public long getSecond() {
@@ -85,6 +76,7 @@ public class QualityGroupShareEntity extends BaseEntity{
 
         private int leftParticipant;
         private int gpCount;
+        private int range;
         private String gpPicUrl;
         private String gpStartTime;
         private int gpInfoId;
@@ -110,10 +102,18 @@ public class QualityGroupShareEntity extends BaseEntity{
         private String subtitle;
         private String name;
         private String gpPrice;
-//        infoStatusTag  拼团成功/已结束/已过期
-        private String infoStatusTag;
+        //拼团状态（还差*人成团/已成团/已结束）
+        private String groupStatus;
         private List<String> avatar;
         private List<MemberListBean> memberList;
+
+        public int getRange() {
+            return range;
+        }
+
+        public void setRange(int range) {
+            this.range = range;
+        }
 
         public int getLeftParticipant() {
             return leftParticipant;
@@ -131,12 +131,12 @@ public class QualityGroupShareEntity extends BaseEntity{
             this.gpCount = gpCount;
         }
 
-        public String getInfoStatusTag() {
-            return infoStatusTag;
+        public String getGroupStatus() {
+            return groupStatus;
         }
 
-        public void setInfoStatusTag(String infoStatusTag) {
-            this.infoStatusTag = infoStatusTag;
+        public void setGroupStatus(String groupStatus) {
+            this.groupStatus = groupStatus;
         }
 
         public String getGpPicUrl() {

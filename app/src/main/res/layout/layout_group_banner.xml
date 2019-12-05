@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.amkj.dmsh.views.arclayout.ArcLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rel_communal_banner"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/sc_mm_18"
+    android:orientation="vertical"
+    app:arc_cropDirection="cropOutside"
+    app:arc_height="@dimen/sc_mm_30"
+    app:arc_position="bottom">
+
+    <com.bigkoo.convenientbanner.ConvenientBanner
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/ad_communal_banner"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sc_mm_230"
+        android:background="@color/white"
+        app:canLoop="true"/>
+</com.amkj.dmsh.views.arclayout.ArcLayout>

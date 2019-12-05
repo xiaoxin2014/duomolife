@@ -8,15 +8,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
-import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.dominant.activity.QualityGroupShopAllActivity;
 import com.amkj.dmsh.dominant.activity.QualityGroupShopDetailActivity;
 import com.amkj.dmsh.dominant.activity.QualityGroupShopMineActivity;
 import com.amkj.dmsh.dominant.adapter.QualityGroupShopAdapter;
@@ -26,15 +24,14 @@ import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
+import com.amkj.dmsh.views.DrawableCenterTextView;
+import com.amkj.dmsh.views.arclayout.ArcLayout;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,8 +42,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -71,18 +66,21 @@ public class QualityGroupShopFragment extends BaseFragment {
     //    滚动至顶部
     @BindView(R.id.download_btn_communal)
     public FloatingActionButton download_btn_communal;
+    @BindView(R.id.tv_header_title)
+    TextView tv_header_titleAll;
+    @BindView(R.id.ll_group_shop_bottom)
+    LinearLayout mLlBottom;
+    @BindView(R.id.tv_quality_all_gp_sp)
+    DrawableCenterTextView mTvQualityAllGpSp;
     @BindView(R.id.tl_normal_bar)
     Toolbar mTlNormalBar;
     private int page = 1;
-    private int scrollY;
-    private float screenHeight;
-    private List<QualityGroupBean> qualityGroupBeanList = new ArrayList();
+    private List<QualityGroupBean> qualityGroupBeanList = new ArrayList<>();
     private QualityGroupShopAdapter qualityGroupShopAdapter;
     private GroupShopHeaderView groupShopHeaderView;
     List<CommunalADActivityBean> adBeanList = new ArrayList<>();
     private CBViewHolderCreator cbViewHolderCreator;
     private QualityGroupEntity qualityGroupEntity;
-    private ConstantMethod constantMethod;
 
     @Override
     protected int getContentView() {
@@ -91,83 +89,33 @@ public class QualityGroupShopFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
-        getConstant();
-        mTlNormalBar.setVisibility(GONE);
+        mTlNormalBar.setVisibility(View.GONE);
+        mTvQualityAllGpSp.setSelected(true);
         communal_recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
-        qualityGroupShopAdapter = new QualityGroupShopAdapter(getActivity(), constantMethod, qualityGroupBeanList);
-        View view = LayoutInflater.from(getActivity()).inflate(R.layout.layout_al_new_sp_banner, (ViewGroup) communal_recycler.getParent(), false);
+        qualityGroupShopAdapter = new QualityGroupShopAdapter(getActivity(), qualityGroupBeanList);
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.layout_group_banner, (ViewGroup) communal_recycler.getParent(), false);
         groupShopHeaderView = new GroupShopHeaderView();
         ButterKnife.bind(groupShopHeaderView, view);
         qualityGroupShopAdapter.addHeaderView(view);
-        communal_recycler.addItemDecoration(new ItemDecoration.Builder()
-                // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_five_dp).create());
         communal_recycler.setAdapter(qualityGroupShopAdapter);
 
         smart_communal_refresh.setOnRefreshListener(refreshLayout -> loadData());
-        qualityGroupShopAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                QualityGroupBean qualityGroupBean = (QualityGroupBean) view.getTag();
-                if (qualityGroupBean != null) {
-                    Intent intent = new Intent(getActivity(), QualityGroupShopDetailActivity.class);
-                    intent.putExtra("gpInfoId", String.valueOf(qualityGroupBean.getGpInfoId()));
-                    startActivity(intent);
-                }
+        qualityGroupShopAdapter.setOnItemClickListener((adapter, view1, position) -> {
+            QualityGroupBean qualityGroupBean = (QualityGroupBean) view1.getTag();
+            if (qualityGroupBean != null) {
+                Intent intent = new Intent(getActivity(), QualityGroupShopDetailActivity.class);
+                intent.putExtra("gpInfoId", String.valueOf(qualityGroupBean.getGpInfoId()));
+                intent.putExtra("productId", qualityGroupBean.getProductId());
+                startActivity(intent);
             }
         });
-        qualityGroupShopAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
-            @Override
-            public void onLoadMoreRequested() {
-                page++;
-                getOpenGroupShop();
-            }
+        qualityGroupShopAdapter.setOnLoadMoreListener(() -> {
+            page++;
+            getOpenGroupShop();
         }, communal_recycler);
-        TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-        screenHeight = app.getScreenHeight();
-        communal_recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                scrollY += dy;
-                if (!recyclerView.canScrollVertically(-1)) {
-                    scrollY = 0;
-                }
-                if (scrollY > screenHeight * 1.5 && dy < 0) {
-                    if (download_btn_communal.getVisibility() == GONE) {
-                        download_btn_communal.setVisibility(VISIBLE);
-                        download_btn_communal.hide(false);
-                    }
-                    if (!download_btn_communal.isVisible()) {
-                        download_btn_communal.show();
-                    }
-                } else {
-                    if (download_btn_communal.isVisible()) {
-                        download_btn_communal.hide();
-                    }
-                }
-            }
-        });
-        download_btn_communal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) communal_recycler.getLayoutManager();
-                int firstVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition();
-                int mVisibleCount = linearLayoutManager.findLastVisibleItemPosition()
-                        - linearLayoutManager.findFirstVisibleItemPosition() + 1;
-                if (firstVisibleItemPosition > mVisibleCount) {
-                    communal_recycler.scrollToPosition(mVisibleCount);
-                }
-                communal_recycler.smoothScrollToPosition(0);
-            }
-        });
-        qualityGroupShopAdapter.openLoadAnimation(null);
+        setFloatingButton(download_btn_communal, communal_recycler);
     }
 
-    private void getConstant() {
-        if (constantMethod == null) {
-            constantMethod = new ConstantMethod();
-        }
-    }
 
     @Override
     protected void loadData() {
@@ -175,13 +123,13 @@ public class QualityGroupShopFragment extends BaseFragment {
         getData();
     }
 
-
     @Override
     protected boolean isAddLoad() {
         return true;
     }
 
-    private void getData() {
+
+    protected void getData() {
         getQualityADLoop();
         getOpenGroupShop();
     }
@@ -231,8 +179,8 @@ public class QualityGroupShopFragment extends BaseFragment {
         }
     }
 
+    //拼团首页
     private void getOpenGroupShop() {
-//        拼团首页
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", page);
         params.put("showCount", TOTAL_COUNT_TWENTY);
@@ -250,23 +198,24 @@ public class QualityGroupShopFragment extends BaseFragment {
                         if (page == 1) {
                             qualityGroupBeanList.clear();
                         }
-                        Gson gson = new Gson();
-                        qualityGroupEntity = gson.fromJson(result, QualityGroupEntity.class);
+                        qualityGroupEntity = new Gson().fromJson(result, QualityGroupEntity.class);
                         if (qualityGroupEntity != null) {
                             if (qualityGroupEntity.getCode().equals(SUCCESS_CODE)) {
                                 for (int i = 0; i < qualityGroupEntity.getQualityGroupBeanList().size(); i++) {
                                     QualityGroupBean qualityGroupBean = qualityGroupEntity.getQualityGroupBeanList().get(i);
                                     qualityGroupBean.setCurrentTime(qualityGroupEntity.getCurrentTime());
                                     qualityGroupBeanList.add(qualityGroupBean);
+                                    if (i == 0) qualityGroupBean.setItemType(1);
                                 }
                             } else if (qualityGroupEntity.getCode().equals(EMPTY_CODE)) {
                                 qualityGroupShopAdapter.loadMoreEnd();
                             } else {
                                 showToast(getActivity(), qualityGroupEntity.getMsg());
                             }
-                            NetLoadUtils.getNetInstance().showLoadSir(loadService, qualityGroupBeanList, qualityGroupEntity);
-                            qualityGroupShopAdapter.notifyDataSetChanged();
                         }
+
+                        qualityGroupShopAdapter.notifyDataSetChanged();
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, qualityGroupBeanList, qualityGroupEntity);
                     }
 
                     @Override
@@ -275,31 +224,7 @@ public class QualityGroupShopFragment extends BaseFragment {
                         qualityGroupShopAdapter.loadMoreEnd(true);
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, qualityGroupBeanList, qualityGroupEntity);
                     }
-
-                    @Override
-                    public void netClose() {
-                        showToast(getActivity(), R.string.unConnectedNetwork);
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
-                        showToast(getActivity(), R.string.connectedFaile);
-                    }
                 });
-    }
-
-    //    我的拼团
-    @OnClick(R.id.tv_quality_join_gp_sp)
-    void getMineJoinGroup() {
-        Intent intent = new Intent(getActivity(), QualityGroupShopMineActivity.class);
-        startActivity(intent);
-    }
-
-    //    全部拼团
-    @OnClick(R.id.tv_quality_all_gp_sp)
-    void getAllGroup() {
-        Intent intent = new Intent(getActivity(), QualityGroupShopAllActivity.class);
-        startActivity(intent);
     }
 
     @Override
@@ -311,19 +236,21 @@ public class QualityGroupShopFragment extends BaseFragment {
     }
 
 
-    class GroupShopHeaderView {
-        @BindView(R.id.rel_communal_banner)
-        RelativeLayout rel_communal_banner;
-        @BindView(R.id.ad_communal_banner)
-        ConvenientBanner ad_communal_banner;
+    @OnClick({R.id.tv_quality_join_gp_sp})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            //我的拼团
+            case R.id.tv_quality_join_gp_sp:
+                Intent intent2 = new Intent(getActivity(), QualityGroupShopMineActivity.class);
+                startActivity(intent2);
+                break;
+        }
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        if (constantMethod != null) {
-            constantMethod.stopSchedule();
-            constantMethod.releaseHandlers();
-        }
+    class GroupShopHeaderView {
+        @BindView(R.id.rel_communal_banner)
+        ArcLayout rel_communal_banner;
+        @BindView(R.id.ad_communal_banner)
+        ConvenientBanner ad_communal_banner;
     }
 }

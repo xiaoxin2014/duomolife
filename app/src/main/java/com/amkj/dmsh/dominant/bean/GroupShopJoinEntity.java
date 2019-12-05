@@ -1,5 +1,6 @@
 package com.amkj.dmsh.dominant.bean;
 
+import com.amkj.dmsh.base.BaseTimeEntity;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.annotations.SerializedName;
 import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity.QualityGroupShareBean.MemberListBean;
@@ -59,7 +60,7 @@ public class GroupShopJoinEntity {
         this.groupShopJoinBeanList = groupShopJoinBeanList;
     }
 
-    public static class GroupShopJoinBean implements MultiItemEntity {
+    public static class GroupShopJoinBean extends BaseTimeEntity implements MultiItemEntity {
         /**
          * gpInfoId : 3
          * gpCreateUserId : 34225
@@ -77,7 +78,6 @@ public class GroupShopJoinEntity {
         private String nickname;
         private int gpRecordId;
         private String avatar;
-        private String currentTime;
         private int itemType;
         private int range;
         private int gp_type;
@@ -85,15 +85,16 @@ public class GroupShopJoinEntity {
 //        记录序号
         private int numOrder;
         private long second;
-        private String gpStatusTag;
+        //拼团状态（还差*人成团/已成团/已结束）
+        private String groupStatus;
         private List<MemberListBean> memberListBeans;
 
-        public String getGpStatusTag() {
-            return gpStatusTag;
+        public String getGroupStatus() {
+            return groupStatus;
         }
 
-        public void setGpStatusTag(String gpStatusTag) {
-            this.gpStatusTag = gpStatusTag;
+        public void setGroupStatus(String groupStatus) {
+            this.groupStatus = groupStatus;
         }
 
         public long getSecond() {
@@ -134,14 +135,6 @@ public class GroupShopJoinEntity {
 
         public void setRange(int range) {
             this.range = range;
-        }
-
-        public String getCurrentTime() {
-            return currentTime;
-        }
-
-        public void setCurrentTime(String currentTime) {
-            this.currentTime = currentTime;
         }
 
         public int getGpInfoId() {

@@ -16,6 +16,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.dominant.adapter.CatergoryGoodsAdapter;
 import com.amkj.dmsh.dominant.adapter.GoodProductAdapter;
 import com.amkj.dmsh.dominant.bean.CustomCoverDesEntity;
 import com.amkj.dmsh.dominant.bean.CustomCoverDesEntity.CustomCoverDesBean;
@@ -45,10 +46,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getIntegralFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getSpannableString;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -58,8 +59,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.GET_SHOPPING_REWARD;
 import static com.amkj.dmsh.constant.Url.Q_CUSTOM_PRO_COVER;
 import static com.amkj.dmsh.constant.Url.Q_CUSTOM_PRO_LIST;
-
-;
 
 
 /**
@@ -87,16 +86,17 @@ public class QualityCustomTopicFragment extends BaseFragment {
 
     private int mViewTime = 30;
     private int page = 1;
-    private GoodProductAdapter qualityCustomTopicAdapter;
+    private BaseQuickAdapter qualityCustomTopicAdapter;
     private List<LikedProductBean> customProList = new ArrayList<>();
     private List<CommunalDetailObjectBean> descriptionList = new ArrayList<>();
     private QNewProView qNewProView;
-    private String productType;
     private View headViewCover;
     private CommunalDetailAdapter communalDetailAdapter;
     private UserLikedProductEntity userLikedProductEntity;
     private GridLayoutManager mGridLayoutManager;
     private CountDownTimer mCountDownTimer;
+    private String productType;
+    private String spanCount;
 
     @Override
     protected int getContentView() {
@@ -116,20 +116,24 @@ public class QualityCustomTopicFragment extends BaseFragment {
         qNewProView.initViews();
 
         //初始化商品列表
-        mGridLayoutManager = new GridLayoutManager(getActivity(), 2);
+        if (getStringChangeIntegers(spanCount) == 0) {
+            mGridLayoutManager = new GridLayoutManager(getActivity(), 2);
+            qualityCustomTopicAdapter = new GoodProductAdapter(getActivity(), customProList);
+            smart_communal_refresh.setEnableRefresh(true);
+        } else {
+            mGridLayoutManager = new GridLayoutManager(getActivity(), 3);
+            qualityCustomTopicAdapter = new CatergoryGoodsAdapter(getActivity(), customProList);
+            smart_communal_refresh.setEnableRefresh(false);
+        }
         communal_recycler.setLayoutManager(mGridLayoutManager);
-        qualityCustomTopicAdapter = new GoodProductAdapter(getActivity(), customProList);
         communal_recycler.setAdapter(qualityCustomTopicAdapter);
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_five_dp)
+                .setDividerId(R.drawable.item_divider_five_gray_f)
                 .create());
-        qualityCustomTopicAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
-            @Override
-            public void onLoadMoreRequested() {
-                page++;
-                getQualityCustomPro();
-            }
+        qualityCustomTopicAdapter.setOnLoadMoreListener(() -> {
+            page++;
+            getQualityCustomPro();
         }, communal_recycler);
     }
 
@@ -137,7 +141,6 @@ public class QualityCustomTopicFragment extends BaseFragment {
     protected void loadData() {
         page = 1;
         getCustomCoverDescription();
-        getCarCount(getActivity());
     }
 
 
@@ -373,5 +376,6 @@ public class QualityCustomTopicFragment extends BaseFragment {
     @Override
     protected void getReqParams(Bundle bundle) {
         productType = bundle.getString("productType");
+        spanCount = bundle.getString("spanCount");
     }
 }

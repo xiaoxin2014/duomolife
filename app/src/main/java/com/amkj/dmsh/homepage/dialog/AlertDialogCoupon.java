@@ -13,7 +13,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.bean.CouponListEntity.CouponListBean.CouponBean;
+import com.amkj.dmsh.bean.CouponEntity.CouponListEntity.CouponBean;
 import com.amkj.dmsh.homepage.adapter.CouponListAdapter;
 import com.amkj.dmsh.shopdetails.activity.DirectMyCouponActivity;
 

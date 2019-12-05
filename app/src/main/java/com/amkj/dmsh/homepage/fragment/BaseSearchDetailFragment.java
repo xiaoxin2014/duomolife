@@ -16,8 +16,7 @@ import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.AllSearchEntity;
 import com.amkj.dmsh.bean.AllSearchEntity.AllSearchBean.WatchwordBean;
-import com.amkj.dmsh.bean.CouponListEntity;
-import com.amkj.dmsh.bean.CouponListEntity.CouponListBean;
+import com.amkj.dmsh.bean.CouponEntity.CouponListEntity;
 import com.amkj.dmsh.bean.HotSearchTagEntity;
 import com.amkj.dmsh.bean.HotSearchTagEntity.HotSearchTagBean;
 import com.amkj.dmsh.bean.QualityTypeEntity;
@@ -34,6 +33,7 @@ import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.RemoveExistUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogImage;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.google.android.flexbox.FlexWrap;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.gson.Gson;
@@ -52,13 +52,11 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 import static android.view.View.VISIBLE;
-import static com.amkj.dmsh.constant.ConstantMethod.dismissLoadhud;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
-import static com.amkj.dmsh.constant.ConstantMethod.showLoadhud;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_CHILD;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_ID;
@@ -70,8 +68,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_DATA;
 import static com.amkj.dmsh.constant.ConstantVariable.SKIP_LINK;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_SEARCH_NUM;
-import static com.amkj.dmsh.constant.Url.FIND_ARTICLE_COUPON;
-import static com.amkj.dmsh.constant.Url.FIND_COUPON_PACKAGE;
 import static com.amkj.dmsh.constant.Url.H_HOT_NEW_SEARCH_LIST;
 import static com.amkj.dmsh.constant.Url.QUALITY_SHOP_TYPE;
 
@@ -399,11 +395,15 @@ public abstract class BaseSearchDetailFragment extends BaseFragment {
     private void openCoupon(int couponId, String type) {
         if (couponId > 0) {
             if (userId > 0) {
-                showLoadhud(getActivity());
+                if (loadHud != null) {
+                    loadHud.show();
+                }
                 if (COUPON.equals(type)) {
-                    getCoupon(couponId);
+                    CommunalWebDetailUtils.getCommunalWebInstance().getDirectCoupon(getActivity(),
+                            couponId, loadHud, getCouponListener);
                 } else {
-                    getCouponPackage(couponId);
+                    CommunalWebDetailUtils.getCommunalWebInstance().getDirectCouponPackage(getActivity(),
+                            couponId, loadHud, getCouponListener);
                 }
             } else {
                 getLoginStatus(this);
@@ -411,73 +411,42 @@ public abstract class BaseSearchDetailFragment extends BaseFragment {
         }
     }
 
-    //领取优惠券
-    public void getCoupon(int couponId) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("userId", userId);
-        params.put("couponId", couponId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), FIND_ARTICLE_COUPON, params, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                dismissLoadhud(getActivity());
-                Gson gson = new Gson();
-                CouponListEntity couponListEntity = gson.fromJson(result, CouponListEntity.class);
-                if (couponListEntity != null && couponListEntity.getResult() != null) {
-                    String code = couponListEntity.getCode();
-                    CouponListBean couponListBean = couponListEntity.getResult();
-                    String resultCode = couponListBean.getCode();
-                    showCouponList(couponListBean, !SUCCESS_CODE.equals(code) || !SUCCESS_CODE.equals(resultCode));
-                }
-            }
-        });
-    }
-
-    //领取优惠券
-    public void getCouponPackage(int couponId) {
-        Map<String, Object> params = new HashMap<>();
-        //优惠券礼包
-        params.put("uId", userId);
-        params.put("cpId", couponId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), FIND_COUPON_PACKAGE, params, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                dismissLoadhud(getActivity());
-                Gson gson = new Gson();
-                CouponListBean couponListBean = gson.fromJson(result, CouponListBean.class);
-                if (couponListBean != null) {
-                    String code = couponListBean.getCode();
-                    showCouponList(couponListBean, !SUCCESS_CODE.equals(code));
-                }
-            }
-        });
-    }
-
-
-    /**
-     * @param isFailure 是否领取成功
-     */
-    private void showCouponList(CouponListBean couponListBean, boolean isFailure) {
-        //领取失败
-        if (isFailure) {
-            if (mFailDialogImage == null) {
-                mFailDialogImage = new AlertDialogImage(getActivity());
-                mFailDialogImage.hideCloseBtn();
-                mFailDialogImage.setAlertClickListener(() -> {
-                    mFailDialogImage.dismiss();
-                });
-                mFailDialogImage.setImageResource(R.drawable.get_coupon_fail);
-            }
-            mFailDialogImage.setDialogText(couponListBean.getMsg());
-            mFailDialogImage.show();
-        } else {
-            //领取成功
-            if (mSucessDialogImage == null) {
-                mSucessDialogImage = new AlertDialogCoupon(getActivity());
-                mSucessDialogImage.hideCloseBtn();
-            }
-            mSucessDialogImage.setCouponList(couponListBean.getResult());
-            mSucessDialogImage.show();
+    //优惠券领取回调
+    CommunalWebDetailUtils.GetCouponListener getCouponListener = new CommunalWebDetailUtils.GetCouponListener() {
+        @Override
+        public void onSuccess(CouponListEntity couponListEntity) {
+            getCouponSuccess(couponListEntity);
         }
+
+        @Override
+        public void onFailure(CouponListEntity couponListEntity) {
+            getCouponFailure(couponListEntity);
+        }
+    };
+
+
+    //领取成功弹窗
+    private void getCouponSuccess(CouponListEntity couponListEntity) {
+        if (mSucessDialogImage == null) {
+            mSucessDialogImage = new AlertDialogCoupon(getActivity());
+            mSucessDialogImage.hideCloseBtn();
+        }
+        mSucessDialogImage.setCouponList(couponListEntity.getResult());
+        mSucessDialogImage.show();
+    }
+
+    //领取失败弹窗
+    private void getCouponFailure(CouponListEntity couponListEntity) {
+        if (mFailDialogImage == null) {
+            mFailDialogImage = new AlertDialogImage(getActivity());
+            mFailDialogImage.hideCloseBtn();
+            mFailDialogImage.setAlertClickListener(() -> {
+                mFailDialogImage.dismiss();
+            });
+            mFailDialogImage.setImageResource(R.drawable.get_coupon_fail);
+        }
+        mFailDialogImage.setDialogText(couponListEntity.getMsg());
+        mFailDialogImage.show();
     }
 
     @Override

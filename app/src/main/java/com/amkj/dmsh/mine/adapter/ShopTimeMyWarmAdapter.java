@@ -32,6 +32,7 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTimeAddSeconds;
 
 ;
 
@@ -133,7 +134,7 @@ public class ShopTimeMyWarmAdapter extends BaseQuickAdapter<MineWarmBean, BaseVi
         } else {
             cv_countdownTime_red_hours.setVisibility(View.GONE);
         }
-        if(!ConstantMethod.isEndOrStartTimeAddSeconds(mineWarmBean.getCurrentTime()
+        if(!isEndOrStartTimeAddSeconds(mineWarmBean.getCurrentTime()
                 ,mineWarmBean.getStart_time()
                 ,mineWarmBean.getAddSecond())){
             cv_countdownTime_red_hours.setOnCountdownEndListener(new CountdownView.OnCountdownEndListener() {

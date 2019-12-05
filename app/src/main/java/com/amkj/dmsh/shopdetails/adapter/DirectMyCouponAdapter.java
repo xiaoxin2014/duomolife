@@ -21,9 +21,9 @@ import java.util.Locale;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.getCurrentTime;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.utils.TimeUtils.getCurrentTime;
 
 ;
 

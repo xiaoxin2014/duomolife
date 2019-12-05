@@ -63,7 +63,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.UNION_RESULT_CODE;
 import static com.amkj.dmsh.constant.Url.GROUP_MINE_INDENT;
 import static com.amkj.dmsh.constant.Url.Q_PAYMENT_INDENT;
 
-;
 
 /**
  * @author LGuiPeng
@@ -210,6 +209,7 @@ public class QualityGroupShopMineActivity extends BaseActivity {
                 if (qualityGroupMineBean != null) {
                     Intent intent = new Intent(QualityGroupShopMineActivity.this, QualityGroupShopDetailActivity.class);
                     intent.putExtra("gpInfoId", String.valueOf(qualityGroupMineBean.getGpInfoId()));
+                    intent.putExtra("productId", String.valueOf(qualityGroupMineBean.getProductId()));
                     intent.putExtra("gpRecordId", String.valueOf(qualityGroupMineBean.getGpRecordId()));
                     intent.putExtra("orderNo", qualityGroupMineBean.getOrderNo());
                     intent.putExtra("invitePartnerJoinCode", "1");
@@ -227,7 +227,7 @@ public class QualityGroupShopMineActivity extends BaseActivity {
                     , getStrings(qualityGroupMineBean.getSubtitle())
                     , Url.BASE_SHARE_PAGE_TWO + "m/template/share_template/groupShare.html?id=" + qualityGroupMineBean.getGpInfoId()
                     + "&record=" + qualityGroupMineBean.getGpRecordId(), "pages/groupshare/groupshare?id=" + qualityGroupMineBean.getGpInfoId()
-                    + (TextUtils.isEmpty(qualityGroupMineBean.getOrderNo()) ? "&gpRecordId=" + qualityGroupMineBean.getGpRecordId() : "&order=" + qualityGroupMineBean.getOrderNo()),qualityGroupMineBean.getGpInfoId());
+                    + (TextUtils.isEmpty(qualityGroupMineBean.getOrderNo()) ? "&gpRecordId=" + qualityGroupMineBean.getGpRecordId() : "&order=" + qualityGroupMineBean.getOrderNo()), qualityGroupMineBean.getGpInfoId(), -1, "1");
         }
     }
 
@@ -435,10 +435,10 @@ public class QualityGroupShopMineActivity extends BaseActivity {
         } else if (requestCode == UNION_RESULT_CODE) {
             if (unionPay != null && qualityUnionIndent.getQualityCreateUnionPayIndent() != null) {
                 String webManualFinish = data.getStringExtra("webManualFinish");
-                unionPay.unionPayResult(this,qualityUnionIndent.getQualityCreateUnionPayIndent().getNo(),webManualFinish);
+                unionPay.unionPayResult(this, qualityUnionIndent.getQualityCreateUnionPayIndent().getNo(), webManualFinish);
             } else {
-                showToast("支付取消！");
-            }
+            showToast("支付取消！");
+        }
         }
         UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
     }

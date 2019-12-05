@@ -1,80 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:paddingBottom="@dimen/sc_mm_20"
-    android:paddingLeft="@dimen/sc_mm_30"
-    android:paddingRight="@dimen/sc_mm_30"
-    android:paddingTop="@dimen/sc_mm_20">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/sc_mm_120"
+              android:background="@drawable/border_bottom_line"
+              android:gravity="center_vertical"
+              android:orientation="horizontal"
+              android:paddingLeft="@dimen/sc_mm_24"
+              android:paddingRight="@dimen/sc_mm_24">
+
+    <ImageView
+        android:id="@+id/cir_ql_gp_ava"
+        android:layout_width="@dimen/sc_mm_70"
+        android:layout_height="@dimen/sc_mm_70"
+        android:scaleType="centerCrop"/>
+
+    <TextView
+        android:id="@+id/tv_ql_gp_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/sc_mm_20"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:maxLength="10"
+        android:maxLines="2"
+        android:text="@string/defaul"
+        android:textColor="@color/text_black_t"
+        android:textSize="@dimen/sc_mm_32"/>
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_marginLeft="@dimen/sc_mm_20"
         android:gravity="center_vertical"
-        android:layout_gravity="center_vertical">
+        android:orientation="horizontal">
 
         <LinearLayout
-            android:layout_weight="1"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minHeight="@dimen/sc_mm_80"
-            android:layout_marginLeft="@dimen/sc_mm_50"
-            android:background="@drawable/border_rect_nor_red"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingLeft="@dimen/sc_mm_54"
-            android:paddingRight="@dimen/sc_mm_30">
+            android:layout_marginRight="@dimen/sc_mm_24"
+            android:gravity="right"
+            android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tv_ql_gp_name"
-                android:layout_width="0dp"
+                android:id="@+id/tv_join_dif_per_count"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1.7"
-                android:maxLines="2"
-                android:gravity="center"
-                android:textColor="@color/text_login_gray_s"
-                android:textSize="@dimen/sc_mm_26" />
+                android:text="@string/defaul"
+                android:textColor="@color/text_black_t"
+                android:textSize="@dimen/sc_mm_26"/>
 
-            <LinearLayout
-                android:layout_width="0dp"
+            <TextView
+                android:id="@+id/tv_countdownTime"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:minHeight="@dimen/sc_mm_80"
-                android:gravity="center|right"
-                android:orientation="vertical"
-                android:layout_weight="2"
-                android:paddingBottom="@dimen/sc_mm_8"
-                android:paddingTop="@dimen/sc_mm_8">
-
-                <TextView
-                    android:id="@+id/tv_join_dif_per_count"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/sc_mm_10"
-                    android:text="还差一人成团"
-                    android:textColor="@color/text_normal_red"
-                    android:textSize="@dimen/sc_mm_22" />
-
-                <include layout="@layout/layout_countdown_time_hours" />
-            </LinearLayout>
+                android:layout_marginTop="@dimen/sc_mm_14"
+                android:text="@string/defaul"
+                android:textColor="@color/text_black_t"
+                android:textSize="@dimen/sc_mm_26"/>
         </LinearLayout>
-        <TextView
-            android:layout_width="@dimen/sc_mm_140"
-            android:text="去参团"
-            android:textSize="@dimen/sc_mm_28"
-            android:textColor="@color/white"
-            android:id="@+id/tv_ql_gp_sp_join"
-            android:gravity="center"
-            android:layout_height="match_parent" />
-    </LinearLayout>
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/cir_ql_gp_ava"
-        android:layout_width="@dimen/sc_mm_100"
-        android:layout_gravity="center_vertical"
-        android:src="@drawable/load_loading_image"
-        android:layout_height="@dimen/sc_mm_100"
-         />
-</FrameLayout>
+        <TextView
+            android:id="@+id/tv_ql_gp_sp_join"
+            android:layout_width="@dimen/sc_mm_136"
+            android:layout_height="@dimen/sc_mm_60"
+            android:background="@drawable/shap_go_group_bg"
+            android:gravity="center"
+            android:text="去拼团"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sc_mm_32"/>
+    </LinearLayout>
+</LinearLayout>

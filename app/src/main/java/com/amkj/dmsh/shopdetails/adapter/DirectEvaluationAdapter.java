@@ -1,13 +1,12 @@
 package com.amkj.dmsh.shopdetails.adapter;
 
-import android.content.Context;
+import android.app.Activity;
 import android.graphics.Color;
 import android.support.text.emoji.widget.EmojiTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -29,19 +28,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import me.zhanghai.android.materialratingbar.MaterialRatingBar;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.skipUserCenter;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_3;
+import static com.amkj.dmsh.dao.SoftApiDao.favorGoodsComment;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 
 /**
  * Created by atd48 on 2016/8/15.
  */
 public class DirectEvaluationAdapter extends BaseMultiItemQuickAdapter<GoodsCommentBean, DirectEvaluationAdapter.ProductEvaViewHolder> {
-    private final Context context;
+    private final Activity context;
 
-    public DirectEvaluationAdapter(Context context, List<GoodsCommentBean> goodsCommentBeanList) {
+    public DirectEvaluationAdapter(Activity context, List<GoodsCommentBean> goodsCommentBeanList) {
         super(goodsCommentBeanList);
         this.context = context;
         addItemType(ConstantVariable.TYPE_0, R.layout.adapter_direct_evaluation);
@@ -55,6 +57,7 @@ public class DirectEvaluationAdapter extends BaseMultiItemQuickAdapter<GoodsComm
                 LinearLayout ll_eva_comment_reply = helper.getView(R.id.ll_eva_comment_reply);
                 TextView tv_direct_evaluation = helper.getView(R.id.tv_direct_evaluation);
                 TextView tv_eva_count = helper.getView(R.id.tv_eva_count);
+                CircleImageView ivAvatar = helper.getView(R.id.img_direct_avatar);
                 MaterialRatingBar ratingBar = helper.getView(R.id.ratingBar_direct_count);
                 EmojiTextView emo_direct_eva_reply = helper.getView(R.id.emo_direct_eva_reply);
                 if (!TextUtils.isEmpty(goodsCommentBean.getImages())) {
@@ -63,15 +66,15 @@ public class DirectEvaluationAdapter extends BaseMultiItemQuickAdapter<GoodsComm
                 } else {
                     helper.rv_pro_eva.setVisibility(View.GONE);
                 }
-                GlideImageLoaderUtil.loadHeaderImg(context, (ImageView) helper.getView(R.id.img_direct_avatar), goodsCommentBean.getAvatar());
-                helper.setTag(R.id.img_direct_avatar, R.id.iv_avatar_tag, goodsCommentBean)
-                        .addOnClickListener(R.id.img_direct_avatar)
-                        .setTag(R.id.tv_eva_count, goodsCommentBean)
-                        .setText(R.id.tv_eva_count, goodsCommentBean.getLikeNum() > 0
-                                ? goodsCommentBean.getLikeNum() + "" : "赞")
-                        .addOnClickListener(R.id.tv_eva_count)
-                        .setTag(R.id.tv_eva_count, goodsCommentBean)
+
+                GlideImageLoaderUtil.loadHeaderImg(context, ivAvatar, goodsCommentBean.getAvatar());
+                helper.setText(R.id.tv_eva_count, goodsCommentBean.getLikeNum() > 0 ? goodsCommentBean.getLikeNum() + "" : "赞")
                         .setText(R.id.tv_eva_user_name, getStrings(goodsCommentBean.getNickname()));
+                //点击跳转用户主页
+                ivAvatar.setOnClickListener(v -> skipUserCenter(context, goodsCommentBean.getUserId()));
+                //商品评论点赞
+                tv_eva_count.setOnClickListener(v -> favorGoodsComment(context, goodsCommentBean, tv_eva_count));
+
                 ratingBar.setVisibility(goodsCommentBean.getStar() < 1 ? View.GONE : View.VISIBLE);
                 ratingBar.setNumStars(goodsCommentBean.getStar());
                 ratingBar.setMax(goodsCommentBean.getStar());
@@ -101,6 +104,8 @@ public class DirectEvaluationAdapter extends BaseMultiItemQuickAdapter<GoodsComm
                     ll_eva_comment_reply.setVisibility(View.GONE);
                 }
                 tv_eva_count.setSelected(goodsCommentBean.isFavor());
+
+
                 break;
             case ConstantVariable.TYPE_1:
                 helper.setGone(R.id.hasDataNull, false);

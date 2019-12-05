@@ -68,7 +68,7 @@ public class GroupShopCommunalInfoEntity {
 
         private String servicePromiseTitle;
         private List<CommunalDetailBean> gpRule;
-        private List<ServicePromiseBean> servicePromise;
+        private List<CommunalDetailBean> servicePromise;
 
         public String getServicePromiseTitle() {
             return servicePromiseTitle;
@@ -86,38 +86,12 @@ public class GroupShopCommunalInfoEntity {
             this.gpRule = gpRule;
         }
 
-        public List<ServicePromiseBean> getServicePromise() {
+        public List<CommunalDetailBean> getServicePromise() {
             return servicePromise;
         }
 
-        public void setServicePromise(List<ServicePromiseBean> servicePromise) {
+        public void setServicePromise(List<CommunalDetailBean> servicePromise) {
             this.servicePromise = servicePromise;
-        }
-
-        public static class ServicePromiseBean {
-            /**
-             * type : text
-             * content : <p>123</p>
-             */
-
-            private String type;
-            private String content;
-
-            public String getType() {
-                return type;
-            }
-
-            public void setType(String type) {
-                this.type = type;
-            }
-
-            public String getContent() {
-                return content;
-            }
-
-            public void setContent(String content) {
-                this.content = content;
-            }
         }
     }
 }

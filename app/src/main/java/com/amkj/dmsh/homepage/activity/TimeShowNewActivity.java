@@ -143,7 +143,7 @@ public class TimeShowNewActivity extends BaseActivity {
             }
         }
         if (timeShowBeanList.size() > 0) {
-            TimeShowPagerAdapter timeShowPagerAdapter = new TimeShowPagerAdapter(getSupportFragmentManager(), timeShowBeanList,timeShowEntity.getSystemTime());
+            TimeShowPagerAdapter timeShowPagerAdapter = new TimeShowPagerAdapter(getSupportFragmentManager(), timeShowBeanList,timeShowEntity.getCurrentTime());
             vp_show_time.setAdapter(timeShowPagerAdapter);
             vp_show_time.setCurrentItem(currentPosition);
         }

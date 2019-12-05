@@ -95,7 +95,6 @@ import static android.view.View.GONE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -130,6 +129,7 @@ import static com.amkj.dmsh.constant.Url.Q_INDENT_DETAILS;
 import static com.amkj.dmsh.constant.Url.Q_INDENT_DETAIL_REFUND;
 import static com.amkj.dmsh.constant.Url.Q_INQUIRY_WAIT_SEND_EXPEDITING;
 import static com.amkj.dmsh.constant.Url.Q_PAYMENT_INDENT;
+import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTimeAddSeconds;
 
 ;
 

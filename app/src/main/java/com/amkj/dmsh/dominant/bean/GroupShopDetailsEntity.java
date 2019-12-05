@@ -102,6 +102,15 @@ public class GroupShopDetailsEntity extends BaseEntity{
         private int gpStatus = 1;
         private int gpRecordId;
         private int range;
+        private int memberCount;
+
+        public int getMemberCount() {
+            return memberCount;
+        }
+
+        public void setMemberCount(int memberCount) {
+            this.memberCount = memberCount;
+        }
 
         public int getRange() {
             return range;

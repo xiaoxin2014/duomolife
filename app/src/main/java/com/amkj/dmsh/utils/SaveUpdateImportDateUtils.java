@@ -31,8 +31,8 @@ import static com.amkj.dmsh.MainActivity.LauncherAdIdKey;
 import static com.amkj.dmsh.MainActivity.OriginalImgUrl;
 import static com.amkj.dmsh.MainActivity.SkipUrlKey;
 import static com.amkj.dmsh.MainActivity.TimeKey;
-import static com.amkj.dmsh.constant.ConstantMethod.getDateMilliSecond;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.utils.TimeUtils.getDateMilliSecond;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.saveImageToFile;
 
 /**

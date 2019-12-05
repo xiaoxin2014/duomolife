@@ -42,7 +42,6 @@ import butterknife.OnClick;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
-import static com.amkj.dmsh.constant.ConstantMethod.isSameTimeDay;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
@@ -55,6 +54,7 @@ import static com.amkj.dmsh.constant.Url.MINE_BROWSING_HISTORY;
 import static com.amkj.dmsh.constant.Url.MINE_BROWSING_HISTORY_TIME_SHAFT;
 import static com.amkj.dmsh.mine.enumutils.SelectionStatusTypeEnum.AUTO_SELECTION;
 import static com.amkj.dmsh.mine.enumutils.SelectionStatusTypeEnum.MANUAL_SELECTION;
+import static com.amkj.dmsh.utils.TimeUtils.isSameTimeDay;
 
 
 /**

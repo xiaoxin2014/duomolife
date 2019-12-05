@@ -56,7 +56,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.QUALITY_HOT_SALE_AD;
 import static com.amkj.dmsh.constant.Url.QUALITY_HOT_SALE_SHAFT;
 
-;
+
 
 
 /**

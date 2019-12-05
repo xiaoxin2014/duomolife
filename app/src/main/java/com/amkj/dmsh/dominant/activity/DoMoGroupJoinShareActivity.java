@@ -1,13 +1,15 @@
 package com.amkj.dmsh.dominant.activity;
 
 import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
@@ -16,6 +18,7 @@ import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.dominant.adapter.QualityCustomAdapter;
 import com.amkj.dmsh.dominant.bean.GroupShopCommunalInfoEntity;
 import com.amkj.dmsh.dominant.bean.GroupShopCommunalInfoEntity.GroupShopCommunalInfoBean;
 import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity;
@@ -25,15 +28,11 @@ import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
-import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
-import com.google.android.flexbox.FlexboxLayout;
-import com.google.android.flexbox.JustifyContent;
+import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -54,6 +53,7 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 import static android.view.View.GONE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.getSpannableString;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
@@ -61,6 +61,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.GROUP_MINE_SHARE;
 import static com.amkj.dmsh.constant.Url.GROUP_SHOP_COMMUNAL;
+import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTime;
 
 
 /**
@@ -76,7 +77,10 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
     RecyclerView communal_recycler_wrap;
     @BindView(R.id.tv_header_title)
     TextView tv_header_titleAll;
-    //    拼团规则
+    @BindView(R.id.sliding_tablayout)
+    SlidingTabLayout mSlidingTablayout;
+    @BindView(R.id.vp_custom)
+    ViewPager mVpCustom;
     private List<CommunalDetailObjectBean> gpRuleList = new ArrayList<>();
     private GroupShareJoinView groupShareJoinView;
     private CommunalDetailAdapter gpRuleDetailsAdapter;
@@ -85,6 +89,9 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
     private QualityGroupShareBean qualityGroupShareBean;
     private QualityGroupShareEntity qualityGroupShareEntity;
     private ConstantMethod constantMethod;
+    private QualityCustomAdapter qualityCustomAdapter;
+    private String[] titles = {"自定义专区1", "自定义专区2", "自定义专区3"};
+    private List<String> mProductTypeList = new ArrayList<>();
 
     @Override
     protected int getContentView() {
@@ -94,16 +101,12 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
     @Override
     protected void initViews() {
         getLoginStatus(this);
-        tv_header_titleAll.setText("DoMo拼团");
+        tv_header_titleAll.setText("拼团详情");
         Intent intent = getIntent();
         orderNo = intent.getStringExtra("orderNo");
-        smart_scroll_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                loadData();
-            }
-        });
+        smart_scroll_communal_refresh.setOnRefreshListener(refreshLayout -> loadData());
         communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(DoMoGroupJoinShareActivity.this));
+        communal_recycler_wrap.setNestedScrollingEnabled(false);
         View headerView = LayoutInflater.from(DoMoGroupJoinShareActivity.this).inflate(R.layout.layout_ql_gp_sp_join_share, null);
         groupShareJoinView = new GroupShareJoinView();
         ButterKnife.bind(groupShareJoinView, headerView);
@@ -115,6 +118,14 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
         gpRuleDetailsAdapter = new CommunalDetailAdapter(DoMoGroupJoinShareActivity.this, gpRuleList);
         gpRuleDetailsAdapter.addHeaderView(headerView);
         communal_recycler_wrap.setAdapter(gpRuleDetailsAdapter);
+        //初始化自定义专区
+        mProductTypeList.add("1");
+        mProductTypeList.add("2");
+        mProductTypeList.add("3");
+        qualityCustomAdapter = new QualityCustomAdapter(getSupportFragmentManager(), mProductTypeList);
+        mVpCustom.setAdapter(qualityCustomAdapter);
+        mVpCustom.setOffscreenPageLimit(titles.length - 1);
+        mSlidingTablayout.setViewPager(mVpCustom, titles);
     }
 
     @Override
@@ -183,16 +194,6 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
                         smart_scroll_communal_refresh.finishRefresh();
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, qualityGroupShareBean, qualityGroupShareEntity);
                     }
-
-                    @Override
-                    public void netClose() {
-                        showToast(DoMoGroupJoinShareActivity.this, R.string.unConnectedNetwork);
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
-                        showToast(DoMoGroupJoinShareActivity.this, R.string.connectedFaile);
-                    }
                 });
     }
 
@@ -211,36 +212,24 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
         //        参团列表
         List<MemberListBean> memberList = qualityGroupShareBean.getMemberList();
         if (memberList != null && memberList.size() > 0) {
-            for (int i = 0; i < (qualityGroupShareBean.getMemberCount() - memberList.size()); i++) {
-                MemberListBean memberListBean = new MemberListBean();
-                memberListBean.setAvatar("android.resource://com.amkj.dmsh/drawable/" + R.drawable.dm_gp_join);
-                memberList.add(memberListBean);
+            MemberListBean memberListBean = memberList.get(0);
+            if (memberListBean != null) {
+                GlideImageLoaderUtil.loadRoundImg(this, groupShareJoinView.iv_leader
+                        , memberListBean.getAvatar(), AutoSizeUtils.mm2px(this, 100), R.drawable.default_ava_img);
             }
         } else {
             showToast(DoMoGroupJoinShareActivity.this, "拼团信息获取失败，请刷新重试");
         }
-        if (memberList != null && memberList.size() > 0) {
-            groupShareJoinView.rel_group_join_share.setVisibility(View.VISIBLE);
-            groupShareJoinView.flex_communal_tag.setJustifyContent(JustifyContent.CENTER);
-            groupShareJoinView.flex_communal_tag.removeAllViews();
-            groupShareJoinView.flex_communal_tag.setShowDivider(FlexboxLayout.SHOW_DIVIDER_MIDDLE);
-            groupShareJoinView.flex_communal_tag.setDividerDrawable(getResources().getDrawable(R.drawable.item_divider_nine_dp_white));
-            for (int i = 0; i < memberList.size(); i++) {
-                groupShareJoinView.flex_communal_tag.addView(ProductLabelCreateUtils
-                        .createOpenGroupUserInfo(DoMoGroupJoinShareActivity.this, memberList.get(i)));
-            }
-        } else {
-            groupShareJoinView.rel_group_join_share.setVisibility(GONE);
-        }
+
         gpRuleDetailsAdapter.notifyDataSetChanged();
-        groupShareJoinView.tv_invite_fr_join_gp.setText(getString(R.string.share_join_group, qualityGroupShareBean.getLeftParticipant()));
+        String leftParticipant = getString(R.string.share_join_group, qualityGroupShareBean.getLeftParticipant());
+        groupShareJoinView.tv_invite_fr_join_gp.setText(getSpannableString(leftParticipant, 2, 4, -1, "#ff5e6b"));
+        groupShareJoinView.tv_new_user.setVisibility(qualityGroupShareBean.getRange() == 1 ? View.VISIBLE : GONE);
         groupShareJoinView.tv_gp_ql_share_product_c_time.setText(getStrings(qualityGroupShareBean.getGpStartTime()));
         GlideImageLoaderUtil.loadCenterCrop(DoMoGroupJoinShareActivity.this
                 , groupShareJoinView.iv_gp_ql_share_product, qualityGroupShareBean.getGpPicUrl());
-        groupShareJoinView.tv_gp_ql_share_pro_name.setText(getStrings(qualityGroupShareBean.getName()));
-        groupShareJoinView.tv_gp_ql_share_count.setText(getStrings(qualityGroupShareBean.getGpType()));
-        groupShareJoinView.tv_gp_ql_share_open_count.setText(getString(R.string.group_buy_count, qualityGroupShareBean.getGpCount()));
-        groupShareJoinView.tv_gp_ql_share_price.setText(getString(R.string.money_price_chn, getStrings(qualityGroupShareBean.getGpPrice())));
+        groupShareJoinView.tv_gp_ql_share_pro_name.setText(getStrings(TextUtils.isEmpty(qualityGroupShareBean.getSubtitle()) ? qualityGroupShareBean.getName() : (qualityGroupShareBean.getSubtitle() + "•" + qualityGroupShareBean.getName())));
+        groupShareJoinView.tv_gp_ql_share_price.setText(("拼团价¥" + getStrings(qualityGroupShareBean.getGpPrice())));
         groupShareJoinView.tv_gp_ql_share_only_price.setText(("单买价¥" + getStrings(qualityGroupShareBean.getPrice())));
     }
 
@@ -267,7 +256,7 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
                 countdownView.dynamicShow(dynamic.build());
                 countdownView.updateShow(endTime.getTime() - startTime.getTime() - qualityGroupShareEntity.getSecond() * 1000);
                 groupShareJoinView.tv_show_communal_time_status.setText("剩余");
-                if (!ConstantMethod.isEndOrStartTime(qualityGroupShareEntity.getCurrentTime()
+                if (!isEndOrStartTime(qualityGroupShareEntity.getCurrentTime()
                         , qualityGroupShareBean.getGpEndTime())) {
                     countdownView.setOnCountdownEndListener(new CountdownView.OnCountdownEndListener() {
                         @Override
@@ -288,6 +277,13 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
         }
     }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // TODO: add setContentView(...) invocation
+        ButterKnife.bind(this);
+    }
+
     class GroupShareJoinView {
         //         倒计时状态
         @BindView(R.id.tv_show_communal_time_status)
@@ -298,11 +294,11 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
         //        差成团
         @BindView(R.id.tv_invite_fr_join_gp)
         TextView tv_invite_fr_join_gp;
+        //       新人团标志
+        @BindView(R.id.tv_new_user)
+        TextView tv_new_user;
         @BindView(R.id.rel_group_join_share)
-        RelativeLayout rel_group_join_share;
-        //        人数头像
-        @BindView(R.id.flex_communal_tag)
-        FlexboxLayout flex_communal_tag;
+        LinearLayout rel_group_join_share;
         //        创建时间
         @BindView(R.id.tv_gp_ql_share_product_c_time)
         TextView tv_gp_ql_share_product_c_time;
@@ -312,31 +308,20 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
         //        商品名字
         @BindView(R.id.tv_gp_ql_share_pro_name)
         TextView tv_gp_ql_share_pro_name;
-        //        两人团
-        @BindView(R.id.tv_gp_ql_share_count)
-        TextView tv_gp_ql_share_count;
-        //        已开团人数
-        @BindView(R.id.tv_gp_ql_share_open_count)
-        TextView tv_gp_ql_share_open_count;
         //        团购价
         @BindView(R.id.tv_gp_ql_share_price)
         TextView tv_gp_ql_share_price;
         //        单买价
         @BindView(R.id.tv_gp_ql_share_only_price)
         TextView tv_gp_ql_share_only_price;
+        //        团长头像
+        @BindView(R.id.iv_leader)
+        ImageView iv_leader;
 
         //    页面分享
         @OnClick(R.id.tv_join_share)
         void sendShare(View view) {
-            if (qualityGroupShareBean != null) {
-                new UMShareAction(DoMoGroupJoinShareActivity.this
-                        , qualityGroupShareBean.getGpPicUrl()
-                        , qualityGroupShareBean.getName()
-                        , getStrings(qualityGroupShareBean.getSubtitle())
-                        , Url.BASE_SHARE_PAGE_TWO + "m/template/share_template/groupShare.html?id=" + qualityGroupShareBean.getGpInfoId()
-                        + "&record=" + qualityGroupShareBean.getGpRecordId(), "pages/groupshare/groupshare?id=" + qualityGroupShareBean.getGpInfoId()
-                        + (TextUtils.isEmpty(orderNo) ? "&gpRecordId=" + qualityGroupShareBean.getGpRecordId() : "&order=" + orderNo), qualityGroupShareBean.getGpInfoId());
-            }
+            shareGroup();
         }
     }
 
@@ -348,6 +333,10 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
     //    页面分享
     @OnClick(R.id.tv_header_shared)
     void sendShare(View view) {
+        shareGroup();
+    }
+
+    private void shareGroup() {
         if (qualityGroupShareBean != null) {
             new UMShareAction(DoMoGroupJoinShareActivity.this
                     , qualityGroupShareBean.getGpPicUrl()
@@ -355,7 +344,7 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
                     , getStrings(qualityGroupShareBean.getSubtitle())
                     , Url.BASE_SHARE_PAGE_TWO + "m/template/share_template/groupShare.html?id=" + qualityGroupShareBean.getGpInfoId()
                     + "&record=" + qualityGroupShareBean.getGpRecordId(), "pages/groupshare/groupshare?id=" + qualityGroupShareBean.getGpInfoId()
-                    + (TextUtils.isEmpty(orderNo) ? "&gpRecordId=" + qualityGroupShareBean.getGpRecordId() : "&order=" + orderNo), qualityGroupShareBean.getGpInfoId());
+                    + (TextUtils.isEmpty(orderNo) ? "&gpRecordId=" + qualityGroupShareBean.getGpRecordId() : "&order=" + orderNo), qualityGroupShareBean.getGpInfoId(), -1, "1");
         }
     }
 

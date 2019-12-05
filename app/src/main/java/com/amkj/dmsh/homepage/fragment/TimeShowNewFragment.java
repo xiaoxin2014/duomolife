@@ -129,7 +129,7 @@ public class TimeShowNewFragment extends BaseFragment {
             }
         }
         if (timeShowBeanList.size() > 0) {
-            TimeShowPagerAdapter timeShowPagerAdapter = new TimeShowPagerAdapter(getChildFragmentManager(), timeShowBeanList, timeShowEntity.getSystemTime());
+            TimeShowPagerAdapter timeShowPagerAdapter = new TimeShowPagerAdapter(getChildFragmentManager(), timeShowBeanList, timeShowEntity.getCurrentTime());
             vp_show_time.setAdapter(timeShowPagerAdapter);
             vp_show_time.setCurrentItem(currentPosition);
         }

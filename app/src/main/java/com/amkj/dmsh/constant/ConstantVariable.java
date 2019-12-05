@@ -434,4 +434,11 @@ public class ConstantVariable {
     public static final int COUPON_THREE_COLUMN = 3;//三列
 
 
+    /**
+     * 团购订单类型
+     */
+    public static final int OPEN_GROUP = 1;//开团
+    public static final int JOIN_GROUP = 2;//拼团
+
+
 }

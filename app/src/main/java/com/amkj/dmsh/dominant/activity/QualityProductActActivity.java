@@ -29,7 +29,6 @@ import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.CountDownTimer;
-import com.amkj.dmsh.utils.CountDownUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
@@ -66,7 +65,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.BASE_SHARE_PAGE_TWO;
 import static com.amkj.dmsh.constant.Url.Q_ACT_PRO_LIST;
-import static com.amkj.dmsh.utils.CountDownUtils.isTimeStart;
+import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTime;
 
 
 /**
@@ -275,7 +274,7 @@ public class QualityProductActActivity extends BaseActivity {
             long dateEnd = formatter.parse(activityEndTime).getTime();
             long dateCurret = !TextUtils.isEmpty(currentTime) ? formatter.parse(currentTime).getTime() : System.currentTimeMillis();
             //活动未开始
-            if (!isTimeStart(likedProductEntity.getActivityStartTime(), likedProductEntity.getCurrentTime())) {
+            if (!isEndOrStartTime( likedProductEntity.getCurrentTime(),likedProductEntity.getActivityStartTime())) {
                 tipView.setText(tipView.getId() == R.id.tv_count_time_before_white ? "距开始还有" : "距开始");
                 CountDownTimer countDownTimer = new CountDownTimer(this, dateStart + 1 - dateCurret, 1000) {
                     @Override
@@ -293,7 +292,7 @@ public class QualityProductActActivity extends BaseActivity {
                 };
 
                 countDownTimer.start();
-            } else if (!CountDownUtils.isTimeEnd(activityEndTime, currentTime)) {
+            } else if (!isEndOrStartTime(currentTime, activityEndTime)) {
                 //活动已开始未结束
                 tipView.setText(tipView.getId() == R.id.tv_count_time_before_white ? "距结束还有" : "距结束");
                 CountDownTimer countDownTimer = new CountDownTimer(this, dateEnd + 1 - dateCurret, 1000) {

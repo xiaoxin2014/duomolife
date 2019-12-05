@@ -1,99 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/white"
-    android:orientation="vertical"
-    android:paddingBottom="@dimen/sc_mm_26">
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/sc_mm_280"
+              android:layout_marginLeft="@dimen/sc_mm_16"
+              android:layout_marginTop="@dimen/sc_mm_18"
+              android:layout_marginRight="@dimen/sc_mm_16"
+              android:background="@color/white"
+              android:orientation="horizontal">
+
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <include layout="@layout/layout_communal_img_bg_time" />
+        android:layout_width="@dimen/sc_mm_280"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <ImageView
+            android:id="@+id/iv_communal_img_bg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"/>
+
         <TextView
-            android:layout_width="@dimen/sc_mm_108"
-            android:layout_height="@dimen/sc_mm_68"
-            android:layout_marginLeft="@dimen/sc_mm_20"
-            android:textSize="@dimen/sc_mm_28"
-            android:textColor="@color/white"
-            android:text="邀新团"
-            android:gravity="center"
-            android:visibility="gone"
-            android:background="@drawable/ql_gp_icon"
             android:id="@+id/tv_ql_gp_sp_new"
-            />
-    </RelativeLayout>
+            android:layout_width="@dimen/sc_mm_102"
+            android:layout_height="@dimen/sc_mm_40"
+            android:background="@drawable/shap_group_type_bg"
+            android:gravity="center"
+            android:text="邀新团"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sc_mm_24"/>
 
-    <TextView
-        android:id="@+id/tv_gp_sp_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:gravity="center_vertical"
-        android:lines="1"
-        android:paddingLeft="@dimen/sc_mm_20"
-        android:paddingTop="@dimen/sc_mm_20"
-        android:textColor="@color/text_black_t"
-        android:textSize="@dimen/sc_mm_28" />
-
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/sc_mm_28"
-        android:paddingLeft="@dimen/sc_mm_30"
-        android:paddingRight="@dimen/sc_mm_20">
-        <include layout="@layout/layout_ql_gp_sp_price" />
+        <TextView
+            android:id="@+id/tv_group_time"
+            android:layout_width="@dimen/sc_mm_220"
+            android:layout_height="@dimen/sc_mm_35"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/sc_mm_28"
+            android:background="@drawable/shap_group_end_time_bg"
+            android:gravity="center"
+            android:text="@string/defaul"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sc_mm_24"/>
     </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/sc_mm_28"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingLeft="@dimen/sc_mm_20"
-        android:paddingRight="@dimen/sc_mm_20">
+        android:layout_marginLeft="@dimen/sc_mm_15"
+        android:layout_marginTop="@dimen/sc_mm_30"
+        android:orientation="vertical">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/tv_gp_sp_name"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="已成团:"
-            android:textColor="@color/text_gray_hint_n"
-            android:textSize="@dimen/sc_mm_24" />
+            android:layout_marginRight="@dimen/sc_mm_10"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="@string/defaul"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_30"/>
 
-        <TextView
-            android:id="@+id/tv_gp_sp_open_count"
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/sc_mm_18"
-            android:textColor="@color/text_normal_red"
-            android:textSize="@dimen/sc_mm_24" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/sc_mm_68"
-            android:text="库存:"
-            android:textColor="@color/text_gray_hint_n"
-            android:textSize="@dimen/sc_mm_24" />
-
-        <TextView
-            android:id="@+id/tv_gp_sp_inventory"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/sc_mm_18"
-            android:layout_weight="1"
-            android:textColor="@color/text_gray_hint_n"
-            android:textSize="@dimen/sc_mm_24" />
-
-        <TextView
-            android:layout_width="@dimen/sc_mm_177"
-            android:layout_height="@dimen/sc_mm_58"
-            android:id="@+id/tv_gp_sp_count"
-            android:background="@drawable/sel_red_nor_gray_cir_five"
+            android:layout_height="@dimen/sc_mm_50"
+            android:layout_marginTop="@dimen/sc_mm_20"
+            android:background="@drawable/shap_group_price_bg"
             android:gravity="center"
-            android:text="去开团"
-            android:textColor="@color/white"
-            android:textSize="@dimen/sc_mm_32" />
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/sc_mm_25"
+            android:paddingRight="@dimen/sc_mm_25">
+
+            <TextView
+                android:id="@+id/tv_gp_sp_per_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/defaul"
+                android:textColor="@color/text_black_t"
+                android:textSize="@dimen/sc_mm_30"/>
+
+            <TextView
+                android:id="@+id/tv_gp_sp_per_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/sc_mm_8"
+                android:text="@string/defaul"
+                android:textColor="@color/text_normal_red"
+                android:textSize="@dimen/sc_mm_30"/>
+
+            <TextView
+                android:id="@+id/tv_gp_sp_nor_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/sc_mm_26"
+                android:text="@string/defaul"
+                android:textColor="@color/color_blue_reply_com"
+                android:textSize="@dimen/sc_mm_24"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/sc_mm_60"
+            android:layout_marginTop="@dimen/sc_mm_28"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_gp_sp_open_count"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="@string/defaul"
+                android:textColor="@color/text_login_gray_s"
+                android:textSize="@dimen/sc_mm_24"/>
+
+            <TextView
+                android:id="@+id/tv_gp_sp_count"
+                android:layout_width="@dimen/sc_mm_168"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/sc_mm_30"
+                android:background="@drawable/shap_go_group_bg"
+                android:gravity="center"
+                android:text="@string/go_group"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sc_mm_30"/>
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

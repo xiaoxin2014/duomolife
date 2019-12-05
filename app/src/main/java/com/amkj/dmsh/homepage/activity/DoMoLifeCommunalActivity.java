@@ -79,7 +79,6 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import me.jessyan.autosize.AutoSize;
 
-import static com.amkj.dmsh.constant.ConstantMethod.getDateMilliSecond;
 import static com.amkj.dmsh.constant.ConstantMethod.getDeviceAppNotificationStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getDeviceId;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
@@ -102,6 +101,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.WEB_TB_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TMALL_SCHEME;
 import static com.amkj.dmsh.dao.BaiChuanDao.skipAliBC;
 import static com.amkj.dmsh.rxeasyhttp.interceptor.MyInterceptor.getCommonApiParameter;
+import static com.amkj.dmsh.utils.TimeUtils.getDateMilliSecond;
 import static com.luck.picture.lib.config.PictureConfigC.CHOOSE_REQUEST;
 
 

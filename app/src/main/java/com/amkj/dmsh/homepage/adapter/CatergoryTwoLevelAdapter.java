@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.catergory.bean.CatergoryOneLevelEntity.CatergoryOneLevelBean.ChildCategoryListBean;
-import com.amkj.dmsh.homepage.activity.CatergoryGoodsFragment;
+import com.amkj.dmsh.homepage.fragment.CatergoryGoodsFragment;
 
 import java.util.HashMap;
 import java.util.List;

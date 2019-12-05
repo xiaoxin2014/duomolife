@@ -1,11 +1,7 @@
 package com.amkj.dmsh.dominant.activity;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import android.graphics.Paint;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,22 +14,21 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.BaseFragment;
-import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.TabEntity;
 import com.amkj.dmsh.constant.UMShareAction;
+import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.adapter.JoinGroupAdapter;
 import com.amkj.dmsh.dominant.bean.GroupShopCommunalInfoEntity;
 import com.amkj.dmsh.dominant.bean.GroupShopCommunalInfoEntity.GroupShopCommunalInfoBean;
@@ -45,7 +40,6 @@ import com.amkj.dmsh.dominant.bean.GroupShopJoinEntity.GroupShopJoinBean;
 import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity;
 import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity.QualityGroupShareBean;
 import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity.QualityGroupShareBean.MemberListBean;
-import com.amkj.dmsh.dominant.fragment.GroupCustomerServiceFragment;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
@@ -56,22 +50,26 @@ import com.amkj.dmsh.shopdetails.activity.DirectIndentWriteActivity;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.adapter.DirectEvaluationAdapter;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
+import com.amkj.dmsh.shopdetails.bean.EditGoodsSkuEntity;
 import com.amkj.dmsh.shopdetails.bean.GoodsCommentEntity;
 import com.amkj.dmsh.shopdetails.bean.GoodsCommentEntity.GoodsCommentBean;
+import com.amkj.dmsh.shopdetails.bean.ShopCarGoodsSku;
 import com.amkj.dmsh.shopdetails.bean.ShopDetailsEntity;
-import com.amkj.dmsh.shopdetails.fragment.DirectImgArticleFragment;
-import com.amkj.dmsh.user.activity.UserPagerActivity;
-import com.amkj.dmsh.utils.ProductLabelCreateUtils;
-import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
+import com.amkj.dmsh.shopdetails.bean.ShopDetailsEntity.ShopPropertyBean;
+import com.amkj.dmsh.shopdetails.bean.ShopRecommendHotTopicEntity;
+import com.amkj.dmsh.shopdetails.bean.ShopRecommendHotTopicEntity.ShopRecommendHotTopicBean;
+import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
+import com.amkj.dmsh.utils.TimeUtils;
+import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
+import com.amkj.dmsh.views.StatusBarUtil;
+import com.amkj.dmsh.views.bottomdialog.SkuDialog;
 import com.amkj.dmsh.views.flycoTablayout.CommonTabLayout;
 import com.amkj.dmsh.views.flycoTablayout.listener.CustomTabEntity;
 import com.amkj.dmsh.views.flycoTablayout.listener.OnTabSelectListener;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
-import com.bigkoo.convenientbanner.listener.OnItemClickListener;
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
@@ -79,23 +77,14 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.umeng.socialize.UMShareAPI;
 
-import org.greenrobot.eventbus.EventBus;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
-import cn.iwgang.countdownview.CountdownView;
-import cn.iwgang.countdownview.DynamicConfig;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static android.view.View.GONE;
@@ -106,7 +95,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeBoolean;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
-import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTime;
 import static com.amkj.dmsh.constant.ConstantMethod.showImageActivity;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
@@ -121,12 +109,11 @@ import static com.amkj.dmsh.constant.Url.GROUP_SHOP_DETAILS;
 import static com.amkj.dmsh.constant.Url.GROUP_SHOP_JOIN_NRE_USER;
 import static com.amkj.dmsh.constant.Url.GROUP_SHOP_OPEN_PERSON;
 import static com.amkj.dmsh.constant.Url.Q_NEW_SHOP_DETAILS;
-import static com.amkj.dmsh.constant.Url.Q_SHOP_DETAILS_COMMENT;
-import static com.amkj.dmsh.constant.Url.SHOP_EVA_LIKE;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
+import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODUCT_TITLE;
+import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTime;
+import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getSquareImgUrl;
 
-;
-;
 
 /**
  * @author LGuiPeng
@@ -138,20 +125,9 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
     @BindView(R.id.smart_refresh_ql_sp_details)
     SmartRefreshLayout smart_refresh_ql_sp_details;
     @BindView(R.id.banner_ql_gp_sp_details)
-    ConvenientBanner banner_ql_gp_sp_details;
+    ConvenientBanner banner_ql_sp_pro_details;
     @BindView(R.id.tv_ql_gp_sp_new_detail)
     TextView tv_ql_gp_sp_new_detail;
-    //    商品标签
-    @BindView(R.id.tv_open_pro_label)
-    TextView tv_open_pro_label;
-    @BindView(R.id.rel_ql_gp_sp_time)
-    RelativeLayout rel_ql_gp_sp_time;
-    //    计时器状态
-    @BindView(R.id.tv_pro_time_detail_status)
-    TextView tv_pro_time_detail_status;
-    //    计时器状态
-    @BindView(R.id.ct_pro_show_time_detail)
-    CountdownView ct_pro_show_time_detail;
     //            商品名字
     @BindView(R.id.tv_ql_sp_pro_name)
     TextView tv_ql_sp_pro_name;
@@ -164,17 +140,6 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
     //    单买价
     @BindView(R.id.tv_gp_sp_nor_price)
     TextView tv_gp_sp_nor_price;
-    //    标签布局
-    @BindView(R.id.ll_layout_pro_tag)
-    LinearLayout ll_layout_pro_tag;
-    @BindView(R.id.flex_communal_tag)
-    FlexboxLayout flex_communal_tag;
-    @BindView(R.id.tv_header_title)
-    TextView tv_header_titleAll;
-    @BindView(R.id.communal_recycler_wrap)
-    RecyclerView communal_recycler_wrap;
-    @BindView(R.id.ctb_ql_gp_sp_tab)
-    CommonTabLayout ctb_ql_gp_sp_tab;
     //    团购布局
     @BindView(R.id.ll_group_buy)
     LinearLayout ll_group_buy;
@@ -198,44 +163,104 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
     @BindView(R.id.download_btn_communal)
     FloatingActionButton download_btn_communal;
     @BindView(R.id.nsv_gp_detail)
-    NestedScrollView nsv_gp_detail;
+    NestedScrollView scroll_pro;
     @BindView(R.id.ll_gp_detail_bottom)
     LinearLayout ll_gp_detail_bottom;
+    @BindView(R.id.rv_group_join)
+    RecyclerView rv_group_join;
+    @BindView(R.id.tv_partner_join)
+    TextView tv_partner_join;
+    @BindView(R.id.ll_group_join)
+    LinearLayout ll_group_join;
+    @BindView(R.id.rv_comment)
+    RecyclerView rv_comment;
+    @BindView(R.id.tv_shop_comment_count)
+    TextView tv_shop_comment_count;
+    @BindView(R.id.rel_pro_comment)
+    RelativeLayout rel_pro_comment;
+    @BindView(R.id.ll_comment)
+    LinearLayout ll_comment;
+    @BindView(R.id.rv_group_rule)
+    RecyclerView rv_group_rule;
+    @BindView(R.id.iv_artical_cover)
+    ImageView mIvArticalCover;
+    @BindView(R.id.tv_artical_title)
+    TextView mTvArticalTitle;
+    @BindView(R.id.tv_artical_desc)
+    TextView mTvArticalDesc;
+    @BindView(R.id.ll_artical)
+    LinearLayout mLlArtical;
+    @BindView(R.id.flex_product_tag)
+    FlexboxLayout flex_product_tag;
+    @BindView(R.id.iv_more_tag)
+    ImageView mIvMoreTag;
+    @BindView(R.id.ll_layout_pro_sc_tag)
+    LinearLayout ll_layout_pro_sc_tag;
+    @BindView(R.id.rv_product_details)
+    RecyclerView rv_product_details;
+    @BindView(R.id.rl_toolbar)
+    LinearLayout mRlToolbar;
+    @BindView(R.id.rl_toolbar2)
+    RelativeLayout mRlToolbar2;
+    @BindView(R.id.ll_group_detail_bottom)
+    LinearLayout mLlGroupDetailBottom;
+    @BindView(R.id.ll_ll_group_detail_bottom2)
+    LinearLayout mLlGroupDetailBottom2;
+    @BindView(R.id.ll_sp_pro_sku_value)
+    LinearLayout ll_sp_pro_sku_value;
+    @BindView(R.id.tv_ql_sp_pro_sku)
+    TextView tv_ql_sp_pro_sku;
+    @BindView(R.id.ctb_qt_pro_details)
+    CommonTabLayout ctb_qt_pro_details;
+    @BindView(R.id.ll_pro_layout)
+    LinearLayout ll_pro_layout;
+    @BindView(R.id.tv_group_home)
+    TextView mTvGroupHome;
+    @BindView(R.id.tv_invate)
+    TextView mTvInvate;
 
+    //拼团列表
     private List<GroupShopJoinBean> groupShopJoinList = new ArrayList<>();
-    //    拼团规则
+    //拼团规则
     private List<CommunalDetailObjectBean> gpRuleList = new ArrayList<>();
-    //    弹框
-    private List<CommunalDetailObjectBean> diaRuleList = new ArrayList<>();
-    //    轮播图片视频
+    //轮播图片视频
     private List<CommunalADActivityBean> imagesVideoList = new ArrayList<>();
-    //    商品评论
-    private List<GoodsCommentBean> goodsComments = new ArrayList();
+    //商品评论
+    private List<GoodsCommentBean> goodsComments = new ArrayList<>();
+    //文章主题推荐
+    private List<ShopRecommendHotTopicBean> articalRecommendList = new ArrayList<>();
+    //商品详情 服务承诺 合集
+    private List<CommunalDetailObjectBean> shopDetailBeanList = new ArrayList<>();
+    //    服务承诺
+    private List<CommunalDetailObjectBean> serviceDataList = new ArrayList<>();
+    private JoinGroupAdapter joinGroupAdapter;
     private DirectEvaluationAdapter directEvaluationAdapter;
-    private ShopJoinGroupView shopJoinGroupView;
-    private ShopCommentHeaderView shopCommentHeaderView;
-    private String gpInfoId;
-    private FragmentManager fragmentManager;
-    private String[] title = {"图文详情", "服务承诺"};
-    //tab集合
-    private ArrayList<CustomTabEntity> tabs = new ArrayList<>();
-    private FragmentTransaction transaction;
-    private Fragment lastFragment;
-    private GroupShopDetailsEntity shopDetailsEntity;
+    private CommunalDetailAdapter gpRuleDetailsAdapter;
+    private CommunalDetailAdapter communalDetailAdapter;
+    private GroupShopDetailsEntity mGroupShopDetailsEntity;
     private GroupShopCommunalInfoEntity groupShopCommunalInfoEntity;
-    private AlertDialog alertDialog;
-    private String gpRecordId;
     private QualityGroupShareEntity qualityGroupShareEntity;
-    private String shareJoinGroup = "shareJoinGroup";
-    private String normalJoinGroup = "normalJoinGroup";
+    private ShopDetailsEntity mShopDetailsEntity;
+    private EditGoodsSkuEntity.EditGoodsSkuBean editGoodsSkuBean;
     private boolean isPause;
     private String sharePageUrl = BASE_SHARE_PAGE_TWO + "m/template/share_template/groupDetail.html?id=";
-    private ConstantMethod constantMethod;
     private CBViewHolderCreator cbViewHolderCreator;
     private boolean invitePartnerJoin;
-    private GroupShopDetailsBean groupShopDetailsBean;
     private String orderNo;
+    private String gpInfoId;
+    private String productId;
+    private String gpRecordId;
     private int screenHeight;
+    private int screenWith;
+    private int statusBarHeight;
+    private int measuredHeight;
+    private SkuDialog skuDialog;
+    private AlertDialog alertDialog;
+    private ShopCarGoodsSku shopCarGoodsSkuDif;
+    private GroupShopDetailsBean mGroupShopDetailsBean;
+    private String[] detailTabData = {"商品", "详情"};
+    private ArrayList<CustomTabEntity> tabData = new ArrayList<>();
+
 
     @Override
     protected int getContentView() {
@@ -244,12 +269,17 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
-        tv_header_titleAll.setVisibility(GONE);
-        getConstant();
+        tv_gp_sp_nor_price.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+        tv_gp_sp_nor_price.getPaint().setAntiAlias(true);
         Intent intent = getIntent();
         gpInfoId = intent.getStringExtra("gpInfoId");
+        productId = intent.getStringExtra("productId");
         gpRecordId = intent.getStringExtra("gpRecordId");
         orderNo = intent.getStringExtra("orderNo");
+        TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
+        screenHeight = app.getScreenHeight();
+        screenWith = app.getScreenWidth();
+        statusBarHeight = StatusBarUtil.getStatusBarHeight(this);
         invitePartnerJoin = getStringChangeBoolean(intent.getStringExtra("invitePartnerJoinCode"));
         ll_gp_detail_bottom.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -266,94 +296,64 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
             }
         });
         smart_refresh_ql_sp_details.setOnRefreshListener(refreshLayout -> loadData());
-        communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(QualityGroupShopDetailActivity.this));
-        communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
-                // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_gray_f_two_px).create());
-        directEvaluationAdapter = new DirectEvaluationAdapter(QualityGroupShopDetailActivity.this, goodsComments);
-        directEvaluationAdapter.setHeaderAndEmpty(true);
-        View joinGroupView = LayoutInflater.from(QualityGroupShopDetailActivity.this).inflate(R.layout.layout_communal_recycler_wrap, null);
-        shopJoinGroupView = new ShopJoinGroupView();
-        ButterKnife.bind(shopJoinGroupView, joinGroupView);
-        shopJoinGroupView.initView();
-//        评论头部
-        View commentHeaderView = LayoutInflater.from(QualityGroupShopDetailActivity.this).inflate(R.layout.layout_shop_comment_header, null);
-        shopCommentHeaderView = new ShopCommentHeaderView();
-        ButterKnife.bind(shopCommentHeaderView, commentHeaderView);
-        shopCommentHeaderView.initView();
-        directEvaluationAdapter.addHeaderView(joinGroupView);
-        directEvaluationAdapter.addHeaderView(commentHeaderView);
-        directEvaluationAdapter.getHeaderLayout();
-        directEvaluationAdapter.getFooterLayout();
-        communal_recycler_wrap.setNestedScrollingEnabled(false);
-        communal_recycler_wrap.setAdapter(directEvaluationAdapter);
 
-        directEvaluationAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
-            @Override
-            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                switch (view.getId()) {
-                    case R.id.img_direct_avatar:
-                        GoodsCommentBean goodsCommentBean = (GoodsCommentBean) view.getTag(R.id.iv_avatar_tag);
-                        if (goodsCommentBean != null) {
-                            Intent intent = new Intent(QualityGroupShopDetailActivity.this, UserPagerActivity.class);
-                            intent.putExtra("userId", String.valueOf(goodsCommentBean.getUserId()));
-                            startActivity(intent);
-                        }
-                        break;
-                    case R.id.tv_eva_count:
-                        goodsCommentBean = (GoodsCommentBean) view.getTag();
-                        if (goodsCommentBean != null && !goodsCommentBean.isFavor()) {
-                            if (userId > 0) {
-                                setProductEvaLike(view);
-                            } else {
-                                getLoginStatus(QualityGroupShopDetailActivity.this);
-                            }
-                        }
-                        break;
+        //初始化拼团列表
+        rv_group_join.setLayoutManager(new LinearLayoutManager(QualityGroupShopDetailActivity.this));
+        joinGroupAdapter = new JoinGroupAdapter(QualityGroupShopDetailActivity.this, groupShopJoinList);
+        rv_group_join.setAdapter(joinGroupAdapter);
+        joinGroupAdapter.setOnItemClickListener((adapter, view, position) -> {
+            GroupShopJoinBean groupShopJoinBean = (GroupShopJoinBean) view.getTag();
+            if (groupShopJoinBean != null && mGroupShopDetailsBean != null) {
+                if (userId != 0) {
+                    isCanJoinGroup(groupShopJoinBean);
+                } else {
+                    getLoginStatus(QualityGroupShopDetailActivity.this);
                 }
-
             }
         });
-        fragmentManager = getSupportFragmentManager();
-        for (int i = 0; i < title.length; i++) {
-            tabs.add(new TabEntity(title[i], 0, 0));
+
+        //初始化活动规则
+        rv_group_rule.setNestedScrollingEnabled(false);
+        gpRuleDetailsAdapter = new CommunalDetailAdapter(this, gpRuleList);
+        rv_group_rule.setLayoutManager(new LinearLayoutManager(this));
+        rv_group_rule.setAdapter(gpRuleDetailsAdapter);
+
+        //初始化评论列表
+        rv_comment.setLayoutManager(new LinearLayoutManager(this));
+        directEvaluationAdapter = new DirectEvaluationAdapter(this, goodsComments);
+        rv_comment.setNestedScrollingEnabled(false);
+        rv_comment.setAdapter(directEvaluationAdapter);
+
+        //初始化图文详情
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        rv_product_details.setLayoutManager(linearLayoutManager);
+        rv_product_details.setNestedScrollingEnabled(false);
+        communalDetailAdapter = new CommunalDetailAdapter(getActivity(), shopDetailBeanList);
+        rv_product_details.setAdapter(communalDetailAdapter);
+
+        for (int i = 0; i < detailTabData.length; i++) {
+            tabData.add(new TabEntity(detailTabData[i], 0, 0));
         }
-        changePage("ImgArticleShop");
-        ctb_ql_gp_sp_tab.setTabData(tabs);
-        ctb_ql_gp_sp_tab.setTextSize(AutoSizeUtils.mm2px(mAppContext, 30));
-        ctb_ql_gp_sp_tab.setOnTabSelectListener(new OnTabSelectListener() {
+        ctb_qt_pro_details.setTextSize(AutoSizeUtils.mm2px(mAppContext, 30));
+        ctb_qt_pro_details.setIndicatorWidth(AutoSizeUtils.mm2px(mAppContext, 28 * 2));
+        ctb_qt_pro_details.setTabPadding(AutoSizeUtils.mm2px(mAppContext, 20));
+        ctb_qt_pro_details.setTabData(tabData);
+        ctb_qt_pro_details.setOnTabSelectListener(new OnTabSelectListener() {
             @Override
             public void onTabSelect(int position) {
-                switch (position) {
-                    case 0:
-                        changePage("ImgArticleShop");
-                        break;
-                    case 1:
-                        changePage("ClientService");
-                        break;
-                }
+                scrollLocation(position);
             }
 
             @Override
             public void onTabReselect(int position) {
+                scrollLocation(position);
             }
         });
-        Drawable drawable = getResources().getDrawable(R.drawable.clock_time_icon_b);
-        drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight()); //设置边界
-        tv_pro_time_detail_status.setCompoundDrawables(drawable, null, null, null);
-
-        DynamicConfig.Builder dynamicDetails = new DynamicConfig.Builder();
-        dynamicDetails.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext, 22));
-        dynamicDetails.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext, 22));
-        ct_pro_show_time_detail.dynamicShow(dynamicDetails.build());
-        flex_communal_tag.setDividerDrawable(getResources().getDrawable(R.drawable.item_divider_product_tag));
-        flex_communal_tag.setShowDivider(FlexboxLayout.SHOW_DIVIDER_MIDDLE);
-        TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-        screenHeight = app.getScreenHeight();
-        nsv_gp_detail.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+        ctb_qt_pro_details.setCurrentTab(0);
+        scroll_pro.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
             @Override
-            public void onScrollChange(NestedScrollView nestedScrollView, int i, int newY, int i2, int oldY) {
-                if (newY > screenHeight * 1.5) {
+            public void onScrollChange(NestedScrollView nestedScrollView, int i, int scrollY, int i2, int oldY) {
+                if (scrollY > screenHeight * 1.5) {
                     if (download_btn_communal.getVisibility() == GONE) {
                         download_btn_communal.setVisibility(VISIBLE);
                         download_btn_communal.show(false);
@@ -366,58 +366,60 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                         download_btn_communal.hide(false);
                     }
                 }
+
+                //设置标题栏
+                float alpha = scrollY * 1.0f / screenHeight * 1.0f;
+                if (alpha >= 1) {
+                    mRlToolbar2.setAlpha(0);
+                    mRlToolbar.setAlpha(1);
+                } else if (alpha > 0) {
+                    mRlToolbar2.setAlpha(alpha > 0.4f ? 0 : 1 - alpha);
+                    mRlToolbar.setAlpha(alpha < 0.4f ? 0 : alpha);
+                } else {
+                    mRlToolbar2.setAlpha(1);
+                    mRlToolbar.setAlpha(0);
+                }
             }
         });
         download_btn_communal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                nsv_gp_detail.scrollTo(0, 0);
-                nsv_gp_detail.fling(0);
+                scroll_pro.scrollTo(0, 0);
+                scroll_pro.fling(0);
                 download_btn_communal.hide(false);
             }
         });
     }
 
-    private void changePage(String tag) {
-        Fragment fragmentByTag = fragmentManager.findFragmentByTag(tag);
-        transaction = fragmentManager.beginTransaction();
-        if (fragmentByTag != null && fragmentByTag.isAdded()) {
-            if (lastFragment != null) {
-                transaction.hide(lastFragment).commit();
+    private void setChangeMeasureHeight() {
+        //获取的测量高度包含了状态栏高度，所以要减去
+        int height = ll_pro_layout.getMeasuredHeight() - statusBarHeight;
+        measuredHeight = height > 0 ? height : ll_pro_layout.getMeasuredHeight();
+    }
+
+    private void scrollLocation(int position) {
+        setChangeMeasureHeight();
+        if (position == 0) {
+            scroll_pro.scrollTo(0, 0);
+        } else if (position == 1) {
+            if (ll_pro_layout.getMeasuredHeight() > 0) {
+                scroll_pro.scrollTo(0, measuredHeight);
             }
-            transaction.show(fragmentByTag);
-            lastFragment = fragmentByTag;
-            fragmentByTag.onResume();
-        } else {
-            Fragment fragment = null;
-            switch (tag) {
-                case "ImgArticleShop":
-                    fragment = BaseFragment.newInstance(DirectImgArticleFragment.class, null, null);
-                    break;
-                case "ClientService":
-                    fragment = BaseFragment.newInstance(GroupCustomerServiceFragment.class, null, null);
-                    break;
-            }
-            if (lastFragment != null) {
-                if (fragment.isAdded()) {
-                    transaction.hide(lastFragment).show(fragment).commit(); // 隐藏当前的fragment，显示下一个
-                } else {
-                    transaction.hide(lastFragment).add(R.id.fl_ql_sp_container, fragment, tag).commit();
-                }
-            } else {
-                transaction.add(R.id.fl_ql_sp_container, fragment, tag).commit();
-            }
-            lastFragment = fragment;
         }
     }
 
     @Override
     protected void loadData() {
-//        拼团列表
-        getGroupShopPerson();
+        //获取团购信息
         getGroupShopDetails();
-//        标签 拼团规则 服务承诺
+        //拼团规则 服务承诺
         getGroupCommunalInfo();
+        //获取拼团列表
+        getGroupShopPerson();
+        //获取商品评论
+        getComment();
+        //获取推荐文章
+        getArticalRecommend();
     }
 
     @Override
@@ -430,234 +432,6 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         return true;
     }
 
-    private void setProductEvaLike(View view) {
-        GoodsCommentBean goodsCommentBean = (GoodsCommentBean) view.getTag();
-        TextView tv_eva_like = (TextView) view;
-        Map<String, Object> params = new HashMap<>();
-        params.put("id", goodsCommentBean.getId());
-        params.put("uid", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, SHOP_EVA_LIKE, params, null);
-        goodsCommentBean.setFavor(!goodsCommentBean.isFavor());
-        tv_eva_like.setSelected(!tv_eva_like.isSelected());
-        tv_eva_like.setText(ConstantMethod.getNumCount(tv_eva_like.isSelected(), goodsCommentBean.isFavor(), goodsCommentBean.getLikeNum(), "赞"));
-    }
-
-    private void getShopDetails(GroupShopDetailsBean groupShopDetailsBean) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("id", groupShopDetailsBean.getProductId());
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_NEW_SHOP_DETAILS, params, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                Gson gson = new Gson();
-                ShopDetailsEntity shopDetailsEntity = gson.fromJson(result, ShopDetailsEntity.class);
-                if (shopDetailsEntity != null) {
-                    if (shopDetailsEntity.getCode().equals(SUCCESS_CODE)) {
-                        EventBus.getDefault().post(new EventMessage("ImgArticleShop", shopDetailsEntity.getShopPropertyBean().getItemBody()));
-                    }
-                }
-            }
-        });
-    }
-
-    //  获取商品评论
-    private void getGroupShopComment(GroupShopDetailsBean groupShopDetailsEntity) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("showCount", 2);
-        params.put("currentPage", 1);
-        params.put("id", groupShopDetailsEntity.getProductId());
-        if (userId > 0) {
-            params.put("uid", userId);
-        }
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_SHOP_DETAILS_COMMENT, params, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                goodsComments.clear();
-                Gson gson = new Gson();
-                GoodsCommentEntity goodsCommentEntity = gson.fromJson(result, GoodsCommentEntity.class);
-                if (goodsCommentEntity != null) {
-                    if (goodsCommentEntity.getCode().equals(SUCCESS_CODE)) {
-                        communal_recycler_wrap.setVisibility(View.VISIBLE);
-                        goodsComments.addAll(goodsCommentEntity.getGoodsComments());
-                    } else if (!goodsCommentEntity.getCode().equals(EMPTY_CODE)) {
-                        communal_recycler_wrap.setVisibility(GONE);
-                        showToast(QualityGroupShopDetailActivity.this, goodsCommentEntity.getMsg());
-                    }
-                    setCommentCount(goodsCommentEntity);
-                    directEvaluationAdapter.notifyDataSetChanged();
-                }
-            }
-        });
-    }
-
-    private void setCommentCount(GoodsCommentEntity goodsCommentEntity) {
-        if (goodsCommentEntity.getEvaluateCount() < 1) {
-            shopCommentHeaderView.rel_pro_comment.setVisibility(GONE);
-        } else {
-            shopCommentHeaderView.rel_pro_comment.setVisibility(View.VISIBLE);
-            shopCommentHeaderView.tv_shop_comment_count.setText(String.format(getResources().getString(R.string.product_comment_count), goodsCommentEntity.getEvaluateCount()));
-        }
-    }
-
-    /**
-     * 获取开团信息
-     */
-    private void getGroupShopPerson() {
-        if (!TextUtils.isEmpty(gpRecordId)) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("gpRecordId", gpRecordId);
-            NetLoadUtils.getNetInstance().loadNetDataPost(this, GROUP_MINE_SHARE, params, new NetLoadListenerHelper() {
-                @Override
-                public void onSuccess(String result) {
-                    groupShopJoinList.clear();
-                    Gson gson = new Gson();
-                    qualityGroupShareEntity = gson.fromJson(result, QualityGroupShareEntity.class);
-                    if (qualityGroupShareEntity != null) {
-                        if (qualityGroupShareEntity.getCode().equals(SUCCESS_CODE)) {
-                            QualityGroupShareBean qualityGroupShareBean = qualityGroupShareEntity.getQualityGroupShareBean();
-                            GroupShopJoinBean groupShopJoinBean = new GroupShopJoinBean();
-                            groupShopJoinBean.setCurrentTime(qualityGroupShareEntity.getCurrentTime());
-                            if (invitePartnerJoin) {
-                                groupShopJoinBean.setGpCreateTime(qualityGroupShareEntity.getCurrentTime());
-                                List<MemberListBean> memberListBeans = new ArrayList<>(qualityGroupShareBean.getMemberList());
-                                int leftParticipant = qualityGroupShareBean.getMemberCount() - qualityGroupShareBean.getMemberList().size();
-                                for (int i = 0; i < leftParticipant; i++) {
-                                    MemberListBean memberListBean = new MemberListBean();
-                                    memberListBean.setAvatar("android.resource://com.amkj.dmsh/drawable/" + R.drawable.dm_gp_join);
-                                    memberListBeans.add(memberListBean);
-                                }
-                                groupShopJoinBean.setItemType(TYPE_2);
-                                groupShopJoinBean.setMemberListBeans(memberListBeans);
-                                tv_sp_details_join_buy_price.setVisibility(GONE);
-                                if (leftParticipant < 1 || isEndOrStartTime(qualityGroupShareEntity.getCurrentTime(), qualityGroupShareBean.getGpEndTime())) {
-                                    ll_group_buy.setEnabled(false);
-                                    groupShopJoinBean.setGpEndTime(qualityGroupShareEntity.getCurrentTime());
-                                } else {
-                                    groupShopJoinBean.setGpEndTime(qualityGroupShareBean.getGpEndTime());
-                                    ll_group_buy.setEnabled(true);
-                                }
-                                tv_sp_details_join_count.setText("邀请好友");
-                                tv_sp_details_ol_buy_price.setVisibility(GONE);
-                                tv_sp_details_ol_buy.setText("全部拼团");
-                            } else {
-                                tv_sp_details_join_buy_price.setVisibility(View.VISIBLE);
-                                groupShopJoinBean.setItemType(ConstantVariable.TYPE_1);
-                                setGpDataInfo(qualityGroupShareBean);
-                            }
-                            groupShopJoinBean.setGpStatusTag(qualityGroupShareBean.getInfoStatusTag());
-                            groupShopJoinBean.setGpInfoId(qualityGroupShareBean.getGpInfoId());
-                            groupShopJoinBean.setGpRecordId(Integer.parseInt(qualityGroupShareBean.getGpRecordId()));
-                            groupShopJoinList.add(groupShopJoinBean);
-                            shopJoinGroupView.joinGroupAdapter.removeAllHeaderView();
-                            if (groupShopJoinList.size() > 0) {
-                                shopJoinGroupView.joinGroupAdapter.addHeaderView(shopJoinGroupView.headerView);
-                            }
-                            shopJoinGroupView.joinGroupAdapter.setNewData(groupShopJoinList);
-                        } else if (qualityGroupShareEntity.getCode().equals(EMPTY_CODE)) {
-                            showToast(QualityGroupShopDetailActivity.this, R.string.unConnectedNetwork);
-                            ll_group_buy.setEnabled(false);
-                            tv_sp_details_join_count.setText("拼团失败");
-                        } else {
-                            showToast(QualityGroupShopDetailActivity.this, qualityGroupShareEntity.getMsg());
-                            ll_group_buy.setEnabled(false);
-                            tv_sp_details_join_count.setText("拼团失败");
-                        }
-                    }
-                }
-
-                @Override
-                public void onError(Throwable throwable) {
-                    showToast(QualityGroupShopDetailActivity.this, R.string.connectedFaile);
-                }
-
-                @Override
-                public void netClose() {
-                    showToast(QualityGroupShopDetailActivity.this, R.string.unConnectedNetwork);
-                }
-            });
-        } else {
-            Map<String, Object> params = new HashMap<>();
-            params.put("gpInfoId", gpInfoId);
-            if (userId > 0) {
-                params.put("uid", userId);
-            }
-            NetLoadUtils.getNetInstance().loadNetDataPost(this, GROUP_SHOP_OPEN_PERSON, params, new NetLoadListenerHelper() {
-                @Override
-                public void onSuccess(String result) {
-                    smart_refresh_ql_sp_details.finishRefresh();
-                    groupShopJoinList.clear();
-                    Gson gson = new Gson();
-                    GroupShopJoinEntity groupShopJoinEntity = gson.fromJson(result, GroupShopJoinEntity.class);
-                    if (groupShopJoinEntity != null) {
-                        if (groupShopJoinEntity.getCode().equals(SUCCESS_CODE)) {
-                            for (int i = 0; i < groupShopJoinEntity.getGroupShopJoinBeanList().size(); i++) {
-                                GroupShopJoinBean groupShopJoinBean = groupShopJoinEntity.getGroupShopJoinBeanList().get(i);
-                                groupShopJoinBean.setCurrentTime(groupShopJoinEntity.getCurrentTime());
-                                groupShopJoinBean.setNumOrder(i);
-                                groupShopJoinList.add(groupShopJoinBean);
-                            }
-                        }
-                        shopJoinGroupView.joinGroupAdapter.removeAllHeaderView();
-                        if (groupShopJoinList.size() > 0) {
-                            shopJoinGroupView.joinGroupAdapter.addHeaderView(shopJoinGroupView.headerView);
-                        }
-                        shopJoinGroupView.joinGroupAdapter.setNewData(groupShopJoinList);
-                    }
-                }
-
-                @Override
-                public void onNotNetOrException() {
-                    smart_refresh_ql_sp_details.finishRefresh();
-                }
-            });
-        }
-    }
-
-    private void setGpDataInfo(QualityGroupShareBean qualityGroupShareEntity) {
-        tv_sp_details_join_buy_price.setText(getStrings(qualityGroupShareEntity.getGpPrice()));
-        tv_sp_details_join_count.setText("立即参团");
-    }
-
-    private void getGroupCommunalInfo() {
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, GROUP_SHOP_COMMUNAL, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                smart_refresh_ql_sp_details.finishRefresh();
-                Gson gson = new Gson();
-                groupShopCommunalInfoEntity = gson.fromJson(result, GroupShopCommunalInfoEntity.class);
-                if (groupShopCommunalInfoEntity != null) {
-                    if (groupShopCommunalInfoEntity.getCode().equals(SUCCESS_CODE)) {
-                        setCommunalInfo(groupShopCommunalInfoEntity.getGroupShopCommunalInfoBean());
-                    }
-                }
-            }
-
-            @Override
-            public void onNotNetOrException() {
-                smart_refresh_ql_sp_details.finishRefresh();
-            }
-        });
-    }
-
-    private void setCommunalInfo(GroupShopCommunalInfoBean groupShopCommunalInfoBean) {
-        List<CommunalDetailBean> gpRuleBeanList = groupShopCommunalInfoBean.getGpRule();
-//        拼团规则
-        if (gpRuleBeanList != null && gpRuleBeanList.size() > 0) {
-            gpRuleList.clear();
-            gpRuleList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(groupShopCommunalInfoBean.getGpRule()));
-            shopCommentHeaderView.gpRuleDetailsAdapter.notifyDataSetChanged();
-        }
-        final String[] tagArray = groupShopCommunalInfoBean.getServicePromiseTitle().split(",");
-        if (tagArray.length > 0) {
-            ll_layout_pro_tag.setVisibility(View.VISIBLE);
-            flex_communal_tag.removeAllViews();
-            for (int i = 0; i < (tagArray.length > 3 ? 3 : tagArray.length); i++) {
-                flex_communal_tag.addView(ProductLabelCreateUtils.createProductTag(QualityGroupShopDetailActivity.this, tagArray[i]));
-            }
-        } else {
-            ll_layout_pro_tag.setVisibility(GONE);
-        }
-    }
-
     private void getGroupShopDetails() {
         Map<String, Object> params = new HashMap<>();
         params.put("gpInfoId", gpInfoId);
@@ -665,74 +439,99 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                 params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
-                        smart_refresh_ql_sp_details.finishRefresh();
                         Gson gson = new Gson();
-                        shopDetailsEntity = gson.fromJson(result, GroupShopDetailsEntity.class);
-                        if (shopDetailsEntity != null) {
-                            if (shopDetailsEntity.getCode().equals(SUCCESS_CODE)) {
-                                setGroupShopDetailsData(shopDetailsEntity);
-                                //         获取商品评论列表
-                                groupShopDetailsBean = shopDetailsEntity.getGroupShopDetailsBean();
-                                getGroupShopComment(groupShopDetailsBean);
-                                //        获取商品详情
-                                getShopDetails(groupShopDetailsBean);
-                            } else if (!shopDetailsEntity.getCode().equals(EMPTY_CODE)) {
-                                showToast(QualityGroupShopDetailActivity.this, shopDetailsEntity.getMsg());
+                        mGroupShopDetailsEntity = gson.fromJson(result, GroupShopDetailsEntity.class);
+                        if (mGroupShopDetailsEntity != null && mGroupShopDetailsEntity.getGroupShopDetailsBean() != null) {
+                            mGroupShopDetailsBean = mGroupShopDetailsEntity.getGroupShopDetailsBean();
+                            if (mGroupShopDetailsEntity.getCode().equals(SUCCESS_CODE)) {
+                                setGroupShopDetailsData(mGroupShopDetailsBean);
+                            } else if (!mGroupShopDetailsEntity.getCode().equals(EMPTY_CODE)) {
+                                showToast(QualityGroupShopDetailActivity.this, mGroupShopDetailsEntity.getMsg());
                             }
                         }
-                        NetLoadUtils.getNetInstance().showLoadSir(loadService, groupShopDetailsBean, shopDetailsEntity);
+
+                        getShopDetails();
                     }
 
                     @Override
                     public void onNotNetOrException() {
-                        smart_refresh_ql_sp_details.finishRefresh();
-                        NetLoadUtils.getNetInstance().showLoadSir(loadService, groupShopDetailsBean, shopDetailsEntity);
-                    }
-
-                    @Override
-                    public void netClose() {
-                        showToast(QualityGroupShopDetailActivity.this, R.string.unConnectedNetwork);
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
-                        showToast(QualityGroupShopDetailActivity.this, R.string.invalidData);
+                        getShopDetails();
                     }
                 });
     }
 
-    private void setGroupShopDetailsData(GroupShopDetailsEntity groupShopDetailsEntity) {
-        GroupShopDetailsBean groupShopDetailsBean = groupShopDetailsEntity.getGroupShopDetailsBean();
-        String[] images = groupShopDetailsBean.getImages().split(",");
-        imagesVideoList.clear();
-        CommunalADActivityBean communalADActivityBean;
-        List<String> imageList = new ArrayList<>();
-        if (images.length != 0) {
-            imageList.addAll(Arrays.asList(images));
-            for (String imagePath : imageList) {
-                communalADActivityBean = new CommunalADActivityBean();
-                communalADActivityBean.setPicUrl(imagePath);
-                imagesVideoList.add(communalADActivityBean);
-            }
-        } else {
-            communalADActivityBean = new CommunalADActivityBean();
-            communalADActivityBean.setPicUrl(getStrings(groupShopDetailsBean.getCoverImage()));
-            imageList.add(getStrings(groupShopDetailsBean.getCoverImage()));
-            imagesVideoList.add(communalADActivityBean);
-        }
-        if (groupShopDetailsBean.getRange() == 1) {
-            tv_ql_gp_sp_new_detail.setVisibility(View.VISIBLE);
-            shopJoinGroupView.tv_partner_join.setText(R.string.ql_new_gp_tint);
-        } else if (groupShopDetailsBean.getRange() == 0) {
-            tv_ql_gp_sp_new_detail.setVisibility(View.GONE);
-            shopJoinGroupView.tv_partner_join.setText(R.string.ql_normal_gp_tint);
-        }
+    private void getShopDetails() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", productId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_NEW_SHOP_DETAILS, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                smart_refresh_ql_sp_details.finishRefresh();
+                shopDetailBeanList.clear();
+                mShopDetailsEntity = new Gson().fromJson(result, ShopDetailsEntity.class);
+                if (mShopDetailsEntity != null && mShopDetailsEntity.getShopPropertyBean() != null) {
+                    if (mShopDetailsEntity.getCode().equals(SUCCESS_CODE)) {
+                        setProductData(mShopDetailsEntity.getShopPropertyBean());
+                    }
+                }
 
+                communalDetailAdapter.notifyDataSetChanged();
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, mGroupShopDetailsEntity);
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                smart_refresh_ql_sp_details.finishRefresh();
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, mGroupShopDetailsEntity);
+            }
+        });
+    }
+
+    //  获取商品评论
+    private void getComment() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("showCount", 1);
+        params.put("currentPage", 1);
+        params.put("id", productId);
+        if (userId > 0) {
+            params.put("uid", userId);
+        }
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.Q_SHOP_DETAILS_COMMENT, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                goodsComments.clear();
+                Gson gson = new Gson();
+                GoodsCommentEntity goodsCommentEntity = gson.fromJson(result, GoodsCommentEntity.class);
+                if (goodsCommentEntity != null) {
+                    if (goodsCommentEntity.getCode().equals(SUCCESS_CODE)) {
+                        goodsComments.addAll(goodsCommentEntity.getGoodsComments());
+                    } else if (!goodsCommentEntity.getCode().equals(EMPTY_CODE)) {
+                        showToast(getActivity(), goodsCommentEntity.getMsg());
+                    }
+                    tv_shop_comment_count.setText(("Ta们在说(" + goodsCommentEntity.getEvaluateCount() + ")"));
+                    directEvaluationAdapter.setNewData(goodsComments);
+
+                    ll_comment.setVisibility(goodsComments.size() > 0 ? VISIBLE : GONE);
+                }
+            }
+        });
+    }
+
+    private void setProductData(final ShopPropertyBean shopProperty) {
+        //轮播位（包含图片以及视频）
+        imagesVideoList.clear();
+        List<String> imageList = Arrays.asList(shopProperty.getImages().split(","));
+        if (shopProperty.haveVideo()) {
+            imagesVideoList.add(new CommunalADActivityBean("", shopProperty.getVideoUrl()));
+        }
+        for (int i = 0; i < imageList.size(); i++) {
+            imagesVideoList.add(new CommunalADActivityBean(getSquareImgUrl(imageList.get(i), screenWith, shopProperty.getWaterRemark()), ""));
+        }
         if (cbViewHolderCreator == null) {
             cbViewHolderCreator = new CBViewHolderCreator() {
                 @Override
                 public Holder createHolder(View itemView) {
-                    return new CommunalAdHolderView(itemView, QualityGroupShopDetailActivity.this, false);
+                    return new CommunalAdHolderView(itemView, getActivity(), false);
                 }
 
                 @Override
@@ -741,43 +540,113 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                 }
             };
         }
-        banner_ql_gp_sp_details.setPages(this, cbViewHolderCreator, imagesVideoList).setCanLoop(true)
+        banner_ql_sp_pro_details.setPages(this, cbViewHolderCreator, imagesVideoList).setCanLoop(false)
                 .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius});
-        banner_ql_gp_sp_details.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(int position) {
-                if (imagesVideoList.size() > position) {
-                    if (imageList.size() > 0 && position < imageList.size()) {
-                        showImageActivity(QualityGroupShopDetailActivity.this, IMAGE_DEF,
-                                position,
-                                imageList);
-                    }
+        banner_ql_sp_pro_details.setOnItemClickListener(position -> {
+            if (imagesVideoList.size() > position) {
+                CommunalADActivityBean communalADActivityBean = imagesVideoList.get(position);
+                if (!TextUtils.isEmpty(communalADActivityBean.getVideoUrl())) {
+                    return;
                 }
+
+                showImageActivity(getActivity(), IMAGE_DEF,
+                        position - (shopProperty.haveVideo() ? 1 : 0),
+                        imageList);
             }
         });
-        tv_open_pro_label.setText(getStrings(groupShopDetailsBean.getGoodsAreaLabel()));
-        if (!ConstantMethod.isEndOrStartTime(groupShopDetailsEntity.getCurrentTime()
-                , groupShopDetailsBean.getGpEndTime())) {
-            setCountTime(groupShopDetailsEntity);
-            constantMethod.createSchedule();
-            constantMethod.setRefreshTimeListener(new ConstantMethod.RefreshTimeListener() {
-                @Override
-                public void refreshTime() {
-                    shopDetailsEntity.setSecond(shopDetailsEntity.getSecond() + 1);
-                    setCountTime(shopDetailsEntity);
-                }
-            });
-        } else {
-            ct_pro_show_time_detail.setVisibility(GONE);
-            tv_pro_time_detail_status.setText("已结束");
-            if (constantMethod != null) {
-                constantMethod.stopSchedule();
-            }
+
+        //商品服务标签
+        setSeviceTag(shopProperty, ll_layout_pro_sc_tag, flex_product_tag);
+
+        //图文详情
+        List<CommunalDetailObjectBean> detailsDataList = CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(shopProperty.getItemBody());
+        CommunalDetailObjectBean communalDetailObjectBean = new CommunalDetailObjectBean();
+        communalDetailObjectBean.setItemType(TYPE_PRODUCT_TITLE);
+        communalDetailObjectBean.setContent("商品详情");
+        shopDetailBeanList.add(communalDetailObjectBean);
+        shopDetailBeanList.addAll(detailsDataList);
+        if (serviceDataList.size() > 0) {
+            shopDetailBeanList.addAll(serviceDataList);
         }
-        tv_ql_sp_pro_name.setText(getStrings(groupShopDetailsBean.getName()));
-        tv_gp_sp_per_count.setText(getStrings(groupShopDetailsBean.getGpType()));
-        tv_gp_sp_per_price.setText(getStringsChNPrice(this, groupShopDetailsBean.getGpPrice()));
-        tv_gp_sp_nor_price.setText("单买价 ¥" + groupShopDetailsBean.getPrice());
+        communalDetailAdapter.notifyDataSetChanged();
+
+        //设置sku
+        setSkuProp(shopProperty);
+    }
+
+    private void setSkuProp(ShopPropertyBean shopProperty) {
+        List<SkuSaleBean> skuSaleList = shopProperty.getSkuSale();
+        if (skuSaleList != null && skuSaleList.size() > 0) {
+            //选择规格
+            tv_ql_sp_pro_sku.setTextColor(getResources().getColor(R.color.color_blue_reply_com));
+            tv_ql_sp_pro_sku.setText(getString(R.string.sel_pro_sku
+                    , getStrings(shopProperty.getProps().get(0).getPropName())));
+            //有多个SKU
+            if (skuSaleList.size() > 1) {
+                ll_sp_pro_sku_value.setVisibility(VISIBLE);
+                editGoodsSkuBean = new EditGoodsSkuEntity.EditGoodsSkuBean();
+                editGoodsSkuBean.setQuantity(shopProperty.getQuantity());
+                editGoodsSkuBean.setId(shopProperty.getId());
+                editGoodsSkuBean.setDelivery(shopProperty.getDelivery());
+                editGoodsSkuBean.setPicUrl(shopProperty.getPicUrl());
+                editGoodsSkuBean.setProps(shopProperty.getProps());
+                editGoodsSkuBean.setPropvalues(shopProperty.getPropvalues());
+                editGoodsSkuBean.setProductName(shopProperty.getName());
+                editGoodsSkuBean.setSkuSale(shopProperty.getSkuSale());
+                editGoodsSkuBean.setActivityCode(getStrings(shopProperty.getActivityCode()));
+                editGoodsSkuBean.setPresentIds(getStrings(shopProperty.getPresentIds()));
+                if ("待售".equals(getStrings(shopProperty.getSellStatus()))) {
+                    editGoodsSkuBean.setSellStatus(true);
+                } else {
+                    editGoodsSkuBean.setSellStatus(false);
+                }
+                editGoodsSkuBean.setMaxDiscounts(getStrings(shopProperty.getMaxDiscounts()));
+                skuDialog = new SkuDialog(getActivity());
+                skuDialog.setDismissListener(shopCarGoodsSku -> {
+                    if (shopCarGoodsSku != null) {
+                        shopCarGoodsSkuDif = shopCarGoodsSku;
+                        tv_ql_sp_pro_sku.setTextColor(getResources().getColor(R.color.text_black_t));
+                        tv_ql_sp_pro_sku.setText(("已选：" + shopCarGoodsSku.getValuesName()));
+                    }
+                });
+                skuDialog.refreshView(editGoodsSkuBean);
+            } else {
+                //仅有一个SKU
+                ll_sp_pro_sku_value.setVisibility(View.GONE);
+                ll_sp_pro_sku_value.setVisibility(View.GONE);
+                shopCarGoodsSkuDif = new ShopCarGoodsSku();
+                shopCarGoodsSkuDif.setCount(1);
+                shopCarGoodsSkuDif.setSaleSkuId(shopProperty.getSkuSale().get(0).getId());
+                shopCarGoodsSkuDif.setPrice(Double.parseDouble(shopProperty.getSkuSale().get(0).getPrice()));
+                shopCarGoodsSkuDif.setProductId(shopProperty.getId());
+                shopCarGoodsSkuDif.setPicUrl(shopProperty.getPicUrl());
+                shopCarGoodsSkuDif.setActivityCode(getStrings(shopProperty.getActivityCode()));
+                shopCarGoodsSkuDif.setValuesName(
+                        !TextUtils.isEmpty(shopProperty.getPropvalues().get(0).getPropValueName())
+                                ? shopProperty.getPropvalues().get(0).getPropValueName() : "默认");
+                shopCarGoodsSkuDif.setPresentIds(getStrings(shopProperty.getSkuSale().get(0).getPresentSkuIds()));
+            }
+        } else {
+            showToast(this, "商品数据错误");
+        }
+    }
+
+    private void setGroupShopDetailsData(GroupShopDetailsBean groupShopDetailsBean) {
+        if (groupShopDetailsBean.getRange() == 1) {
+            tv_ql_gp_sp_new_detail.setVisibility(View.VISIBLE);
+            tv_partner_join.setText(R.string.ql_new_gp_tint);
+        } else if (groupShopDetailsBean.getRange() == 0) {
+            tv_ql_gp_sp_new_detail.setVisibility(View.GONE);
+            tv_partner_join.setText(R.string.ql_normal_gp_tint);
+        }
+
+        //设置商品标题
+        String productName = TextUtils.isEmpty(groupShopDetailsBean.getSubtitle()) ? groupShopDetailsBean.getName() : (groupShopDetailsBean.getSubtitle() + "•" + groupShopDetailsBean.getName());
+        tv_ql_sp_pro_name.setText(getStrings(productName));
+
+        tv_gp_sp_per_count.setText(getStrings(groupShopDetailsBean.getMemberCount() + "人拼团价¥"));
+        tv_gp_sp_per_price.setText(getStrings(groupShopDetailsBean.getGpPrice()));
+        tv_gp_sp_nor_price.setText("原价 ¥" + groupShopDetailsBean.getPrice());
         tv_sp_details_ol_buy.setText("单独购买");
         tv_sp_details_ol_buy_price.setText(getStringsChNPrice(this, groupShopDetailsBean.getPrice()));
         if (groupShopDetailsBean.getQuantityStatus() == null) {
@@ -805,228 +674,344 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         }
     }
 
-    private void setCountTime(GroupShopDetailsEntity groupShopDetailsEntity) {
-        ct_pro_show_time_detail.setVisibility(VISIBLE);
-        GroupShopDetailsBean groupShopDetailsBean = groupShopDetailsEntity.getGroupShopDetailsBean();
-        if (isTimeStart(groupShopDetailsEntity, groupShopDetailsBean)) {
-            try {
-                //格式化结束时间
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-                Date dateEnd = formatter.parse(groupShopDetailsBean.getGpEndTime());
-                Date dateCurrent;
-                if (!TextUtils.isEmpty(groupShopDetailsEntity.getCurrentTime())) {
-                    dateCurrent = formatter.parse(groupShopDetailsEntity.getCurrentTime());
-                } else {
-                    dateCurrent = new Date();
-                }
-                DynamicConfig.Builder dynamic = new DynamicConfig.Builder();
-                dynamic.setTimeTextColor(getResources().getColor(R.color.text_normal_red));
-                dynamic.setSuffixTextColor(getResources().getColor(R.color.text_login_gray_s));
-                ct_pro_show_time_detail.dynamicShow(dynamic.build());
-                ct_pro_show_time_detail.updateShow(dateEnd.getTime() - dateCurrent.getTime() - groupShopDetailsEntity.getSecond() * 1000);
-                tv_pro_time_detail_status.setText("距结束");
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        } else {
-            try {
-                //格式化开始时间
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-                Date dateStart = formatter.parse(groupShopDetailsBean.getGpStartTime());
-                Date dateCurrent;
-                if (!TextUtils.isEmpty(groupShopDetailsEntity.getCurrentTime())) {
-                    dateCurrent = formatter.parse(groupShopDetailsEntity.getCurrentTime());
-                } else {
-                    dateCurrent = new Date();
-                }
-                DynamicConfig.Builder dynamic = new DynamicConfig.Builder();
-                dynamic.setTimeTextColor(getResources().getColor(R.color.text_login_gray_s));
-                dynamic.setSuffixTextColor(getResources().getColor(R.color.text_login_gray_s));
-                ct_pro_show_time_detail.dynamicShow(dynamic.build());
-                ct_pro_show_time_detail.updateShow(dateStart.getTime() - dateCurrent.getTime() - groupShopDetailsEntity.getSecond() * 1000);
-                tv_pro_time_detail_status.setText("距开始");
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        }
-        if (!ConstantMethod.isEndOrStartTimeAddSeconds(groupShopDetailsEntity.getCurrentTime()
-                , groupShopDetailsBean.getGpEndTime()
-                , groupShopDetailsEntity.getSecond())) {
-            ct_pro_show_time_detail.setOnCountdownEndListener(new CountdownView.OnCountdownEndListener() {
+
+    //获取拼团列表
+    private void getGroupShopPerson() {
+        if (!TextUtils.isEmpty(gpRecordId)) {
+            mLlGroupDetailBottom.setVisibility(GONE);
+            mLlGroupDetailBottom2.setVisibility(VISIBLE);
+            Map<String, Object> params = new HashMap<>();
+            params.put("gpRecordId", gpRecordId);
+            NetLoadUtils.getNetInstance().loadNetDataPost(this, GROUP_MINE_SHARE, params, new NetLoadListenerHelper() {
                 @Override
-                public void onEnd(CountdownView cv) {
-                    cv.setOnCountdownEndListener(null);
-                    loadData();
+                public void onSuccess(String result) {
+                    groupShopJoinList.clear();
+                    Gson gson = new Gson();
+                    qualityGroupShareEntity = gson.fromJson(result, QualityGroupShareEntity.class);
+                    if (qualityGroupShareEntity != null) {
+                        if (qualityGroupShareEntity.getCode().equals(SUCCESS_CODE)) {
+                            QualityGroupShareBean qualityGroupShareBean = qualityGroupShareEntity.getQualityGroupShareBean();
+                            if (qualityGroupShareBean != null) {
+                                List<MemberListBean> memberList = qualityGroupShareBean.getMemberList();
+                                if (memberList != null && memberList.size() > 0) {
+                                    GroupShopJoinBean groupShopJoinBean = new GroupShopJoinBean();
+                                    List<MemberListBean> memberListBeans = new ArrayList<>(qualityGroupShareBean.getMemberList());
+                                    int leftParticipant = qualityGroupShareBean.getMemberCount() - qualityGroupShareBean.getMemberList().size();
+                                    for (int i = 0; i < leftParticipant; i++) {
+                                        MemberListBean memberListBean = new MemberListBean();
+                                        memberListBean.setAvatar("android.resource://com.amkj.dmsh/drawable/" + R.drawable.who);
+                                        memberListBeans.add(memberListBean);
+                                    }
+                                    groupShopJoinBean.setItemType(TYPE_2);
+                                    groupShopJoinBean.setMemberListBeans(memberListBeans);
+
+                                    //还差几人成团
+                                    if (leftParticipant > 0) {
+                                        //未结束
+                                        if (isEndOrStartTime(qualityGroupShareBean.getGpEndTime(), TimeUtils.getCurrentTime(qualityGroupShareEntity))) {
+                                            mTvInvate.setEnabled(true);
+                                            groupShopJoinBean.setGroupStatus(ConstantMethod.getIntegralFormat(getActivity(), R.string.leftParticipant, leftParticipant));
+                                        } else {
+                                            mTvInvate.setEnabled(false);
+                                            groupShopJoinBean.setGroupStatus("已结束");
+                                        }
+                                    } else {
+                                        mTvInvate.setEnabled(false);
+                                        groupShopJoinBean.setGroupStatus("已成团");
+                                    }
+
+                                    groupShopJoinList.add(groupShopJoinBean);
+                                }else {
+                                    mTvInvate.setEnabled(false);
+                                }
+                            }
+                        }
+                    }
+
+                    joinGroupAdapter.setNewData(groupShopJoinList);
+                    ll_group_join.setVisibility(groupShopJoinList.size() > 0 ? VISIBLE : GONE);
+                }
+
+                @Override
+                public void onNotNetOrException() {
+                    ll_group_join.setVisibility(groupShopJoinList.size() > 0 ? VISIBLE : GONE);
                 }
             });
         } else {
-            ct_pro_show_time_detail.setOnCountdownEndListener(null);
-        }
-
-    }
-
-    private boolean isTimeStart(GroupShopDetailsEntity groupShopDetailsEntity, GroupShopDetailsBean groupShopDetailsBean) {
-        try {
-            //格式化开始时间
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-            Date dateStart = formatter.parse(groupShopDetailsBean.getGpStartTime());
-            Date dateCurrent;
-            if (!TextUtils.isEmpty(groupShopDetailsEntity.getCurrentTime())) {
-                dateCurrent = formatter.parse(groupShopDetailsEntity.getCurrentTime());
-            } else {
-                dateCurrent = new Date();
+            mLlGroupDetailBottom.setVisibility(VISIBLE);
+            mLlGroupDetailBottom2.setVisibility(GONE);
+            Map<String, Object> params = new HashMap<>();
+            params.put("gpInfoId", gpInfoId);
+            if (userId > 0) {
+                params.put("uid", userId);
             }
-            if (dateCurrent.getTime() >= dateStart.getTime()) {
-                return true;
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
+            NetLoadUtils.getNetInstance().loadNetDataPost(this, GROUP_SHOP_OPEN_PERSON, params, new NetLoadListenerHelper() {
+                @Override
+                public void onSuccess(String result) {
+                    groupShopJoinList.clear();
+                    Gson gson = new Gson();
+                    GroupShopJoinEntity groupShopJoinEntity = gson.fromJson(result, GroupShopJoinEntity.class);
+                    if (groupShopJoinEntity != null) {
+                        if (groupShopJoinEntity.getCode().equals(SUCCESS_CODE)) {
+                            List<GroupShopJoinBean> joinBeanList = groupShopJoinEntity.getGroupShopJoinBeanList();
+                            if (joinBeanList != null && joinBeanList.size() > 0) {
+                                for (int i = 0; i < joinBeanList.size(); i++) {
+                                    GroupShopJoinBean groupShopJoinBean = joinBeanList.get(i);
+                                    groupShopJoinBean.setCurrentTime(groupShopJoinEntity.getCurrentTime());
+                                    groupShopJoinList.add(groupShopJoinBean);
+                                }
+                            }
+                        }
+                    }
+                    ll_group_join.setVisibility(groupShopJoinList.size() > 0 ? VISIBLE : GONE);
+                    joinGroupAdapter.setNewData(groupShopJoinList);
+                }
 
-    @Override
-    protected void postEventResult(@NonNull EventMessage message) {
-        if (message.type.equals("refreshGroupShopPerson") || message.type.equals("refreshGroupShop")) {
-            getGroupShopPerson();
-        }
-    }
-
-    @OnClick(R.id.ll_layout_pro_tag)
-    void openDialog(View view) {
-        if (groupShopCommunalInfoEntity != null) {
-            if (alertDialog == null) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(QualityGroupShopDetailActivity.this, R.style.CustomTransDialog);
-                View dialogView = LayoutInflater.from(QualityGroupShopDetailActivity.this).inflate(R.layout.layout_ql_gp_dialog, communal_recycler_wrap, false);
-                initDialogView(dialogView);
-                alertDialog = builder.create();
-                alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                alertDialog.setCanceledOnTouchOutside(true);
-                alertDialog.show();
-                TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-                int dialogHeight = (int) (app.getScreenHeight() * 0.618 + 1);
-                Window window = alertDialog.getWindow();
-                window.getDecorView().setPadding(0, 0, 0, 0);
-                window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, dialogHeight);
-                window.setGravity(Gravity.BOTTOM);//底部出现
-                window.setContentView(dialogView);
-            } else {
-                alertDialog.show();
-            }
+                @Override
+                public void onNotNetOrException() {
+                    ll_group_join.setVisibility(groupShopJoinList.size() > 0 ? VISIBLE : GONE);
+                }
+            });
         }
     }
 
-    private void initDialogView(View dialogView) {
-        FlexboxLayout flex_communal_tag = dialogView.findViewById(R.id.flex_communal_tag);
-        RecyclerView communal_recycler_wrap = (RecyclerView) dialogView.findViewById(R.id.communal_recycler_wrap);
-        TextView tv_pro_buy_detail_text = (TextView) dialogView.findViewById(R.id.tv_pro_buy_detail_text);
-        TextView tv_title_text = (TextView) dialogView.findViewById(R.id.tv_title_text);
-        tv_title_text.setText("服务承诺");
-        tv_pro_buy_detail_text.setVisibility(GONE);
-        communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(QualityGroupShopDetailActivity.this));
-        communal_recycler_wrap.setNestedScrollingEnabled(false);
-        CommunalDetailAdapter gpRuleDetailsAdapter = new CommunalDetailAdapter(QualityGroupShopDetailActivity.this, diaRuleList);
-        communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(QualityGroupShopDetailActivity.this));
-        communal_recycler_wrap.setAdapter(gpRuleDetailsAdapter);
-        GroupShopCommunalInfoBean groupShopCommunalInfoBean = groupShopCommunalInfoEntity.getGroupShopCommunalInfoBean();
-        //        标签
-        final String[] tagArray = groupShopCommunalInfoBean.getServicePromiseTitle().split(",");
-        if (tagArray.length > 0) {
-            flex_communal_tag.setVisibility(View.VISIBLE);
-            flex_communal_tag.setDividerDrawable(getResources().getDrawable(R.drawable.item_divider_product_tag));
-            flex_communal_tag.setShowDivider(FlexboxLayout.SHOW_DIVIDER_MIDDLE);
-            flex_communal_tag.removeAllViews();
-            for (int i = 0; i < tagArray.length; i++) {
-                flex_communal_tag.addView(ProductLabelCreateUtils.createProductTag(QualityGroupShopDetailActivity.this, tagArray[i]));
-            }
-        } else {
-            flex_communal_tag.setVisibility(GONE);
-        }
+    //拼团规则
+    private void getGroupCommunalInfo() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, GROUP_SHOP_COMMUNAL, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                gpRuleList.clear();
+                serviceDataList.clear();
+                groupShopCommunalInfoEntity = new Gson().fromJson(result, GroupShopCommunalInfoEntity.class);
+                if (groupShopCommunalInfoEntity != null) {
+                    GroupShopCommunalInfoBean infoBean = groupShopCommunalInfoEntity.getGroupShopCommunalInfoBean();
+                    if (infoBean != null) {
+                        List<CommunalDetailBean> gpRuleBeanList = infoBean.getGpRule();
+                        List<CommunalDetailBean> servicePromiseList = infoBean.getServicePromise();
+                        if (gpRuleBeanList != null && gpRuleBeanList.size() > 0) {
+                            gpRuleList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(gpRuleBeanList));
+                        }
 
-        List<GroupShopCommunalInfoBean.ServicePromiseBean> gpRuleBeanList = groupShopCommunalInfoBean.getServicePromise();
-//        拼团规则
-        if (gpRuleBeanList.size() > 0) {
-            CommunalDetailObjectBean communalDetailObjectBean;
-            diaRuleList.clear();
-            for (int i = 0; i < gpRuleBeanList.size(); i++) {
-                communalDetailObjectBean = new CommunalDetailObjectBean();
-                GroupShopCommunalInfoBean.ServicePromiseBean directGoodsServerBean = gpRuleBeanList.get(i);
-                if (directGoodsServerBean.getType().equals("text")) {
-                    communalDetailObjectBean.setContent(directGoodsServerBean.getContent());
-                    diaRuleList.add(communalDetailObjectBean);
+                        if (servicePromiseList != null && servicePromiseList.size() > 0) {
+                            CommunalDetailObjectBean communalDetailObjectBean = new CommunalDetailObjectBean();
+                            communalDetailObjectBean.setItemType(TYPE_PRODUCT_TITLE);
+                            communalDetailObjectBean.setContent("服务承诺");
+                            communalDetailObjectBean.setFirstLinePadding(true);
+                            serviceDataList.add(communalDetailObjectBean);
+                            serviceDataList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(servicePromiseList));
+                        }
+
+                        //保证图文详情在服务承诺上面
+                        if (shopDetailBeanList.size() > 0) {
+                            shopDetailBeanList.addAll(serviceDataList);
+                            communalDetailAdapter.notifyDataSetChanged();
+                        }
+                    }
+                }
+
+                gpRuleDetailsAdapter.notifyDataSetChanged();
+                communalDetailAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+    //获取推荐文章
+    private void getArticalRecommend() {
+        String url = Url.Q_SP_DETAIL_TOPIC_RECOMMEND;
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", productId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                ShopRecommendHotTopicEntity recommendHotTopicEntity = ShopRecommendHotTopicEntity.objectFromData(result);
+                if (recommendHotTopicEntity != null) {
+                    List<ShopRecommendHotTopicBean> articalList = recommendHotTopicEntity.getShopRecommendHotTopicList();
+                    if (recommendHotTopicEntity.getCode().equals(SUCCESS_CODE)) {
+                        if (recommendHotTopicEntity.getShopRecommendHotTopicList().size() > 0) {
+                            articalRecommendList.clear();
+                            articalRecommendList.addAll(articalList);
+                            ShopRecommendHotTopicBean hotTopicBean = articalRecommendList.get(0);
+                            if (hotTopicBean != null) {
+                                mLlArtical.setVisibility(VISIBLE);
+                                GlideImageLoaderUtil.loadRoundImg(getActivity(), mIvArticalCover, hotTopicBean.getPicUrl(), 0);
+                                mTvArticalTitle.setText(getStrings(hotTopicBean.getTitle()));
+                                mTvArticalDesc.setText(getStrings(hotTopicBean.getDigest()));
+                            }
+                        }
+                    }
                 }
             }
-            gpRuleDetailsAdapter.setNewData(diaRuleList);
+        });
+    }
+
+    //商品服务标签
+    private void setSeviceTag(ShopPropertyBean shopProperty, ViewGroup viewGroup, FlexboxLayout flexboxLayout) {
+        try {
+            List<ShopPropertyBean.TagsBean> tags = shopProperty.getTags();
+            String tagIds = shopProperty.getTagIds();
+            shopProperty.setTagIds(tagIds);
+            if (tags != null && tags.size() > 0 && !TextUtils.isEmpty(tagIds) && tagIds.split(",").length > 0) {
+                final Map<Integer, String> tagMap = new HashMap<>();
+                for (ShopPropertyBean.TagsBean tagsBean : shopProperty.getTags()) {
+                    tagMap.put(tagsBean.getId(), getStrings(tagsBean.getName()));
+                }
+                final String[] tagSelected = shopProperty.getTagIds().split(",");
+                flexboxLayout.removeAllViews();
+                int tagLength = 0;
+                for (String aTagSelected : tagSelected) {
+                    String tagName = tagMap.get(Integer.parseInt(aTagSelected));
+                    if (!TextUtils.isEmpty(tagName)) {
+                        tagLength = tagLength + tagName.length();
+                        TextView textView = (TextView) LayoutInflater.from(getActivity()).inflate(R.layout.layout_product_tag, null, false);
+                        textView.setLines(1);
+                        textView.setText(getStrings(tagName));
+                        flexboxLayout.addView(textView);
+                    }
+                }
+                mIvMoreTag.setVisibility(tagLength > 20 ? VISIBLE : GONE);
+            }
+
+            viewGroup.setVisibility(flexboxLayout.getChildCount() > 0 ? VISIBLE : GONE);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    @OnClick(R.id.tv_life_back)
-    void goBack(View view) {
-        finish();
-    }
+    @OnClick({R.id.iv_life_back, R.id.iv_img_service, R.id.iv_img_share, R.id.ll_group_buy, R.id.ll_alone_buy,
+            R.id.rel_pro_comment, R.id.tv_group_home, R.id.tv_ql_sp_pro_sku, R.id.ll_layout_pro_sc_tag, R.id.tv_quality_all_gp_sp, R.id.tv_invate})
+    public void onViewClicked(View view) {
+        Intent intent = null;
+        switch (view.getId()) {
+            case R.id.iv_life_back:
+                finish();
+                break;
+            case R.id.iv_img_service:
+                if (mGroupShopDetailsBean != null) {
+                    skipServiceDataInfo(mGroupShopDetailsBean);
+                } else {
+                    skipServiceDataInfo(null);
+                }
+                break;
+            //分享拼团详情
+            case R.id.iv_img_share:
+                if (mGroupShopDetailsBean != null) {
+                    new UMShareAction(QualityGroupShopDetailActivity.this
+                            , !TextUtils.isEmpty(mGroupShopDetailsBean.getGpPicUrl()) ? mGroupShopDetailsBean.getGpPicUrl() : mGroupShopDetailsBean.getCoverImage()
+                            , getStringsFormat(this, R.string.group_price, mGroupShopDetailsBean.getGpPrice()) + mGroupShopDetailsBean.getName()
+                            , "超值两人团，好货又便宜。"
+                            , sharePageUrl + mGroupShopDetailsBean.getGpInfoId(),
+                            "pages/groupDetails/groupDetails?id=" + mGroupShopDetailsBean.getGpInfoId(), mGroupShopDetailsBean.getGpInfoId());
+                }
 
-    @OnClick(R.id.iv_img_service)
-    void skipService(View view) {
-        if (shopDetailsEntity != null && shopDetailsEntity.getGroupShopDetailsBean() != null) {
-            skipServiceDataInfo(shopDetailsEntity.getGroupShopDetailsBean());
-        } else {
-            skipServiceDataInfo(null);
-        }
-    }
-
-    @OnClick(R.id.iv_img_share)
-    void setShare(View view) {
-        if (shopDetailsEntity != null && shopDetailsEntity.getGroupShopDetailsBean() != null) {
-            GroupShopDetailsBean groupShopDetailsBean = shopDetailsEntity.getGroupShopDetailsBean();
-            new UMShareAction(QualityGroupShopDetailActivity.this
-                    , !TextUtils.isEmpty(groupShopDetailsBean.getGpPicUrl()) ? groupShopDetailsBean.getGpPicUrl() : groupShopDetailsBean.getCoverImage()
-                    , getStringsFormat(this, R.string.group_price, groupShopDetailsBean.getGpPrice()) + groupShopDetailsBean.getName()
-                    , "超值两人团，好货又便宜。"
-                    , sharePageUrl + groupShopDetailsBean.getGpInfoId(), "pages/groupDetails/groupDetails?id=" + groupShopDetailsBean.getGpInfoId(), groupShopDetailsBean.getGpInfoId());
-        }
-    }
-
-    //  开团
-    @OnClick(R.id.ll_group_buy)
-    void skipBuy(View view) {
-        if (userId > 0) {
-//            去参团
-            if (!TextUtils.isEmpty(gpRecordId) && qualityGroupShareEntity != null
-                    && qualityGroupShareEntity.getQualityGroupShareBean() != null) {
-                QualityGroupShareBean qualityGroupShareBean = qualityGroupShareEntity.getQualityGroupShareBean();
-                if (invitePartnerJoin) {
+                break;
+            //邀请参团
+            case R.id.tv_invate:
+                if (!TextUtils.isEmpty(gpRecordId) && qualityGroupShareEntity != null
+                        && qualityGroupShareEntity.getQualityGroupShareBean() != null) {
+                    QualityGroupShareBean qualityGroupShareBean = qualityGroupShareEntity.getQualityGroupShareBean();
                     new UMShareAction(QualityGroupShopDetailActivity.this
                             , qualityGroupShareBean.getGpPicUrl()
                             , qualityGroupShareBean.getName()
                             , getStrings(qualityGroupShareBean.getSubtitle())
                             , BASE_SHARE_PAGE_TWO + "m/template/share_template/groupShare.html?id=" + qualityGroupShareBean.getGpInfoId()
                             + "&record=" + qualityGroupShareBean.getGpRecordId(), "pages/groupshare/groupshare?id=" + qualityGroupShareBean.getGpInfoId()
-                            + (TextUtils.isEmpty(orderNo) ? "&gpRecordId=" + qualityGroupShareBean.getGpRecordId() : "&order=" + orderNo), qualityGroupShareBean.getGpInfoId());
-                } else {
-                    isCanJoinGroup(null, qualityGroupShareEntity, shareJoinGroup);
+                            + (TextUtils.isEmpty(orderNo) ? "&gpRecordId=" + qualityGroupShareBean.getGpRecordId() : "&order=" + orderNo), qualityGroupShareBean.getGpInfoId(), -1, "1");
                 }
-            } else if (shopDetailsEntity != null && shopDetailsEntity.getGroupShopDetailsBean() != null) {
-                Intent intent = new Intent(QualityGroupShopDetailActivity.this, DirectIndentWriteActivity.class);
-                intent.putExtra("gpShopInfo", new Gson().toJson(shopDetailsEntity.getGroupShopDetailsBean()));
+                break;
+            //拼团首页
+            case R.id.tv_group_home:
+            case R.id.tv_quality_all_gp_sp:
+                intent = new Intent(getActivity(), QualityGroupShopActivity.class);
                 startActivity(intent);
-            }
-        } else {
-            getLoginStatus(QualityGroupShopDetailActivity.this);
+                break;
+            //单独购买
+            case R.id.ll_alone_buy:
+                intent = new Intent(getActivity(), ShopScrollDetailsActivity.class);
+                intent.putExtra("productId", productId);
+                startActivity(intent);
+                break;
+            //开团
+            case R.id.ll_group_buy:
+                buyGoItCheckStatus();
+                break;
+            //更多评论
+            case R.id.rel_pro_comment:
+                intent = new Intent(getActivity(), DirectProductEvaluationActivity.class);
+                intent.putExtra("productId", productId);
+                startActivity(intent);
+                break;
+            //sku属性选择
+            case R.id.tv_ql_sp_pro_sku:
+                if (skuDialog != null) {
+                    skuDialog.show(true, "确定");
+                    skuDialog.getGoodsSKu(shopCarGoodsSku -> {
+                        shopCarGoodsSkuDif = shopCarGoodsSku;
+                        if (shopCarGoodsSku != null) {
+                            buyGoItCheckStatus();
+                        } else {
+                            tv_ql_sp_pro_sku.setTextColor(getResources().getColor(R.color.color_blue_reply_com));
+                            tv_ql_sp_pro_sku.setText(String.format(getResources().getString(R.string.sel_pro_sku)
+                                    , getStrings(mShopDetailsEntity.getShopPropertyBean().getProps().get(0).getPropName())));
+                        }
+                    });
+                }
+                break;
+            //点击服务标签
+            case R.id.ll_layout_pro_sc_tag:
+                if (mShopDetailsEntity != null && mIvMoreTag.getVisibility() == VISIBLE) {
+                    if (alertDialog == null) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.CustomTransDialog);
+                        View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.layout_sevicetag_dialog, null, false);
+                        FlexboxLayout flex_communal_tag = dialogView.findViewById(R.id.flex_communal_tag);
+                        setSeviceTag(mShopDetailsEntity.getShopPropertyBean(), flex_communal_tag, flex_communal_tag);
+                        alertDialog = builder.create();
+                        alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                        alertDialog.setCanceledOnTouchOutside(true);
+                        alertDialog.show();
+                        Window window = alertDialog.getWindow();
+                        window.getDecorView().setPadding(0, 0, 0, 0);
+                        window.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        window.setGravity(Gravity.BOTTOM);//底部出现
+                        window.setContentView(dialogView);
+                    } else {
+                        alertDialog.show();
+                    }
+                }
+                break;
         }
     }
 
-    @OnClick(R.id.ll_alone_buy)
-    void skipAloneBuy(View view) {
-        if (shopDetailsEntity != null && shopDetailsEntity.getGroupShopDetailsBean() != null) {
-            if (invitePartnerJoin) {
-                Intent intent = new Intent(QualityGroupShopDetailActivity.this, QualityGroupShopAllActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+    private void buyGoItCheckStatus() {
+        if (userId > 0) {
+            buyGoIt();
+        } else {
+            getLoginStatus(getActivity());
+        }
+    }
+
+    //立即购买
+    private void buyGoIt() {
+        if (shopCarGoodsSkuDif != null) {
+            if (mGroupShopDetailsBean != null) {
+                Intent intent = new Intent(QualityGroupShopDetailActivity.this, DirectIndentWriteActivity.class);
+                mGroupShopDetailsBean.setGpSkuId(shopCarGoodsSkuDif.getSaleSkuId());
+                mGroupShopDetailsBean.setGpPicUrl(shopCarGoodsSkuDif.getPicUrl());
+                mGroupShopDetailsBean.setProductSkuValue(shopCarGoodsSkuDif.getValuesName());
+                mGroupShopDetailsBean.setGpPrice(shopCarGoodsSkuDif.getPrice() + "");
+                intent.putExtra("gpShopInfo", new Gson().toJson(mGroupShopDetailsEntity.getGroupShopDetailsBean()));
                 startActivity(intent);
-            } else {
-                Intent intent = new Intent(QualityGroupShopDetailActivity.this, ShopScrollDetailsActivity.class);
-                GroupShopDetailsBean groupShopDetailsBean = shopDetailsEntity.getGroupShopDetailsBean();
-                intent.putExtra("productId", String.valueOf(groupShopDetailsBean.getProductId()));
-                startActivity(intent);
+            }
+        } else {
+            if (skuDialog != null) {
+                skuDialog.show(true, "确定");
+                skuDialog.getGoodsSKu(shopCarGoodsSku -> {
+                    shopCarGoodsSkuDif = shopCarGoodsSku;
+                    if (shopCarGoodsSku != null) {
+                        tv_ql_sp_pro_sku.setTextColor(getResources().getColor(R.color.text_black_t));
+                        tv_ql_sp_pro_sku.setText(("已选：" + shopCarGoodsSku.getValuesName()));
+                        buyGoItCheckStatus();
+                    }
+                });
             }
         }
     }
@@ -1049,20 +1034,11 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         QyServiceUtils.getQyInstance().openQyServiceChat(this, sourceTitle, sourceUrl, qyProductIndentInfo);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
-        if (resultCode != RESULT_OK) {
-            return;
-        }
-    }
-
-    public void isCanJoinGroup(final GroupShopJoinBean groupShopjoinBean, final QualityGroupShareEntity qualityGroupShareEntity, final String joinType) {
+    //参团
+    public void isCanJoinGroup(final GroupShopJoinBean groupShopjoinBean) {
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
-        params.put("gpInfoId", groupShopjoinBean != null ?
-                groupShopjoinBean.getGpInfoId() : qualityGroupShareEntity.getQualityGroupShareBean().getGpInfoId());
+        params.put("gpInfoId", groupShopjoinBean.getGpInfoId());
         NetLoadUtils.getNetInstance().loadNetDataPost(this, GROUP_SHOP_JOIN_NRE_USER, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
@@ -1070,31 +1046,11 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        if (joinType.equals(normalJoinGroup) && groupShopjoinBean != null) {
-                            final GroupShopDetailsBean groupShopDetailsBean = shopDetailsEntity.getGroupShopDetailsBean();
-                            groupShopDetailsBean.setGpStatus(2);
-                            groupShopDetailsBean.setGpRecordId(groupShopjoinBean.getGpRecordId());
-                            Intent intent = new Intent(QualityGroupShopDetailActivity.this, DirectIndentWriteActivity.class);
-                            intent.putExtra("gpShopInfo", new Gson().toJson(groupShopDetailsBean));
-                            startActivity(intent);
-                        } else if (joinType.equals(shareJoinGroup) && qualityGroupShareEntity != null) {
-                            QualityGroupShareBean qualityGroupShareBean = qualityGroupShareEntity.getQualityGroupShareBean();
-                            GroupShopDetailsBean groupShopDetailsBean = new GroupShopDetailsBean();
-                            groupShopDetailsBean.setGpStatus(2);
-                            groupShopDetailsBean.setGpRecordId(Integer.parseInt(qualityGroupShareBean.getGpRecordId()));
-                            groupShopDetailsBean.setProductId(qualityGroupShareBean.getProductId());
-                            groupShopDetailsBean.setGpProductId(qualityGroupShareBean.getGpProductId());
-                            groupShopDetailsBean.setGpInfoId(qualityGroupShareBean.getGpInfoId());
-                            groupShopDetailsBean.setProductSkuValue(qualityGroupShareBean.getProductSkuValue());
-                            groupShopDetailsBean.setGpSkuId(qualityGroupShareBean.getGpSkuId());
-                            groupShopDetailsBean.setCoverImage(qualityGroupShareBean.getCoverImage());
-                            groupShopDetailsBean.setGpPicUrl(qualityGroupShareBean.getGpPicUrl());
-                            groupShopDetailsBean.setName(qualityGroupShareBean.getName());
-                            groupShopDetailsBean.setGpPrice(qualityGroupShareBean.getGpPrice());
-                            Intent intent = new Intent(QualityGroupShopDetailActivity.this, DirectIndentWriteActivity.class);
-                            intent.putExtra("gpShopInfo", new Gson().toJson(groupShopDetailsBean));
-                            startActivity(intent);
-                        }
+                        mGroupShopDetailsBean.setGpStatus(2);
+                        mGroupShopDetailsBean.setGpRecordId(groupShopjoinBean.getGpRecordId());
+                        Intent intent = new Intent(QualityGroupShopDetailActivity.this, DirectIndentWriteActivity.class);
+                        intent.putExtra("gpShopInfo", new Gson().toJson(mGroupShopDetailsBean));
+                        startActivity(intent);
                     } else {
                         showToastRequestMsg(QualityGroupShopDetailActivity.this, requestStatus);
                     }
@@ -1105,64 +1061,12 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         });
     }
 
-    //    参团列表
-    class ShopJoinGroupView {
-        @BindView(R.id.communal_recycler_wrap)
-        RecyclerView communal_recycler_wrap;
-        private JoinGroupAdapter joinGroupAdapter;
-        private View headerView;
-        private TextView tv_partner_join;
-
-        public void initView() {
-            communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(QualityGroupShopDetailActivity.this));
-            joinGroupAdapter = new JoinGroupAdapter(QualityGroupShopDetailActivity.this, constantMethod, groupShopJoinList);
-            headerView = LayoutInflater.from(QualityGroupShopDetailActivity.this).inflate(R.layout.layout_ql_gp_text, null);
-            tv_partner_join = (TextView) headerView.findViewById(R.id.tv_partner_join);
-            communal_recycler_wrap.setAdapter(joinGroupAdapter);
-            joinGroupAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-                @Override
-                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                    GroupShopJoinBean groupShopJoinBean = (GroupShopJoinBean) view.getTag();
-                    if (groupShopJoinBean != null && shopDetailsEntity != null) {
-                        if (userId != 0) {
-                            isCanJoinGroup(groupShopJoinBean, null, normalJoinGroup);
-                        } else {
-                            getLoginStatus(QualityGroupShopDetailActivity.this);
-                        }
-                    }
-                }
-            });
-        }
-    }
-
-    class ShopCommentHeaderView {
-        //        商品评论展示
-        @BindView(R.id.rel_pro_comment)
-        RelativeLayout rel_pro_comment;
-        //        评价数目
-        @BindView(R.id.tv_shop_comment_count)
-        TextView tv_shop_comment_count;
-        @BindView(R.id.communal_recycler_wrap)
-        RecyclerView communal_recycler_wrap;
-        private CommunalDetailAdapter gpRuleDetailsAdapter;
-
-        @OnClick(R.id.tv_shop_comment_more)
-        void getMoreComment(View view) {
-            if (shopDetailsEntity != null
-                    && shopDetailsEntity.getGroupShopDetailsBean() != null
-                    && shopDetailsEntity.getGroupShopDetailsBean().getProductId() > 0) {
-//                跳转更多评论
-                Intent intent = new Intent(QualityGroupShopDetailActivity.this, DirectProductEvaluationActivity.class);
-                intent.putExtra("productId", String.valueOf(shopDetailsEntity.getGroupShopDetailsBean().getProductId()));
-                startActivity(intent);
-            }
-        }
-
-        public void initView() {
-            communal_recycler_wrap.setNestedScrollingEnabled(false);
-            gpRuleDetailsAdapter = new CommunalDetailAdapter(QualityGroupShopDetailActivity.this, gpRuleList);
-            communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(QualityGroupShopDetailActivity.this));
-            communal_recycler_wrap.setAdapter(gpRuleDetailsAdapter);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
+        if (resultCode != RESULT_OK) {
+            return;
         }
     }
 
@@ -1180,20 +1084,5 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
             getGroupShopPerson();
             isPause = false;
         }
-    }
-
-    private void getConstant() {
-        if (constantMethod == null) {
-            constantMethod = new ConstantMethod();
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        if (constantMethod != null) {
-            constantMethod.stopSchedule();
-            constantMethod.releaseHandlers();
-        }
-        super.onDestroy();
     }
 }

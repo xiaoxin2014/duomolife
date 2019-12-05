@@ -21,11 +21,11 @@ import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
-import static com.amkj.dmsh.constant.ConstantMethod.getDateFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_GOODS_IMG;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_GOODS_IMG_DIRECT_BUY;
+import static com.amkj.dmsh.utils.TimeUtils.getDateFormat;
 
 /**
  * Created by xiaoxin on 2019/3/16 0016

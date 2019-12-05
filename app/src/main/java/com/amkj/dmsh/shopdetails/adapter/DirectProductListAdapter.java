@@ -73,7 +73,7 @@ import static com.amkj.dmsh.shopdetails.activity.DirectIndentInvoiceActivity.IND
 import static com.amkj.dmsh.shopdetails.activity.DirectIndentWriteActivity.INDENT_GROUP_SHOP;
 import static com.amkj.dmsh.shopdetails.activity.DirectIndentWriteActivity.INDENT_W_TYPE;
 import static com.amkj.dmsh.shopdetails.activity.DoMoIndentAllActivity.INDENT_TYPE;
-import static com.amkj.dmsh.utils.CountDownUtils.getCoutDownTime;
+import static com.amkj.dmsh.utils.TimeUtils.getCoutDownTime;
 
 
 /**

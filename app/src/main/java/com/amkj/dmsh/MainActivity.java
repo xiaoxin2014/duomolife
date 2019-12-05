@@ -99,11 +99,8 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.APP_FIRST_TIMES;
 import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.APP_SAVE_VERSION;
-import static com.amkj.dmsh.constant.ConstantMethod.getDateFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeBoolean;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.isSameTimeDay;
-import static com.amkj.dmsh.constant.ConstantMethod.isTimeDayEligibility;
 import static com.amkj.dmsh.constant.ConstantMethod.setDeviceInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -129,6 +126,9 @@ import static com.amkj.dmsh.dao.SoftApiDao.checkPushPermission;
 import static com.amkj.dmsh.dao.UserDao.getPersonalInfo;
 import static com.amkj.dmsh.dao.UserDao.savePersonalInfoCache;
 import static com.amkj.dmsh.utils.ServiceDownUtils.INSTALL_APP_PROGRESS;
+import static com.amkj.dmsh.utils.TimeUtils.getDateFormat;
+import static com.amkj.dmsh.utils.TimeUtils.isSameTimeDay;
+import static com.amkj.dmsh.utils.TimeUtils.isTimeDayEligibility;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.fileIsExist;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getImageFilePath;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.saveImageToFile;
@@ -969,8 +969,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         String lastShowTime = sp.getString("showTime", "0");
                         String newTime = communalADActivityBean.getCtime();
                         if (!saveTime.equals(newTime) ||
-                                (communalADActivityBean.getFrequency_type() == 1 && isTimeDayEligibility(lastShowTime, communalADActivityEntity.getSystemTime(), communalADActivityBean.getInterval_day()))) {
-                            edit.putString("showTime", communalADActivityEntity.getSystemTime());
+                                (communalADActivityBean.getFrequency_type() == 1 && isTimeDayEligibility(lastShowTime, communalADActivityEntity.getCurrentTime(), communalADActivityBean.getInterval_day()))) {
+                            edit.putString("showTime", communalADActivityEntity.getCurrentTime());
                             showAdDialog(communalADActivityBean, saveTime, newTime);
                         }
                         if (!saveTime.equals(newTime)) {

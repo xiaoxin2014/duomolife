@@ -95,7 +95,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
-import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTime;
 import static com.amkj.dmsh.constant.ConstantMethod.showImageActivity;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
@@ -112,6 +111,7 @@ import static com.amkj.dmsh.dao.BaiChuanDao.skipAliBC;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_EMPTY_OBJECT;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PROMOTION_TITLE;
+import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTime;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getWaterMarkImgUrl;
 
 
@@ -524,7 +524,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
         } else {
             tvTimeProductDetailsWarm.setText("开团提醒");
         }
-        if (isEndOrStartTime(productDetailEntity.getSystemTime(), productDetailBean.getStartTime())) {
+        if (isEndOrStartTime(productDetailEntity.getCurrentTime(), productDetailBean.getStartTime())) {
 //            参与人数
             if (!TextUtils.isEmpty(productDetailBean.getFlashBuyClickCount())) {
                 tvProductDetailsJoinCount.setText(String.format(getResources().getString(R.string.time_join_group_count), getStrings(productDetailBean.getFlashBuyClickCount())));
@@ -532,7 +532,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
             }
 //            底栏提示
             tvTimeProductDetailsWarm.setVisibility(View.GONE);
-            if (isEndOrStartTime(productDetailEntity.getSystemTime(), productDetailBean.getEndTime())) {
+            if (isEndOrStartTime(productDetailEntity.getCurrentTime(), productDetailBean.getEndTime())) {
                 tvTimeProductDetailsBuyIt.setEnabled(false);
                 tvTimeProductDetailsBuyIt.setText("已结束");
             } else if (productDetailBean.getQuantity() == 0) {
@@ -556,7 +556,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
             tvTimeProductDetailsBuyIt.setText("我要跟团");
         }
         setCountTime();
-        if (!isEndOrStartTime(productDetailEntity.getSystemTime(), productDetailBean.getEndTime())) {
+        if (!isEndOrStartTime(productDetailEntity.getCurrentTime(), productDetailBean.getEndTime())) {
             getConstant();
             constantMethod.createSchedule();
             constantMethod.setRefreshTimeListener(new ConstantMethod.RefreshTimeListener() {
@@ -775,8 +775,8 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
         try {
             //格式化结束时间
             Date dateCurrent;
-            if (!TextUtils.isEmpty(productDetailEntity.getSystemTime())) {
-                dateCurrent = formatter.parse(productDetailEntity.getSystemTime());
+            if (!TextUtils.isEmpty(productDetailEntity.getCurrentTime())) {
+                dateCurrent = formatter.parse(productDetailEntity.getCurrentTime());
             } else {
                 dateCurrent = new Date();
             }
@@ -796,7 +796,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        if (!isEndOrStartTime(productDetailEntity.getSystemTime(), productDetailBean.getEndTime())) {
+        if (!isEndOrStartTime(productDetailEntity.getCurrentTime(), productDetailBean.getEndTime())) {
             ctPromotionProductTime.setOnCountdownEndListener(new CountdownView.OnCountdownEndListener() {
                 @Override
                 public void onEnd(CountdownView cv) {

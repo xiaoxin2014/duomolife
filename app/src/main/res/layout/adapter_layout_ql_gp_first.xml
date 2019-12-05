@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/sc_mm_390"
+              android:layout_marginLeft="@dimen/sc_mm_16"
+              android:layout_marginRight="@dimen/sc_mm_16"
+              android:layout_marginTop="@dimen/sc_mm_18"
+              android:background="@color/white"
+              android:orientation="horizontal">
+
+    <RelativeLayout
+        android:layout_width="@dimen/sc_mm_390"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <ImageView
+            android:id="@+id/iv_communal_img_bg"
+            android:layout_width="@dimen/sc_mm_390"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/load_loading_image"/>
+
+        <TextView
+            android:id="@+id/tv_ql_gp_sp_new"
+            android:layout_width="@dimen/sc_mm_102"
+            android:layout_height="@dimen/sc_mm_40"
+            android:background="@drawable/shap_group_type_bg"
+            android:gravity="center"
+            android:text="@string/defaul"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sc_mm_24"/>
+
+        <TextView
+            android:id="@+id/tv_group_time"
+            android:layout_width="@dimen/sc_mm_220"
+            android:layout_height="@dimen/sc_mm_35"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/sc_mm_28"
+            android:background="@drawable/shap_group_end_time_bg"
+            android:gravity="center"
+            android:text="@string/defaul"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sc_mm_24"/>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/sc_mm_28"
+        android:layout_marginTop="@dimen/sc_mm_30"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_gp_sp_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/sc_mm_20"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="-------------------------------------------------"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_30"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/sc_mm_50"
+            android:layout_marginTop="@dimen/sc_mm_28"
+            android:background="@drawable/shap_group_price_bg"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/sc_mm_25"
+            android:paddingRight="@dimen/sc_mm_25">
+
+            <TextView
+                android:id="@+id/tv_gp_sp_per_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_black_t"
+                android:textSize="@dimen/sc_mm_30"/>
+
+            <TextView
+                android:id="@+id/tv_gp_sp_per_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/sc_mm_8"
+                android:textColor="@color/text_normal_red"
+                android:textSize="@dimen/sc_mm_30"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_gp_sp_nor_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/sc_mm_25"
+            android:layout_marginTop="@dimen/sc_mm_16"
+            android:text="@string/defaul"
+            android:textColor="@color/color_blue_reply_com"
+            android:textSize="@dimen/sc_mm_24"/>
+
+        <TextView
+            android:id="@+id/tv_gp_sp_count"
+            android:layout_width="@dimen/sc_mm_250"
+            android:layout_height="@dimen/sc_mm_60"
+            android:layout_marginTop="@dimen/sc_mm_30"
+            android:background="@drawable/shap_go_group_bg"
+            android:gravity="center"
+            android:text="@string/go_group"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sc_mm_30"/>
+
+        <TextView
+            android:id="@+id/tv_gp_sp_open_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/sc_mm_20"
+            android:layout_marginRight="@dimen/sc_mm_40"
+            android:text="@string/defaul"
+            android:textColor="@color/text_login_gray_s"
+            android:textSize="@dimen/sc_mm_24"/>
+    </LinearLayout>
+</LinearLayout>

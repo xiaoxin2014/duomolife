@@ -8,8 +8,8 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import java.util.List;
 
 import static com.amkj.dmsh.constant.ConstantMethod.formatStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.getDateFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.utils.TimeUtils.getDateFormat;
 
 ;
 

@@ -411,11 +411,11 @@ public class Url {
     public static final String Q_RE_BUY_INDENT = "api/goods/order/againBuy";
     //    新版再次购买
     public static final String Q_NEW_RE_BUY_INDENT = "api/goods/order/againBuyNewV2";
-    //订单付款
+    //    订单付款
     public static final String Q_PAYMENT_INDENT = "api/goods/order/buy";
     //    银联支付手动回调
     public static final String Q_UNIONPAY_PAYMENT_INDENT = "api/goods/order/abcOrderQuery";
-    //订单支付失败提示
+    //    订单支付失败提示
     public static final String PAY_ERROR = "api/reminder/getPayErorr";
     //    订单支付取消提示
     public static final String PAY_CANCEL = "api/reminder/getLeaveConfirm";
@@ -423,33 +423,33 @@ public class Url {
     public static final String PRO_SETTLE_PRICE = "api/goods/cart/changeCartCheckStatus";
     //    新版购物车结算金额
     public static final String NEW_PRO_SETTLE_PRICE = "api/goods/cart/changeCartCheckStatusV2";
-    //订单详情
+    //    订单详情
     public static final String Q_INDENT_DETAILS = "api/goods/order/getOrderNew";
-    //订单删除
+    //    订单删除
     public static final String Q_INDENT_DEL = "api/goods/order/del";
-    //订单取消 3.1.5 积分 商品 订单通用
+    //    订单取消 3.1.5 积分 商品 订单通用
     public static final String Q_INDENT_CANCEL = "api/goods/order/cancel";
-    //订单确定
+    //    订单确定
     public static final String Q_INDENT_CONFIRM = "api/goods/order/takeDelivery";
-    //发布评价
+    //    发布评价
     public static final String Q_SEND_APPRAISE = "api/goods/order/evaluate";
-    //查询良品全部订单
+    //    查询良品全部订单
     public static final String Q_INQUIRY_ALL_ORDER = "api/goods/order/getOrders";
-    //查询良品已完成订单
+    //    查询良品已完成订单
     public static final String Q_INQUIRY_FINISH = "api/goods/order/getWaitEvaluate";
-    //查询良品待发货订单
+    //    查询良品待发货订单
     public static final String Q_INQUIRY_WAIT_SEND = "api/goods/order/getWaitDelivery";
     //    待发货 催单
     public static final String Q_INQUIRY_WAIT_SEND_EXPEDITING = "api/goods/order/urgeOrder";
-    //查询良品待付款订单
+    //    查询良品待付款订单
     public static final String Q_INQUIRY_WAIT_PAY = "api/goods/order/getWaitPay";
-    //查询良品已发货订单
+    //    查询良品已发货订单
     public static final String Q_INQUIRY_DEL_IVERED = "api/goods/order/getWaitTakeDelivery";
-    //申请取消订单 待发货
+    //    申请取消订单 待发货
     public static final String Q_CANCEL_INDENT_REFUND = "api/goods/order/cancelRefund";
-    //查询物流
+    //    查询物流
     public static final String Q_CONFIRM_LOGISTICS = "api/goods/order/viewLogistics";
-    //查询包裹
+    //    查询包裹
     public static final String Q_CONFIRM_PACKET = "api/goods/order/viewPackage";
     //    退款售后 二期
     public static final String Q_APPLY_AFTER_SALE_REPLY_RECORD = "api/goods/order/getAfterSale";
@@ -484,15 +484,15 @@ public class Url {
     //  申诉查询
     public static final String Q_INDENT_APPLY_REFUND_CHECK = "api/goods/order/getVerifyRefundResultNew";
 
-    //商品详情
+    //    商品详情
     public static final String Q_SHOP_DETAILS = "api/goods/getGoods";
-    //商品详情 新版
+    //    商品详情 新版
     public static final String Q_NEW_SHOP_DETAILS = "api/goods/getSelfProduct";
-    //商品评价
+    //    商品评价
     public static final String Q_SHOP_DETAILS_COMMENT = "api/goods/getEvaluate";
-    //加入购物车 新版
+    //    加入购物车 新版
     public static final String Q_SHOP_DETAILS_ADD_CAR = "api/goods/cart/addNew";
-    //组合商品加入购物车
+    //    组合商品加入购物车
     public static final String Q_COMBINE_PRODUCT_ADD_CAR = "api/goods/cart/addCombineProducts";
     //    购物车列表
     public static final String MINE_SHOP_CAR_GOODS = "api/goods/cart/getCartNew";
@@ -502,23 +502,23 @@ public class Url {
     public static final String MINE_SHOP_CAR_RECOMMEND_GOODS = "api/goods/cart/shopFullCartRecommend";
     //    购物车无商品推荐
     public static final String SHOP_CART_RECOMMEND_EMPTY_GOODS = "api/goods/cart/shopEmptyCartRecommend";
-    //查询购物车数量
+    //    查询购物车数量
     public static final String Q_QUERY_CAR_COUNT = "api/goods/cart/getCartTip";
     //    添加取消到货通知
     public static final String Q_REPLENISHMENT_NOTICE = "api/goods/addUserSkuNotice";
     //    查询订单数量
     public static final String Q_QUERY_INDENT_COUNT = "api/goods/order/getOrderNum";
-    //购物车修改 新版
+    //    购物车修改 新版
     public static final String Q_SHOP_DETAILS_CHANGE_CAR = "api/goods/cart/changeNew";
-    //购物车删除
+    //    购物车删除
     public static final String Q_SHOP_DETAILS_DEL_CAR = "api/goods/cart/del";
-    //获取商品属性
+    //    获取商品属性
     public static final String Q_SHOP_DETAILS_GET_SKU_CAR = "api/goods/cart/getSaleSku";
-    //优惠券展示 新版
+    //    优惠券展示 新版
     public static final String Q_SHOP_DETAILS_COUPON = "api/my/coupon/getNewMyCouponList";
-    //自选优惠券
+    //    自选优惠券
     public static final String Q_SELF_SHOP_DETAILS_COUPON = "api/my/coupon/choiceSelfCouponV2";
-    //优惠券专区
+    //    优惠券专区
     public static final String Q_COUPON_ZONE= "api/activity/zone/getApiCouponZoneInfo";
     //    订单优惠信息 新版
     public static final String INDENT_DISCOUNTS_INFO = "api/goods/order/getOrderSettleInfoNew";
@@ -550,11 +550,11 @@ public class Url {
     public static final String GROUP_SHOP_DETAILS = "api/gp/getGpInfoDetailInfo";
     //    拼团列表
     public static final String GROUP_SHOP_OPEN_PERSON = "api/gp/getDomoCreateGpInfp";
-    //创建拼团订单
+    //    创建拼团订单
     public static final String Q_CREATE_GROUP_INDENT = "api/goods/order/addGpOrder";
-    //我的拼团订单
+    //    我的拼团订单
     public static final String GROUP_MINE_INDENT = "api/gp/getMyGpInfo";
-    //  分享参团信息
+    //    分享参团信息
     public static final String GROUP_MINE_SHARE = "api/gp/inviteToGp";
     //    商品评论点赞
     public static final String SHOP_EVA_LIKE = "api/goods/addEvaluateFavor";
@@ -613,15 +613,15 @@ public class Url {
     //   组合商品详细信息
     public static final String Q_GROUP_GOODS_DETAIL = "api/goods/getCombineDetailInfo";
 
-    //海外直邮主题列表
+    //    海外直邮主题列表
     public static final String QUALITY_OVERSEAS_THEME = "api/goods/overseas/getTopics";
-    //海外直邮商品列表
+    //    海外直邮商品列表
     public static final String QUALITY_OVERSEAS_LIST = "api/goods/overseas/getGoods";
-    //海外直邮主题详情
+    //    海外直邮主题详情
     public static final String QUALITY_OVERSEAS_THEME_DETAIL = "api/goods/overseas/getTopic";
-    //海外直邮详情详情商品列表
+    //    海外直邮详情详情商品列表
     public static final String QUALITY_OVERSEAS_DETAIL_LIST = "api/goods/overseas/getTopicGoods";
-    //新人专区商品列表
+    //    新人专区商品列表
     public static final String QUALITY_NEW_USER_LIST = "api/goods/newuser/getGoods";
     //    新人用券专区
     public static final String QUALITY_NEW_USER_COUPON_LIST = "api/goods/coupon/getCouponGoodsList";

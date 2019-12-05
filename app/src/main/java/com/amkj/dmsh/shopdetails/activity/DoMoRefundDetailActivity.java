@@ -72,7 +72,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
-import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -89,6 +88,7 @@ import static com.amkj.dmsh.constant.Url.Q_INDENT_REFUND_DETAIL;
 import static com.amkj.dmsh.constant.Url.Q_INDENT_REPAIR_DETAIL;
 import static com.amkj.dmsh.constant.Url.Q_INDENT_REPAIR_LOGISTIC_SUB;
 import static com.amkj.dmsh.constant.Url.Q_INDENT_REPAIR_RECEIVE;
+import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTimeAddSeconds;
 
 ;
 ;

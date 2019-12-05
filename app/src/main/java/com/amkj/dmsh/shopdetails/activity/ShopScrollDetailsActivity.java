@@ -70,15 +70,12 @@ import com.amkj.dmsh.shopdetails.bean.ShopRecommendHotTopicEntity;
 import com.amkj.dmsh.shopdetails.bean.ShopRecommendHotTopicEntity.ShopRecommendHotTopicBean;
 import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
 import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
-import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean.MarketLabelBean;
 import com.amkj.dmsh.utils.CountDownTimer;
-import com.amkj.dmsh.utils.CountDownUtils;
 import com.amkj.dmsh.utils.LifecycleHandler;
 import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
-import com.amkj.dmsh.utils.webformatdata.ShareDataBean;
 import com.amkj.dmsh.views.bottomdialog.SkuDialog;
 import com.amkj.dmsh.views.flycoTablayout.CommonTabLayout;
 import com.amkj.dmsh.views.flycoTablayout.listener.CustomTabEntity;
@@ -130,22 +127,19 @@ import static com.amkj.dmsh.constant.ConstantMethod.getSpannableString;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeDouble;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
-import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTime;
 import static com.amkj.dmsh.constant.ConstantMethod.showImageActivity;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.RECOMMEND_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
 import static com.amkj.dmsh.constant.ConstantVariable.isShowTint;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
-import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODUCT_MORE;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODUCT_TITLE;
-import static com.amkj.dmsh.utils.CountDownUtils.isTimeStart;
+import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTime;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getSquareImgUrl;
 
 
@@ -329,8 +323,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     private List<CommunalDetailObjectBean> shopDetailBeanList = new ArrayList<>();
     //    服务承诺
     private List<CommunalDetailObjectBean> serviceDataList = new ArrayList<>();
-    //    服务承诺总条数
-    private List<CommunalDetailObjectBean> serviceDataTotalList = new ArrayList<>();
 
     private DirectEvaluationAdapter directEvaluationAdapter;
     private ShopCommentHeaderView shopCommentHeaderView;
@@ -350,8 +342,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     private ArrayList<CustomTabEntity> tabData = new ArrayList<>();
     private int measuredHeight;
     private CBViewHolderCreator cbViewHolderCreator;
-    private String recommendFlag;
-    private String recommendType;
     private int skuSaleBeanId;
     private int screenHeight;
     private int screenWith;
@@ -406,11 +396,9 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         mCtCountDownBottom.dynamicShow(dynamicBottom.build());
         Intent intent = getIntent();
         productId = intent.getStringExtra("productId");
-        recommendFlag = intent.getStringExtra("recommendFlag");
         TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
         screenHeight = app.getScreenHeight();
         screenWith = app.getScreenWidth();
-        recommendType = intent.getStringExtra(RECOMMEND_TYPE);
         if (TextUtils.isEmpty(productId)) {
             showToast(getActivity(), "商品信息有误，请重试");
             finish();
@@ -428,28 +416,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         directEvaluationAdapter.addHeaderView(commentHeaderView);
         communal_recycler_wrap.setNestedScrollingEnabled(false);
         communal_recycler_wrap.setAdapter(directEvaluationAdapter);
-        directEvaluationAdapter.setOnItemChildClickListener((adapter, view, position) -> {
-            switch (view.getId()) {
-                case R.id.img_direct_avatar:
-                    GoodsCommentBean goodsCommentBean = (GoodsCommentBean) view.getTag(R.id.iv_avatar_tag);
-                    if (goodsCommentBean != null) {
-                        Intent intent1 = new Intent(getActivity(), UserPagerActivity.class);
-                        intent1.putExtra("userId", String.valueOf(goodsCommentBean.getUserId()));
-                        startActivity(intent1);
-                    }
-                    break;
-                case R.id.tv_eva_count:
-                    goodsCommentBean = (GoodsCommentBean) view.getTag();
-                    if (goodsCommentBean != null && !goodsCommentBean.isFavor()) {
-                        if (userId > 0) {
-                            setProductEvaLike(view);
-                        } else {
-                            getLoginStatus(getActivity());
-                        }
-                    }
-                    break;
-            }
-        });
         ll_details_bottom.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -469,36 +435,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         rv_product_details.setNestedScrollingEnabled(false);
         communalDetailAdapter = new CommunalDetailAdapter(getActivity(), shopDetailBeanList);
         rv_product_details.setAdapter(communalDetailAdapter);
-        communalDetailAdapter.setOnItemClickListener((adapter, view, position) -> {
-            CommunalDetailObjectBean communalDetailObjectBean = (CommunalDetailObjectBean) view.getTag();
-            if (communalDetailObjectBean != null
-                    && TYPE_PRODUCT_MORE == communalDetailObjectBean.getItemType()
-                    && communalDetailObjectBean.getMoreDataList() != null) {
-                int serviceMorePosition = 0;
-                if (shopDetailBeanList.size() > 0) {
-                    serviceMorePosition = shopDetailBeanList.size() - 1;
-                }
-                shopDetailBeanList.removeAll(serviceDataList);
-                shopDetailBeanList.addAll(communalDetailObjectBean.getMoreDataList());
-                if (serviceMorePosition < shopDetailBeanList.size()) {
-                    communalDetailAdapter.notifyItemRangeChanged(serviceMorePosition,
-                            shopDetailBeanList.size());
-                } else {
-                    communalDetailAdapter.notifyDataSetChanged();
-                }
-            }
-        });
-        communalDetailAdapter.setOnItemChildClickListener((adapter, view, position) -> {
-            ShareDataBean shareDataBean = null;
-            if (view.getId() == R.id.tv_communal_share && shopPropertyBean != null) {
-                shareDataBean = new ShareDataBean(shopPropertyBean.getPicUrl()
-                        , "我在多么生活看中了" + shopPropertyBean.getName()
-                        , getStrings(shopPropertyBean.getSubtitle())
-                        , sharePageUrl + shopPropertyBean.getId());
-            }
-            CommunalWebDetailUtils.getCommunalWebInstance()
-                    .setWebDataClick(getActivity(), shareDataBean, view, loadHud);
-        });
 
         for (int i = 0; i < detailTabData.length; i++) {
             tabData.add(new TabEntity(detailTabData[i], 0, 0));
@@ -664,7 +600,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         if (smart_ql_sp_pro_details != null) {
             serviceDataList.clear();
             shopDetailBeanList.clear();
-            serviceDataTotalList.clear();
             communalDetailAdapter.notifyDataSetChanged();
             getShopProDetails();
             getServiceData(productId);
@@ -680,20 +615,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     @Override
     public View getLoadView() {
         return fl_product_details;
-    }
-
-
-    private void setProductEvaLike(View view) {
-        GoodsCommentBean goodsCommentBean = (GoodsCommentBean) view.getTag();
-        TextView tv_eva_like = (TextView) view;
-        String url = Url.SHOP_EVA_LIKE;
-        Map<String, Object> params = new HashMap<>();
-        params.put("id", goodsCommentBean.getId());
-        params.put("uid", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, null);
-        goodsCommentBean.setFavor(!goodsCommentBean.isFavor());
-        tv_eva_like.setSelected(!tv_eva_like.isSelected());
-        tv_eva_like.setText(ConstantMethod.getNumCount(tv_eva_like.isSelected(), goodsCommentBean.isFavor(), goodsCommentBean.getLikeNum(), "赞"));
     }
 
     //获取商品详情
@@ -713,7 +634,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     if (shopDetailsEntity.getCode().equals(SUCCESS_CODE)) {
                         shopPropertyBean = shopDetailsEntity.getShopPropertyBean();
                         setProductData(shopPropertyBean);
-                        getGroupGoods(shopPropertyBean.getId());
+                        getCombineGoods(shopPropertyBean.getId());
                         getShopProComment(shopPropertyBean);
                         getArticalRecommend(shopPropertyBean.getId());
                         getGoodsRecommend(shopPropertyBean.getId());
@@ -793,7 +714,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     }
 
     //获取组合商品基本信息
-    private void getGroupGoods(int id) {
+    private void getCombineGoods(int id) {
         String url = Url.Q_GROUP_GOODS_BASIC;
         Map<String, Object> params = new HashMap<>();
         params.put("productId", id);
@@ -905,10 +826,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         } else {
             tv_group_product.setVisibility(GONE);
         }
-        //选择规格
-        tv_ql_sp_pro_sku.setTextColor(getResources().getColor(R.color.color_blue_reply_com));
-        tv_ql_sp_pro_sku.setText(getString(R.string.sel_pro_sku
-                , getStrings(shopProperty.getProps().get(0).getPropName())));
+
         if (isEndOrStartTime(shopPropertyBean.getStartTime(), shopDetailsEntity.getCurrentTime())
                 && TextUtils.isEmpty(shopPropertyBean.getActivityTag())) {
             ll_sp_pro_sku_value.setVisibility(VISIBLE);
@@ -996,11 +914,11 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     ll_communal_time_hours.setVisibility(VISIBLE);//上面的倒计时
                     startActivityDownTime(tv_count_time_before_white, cv_countdownTime_white_hours);//开启倒计时
                     //限时购活动价(未开始时：activityPrice表示活动价；已开始时：price表示活动价)
-                    String price = getRmbFormat(this, isTimeStart(shopDetailsEntity.getShopPropertyBean().getActivityStartTime(), shopDetailsEntity.getCurrentTime()) ? shopProperty.getPrice() : shopProperty.getActivityPrice()) + end;
+                    String price = getRmbFormat(this, isEndOrStartTime(shopDetailsEntity.getCurrentTime(), shopDetailsEntity.getShopPropertyBean().getActivityStartTime()) ? shopProperty.getPrice() : shopProperty.getActivityPrice()) + end;
                     mTvProductMinPrice.setText(getSpannableString(price, 1, price.length() - end.length(), 1.6f, null));
                     mTvProductMartketPrice.setVisibility(getStringChangeDouble(shopProperty.getMarketPrice()) > 0 ? VISIBLE : GONE);//大于0才显示
                     //市场价
-                    if (isTimeStart(shopDetailsEntity.getShopPropertyBean().getActivityStartTime(), shopDetailsEntity.getCurrentTime())) {
+                    if (isEndOrStartTime(shopDetailsEntity.getCurrentTime(), shopDetailsEntity.getShopPropertyBean().getActivityStartTime())) {
                         //已开始时显示划线价（市场参考价）
                         mTvProductMartketPrice.setText("¥" + getStrings(shopProperty.getMarketPrice()));
                         mTvProductMartketPrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
@@ -1052,7 +970,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         if (!TextUtils.isEmpty(shopPropertyBean.getActivityPrice())
                 && shopDetailsEntity.getShopPropertyBean() != null
                 && shopDetailsEntity.getShopPropertyBean().getActivityStartTime() != null
-                && !isTimeStart(shopDetailsEntity.getShopPropertyBean().getActivityStartTime(), shopDetailsEntity.getCurrentTime())) {
+                && !isEndOrStartTime(shopDetailsEntity.getCurrentTime(), shopDetailsEntity.getShopPropertyBean().getActivityStartTime())) {
             String priceCHN = String.format(getResources().getString(R.string.money_price_chn)
                     , getStrings(shopPropertyBean.getActivityPrice()));
             String priceDes = String.format(getResources().getString(R.string.text_act_not_start)
@@ -1256,7 +1174,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             long dateEnd = formatter.parse(activityEndTime).getTime();
             long dateCurret = !TextUtils.isEmpty(currentTime) ? formatter.parse(currentTime).getTime() : System.currentTimeMillis();
             //活动未开始
-            if (!isTimeStart(shopPropertyBean.getActivityStartTime(), shopDetailsEntity.getCurrentTime())) {
+            if (!isEndOrStartTime(shopDetailsEntity.getCurrentTime(), shopPropertyBean.getActivityStartTime())) {
                 tipView.setText(tipView.getId() == R.id.tv_count_time_before_white ? "距开始还有" : "距开始");
                 CountDownTimer countDownTimer = new CountDownTimer(this, dateStart + 1 - dateCurret, 1000) {
                     @Override
@@ -1274,7 +1192,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 };
 
                 countDownTimer.start();
-            } else if (!CountDownUtils.isTimeEnd(activityEndTime, currentTime)) {
+            } else if (!isEndOrStartTime(currentTime, activityEndTime)) {
                 //活动已开始未结束
                 tipView.setText(tipView.getId() == R.id.tv_count_time_before_white ? "距结束还有" : "距结束");
                 CountDownTimer countDownTimer = new CountDownTimer(this, dateEnd + 1 - dateCurret, 1000) {
@@ -1360,7 +1278,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 if (mDirectGoodsServerEntity != null) {
                     if (mDirectGoodsServerEntity.getCode().equals(SUCCESS_CODE)) {
                         serviceDataList.clear();
-                        serviceDataTotalList.clear();
                         DirectGoodsServerBean directGoodsServerBean = mDirectGoodsServerEntity.getDirectGoodsServerBean();
                         if (directGoodsServerBean != null) {
                             List<DirectGoodsServerBean.ServicePromiseBean> servicePromiseList = directGoodsServerBean.getServicePromiseList();
@@ -1369,24 +1286,13 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                                 communalDetailObjectBean.setItemType(TYPE_PRODUCT_TITLE);
                                 communalDetailObjectBean.setContent("服务承诺");
                                 serviceDataList.add(communalDetailObjectBean);
-                                serviceDataTotalList.add(communalDetailObjectBean);
-                                int serviceSize = servicePromiseList.size();
-                                for (int i = 0; i < serviceSize; i++) {
+                                for (int i = 0; i < servicePromiseList.size(); i++) {
                                     communalDetailObjectBean = new CommunalDetailObjectBean();
                                     if (i == 0) {
                                         communalDetailObjectBean.setFirstLinePadding(true);
                                     }
                                     DirectGoodsServerBean.ServicePromiseBean servicePromiseBean = servicePromiseList.get(i);
                                     communalDetailObjectBean.setContent(servicePromiseBean.getContent());
-                                    if (i <= 10) {
-                                        serviceDataList.add(communalDetailObjectBean);
-                                    }
-                                    serviceDataTotalList.add(communalDetailObjectBean);
-                                }
-                                if (serviceSize > 10) {
-                                    communalDetailObjectBean = new CommunalDetailObjectBean();
-                                    communalDetailObjectBean.setItemType(TYPE_PRODUCT_MORE);
-                                    communalDetailObjectBean.setMoreDataList(serviceDataTotalList);
                                     serviceDataList.add(communalDetailObjectBean);
                                 }
                             }
@@ -1404,6 +1310,10 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
     private void setSkuProp(ShopPropertyBean shopProperty) {
         if (shopProperty.getSkuSale() != null && shopProperty.getSkuSale().size() > 0) {
+            //选择规格
+            tv_ql_sp_pro_sku.setTextColor(getResources().getColor(R.color.color_blue_reply_com));
+            tv_ql_sp_pro_sku.setText(getString(R.string.sel_pro_sku
+                    , getStrings(shopProperty.getProps().get(0).getPropName())));
             List<SkuSaleBean> skuSaleList = shopProperty.getSkuSale();
             //有多个SKU
             if (shopProperty.getSkuSale().size() > 1) {
@@ -1783,6 +1693,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                         && shopPropertyBean.getGpInfoId() > 0) {
                     intent = new Intent(getActivity(), QualityGroupShopDetailActivity.class);
                     intent.putExtra("gpInfoId", String.valueOf(shopPropertyBean.getGpInfoId()));
+                    intent.putExtra("productId", productId);
                     startActivity(intent);
                 }
                 break;
@@ -1844,30 +1755,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
     private void getDirectCoupon(int id) {
         if (userId > 0) {
-            String url = Url.FIND_ARTICLE_COUPON;
-            Map<String, Object> params = new HashMap<>();
-            params.put("userId", userId);
-            params.put("couponId", id);
-            NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
-                @Override
-                public void onSuccess(String result) {
-                    if (loadHud != null) {
-                        loadHud.dismiss();
-                    }
-                    Gson gson = new Gson();
-                    RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                    if (requestStatus != null) {
-                        showToastRequestMsg(getActivity(), requestStatus);
-                    }
-                }
-
-                @Override
-                public void onNotNetOrException() {
-                    if (loadHud != null) {
-                        loadHud.dismiss();
-                    }
-                }
-            });
+            CommunalWebDetailUtils.getCommunalWebInstance().getDirectCoupon(this, id, loadHud);
         } else {
             getLoginStatus(getActivity());
         }

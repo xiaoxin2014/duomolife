@@ -3,7 +3,7 @@ package com.amkj.dmsh.homepage.adapter;
 import android.support.annotation.Nullable;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.bean.CouponListEntity.CouponListBean.CouponBean;
+import com.amkj.dmsh.bean.CouponEntity.CouponListEntity.CouponBean;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 

@@ -181,7 +181,7 @@
     <string name="sku_notice">到货提醒</string>
     <string name="sku_cancel_notice">取消提醒</string>
     <!--拼团-->
-    <string name="share_join_group">邀请好友一起来拼团吧\n还差%1$d人就可拼团成功，快去分享给好友吧</string>
+    <string name="share_join_group">还差%d人，即可获得！</string>
     <string name="group_buy_count">已团%1$d件</string>
     <string name="group_residue_join_count">"拼团中，还差%1$d人</string>
     <string name="group_left_join_count">"还差%1$d人成团</string>
@@ -279,4 +279,7 @@
     <string name="picked_num">%d条精选内容</string>
     <string name="shoppig_reward_rule">还有%d秒就可获得奖励</string>
     <string name="my_coupon">我的优惠券</string>
+    <string name="go_group">去开团</string>
+    <string name="already_join_group_num">已参与人数:%s人</string>
+    <string name="leftParticipant">还差“%d人”成团</string>
 </resources>

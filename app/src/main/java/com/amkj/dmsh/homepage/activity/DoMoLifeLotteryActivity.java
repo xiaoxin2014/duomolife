@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
-import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AlertDialog;
@@ -37,12 +36,14 @@ import android.widget.Toast;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.bean.H5ShareBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.views.HtmlWebView;
+import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.umeng.socialize.UMShareAPI;
 
@@ -64,8 +65,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_BLACK_PAGE;
 import static com.amkj.dmsh.constant.Url.H_HOT_ACTIVITY_ADD_LOTTERY;
-
-;
 
 /**
  * @author LGuiPeng
@@ -98,7 +97,7 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
     @Override
     protected void initViews() {
         getLoginStatus(DoMoLifeLotteryActivity.this);
-        if(userId>0){
+        if (userId > 0) {
             web_communal.loadUrl(LOTTERY_URL + "?uid=" + userId);
         }
         tv_web_shared.setVisibility(View.GONE);
@@ -141,17 +140,18 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
             public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
                 handler.proceed();
             }
+
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 String url = request.getUrl().toString();
-                try{
-                    if(!url.startsWith("http://") && !url.startsWith("https://")){
+                try {
+                    if (!url.startsWith("http://") && !url.startsWith("https://")) {
                         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                         startActivity(intent);
                         return true;
                     }
-                }catch (Exception e){//防止crash (如果手机上没有安装处理某个scheme开头的url的APP, 会导致crash)
+                } catch (Exception e) {//防止crash (如果手机上没有安装处理某个scheme开头的url的APP, 会导致crash)
                     return true;//没有安装该app时，返回true，表示拦截自定义链接，但不跳转，避免弹出上面的错误页面
                 }
                 view.loadUrl(url);
@@ -160,18 +160,19 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                try{
-                    if(!url.startsWith("http://") && !url.startsWith("https://")){
+                try {
+                    if (!url.startsWith("http://") && !url.startsWith("https://")) {
                         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                         startActivity(intent);
                         return true;
                     }
-                }catch (Exception e){//防止crash (如果手机上没有安装处理某个scheme开头的url的APP, 会导致crash)
+                } catch (Exception e) {//防止crash (如果手机上没有安装处理某个scheme开头的url的APP, 会导致crash)
                     return true;//没有安装该app时，返回true，表示拦截自定义链接，但不跳转，避免弹出上面的错误页面
                 }
                 view.loadUrl(url);
                 return true;
             }
+
             @Override
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                 super.onReceivedError(view, errorCode, description, failingUrl);
@@ -186,7 +187,7 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
             @Override
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
                 int errorCode = error.getErrorCode();
-                if (404 == errorCode || 500 == errorCode||errorCode == -2) {
+                if (404 == errorCode || 500 == errorCode || errorCode == -2) {
                     errorUrl = request.getUrl().toString();
                     setErrorException(view);
                 }
@@ -196,11 +197,12 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
             @Override
             public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
                 int errorCode = errorResponse.getStatusCode();
-                if (404 == errorCode || 500 == errorCode||errorCode == -2) {
+                if (404 == errorCode || 500 == errorCode || errorCode == -2) {
                     errorUrl = request.getUrl().toString();
                     setErrorException(view);
                 }
             }
+
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
@@ -245,13 +247,13 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
     }
 
     private void getLotteryTime() {
-        if(userId<1){
+        if (userId < 1) {
             return;
         }
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
         params.put("turn_id", TextUtils.isEmpty(turnId) ? "3" : turnId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,H_HOT_ACTIVITY_ADD_LOTTERY,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, H_HOT_ACTIVITY_ADD_LOTTERY, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 String code = "";
@@ -279,6 +281,7 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
                     Toast.makeText(DoMoLifeLotteryActivity.this, msg, Toast.LENGTH_SHORT).show();
                 }
             }
+
             @Override
             public void netClose() {
                 Toast.makeText(DoMoLifeLotteryActivity.this, R.string.unConnectedNetwork, Toast.LENGTH_SHORT).show();
@@ -487,65 +490,39 @@ public class DoMoLifeLotteryActivity extends BaseActivity {
         //分享
         @JavascriptInterface
         public void sharePage(String result) {
-            if (!TextUtils.isEmpty(result)) {
-                Message message = handler.obtainMessage();
-                message.obj = result;
-                handler.sendMessage(message);
-            } else {
-                Toast.makeText(context, "数据为空", Toast.LENGTH_SHORT).show();
-            }
+            getActivity().runOnUiThread(() -> {
+                if (!TextUtils.isEmpty(result)) {
+                    H5ShareBean shareBean = new Gson().fromJson(result, H5ShareBean.class);
+                    turnId = shareBean.getTurnId();
+                    UMShareAction umShareAction = new UMShareAction(getActivity()
+                            , shareBean.getImageUrl()
+                            , TextUtils.isEmpty(shareBean.getTitle()) ? "多么生活" : shareBean.getTitle()
+                            , TextUtils.isEmpty(shareBean.getDescription()) ? "抽奖活动" : shareBean.getDescription()
+                            , shareBean.getUrl(), 1);
+                    umShareAction.setOnShareSuccessListener(shareSuccessListener);
+                } else {
+                    Toast.makeText(context, "数据为空", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
 
         //      跳转客服
         @JavascriptInterface
         public void skipService() {
             QyServiceUtils qyServiceUtils = QyServiceUtils.getQyInstance();
-            qyServiceUtils.openQyServiceChat(DoMoLifeLotteryActivity.this, "web：","");
+            qyServiceUtils.openQyServiceChat(DoMoLifeLotteryActivity.this, "web：", "");
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        handler.removeCallbacksAndMessages(null);
-        super.onDestroy();
-    }
+    UMShareAction.OnShareSuccessListener shareSuccessListener = this::getLotteryTime;
 
-    UMShareAction.OnShareSuccessListener shareSuccessListener = new UMShareAction.OnShareSuccessListener() {
-        @Override
-        public void onShareSuccess() {
-            getLotteryTime();
-        }
-    };
-    Handler handler = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message msg) {
-            String shareData = (String) msg.obj;
-            try {
-                JSONObject jsonObject = new JSONObject(shareData);
-                String title = jsonObject.getString("title");
-                String imageUrl = jsonObject.getString("imageUrl");
-                String content = jsonObject.getString("content");
-                String url = jsonObject.getString("url");
-                turnId = jsonObject.getString("turnId");
-                UMShareAction umShareAction = new UMShareAction(DoMoLifeLotteryActivity.this
-                        , imageUrl
-                        , TextUtils.isEmpty(title) ? "多么生活" : title
-                        , TextUtils.isEmpty(content) ? "抽奖活动" : content
-                        , url,1);
-                umShareAction.setOnShareSuccessListener(shareSuccessListener);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return false;
-        }
-    });
 
     @OnClick(R.id.tv_communal_net_refresh)
-    void clickError(){
+    void clickError() {
         rel_communal_net_error.setVisibility(View.GONE);
-        if(isWebLinkUrl(errorUrl)){
+        if (isWebLinkUrl(errorUrl)) {
             web_communal.loadUrl(errorUrl);
-        }else{
+        } else {
             web_communal.loadUrl(LOTTERY_URL);
         }
     }

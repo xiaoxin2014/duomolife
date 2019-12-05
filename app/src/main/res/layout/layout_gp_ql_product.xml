@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:divider="@drawable/divider_ll_10dp_gray_bg"
-    android:orientation="vertical"
-    android:showDividers="beginning|end">
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:divider="@drawable/divider_ll_10dp_gray_bg"
+              android:orientation="vertical"
+              android:showDividers="beginning|end">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/sc_mm_68"
+        android:background="@color/white"
         android:gravity="center_vertical"
         android:paddingLeft="@dimen/sc_mm_20"
         android:paddingRight="@dimen/sc_mm_33">
@@ -18,89 +18,72 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:text="创建时间"
+            android:text="开团时间"
             android:textColor="@color/text_black_t"
-            android:textSize="@dimen/sc_mm_26" />
+            android:textSize="@dimen/sc_mm_26"/>
 
         <TextView
             android:id="@+id/tv_gp_ql_share_product_c_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:text="2011111111111111111111111111"
+            android:text="@string/defaul"
             android:textColor="@color/text_black_t"
-            android:textSize="@dimen/sc_mm_26" />
+            android:textSize="@dimen/sc_mm_26"/>
     </RelativeLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/sc_mm_216"
-        android:orientation="horizontal"
-        android:paddingLeft="@dimen/sc_mm_30"
+        android:background="@drawable/border_top_line"
         android:gravity="center_vertical"
-        android:paddingRight="@dimen/sc_mm_35">
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/sc_mm_32"
+        android:paddingTop="@dimen/sc_mm_20"
+        android:paddingRight="@dimen/sc_mm_35"
+        android:paddingBottom="@dimen/sc_mm_22">
 
         <ImageView
             android:id="@+id/iv_gp_ql_share_product"
             android:layout_width="@dimen/sc_mm_176"
             android:layout_height="@dimen/sc_mm_176"
-            android:scaleType="centerCrop"
-             />
-        <LinearLayout
+            android:scaleType="centerCrop"/>
+
+        <TextView
+            android:id="@+id/tv_gp_ql_share_pro_name"
             android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:paddingLeft="@dimen/sc_mm_30"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_width="match_parent"
-                android:id="@+id/tv_gp_ql_share_pro_name"
-                android:textColor="@color/text_black_t"
-                android:textSize="@dimen/sc_mm_28"
-                android:maxLines="2"
-                android:ellipsize="end"
-                android:layout_height="wrap_content" />
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_marginTop="@dimen/sc_mm_22"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:id="@+id/tv_gp_ql_share_count"
-                    android:textSize="@dimen/sc_mm_24"
-                    android:textColor="@color/text_gray_hint_n"
-                    android:layout_height="wrap_content" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="@dimen/sc_mm_15"
-                    android:layout_toRightOf="@id/tv_gp_ql_share_count"
-                    android:id="@+id/tv_gp_ql_share_open_count"
-                    android:textSize="@dimen/sc_mm_24"
-                    android:textColor="@color/text_gray_hint_n"
-                    android:layout_height="wrap_content" />
-            </RelativeLayout>
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_marginTop="@dimen/sc_mm_22"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:id="@+id/tv_gp_ql_share_price"
-                    android:textSize="@dimen/sc_mm_30"
-                    android:textColor="@color/text_normal_red"
-                    android:layout_height="wrap_content" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="@dimen/sc_mm_30"
-                    android:layout_toRightOf="@id/tv_gp_ql_share_price"
-                    android:id="@+id/tv_gp_ql_share_only_price"
-                    android:textSize="@dimen/sc_mm_24"
-                    android:textColor="@color/text_gray_hint_n"
-                    android:layout_height="wrap_content" />
-            </RelativeLayout>
-        </LinearLayout>
-    </LinearLayout>
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/sc_mm_30"
+            android:layout_marginTop="@dimen/sc_mm_20"
+            android:layout_toRightOf="@+id/iv_gp_ql_share_product"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="@string/defaul"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_28"/>
+
+        <TextView
+            android:id="@+id/tv_gp_ql_share_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="@dimen/sc_mm_30"
+            android:layout_marginBottom="@dimen/sc_mm_20"
+            android:layout_toRightOf="@+id/iv_gp_ql_share_product"
+            android:text="@string/defaul"
+            android:textColor="@color/text_normal_red"
+            android:textSize="@dimen/sc_mm_30"/>
+
+        <TextView
+            android:id="@+id/tv_gp_ql_share_only_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/tv_gp_ql_share_price"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/sc_mm_24"
+            android:layout_toRightOf="@id/tv_gp_ql_share_price"
+            android:text="@string/defaul"
+            android:textColor="@color/text_gray_hint_n"
+            android:textSize="@dimen/sc_mm_24"/>
+    </RelativeLayout>
 </LinearLayout>

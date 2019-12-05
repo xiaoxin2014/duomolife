@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.BuildConfig;
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.dominant.activity.QualityGroupShopDetailActivity;
 import com.amkj.dmsh.find.activity.TopicDetailActivity;
 import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
 import com.amkj.dmsh.netloadpage.NetEmptyCallback;
@@ -155,7 +156,7 @@ public abstract class BaseActivity extends AppCompatActivity {
      * 设置状态栏颜色
      */
     public void setStatusBar() {
-        if (this instanceof ShopScrollDetailsActivity || this instanceof TopicDetailActivity || this instanceof ArticleOfficialActivity) {
+        if (this instanceof ShopScrollDetailsActivity || this instanceof TopicDetailActivity || this instanceof ArticleOfficialActivity || this instanceof QualityGroupShopDetailActivity) {
             ImmersionBar.with(this).keyboardEnable(true).navigationBarEnable(false).statusBarDarkFont(true).fullScreen(true).init();
         } else {
 //            设置共同沉浸式样式

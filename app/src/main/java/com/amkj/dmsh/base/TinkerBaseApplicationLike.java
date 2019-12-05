@@ -884,18 +884,6 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
 
         return "";
     }
-//
-//  public String getPreviousActivity() {
-//        for (int i = activityLinkedList.size() - 1; i >= 0; i--) {
-//            Activity activity = activityLinkedList.get(i);
-//            String simpleName = activity.getClass().getSimpleName();
-//            if (!TextUtils.isEmpty(ConstantMethod.getSourceName(simpleName))) {
-//                return simpleName;
-//            }
-//        }
-//
-//        return "";
-//    }
 
     /**
      * 获取 webUrlTransform

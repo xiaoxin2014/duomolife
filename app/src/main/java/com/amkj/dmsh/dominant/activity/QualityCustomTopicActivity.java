@@ -72,7 +72,6 @@ import static com.amkj.dmsh.constant.Url.GET_SHOPPING_REWARD;
 import static com.amkj.dmsh.constant.Url.Q_CUSTOM_PRO_COVER;
 import static com.amkj.dmsh.constant.Url.Q_CUSTOM_PRO_LIST;
 
-;
 
 
 /**

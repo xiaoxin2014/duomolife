@@ -51,7 +51,6 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getSpannableString;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTimeAddSeconds;
 import static com.amkj.dmsh.constant.ConstantVariable.CANCEL_ORDER;
 import static com.amkj.dmsh.constant.ConstantVariable.CANCEL_PAY_ORDER;
 import static com.amkj.dmsh.constant.ConstantVariable.CHECK_LOG;
@@ -62,6 +61,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.LITTER_CONSIGN;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.REMIND_DELIVERY;
 import static com.amkj.dmsh.shopdetails.activity.DoMoIndentAllActivity.INDENT_TYPE;
+import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTimeAddSeconds;
 
 ;
 

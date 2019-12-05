@@ -33,10 +33,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import me.jessyan.autosize.utils.AutoSizeUtils;
-import q.rorbin.badgeview.Badge;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
@@ -44,7 +42,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.QUALITY_HOT_SALE_AD;
 import static com.amkj.dmsh.constant.Url.QUALITY_HOT_SALE_SHAFT;
 
-;
 
 
 /**
@@ -68,7 +65,6 @@ public class QualityTypeHotSaleProFragment extends BaseFragment {
     SlidingTabLayout stdDominantHotSale;
     @BindView(R.id.vp_dominant_hot_sale)
     ViewPager vpDominantHotSale;
-    private Badge badge;
     private QualityHotSaleShaftEntity qualityHotSaleShaftEntity;
     private CBViewHolderCreator cbViewHolderCreator;
     private List<CommunalADActivityBean> adBeanList = new ArrayList<>();
@@ -87,7 +83,6 @@ public class QualityTypeHotSaleProFragment extends BaseFragment {
             loadData();
             EventBus.getDefault().post(new EventMessage("refresh", "hotSaleData"));
         });
-        badge = getBadge(getActivity(), fl_header_service);
     }
 
     @Override

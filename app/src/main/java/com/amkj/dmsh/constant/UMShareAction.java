@@ -143,7 +143,12 @@ public class UMShareAction {
             this.routineUrl = routineUrl;
         }
 
-        //如果是自营商品详情页面，则分享弹窗显示保存图片按钮
+        //只分享到微信时不用弹窗直接调起微信分享
+        if (!TextUtils.isEmpty(h5Platform) && "1".equals(h5Platform)) {
+            setLoadImageShare(SHARE_MEDIA.WEIXIN, new UMImage(context, imgUrl), context, urlLink, title, description);
+            return;
+        }
+
         if (alertDialogShareHelper == null) {
             alertDialogShareHelper = new AlertDialogShareHelper(context, !TextUtils.isEmpty(routineUrl) && isSaveImg && productId > 0, h5Platform);
         }

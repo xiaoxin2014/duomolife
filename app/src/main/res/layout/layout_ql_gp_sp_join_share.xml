@@ -1,74 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1"
     android:background="@color/white"
-    android:layout_height="wrap_content">
-    <LinearLayout
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_invite_fr_join_gp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_marginTop="@dimen/sc_mm_70"
+        android:gravity="center"
+        android:text="@string/share_join_group"
+        android:textColor="@color/text_black_t"
+        android:textSize="@dimen/sc_mm_32"/>
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/sc_mm_87"
-            android:gravity="center">
+    <TextView
+        android:id="@+id/tv_new_user"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/sc_mm_22"
+        android:gravity="center"
+        android:text="必须是新用户才可以参团成功哦~"
+        android:textColor="@color/text_normal_red"
+        android:textSize="@dimen/sc_mm_30"/>
 
-            <include layout="@layout/layout_communal_time_countdown_bg" />
-        </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/sc_mm_32"
+        android:gravity="center">
 
-        <TextView
-            android:id="@+id/tv_invite_fr_join_gp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/sc_mm_70"
-            android:gravity="center"
-            android:lineSpacingExtra="@dimen/dimen_10_dp"
-            android:text="@string/share_join_group"
-            android:textColor="@color/text_black_t"
-            android:textSize="@dimen/sc_mm_32" />
+        <include layout="@layout/layout_communal_time_countdown_bg"/>
+    </RelativeLayout>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/sc_mm_44"
-            android:gravity="center"
-            android:text="倒计时结束前人数不满将拼团失败"
-            android:textColor="@color/text_black_t"
-            android:textSize="@dimen/sc_mm_28" />
+    <TextView
+        android:id="@+id/tv_join_share"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sc_mm_88"
+        android:layout_marginLeft="@dimen/sc_mm_49"
+        android:layout_marginTop="@dimen/sc_mm_58"
+        android:layout_marginRight="@dimen/sc_mm_49"
+        android:background="@drawable/shap_invate_group_bg"
+        android:gravity="center"
+        android:text="邀请好友参团"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sc_mm_32"/>
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/rel_group_join_share"
-            android:layout_marginLeft="@dimen/gap_left"
-            android:layout_marginRight="@dimen/gap_right"
-            android:layout_marginTop="@dimen/sc_mm_44"
-            android:gravity="center">
-            <include layout="@layout/layout_communal_flexbox"/>
-        </RelativeLayout>
-        <TextView
-            android:layout_marginTop="@dimen/sc_mm_44"
-            android:layout_width="match_parent"
-            android:layout_marginLeft="@dimen/sc_mm_80"
-            android:layout_marginRight="@dimen/sc_mm_80"
-            android:id="@+id/tv_join_share"
-            android:textSize="@dimen/sc_mm_32"
-            android:gravity="center"
-            android:text="邀请好友参团"
-            android:background="@drawable/border_circle_4_s_red"
-            android:textColor="@color/white"
-            android:layout_height="@dimen/sc_mm_88" />
-        <TextView
+    <LinearLayout
+        android:id="@+id/rel_group_join_share"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/sc_mm_90"
+        android:background="@drawable/border_top_line"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/sc_mm_26"
+        android:paddingBottom="@dimen/sc_mm_18">
+
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/sc_mm_16"
-            android:layout_marginBottom="@dimen/sc_mm_44"
-            android:textSize="@dimen/sc_mm_24"
-            android:text="（分享有惊喜）"
-            android:textColor="@color/text_gray_hint_n"
-            android:gravity="center"
-            android:layout_height="wrap_content" />
-        <include layout="@layout/layout_gp_ql_product"/>
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/iv_leader"
+                android:layout_width="@dimen/sc_mm_100"
+                android:layout_height="@dimen/sc_mm_100"
+                android:scaleType="centerCrop"/>
+
+            <TextView
+                android:layout_width="@dimen/sc_mm_80"
+                android:layout_height="@dimen/sc_mm_38"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/sc_mm_17"
+                android:background="@drawable/shap_leader_bg"
+                android:gravity="center"
+                android:text="团长"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sc_mm_26"/>
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="@dimen/sc_mm_100"
+            android:layout_height="@dimen/sc_mm_100"
+            android:layout_marginLeft="@dimen/sc_mm_30"
+            android:scaleType="centerCrop"
+            android:src="@drawable/who"/>
     </LinearLayout>
-</FrameLayout>
+
+
+    <include layout="@layout/layout_gp_ql_product"/>
+</LinearLayout>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:background="@color/white">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/topic_head_bg"/>
+
+    <LinearLayout
+        android:id="@+id/ll_topic_detail"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.scwang.smartrefresh.layout.SmartRefreshLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:cube_ptr="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/smart_refresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            cube_ptr:srlEnableAutoLoadMore="false"
+            cube_ptr:srlEnableLoadMore="false">
+
+            <include
+                layout="@layout/layout_refresh_header_gif"/>
+
+            <android.support.design.widget.CoordinatorLayout
+                android:id="@+id/coordinator"
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/transparent">
+
+                <android.support.design.widget.AppBarLayout
+                    android:id="@+id/ab_find_topic_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/transparent"
+                    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+                    <android.support.design.widget.CollapsingToolbarLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/transparent"
+                        app:contentScrim="@android:color/white"
+                        app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+                        <include layout="@layout/layout_topic_info"/>
+
+                    </android.support.design.widget.CollapsingToolbarLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/white"
+                        android:gravity="center_horizontal">
+
+                        <com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout
+                            xmlns:tl="http://schemas.android.com/apk/res-auto"
+                            android:id="@+id/sliding_tablayout"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/sc_mm_88"
+                            android:layout_gravity="center"
+                            android:background="@color/white"
+                            tl:tl_indicator_color="@color/tab_color"
+                            tl:tl_indicator_gravity="BOTTOM"
+                            tl:tl_indicator_height="@dimen/dimen_2dp"
+                            tl:tl_indicator_style="NORMAL"
+                            tl:tl_indicator_width_equal_title="true"
+                            tl:tl_tab_padding="@dimen/sc_mm_77"
+                            tl:tl_textBold="SELECT"
+                            tl:tl_textSelectColor="@color/text_login_gray_s"
+                            tl:tl_textUnselectColor="@color/text_login_gray_s"
+                            tl:tl_textsize="15sp"/>
+                    </LinearLayout>
+                </android.support.design.widget.AppBarLayout>
+
+                <android.support.v4.view.ViewPager
+                    android:id="@+id/vp_post"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/border_top_line"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+                <include layout="@layout/layout_find_topic_release"/>
+            </android.support.design.widget.CoordinatorLayout>
+        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+    </LinearLayout>
+</FrameLayout>

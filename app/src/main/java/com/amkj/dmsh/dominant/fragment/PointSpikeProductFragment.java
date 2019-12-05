@@ -48,7 +48,6 @@ import static android.app.Activity.RESULT_OK;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getDeviceAppNotificationStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
-import static com.amkj.dmsh.constant.ConstantMethod.isEndOrStartTime;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
@@ -58,6 +57,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.Q_POINT_SPIKE_PRODUCT;
 import static com.amkj.dmsh.constant.Url.Q_POINT_SPIKE_PRODUCT_CLICK_TOTAL;
 import static com.amkj.dmsh.constant.Url.Q_POINT_SPIKE_PRODUCT_STATUS;
+import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTime;
 
 
 /**
@@ -207,11 +207,11 @@ public class PointSpikeProductFragment extends BaseFragment {
                                 int productStatus = 0;
                                 String timeStatus = "距离开始还有";
 //                                是否已开始
-                                if (isEndOrStartTime(pointSpikeProductEntity.getSystemTime(), pointSpikeStartTime)) {
+                                if (isEndOrStartTime(pointSpikeProductEntity.getCurrentTime(), pointSpikeStartTime)) {
                                     productStatus = 1;
                                     timeStatus = "距离结束还有";
 //                                是否已结束
-                                    if (isEndOrStartTime(pointSpikeProductEntity.getSystemTime(), pointSpikeEndTime)) {
+                                    if (isEndOrStartTime(pointSpikeProductEntity.getCurrentTime(), pointSpikeEndTime)) {
                                         productStatus = 2;
                                         timeStatus = "已结束";
                                     }
@@ -251,10 +251,10 @@ public class PointSpikeProductFragment extends BaseFragment {
         Date startTime;
         Date endTime;
         try {
-            if (TextUtils.isEmpty(pointSpikeProductEntity.getSystemTime())) {
+            if (TextUtils.isEmpty(pointSpikeProductEntity.getCurrentTime())) {
                 currentTime = new Date();
             } else {
-                currentTime = formatter.parse(pointSpikeProductEntity.getSystemTime());
+                currentTime = formatter.parse(pointSpikeProductEntity.getCurrentTime());
             }
             startTime = formatter.parse(pointSpikeStartTime);
             endTime = formatter.parse(pointSpikeEndTime);
