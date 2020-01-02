@@ -800,6 +800,8 @@ public class Url {
     public static final String FIND_AD2 = "api/website/getAdByFindTopic";
     //    获取商品详情更多评论
     public static final String GET_PRODUCT_POST = "api/find/post/getProductPost";
+    //    抽奖页面
+    public static final String LOTTERY_URL = "https://www.domolife.cn/m/template/home/lottery.html";
 
 
     /**

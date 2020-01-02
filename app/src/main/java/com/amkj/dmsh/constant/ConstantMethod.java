@@ -56,7 +56,6 @@ import com.amkj.dmsh.find.activity.JoinTopicActivity;
 import com.amkj.dmsh.find.activity.PostDetailActivity;
 import com.amkj.dmsh.find.activity.TopicDetailActivity;
 import com.amkj.dmsh.homepage.activity.DoMoLifeCommunalActivity;
-import com.amkj.dmsh.homepage.activity.DoMoLifeLotteryActivity;
 import com.amkj.dmsh.homepage.bean.ScoreGoodsEntity;
 import com.amkj.dmsh.homepage.bean.ScoreGoodsEntity.ScoreGoodsBean;
 import com.amkj.dmsh.message.bean.MessageTotalEntity;
@@ -147,6 +146,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_C_WELFARE;
 import static com.amkj.dmsh.constant.UMShareAction.routineId;
 import static com.amkj.dmsh.constant.Url.H_Q_FLOAT_AD;
+import static com.amkj.dmsh.constant.Url.LOTTERY_URL;
 import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 import static com.amkj.dmsh.dao.BaiChuanDao.isTaoBaoUrl;
 import static com.amkj.dmsh.dao.BaiChuanDao.skipAliBC;
@@ -1182,7 +1182,8 @@ public class ConstantMethod {
                                 @Override
                                 public void imageClick() {
                                     alertDialogAdImage.dismiss();
-                                    Intent intent = new Intent(context, DoMoLifeLotteryActivity.class);
+                                    Intent intent = new Intent(context, DoMoLifeCommunalActivity.class);
+                                    intent.putExtra("loadUrl", LOTTERY_URL);
                                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                     context.startActivity(intent);
                                 }

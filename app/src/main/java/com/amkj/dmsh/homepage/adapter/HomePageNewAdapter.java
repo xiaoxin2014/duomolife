@@ -24,7 +24,6 @@ import com.amkj.dmsh.homepage.bean.HomeCommonEntity.HomeCommonBean;
 import com.amkj.dmsh.homepage.fragment.AliBCFragment;
 import com.amkj.dmsh.homepage.fragment.ArticleTypeFragment;
 import com.amkj.dmsh.homepage.fragment.AttendanceFragment;
-import com.amkj.dmsh.homepage.fragment.DoMoLifeLotteryFragment;
 import com.amkj.dmsh.homepage.fragment.EditorSelectFragment;
 import com.amkj.dmsh.homepage.fragment.HomeCouponGetFragment;
 import com.amkj.dmsh.homepage.fragment.HomeDefalutFragment;
@@ -49,7 +48,7 @@ public class HomePageNewAdapter extends FragmentPagerAdapter {
     private final List<HomeCommonBean> mHomeCommonBeanList;
     private String[] actionArrays = {"app://HomeDefalutFragment", "app://QualityNewUserActivity", "app://QualityTypeHotSaleProActivity", "app://QualityNewProActivity", "app://HomeCouponGetActivity", "app://DmlOptimizedSelActivity",
             "app://DoMoLifeWelfareActivity", "app://EditorSelectActivity", "app://WholePointSpikeProductActivity", "app://QualityGroupShopActivity", "app://DoMoLifeWelfareDetailsActivity", "app://DuomoLifeActivity",
-            "app://QualityCustomTopicActivity", "app://QualityWeekOptimizedActivity", "app://QualityShopBuyListActivity", "app://ArticleTypeActivity", "app://CouponZoneActivity", "app://TopicDetailActivity","app://AttendanceActivity","app://DoMoLifeLotteryActivity"};
+            "app://QualityCustomTopicActivity", "app://QualityWeekOptimizedActivity", "app://QualityShopBuyListActivity", "app://ArticleTypeActivity", "app://CouponZoneActivity", "app://TopicDetailActivity","app://AttendanceActivity"};
     private String prefix = "app://";
 
     public HomePageNewAdapter(FragmentManager fm, List<HomeCommonBean> homeCommonBeanList) {
@@ -141,8 +140,6 @@ public class HomePageNewAdapter extends FragmentPagerAdapter {
                         return BaseFragment.newInstance(ArticleTypeFragment.class, null, null);
                     case "app://AttendanceActivity"://签到
                         return BaseFragment.newInstance(AttendanceFragment.class, null, null);
-                    case "app://DoMoLifeLotteryActivity"://抽奖
-                        return BaseFragment.newInstance(DoMoLifeLotteryFragment.class, null, null);
                     //良品优选
                     default:
                         return BaseFragment.newInstance(HomeDefalutFragment.class, null, null);

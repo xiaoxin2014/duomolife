@@ -7,7 +7,6 @@ import android.text.TextUtils;
 
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.homepage.activity.DoMoLifeCommunalActivity;
-import com.amkj.dmsh.homepage.activity.DoMoLifeLotteryActivity;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.microquation.linkedme.android.LinkedME;
@@ -16,8 +15,8 @@ import com.microquation.linkedme.android.util.LinkProperties;
 import java.util.HashMap;
 
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
+import static com.amkj.dmsh.constant.Url.LOTTERY_URL;
 import static com.amkj.dmsh.dao.UserDao.getPersonalInfo;
-import static com.amkj.dmsh.homepage.activity.DoMoLifeLotteryActivity.LOTTERY_URL;
 
 ;
 
@@ -100,7 +99,8 @@ public class MiddleActivity extends AppCompatActivity {
     }
 
     private void setSkipPager() {
-        Intent intent = new Intent(MiddleActivity.this, DoMoLifeLotteryActivity.class);
+        Intent intent = new Intent(this, DoMoLifeCommunalActivity.class);
+        intent.putExtra("loadUrl", "https://www.domolife.cn/m/template/home/lottery.html");
         startActivity(intent);
         finish();
 

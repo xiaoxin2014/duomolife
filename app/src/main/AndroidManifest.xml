@@ -166,15 +166,6 @@
             </intent-filter>
         </activity>
         <!--抽奖模块-->
-        <activity
-            android:name=".homepage.activity.DoMoLifeLotteryActivity"
-            android:exported="false"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="DoMoLifeLotteryActivity"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
-        </activity>
         <!--积分夺宝-我的奖励-->
         <activity
             android:name=".homepage.activity.MineIntegralLotteryAwardActivity"

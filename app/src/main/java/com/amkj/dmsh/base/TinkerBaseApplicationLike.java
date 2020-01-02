@@ -701,8 +701,6 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
                 getWebUrlParameter("record", "gpRecordId", null)));
         //        拼团列表
         webUrlTransform.put("group.html", "app://QualityGroupShopActivity");
-        //        抽奖
-        webUrlTransform.put("lottery.html", "app://DoMoLifeLotteryActivity");
         //        热销单品
         webUrlTransform.put("hot_products.html", "app://QualityTypeHotSaleProActivity");
         //        新品发布
