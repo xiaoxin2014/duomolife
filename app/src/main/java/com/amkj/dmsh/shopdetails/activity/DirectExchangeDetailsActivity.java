@@ -24,11 +24,10 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.dao.ShareDao;
 import com.amkj.dmsh.dominant.activity.QualityProductActActivity;
 import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity;
-import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity.QualityGroupShareBean;
 import com.amkj.dmsh.find.activity.IndentScoreListActivity;
 import com.amkj.dmsh.find.activity.JoinTopicActivity;
 import com.amkj.dmsh.homepage.bean.ScoreGoodsEntity;
@@ -1036,8 +1035,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
                 QualityGroupShareEntity qualityGroupShareEntity = gson.fromJson(result, QualityGroupShareEntity.class);
                 if (qualityGroupShareEntity != null) {
                     if (qualityGroupShareEntity.getCode().equals(SUCCESS_CODE)) {
-                        QualityGroupShareBean qualityGroupShareBean = qualityGroupShareEntity.getQualityGroupShareBean();
-                        invitePartnerGroup(qualityGroupShareBean);
+                        ShareDao.invitePartnerGroup(getActivity(), qualityGroupShareEntity.getQualityGroupShareBean(), orderNo);
                     }
                 }
             }
@@ -1059,21 +1057,6 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
                 showToast(DirectExchangeDetailsActivity.this, R.string.unConnectedNetwork);
             }
         });
-    }
-
-    /**
-     * 邀请参团
-     *
-     * @param qualityGroupShareBean 参团信息
-     */
-    private void invitePartnerGroup(@NonNull QualityGroupShareBean qualityGroupShareBean) {
-        new UMShareAction(DirectExchangeDetailsActivity.this
-                , qualityGroupShareBean.getGpPicUrl()
-                , qualityGroupShareBean.getName()
-                , getStrings(qualityGroupShareBean.getSubtitle())
-                , Url.BASE_SHARE_PAGE_TWO + "m/template/share_template/groupShare.html?id=" + qualityGroupShareBean.getGpInfoId()
-                + "&record=" + qualityGroupShareBean.getGpRecordId(), "pages/groupshare/groupshare?id=" + qualityGroupShareBean.getGpInfoId()
-                + (TextUtils.isEmpty(orderNo) ? "&gpRecordId=" + qualityGroupShareBean.getGpRecordId() : "&order=" + orderNo), qualityGroupShareBean.getGpInfoId());
     }
 
     @Override

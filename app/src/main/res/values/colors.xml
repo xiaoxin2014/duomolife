@@ -12,7 +12,7 @@
     <color name="transparent_header">#7fffffff</color>
     <color name="translucence_black">#7f000000</color>
     <color name="white">#fff</color>
-    <color name="text_gray_c">#cccccc</color>
+    <color name="text_gray_c">#ccc</color>
     <color name="text_black_t">#333</color>
     <color name="text_black_t2">#4d4d4d</color>
     <color name="text_black_t3">#444</color>

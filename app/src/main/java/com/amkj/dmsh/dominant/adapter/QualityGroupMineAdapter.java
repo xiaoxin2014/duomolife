@@ -1,7 +1,6 @@
 package com.amkj.dmsh.dominant.adapter;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,8 +16,6 @@ import static com.amkj.dmsh.R.id.tv_ql_gp_mine_inv_join;
 import static com.amkj.dmsh.constant.ConstantMethod.getIntegralFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 
-;
-;
 
 /**
  * @author LGuiPeng
@@ -37,10 +34,9 @@ public class QualityGroupMineAdapter extends BaseQuickAdapter<QualityGroupMineBe
 
     @Override
     protected void convert(BaseViewHolder helper, QualityGroupMineBean qualityGroupMineBean) {
-        GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.iv_gp_product), qualityGroupMineBean.getGpPicUrl());
-        helper.setText(R.id.tv_ql_mine_time, !TextUtils.isEmpty(qualityGroupMineBean.getPayTime())
-                ? qualityGroupMineBean.getPayTime() : getStrings(qualityGroupMineBean.getCreateTime()))
-                .setText(R.id.tv_gp_indent_name, getStrings(qualityGroupMineBean.getName()))
+        GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.iv_gp_product), qualityGroupMineBean.getCoverImage());
+        helper.setText(R.id.tv_ql_mine_time, qualityGroupMineBean.getCreateTime())
+                .setText(R.id.tv_gp_indent_name, getStrings(qualityGroupMineBean.getProductName()))
                 .setText(R.id.tv_direct_indent_pro_sku, getStrings(qualityGroupMineBean.getProductSkuValue()))
                 .addOnClickListener(tv_ql_gp_mine_inv_join).setTag(tv_ql_gp_mine_inv_join, qualityGroupMineBean)
                 .addOnClickListener(R.id.tv_ql_gp_mine_details).setTag(R.id.tv_ql_gp_mine_details, qualityGroupMineBean);
@@ -53,8 +49,9 @@ public class QualityGroupMineAdapter extends BaseQuickAdapter<QualityGroupMineBe
             helper.setGone(R.id.tv_ql_gp_mine_inv_join, false);
         }
         TextView tv_ql_mine_status = helper.getView(R.id.tv_ql_mine_status);
+//        {"1":"拼团中","2":"拼团成功","3":"开团待支付","4":"参团待支付","5":"已过期","6":"拼团失败"}
         if (qualityGroupMineBean.getGpStatus() == 1) {
-            tv_ql_mine_status.setText(getIntegralFormat(context,R.string.group_residue_join_count,qualityGroupMineBean.getLeftParticipant()));
+            tv_ql_mine_status.setText(getIntegralFormat(context, R.string.group_residue_join_count, qualityGroupMineBean.getRemainNum()));
             tv_ql_mine_status.setSelected(true);
         } else {
             tv_ql_mine_status.setSelected(false);

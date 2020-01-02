@@ -287,9 +287,8 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                 break;
             case INDENT_GROUP_SHOP:
                 GroupShopDetailsBean groupShopDetailsBean = (GroupShopDetailsBean) item;
-                GlideImageLoaderUtil.loadCenterCrop(context, helper.getView(R.id.iv_direct_indent_pro),
-                        !TextUtils.isEmpty(groupShopDetailsBean.getGpPicUrl()) ? groupShopDetailsBean.getGpPicUrl() : groupShopDetailsBean.getCoverImage());
-                helper.setText(R.id.tv_direct_indent_pro_name, getStrings(groupShopDetailsBean.getName()))
+                GlideImageLoaderUtil.loadCenterCrop(context, helper.getView(R.id.iv_direct_indent_pro), groupShopDetailsBean.getGpPicUrl());
+                helper.setText(R.id.tv_direct_indent_pro_name, getStrings(groupShopDetailsBean.getProductName()))
                         .setText(R.id.tv_direct_indent_pro_sku, getStrings(groupShopDetailsBean.getProductSkuValue()))
                         .setText(R.id.tv_direct_indent_pro_price, getStringsChNPrice(context, groupShopDetailsBean.getGpPrice()))
                         .setText(R.id.tv_direct_pro_count, "x" + 1);
@@ -588,7 +587,7 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
     }
 
     private void requestRefundData(final CartProductInfoBean cartProductInfoBean) {
-        String url =  Url.Q_INDENT_APPLY_REFUND_CHECK;
+        String url = Url.Q_INDENT_APPLY_REFUND_CHECK;
         Map<String, Object> params = new HashMap<>();
         params.put("no", cartProductInfoBean.getOrderNo());
         params.put("userId", userId);

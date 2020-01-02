@@ -435,10 +435,26 @@ public class ConstantVariable {
 
 
     /**
-     * 团购订单类型
+     * 拼团订单类型
      */
     public static final int OPEN_GROUP = 1;//开团
     public static final int JOIN_GROUP = 2;//拼团
 
 
+    /**
+     * 拼团类型
+     */
+    public static final String GROUP_PRODUCT = "0";//商品团
+    public static final String GROUP_LOTTERY = "1";//抽奖团
+
+    /**
+     * 弹窗编号
+     */
+    public static final String FORCE_UPDATE = "1";//强制更新
+    public static final String COUPON_POPUP = "10";//优惠券弹窗
+    public static final String GP_REMIND = "21";//拼团未完成
+    public static final String NOT_FORCE_UPDATE = "22";//非强制更新
+    public static final String PUSH_OPEN_REMIND = "23";//推送通知打开提醒
+    public static final String APP_REMARK_GUDIANCE = "24";//app评分引导
+    public static final String MARKING_POPUP = "31";//营销弹窗
 }

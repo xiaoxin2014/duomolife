@@ -59,6 +59,7 @@ import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
 import com.amkj.dmsh.views.HtmlWebView;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.gyf.barlibrary.ImmersionBar;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfigC;
@@ -139,6 +140,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
     private boolean isWebManualFinish;
     private AlertDialogHelper notificationAlertDialogHelper;
     private AlertDialogHelper marketStoreGradeDialog;
+    private H5ShareBean mShareBean;
 
 
     @Override
@@ -402,18 +404,6 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
         });
     }
 
-    @OnClick(R.id.tv_web_back)
-    void finish(View view) {
-        isWebManualFinish = false;
-        finishWebPage(1);
-    }
-
-
-    @OnClick(R.id.tv_web_shared)
-    void shareData(View view) {
-        webViewJs(getResources().getString(R.string.web_share_getData_method));
-    }
-
     //    自定义系统原生弹框
     class MyWebChromeClient extends WebChromeClient {
 
@@ -568,7 +558,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
         private Activity context;
 
 
-        public JsData(Activity context) {
+        private JsData(Activity context) {
             this.context = context;
         }
 
@@ -581,19 +571,12 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
         //分享
         @JavascriptInterface
         public void sharePage(String result) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (!TextUtils.isEmpty(result)) {
-                        H5ShareBean shareBean = new Gson().fromJson(result, H5ShareBean.class);
-                        UMShareAction umShareAction = new UMShareAction(getActivity()
-                                , shareBean.getImageUrl()
-                                , TextUtils.isEmpty(shareBean.getTitle()) ? "多么生活" : shareBean.getTitle()
-                                , TextUtils.isEmpty(shareBean.getDescription()) ? "" : shareBean.getDescription()
-                                , shareBean.getUrl(), shareBean.getRoutineUrl(), shareBean.getObjId(), shareBean.getShareType(), shareBean.getPlatform());
-                    } else {
-                        showToast(context, "数据为空");
-                    }
+            runOnUiThread(() -> {
+                try {
+                    mShareBean = new Gson().fromJson(result, H5ShareBean.class);
+                    shareH5();
+                } catch (JsonSyntaxException e) {
+                    jsInteractiveException();
                 }
             });
         }
@@ -666,6 +649,9 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                             break;
                         case "getHeaderFromApp":
                             getHeaderFromApp(jsInteractiveBean.getOtherData());
+                            break;
+                        case "setShareButton":
+                            setShareButton(jsInteractiveBean.getOtherData());
                             break;
 //                            刷新设置
                         case "refresh":
@@ -756,6 +742,17 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
         }
     }
 
+    //分享当前H5页面
+    private void shareH5() {
+        if (mShareBean != null) {
+            UMShareAction umShareAction = new UMShareAction(this
+                    , mShareBean.getImageUrl()
+                    , mShareBean.getTitle()
+                    , mShareBean.getDescription()
+                    , mShareBean.getUrl(), mShareBean.getRoutineUrl(), mShareBean.getObjId(), mShareBean.getShareType(), mShareBean.getPlatform());
+        }
+    }
+
     //跳转订单填写
     private void skipIndentWrite(Map<String, Object> data) {
         if (data != null) {
@@ -788,6 +785,20 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
 //        String base64 = Base64.encodeToString(new JSONObject(map).toString().getBytes(), Base64.NO_WRAP);
         webViewJs(getStringsFormat(getActivity(), R.string.web_head_method, new JSONObject(map).toString(), userId == 0 ? "0" : String.valueOf(userId)));
     }
+
+    //标题栏分享
+    public void setShareButton(Map<String, Object> map) {
+        String title = (String) map.get("objName");
+        String imageUrl = (String) map.get("imageUrl");
+        String content = (String) map.get("content");
+        String url = (String) map.get("url");
+        int objId = (int) map.get("objId");
+        String routineUrl = (String) map.get("routineUrl");
+        int shareType = (int) map.get("shareType");
+        String platform = (String) map.get("platform");
+        mShareBean = new H5ShareBean(title, imageUrl, content, url, routineUrl, String.valueOf(objId), shareType, platform);
+    }
+
 
     //弹窗
     public void showImportToast(Map<String, Object> map) {
@@ -1249,7 +1260,17 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                 }
             }
         });
+    }
 
+    @OnClick(R.id.tv_web_back)
+    void finish(View view) {
+        isWebManualFinish = false;
+        finishWebPage(1);
+    }
+
+    @OnClick(R.id.tv_web_shared)
+    void shareData(View view) {
+        shareH5();
     }
 
     @OnClick(R.id.tv_communal_net_refresh)

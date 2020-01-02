@@ -225,6 +225,9 @@ public class Url {
     public static final String EDITOR_COMMENT_LIST = "api/redactorpickedcomment/getCommentList";
     //    获取自定义专区（逛一逛得积分）奖励
     public static final String GET_SHOPPING_REWARD = "api/goods/greate/grantViewReward";
+    //    统一弹窗规则接口
+    public static final String GET_UNIFIED_POPUP = "api/my/remind/getUnifiedPopup";
+
 
     /**
      * 大改版首页
@@ -519,7 +522,7 @@ public class Url {
     //    自选优惠券
     public static final String Q_SELF_SHOP_DETAILS_COUPON = "api/my/coupon/choiceSelfCouponV2";
     //    优惠券专区
-    public static final String Q_COUPON_ZONE= "api/activity/zone/getApiCouponZoneInfo";
+    public static final String Q_COUPON_ZONE = "api/activity/zone/getApiCouponZoneInfo";
     //    订单优惠信息 新版
     public static final String INDENT_DISCOUNTS_INFO = "api/goods/order/getOrderSettleInfoNew";
     //    订单优惠信息 大营销中心新版
@@ -540,6 +543,8 @@ public class Url {
     public static final String GROUP_SHOP_JOIN_ALL = "api/gp/getAllDomoGpInfo";
     //    拼团首页
     public static final String GROUP_SHOP_JOIN_INDEX = "api/gp/getDomoGpIndexInfo";
+    //    新版拼团首页
+    public static final String GROUP_SHOP_JOIN_NEW_INDEX = "api/gp/getGpListV2";
     //    拼团首页轮播图
     public static final String GROUP_SHOP_LOOP_INDEX = "api/gp/getGpIndexAd";
     //    拼团商品详细信息
@@ -548,14 +553,22 @@ public class Url {
     public static final String GROUP_SHOP_JOIN_NRE_USER = "api/gp/getQualifications";
     //    拼团通用信息
     public static final String GROUP_SHOP_DETAILS = "api/gp/getGpInfoDetailInfo";
+    //    拼团通用信息改版
+    public static final String GROUP_SHOP_NEW_DETAILS = "api/gp/getGpInfoDetailInfoV2";
     //    拼团列表
     public static final String GROUP_SHOP_OPEN_PERSON = "api/gp/getDomoCreateGpInfp";
     //    创建拼团订单
     public static final String Q_CREATE_GROUP_INDENT = "api/goods/order/addGpOrder";
+    //    新版创建拼团订单
+    public static final String Q_CREATE_GROUP_NEW_INDENT = "api/goods/order/addGpOrderV2";
     //    我的拼团订单
     public static final String GROUP_MINE_INDENT = "api/gp/getMyGpInfo";
+    //    新版我的拼团订单
+    public static final String GROUP_MINE_NEW_INDENT = "api/gp/getMyGpInfoV2";
     //    分享参团信息
     public static final String GROUP_MINE_SHARE = "api/gp/inviteToGp";
+    //    获取拼团弹窗
+    public static final String GROUP_GET_GP_POPUP = "api/gp/getGpPopup";
     //    商品评论点赞
     public static final String SHOP_EVA_LIKE = "api/goods/addEvaluateFavor";
     //    必买清单
@@ -633,7 +646,7 @@ public class Url {
     public static final String QUALITY_HOT_SALE_AD = "api/home/getHotProductAd";
     //    热销单品时间轴
     public static final String QUALITY_HOT_SALE_SHAFT = "api/goods/getHotGoodsDay";
-    //    标签详情商品
+    //    //    标签详情商品
     public static final String QUALITY_PRODUCT_LABEL = "api/goods/getProductListByLabelId";
     //    新版热销单品 时间轴
     public static final String QUALITY_HOT_SALE_LIST_NEW = "api/goods/getHotGoodsNew";

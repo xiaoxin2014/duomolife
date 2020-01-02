@@ -74,6 +74,8 @@ import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
 import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.utils.MarketUtils;
+import com.amkj.dmsh.utils.SharedPreUtils;
+import com.amkj.dmsh.utils.TimeUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogImage;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
@@ -128,9 +130,11 @@ import q.rorbin.badgeview.QBadgeView;
 import static android.content.Context.MODE_PRIVATE;
 import static android.os.Build.VERSION_CODES.KITKAT;
 import static com.ali.auth.third.core.context.KernelContext.getApplicationContext;
+import static com.amkj.dmsh.MainActivity.InvokeTimeFileName;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.base.WeChatPayConstants.APP_ID;
 import static com.amkj.dmsh.constant.ConstantVariable.COMMENT_TYPE;
+import static com.amkj.dmsh.constant.ConstantVariable.COUPON_POPUP;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.MES_ADVISE;
 import static com.amkj.dmsh.constant.ConstantVariable.MES_FEEDBACK;
@@ -1774,10 +1778,10 @@ public class ConstantMethod {
                 public void onSuccess(String result) {
                     RequestStatus requestStatus = RequestStatus.objectFromData(result);
                     if (requestStatus != null) {
-                        if (requestStatus.getCode().equals(SUCCESS_CODE)
-                                && !TextUtils.isEmpty(requestStatus.getImgUrl())
+                        if (requestStatus.getCode().equals(SUCCESS_CODE) && !TextUtils.isEmpty(requestStatus.getImgUrl())
                                 && 0 < requestStatus.getUserType() && requestStatus.getUserType() < 4) {
-                            //                                    弹窗
+                            SharedPreUtils.setParam(InvokeTimeFileName, COUPON_POPUP, TimeUtils.getCurrentTime(requestStatus));//记录调用时间
+                            // 弹窗
                             if (isContextExisted(context)) {
                                 GlideImageLoaderUtil.loadFinishImgDrawable(context, requestStatus.getImgUrl(), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
                                     @Override

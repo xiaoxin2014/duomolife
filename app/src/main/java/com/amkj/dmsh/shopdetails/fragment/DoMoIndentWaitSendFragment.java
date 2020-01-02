@@ -2,16 +2,12 @@ package com.amkj.dmsh.shopdetails.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity;
 import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity.QualityGroupShareBean;
@@ -44,7 +40,6 @@ import butterknife.BindView;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
-import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -59,6 +54,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.REMIND_DELIVERY;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
 import static com.amkj.dmsh.constant.Url.Q_INQUIRY_WAIT_SEND_EXPEDITING;
+import static com.amkj.dmsh.dao.ShareDao.invitePartnerGroup;
 
 
 /**
@@ -235,7 +231,7 @@ public class DoMoIndentWaitSendFragment extends BaseFragment {
      * @param no
      */
     private void getInviteGroupInfo(String no) {
-        String url =  Url.GROUP_MINE_SHARE;
+        String url = Url.GROUP_MINE_SHARE;
         if (loadHud != null) {
             loadHud.show();
         }
@@ -252,7 +248,7 @@ public class DoMoIndentWaitSendFragment extends BaseFragment {
                 if (qualityGroupShareEntity != null) {
                     if (qualityGroupShareEntity.getCode().equals(SUCCESS_CODE)) {
                         QualityGroupShareBean qualityGroupShareBean = qualityGroupShareEntity.getQualityGroupShareBean();
-                        invitePartnerGroup(qualityGroupShareBean, no);
+                        invitePartnerGroup(getActivity(), qualityGroupShareBean, no);
                     }
                 }
             }
@@ -320,21 +316,6 @@ public class DoMoIndentWaitSendFragment extends BaseFragment {
                 showToast(mAppContext, R.string.do_failed);
             }
         });
-    }
-
-    /**
-     * 邀请参团
-     *
-     * @param qualityGroupShareBean 参团信息
-     */
-    private void invitePartnerGroup(@NonNull QualityGroupShareBean qualityGroupShareBean, String orderNo) {
-        new UMShareAction((BaseActivity) getActivity()
-                , qualityGroupShareBean.getGpPicUrl()
-                , qualityGroupShareBean.getName()
-                , getStrings(qualityGroupShareBean.getSubtitle())
-                , Url.BASE_SHARE_PAGE_TWO + "m/template/share_template/groupShare.html?id=" + qualityGroupShareBean.getGpInfoId()
-                + "&record=" + qualityGroupShareBean.getGpRecordId(), "pages/groupshare/groupshare?id=" + qualityGroupShareBean.getGpInfoId()
-                + (TextUtils.isEmpty(orderNo) ? "&gpRecordId=" + qualityGroupShareBean.getGpRecordId() : "&order=" + orderNo), qualityGroupShareBean.getGpInfoId());
     }
 
 

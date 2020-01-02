@@ -23,7 +23,7 @@ public class SkuSaleBean implements Parcelable {
      * newUserTag : null
      */
 
-    @SerializedName(value = "id")
+    @SerializedName(value = "id", alternate = "skuId")
     private int id;
     private int productId;
     private String price;
@@ -35,8 +35,9 @@ public class SkuSaleBean implements Parcelable {
     private int isNotice;
     private String presentSkuIds;
     private String activityPrice;
+    //   新人专属以及拼团标志专属字段
     private String newUserTag;
-    //            积分商品独有属性
+    //   积分商品独有属性
     private String moneyPrice;
     private String prePrice;
     //赠品信息

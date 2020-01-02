@@ -19,8 +19,6 @@ import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,8 +36,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.Q_COUPON_PRODUCT_LIST;
 
-;
-;
 
 /**
  * @author LGuiPeng
@@ -81,20 +77,14 @@ public class CouponProductActivity extends BaseActivity {
             finish();
             return;
         }
+        tv_header_titleAll.setText("可用券商品");
         tl_normal_bar.setSelected(true);
         header_shared.setVisibility(View.INVISIBLE);
-        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                loadData();
-            }
-        });
+        smart_communal_refresh.setOnRefreshListener(refreshLayout -> loadData());
         communal_recycler.setLayoutManager(new GridLayoutManager(CouponProductActivity.this, 2));
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_dp)
-
-
                 .create());
         qualityTypeProductAdapter = new QualityTypeProductAdapter(CouponProductActivity.this, couponProductList);
         communal_recycler.setAdapter(qualityTypeProductAdapter);
@@ -161,6 +151,7 @@ public class CouponProductActivity extends BaseActivity {
                                 qualityTypeProductAdapter.loadMoreEnd();
                                 showToast(CouponProductActivity.this, likedProductEntity.getMsg());
                             }
+                            qualityTypeProductAdapter.disableLoadMoreIfNotFullPage();
                             qualityTypeProductAdapter.notifyDataSetChanged();
                         }
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, couponProductList, likedProductEntity);
@@ -199,5 +190,15 @@ public class CouponProductActivity extends BaseActivity {
     @OnClick(R.id.tv_life_back)
     void goBack() {
         finish();
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
+
+    @Override
+    public View getLoadView() {
+        return smart_communal_refresh;
     }
 }

@@ -61,6 +61,7 @@ import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
 import com.amkj.dmsh.views.HtmlWebView;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.gyf.barlibrary.ImmersionBar;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfigC;
@@ -145,6 +146,7 @@ public class AliBCFragment extends BaseFragment {
     private WeakReference<Activity> activityWeakReference;
     private AlertDialogHelper notificationAlertDialogHelper;
     private AlertDialogHelper marketStoreGradeDialog;
+    private H5ShareBean mShareBean;
 
     @Override
     protected int getContentView() {
@@ -153,7 +155,6 @@ public class AliBCFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
-        tv_header_shared.setVisibility(View.GONE);
         tl_normal_bar.setVisibility(View.GONE);
         rel_communal_net_error.setVisibility(View.GONE);
         ll_web_ali.setBackgroundColor(getResources().getColor(R.color.transparent));
@@ -610,12 +611,11 @@ public class AliBCFragment extends BaseFragment {
 
         @JavascriptInterface
         public void sharePage(String result) {
-            if (!TextUtils.isEmpty(result)) {
-                Message message = handler.obtainMessage();
-                message.obj = result;
-                handler.sendMessage(message);
-            } else {
-                showToast(context, "数据为空");
+            try {
+                mShareBean = new Gson().fromJson(result, H5ShareBean.class);
+                shareH5();
+            } catch (JsonSyntaxException e) {
+                jsInteractiveException("");
             }
         }
 
@@ -642,11 +642,6 @@ public class AliBCFragment extends BaseFragment {
             constantMethod.getPermissions(getActivity(), Permission.Group.STORAGE);
         }
 
-        /**
-         * v 3.1.8 后提供公用方法交互 避免版本控制
-         *
-         * @param resultJson json 数据
-         */
         /**
          * v 3.1.8 后提供公用方法交互 避免版本控制
          *
@@ -778,6 +773,18 @@ public class AliBCFragment extends BaseFragment {
             }
         }
     }
+
+    //分享当前H5页面
+    private void shareH5() {
+        if (mShareBean != null) {
+            UMShareAction umShareAction = new UMShareAction((BaseActivity) getActivity()
+                    , mShareBean.getImageUrl()
+                    , mShareBean.getTitle()
+                    , mShareBean.getDescription()
+                    , mShareBean.getUrl(), mShareBean.getRoutineUrl(), mShareBean.getObjId(), mShareBean.getShareType(), mShareBean.getPlatform());
+        }
+    }
+
 
     //获取Header头
     public void getHeaderFromApp(Map<String, Object> data) {
@@ -1185,39 +1192,6 @@ public class AliBCFragment extends BaseFragment {
         paddingStatus = bundle.getString("paddingStatus", "false");
     }
 
-    @OnClick(R.id.tv_life_back)
-    void goBack(View view) {
-        finishWebPage(1);
-    }
-
-    private Handler handler = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message msg) {
-            shareData = (String) msg.obj;
-            if (shareData != null && !TextUtils.isEmpty(shareData)) {
-                setShareData(shareData);
-            }
-            return false;
-        }
-    });
-
-    private void setShareData(String shareData) {
-        try {
-            H5ShareBean shareBean = new Gson().fromJson(shareData, H5ShareBean.class);
-            UMShareAction umShareAction = new UMShareAction((BaseActivity) getActivity()
-                    , shareBean.getImageUrl()
-                    , TextUtils.isEmpty(shareBean.getTitle()) ? "多么生活" : shareBean.getTitle()
-                    , TextUtils.isEmpty(shareBean.getDescription()) ? "" : shareBean.getDescription()
-                    , shareBean.getUrl(), shareBean.getRoutineUrl(), shareBean.getObjId(), shareBean.getShareType(), shareBean.getPlatform());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @OnClick(R.id.tv_header_shared)
-    void shareData(View view) {
-        webViewJs(getResources().getString(R.string.web_share_getData_method));
-    }
 
     /**
      * 回调添加日程返回值
@@ -1261,9 +1235,6 @@ public class AliBCFragment extends BaseFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (handler != null) {
-            handler.removeCallbacksAndMessages(this);
-        }
         if (web_fragment_communal != null) {
             web_fragment_communal.removeAllViews();
             web_fragment_communal.destroy();

@@ -16,7 +16,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.dominant.activity.ProductLabelDetailActivity;
 import com.amkj.dmsh.dominant.activity.QualityNewUserActivity;
 import com.amkj.dmsh.dominant.activity.QualityProductActActivity;
-import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity.QualityGroupShareBean.MemberListBean;
+import com.amkj.dmsh.dominant.bean.GroupShopDetailsEntity.GroupShopDetailsBean.ParticipantInfoBean.GroupShopJoinBean;
 import com.amkj.dmsh.find.activity.FindTagDetailsActivity;
 import com.amkj.dmsh.find.bean.InvitationImgDetailEntity.InvitationImgDetailBean.TagsBean;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean.MarketLabelBean;
@@ -24,6 +24,7 @@ import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 
@@ -46,7 +47,7 @@ public class ProductLabelCreateUtils {
      */
     public static TextView createLabelText(Context context, String labelText, int labelCode) {
         TextView textView = new TextView(context);
-        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
         textView.setLayoutParams(layoutParams);
         int tenLeftRight = AutoSizeUtils.mm2px(context, 7);
         int fiveTopBottom = AutoSizeUtils.mm2px(context, 3);
@@ -75,7 +76,7 @@ public class ProductLabelCreateUtils {
      */
     public static TextView createLabelClickText(Context context, MarketLabelBean marketLabelBean) {
         TextView textView = new TextView(context);
-        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
         textView.setLayoutParams(layoutParams);
         int tenLeftRight = AutoSizeUtils.mm2px(context, 15);
         int fiveTopBottom = AutoSizeUtils.mm2px(context, 7);
@@ -141,7 +142,7 @@ public class ProductLabelCreateUtils {
     public static View createArticleIcon(Context context) {
         ImageView iv_label = new ImageView(context);
         iv_label.setImageResource(R.drawable.tag_label_icon);
-        iv_label.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        iv_label.setLayoutParams(new ViewGroup.LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
         return iv_label;
     }
 
@@ -180,16 +181,20 @@ public class ProductLabelCreateUtils {
      * @param memberListBean
      * @return
      */
-    public static View createOpenGroupUserInfo(Context context, MemberListBean memberListBean) {
+    public static View createOpenGroupUserInfo(Context context, GroupShopJoinBean memberListBean) {
         View view = LayoutInflater.from(context).inflate(R.layout.layout_gp_join_avator, null, false);
-        ImageView imageView =  view.findViewById(R.id.iv_dm_gp_open_ava);
-        TextView tv_dm_gp_name =  view.findViewById(R.id.tv_dm_gp_name);
-        GlideImageLoaderUtil.loadRoundImg(context, imageView, memberListBean.getAvatar(), AutoSizeUtils.mm2px(mAppContext, 100), R.drawable.default_ava_img);
-        String name = getStrings(memberListBean.getNickname());
-        if (name.length() > 7) {
-            name = name.substring(0, 7) + "...";
+        ImageView imageView = view.findViewById(R.id.iv_dm_gp_open_ava);
+        TextView tv_dm_gp_name = view.findViewById(R.id.tv_dm_gp_name);
+        TextView tvStatus = view.findViewById(R.id.tv_status);
+        GlideImageLoaderUtil.loadRoundImg(context, imageView, memberListBean.getAvatar(), AutoSizeUtils.mm2px(mAppContext, 105), R.drawable.default_ava_img);
+        String name = getStrings(memberListBean.getNickName());
+        if (name.length() > 5) {
+            name = name.substring(0, 5) + "...";
         }
         tv_dm_gp_name.setText(name);
+        String statusText = memberListBean.getStatusText();
+        tvStatus.setVisibility(!TextUtils.isEmpty(statusText) ? View.VISIBLE : View.GONE);
+        tvStatus.setText(statusText);
         return view;
     }
 

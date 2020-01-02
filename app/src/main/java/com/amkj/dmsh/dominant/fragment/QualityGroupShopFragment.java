@@ -44,11 +44,10 @@ import butterknife.OnClick;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
-import static com.amkj.dmsh.constant.Url.GROUP_SHOP_JOIN_INDEX;
+import static com.amkj.dmsh.constant.Url.GROUP_SHOP_JOIN_NEW_INDEX;
 import static com.amkj.dmsh.constant.Url.GROUP_SHOP_LOOP_INDEX;
 
 
@@ -184,12 +183,7 @@ public class QualityGroupShopFragment extends BaseFragment {
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", page);
         params.put("showCount", TOTAL_COUNT_TWENTY);
-        //            区分新人团
-        params.put("version", 1);
-        if (userId > 0) {
-            params.put("uid", userId);
-        }
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), GROUP_SHOP_JOIN_INDEX,
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), GROUP_SHOP_JOIN_NEW_INDEX,
                 params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {

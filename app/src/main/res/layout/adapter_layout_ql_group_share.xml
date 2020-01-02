@@ -1,28 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
-              android:layout_height="@dimen/sc_mm_320"
+              android:layout_height="wrap_content"
               android:background="@color/white"
               android:orientation="vertical">
 
-    <include
-        layout="@layout/layout_communal_flexbox"
+    <com.google.android.flexbox.FlexboxLayout
+        android:id="@+id/flex_communal_tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/sc_mm_50"
+        android:background="@color/white"
+        android:paddingLeft="@dimen/sc_mm_20"
+        android:paddingRight="@dimen/sc_mm_20"
+        app:flexDirection="row"
+        app:flexWrap="wrap"/>
+
+    <TextView
+        android:id="@+id/tv_countdownTime"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/sc_mm_50"/>
+        android:layout_marginTop="@dimen/sc_mm_32"
+        android:layout_marginBottom="@dimen/sc_mm_50"
+        android:gravity="center"
+        android:textColor="@color/text_normal_red"
+        android:textSize="@dimen/sc_mm_28"
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/tv_group_status"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/sc_mm_32"
-        android:layout_weight="1"
+        android:layout_marginBottom="@dimen/sc_mm_50"
         android:gravity="center"
         android:textColor="@color/text_black_t"
-        android:textSize="@dimen/sc_mm_32"/>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_10"
-        android:background="@color/light_gray_f"/>
+        android:textSize="@dimen/sc_mm_32"
+        android:visibility="gone"/>
 </LinearLayout>

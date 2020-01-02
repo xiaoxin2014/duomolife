@@ -11,12 +11,11 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.TinkerBaseApplicationLike;
-import com.amkj.dmsh.constant.UMShareAction;
-import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.dao.ShareDao;
 import com.amkj.dmsh.dominant.adapter.QualityGroupMineAdapter;
 import com.amkj.dmsh.dominant.bean.QualityGroupMineEntity;
 import com.amkj.dmsh.dominant.bean.QualityGroupMineEntity.QualityGroupMineBean;
+import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity.QualityGroupShareBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.DirectExchangeDetailsActivity;
@@ -32,9 +31,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
-import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.umeng.socialize.UMShareAPI;
 
 import java.util.ArrayList;
@@ -46,8 +42,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -60,7 +54,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.PAY_WX_PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
 import static com.amkj.dmsh.constant.ConstantVariable.UNION_RESULT_CODE;
-import static com.amkj.dmsh.constant.Url.GROUP_MINE_INDENT;
+import static com.amkj.dmsh.constant.Url.GROUP_MINE_NEW_INDENT;
 import static com.amkj.dmsh.constant.Url.Q_PAYMENT_INDENT;
 
 
@@ -83,8 +77,6 @@ public class QualityGroupShopMineActivity extends BaseActivity {
     @BindView(R.id.tv_header_shared)
     TextView tv_header_shared;
     private int page = 1;
-    private int scrollY;
-    private float screenHeight;
     private List<QualityGroupMineBean> qualityGroupMineList = new ArrayList<>();
     private QualityGroupMineAdapter qualityGroupMineAdapter;
     private String payWay;
@@ -95,6 +87,7 @@ public class QualityGroupShopMineActivity extends BaseActivity {
     private QualityGroupMineEntity qualityGroupMineEntity;
     private UnionPay unionPay;
     private QualityCreateUnionPayIndentEntity qualityUnionIndent;
+    private boolean firstSet = true;
 
     @Override
     protected int getContentView() {
@@ -107,62 +100,18 @@ public class QualityGroupShopMineActivity extends BaseActivity {
         tv_header_shared.setVisibility(View.GONE);
         tv_header_titleAll.setText("我的拼团");
 
-        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                loadData();
-            }
-        });
+        smart_communal_refresh.setOnRefreshListener(refreshLayout -> loadData());
         communal_recycler.setLayoutManager(new LinearLayoutManager(QualityGroupShopMineActivity.this));
         qualityGroupMineAdapter = new QualityGroupMineAdapter(QualityGroupShopMineActivity.this, qualityGroupMineList);
         communal_recycler.setAdapter(qualityGroupMineAdapter);
-        qualityGroupMineAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
-            @Override
-            public void onLoadMoreRequested() {
-                page++;
-                getData();
-            }
+        qualityGroupMineAdapter.setOnLoadMoreListener(() -> {
+            page++;
+            getData();
         }, communal_recycler);
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_dp).create());
-        TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-        screenHeight = app.getScreenHeight();
-        communal_recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                scrollY += dy;
-                if (!recyclerView.canScrollVertically(-1)) {
-                    scrollY = 0;
-                }
-                if (scrollY > screenHeight * 1.5 && dy < 0) {
-                    if (download_btn_communal.getVisibility() == GONE) {
-                        download_btn_communal.setVisibility(VISIBLE);
-                        download_btn_communal.hide(false);
-                    }
-                    if (!download_btn_communal.isVisible()) {
-                        download_btn_communal.show();
-                    }
-                } else {
-                    if (download_btn_communal.isVisible()) {
-                        download_btn_communal.hide();
-                    }
-                }
-            }
-        });
-        download_btn_communal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) communal_recycler.getLayoutManager();
-                int firstVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition();
-                int mVisibleCount = linearLayoutManager.findLastVisibleItemPosition()
-                        - linearLayoutManager.findFirstVisibleItemPosition() + 1;
-                if (firstVisibleItemPosition > mVisibleCount) {
-                    communal_recycler.scrollToPosition(mVisibleCount);
-                }
-                communal_recycler.smoothScrollToPosition(0);
-            }
-        });
+        setFloatingButton(download_btn_communal, communal_recycler);
         qualityGroupMineAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
@@ -188,7 +137,14 @@ public class QualityGroupShopMineActivity extends BaseActivity {
                                     }
                                     break;
                                 case 1:
-                                    inviteFriendJoinGroup(qualityGroupMineBean);
+                                    if (qualityGroupMineBean != null) {
+                                        QualityGroupShareBean qualityGroupShareBean = new QualityGroupShareBean();
+                                        qualityGroupShareBean.setGpPicUrl(qualityGroupMineBean.getCoverImage());
+                                        qualityGroupShareBean.setName(qualityGroupMineBean.getProductName());
+                                        qualityGroupShareBean.setGpInfoId(qualityGroupMineBean.getGpInfoId());
+                                        qualityGroupShareBean.setGpRecordId(qualityGroupMineBean.getGpRecordId());
+                                        ShareDao.invitePartnerGroup(getActivity(), qualityGroupShareBean, qualityGroupMineBean.getOrderNo());
+                                    }
                                     break;
                             }
                             break;
@@ -202,34 +158,20 @@ public class QualityGroupShopMineActivity extends BaseActivity {
             }
         });
 
-        qualityGroupMineAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                QualityGroupMineBean qualityGroupMineBean = (QualityGroupMineBean) view.getTag();
-                if (qualityGroupMineBean != null) {
-                    Intent intent = new Intent(QualityGroupShopMineActivity.this, QualityGroupShopDetailActivity.class);
-                    intent.putExtra("gpInfoId", String.valueOf(qualityGroupMineBean.getGpInfoId()));
-                    intent.putExtra("productId", String.valueOf(qualityGroupMineBean.getProductId()));
-                    intent.putExtra("gpRecordId", String.valueOf(qualityGroupMineBean.getGpRecordId()));
-                    intent.putExtra("orderNo", qualityGroupMineBean.getOrderNo());
-                    intent.putExtra("invitePartnerJoinCode", "1");
-                    startActivity(intent);
-                }
+        qualityGroupMineAdapter.setOnItemClickListener((adapter, view, position) -> {
+            QualityGroupMineBean qualityGroupMineBean = (QualityGroupMineBean) view.getTag();
+            if (qualityGroupMineBean != null) {
+                Intent intent = new Intent(QualityGroupShopMineActivity.this, QualityGroupShopDetailActivity.class);
+                intent.putExtra("gpInfoId", String.valueOf(qualityGroupMineBean.getGpInfoId()));
+                intent.putExtra("productId", String.valueOf(qualityGroupMineBean.getProductId()));
+                intent.putExtra("gpRecordId", String.valueOf(qualityGroupMineBean.getGpRecordId()));
+                intent.putExtra("orderNo", qualityGroupMineBean.getOrderNo());
+                intent.putExtra("gpStatus", String.valueOf(qualityGroupMineBean.getGpStatus()));
+                startActivity(intent);
             }
         });
     }
 
-    private void inviteFriendJoinGroup(QualityGroupMineBean qualityGroupMineBean) {
-        if (qualityGroupMineBean != null) {
-            new UMShareAction(QualityGroupShopMineActivity.this
-                    , qualityGroupMineBean.getGpPicUrl()
-                    , qualityGroupMineBean.getName()
-                    , getStrings(qualityGroupMineBean.getSubtitle())
-                    , Url.BASE_SHARE_PAGE_TWO + "m/template/share_template/groupShare.html?id=" + qualityGroupMineBean.getGpInfoId()
-                    + "&record=" + qualityGroupMineBean.getGpRecordId(), "pages/groupshare/groupshare?id=" + qualityGroupMineBean.getGpInfoId()
-                    + (TextUtils.isEmpty(qualityGroupMineBean.getOrderNo()) ? "&gpRecordId=" + qualityGroupMineBean.getGpRecordId() : "&order=" + qualityGroupMineBean.getOrderNo()), qualityGroupMineBean.getGpInfoId(), -1, "1");
-        }
-    }
 
     private void paymentIndent() {
         if (qualityGroupMineBean == null) {
@@ -437,8 +379,8 @@ public class QualityGroupShopMineActivity extends BaseActivity {
                 String webManualFinish = data.getStringExtra("webManualFinish");
                 unionPay.unionPayResult(this, qualityUnionIndent.getQualityCreateUnionPayIndent().getNo(), webManualFinish);
             } else {
-            showToast("支付取消！");
-        }
+                showToast("支付取消！");
+            }
         }
         UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
     }
@@ -468,8 +410,7 @@ public class QualityGroupShopMineActivity extends BaseActivity {
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", page);
         params.put("showCount", TOTAL_COUNT_TEN);
-        params.put("uid", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, GROUP_MINE_INDENT
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, GROUP_MINE_NEW_INDENT
                 , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
@@ -504,23 +445,16 @@ public class QualityGroupShopMineActivity extends BaseActivity {
                         smart_communal_refresh.finishRefresh();
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, qualityGroupMineList, qualityGroupMineEntity);
                     }
-
-                    @Override
-                    public void netClose() {
-                        showToast(QualityGroupShopMineActivity.this, R.string.unConnectedNetwork);
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
-                        showToast(QualityGroupShopMineActivity.this, R.string.connectedFaile);
-                    }
                 });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        loadData();
+        if (!firstSet) {
+            loadData();
+            firstSet = false;
+        }
     }
 
     class PopupWindowView {

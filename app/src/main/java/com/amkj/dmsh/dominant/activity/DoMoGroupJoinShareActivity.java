@@ -1,7 +1,6 @@
 package com.amkj.dmsh.dominant.activity;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,14 +15,11 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.UMShareAction;
-import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.dao.ShareDao;
 import com.amkj.dmsh.dominant.adapter.QualityCustomAdapter;
-import com.amkj.dmsh.dominant.bean.GroupShopCommunalInfoEntity;
-import com.amkj.dmsh.dominant.bean.GroupShopCommunalInfoEntity.GroupShopCommunalInfoBean;
-import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity;
+import com.amkj.dmsh.dominant.bean.GroupShopDetailsEntity;
+import com.amkj.dmsh.dominant.bean.GroupShopDetailsEntity.GroupShopDetailsBean.ParticipantInfoBean.GroupShopJoinBean;
 import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity.QualityGroupShareBean;
-import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity.QualityGroupShareBean.MemberListBean;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
@@ -56,11 +52,9 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getSpannableString;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.constant.Url.GROUP_MINE_SHARE;
-import static com.amkj.dmsh.constant.Url.GROUP_SHOP_COMMUNAL;
+import static com.amkj.dmsh.constant.Url.GROUP_SHOP_NEW_DETAILS;
 import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTime;
 
 
@@ -84,14 +78,13 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
     private List<CommunalDetailObjectBean> gpRuleList = new ArrayList<>();
     private GroupShareJoinView groupShareJoinView;
     private CommunalDetailAdapter gpRuleDetailsAdapter;
-    private GroupShopCommunalInfoEntity groupShopJoinEntity;
     private String orderNo;
-    private QualityGroupShareBean qualityGroupShareBean;
-    private QualityGroupShareEntity qualityGroupShareEntity;
     private ConstantMethod constantMethod;
     private QualityCustomAdapter qualityCustomAdapter;
     private String[] titles = {"自定义专区1", "自定义专区2", "自定义专区3"};
     private List<String> mProductTypeList = new ArrayList<>();
+    private GroupShopDetailsEntity mGroupShopDetailsEntity;
+    private GroupShopDetailsEntity.GroupShopDetailsBean mGroupShopDetailsBean;
 
     @Override
     protected int getContentView() {
@@ -130,8 +123,7 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
-        getGroupShareInfo();
-        getCommunalInfo();
+        getGroupShopDetails();
     }
 
     @Override
@@ -144,108 +136,104 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
         return true;
     }
 
-    private void getCommunalInfo() {
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, GROUP_SHOP_COMMUNAL, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                Gson gson = new Gson();
-                groupShopJoinEntity = gson.fromJson(result, GroupShopCommunalInfoEntity.class);
-                if (groupShopJoinEntity != null) {
-                    if (groupShopJoinEntity.getCode().equals(SUCCESS_CODE)) {
-                        setCommunalInfo(groupShopJoinEntity.getGroupShopCommunalInfoBean());
-                    }
-                }
-            }
-        });
-    }
 
-    private void setCommunalInfo(GroupShopCommunalInfoBean groupShopCommunalInfoBean) {
-        List<CommunalDetailBean> gpRuleBeanList = groupShopCommunalInfoBean.getGpRule();
-//        拼团规则
-        if (gpRuleBeanList != null && gpRuleBeanList.size() > 0) {
-            gpRuleList.clear();
-            gpRuleList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(gpRuleBeanList));
-            gpRuleDetailsAdapter.notifyDataSetChanged();
-        }
-    }
-
-    private void getGroupShareInfo() {
+    private void getGroupShopDetails() {
         Map<String, Object> params = new HashMap<>();
         params.put("orderNo", orderNo);
-        NetLoadUtils.getNetInstance().loadNetDataPost(DoMoGroupJoinShareActivity.this, GROUP_MINE_SHARE
-                , params, new NetLoadListenerHelper() {
+        params.put("gpInfoId", 0);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, GROUP_SHOP_NEW_DETAILS,
+                params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         smart_scroll_communal_refresh.finishRefresh();
                         Gson gson = new Gson();
-                        qualityGroupShareEntity = gson.fromJson(result, QualityGroupShareEntity.class);
-                        if (qualityGroupShareEntity != null) {
-                            if (qualityGroupShareEntity.getCode().equals(SUCCESS_CODE)) {
-                                setGpDataInfo(qualityGroupShareEntity);
-                            } else if (!qualityGroupShareEntity.getCode().equals(EMPTY_CODE)) {
-                                showToast(DoMoGroupJoinShareActivity.this, qualityGroupShareEntity.getMsg());
+                        mGroupShopDetailsEntity = gson.fromJson(result, GroupShopDetailsEntity.class);
+                        if (mGroupShopDetailsEntity != null) {
+                            mGroupShopDetailsBean = mGroupShopDetailsEntity.getGroupShopDetailsBean();
+                            if (mGroupShopDetailsEntity.getCode().equals(SUCCESS_CODE)) {
+                                if (mGroupShopDetailsBean != null) {
+                                    setGroupShopDetailsData();
+                                }
+                            } else {
+                                showToast(getActivity(), mGroupShopDetailsEntity.getMsg());
                             }
                         }
-                        NetLoadUtils.getNetInstance().showLoadSir(loadService, qualityGroupShareBean, qualityGroupShareEntity);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, mGroupShopDetailsBean, mGroupShopDetailsEntity);
                     }
 
                     @Override
                     public void onNotNetOrException() {
                         smart_scroll_communal_refresh.finishRefresh();
-                        NetLoadUtils.getNetInstance().showLoadSir(loadService, qualityGroupShareBean, qualityGroupShareEntity);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, mGroupShopDetailsBean, mGroupShopDetailsEntity);
                     }
                 });
     }
 
-    private void setGpDataInfo(final QualityGroupShareEntity qualityGroupShareEntity) {
-        qualityGroupShareBean = qualityGroupShareEntity.getQualityGroupShareBean();
-        getConstant();
-        setCountTime(groupShareJoinView.ct_time_communal_show_bg, qualityGroupShareEntity);
-        constantMethod.createSchedule();
-        constantMethod.setRefreshTimeListener(new ConstantMethod.RefreshTimeListener() {
-            @Override
-            public void refreshTime() {
-                qualityGroupShareEntity.setSecond(qualityGroupShareEntity.getSecond() + 1);
-                setCountTime(groupShareJoinView.ct_time_communal_show_bg, qualityGroupShareEntity);
-            }
-        });
+    private void setGroupShopDetailsData() {
+        //        拼团规则
+        List<CommunalDetailBean> gpRuleBeanList = mGroupShopDetailsBean.getGpRule();
+        if (gpRuleBeanList != null && gpRuleBeanList.size() > 0) {
+            gpRuleList.clear();
+            gpRuleList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(gpRuleBeanList));
+            gpRuleDetailsAdapter.notifyDataSetChanged();
+        }
+
+
         //        参团列表
-        List<MemberListBean> memberList = qualityGroupShareBean.getMemberList();
-        if (memberList != null && memberList.size() > 0) {
-            MemberListBean memberListBean = memberList.get(0);
-            if (memberListBean != null) {
-                GlideImageLoaderUtil.loadRoundImg(this, groupShareJoinView.iv_leader
-                        , memberListBean.getAvatar(), AutoSizeUtils.mm2px(this, 100), R.drawable.default_ava_img);
+        GroupShopDetailsEntity.GroupShopDetailsBean.ParticipantInfoBean participantInfo = mGroupShopDetailsBean.getParticipantInfo();
+        if (participantInfo != null) {
+            List<GroupShopJoinBean> userInfoList = participantInfo.getUserInfoList();
+            if (userInfoList != null && userInfoList.size() > 0) {
+                GroupShopJoinBean groupShopJoinBean = userInfoList.get(0);
+                if (groupShopJoinBean != null) {
+                    GlideImageLoaderUtil.loadRoundImg(this, groupShareJoinView.iv_leader
+                            , groupShopJoinBean.getAvatar(), AutoSizeUtils.mm2px(this, 100), R.drawable.default_ava_img);
+                }
             }
-        } else {
-            showToast(DoMoGroupJoinShareActivity.this, "拼团信息获取失败，请刷新重试");
+
+            String endTime = participantInfo.getEndTime();
+            if (!TextUtils.isEmpty(endTime)) {
+                getConstant();
+                setCountTime(groupShareJoinView.ct_time_communal_show_bg, endTime);
+                constantMethod.createSchedule();
+                constantMethod.setRefreshTimeListener(new ConstantMethod.RefreshTimeListener() {
+                    @Override
+                    public void refreshTime() {
+                        mGroupShopDetailsEntity.setSecond(mGroupShopDetailsEntity.getSecond() + 1);
+                        setCountTime(groupShareJoinView.ct_time_communal_show_bg, endTime);
+                    }
+                });
+            }
         }
 
         gpRuleDetailsAdapter.notifyDataSetChanged();
-        String leftParticipant = getString(R.string.share_join_group, qualityGroupShareBean.getLeftParticipant());
+        String leftParticipant = getString(R.string.share_join_group, mGroupShopDetailsBean.getRequireCount() - 1);
         groupShareJoinView.tv_invite_fr_join_gp.setText(getSpannableString(leftParticipant, 2, 4, -1, "#ff5e6b"));
-        groupShareJoinView.tv_new_user.setVisibility(qualityGroupShareBean.getRange() == 1 ? View.VISIBLE : GONE);
-        groupShareJoinView.tv_gp_ql_share_product_c_time.setText(getStrings(qualityGroupShareBean.getGpStartTime()));
+        groupShareJoinView.tv_new_user.setVisibility(mGroupShopDetailsBean.isNewUserGroup() ? View.VISIBLE : GONE);
+        groupShareJoinView.tv_gp_ql_share_product_c_time.setText(getStrings(mGroupShopDetailsBean.getGpStartTime()));
         GlideImageLoaderUtil.loadCenterCrop(DoMoGroupJoinShareActivity.this
-                , groupShareJoinView.iv_gp_ql_share_product, qualityGroupShareBean.getGpPicUrl());
-        groupShareJoinView.tv_gp_ql_share_pro_name.setText(getStrings(TextUtils.isEmpty(qualityGroupShareBean.getSubtitle()) ? qualityGroupShareBean.getName() : (qualityGroupShareBean.getSubtitle() + "•" + qualityGroupShareBean.getName())));
-        groupShareJoinView.tv_gp_ql_share_price.setText(("拼团价¥" + getStrings(qualityGroupShareBean.getGpPrice())));
-        groupShareJoinView.tv_gp_ql_share_only_price.setText(("单买价¥" + getStrings(qualityGroupShareBean.getPrice())));
+                , groupShareJoinView.iv_gp_ql_share_product, mGroupShopDetailsBean.getGpPicUrl());
+        //设置商品标题
+        String gpName = mGroupShopDetailsBean.getGpName();
+        String productName = mGroupShopDetailsBean.getProductName();
+        String subTitle = mGroupShopDetailsBean.getSubTitle();
+        groupShareJoinView.tv_gp_ql_share_pro_name.setText(getStrings(!TextUtils.isEmpty(gpName) ? gpName : (TextUtils.isEmpty(subTitle) ? productName : (subTitle + "•" + productName))));
+        groupShareJoinView.tv_gp_ql_share_price.setText(("拼团价¥" + getStrings(mGroupShopDetailsBean.getGpPrice())));
+        groupShareJoinView.tv_gp_ql_share_only_price.setText(("单买价¥" + getStrings(mGroupShopDetailsBean.getPrice())));
     }
 
-    public void setCountTime(CountdownView countdownView, QualityGroupShareEntity qualityGroupShareEntity) {
+    public void setCountTime(CountdownView countdownView, String gpEndTime) {
         //格式化结束时间
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
         Date startTime = null;
         Date endTime = null;
-        QualityGroupShareBean qualityGroupShareBean = qualityGroupShareEntity.getQualityGroupShareBean();
         try {
-            if (TextUtils.isEmpty(qualityGroupShareEntity.getCurrentTime())) {
+            if (TextUtils.isEmpty(mGroupShopDetailsEntity.getCurrentTime())) {
                 startTime = new Date();
             } else {
-                startTime = formatter.parse(qualityGroupShareEntity.getCurrentTime());
+                startTime = formatter.parse(mGroupShopDetailsEntity.getCurrentTime());
             }
-            endTime = formatter.parse(qualityGroupShareBean.getGpEndTime());
+            endTime = formatter.parse(gpEndTime);
             if (startTime != null && endTime != null && endTime.getTime() > startTime.getTime()) {
                 DynamicConfig.Builder dynamic = new DynamicConfig.Builder();
                 dynamic.setTimeTextColor(0xffffffff);
@@ -254,10 +242,10 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
                 backgroundInfo.setColor(getResources().getColor(R.color.text_normal_red));
                 dynamic.setBackgroundInfo(backgroundInfo);
                 countdownView.dynamicShow(dynamic.build());
-                countdownView.updateShow(endTime.getTime() - startTime.getTime() - qualityGroupShareEntity.getSecond() * 1000);
+                countdownView.updateShow(endTime.getTime() - startTime.getTime() - mGroupShopDetailsEntity.getSecond() * 1000);
                 groupShareJoinView.tv_show_communal_time_status.setText("剩余");
-                if (!isEndOrStartTime(qualityGroupShareEntity.getCurrentTime()
-                        , qualityGroupShareBean.getGpEndTime())) {
+                if (!isEndOrStartTime(mGroupShopDetailsEntity.getCurrentTime()
+                        , gpEndTime)) {
                     countdownView.setOnCountdownEndListener(new CountdownView.OnCountdownEndListener() {
                         @Override
                         public void onEnd(CountdownView cv) {
@@ -269,19 +257,12 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
                     countdownView.setOnCountdownEndListener(null);
                 }
             } else {
-                groupShareJoinView.tv_show_communal_time_status.setText("已结束");
+                groupShareJoinView.tv_show_communal_time_status.setText("已过期");
                 groupShareJoinView.ct_time_communal_show_bg.setVisibility(GONE);
             }
         } catch (ParseException e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // TODO: add setContentView(...) invocation
-        ButterKnife.bind(this);
     }
 
     class GroupShareJoinView {
@@ -321,8 +302,17 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
         //    页面分享
         @OnClick(R.id.tv_join_share)
         void sendShare(View view) {
-            shareGroup();
+            invateJoin();
         }
+    }
+
+    private void invateJoin() {
+        QualityGroupShareBean qualityGroupShareBean = new QualityGroupShareBean();
+        qualityGroupShareBean.setGpPicUrl(mGroupShopDetailsBean.getCoverImage());
+        qualityGroupShareBean.setName(mGroupShopDetailsBean.getProductName());
+        qualityGroupShareBean.setGpInfoId(mGroupShopDetailsBean.getGpInfoId());
+        qualityGroupShareBean.setGpRecordId(String.valueOf(mGroupShopDetailsBean.getGpRecordId()));
+        ShareDao.invitePartnerGroup(getActivity(), qualityGroupShareBean, orderNo);
     }
 
     @OnClick(R.id.tv_life_back)
@@ -333,20 +323,9 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
     //    页面分享
     @OnClick(R.id.tv_header_shared)
     void sendShare(View view) {
-        shareGroup();
+        invateJoin();
     }
 
-    private void shareGroup() {
-        if (qualityGroupShareBean != null) {
-            new UMShareAction(DoMoGroupJoinShareActivity.this
-                    , qualityGroupShareBean.getGpPicUrl()
-                    , qualityGroupShareBean.getName()
-                    , getStrings(qualityGroupShareBean.getSubtitle())
-                    , Url.BASE_SHARE_PAGE_TWO + "m/template/share_template/groupShare.html?id=" + qualityGroupShareBean.getGpInfoId()
-                    + "&record=" + qualityGroupShareBean.getGpRecordId(), "pages/groupshare/groupshare?id=" + qualityGroupShareBean.getGpInfoId()
-                    + (TextUtils.isEmpty(orderNo) ? "&gpRecordId=" + qualityGroupShareBean.getGpRecordId() : "&order=" + orderNo), qualityGroupShareBean.getGpInfoId(), -1, "1");
-        }
-    }
 
     private void getConstant() {
         if (constantMethod == null) {

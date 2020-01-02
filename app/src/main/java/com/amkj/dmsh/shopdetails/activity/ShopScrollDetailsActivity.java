@@ -558,7 +558,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
         //初始化推荐商品列表
         mRvGoodsRecommend.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        mGoodsRecommendAdapter = new GoodsRecommendAdapter(this, goodsRecommendList);
+        mGoodsRecommendAdapter = new GoodsRecommendAdapter(this, goodsRecommendList,true);
         mRvGoodsRecommend.setAdapter(mGoodsRecommendAdapter);
         mGoodsRecommendAdapter.setOnItemClickListener((adapter, view, position) -> {
             ShopRecommendHotTopicBean shopRecommendHotTopicBean = (ShopRecommendHotTopicBean) view.getTag();
@@ -780,7 +780,8 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         }
 
         for (int i = 0; i < imageList.size(); i++) {
-            imagesVideoList.add(new CommunalADActivityBean(getSquareImgUrl(imageList.get(i), screenWith, shopProperty.getWaterRemark()), ""));
+            String imgUrl = imageList.get(i);
+            imagesVideoList.add(new CommunalADActivityBean(i == 0 ? getSquareImgUrl(imgUrl, screenWith, shopProperty.getWaterRemark()) : imgUrl, ""));
         }
 
         if (cbViewHolderCreator == null) {

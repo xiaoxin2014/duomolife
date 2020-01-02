@@ -187,7 +187,7 @@ public class AppDataActivity extends BaseActivity {
                 public void confirm() {
                     NEW_USER_DIALOG = true;
                     //调用登出接口
-                logout(getActivity(), true);
+                    logout(getActivity(), true);
                 }
 
                 @Override

@@ -278,7 +278,7 @@ public class GlideImageLoaderUtil {
         String ossDataUrl = applicationLike.getOSSDataUrl();
         if (!TextUtils.isEmpty(imgUrl) && imgUrl.contains(ossDataUrl)) {
             String ossPrefix = "?x-oss-process=image";
-            String ossImg = "/resize,m_fill,w_" + sizeValue + ",limit_0/auto-orient,1";
+            String ossImg = "/resize,m_fill,w_" + sizeValue + ",limit_0/auto-orient,1" + (!imgUrl.contains(".gif") ? "/format,jpg" : "");//转成jpg格式，修复透明底色封面图水印显示不全的问题
             if (imgUrl.contains(ossPrefix)) {
                 return imgUrl + ossImg + (!TextUtils.isEmpty(waterRemark) ? ("/" + getStrings(waterRemark)) : "");
             } else {

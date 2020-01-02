@@ -126,6 +126,9 @@ public abstract class BaseActivity extends AppCompatActivity {
                 case "EditorCommentActivity":
                     hintText = "快来留言吧~";
                     break;
+                case "CouponProductActivity":
+                    hintText = "暂无可用券商品";
+                    break;
                 default:
                     hintText = "暂无数据，稍后重试";
                     break;

@@ -2,7 +2,6 @@ package com.amkj.dmsh.shopdetails.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -10,13 +9,11 @@ import android.view.Gravity;
 import android.view.View;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.dao.ShareDao;
 import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity;
-import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity.QualityGroupShareBean;
 import com.amkj.dmsh.mine.bean.CartProductInfoBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
@@ -49,7 +46,6 @@ import butterknife.BindView;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
-import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -406,8 +402,7 @@ public class DuMoIndentAllFragment extends BaseFragment {
                 QualityGroupShareEntity qualityGroupShareEntity = gson.fromJson(result, QualityGroupShareEntity.class);
                 if (qualityGroupShareEntity != null) {
                     if (qualityGroupShareEntity.getCode().equals(SUCCESS_CODE)) {
-                        QualityGroupShareBean qualityGroupShareBean = qualityGroupShareEntity.getQualityGroupShareBean();
-                        invitePartnerGroup(qualityGroupShareBean, no);
+                        ShareDao.invitePartnerGroup(getActivity(), qualityGroupShareEntity.getQualityGroupShareBean(), no);
                     }
                 }
             }
@@ -475,22 +470,6 @@ public class DuMoIndentAllFragment extends BaseFragment {
                 showToast(mAppContext, R.string.do_failed);
             }
         });
-    }
-
-    /**
-     * 邀请参团
-     *
-     * @param qualityGroupShareBean 参团信息
-     * @param orderNo
-     */
-    private void invitePartnerGroup(@NonNull QualityGroupShareBean qualityGroupShareBean, String orderNo) {
-        new UMShareAction((BaseActivity) getActivity()
-                , qualityGroupShareBean.getGpPicUrl()
-                , qualityGroupShareBean.getName()
-                , getStrings(qualityGroupShareBean.getSubtitle())
-                , Url.BASE_SHARE_PAGE_TWO + "m/template/share_template/groupShare.html?id=" + qualityGroupShareBean.getGpInfoId()
-                + "&record=" + qualityGroupShareBean.getGpRecordId(), "pages/groupshare/groupshare?id=" + qualityGroupShareBean.getGpInfoId()
-                + (TextUtils.isEmpty(orderNo) ? "&gpRecordId=" + qualityGroupShareBean.getGpRecordId() : "&order=" + orderNo), qualityGroupShareBean.getGpInfoId());
     }
 
     @Override

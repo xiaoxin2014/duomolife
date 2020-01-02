@@ -104,4 +104,8 @@ public class SharedPreUtils {
     public static void clear(String key) {
         clear(null, key);
     }
+
+    /**
+     * 获取某个文件所有的字段
+     */
 }

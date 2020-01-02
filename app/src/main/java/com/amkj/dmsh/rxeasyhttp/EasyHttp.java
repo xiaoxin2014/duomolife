@@ -143,6 +143,7 @@ public final class EasyHttp {
                 .setRetryDelay(500)//每次延时500ms重试
                 .setCacheDirectory(rxCacheFile) //设置缓存路径
                 .setCacheMaxSize(20 * 1024 * 1024)
+                .setRetryCount(0)//取消超时重试
                 .setCacheDiskConverter(new GsonDiskConverter());//设置缓存转换器
     }
 

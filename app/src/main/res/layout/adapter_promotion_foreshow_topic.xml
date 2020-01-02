@@ -6,12 +6,12 @@
     android:orientation="vertical">
     <ImageView
         android:layout_width="match_parent"
-        android:scaleType="fitCenter"
+        android:scaleType="centerCrop"
         android:adjustViewBounds="true"
         android:layout_marginLeft="@dimen/sc_mm_10"
         android:layout_marginRight="@dimen/sc_mm_10"
         android:id="@+id/iv_time_spring_topic_image"
-        android:layout_height="wrap_content" />
+        android:layout_height="@dimen/sc_mm_403" />
     <TextView
         android:layout_width="match_parent"
         android:layout_marginTop="@dimen/sc_mm_20"

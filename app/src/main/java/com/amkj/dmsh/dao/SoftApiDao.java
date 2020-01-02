@@ -1,18 +1,12 @@
 package com.amkj.dmsh.dao;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.Uri;
-import android.provider.Settings;
-import android.text.TextUtils;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.bean.SysNotificationEntity;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
@@ -22,7 +16,6 @@ import com.amkj.dmsh.find.bean.PostEntity.PostBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.bean.GoodsCommentEntity;
-import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
@@ -30,28 +23,21 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.HashMap;
 import java.util.Map;
 
-import static android.content.Context.MODE_PRIVATE;
-import static com.amkj.dmsh.constant.ConstantMethod.getDeviceAppNotificationStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
-import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.NEW_FANS;
-import static com.amkj.dmsh.constant.ConstantVariable.PUSH_CHECK;
-import static com.amkj.dmsh.constant.ConstantVariable.PUSH_CHECK_TIME;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_FOLLOW_STATUS;
-import static com.amkj.dmsh.constant.Url.APP_SYS_NOTIFICATION;
 import static com.amkj.dmsh.constant.Url.F_ARTICLE_COLLECT;
 import static com.amkj.dmsh.constant.Url.F_ARTICLE_DETAILS_FAVOR;
 import static com.amkj.dmsh.constant.Url.F_TOPIC_COLLECT;
 import static com.amkj.dmsh.constant.Url.SHOP_EVA_LIKE;
 import static com.amkj.dmsh.constant.Url.UPDATE_ATTENTION;
-import static com.amkj.dmsh.utils.TimeUtils.isTimeDayEligibility;
 
 /**
  * Created by xiaoxin on 2019/7/13
@@ -306,57 +292,5 @@ public class SoftApiDao {
                 }
             }
         });
-    }
-
-
-    //检查推送权限
-    public static void checkPushPermission(Activity activity) {
-        if (isContextExisted(activity) && !getDeviceAppNotificationStatus(activity)) {
-            NetLoadUtils.getNetInstance().loadNetDataPost(activity, APP_SYS_NOTIFICATION, new NetLoadListenerHelper() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    SysNotificationEntity sysNotificationEntity = gson.fromJson(result, SysNotificationEntity.class);
-                    SharedPreferences preferences = activity.getSharedPreferences(PUSH_CHECK, MODE_PRIVATE);
-                    String pushCheckTime = preferences.getString(PUSH_CHECK_TIME, "");
-                    SharedPreferences.Editor edit = preferences.edit();
-                    if (sysNotificationEntity != null && sysNotificationEntity.getSysNotificationBean() != null &&
-                            SUCCESS_CODE.equals(sysNotificationEntity.getCode())) {
-                        SysNotificationEntity.SysNotificationBean sysNotificationBean = sysNotificationEntity.getSysNotificationBean();
-                        if (TextUtils.isEmpty(pushCheckTime) ||
-                                isTimeDayEligibility(pushCheckTime, sysNotificationEntity.getCurrentTime(), sysNotificationBean.getIntervalDay())) {
-                            edit.putString(PUSH_CHECK_TIME, sysNotificationEntity.getCurrentTime());
-                            edit.apply();
-                            AlertDialogHelper alertDialogHelper = new AlertDialogHelper(activity);
-                            alertDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
-                                @Override
-                                public void confirm() {
-                                    // 根据isOpened结果，判断是否需要提醒用户跳转AppInfo页面，去打开App通知权限
-                                    Intent intent = new Intent();
-                                    intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                                    Uri uri = Uri.fromParts("package", activity.getPackageName(), null);
-                                    intent.setData(uri);
-                                    activity.startActivity(intent);
-                                    alertDialogHelper.dismiss();
-                                }
-
-                                @Override
-                                public void cancel() {
-                                    alertDialogHelper.dismiss();
-                                }
-                            });
-                            alertDialogHelper.setTitle("通知提示")
-                                    .setMsg(TextUtils.isEmpty(sysNotificationBean.getContent()) ? "“多么生活”想给您发送通知,方便我们更好的为您服务，限时秒杀不再错过。" :
-                                            sysNotificationBean.getContent())
-                                    .setSingleButton(true)
-                                    .setConfirmText("去设置");
-                            alertDialogHelper.show();
-                        }
-                    } else {
-                        edit.clear().apply();
-                    }
-                }
-            });
-        }
     }
 }

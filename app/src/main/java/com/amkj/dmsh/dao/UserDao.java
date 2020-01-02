@@ -163,7 +163,7 @@ public class UserDao {
     /**
      * 调用登出接口,清除后台记录的token信息
      *
-     * @param isHandOperation 是否是手动退出登录
+     * @param isHandOperation 是否是手动退出登录(只有手动退出登录才需要调登出接口)
      */
     public static void logout(Activity activity, boolean isHandOperation) {
         if (isHandOperation) {

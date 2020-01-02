@@ -282,4 +282,10 @@
     <string name="go_group">去开团</string>
     <string name="already_join_group_num">已参与人数:%s人</string>
     <string name="leftParticipant">还差“%d人”成团</string>
+    <string name="lottery_list">中奖名单</string>
+    <string name="look_all_lottery_list"><![CDATA[查看全部中奖名单>>]]></string>
+    <string name="lotter_baby_contact">请中奖的宝宝们尽快联系客服哦~</string>
+    <string name="invate_group_now">快去找好友参团</string>
+    <string name="remain_person_sucess">你开团的商品还差%s人就成功啦</string>
+    <string name="only_price">只要¥%s哦~</string>
 </resources>

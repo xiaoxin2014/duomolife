@@ -1272,6 +1272,17 @@
             </intent-filter>
         </activity>
 
+        <!--抽奖团所有中奖名单-->
+        <activity
+            android:name=".dominant.activity.AllLotteryActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/activityTheme">
+            <intent-filter>
+                <action android:name="AllLotteryActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
 
         <!--支付成功-->
         <activity

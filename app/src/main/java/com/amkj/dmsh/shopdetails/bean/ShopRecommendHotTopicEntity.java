@@ -65,11 +65,11 @@ public class ShopRecommendHotTopicEntity extends BaseEntity {
          * title : 鲜8纯芝麻酱1瓶+黑芝麻油1瓶装
          * activity_code : XSG1512975268
          */
-        @SerializedName(value = "path", alternate = "pic_url")
+        @SerializedName(value = "picUrl", alternate = {"path", "pic_url"})
         private String picUrl;
         private int quantity;
         private int category_id;
-        private int type_id;
+        private int type_id = 1;//默认类型是自营商品
         private String price;
         private String marketPrice;
         private int favor_num;

@@ -64,7 +64,7 @@ public class HomeCommonEntity extends BaseEntity {
         this.guidanceInfoList = goodsNavbarList;
     }
 
-    public class HomeCommonBean {
+    public static class HomeCommonBean {
         /**
          * color : string
          * icon : string

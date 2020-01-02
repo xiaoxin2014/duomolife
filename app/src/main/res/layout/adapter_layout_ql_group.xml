@@ -65,7 +65,7 @@
             android:layout_height="@dimen/sc_mm_60"
             android:background="@drawable/shap_go_group_bg"
             android:gravity="center"
-            android:text="去拼团"
+            android:text="去参团"
             android:textColor="@color/white"
             android:textSize="@dimen/sc_mm_32"/>
     </LinearLayout>

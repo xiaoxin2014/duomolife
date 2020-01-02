@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_open_group_info"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:divider="@drawable/divider_ll_10dp_gray_bg"
+    android:orientation="vertical"
+    android:showDividers="beginning">
+
+    <LinearLayout
+        android:id="@+id/ll_group_join"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tv_partner_join"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/sc_mm_76"
+            android:background="@drawable/border_bottom_line"
+            android:gravity="center"
+            android:paddingLeft="@dimen/sc_mm_30"
+            android:paddingRight="@dimen/sc_mm_30"
+            android:text="@string/defaul"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_28"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_group_join"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"/>
+    </LinearLayout>
+
+    <include layout="@layout/layout_all_lottery"/>
+</LinearLayout>

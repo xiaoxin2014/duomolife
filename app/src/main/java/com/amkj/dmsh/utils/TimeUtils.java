@@ -166,7 +166,7 @@ public class TimeUtils {
         }
     }
 
-    //获取两个时间之间的时间差(单位毫秒)
+    //获取两个时间之间的时间差(单位毫秒)  返回毫秒数
     public static long getTimeDifference(String t1, String t2) {
         long abs = 0;
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
@@ -180,6 +180,40 @@ public class TimeUtils {
 
         return abs;
     }
+
+    /**
+     * 获取两个时间之间的时间差
+     *
+     * 当大于24小时时显示：天+小时
+     * 当大于1小时小于24小时时显示：小时+分
+     * 当小于1小时时显示：分+秒
+     */
+    public static String getTimeDifferenceText(String t1, String t2) {
+        String timeDifference = "";
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+        try {
+            long time1 = formatter.parse(t1).getTime();
+            long time2 = formatter.parse(t2).getTime();
+            long abs = Math.abs(time1 - time2);
+            int day = (int) (abs / (1000 * 60 * 60 * 24));
+            int hour = (int) ((abs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            int minute = (int) ((abs % (1000 * 60 * 60)) / (1000 * 60));
+            int second = (int) ((abs % (1000 * 60)) / 1000);
+
+            if (day != 0) {
+                timeDifference = day + "天" + hour + "时";
+            } else if (hour != 0) {
+                timeDifference = hour + "时" + minute + "分";
+            } else {
+                timeDifference = minute + "分" + second + "秒";
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return timeDifference;
+    }
+
 
     /**
      * 毫秒转换成天 时分秒

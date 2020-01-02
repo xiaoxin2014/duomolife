@@ -95,9 +95,11 @@ public class DirectMyCouponFragment extends BaseFragment {
                 DirectCouponBean directCouponBean = (DirectCouponBean) view.getTag();
                 if (directCouponBean != null && !TextUtils.isEmpty(directCouponBean.getBeOverdue())
                         && "0".equals(directCouponBean.getBeOverdue())) {
+                    //全场券
                     if (directCouponBean.getUse_range() == 0) {
                         setSkipPath(getActivity(), directCouponBean.getAndroid_link(), false);
                     } else {
+                        //指定券
                         Intent intent = new Intent(getActivity(), CouponProductActivity.class);
                         intent.putExtra("userCouponId", String.valueOf(directCouponBean.getId()));
                         startActivity(intent);

@@ -13,6 +13,8 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
+import android.net.Uri;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -45,11 +47,13 @@ import com.amkj.dmsh.bean.OSSConfigEntity;
 import com.amkj.dmsh.bean.OSSConfigEntity.OSSConfigBean;
 import com.amkj.dmsh.bean.PushInfoEntity;
 import com.amkj.dmsh.bean.RequestStatus;
+import com.amkj.dmsh.bean.SysNotificationEntity;
 import com.amkj.dmsh.catergory.fragment.QualityFragment;
 import com.amkj.dmsh.constant.AppUpdateUtils;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.dominant.dialog.AlertDialogGroup;
 import com.amkj.dmsh.find.fragment.FindFragment;
 import com.amkj.dmsh.homepage.activity.MainPageTabBarActivity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
@@ -68,11 +72,13 @@ import com.amkj.dmsh.utils.FileStreamUtils;
 import com.amkj.dmsh.utils.SaveUpdateImportDateUtils;
 import com.amkj.dmsh.utils.SelectorUtil;
 import com.amkj.dmsh.utils.SharedPreUtils;
+import com.amkj.dmsh.utils.TimeUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogImage;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.restartapputils.RestartAPPTool;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.umeng.socialize.UMShareAPI;
@@ -99,19 +105,27 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.APP_FIRST_TIMES;
 import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.APP_SAVE_VERSION;
+import static com.amkj.dmsh.constant.ConstantMethod.getDeviceAppNotificationStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeBoolean;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
 import static com.amkj.dmsh.constant.ConstantMethod.setDeviceInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.COUPON_POPUP;
+import static com.amkj.dmsh.constant.ConstantVariable.FORCE_UPDATE;
 import static com.amkj.dmsh.constant.ConstantVariable.GET_FIRST_INSTALL_INFO;
+import static com.amkj.dmsh.constant.ConstantVariable.GP_REMIND;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_NEW_USER;
 import static com.amkj.dmsh.constant.ConstantVariable.MAIN_FIND;
 import static com.amkj.dmsh.constant.ConstantVariable.MAIN_HOME;
 import static com.amkj.dmsh.constant.ConstantVariable.MAIN_MINE;
 import static com.amkj.dmsh.constant.ConstantVariable.MAIN_QUALITY;
 import static com.amkj.dmsh.constant.ConstantVariable.MAIN_TIME;
+import static com.amkj.dmsh.constant.ConstantVariable.MARKING_POPUP;
+import static com.amkj.dmsh.constant.ConstantVariable.NOT_FORCE_UPDATE;
 import static com.amkj.dmsh.constant.ConstantVariable.OTHER_WECHAT;
+import static com.amkj.dmsh.constant.ConstantVariable.PUSH_OPEN_REMIND;
 import static com.amkj.dmsh.constant.ConstantVariable.REFRESH_MESSAGE_TOTAL;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_TEXT;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
@@ -119,16 +133,17 @@ import static com.amkj.dmsh.constant.ConstantVariable.TOKEN_EXPIRE_TIME;
 import static com.amkj.dmsh.constant.ConstantVariable.TOKEN_REFRESH_TIME;
 import static com.amkj.dmsh.constant.ConstantVariable.isDebugTag;
 import static com.amkj.dmsh.constant.ConstantVariable.isShowTint;
+import static com.amkj.dmsh.constant.Url.APP_SYS_NOTIFICATION;
 import static com.amkj.dmsh.constant.Url.CHECK_CLEAR_USER_DATA;
+import static com.amkj.dmsh.constant.Url.GET_UNIFIED_POPUP;
+import static com.amkj.dmsh.constant.Url.GROUP_GET_GP_POPUP;
 import static com.amkj.dmsh.constant.Url.H_AD_DIALOG;
 import static com.amkj.dmsh.dao.AddClickDao.adClickTotal;
-import static com.amkj.dmsh.dao.SoftApiDao.checkPushPermission;
 import static com.amkj.dmsh.dao.UserDao.getPersonalInfo;
 import static com.amkj.dmsh.dao.UserDao.savePersonalInfoCache;
 import static com.amkj.dmsh.utils.ServiceDownUtils.INSTALL_APP_PROGRESS;
 import static com.amkj.dmsh.utils.TimeUtils.getDateFormat;
 import static com.amkj.dmsh.utils.TimeUtils.isSameTimeDay;
-import static com.amkj.dmsh.utils.TimeUtils.isTimeDayEligibility;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.fileIsExist;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getImageFilePath;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.saveImageToFile;
@@ -155,7 +170,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public static final String TimeKey = "ShowSeconds";
     public static final String SkipUrlKey = "SkipUrl";
     public static final String LauncherAdIdKey = "AD_ID";
+    public static final String InvokeTimeFileName = "INVOKE_TIME_FILENAME";
     public static String OriginalImgUrl = "OriginalImgUrl";
+
     //    地址存储路径
     private Fragment fragment;
     private boolean isChecked;
@@ -165,17 +182,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private AlertDialogHelper alertDialogHelper;
     //    底部限制98 padding top&bottom 10*2 drawablepadding 10 textsize 20
     private float iconHeight = 32f;
+    private AlertDialogGroup mAlertDialogGroup;
+
 
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
-
         if ("skipMinePage".equals(message.type)) {
             changeAdaptivePage(MAIN_MINE);
-        } else if (message.type.equals("loginShowDialog")) {
-            if (constantMethod == null) {
-                constantMethod = new ConstantMethod();
-            }
-            constantMethod.getNewUserCouponDialog(MainActivity.this);
         }
     }
 
@@ -187,17 +200,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     protected void initViews() {
         fragmentManager = getSupportFragmentManager();
+        constantMethod = new ConstantMethod();
         boolean isFirstTime = setIntentBottomIconData();
         if (isFirstTime) {
-//        七鱼客服登录 获取用户信息 登进登出……
+//            七鱼客服登录 获取用户信息 登进登出……
             getNetDataInfo();
-            //刷新token
+//            刷新token
             flushToken();
-//            弹窗广告
-            getADDialog();
 //            启动广告
             SaveUpdateImportDateUtils.getUpdateDataUtilsInstance().getLaunchBanner(this);
-
             if (isDebugTag) {
                 getSelectedDialog();
             }
@@ -209,16 +220,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             SaveUpdateImportDateUtils.getUpdateDataUtilsInstance().getMainIconData(this, 3);
 //            获取push信息
             getFirstPushInfo();
-//            获取更新
-            AppUpdateUtils.getInstance().getAppUpdate(MainActivity.this);
 //            设置分享提示
             setShareTint();
-//            检查推送权限
-            checkPushPermission(getActivity());
 //            统计首次安装设备信息
             getFirstInstallInfo();
+            //获取要显示的弹窗
+            getUnifiedPopup();
         }
-
 
         rp_bottom_main.setOnCheckedChangeListener((group, checkedId) -> {
             isChecked = true;
@@ -237,6 +245,88 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
         });
     }
+
+    //统一弹窗规则接口
+    private void getUnifiedPopup() {
+        Map<String, Object> allTime = (Map<String, Object>) getSharedPreferences(InvokeTimeFileName, Context.MODE_PRIVATE).getAll();
+        if (!TextUtils.isEmpty((String) allTime.get(MARKING_POPUP))) {
+            Map markingTime = new Gson().fromJson((String) allTime.get(MARKING_POPUP), Map.class);
+            allTime.put(MARKING_POPUP, markingTime);
+        }
+        allTime.put("lastShowTimeMap", new Gson().toJson(allTime));
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, GET_UNIFIED_POPUP, allTime, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                RequestStatus requestStatus = new Gson().fromJson(result, RequestStatus.class);
+                if (requestStatus != null && SUCCESS_CODE.equals(requestStatus.getCode())) {
+                    switch (requestStatus.getNo()) {
+                        //强制更新
+                        case FORCE_UPDATE:
+                            SharedPreUtils.setParam(InvokeTimeFileName, FORCE_UPDATE, TimeUtils.getCurrentTime(requestStatus));//记录调用时间
+                            AppUpdateUtils.getInstance().getAppUpdate(getActivity());
+                            break;
+                        //新人优惠券弹窗
+                        case COUPON_POPUP:
+                            constantMethod.getNewUserCouponDialog(getActivity());
+                            break;
+                        //拼团未完成
+                        case GP_REMIND:
+                            getGpPopup();
+                            break;
+                        //非强制更新
+                        case NOT_FORCE_UPDATE:
+                            SharedPreUtils.setParam(InvokeTimeFileName, NOT_FORCE_UPDATE, TimeUtils.getCurrentTime(requestStatus));//记录调用时间
+                            AppUpdateUtils.getInstance().getAppUpdate(getActivity());
+                            break;
+                        //推送通知打开提醒
+                        case PUSH_OPEN_REMIND:
+                            checkPushPermission(requestStatus);
+                            break;
+                        //营销弹窗
+                        case MARKING_POPUP:
+                            getMarkingPopup(requestStatus.getTargetId());
+                            break;
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * 获取拼团弹窗
+     */
+    private void getGpPopup() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, GROUP_GET_GP_POPUP, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                RequestStatus requestStatus = new Gson().fromJson(result, RequestStatus.class);
+                if (requestStatus != null && SUCCESS_CODE.equals(requestStatus.getCode()) && requestStatus.getGpRecordId() > 0) {
+                    SharedPreUtils.setParam(InvokeTimeFileName, GP_REMIND, TimeUtils.getCurrentTime(requestStatus));//记录调用时间
+                    GlideImageLoaderUtil.loadFinishImgDrawable(getActivity(), requestStatus.getCoverImage(), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
+                        @Override
+                        public void onSuccess(Bitmap bitmap) {
+                            showAlertDialogGroup(requestStatus);
+                        }
+
+                        @Override
+                        public void onError() {
+                            showAlertDialogGroup(requestStatus);
+                        }
+                    });
+
+                }
+            }
+        });
+    }
+
+    private void showAlertDialogGroup(RequestStatus requestStatus) {
+        if (mAlertDialogGroup == null) {
+            mAlertDialogGroup = new AlertDialogGroup(getActivity());
+        }
+        mAlertDialogGroup.update(requestStatus);
+        mAlertDialogGroup.show();
+    }
+
 
     /**
      * 统计首次安装设备信息
@@ -364,9 +454,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void setPushInfoReceive(SharedPreferences sharedPreferences, PushInfoEntity pushInfoEntity) {
-        if (constantMethod == null) {
-            constantMethod = new ConstantMethod();
-        }
         final int[] currentSecond = {0};
         constantMethod.createSchedule();
         constantMethod.setRefreshTimeListener(() -> {
@@ -953,41 +1040,37 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         imm.hideSoftInputFromWindow(etName.getWindowToken(), 0);
     }
 
-    private void getADDialog() {
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, H_AD_DIALOG, new NetLoadListenerHelper() {
+    //获取营销弹窗
+    private void getMarkingPopup(int targetId) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("targetId", targetId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, H_AD_DIALOG, map, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
                 CommunalADActivityEntity communalADActivityEntity = gson.fromJson(result, CommunalADActivityEntity.class);
-                SharedPreferences sp = getSharedPreferences("ADDialog", MODE_PRIVATE);
-                SharedPreferences.Editor edit = sp.edit();
                 if (communalADActivityEntity != null && communalADActivityEntity.getCode().equals(SUCCESS_CODE)) {
                     List<CommunalADActivityBean> communalADActivityBeanList = communalADActivityEntity.getCommunalADActivityBeanList();
                     if (communalADActivityBeanList != null && communalADActivityBeanList.size() > 0) {
                         CommunalADActivityBean communalADActivityBean = communalADActivityBeanList.get(communalADActivityBeanList.size() - 1);
-                        String saveTime = sp.getString("createTime", "0");
-                        String lastShowTime = sp.getString("showTime", "0");
-                        String newTime = communalADActivityBean.getCtime();
-                        if (!saveTime.equals(newTime) ||
-                                (communalADActivityBean.getFrequency_type() == 1 && isTimeDayEligibility(lastShowTime, communalADActivityEntity.getCurrentTime(), communalADActivityBean.getInterval_day()))) {
-                            edit.putString("showTime", communalADActivityEntity.getCurrentTime());
-                            showAdDialog(communalADActivityBean, saveTime, newTime);
+                        if (communalADActivityBean != null) {
+                            try {
+                                String json = (String) SharedPreUtils.getParam(InvokeTimeFileName, MARKING_POPUP, "");
+                                Map map = !TextUtils.isEmpty(json) ? gson.fromJson(json, Map.class) : new HashMap();
+                                map.put(communalADActivityBean.getId(), TimeUtils.getCurrentTime(communalADActivityEntity));
+                                SharedPreUtils.setParam(InvokeTimeFileName, MARKING_POPUP, gson.toJson(map));
+                            } catch (JsonSyntaxException e) {
+                                e.printStackTrace();
+                            }
+                            showAdDialog(communalADActivityBean);
                         }
-                        if (!saveTime.equals(newTime)) {
-                            edit.putString("createTime", newTime);
-                        }
-                        edit.apply();
-                    } else {
-                        edit.clear().apply();
                     }
-                } else {
-                    edit.clear().apply();
                 }
             }
         });
     }
 
-    private void showAdDialog(CommunalADActivityBean communalADActivityBean, String saveTime, String newTime) {
+    private void showAdDialog(CommunalADActivityBean communalADActivityBean) {
         GlideImageLoaderUtil.loadFinishImgDrawable(MainActivity.this, communalADActivityBean.getPicUrl(), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
             @Override
             public void onSuccess(Bitmap bitmap) {
@@ -1008,6 +1091,47 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
             }
         });
+    }
+
+    //检查推送权限
+    public void checkPushPermission(RequestStatus requestStatus) {
+        SharedPreUtils.setParam(InvokeTimeFileName, PUSH_OPEN_REMIND, TimeUtils.getCurrentTime(requestStatus));//记录调用时间
+        if (isContextExisted(getActivity()) && !getDeviceAppNotificationStatus(getActivity())) {
+            NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), APP_SYS_NOTIFICATION, new NetLoadListenerHelper() {
+                @Override
+                public void onSuccess(String result) {
+                    SysNotificationEntity sysNotificationEntity = new Gson().fromJson(result, SysNotificationEntity.class);
+                    if (sysNotificationEntity != null && sysNotificationEntity.getSysNotificationBean() != null &&
+                            SUCCESS_CODE.equals(sysNotificationEntity.getCode())) {
+                        SysNotificationEntity.SysNotificationBean sysNotificationBean = sysNotificationEntity.getSysNotificationBean();
+                        AlertDialogHelper alertDialogHelper = new AlertDialogHelper(getActivity());
+                        alertDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                            @Override
+                            public void confirm() {
+                                // 根据isOpened结果，判断是否需要提醒用户跳转AppInfo页面，去打开App通知权限
+                                Intent intent = new Intent();
+                                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                                Uri uri = Uri.fromParts("package", getActivity().getPackageName(), null);
+                                intent.setData(uri);
+                                getActivity().startActivity(intent);
+                                alertDialogHelper.dismiss();
+                            }
+
+                            @Override
+                            public void cancel() {
+                                alertDialogHelper.dismiss();
+                            }
+                        });
+                        alertDialogHelper.setTitle("通知提示")
+                                .setMsg(TextUtils.isEmpty(sysNotificationBean.getContent()) ? "“多么生活”想给您发送通知,方便我们更好的为您服务，限时秒杀不再错过。" :
+                                        sysNotificationBean.getContent())
+                                .setSingleButton(true)
+                                .setConfirmText("去设置");
+                        alertDialogHelper.show();
+                    }
+                }
+            });
+        }
     }
 
     //登陆成功返回消息
@@ -1220,6 +1344,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
         if (alertDialogAdImage != null && alertDialogAdImage.isShowing()) {
             alertDialogAdImage.dismiss();
+        }
+        if (mAlertDialogGroup != null && mAlertDialogGroup.isShowing()) {
+            mAlertDialogGroup.dismiss();
         }
     }
 

@@ -111,7 +111,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.UNION_RESULT_CODE;
 import static com.amkj.dmsh.constant.Url.ADDRESS_LIST;
 import static com.amkj.dmsh.constant.Url.PAY_CANCEL;
 import static com.amkj.dmsh.constant.Url.PAY_ERROR;
-import static com.amkj.dmsh.constant.Url.Q_CREATE_GROUP_INDENT;
+import static com.amkj.dmsh.constant.Url.Q_CREATE_GROUP_NEW_INDENT;
 import static com.amkj.dmsh.constant.Url.Q_CREATE_INDENT;
 import static com.amkj.dmsh.constant.Url.Q_NEW_RE_BUY_INDENT;
 import static com.amkj.dmsh.constant.Url.Q_PAYMENT_INDENT;
@@ -760,7 +760,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
         params.put("userAddressId", addressId);
         //拼团订单状态 开团 1 拼团 2
         params.put("gpStatus", groupShopDetailsBean.getGpStatus());
-        params.put("gpProductId", groupShopDetailsBean.getGpProductId());
+//        params.put("gpProductId", groupShopDetailsBean.getGpProductId());
         params.put("gpInfoId", groupShopDetailsBean.getGpInfoId());
         if (groupShopDetailsBean.getGpStatus() == 2) {
             params.put("gpRecordId", groupShopDetailsBean.getGpRecordId());
@@ -794,7 +794,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
         params.put("source", 0);
         //添加埋点来源参数
         ConstantMethod.addSourceParameter(params);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_CREATE_GROUP_INDENT, params, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_CREATE_GROUP_NEW_INDENT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 dealingIndentPayResult(result);
@@ -959,7 +959,10 @@ public class DirectIndentWriteActivity extends BaseActivity {
                     doWXPay(qualityWeChatIndent.getResult().getPayKey());
                     orderCreateNo = qualityWeChatIndent.getResult().getNo();
                 } else {
-                    showImportantToast(DirectIndentWriteActivity.this, qualityWeChatIndent.getResult() == null ? qualityWeChatIndent.getMsg() : qualityWeChatIndent.getResult().getMsg());
+                    showImportantToast(DirectIndentWriteActivity.this, qualityWeChatIndent.getResult() != null &&
+                            !TextUtils.isEmpty(qualityWeChatIndent.getResult().getMsg()) ?
+                            getStrings(qualityWeChatIndent.getResult().getMsg()) :
+                            getStrings(qualityWeChatIndent.getMsg()));
 //                            赠品送完刷新数据
                     if (qualityWeChatIndent.getResult() != null) {
                         presentStatusUpdate(qualityWeChatIndent.getResult().getCode());
@@ -978,7 +981,10 @@ public class DirectIndentWriteActivity extends BaseActivity {
                     if (qualityAliPayIndent.getResult() != null) {
                         presentStatusUpdate(qualityAliPayIndent.getResult().getCode());
                     }
-                    showImportantToast(DirectIndentWriteActivity.this, qualityAliPayIndent.getResult() == null ? qualityAliPayIndent.getMsg() : qualityAliPayIndent.getResult().getMsg());
+                    showImportantToast(DirectIndentWriteActivity.this, qualityAliPayIndent.getResult() != null &&
+                            !TextUtils.isEmpty(qualityAliPayIndent.getResult().getMsg()) ?
+                            getStrings(qualityAliPayIndent.getResult().getMsg()) :
+                            getStrings(qualityAliPayIndent.getMsg()));
                 }
             }
         } else if (payWay.equals(PAY_UNION_PAY)) {
@@ -990,7 +996,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
                     unionPay(qualityUnionIndent);
                 } else {
                     showImportantToast(DirectIndentWriteActivity.this, qualityUnionIndent.getQualityCreateUnionPayIndent() != null &&
-                            qualityUnionIndent.getQualityCreateUnionPayIndent() != null &&
                             !TextUtils.isEmpty(qualityUnionIndent.getQualityCreateUnionPayIndent().getMsg()) ?
                             getStrings(qualityUnionIndent.getQualityCreateUnionPayIndent().getMsg()) :
                             getStrings(qualityUnionIndent.getMsg()));

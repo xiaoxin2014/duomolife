@@ -5,7 +5,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.dominant.bean.GroupShopJoinEntity.GroupShopJoinBean;
+import com.amkj.dmsh.dominant.bean.GroupShopDetailsEntity.GroupShopDetailsBean.ParticipantInfoBean.GroupShopJoinBean;
 import com.amkj.dmsh.utils.CountDownTimer;
 import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
@@ -51,58 +51,68 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
         switch (helper.getItemViewType()) {
             case TYPE_0:
                 GlideImageLoaderUtil.loadRoundImg(context, helper.getView(R.id.cir_ql_gp_ava), groupShopJoinBean.getAvatar(), AutoSizeUtils.mm2px(context, 70));
-                helper.setText(R.id.tv_ql_gp_name, getStrings(groupShopJoinBean.getNickname()))
-                        .setText(R.id.tv_join_dif_per_count, getStrings(groupShopJoinBean.getGpCreateStatus()))
-                        .setText(R.id.tv_ql_gp_sp_join, groupShopJoinBean.getRange() == 1 ? R.string.join_new_group : R.string.join_group);
-                setCountTime(helper, groupShopJoinBean);
+                helper.setText(R.id.tv_ql_gp_name, getStrings(groupShopJoinBean.getNickName()))
+                        .setText(R.id.tv_join_dif_per_count, "还差" + groupShopJoinBean.getRemainNum() + "人成团");
+                setCountTime(helper, groupShopJoinBean, "倒计时 ", true);
                 helper.itemView.setTag(groupShopJoinBean);
                 break;
             case TYPE_2:
                 FlexboxLayout flex_communal_tag = helper.getView(R.id.flex_communal_tag);
                 flex_communal_tag.setJustifyContent(JustifyContent.CENTER);
                 flex_communal_tag.removeAllViews();
-                flex_communal_tag.setShowDivider(FlexboxLayout.SHOW_DIVIDER_MIDDLE);
-                flex_communal_tag.setDividerDrawable(context.getResources().getDrawable(R.drawable.item_divider_nine_dp_white));
                 for (int i = 0; i < groupShopJoinBean.getMemberListBeans().size(); i++) {
                     flex_communal_tag.addView(ProductLabelCreateUtils
                             .createOpenGroupUserInfo(context, groupShopJoinBean.getMemberListBeans().get(i)));
                 }
-                String groupStatus = groupShopJoinBean.getGroupStatus();
-                int start = groupStatus.indexOf("“");
-                int end = groupStatus.indexOf("”");
-                helper.setText(R.id.tv_group_status, groupStatus.contains("“") ? getSpannableString(groupStatus.replace("“", "").replace("”", ""), start, end - 1, 0, "#ff5e6b") : getStrings(groupStatus));
+
+                if (groupShopJoinBean.isDownTime()) {
+                    setCountTime(helper, groupShopJoinBean, "剩余 ", false);
+                    helper.setGone(R.id.tv_group_status, false)
+                            .setGone(R.id.tv_countdownTime, true);
+                } else {
+                    helper.setText(R.id.tv_group_status, groupShopJoinBean.getGroupStatus())
+                            .setGone(R.id.tv_countdownTime, false)
+                            .setGone(R.id.tv_group_status, true);
+                }
                 break;
         }
     }
 
 
-    private void setCountTime(final BaseViewHolder helper, GroupShopJoinBean groupShopJoinBean) {
+    private void setCountTime(final BaseViewHolder helper, GroupShopJoinBean groupShopJoinBean, String prefix, boolean isGroupList) {
         try {
-            long timeDifference = getTimeDifference(groupShopJoinBean.getGpEndTime(), getCurrentTime(groupShopJoinBean));
+            long timeDifference = getTimeDifference(groupShopJoinBean.getEndTime(), getCurrentTime(groupShopJoinBean));
             //格式化开始时间
-            if (isEndOrStartTime(groupShopJoinBean.getGpEndTime(), getCurrentTime(groupShopJoinBean))) {
-                helper.setEnabled(R.id.tv_ql_gp_sp_join, true);
+            if (isEndOrStartTime(groupShopJoinBean.getEndTime(), getCurrentTime(groupShopJoinBean))) {
+                if (isGroupList) {
+                    helper.setEnabled(R.id.tv_ql_gp_sp_join, true);
+                }
                 helper.itemView.setEnabled(true);
                 CountDownTimer countDownTimer = new CountDownTimer((LifecycleOwner) context, timeDifference, 1000) {
                     @Override
                     public void onTick(long millisUntilFinished) {
-                        String downTime = "倒计时 " + getCoutDownTime(millisUntilFinished, true);
+                        String downTime = prefix + getCoutDownTime(millisUntilFinished, true);
                         helper.setText(R.id.tv_countdownTime, getSpannableString(downTime, 4, downTime.length(), 0, "#ff5e6b"));
                     }
 
                     @Override
                     public void onFinish() {
                         cancel();
-                        helper.setText(R.id.tv_countdownTime, "已结束");
+                        helper.setText(R.id.tv_countdownTime, "已过期");
+                        if (isGroupList) {
+                            helper.setEnabled(R.id.tv_ql_gp_sp_join, false);
+                        }
                     }
                 };
 
                 countDownTimer.start();
                 helper.itemView.setTag(R.id.id_tag, countDownTimer);
             } else {
-                helper.setEnabled(R.id.tv_ql_gp_sp_join, false);
+                if (isGroupList) {
+                    helper.setEnabled(R.id.tv_ql_gp_sp_join, false);
+                }
                 helper.itemView.setEnabled(false);
-                helper.setText(R.id.tv_countdownTime, "已结束");
+                helper.setText(R.id.tv_countdownTime, "已过期");
             }
 
         } catch (Exception e) {

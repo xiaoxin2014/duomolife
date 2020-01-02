@@ -2,7 +2,7 @@ ext.versions = [
         code             : 7,
         name             : '1.1.4',
 
-        minSdk           : 16,
+        minSdk           : 21,
         targetSdk        : 28,
         compileSdk       : 28,
 
@@ -19,10 +19,10 @@ ext.versions = [
         rxrxlifecycle    : '2.2.2',
 //        glide
         glideVersion     : '4.8.0',
-        retrofit         : '2.5.0',
-        retrofit_rxjava2 : '2.5.0',
-        okhttp           : '3.12.0',
-        okhttp_logging   : '3.12.0'
+        retrofit         : '2.6.2',
+        retrofit_rxjava2 : '2.6.2',
+        okhttp           : '3.14.4',
+        okhttp_logging   : '3.14.4'
 ]
 ext.libraries = [
         supportRecyclerView: "com.android.support:recyclerview-v7:$versions.supportLibs",

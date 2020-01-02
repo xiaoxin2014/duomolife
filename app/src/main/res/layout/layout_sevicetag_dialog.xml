@@ -11,5 +11,4 @@
 
     <include
         layout="@layout/layout_communal_flexbox"/>
-
 </LinearLayout>

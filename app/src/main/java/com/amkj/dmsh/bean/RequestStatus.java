@@ -1,6 +1,8 @@
 package com.amkj.dmsh.bean;
 
-import com.amkj.dmsh.base.BaseEntity;
+import android.text.TextUtils;
+
+import com.amkj.dmsh.base.BaseTimeEntity;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
@@ -8,7 +10,7 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Created by atd48 on 2016/9/2.
  */
-public class RequestStatus extends BaseEntity {
+public class RequestStatus extends BaseTimeEntity {
     private boolean isSign;
     private boolean isCollect;
     private int registerFlag;
@@ -47,9 +49,64 @@ public class RequestStatus extends BaseEntity {
     private String token;
     private String tokenExpireSeconds;
 
+    //    弹窗编号
+    private String no;
+    private int targetId;
+
+    //未完成拼团弹窗相关
+    private int gpInfoId;
+    private int gpRecordId;
+    private String personNum;
+    private String price;
+    private String coverImage;
+    private String gpEndTime;
+    private String gpName;
+    private String orderNo;
+    private int range;//1表示新人团
+
 
     public static RequestStatus objectFromData(String str) {
         return new Gson().fromJson(str, RequestStatus.class);
+    }
+
+    public int getTargetId() {
+        return targetId;
+    }
+
+    public void setTargetId(int targetId) {
+        this.targetId = targetId;
+    }
+
+    public int getRange() {
+        return range;
+    }
+
+    public void setRange(int range) {
+        this.range = range;
+    }
+
+    public String getGpName() {
+        return gpName;
+    }
+
+    public void setGpName(String gpName) {
+        this.gpName = gpName;
+    }
+
+    public String getOrderNo() {
+        return orderNo;
+    }
+
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo;
+    }
+
+    public String getNo() {
+        return no;
+    }
+
+    public void setNo(String no) {
+        this.no = no;
     }
 
     public String getToken() {
@@ -204,6 +261,54 @@ public class RequestStatus extends BaseEntity {
         this.result = result;
     }
 
+    public int getGpInfoId() {
+        return gpInfoId;
+    }
+
+    public void setGpInfoId(int gpInfoId) {
+        this.gpInfoId = gpInfoId;
+    }
+
+    public int getGpRecordId() {
+        return gpRecordId;
+    }
+
+    public void setGpRecordId(int gpRecordId) {
+        this.gpRecordId = gpRecordId;
+    }
+
+    public String getPersonNum() {
+        return personNum;
+    }
+
+    public void setPersonNum(String personNum) {
+        this.personNum = personNum;
+    }
+
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
+
+    public String getCoverImage() {
+        return coverImage;
+    }
+
+    public void setCoverImage(String coverImage) {
+        this.coverImage = coverImage;
+    }
+
+    public String getGpEndTime() {
+        return gpEndTime;
+    }
+
+    public void setGpEndTime(String gpEndTime) {
+        this.gpEndTime = gpEndTime;
+    }
+
     public class Result {
         @SerializedName(value = "resultCode", alternate = "code")
         private String resultCode;
@@ -247,7 +352,7 @@ public class RequestStatus extends BaseEntity {
         }
 
         public String getResultMsg() {
-            return resultMsg;
+            return TextUtils.isEmpty(resultMsg) ? getMsg() : resultMsg;
         }
 
         public void setResultMsg(String resultMsg) {
