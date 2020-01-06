@@ -109,7 +109,6 @@ import static com.amkj.dmsh.utils.TimeUtils.getDateMilliSecond;
 import static com.luck.picture.lib.config.PictureConfigC.CHOOSE_REQUEST;
 
 
-
 /**
  * @author LGuiPeng
  * @email liuguipeng163@163.com
@@ -612,8 +611,10 @@ public class AliBCFragment extends BaseFragment {
         @JavascriptInterface
         public void sharePage(String result) {
             try {
-                mShareBean = new Gson().fromJson(result, H5ShareBean.class);
-                shareH5();
+                getActivity().runOnUiThread(() -> {
+                    mShareBean = new Gson().fromJson(result, H5ShareBean.class);
+                    shareH5();
+                });
             } catch (JsonSyntaxException e) {
                 jsInteractiveException("");
             }

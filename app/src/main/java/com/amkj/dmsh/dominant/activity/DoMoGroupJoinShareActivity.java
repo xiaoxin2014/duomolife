@@ -210,7 +210,9 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
         String leftParticipant = getString(R.string.share_join_group, mGroupShopDetailsBean.getRequireCount() - 1);
         groupShareJoinView.tv_invite_fr_join_gp.setText(getSpannableString(leftParticipant, 2, 4, -1, "#ff5e6b"));
         groupShareJoinView.tv_new_user.setVisibility(mGroupShopDetailsBean.isNewUserGroup() ? View.VISIBLE : GONE);
-        groupShareJoinView.tv_gp_ql_share_product_c_time.setText(getStrings(mGroupShopDetailsBean.getGpStartTime()));
+        if (mGroupShopDetailsBean.getParticipantInfo() != null && !TextUtils.isEmpty(mGroupShopDetailsBean.getParticipantInfo().getStartTime())) {
+            groupShareJoinView.tv_gp_ql_share_product_c_time.setText(mGroupShopDetailsBean.getParticipantInfo().getStartTime());
+        }
         GlideImageLoaderUtil.loadCenterCrop(DoMoGroupJoinShareActivity.this
                 , groupShareJoinView.iv_gp_ql_share_product, mGroupShopDetailsBean.getGpPicUrl());
         //设置商品标题

@@ -457,8 +457,17 @@ public class GroupShopDetailsEntity extends BaseTimeEntity {
              */
 
             private String endTime;
+            private String startTime;
             private String statusText;
             private List<GroupShopJoinBean> userInfoList;
+
+            public String getStartTime() {
+                return startTime;
+            }
+
+            public void setStartTime(String startTime) {
+                this.startTime = startTime;
+            }
 
             public String getEndTime() {
                 return endTime;

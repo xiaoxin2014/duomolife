@@ -253,8 +253,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             Map markingTime = new Gson().fromJson((String) allTime.get(MARKING_POPUP), Map.class);
             allTime.put(MARKING_POPUP, markingTime);
         }
-        allTime.put("lastShowTimeMap", new Gson().toJson(allTime));
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, GET_UNIFIED_POPUP, allTime, new NetLoadListenerHelper() {
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("lastShowTimeMap", new Gson().toJson(allTime));
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, GET_UNIFIED_POPUP, map, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 RequestStatus requestStatus = new Gson().fromJson(result, RequestStatus.class);
@@ -1043,7 +1045,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     //获取营销弹窗
     private void getMarkingPopup(int targetId) {
         Map<String, Object> map = new HashMap<>();
-        map.put("targetId", targetId);
+        map.put("id", targetId);
         NetLoadUtils.getNetInstance().loadNetDataPost(this, H_AD_DIALOG, map, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
@@ -1057,7 +1059,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                             try {
                                 String json = (String) SharedPreUtils.getParam(InvokeTimeFileName, MARKING_POPUP, "");
                                 Map map = !TextUtils.isEmpty(json) ? gson.fromJson(json, Map.class) : new HashMap();
-                                map.put(communalADActivityBean.getId(), TimeUtils.getCurrentTime(communalADActivityEntity));
+                                if (map.size() > 20) {//防止缓存数据过多，每20条清一次
+                                    map.clear();
+                                }
+                                map.put(String.valueOf(communalADActivityBean.getId()), TimeUtils.getCurrentTime(communalADActivityEntity));
                                 SharedPreUtils.setParam(InvokeTimeFileName, MARKING_POPUP, gson.toJson(map));
                             } catch (JsonSyntaxException e) {
                                 e.printStackTrace();

@@ -51,7 +51,7 @@ public class QualityGroupMineAdapter extends BaseQuickAdapter<QualityGroupMineBe
         TextView tv_ql_mine_status = helper.getView(R.id.tv_ql_mine_status);
 //        {"1":"拼团中","2":"拼团成功","3":"开团待支付","4":"参团待支付","5":"已过期","6":"拼团失败"}
         if (qualityGroupMineBean.getGpStatus() == 1) {
-            tv_ql_mine_status.setText(getIntegralFormat(context, R.string.group_residue_join_count, qualityGroupMineBean.getRemainNum()));
+            tv_ql_mine_status.setText(qualityGroupMineBean.getRemainNum() == 0 ? "拼团中" : getIntegralFormat(context, R.string.group_residue_join_count, qualityGroupMineBean.getRemainNum()));
             tv_ql_mine_status.setSelected(true);
         } else {
             tv_ql_mine_status.setSelected(false);

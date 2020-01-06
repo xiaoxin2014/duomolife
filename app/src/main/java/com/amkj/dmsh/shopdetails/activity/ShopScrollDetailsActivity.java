@@ -558,7 +558,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
         //初始化推荐商品列表
         mRvGoodsRecommend.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        mGoodsRecommendAdapter = new GoodsRecommendAdapter(this, goodsRecommendList,true);
+        mGoodsRecommendAdapter = new GoodsRecommendAdapter(this, goodsRecommendList, true);
         mRvGoodsRecommend.setAdapter(mGoodsRecommendAdapter);
         mGoodsRecommendAdapter.setOnItemClickListener((adapter, view, position) -> {
             ShopRecommendHotTopicBean shopRecommendHotTopicBean = (ShopRecommendHotTopicBean) view.getTag();
@@ -1610,13 +1610,14 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         }
     }
 
-    @OnClick({R.id.iv_life_back, R.id.ll_product_activity_detail, R.id.tv_sp_details_service,
+    @OnClick({R.id.iv_life_back, R.id.iv_life_back2, R.id.ll_product_activity_detail, R.id.tv_sp_details_service,
             R.id.tv_sp_details_add_car, R.id.tv_sp_details_buy_it, R.id.tv_sp_details_collect, R.id.iv_img_service, R.id.iv_img_share,
             R.id.tv_group_product, R.id.iv_ql_shop_pro_cp_tag, R.id.tv_ql_sp_pro_sku, R.id.ll_layout_pro_sc_tag})
     public void onViewClicked(View view) {
         Intent intent;
         switch (view.getId()) {
             case R.id.iv_life_back:
+            case R.id.iv_life_back2:
                 finish();
                 break;
             //打开活动专区

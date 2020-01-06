@@ -791,6 +791,19 @@ public class DirectIndentWriteActivity extends BaseActivity {
             params.put("paymentLinkType", 2);
             params.put("isApp", true);
         }
+        //实名信息
+        if (isReal) {
+            params.put("realName", pullHeaderView.et_oversea_name.getText().toString().trim());
+            String idCard = pullHeaderView.et_oversea_card.getText().toString().trim();
+            String showIdCard = (String) pullHeaderView.et_oversea_card.getTag();
+            String reallyIdCard = (String) pullHeaderView.et_oversea_card.getTag(R.id.id_tag);
+            //判断是否修改了默认的idcard
+            if (idCard.equals(getStrings(showIdCard))) {
+                params.put("idcard", reallyIdCard);
+            } else {
+                params.put("idcard", idCard);
+            }
+        }
         params.put("source", 0);
         //添加埋点来源参数
         ConstantMethod.addSourceParameter(params);

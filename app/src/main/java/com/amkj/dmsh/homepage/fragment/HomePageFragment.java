@@ -169,6 +169,11 @@ public class HomePageFragment extends BaseFragment {
                         //设置导航栏适配器
                         if (goodsNavbarList != null && goodsNavbarList.size() > 0) {
                             mGoodsNavbarList.clear();
+//                            HomeCommonBean homeCommonBean = new HomeCommonBean();
+//                            homeCommonBean.setName("年货节");
+//                            homeCommonBean.setLink("https://www.domolife.cn/m/template/2019Spring/home.html");
+//                            homeCommonBean.setShowType("1");
+//                            mGoodsNavbarList.add(homeCommonBean);
                             mGoodsNavbarList.addAll(goodsNavbarList);
                             HomePageNewAdapter homePageNewAdapter = new HomePageNewAdapter(HomePageFragment.this.getChildFragmentManager(), mGoodsNavbarList);
                             mVpHome.setAdapter(homePageNewAdapter);

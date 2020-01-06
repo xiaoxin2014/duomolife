@@ -100,7 +100,7 @@ public class MiddleActivity extends AppCompatActivity {
 
     private void setSkipPager() {
         Intent intent = new Intent(this, DoMoLifeCommunalActivity.class);
-        intent.putExtra("loadUrl", "https://www.domolife.cn/m/template/home/lottery.html");
+        intent.putExtra("loadUrl", LOTTERY_URL);
         startActivity(intent);
         finish();
 

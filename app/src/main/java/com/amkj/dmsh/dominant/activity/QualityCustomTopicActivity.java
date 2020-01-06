@@ -363,7 +363,6 @@ public class QualityCustomTopicActivity extends BaseActivity {
                 mTvIntegralRule.setText("积分发放失败");
             }
         });
-
     }
 
     class QNewProView {

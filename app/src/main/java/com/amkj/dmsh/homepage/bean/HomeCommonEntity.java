@@ -80,7 +80,7 @@ public class HomeCommonEntity extends BaseEntity {
         private String link;
         private String name;
         private String subtitle;
-        private String showType;
+        private String showType;//1.文本   2.图标
         private String description;
         private List<ProductInfoListBean> productInfoList;
 
