@@ -1,7 +1,5 @@
 package com.amkj.dmsh.mine.bean;
 
-import android.text.TextUtils;
-
 /**
  * @author LGuiPeng
  * @email liuguipeng163@163.com
@@ -111,7 +109,7 @@ public class SavePersonalInfoBean {
     }
 
     public String getUnionId() {
-        return TextUtils.isEmpty(unionId) ? "0" : unionId;
+        return unionId;
     }
 
     public void setUnionId(String unionId) {
