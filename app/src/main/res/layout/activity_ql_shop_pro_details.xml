@@ -187,16 +187,24 @@
                             </LinearLayout>
 
 
-                            <RelativeLayout
+                            <LinearLayout
+                                android:showDividers="beginning"
+                                android:divider="@drawable/divider_ll_10dp_gray_bg"
                                 android:id="@+id/rel_shop_details_comment"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:background="@color/light_gray_f"
-                                android:paddingTop="@dimen/dimen_10_dp"
+                                android:orientation="vertical"
                                 android:visibility="gone">
 
-                                <include layout="@layout/layout_communal_recycler_wrap"/>
-                            </RelativeLayout>
+                                <include layout="@layout/layout_product_comment_eva"/>
+
+                                <android.support.v7.widget.RecyclerView
+                                    android:id="@+id/communal_recycler_wrap"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:background="@color/white"
+                                    android:scrollbars="none"/>
+                            </LinearLayout>
 
                             <include
                                 layout="@layout/item_recommend_artical"/>

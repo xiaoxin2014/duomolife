@@ -10,8 +10,8 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.dao.ShareDao;
-import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity.QualityGroupShareBean;
+import com.amkj.dmsh.dao.GroupDao;
+import com.amkj.dmsh.dominant.bean.GroupShopDetailsEntity.GroupShopDetailsBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 
 import me.jessyan.autosize.AutoSize;
@@ -79,12 +79,13 @@ public class AlertDialogGroup {
 
         mTvInvate.setOnClickListener(v -> {
             dismiss();
-            QualityGroupShareBean qualityGroupShareBean = new QualityGroupShareBean();
-            qualityGroupShareBean.setGpPicUrl(requestStatus.getCoverImage());
-            qualityGroupShareBean.setName(requestStatus.getGpName());
-            qualityGroupShareBean.setGpInfoId(requestStatus.getGpInfoId());
-            qualityGroupShareBean.setGpRecordId(String.valueOf(requestStatus.getGpRecordId()));
-            ShareDao.invitePartnerGroup(context, qualityGroupShareBean, requestStatus.getOrderNo());
+            GroupShopDetailsBean groupShopDetailsBean = new GroupShopDetailsBean();
+            groupShopDetailsBean.setCoverImage(requestStatus.getCoverImage());
+            groupShopDetailsBean.setGpName(requestStatus.getGpName());
+            groupShopDetailsBean.setGpInfoId(requestStatus.getGpInfoId());
+            groupShopDetailsBean.setGpRecordId(requestStatus.getGpRecordId());
+            groupShopDetailsBean.setType(requestStatus.getType());
+            GroupDao.invitePartnerGroup(context, groupShopDetailsBean);
         });
 
         mTvNewUser.setVisibility(requestStatus.getRange() == 1 ? View.VISIBLE : View.GONE);

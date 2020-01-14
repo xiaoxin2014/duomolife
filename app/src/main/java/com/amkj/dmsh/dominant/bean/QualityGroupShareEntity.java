@@ -106,6 +106,15 @@ public class QualityGroupShareEntity extends BaseTimeEntity {
         private String groupStatus;
         private List<String> avatar;
         private List<MemberListBean> memberList;
+        private String type;//拼团类型
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
 
         public int getRange() {
             return range;
@@ -185,14 +194,6 @@ public class QualityGroupShareEntity extends BaseTimeEntity {
 
         public void setGpProductQuantity(int gpProductQuantity) {
             this.gpProductQuantity = gpProductQuantity;
-        }
-
-        public String getGpType() {
-            return gpType;
-        }
-
-        public void setGpType(String gpType) {
-            this.gpType = gpType;
         }
 
         public String getPrice() {

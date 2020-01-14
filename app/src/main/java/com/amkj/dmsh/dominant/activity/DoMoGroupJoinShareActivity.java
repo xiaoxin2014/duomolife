@@ -15,11 +15,10 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.dao.ShareDao;
+import com.amkj.dmsh.dao.GroupDao;
 import com.amkj.dmsh.dominant.adapter.QualityCustomAdapter;
 import com.amkj.dmsh.dominant.bean.GroupShopDetailsEntity;
 import com.amkj.dmsh.dominant.bean.GroupShopDetailsEntity.GroupShopDetailsBean.ParticipantInfoBean.GroupShopJoinBean;
-import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity.QualityGroupShareBean;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
@@ -62,7 +61,7 @@ import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTime;
  * @author LGuiPeng
  * @email liuguipeng163@163.com
  * created on 2017/6/8
- * class description:多么生活拼团 分享跳转详情
+ * class description:开团成功
  */
 public class DoMoGroupJoinShareActivity extends BaseActivity {
     @BindView(R.id.smart_scroll_communal_refresh)
@@ -81,7 +80,7 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
     private String orderNo;
     private ConstantMethod constantMethod;
     private QualityCustomAdapter qualityCustomAdapter;
-    private String[] titles = {"自定义专区1", "自定义专区2", "自定义专区3"};
+    private String[] titles = {"9.9包邮", "热销爆品", "面膜专场"};
     private List<String> mProductTypeList = new ArrayList<>();
     private GroupShopDetailsEntity mGroupShopDetailsEntity;
     private GroupShopDetailsEntity.GroupShopDetailsBean mGroupShopDetailsBean;
@@ -112,9 +111,9 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
         gpRuleDetailsAdapter.addHeaderView(headerView);
         communal_recycler_wrap.setAdapter(gpRuleDetailsAdapter);
         //初始化自定义专区
-        mProductTypeList.add("1");
-        mProductTypeList.add("2");
-        mProductTypeList.add("3");
+        mProductTypeList.add("211");
+        mProductTypeList.add("208");
+        mProductTypeList.add("209");
         qualityCustomAdapter = new QualityCustomAdapter(getSupportFragmentManager(), mProductTypeList);
         mVpCustom.setAdapter(qualityCustomAdapter);
         mVpCustom.setOffscreenPageLimit(titles.length - 1);
@@ -173,11 +172,13 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
         //        拼团规则
         List<CommunalDetailBean> gpRuleBeanList = mGroupShopDetailsBean.getGpRule();
         if (gpRuleBeanList != null && gpRuleBeanList.size() > 0) {
+            groupShareJoinView.mViewDividerGprule.setVisibility(View.VISIBLE);
             gpRuleList.clear();
             gpRuleList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(gpRuleBeanList));
             gpRuleDetailsAdapter.notifyDataSetChanged();
+        } else {
+            groupShareJoinView.mViewDividerGprule.setVisibility(GONE);
         }
-
 
         //        参团列表
         GroupShopDetailsEntity.GroupShopDetailsBean.ParticipantInfoBean participantInfo = mGroupShopDetailsBean.getParticipantInfo();
@@ -206,15 +207,16 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
             }
         }
 
-        gpRuleDetailsAdapter.notifyDataSetChanged();
         String leftParticipant = getString(R.string.share_join_group, mGroupShopDetailsBean.getRequireCount() - 1);
         groupShareJoinView.tv_invite_fr_join_gp.setText(getSpannableString(leftParticipant, 2, 4, -1, "#ff5e6b"));
         groupShareJoinView.tv_new_user.setVisibility(mGroupShopDetailsBean.isNewUserGroup() ? View.VISIBLE : GONE);
+        //开团时间
         if (mGroupShopDetailsBean.getParticipantInfo() != null && !TextUtils.isEmpty(mGroupShopDetailsBean.getParticipantInfo().getStartTime())) {
             groupShareJoinView.tv_gp_ql_share_product_c_time.setText(mGroupShopDetailsBean.getParticipantInfo().getStartTime());
         }
+        //拼团封面
         GlideImageLoaderUtil.loadCenterCrop(DoMoGroupJoinShareActivity.this
-                , groupShareJoinView.iv_gp_ql_share_product, mGroupShopDetailsBean.getGpPicUrl());
+                , groupShareJoinView.iv_gp_ql_share_product, mGroupShopDetailsBean.getCoverImage());
         //设置商品标题
         String gpName = mGroupShopDetailsBean.getGpName();
         String productName = mGroupShopDetailsBean.getProductName();
@@ -306,15 +308,13 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
         void sendShare(View view) {
             invateJoin();
         }
+
+        @BindView(R.id.view_divider_gprule)
+        View mViewDividerGprule;
     }
 
     private void invateJoin() {
-        QualityGroupShareBean qualityGroupShareBean = new QualityGroupShareBean();
-        qualityGroupShareBean.setGpPicUrl(mGroupShopDetailsBean.getCoverImage());
-        qualityGroupShareBean.setName(mGroupShopDetailsBean.getProductName());
-        qualityGroupShareBean.setGpInfoId(mGroupShopDetailsBean.getGpInfoId());
-        qualityGroupShareBean.setGpRecordId(String.valueOf(mGroupShopDetailsBean.getGpRecordId()));
-        ShareDao.invitePartnerGroup(getActivity(), qualityGroupShareBean, orderNo);
+        GroupDao.invitePartnerGroup(getActivity(), mGroupShopDetailsBean);
     }
 
     @OnClick(R.id.tv_life_back)

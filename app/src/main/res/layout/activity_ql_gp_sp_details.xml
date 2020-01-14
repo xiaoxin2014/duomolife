@@ -69,12 +69,13 @@
                                 android:id="@+id/tv_ql_sp_pro_name"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:background="@drawable/border_bottom_gray_ten_line"
                                 android:ellipsize="end"
                                 android:maxLines="2"
                                 android:paddingLeft="@dimen/sc_mm_30"
                                 android:paddingTop="@dimen/sc_mm_28"
                                 android:paddingRight="@dimen/sc_mm_30"
-                                android:paddingBottom="@dimen/sc_mm_38"
+                                android:paddingBottom="@dimen/sc_mm_58"
                                 android:text="@string/defaul"
                                 android:textColor="@color/text_black_t"
                                 android:textSize="@dimen/sc_mm_32"/>
@@ -83,10 +84,10 @@
                                 android:id="@+id/ll_sp_pro_sku_value"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:background="@drawable/border_top_divider_10dp"
+                                android:background="@drawable/border_bottom_gray_ten_line"
                                 android:gravity="center_vertical"
                                 android:orientation="horizontal"
-                                android:paddingTop="@dimen/dimen_10_dp"
+                                android:paddingBottom="@dimen/sc_mm_20"
                                 android:visibility="gone">
 
                                 <TextView
@@ -104,12 +105,19 @@
 
                             <include layout="@layout/layout_open_group_info"/>
 
+
                             <LinearLayout
-                                android:id="@+id/ll_lottery"
+                                android:id="@+id/ll_custom_zone"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:background="@drawable/border_top_divider_10dp"
-                                android:orientation="vertical">
+                                android:orientation="vertical"
+                                android:visibility="gone">
+
+                                <View
+                                    android:id="@+id/view_divider_zone"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="@dimen/sc_mm_20"
+                                    android:background="@color/light_gray_f"/>
 
                                 <ImageView
                                     android:id="@+id/iv_lottery_zone"
@@ -133,7 +141,6 @@
                                 android:id="@+id/rv_group_rule"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:background="@drawable/border_top_line"
                                 android:scrollbars="none"/>
 
                             <LinearLayout

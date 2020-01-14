@@ -18,6 +18,7 @@ import com.amkj.dmsh.bean.IntegrationProEntity;
 import com.amkj.dmsh.bean.IntegrationProEntity.IntegrationBean;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.dao.AddClickDao;
 import com.amkj.dmsh.dominant.activity.QualityCustomTopicActivity;
 import com.amkj.dmsh.homepage.AttendanceMarqueeView;
 import com.amkj.dmsh.homepage.activity.IntegralDetailActivity;
@@ -909,6 +910,7 @@ public class AttendanceFragment extends BaseFragment {
                 CommunalADActivityBean communalADActivityBean = (CommunalADActivityBean) view.getTag();
                 if (communalADActivityBean != null) {
                     setSkipPath(getActivity(), communalADActivityBean.getAndroidLink(), false);
+                    AddClickDao.adClickTotal(getActivity(),communalADActivityBean.getId());
                 }
             });
         }

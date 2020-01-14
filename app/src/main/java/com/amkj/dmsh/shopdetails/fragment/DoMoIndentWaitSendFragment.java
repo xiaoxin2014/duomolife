@@ -9,8 +9,8 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity;
-import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity.QualityGroupShareBean;
+import com.amkj.dmsh.dao.GroupDao;
+import com.amkj.dmsh.dominant.bean.GroupShopDetailsEntity.GroupShopDetailsBean;
 import com.amkj.dmsh.mine.bean.CartProductInfoBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
@@ -54,7 +54,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.REMIND_DELIVERY;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
 import static com.amkj.dmsh.constant.Url.Q_INQUIRY_WAIT_SEND_EXPEDITING;
-import static com.amkj.dmsh.dao.ShareDao.invitePartnerGroup;
 
 
 /**
@@ -158,7 +157,15 @@ public class DoMoIndentWaitSendFragment extends BaseFragment {
                         startActivity(intent);
                         break;
                     case INVITE_GROUP:
-                        getInviteGroupInfo(orderListBean.getNo());
+                        List<GoodsBean> goods = orderListBean.getGoods();
+                        if (goods != null && goods.size() > 0) {
+                            GoodsBean goodsBean = goods.get(0);
+                            GroupShopDetailsBean groupShopDetailsBean = new GroupShopDetailsBean();
+                            groupShopDetailsBean.setCoverImage(goodsBean.getPicUrl());
+                            groupShopDetailsBean.setGpName(goodsBean.getName());
+                            groupShopDetailsBean.setType(type);
+                            GroupDao.invitePartnerGroup(getActivity(), groupShopDetailsBean, orderListBean.getNo());
+                        }
                         break;
                 }
             }
@@ -225,52 +232,6 @@ public class DoMoIndentWaitSendFragment extends BaseFragment {
         });
     }
 
-    /**
-     * 邀请参团获取信息
-     *
-     * @param no
-     */
-    private void getInviteGroupInfo(String no) {
-        String url = Url.GROUP_MINE_SHARE;
-        if (loadHud != null) {
-            loadHud.show();
-        }
-        Map<String, Object> params = new HashMap<>();
-        params.put("orderNo", no);
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), url, params, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                Gson gson = new Gson();
-                QualityGroupShareEntity qualityGroupShareEntity = gson.fromJson(result, QualityGroupShareEntity.class);
-                if (qualityGroupShareEntity != null) {
-                    if (qualityGroupShareEntity.getCode().equals(SUCCESS_CODE)) {
-                        QualityGroupShareBean qualityGroupShareBean = qualityGroupShareEntity.getQualityGroupShareBean();
-                        invitePartnerGroup(getActivity(), qualityGroupShareBean, no);
-                    }
-                }
-            }
-
-            @Override
-            public void onNotNetOrException() {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                showToast(getActivity(), R.string.do_failed);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(getActivity(), R.string.unConnectedNetwork);
-            }
-        });
-    }
 
     /**
      * 设置催发货

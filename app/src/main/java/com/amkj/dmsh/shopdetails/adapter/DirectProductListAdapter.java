@@ -16,7 +16,6 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.dominant.bean.GroupShopDetailsEntity.GroupShopDetailsBean;
 import com.amkj.dmsh.mine.adapter.ShopCarComPreProAdapter;
 import com.amkj.dmsh.mine.bean.ActivityInfoBean;
 import com.amkj.dmsh.mine.bean.CartProductInfoBean;
@@ -218,8 +217,8 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                 }
                 helper.itemView.setTag(orderProductInfoBean);
                 break;
+            //普通订单填写
             case INDENT_W_TYPE:
-                //            订单填写
                 ProductInfoBean productInfoBean = (ProductInfoBean) item;
                 GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.iv_direct_indent_pro), productInfoBean.getPicUrl());
                 helper.setText(R.id.tv_direct_indent_pro_name, getStrings(productInfoBean.getName()))
@@ -285,14 +284,17 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                 }
                 helper.itemView.setTag(productInfoBean);
                 break;
+            //拼团订单填写
             case INDENT_GROUP_SHOP:
-                GroupShopDetailsBean groupShopDetailsBean = (GroupShopDetailsBean) item;
-                GlideImageLoaderUtil.loadCenterCrop(context, helper.getView(R.id.iv_direct_indent_pro), groupShopDetailsBean.getGpPicUrl());
-                helper.setText(R.id.tv_direct_indent_pro_name, getStrings(groupShopDetailsBean.getProductName()))
-                        .setText(R.id.tv_direct_indent_pro_sku, getStrings(groupShopDetailsBean.getProductSkuValue()))
-                        .setText(R.id.tv_direct_indent_pro_price, getStringsChNPrice(context, groupShopDetailsBean.getGpPrice()))
-                        .setText(R.id.tv_direct_pro_count, "x" + 1);
-                helper.itemView.setTag(groupShopDetailsBean);
+                ProductInfoBean groupProductInfoBean = (ProductInfoBean) item;
+                GlideImageLoaderUtil.loadCenterCrop(context, helper.getView(R.id.iv_direct_indent_pro), groupProductInfoBean.getPicUrl());
+                helper.setText(R.id.tv_direct_indent_pro_name, getStrings(groupProductInfoBean.getName()))
+                        .setText(R.id.tv_direct_indent_pro_sku, getStrings(groupProductInfoBean.getSkuName()))
+                        .setText(R.id.tv_direct_indent_pro_price, getStringsChNPrice(context, groupProductInfoBean.getPrice()))
+                        .setText(R.id.tv_direct_pro_count, "x" + 1)
+                        .setGone(R.id.iv_indent_product_del, !TextUtils.isEmpty(groupProductInfoBean.getNotBuyAreaInfo()))
+                        .addOnClickListener(R.id.iv_indent_product_del).setTag(R.id.iv_indent_product_del, groupProductInfoBean);
+                helper.itemView.setTag(groupProductInfoBean);
                 break;
             case APPLY_REFUND:
                 ProductsBean productsBean = (ProductsBean) item;

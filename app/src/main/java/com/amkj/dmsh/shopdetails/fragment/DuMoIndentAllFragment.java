@@ -12,8 +12,8 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.dao.ShareDao;
-import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity;
+import com.amkj.dmsh.dao.GroupDao;
+import com.amkj.dmsh.dominant.bean.GroupShopDetailsEntity.GroupShopDetailsBean;
 import com.amkj.dmsh.mine.bean.CartProductInfoBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
@@ -117,6 +117,7 @@ public class DuMoIndentAllFragment extends BaseFragment {
             @Override
             public void click(String type, OrderListBean orderListBean) {
                 orderBean = orderListBean;
+                if (orderBean == null) return;
                 Intent intent = new Intent();
                 Bundle bundle;
                 switch (type) {
@@ -242,7 +243,15 @@ public class DuMoIndentAllFragment extends BaseFragment {
                         delOrderDialogHelper.show();
                         break;
                     case INVITE_GROUP:
-                        getInviteGroupInfo(orderListBean.getNo());
+                        List<GoodsBean> goods = orderListBean.getGoods();
+                        if (goods != null && goods.size() > 0) {
+                            GoodsBean goodsBean = goods.get(0);
+                            GroupShopDetailsBean groupShopDetailsBean = new GroupShopDetailsBean();
+                            groupShopDetailsBean.setCoverImage(goodsBean.getPicUrl());
+                            groupShopDetailsBean.setGpName(goodsBean.getName());
+                            groupShopDetailsBean.setType(type);
+                            GroupDao.invitePartnerGroup(getActivity(), groupShopDetailsBean, orderListBean.getNo());
+                        }
                         break;
                 }
             }
@@ -261,7 +270,7 @@ public class DuMoIndentAllFragment extends BaseFragment {
     }
 
     private void getAllIndent() {
-        String url =  Url.Q_INQUIRY_ALL_ORDER;
+        String url = Url.Q_INQUIRY_ALL_ORDER;
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
         params.put("showCount", TOTAL_COUNT_TEN);
@@ -318,7 +327,7 @@ public class DuMoIndentAllFragment extends BaseFragment {
 
     //  订单删除
     private void delOrder() {
-        String url =  Url.Q_INDENT_DEL;
+        String url = Url.Q_INDENT_DEL;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderBean.getNo());
         params.put("userId", userId);
@@ -340,7 +349,7 @@ public class DuMoIndentAllFragment extends BaseFragment {
     }
 
     private void confirmOrder() {
-        String url =  Url.Q_INDENT_CONFIRM;
+        String url = Url.Q_INDENT_CONFIRM;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderBean.getNo());
         params.put("userId", userId);
@@ -364,7 +373,7 @@ public class DuMoIndentAllFragment extends BaseFragment {
 
     //  取消订单
     private void cancelOrder() {
-        String url =  Url.Q_INDENT_CANCEL;
+        String url = Url.Q_INDENT_CANCEL;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderBean.getNo());
         params.put("userId", userId);
@@ -381,47 +390,6 @@ public class DuMoIndentAllFragment extends BaseFragment {
                         showToastRequestMsg(getActivity(), requestStatus);
                     }
                 }
-            }
-        });
-    }
-
-    private void getInviteGroupInfo(String no) {
-        String url =  Url.GROUP_MINE_SHARE;
-        if (loadHud != null) {
-            loadHud.show();
-        }
-        Map<String, Object> params = new HashMap<>();
-        params.put("orderNo", no);
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), url, params, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                Gson gson = new Gson();
-                QualityGroupShareEntity qualityGroupShareEntity = gson.fromJson(result, QualityGroupShareEntity.class);
-                if (qualityGroupShareEntity != null) {
-                    if (qualityGroupShareEntity.getCode().equals(SUCCESS_CODE)) {
-                        ShareDao.invitePartnerGroup(getActivity(), qualityGroupShareEntity.getQualityGroupShareBean(), no);
-                    }
-                }
-            }
-
-            @Override
-            public void onNotNetOrException() {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                showToast(getActivity(), R.string.do_failed);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(getActivity(), R.string.unConnectedNetwork);
             }
         });
     }

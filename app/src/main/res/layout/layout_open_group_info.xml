@@ -4,9 +4,7 @@
     android:id="@+id/ll_open_group_info"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:divider="@drawable/divider_ll_10dp_gray_bg"
-    android:orientation="vertical"
-    android:showDividers="beginning">
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/ll_group_join"

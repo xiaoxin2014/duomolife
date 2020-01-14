@@ -244,12 +244,10 @@ public class Url {
     /**
      * 我的
      */
-    //我的首页
+    //    查询个人信息
     public static final String MINE_PAGE = "api/my/getPersonalData";
     //    我-底部宫格数据
     public static final String MINE_BOTTOM_DATA = "api/my/getMyDefinedIcon";
-    //    查询信息
-    public static final String MINE_PAGE_POST = "api/my/getPersonalData";
     //    我 广告
     public static final String MINE_PAGE_AD = "api/home/getMyBottomAdTopic";
     //我的粉丝

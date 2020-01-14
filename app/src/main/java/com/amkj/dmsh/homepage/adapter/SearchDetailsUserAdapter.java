@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -32,7 +31,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.dao.UserDao.getPersonalInfo;
 
-;
 
 /**
  * Created by atd48 on 2016/7/4.
@@ -75,26 +73,22 @@ public class SearchDetailsUserAdapter extends BaseQuickAdapter<UserAttentionFans
 
         helper.itemView.setOnClickListener(v -> {
             Intent intent = new Intent();
-            if (userId > 0) {
-                if (type.equals("attention")) {
-                    if (userId != userAttentionFansBean.getBuid()) {
-                        intent.setClass(context, UserPagerActivity.class);
-                        intent.putExtra("userId", String.valueOf(userAttentionFansBean.getBuid()));
-                        context.startActivity(intent);
-                    } else {
-                        showToast(context, R.string.not_attention_self);
-                    }
+            if (type.equals("attention")) {
+                if (userId != userAttentionFansBean.getBuid()) {
+                    intent.setClass(context, UserPagerActivity.class);
+                    intent.putExtra("userId", String.valueOf(userAttentionFansBean.getBuid()));
+                    context.startActivity(intent);
                 } else {
-                    if (userId != userAttentionFansBean.getFuid()) {
-                        intent.setClass(context, UserPagerActivity.class);
-                        intent.putExtra("userId", String.valueOf(userAttentionFansBean.getFuid()));
-                        context.startActivity(intent);
-                    } else {
-                        showToast(context, R.string.not_attention_self);
-                    }
+                    showToast(context, R.string.not_attention_self);
                 }
             } else {
-                getLoginStatus(context);
+                if (userId != userAttentionFansBean.getFuid()) {
+                    intent.setClass(context, UserPagerActivity.class);
+                    intent.putExtra("userId", String.valueOf(userAttentionFansBean.getFuid()));
+                    context.startActivity(intent);
+                } else {
+                    showToast(context, R.string.not_attention_self);
+                }
             }
         });
         helper.itemView.setTag(userAttentionFansBean);
@@ -111,7 +105,7 @@ public class SearchDetailsUserAdapter extends BaseQuickAdapter<UserAttentionFans
             //未登录跳转登录页
             Intent intent = new Intent(context, MineLoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            ((Activity) context).startActivityForResult(intent, IS_LOGIN_CODE);
+            (context).startActivityForResult(intent, IS_LOGIN_CODE);
         }
     }
 

@@ -444,7 +444,7 @@ public class ConstantVariable {
     /**
      * 拼团类型
      */
-    public static final String GROUP_PRODUCT = "0";//商品团
+    public static final String GROUP_PRODUCT = "0";//普通团
     public static final String GROUP_LOTTERY = "1";//抽奖团
 
     /**

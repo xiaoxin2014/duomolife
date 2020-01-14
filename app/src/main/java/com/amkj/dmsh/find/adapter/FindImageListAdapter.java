@@ -17,6 +17,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_3;
+import static com.amkj.dmsh.constant.ConstantVariable.TYPE_4;
 
 ;
 
@@ -38,6 +39,7 @@ public class FindImageListAdapter extends BaseMultiItemQuickAdapter<PictureBean,
         addItemType(TYPE_2, R.layout.adapter_image_more_communal);
 //       评价图片 size 160*160
         addItemType(TYPE_3, R.layout.adapter_image_eva_communal);
+        addItemType(TYPE_4, R.layout.item_eva_img_not_single);
         this.context = context;
     }
 
@@ -55,6 +57,7 @@ public class FindImageListAdapter extends BaseMultiItemQuickAdapter<PictureBean,
                 helper.itemView.setTag(pictureBean);
                 break;
             case TYPE_3:
+            case TYPE_4:
                 final ImageView iv_eva_image = helper.getView(R.id.iv_eva_image);
                 iv_eva_image.setImageResource(R.drawable.load_loading_image);
                 helper.itemView.setTag(pictureBean);

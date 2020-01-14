@@ -302,7 +302,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             @Override
             public void onSuccess(String result) {
                 RequestStatus requestStatus = new Gson().fromJson(result, RequestStatus.class);
-                if (requestStatus != null && SUCCESS_CODE.equals(requestStatus.getCode()) && requestStatus.getGpRecordId() > 0) {
+                if (requestStatus != null && SUCCESS_CODE.equals(requestStatus.getCode()) && ConstantMethod.getStringChangeIntegers(requestStatus.getGpRecordId()) > 0) {
                     SharedPreUtils.setParam(InvokeTimeFileName, GP_REMIND, TimeUtils.getCurrentTime(requestStatus));//记录调用时间
                     GlideImageLoaderUtil.loadFinishImgDrawable(getActivity(), requestStatus.getCoverImage(), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
                         @Override
@@ -735,7 +735,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         final SavePersonalInfoBean personalInfo = getPersonalInfo(this);
         if (personalInfo.isLogin()) {
             userId = personalInfo.getUid();
-            String url = Url.MINE_PAGE_POST;
             Map<String, Object> params = new HashMap<>();
             params.put("userid", personalInfo.getUid());
             if (!TextUtils.isEmpty(personalInfo.getOpenId())) {
@@ -748,7 +747,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     !TextUtils.isEmpty(personalInfo.getUnionId())) {
                 params.put("unionid", getStrings(personalInfo.getUnionId()));
             }
-            NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.MINE_PAGE, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     Gson gson = new Gson();
@@ -757,11 +756,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         CommunalUserInfoBean communalUserInfoBean = minePageData.getCommunalUserInfoBean();
                         if (minePageData.getCode().equals(SUCCESS_CODE)) {
                             getLoginStatusTime();
-//                            上传设备信息
+                            //上传设备信息
                             setDeviceInfo(MainActivity.this, communalUserInfoBean.getApp_version_no()
                                     , communalUserInfoBean.getDevice_model()
                                     , communalUserInfoBean.getDevice_sys_version(), communalUserInfoBean.getSysNotice());
-                            //        更新最新个人信息
+                            //更新最新个人信息
                             SavePersonalInfoBean savePersonalInfo = new SavePersonalInfoBean();
                             savePersonalInfo.setAvatar(getStrings(communalUserInfoBean.getAvatar()));
                             savePersonalInfo.setNickName(getStrings(communalUserInfoBean.getNickname()));

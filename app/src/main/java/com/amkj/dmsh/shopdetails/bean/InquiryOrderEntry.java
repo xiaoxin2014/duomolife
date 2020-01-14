@@ -123,6 +123,15 @@ public class InquiryOrderEntry extends BaseEntity {
             private int second;
             private String maxRewardTip;
             private int needComment=-1;//是否显示待评价按钮
+            private String type;
+
+            public String getType() {
+                return type;
+            }
+
+            public void setType(String type) {
+                this.type = type;
+            }
 
             public boolean isNeedComment() {
                 return needComment == 1;

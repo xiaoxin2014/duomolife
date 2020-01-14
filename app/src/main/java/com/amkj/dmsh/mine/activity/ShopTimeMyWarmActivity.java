@@ -50,8 +50,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.MINE_WARM;
 import static com.amkj.dmsh.constant.Url.TIME_SHOW_PRO_WARM;
 
-;
-;
 
 /**
  * Created by atd48 on 2016/10/19.

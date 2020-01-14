@@ -191,8 +191,6 @@ public class MineDataFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
-        // TODO: 2019/12/30 暂时注释掉，把新人弹窗逻辑移到首页
-//        isLoginStatus();
         tv_mine_get_score_more.getPaint().setAntiAlias(true);//抗锯齿
         tv_mine_get_score_more.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG); //下划线
         mTvBindPhone.getPaint().setAntiAlias(true);
@@ -414,12 +412,6 @@ public class MineDataFragment extends BaseFragment {
         super.onActivityResult(requestCode, resultCode, data);
         try {
             CallbackContext.onActivityResult(requestCode, resultCode, data);
-            // TODO: 2019/12/30 暂时注释掉，把新人弹窗逻辑移到首页
-//            //每次登录成功判断是否是新人
-//            if (requestCode == IS_LOGIN_CODE && userId > 0) {
-//                ConstantMethod constantMethod = new ConstantMethod();
-//                constantMethod.getNewUserCouponDialog(getActivity());
-//            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -432,18 +424,8 @@ public class MineDataFragment extends BaseFragment {
     @Override
     protected void loadData() {
         getBottomTypeNetData();
-        // TODO: 2019/12/30 暂时注释掉，把提示开启通知弹窗逻辑移到首页
-//        //检查推送权限
-//        checkPushPermission(getActivity());
     }
 
-//    private void isLoginStatus() {
-//        SavePersonalInfoBean personalInfo = getPersonalInfo(getActivity());
-//        if (personalInfo.isLogin()) {
-//            ConstantMethod constantMethod = new ConstantMethod();
-//            constantMethod.getNewUserCouponDialog(getActivity());
-//        }
-//    }
 
     /**
      * 获取订单数量显示

@@ -11,11 +11,11 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.dao.ShareDao;
+import com.amkj.dmsh.dao.GroupDao;
 import com.amkj.dmsh.dominant.adapter.QualityGroupMineAdapter;
+import com.amkj.dmsh.dominant.bean.GroupShopDetailsEntity.GroupShopDetailsBean;
 import com.amkj.dmsh.dominant.bean.QualityGroupMineEntity;
 import com.amkj.dmsh.dominant.bean.QualityGroupMineEntity.QualityGroupMineBean;
-import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity.QualityGroupShareBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.DirectExchangeDetailsActivity;
@@ -138,12 +138,13 @@ public class QualityGroupShopMineActivity extends BaseActivity {
                                     break;
                                 case 1:
                                     if (qualityGroupMineBean != null) {
-                                        QualityGroupShareBean qualityGroupShareBean = new QualityGroupShareBean();
-                                        qualityGroupShareBean.setGpPicUrl(qualityGroupMineBean.getCoverImage());
-                                        qualityGroupShareBean.setName(qualityGroupMineBean.getProductName());
-                                        qualityGroupShareBean.setGpInfoId(qualityGroupMineBean.getGpInfoId());
-                                        qualityGroupShareBean.setGpRecordId(qualityGroupMineBean.getGpRecordId());
-                                        ShareDao.invitePartnerGroup(getActivity(), qualityGroupShareBean, qualityGroupMineBean.getOrderNo());
+                                        GroupShopDetailsBean groupShopDetailsBean = new GroupShopDetailsBean();
+                                        groupShopDetailsBean.setCoverImage(qualityGroupMineBean.getCoverImage());
+                                        groupShopDetailsBean.setGpName(qualityGroupMineBean.getProductName());
+                                        groupShopDetailsBean.setGpInfoId(qualityGroupMineBean.getGpInfoId());
+                                        groupShopDetailsBean.setGpRecordId(qualityGroupMineBean.getGpRecordId());
+                                        groupShopDetailsBean.setType(qualityGroupMineBean.getType());
+                                        GroupDao.invitePartnerGroup(getActivity(), groupShopDetailsBean);
                                     }
                                     break;
                             }
@@ -151,6 +152,7 @@ public class QualityGroupShopMineActivity extends BaseActivity {
                         case R.id.tv_ql_gp_mine_details:
                             Intent intent = new Intent(QualityGroupShopMineActivity.this, DirectExchangeDetailsActivity.class);
                             intent.putExtra("orderNo", qualityGroupMineBean.getOrderNo());
+                            intent.putExtra("gpType", qualityGroupMineBean.getType());//拼团类型
                             startActivity(intent);
                             break;
                     }
@@ -162,9 +164,9 @@ public class QualityGroupShopMineActivity extends BaseActivity {
             QualityGroupMineBean qualityGroupMineBean = (QualityGroupMineBean) view.getTag();
             if (qualityGroupMineBean != null) {
                 Intent intent = new Intent(QualityGroupShopMineActivity.this, QualityGroupShopDetailActivity.class);
-                intent.putExtra("gpInfoId", String.valueOf(qualityGroupMineBean.getGpInfoId()));
-                intent.putExtra("productId", String.valueOf(qualityGroupMineBean.getProductId()));
-                intent.putExtra("gpRecordId", String.valueOf(qualityGroupMineBean.getGpRecordId()));
+                intent.putExtra("gpInfoId", qualityGroupMineBean.getGpInfoId());
+                intent.putExtra("productId", qualityGroupMineBean.getProductId());
+                intent.putExtra("gpRecordId", qualityGroupMineBean.getGpRecordId());
                 intent.putExtra("orderNo", qualityGroupMineBean.getOrderNo());
                 intent.putExtra("gpStatus", String.valueOf(qualityGroupMineBean.getGpStatus()));
                 startActivity(intent);

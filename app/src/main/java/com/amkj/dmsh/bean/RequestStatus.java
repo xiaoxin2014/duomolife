@@ -54,19 +54,34 @@ public class RequestStatus extends BaseTimeEntity {
     private int targetId;
 
     //未完成拼团弹窗相关
-    private int gpInfoId;
-    private int gpRecordId;
+    private String gpInfoId;
+    private String gpRecordId;
     private String personNum;
     private String price;
     private String coverImage;
     private String gpEndTime;
     private String gpName;
-    private String orderNo;
-    private int range;//1表示新人团
-
+    private String type;//0特价团，1抽奖团
+    private String range;//0特价团，1邀新团
 
     public static RequestStatus objectFromData(String str) {
         return new Gson().fromJson(str, RequestStatus.class);
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public int getRange() {
+        return ConstantMethod.getStringChangeIntegers(range);
+    }
+
+    public void setRange(String range) {
+        this.range = range;
     }
 
     public int getTargetId() {
@@ -77,28 +92,12 @@ public class RequestStatus extends BaseTimeEntity {
         this.targetId = targetId;
     }
 
-    public int getRange() {
-        return range;
-    }
-
-    public void setRange(int range) {
-        this.range = range;
-    }
-
     public String getGpName() {
         return gpName;
     }
 
     public void setGpName(String gpName) {
         this.gpName = gpName;
-    }
-
-    public String getOrderNo() {
-        return orderNo;
-    }
-
-    public void setOrderNo(String orderNo) {
-        this.orderNo = orderNo;
     }
 
     public String getNo() {
@@ -261,19 +260,19 @@ public class RequestStatus extends BaseTimeEntity {
         this.result = result;
     }
 
-    public int getGpInfoId() {
+    public String getGpInfoId() {
         return gpInfoId;
     }
 
-    public void setGpInfoId(int gpInfoId) {
+    public void setGpInfoId(String gpInfoId) {
         this.gpInfoId = gpInfoId;
     }
 
-    public int getGpRecordId() {
+    public String getGpRecordId() {
         return gpRecordId;
     }
 
-    public void setGpRecordId(int gpRecordId) {
+    public void setGpRecordId(String gpRecordId) {
         this.gpRecordId = gpRecordId;
     }
 

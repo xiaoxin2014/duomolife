@@ -133,6 +133,15 @@ public class IndentInfoDetailEntity extends BaseEntity {
             @SerializedName("priceInfo")
             private List<PriceInfoBean> priceInfoList;
             private int needComment=-1;//是否显示待评价按钮
+            private String type;
+
+            public String getType() {
+                return type;
+            }
+
+            public void setType(String type) {
+                this.type = type;
+            }
 
             public int getNeedComment() {
                 return needComment;

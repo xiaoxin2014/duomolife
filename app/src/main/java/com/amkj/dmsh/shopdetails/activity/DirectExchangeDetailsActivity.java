@@ -25,9 +25,9 @@ import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.dao.ShareDao;
+import com.amkj.dmsh.dao.GroupDao;
 import com.amkj.dmsh.dominant.activity.QualityProductActActivity;
-import com.amkj.dmsh.dominant.bean.QualityGroupShareEntity;
+import com.amkj.dmsh.dominant.bean.GroupShopDetailsEntity.GroupShopDetailsBean;
 import com.amkj.dmsh.find.activity.IndentScoreListActivity;
 import com.amkj.dmsh.find.activity.JoinTopicActivity;
 import com.amkj.dmsh.homepage.bean.ScoreGoodsEntity;
@@ -42,7 +42,6 @@ import com.amkj.dmsh.shopdetails.bean.ApplyRefundCheckEntity;
 import com.amkj.dmsh.shopdetails.bean.ApplyRefundCheckEntity.ApplyRefundCheckBean;
 import com.amkj.dmsh.shopdetails.bean.DirectApplyRefundBean;
 import com.amkj.dmsh.shopdetails.bean.DirectApplyRefundBean.DirectRefundProBean;
-import com.amkj.dmsh.shopdetails.bean.DirectAppraisePassBean;
 import com.amkj.dmsh.shopdetails.bean.IndentInfoDetailEntity;
 import com.amkj.dmsh.shopdetails.bean.IndentInfoDetailEntity.IndentInfoDetailBean;
 import com.amkj.dmsh.shopdetails.bean.IndentInfoDetailEntity.IndentInfoDetailBean.OrderDetailBean;
@@ -119,7 +118,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.REFUND_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.REMIND_DELIVERY;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.UNION_RESULT_CODE;
-import static com.amkj.dmsh.constant.Url.GROUP_MINE_SHARE;
 import static com.amkj.dmsh.constant.Url.Q_INDENT_APPLY_REFUND_CHECK;
 import static com.amkj.dmsh.constant.Url.Q_INDENT_CANCEL;
 import static com.amkj.dmsh.constant.Url.Q_INDENT_CONFIRM;
@@ -162,7 +160,6 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
     private String orderNo;
     private OrderDetailBean orderDetailBean;
     private List<OrderProductInfoBean> goodsBeanList = new ArrayList<>();
-    private List<DirectAppraisePassBean> directAppraisePassBeanList = new ArrayList<>();
     //    订单价格优惠列表
     private List<PriceInfoBean> priceInfoList = new ArrayList<>();
     private DirectProductListAdapter directProductListAdapter;
@@ -1014,49 +1011,21 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
                 startActivity(intent);
                 break;
             case INVITE_GROUP:
-                getInviteGroupInfo(orderDetailBean.getNo());
+                try {
+                    List<GoodsDetailBean> goodDetails = orderDetailBean.getGoodDetails();
+                    GoodsDetailBean goodsDetailBean = goodDetails.get(0);
+                    List<OrderProductInfoBean> orderProductInfoList = goodsDetailBean.getOrderProductInfoList();
+                    OrderProductInfoBean orderProductInfoBean = orderProductInfoList.get(0);
+                    GroupShopDetailsBean groupShopDetailsBean = new GroupShopDetailsBean();
+                    groupShopDetailsBean.setCoverImage(orderProductInfoBean.getPicUrl());
+                    groupShopDetailsBean.setGpName(orderProductInfoBean.getName());
+                    groupShopDetailsBean.setType(type);
+                    GroupDao.invitePartnerGroup(getActivity(), groupShopDetailsBean, orderDetailBean.getNo());
+                } catch (Exception exception) {
+                    showToast(this, "邀请失败");
+                }
                 break;
         }
-    }
-
-    private void getInviteGroupInfo(String no) {
-        if (loadHud != null) {
-            loadHud.show();
-        }
-        Map<String, Object> params = new HashMap<>();
-        params.put("orderNo", no);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, GROUP_MINE_SHARE, params, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                Gson gson = new Gson();
-                QualityGroupShareEntity qualityGroupShareEntity = gson.fromJson(result, QualityGroupShareEntity.class);
-                if (qualityGroupShareEntity != null) {
-                    if (qualityGroupShareEntity.getCode().equals(SUCCESS_CODE)) {
-                        ShareDao.invitePartnerGroup(getActivity(), qualityGroupShareEntity.getQualityGroupShareBean(), orderNo);
-                    }
-                }
-            }
-
-            @Override
-            public void onNotNetOrException() {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                showToast(DirectExchangeDetailsActivity.this, R.string.do_failed);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(DirectExchangeDetailsActivity.this, R.string.unConnectedNetwork);
-            }
-        });
     }
 
     @Override

@@ -288,4 +288,5 @@
     <string name="invate_group_now">快去找好友参团</string>
     <string name="remain_person_sucess">你开团的商品还差%s人就成功啦</string>
     <string name="only_price">只要¥%s哦~</string>
+    <string name="lottery_price">%s元抢</string>
 </resources>

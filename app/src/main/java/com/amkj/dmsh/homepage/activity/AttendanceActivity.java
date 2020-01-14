@@ -22,6 +22,7 @@ import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.dao.AddClickDao;
 import com.amkj.dmsh.dominant.activity.QualityCustomTopicActivity;
 import com.amkj.dmsh.homepage.AttendanceMarqueeView;
 import com.amkj.dmsh.homepage.adapter.AttendanceAwardAdapter;
@@ -962,6 +963,7 @@ public class AttendanceActivity extends BaseActivity {
                 CommunalADActivityBean communalADActivityBean = (CommunalADActivityBean) view.getTag();
                 if (communalADActivityBean != null) {
                     setSkipPath(AttendanceActivity.this, communalADActivityBean.getAndroidLink(), false);
+                    AddClickDao.adClickTotal(getActivity(),communalADActivityBean.getId());
                 }
             });
         }

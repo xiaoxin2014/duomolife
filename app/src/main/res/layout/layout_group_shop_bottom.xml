@@ -3,27 +3,29 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ll_group_shop_bottom"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="@dimen/sc_mm_98"
     android:background="@drawable/border_top_line"
-    android:divider="@drawable/divider_ll_0_5_dp"
     android:gravity="center_vertical"
-    android:orientation="horizontal"
-    android:paddingTop="@dimen/sc_mm_25"
-    android:paddingBottom="@dimen/sc_mm_25"
-    android:showDividers="middle">
+    android:orientation="horizontal">
 
     <com.amkj.dmsh.views.DrawableCenterTextView
         android:id="@+id/tv_quality_all_gp_sp"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:background="@drawable/border_right_line"
         android:drawableLeft="@drawable/sel_group_home"
         android:drawablePadding="@dimen/dimen_10_dp"
         android:gravity="center_vertical"
         android:text="主页"
         android:textColor="@color/text_black_t"
         android:textSize="@dimen/sc_mm_32"/>
+
+    <View
+        android:layout_width="1mm"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/sc_mm_25"
+        android:layout_marginBottom="@dimen/sc_mm_25"
+        android:background="@color/text_gray_c"/>
 
     <com.amkj.dmsh.views.DrawableCenterTextView
         android:id="@+id/tv_quality_join_gp_sp"

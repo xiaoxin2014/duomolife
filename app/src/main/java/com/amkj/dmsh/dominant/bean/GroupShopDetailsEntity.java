@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import com.amkj.dmsh.base.BaseTimeEntity;
 import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.shopdetails.bean.PropsBean;
 import com.amkj.dmsh.shopdetails.bean.PropvaluesBean;
 import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
@@ -94,6 +95,7 @@ public class GroupShopDetailsEntity extends BaseTimeEntity {
         private String videoUrl;
         private String coverImage;
         private String tipText;
+        private String isBtUsable;
         private List<String> picUrlList;
         private List<String> tagText;
         private List<SkuSaleBean> skuSale;
@@ -108,10 +110,27 @@ public class GroupShopDetailsEntity extends BaseTimeEntity {
 
 
         private int gpSkuId;
-        private String gpPicUrl;
-        private String productSkuValue;
-        private int gpStatus = 1;//开团 1 拼团 2
+        private int gpStatus = ConstantVariable.OPEN_GROUP;//开团 1 参团 2
 
+        public boolean isBtUsable() {
+            return "1".equals(isBtUsable);
+        }
+
+        public boolean isLotteryGroup() {
+            return ConstantVariable.GROUP_LOTTERY.equals(type);
+        }
+
+        public boolean isProductGroup() {
+            return ConstantVariable.GROUP_PRODUCT.equals(type);
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
 
         public boolean isNewUserGroup() {
             return "1".equals(range);
@@ -149,14 +168,6 @@ public class GroupShopDetailsEntity extends BaseTimeEntity {
             this.gpName = gpName;
         }
 
-        public String getGpPicUrl() {
-            if (propvalues != null && propvalues.size() > 0) {
-                gpPicUrl = propvalues.get(0).getPropValueUrl();
-            }
-            return gpPicUrl;
-        }
-
-
         public String getTipText() {
             return tipText;
         }
@@ -173,10 +184,6 @@ public class GroupShopDetailsEntity extends BaseTimeEntity {
             this.gpProductId = gpProductId;
         }
 
-        public void setGpPicUrl(String gpPicUrl) {
-            this.gpPicUrl = gpPicUrl;
-        }
-
         public String getCoverImage() {
             return coverImage;
         }
@@ -185,8 +192,8 @@ public class GroupShopDetailsEntity extends BaseTimeEntity {
             this.coverImage = coverImage;
         }
 
-        public int getGpRecordId() {
-            return ConstantMethod.getStringChangeIntegers(gpRecordId);
+        public String getGpRecordId() {
+            return gpRecordId;
         }
 
         public void setGpRecordId(String gpRecordId) {
@@ -215,14 +222,6 @@ public class GroupShopDetailsEntity extends BaseTimeEntity {
 
         public void setVideoUrl(String videoUrl) {
             this.videoUrl = videoUrl;
-        }
-
-        public String getProductSkuValue() {
-            return productSkuValue;
-        }
-
-        public void setProductSkuValue(String productSkuValue) {
-            this.productSkuValue = productSkuValue;
         }
 
         public int getGpInfoId() {
@@ -279,14 +278,6 @@ public class GroupShopDetailsEntity extends BaseTimeEntity {
 
         public void setRequireCount(String requireCount) {
             this.requireCount = requireCount;
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public void setType(String type) {
-            this.type = type;
         }
 
         public String getGpPrice() {
@@ -486,7 +477,7 @@ public class GroupShopDetailsEntity extends BaseTimeEntity {
             }
 
             public List<GroupShopJoinBean> getUserInfoList() {
-                return userInfoList;
+                return userInfoList == null ? new ArrayList<>() : userInfoList;
             }
 
             public void setUserInfoList(List<GroupShopJoinBean> userInfoList) {

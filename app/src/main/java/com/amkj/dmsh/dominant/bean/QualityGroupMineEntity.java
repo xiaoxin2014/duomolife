@@ -78,6 +78,15 @@ public class QualityGroupMineEntity extends BaseEntity {
         private String gpStatusMsg;
         private String remainNum;
         private String productId;
+        private String type;
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
 
         public String getProductId() {
             return productId;
@@ -119,8 +128,8 @@ public class QualityGroupMineEntity extends BaseEntity {
             this.createTime = createTime;
         }
 
-        public int getGpInfoId() {
-            return ConstantMethod.getStringChangeIntegers(gpInfoId);
+        public String getGpInfoId() {
+            return gpInfoId;
         }
 
         public void setGpInfoId(String gpInfoId) {

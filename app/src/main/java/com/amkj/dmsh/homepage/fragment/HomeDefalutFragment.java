@@ -221,7 +221,7 @@ public class HomeDefalutFragment extends BaseFragment {
             HomeCommonBean homeCommonBean = (HomeCommonBean) view.getTag();
             if (homeCommonBean != null) {
                 setSkipPath(getActivity(), homeCommonBean.getLink(), false);
-             adClickTotal(getActivity(), homeCommonBean.getId());
+                adClickTotal(getActivity(), homeCommonBean.getId());
             }
         });
 
@@ -256,7 +256,7 @@ public class HomeDefalutFragment extends BaseFragment {
         mRvNice.setLayoutManager(niceManager);
         mRvNice.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_five_dp)
+                .setDividerId(R.drawable.item_divider_five_gray_f)
                 .create());
         mRvNice.setNestedScrollingEnabled(false);
         qualityGoodNewProAdapter = new GoodProductAdapter((getActivity()), goodsProList);

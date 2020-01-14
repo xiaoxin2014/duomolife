@@ -33,6 +33,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/sel_nor_red_un_gray"
+            android:enabled="false"
             android:gravity="center"
             android:text="邀请好友"
             android:textColor="@color/white"

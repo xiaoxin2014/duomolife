@@ -4,7 +4,7 @@
               android:layout_height="wrap_content"
               android:divider="@drawable/divider_ll_10dp_gray_bg"
               android:orientation="vertical"
-              android:showDividers="beginning|end">
+              android:showDividers="beginning">
 
     <RelativeLayout
         android:layout_width="match_parent"

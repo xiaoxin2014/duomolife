@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/rel_pro_comment"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/sc_mm_88"
-    android:background="@drawable/border_bottom_line"
-    android:paddingLeft="@dimen/sc_mm_30"
-    android:visibility="visible">
+                android:id="@+id/rel_pro_comment"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/sc_mm_88"
+                android:paddingLeft="@dimen/sc_mm_30"
+                android:paddingRight="@dimen/sc_mm_30"
+                android:visibility="visible">
 
     <TextView
         android:id="@+id/tv_shop_comment_count"
@@ -15,19 +15,17 @@
         android:gravity="center_vertical"
         android:text="TA们在说(8)"
         android:textColor="@color/text_black_t"
-        android:textSize="@dimen/sc_mm_30" />
+        android:textSize="@dimen/sc_mm_30"/>
 
     <TextView
         android:id="@+id/tv_shop_comment_more"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_alignParentRight="true"
-
-        android:drawablePadding="@dimen/dimen_9dp"
         android:drawableRight="@drawable/right_btn_nor"
+        android:drawablePadding="@dimen/sc_mm_20"
         android:gravity="center_vertical"
-        android:paddingRight="@dimen/sc_mm_36"
-        android:text="查看更多评价"
+        android:text="更多评价"
         android:textColor="@color/text_login_gray_s"
-        android:textSize="@dimen/sc_mm_22" />
+        android:textSize="@dimen/sc_mm_24"/>
 </RelativeLayout>

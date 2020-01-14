@@ -2,14 +2,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/sc_mm_96"
-                android:background="@color/text_normal_red"
-                android:gravity="center_vertical">
+                android:background="@color/text_normal_red">
 
     <TextView
         android:id="@+id/tv_gp_sp_per_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
+        android:layout_alignBaseline="@+id/tv_gp_sp_per_price"
         android:layout_marginLeft="@dimen/sc_mm_30"
         android:drawablePadding="@dimen/dimen_5_dp"
         android:text="@string/defaul"
@@ -20,7 +19,7 @@
         android:id="@+id/tv_gp_sp_per_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/tv_gp_sp_per_count"
+        android:layout_centerVertical="true"
         android:layout_toRightOf="@+id/tv_gp_sp_per_count"
         android:text="@string/defaul"
         android:textColor="@color/white"

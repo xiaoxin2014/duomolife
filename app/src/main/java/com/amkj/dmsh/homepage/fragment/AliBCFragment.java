@@ -1295,6 +1295,6 @@ public class AliBCFragment extends BaseFragment {
 
     @Override
     protected boolean isLazy() {
-        return false;
+        return "false".equals(paddingStatus);
     }
 }

@@ -52,7 +52,8 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
             case TYPE_0:
                 GlideImageLoaderUtil.loadRoundImg(context, helper.getView(R.id.cir_ql_gp_ava), groupShopJoinBean.getAvatar(), AutoSizeUtils.mm2px(context, 70));
                 helper.setText(R.id.tv_ql_gp_name, getStrings(groupShopJoinBean.getNickName()))
-                        .setText(R.id.tv_join_dif_per_count, "还差" + groupShopJoinBean.getRemainNum() + "人成团");
+                        .setText(R.id.tv_join_dif_per_count, "还差" + groupShopJoinBean.getRemainNum() + "人成团")
+                        .addOnClickListener(R.id.tv_ql_gp_sp_join).setTag(R.id.tv_ql_gp_sp_join, groupShopJoinBean);
                 setCountTime(helper, groupShopJoinBean, "倒计时 ", true);
                 helper.itemView.setTag(groupShopJoinBean);
                 break;

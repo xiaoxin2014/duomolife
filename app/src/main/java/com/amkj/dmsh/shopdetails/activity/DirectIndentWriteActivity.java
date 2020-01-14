@@ -161,7 +161,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
     private final int REQ_INVOICE = 130;
     private String invoiceTitle;
     private GroupShopDetailsBean groupShopDetailsBean;
-    private List<GroupShopDetailsBean> groupShopDetailsBeanList = new ArrayList<>();
     public final static String INDENT_GROUP_SHOP = "group_shop";
     public final static String INDENT_W_TYPE = "indent";
 
@@ -272,17 +271,12 @@ public class DirectIndentWriteActivity extends BaseActivity {
             directProductAdapter = new DirectProductListAdapter(DirectIndentWriteActivity.this, productInfoList, type);
         } else if (groupShopDetailsBean != null) {
             type = INDENT_GROUP_SHOP;
-            groupShopDetailsBeanList.clear();
-            groupShopDetailsBeanList.add(groupShopDetailsBean);
-            discountBeanList.clear();
-            for (int i = 0; i < groupShopDetailsBeanList.size(); i++) {
-                IndentProDiscountBean indentProBean = new IndentProDiscountBean();
-                indentProBean.setId(groupShopDetailsBean.getProductId());
-                indentProBean.setSaleSkuId(groupShopDetailsBean.getGpSkuId());
-                indentProBean.setCount(1);
-                discountBeanList.add(indentProBean);
-            }
-            directProductAdapter = new DirectProductListAdapter(DirectIndentWriteActivity.this, groupShopDetailsBeanList, type);
+            IndentProDiscountBean indentProBean = new IndentProDiscountBean();
+            indentProBean.setId(groupShopDetailsBean.getProductId());
+            indentProBean.setSaleSkuId(groupShopDetailsBean.getGpSkuId());
+            indentProBean.setCount(1);
+            discountBeanList.add(indentProBean);
+            directProductAdapter = new DirectProductListAdapter(DirectIndentWriteActivity.this, productInfoList, type);
         } else {
             showToast(this, "商品信息有误，请重试");
             finish();
@@ -518,7 +512,8 @@ public class DirectIndentWriteActivity extends BaseActivity {
         showPurchaseDialog(indentWriteBean);
         //实名制相关
         isReal = indentWriteBean.isReal();
-        tv_indent_write_commit.setEnabled(indentWriteBean.getAllProductNotBuy() == 0);
+//        偏远地区
+//        tv_indent_write_commit.setEnabled(indentWriteBean.getAllProductNotBuy() == 0);
         setOverseaData(indentWriteBean);
         //金额信息
         setDiscounts(indentWriteBean.getPriceInfos());
@@ -729,16 +724,14 @@ public class DirectIndentWriteActivity extends BaseActivity {
                     showImportantToast(this, "收货地址为空");
                 } else if (TextUtils.isEmpty(payWay)) {
                     showImportantToast(this, "请选择支付方式");
+                } else if (isReal && (pullHeaderView.et_oversea_name.getText().toString().length() <= 0 || pullHeaderView.et_oversea_card.getText().toString().length() <= 0)) {
+                    showImportantToast(this, "因国家海关要求，购买跨境商品时需完善实名信息后方可购买");
+                } else if (indentWriteBean.getAllProductNotBuy() == 1) {
+                    showImportantToast(this, "所选商品内包含无法配送商品，请移除后再提交订单");
                 } else if (type.equals(INDENT_GROUP_SHOP) && groupShopDetailsBean != null) {
                     createGroupIndent(payWay, groupShopDetailsBean);
                 } else if (type.equals(INDENT_W_TYPE) && productInfoList.size() > 0) {
-                    //判断是否需要实名
-                    if (isReal && (pullHeaderView.et_oversea_name.getText().toString().length() < 0 || pullHeaderView.et_oversea_card.getText().toString().length() < 0)) {
-                        tv_indent_write_commit.setEnabled(true);
-                        showImportantToast(this, "因国家海关要求，购买跨境商品时需完善实名信息后方可购买。");
-                    } else {
-                        createIndent();
-                    }
+                    createIndent();
                 } else {
                     showImportantToast(this, "商品数据错误");
                 }
@@ -1365,7 +1358,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
         }, 500);
     }
 
-    //跳转拼团订单详情
+    //跳转开团成功页面
     private void skipGpShareIndent() {
         String orderNo;
         Intent intent = new Intent(this, DoMoGroupJoinShareActivity.class);

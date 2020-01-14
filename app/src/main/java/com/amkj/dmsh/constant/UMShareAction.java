@@ -56,6 +56,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.isDebugTag;
+import static com.amkj.dmsh.constant.Url.BASE_SHARE_PAGE_TWO;
 import static com.amkj.dmsh.constant.Url.SHARE_SAVE_IMAGE_URL;
 import static com.amkj.dmsh.dao.AddClickDao.addArticleShareCount;
 import static com.amkj.dmsh.dao.SoftApiDao.reportIllegal;
@@ -291,7 +292,7 @@ public class UMShareAction {
                 break;
             case WEIXIN:
                 if (!TextUtils.isEmpty(routineUrl)) {
-                    UMMin umMin = new UMMin(urlLink);
+                    UMMin umMin = new UMMin(BASE_SHARE_PAGE_TWO);//设置一个默认值，避免报错码2000
                     //兼容低版本的网页链接
                     umMin.setThumb(umImage);
                     // 小程序消息封面图片
@@ -309,7 +310,9 @@ public class UMShareAction {
                         if ("http://dev.domolife.cn/".equals(baseUrl)) {
                             com.umeng.socialize.Config.setMiniPreView();
                         } else if (!"https://app.domolife.cn/".equals(baseUrl)) {
-                            com.umeng.socialize.Config.setMiniTest();
+                            // TODO: 2020/1/8  
+//                            com.umeng.socialize.Config.setMiniTest();
+                            com.umeng.socialize.Config.setMiniPreView();
                         }
                     }
 

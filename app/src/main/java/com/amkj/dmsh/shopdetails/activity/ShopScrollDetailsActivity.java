@@ -108,7 +108,6 @@ import java.util.Properties;
 import java.util.regex.Pattern;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.iwgang.countdownview.CountdownView;
 import cn.iwgang.countdownview.DynamicConfig;
@@ -135,6 +134,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
 import static com.amkj.dmsh.constant.ConstantVariable.isShowTint;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
@@ -192,7 +192,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     @BindView(R.id.communal_recycler_wrap)
     RecyclerView communal_recycler_wrap;
     @BindView(R.id.rel_shop_details_comment)
-    RelativeLayout rel_shop_details_comment;
+    LinearLayout rel_shop_details_comment;
     //  是否可使用优惠券
     @BindView(R.id.iv_ql_shop_pro_cp_tag)
     ImageView iv_ql_shop_pro_cp_tag;
@@ -306,6 +306,9 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     ImageView mIvNextIcon;
     @BindView(R.id.rl_product_activity_detail)
     LinearLayout rl_product_activity_detail;
+    //        评价数目
+    @BindView(R.id.tv_shop_comment_count)
+    TextView tv_shop_comment_count;
 
     //    赠品信息
     private List<PresentProductInfoBean> presentProductInfoBeans = new ArrayList<>();
@@ -325,7 +328,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     private List<CommunalDetailObjectBean> serviceDataList = new ArrayList<>();
 
     private DirectEvaluationAdapter directEvaluationAdapter;
-    private ShopCommentHeaderView shopCommentHeaderView;
     private String productId;
     private ShopDetailsEntity shopDetailsEntity;
     private ShopPropertyBean shopPropertyBean;
@@ -404,18 +406,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             finish();
         }
         smart_ql_sp_pro_details.setOnRefreshListener(refreshLayout -> loadData());
-        communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(getActivity()));
-        directEvaluationAdapter = new DirectEvaluationAdapter(getActivity(), goodsComments);
-        directEvaluationAdapter.setHeaderAndEmpty(true);
-//        评论头部
-        View commentHeaderView = LayoutInflater.from(getActivity()).inflate(R.layout.layout_shop_comment_header, null);
-        shopCommentHeaderView = new ShopCommentHeaderView();
-        ButterKnife.bind(shopCommentHeaderView, commentHeaderView);
-        shopCommentHeaderView.initView();
-        shopCommentHeaderView.scroll_details.setVisibility(GONE);
-        directEvaluationAdapter.addHeaderView(commentHeaderView);
-        communal_recycler_wrap.setNestedScrollingEnabled(false);
-        communal_recycler_wrap.setAdapter(directEvaluationAdapter);
         ll_details_bottom.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -533,15 +523,21 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         } else {
             tv_product_share_tint.setVisibility(GONE);
         }
-        download_btn_communal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                scroll_pro.fling(0);
-                scroll_pro.scrollTo(0, 0);
-                download_btn_communal.hide(false);
-            }
+        download_btn_communal.setOnClickListener(v -> {
+            scroll_pro.fling(0);
+            scroll_pro.scrollTo(0, 0);
+            download_btn_communal.hide(false);
         });
         badge = getBadge(getActivity(), fl_header_service).setBadgeGravity(Gravity.END | Gravity.TOP);
+
+        //初始化评论列表
+        communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        directEvaluationAdapter = new DirectEvaluationAdapter(getActivity(), goodsComments);
+        View footView = View.inflate(this, R.layout.layout_click_more_evaluate, null);
+        directEvaluationAdapter.addFooterView(footView, -1, LinearLayout.HORIZONTAL);
+        footView.setOnClickListener(v -> skipMoreEvaluate());
+        communal_recycler_wrap.setNestedScrollingEnabled(false);
+        communal_recycler_wrap.setAdapter(directEvaluationAdapter);
 
         //初始化组合商品列表
         LinearLayoutManager groupManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
@@ -743,8 +739,8 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     private void getShopProComment(ShopPropertyBean shopPropertyBean) {
         String url = Url.Q_SHOP_DETAILS_COMMENT;
         Map<String, Object> params = new HashMap<>();
-        params.put("showCount", 1);
         params.put("currentPage", 1);
+        params.put("showCount", TOTAL_COUNT_TEN);
         params.put("id", shopPropertyBean.getId());
         if (userId > 0) {
             params.put("uid", userId);
@@ -753,17 +749,19 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 goodsComments.clear();
-                Gson gson = new Gson();
-                GoodsCommentEntity goodsCommentEntity = gson.fromJson(result, GoodsCommentEntity.class);
+                GoodsCommentEntity goodsCommentEntity = new Gson().fromJson(result, GoodsCommentEntity.class);
                 if (goodsCommentEntity != null) {
                     if (goodsCommentEntity.getCode().equals(SUCCESS_CODE)) {
                         goodsComments.addAll(goodsCommentEntity.getGoodsComments());
                     } else if (!goodsCommentEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(getActivity(), goodsCommentEntity.getMsg());
                     }
-                    rel_shop_details_comment.setVisibility(goodsCommentEntity.getEvaluateCount() < 1 ? View.GONE : VISIBLE);
-                    shopCommentHeaderView.tv_shop_comment_count.setText(("Ta们在说(" + goodsCommentEntity.getEvaluateCount() + ")"));
-                    directEvaluationAdapter.setNewData(goodsComments);
+                    tv_shop_comment_count.setText(("Ta们在说(" + goodsCommentEntity.getEvaluateCount() + ")"));
+                }
+                rel_shop_details_comment.setVisibility(goodsComments.size() > 0 ? View.VISIBLE : GONE);
+                directEvaluationAdapter.notifyDataSetChanged();
+                if (goodsComments.size() < TOTAL_COUNT_TEN) {
+                    directEvaluationAdapter.removeAllFooterView();
                 }
             }
         });
@@ -1111,7 +1109,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         ll_pro_buy_before.setVisibility(flex_buy_before.getChildCount() > 0 ? VISIBLE : GONE);
 
 
-        //商品浏览
+        //商品详情
         Properties prop = new Properties();
         prop.setProperty("proName", getStrings(shopProperty.getName()));
         prop.setProperty("proId", shopDetailsEntity.getShopPropertyBean().getId() + "");
@@ -1553,34 +1551,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
     }
 
-    class ShopCommentHeaderView {
-        //        商品评论展示
-        @BindView(R.id.rel_pro_comment)
-        RelativeLayout rel_pro_comment;
-        @BindView(R.id.scroll_details)
-        NestedScrollView scroll_details;
-        //        评价数目
-        @BindView(R.id.tv_shop_comment_count)
-        TextView tv_shop_comment_count;
-        @BindView(R.id.communal_recycler_wrap)
-        RecyclerView communal_recycler_wrap;
-
-        @OnClick(R.id.tv_shop_comment_more)
-        void getMoreComment(View view) {
-            if (shopPropertyBean != null && shopPropertyBean.getId() > 0) {
-//                跳转更多评论
-                Intent intent = new Intent(getActivity(), DirectProductEvaluationActivity.class);
-                intent.putExtra("productId", String.valueOf(shopPropertyBean.getId()));
-                startActivity(intent);
-            }
-        }
-
-        public void initView() {
-            communal_recycler_wrap.setVisibility(View.GONE);
-        }
-
-    }
-
     /**
      * 点击推荐商品
      */
@@ -1612,7 +1582,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
     @OnClick({R.id.iv_life_back, R.id.iv_life_back2, R.id.ll_product_activity_detail, R.id.tv_sp_details_service,
             R.id.tv_sp_details_add_car, R.id.tv_sp_details_buy_it, R.id.tv_sp_details_collect, R.id.iv_img_service, R.id.iv_img_share,
-            R.id.tv_group_product, R.id.iv_ql_shop_pro_cp_tag, R.id.tv_ql_sp_pro_sku, R.id.ll_layout_pro_sc_tag})
+            R.id.tv_group_product, R.id.iv_ql_shop_pro_cp_tag, R.id.tv_ql_sp_pro_sku, R.id.ll_layout_pro_sc_tag, R.id.tv_shop_comment_more})
     public void onViewClicked(View view) {
         Intent intent;
         switch (view.getId()) {
@@ -1655,6 +1625,12 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             case R.id.iv_img_service:
                 intent = new Intent(getActivity(), ShopCarActivity.class);
                 startActivity(intent);
+                break;
+            //跳转更多评论
+            case R.id.tv_shop_comment_more:
+                if (shopPropertyBean != null && shopPropertyBean.getId() > 0) {
+                    skipMoreEvaluate();
+                }
                 break;
             //分享
             case R.id.iv_img_share:
@@ -1752,6 +1728,13 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 }
                 break;
         }
+    }
+
+    //跳转更多评论
+    private void skipMoreEvaluate() {
+        Intent intent = new Intent(getActivity(), DirectProductEvaluationActivity.class);
+        intent.putExtra("productId", productId);
+        startActivity(intent);
     }
 
 

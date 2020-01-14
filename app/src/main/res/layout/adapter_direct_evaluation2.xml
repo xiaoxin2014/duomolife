@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="wrap_content"
+              android:layout_height="@dimen/sc_mm_430"
+              android:layout_marginLeft="@dimen/sc_mm_30"
+              android:layout_marginBottom="@dimen/sc_mm_20"
+              android:background="@drawable/shap_product_evaluate_bg">
+
+    <LinearLayout
+        android:id="@+id/ll_evaluate"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/sc_mm_20"
+        android:paddingTop="@dimen/sc_mm_14"
+        android:paddingBottom="@dimen/sc_mm_20">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/sc_mm_64"
+            android:layout_marginRight="@dimen/sc_mm_20"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/img_direct_avatar"
+                android:layout_width="@dimen/sc_mm_64"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"/>
+
+            <android.support.text.emoji.widget.EmojiTextView
+                android:id="@+id/tv_eva_user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/sc_mm_16"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/text_login_gray_s"
+                android:textSize="@dimen/sc_mm_30"/>
+        </LinearLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_pro_eva"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sc_mm_24"/>
+
+        <android.support.text.emoji.widget.EmojiTextView
+            android:id="@+id/tv_direct_evaluation"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/sc_mm_14"
+            android:layout_marginRight="@dimen/sc_mm_20"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_26"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sc_mm_16"
+            android:layout_marginRight="@dimen/sc_mm_20">
+
+            <me.zhanghai.android.materialratingbar.MaterialRatingBar
+                android:id="@+id/ratingBar_direct_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:isIndicator="true"
+                android:maxHeight="@dimen/sc_mm_32"
+                android:minHeight="@dimen/sc_mm_32"
+                android:numStars="5"
+                android:rating="5"
+                android:stepSize="1"
+                app:mrb_progressTint="@color/ratingBar_yellow"
+                app:mrb_secondaryProgressTint="@color/text_gray_c"/>
+
+            <TextView
+                android:id="@+id/tv_eva_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:drawableLeft="@drawable/sel_art_like_heart"
+                android:drawablePadding="@dimen/dimen_5_dp"
+                android:textColor="@color/text_login_gray_s"
+                android:textSize="@dimen/sc_mm_24"/>
+        </RelativeLayout>
+    </LinearLayout>
+</LinearLayout>
