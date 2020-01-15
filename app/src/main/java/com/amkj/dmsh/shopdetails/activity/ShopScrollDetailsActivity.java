@@ -211,14 +211,12 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     //    目的 仅作为测量商品高度
     @BindView(R.id.ll_pro_layout)
     LinearLayout ll_pro_layout;
-
     //    立即购买
     @BindView(R.id.tv_sp_details_buy_it)
     TextView tv_sp_details_buy_it;
     // 首次分享提示
     @BindView(R.id.tv_product_share_tint)
     TextView tv_product_share_tint;
-
     @BindView(R.id.fl_header_service)
     RelativeLayout fl_header_service;
     //    商品收藏
@@ -239,7 +237,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     //    优惠券列表
     @BindView(R.id.rv_shop_details_text_communal)
     RecyclerView rv_shop_details_text_communal;
-
     @BindView(R.id.scroll_pro)
     NestedScrollView scroll_pro;
     @BindView(R.id.fl_product_details)
@@ -528,7 +525,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             scroll_pro.scrollTo(0, 0);
             download_btn_communal.hide(false);
         });
-        badge = getBadge(getActivity(), fl_header_service).setBadgeGravity(Gravity.END | Gravity.TOP);
+        badge = getBadge(getActivity(), fl_header_service);
 
         //初始化评论列表
         communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));

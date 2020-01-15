@@ -226,8 +226,8 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                         .setText(R.id.tv_direct_pro_count, "x" + productInfoBean.getCount())
                         .setGone(R.id.iv_indent_pro_use_cp, productInfoBean.getAllowCoupon() != 0)
                         .setGone(R.id.tv_details_gray, productInfoBean.getShowLine() == 1)
-                        .setGone(R.id.iv_indent_product_del, !TextUtils.isEmpty(productInfoBean.getNotBuyAreaInfo()))
-                        .addOnClickListener(R.id.iv_indent_product_del).setTag(R.id.iv_indent_product_del, productInfoBean)
+                        .setGone(R.id.rl_del, !TextUtils.isEmpty(productInfoBean.getNotBuyAreaInfo()))
+                        .addOnClickListener(R.id.rl_del).setTag(R.id.rl_del, productInfoBean)
                         .setGone(R.id.tv_indent_write_reason, !TextUtils.isEmpty(productInfoBean.getNotBuyAreaInfo()))
                         .setText(R.id.tv_indent_write_reason, getStrings(productInfoBean.getNotBuyAreaInfo()))
                         .setGone(R.id.rel_indent_com_pre_pro, false);
@@ -292,8 +292,10 @@ public class DirectProductListAdapter extends BaseQuickAdapter<Object, BaseViewH
                         .setText(R.id.tv_direct_indent_pro_sku, getStrings(groupProductInfoBean.getSkuName()))
                         .setText(R.id.tv_direct_indent_pro_price, getStringsChNPrice(context, groupProductInfoBean.getPrice()))
                         .setText(R.id.tv_direct_pro_count, "x" + 1)
-                        .setGone(R.id.iv_indent_product_del, !TextUtils.isEmpty(groupProductInfoBean.getNotBuyAreaInfo()))
-                        .addOnClickListener(R.id.iv_indent_product_del).setTag(R.id.iv_indent_product_del, groupProductInfoBean);
+                        .setGone(R.id.rl_del, !TextUtils.isEmpty(groupProductInfoBean.getNotBuyAreaInfo()))
+                        .addOnClickListener(R.id.rl_del).setTag(R.id.rl_del, groupProductInfoBean)
+                        .setGone(R.id.tv_indent_write_reason, !TextUtils.isEmpty(groupProductInfoBean.getNotBuyAreaInfo()))
+                        .setText(R.id.tv_indent_write_reason, getStrings(groupProductInfoBean.getNotBuyAreaInfo()));
                 helper.itemView.setTag(groupProductInfoBean);
                 break;
             case APPLY_REFUND:

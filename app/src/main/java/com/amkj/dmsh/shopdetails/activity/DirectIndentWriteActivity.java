@@ -301,7 +301,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                             startActivity(intent1);
                         }
                         break;
-                    case R.id.iv_indent_product_del:
+                    case R.id.rl_del:
                         for (IndentProDiscountBean discountBean : discountBeanList) {
                             if (productInfoBean.getId() == discountBean.getId()) {
                                 discountBeanList.remove(discountBean);

@@ -2,6 +2,7 @@ package com.amkj.dmsh.dominant.activity;
 
 import android.content.Intent;
 import android.graphics.Paint;
+import android.support.annotation.NonNull;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,11 +22,13 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.TabEntity;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
@@ -84,10 +87,13 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 import me.jessyan.autosize.utils.AutoSizeUtils;
+import q.rorbin.badgeview.Badge;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
+import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
@@ -236,6 +242,8 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
     ImageView mIvLotteryZone;
     @BindView(R.id.view_divider_zone)
     View mViewDividerZone;
+    @BindView(R.id.fl_header_service)
+    RelativeLayout fl_header_service;
 
     //拼团列表
     private List<GroupShopJoinBean> groupShopJoinList = new ArrayList<>();
@@ -273,6 +281,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
     private String[] detailTabData = {"商品", "详情"};
     private ArrayList<CustomTabEntity> tabData = new ArrayList<>();
     private GoodsRecommendAdapter mGoodsRecommendAdapter;
+    private Badge badge;
 
 
     @Override
@@ -282,6 +291,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
+        badge = getBadge(getActivity(), fl_header_service);
         tv_gp_sp_nor_price.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
         tv_gp_sp_nor_price.getPaint().setAntiAlias(true);
         Intent intent = getIntent();
@@ -472,6 +482,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         getArticalRecommend();
         //获取更多拼团商品
         getGoodsRecommend();
+        getCarCount(getActivity());
     }
 
     @Override
@@ -1095,5 +1106,14 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    protected void postEventResult(@NonNull EventMessage message) {
+        if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
+            if (badge != null) {
+                badge.setBadgeNumber((int) message.result);
+            }
+        }
     }
 }

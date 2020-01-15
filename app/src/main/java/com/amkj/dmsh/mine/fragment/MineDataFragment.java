@@ -78,12 +78,15 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import q.rorbin.badgeview.Badge;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
 import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.MINE_BOTTOM_TYPE;
+import static com.amkj.dmsh.constant.ConstantMethod.getMessageCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.getTopBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.setDeviceInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -139,6 +142,8 @@ public class MineDataFragment extends BaseFragment {
     LinearLayout ll_mime_no_login;
     @BindView(R.id.rel_header_title_mine)
     public RelativeLayout rel_header_mine;
+    @BindView(R.id.fl_msg)
+    public FrameLayout fl_msg;
     //    头部背景
     @BindView(R.id.fl_mine_bg)
     public FrameLayout fl_mine_bg;
@@ -183,6 +188,8 @@ public class MineDataFragment extends BaseFragment {
     private SharedPreferences mineTypeShared;
     private MineTypeEntity mineTypeEntity;
     private DirectIndentCountEntity mDirectIndentCountEntity;
+    private Badge badgeMsg;
+    private boolean isFirst = true;
 
     @Override
     protected int getContentView() {
@@ -191,6 +198,7 @@ public class MineDataFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
+        badgeMsg = getTopBadge(getActivity(), fl_msg);
         tv_mine_get_score_more.getPaint().setAntiAlias(true);//抗锯齿
         tv_mine_get_score_more.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG); //下划线
         mTvBindPhone.getPaint().setAntiAlias(true);
@@ -323,6 +331,10 @@ public class MineDataFragment extends BaseFragment {
         //刷新我的界面
         getLoginStatus();
         getMineAd();
+        if (!isFirst) {
+            getMessageCount(getActivity(), badgeMsg);
+        }
+        isFirst = false;
     }
 
 
@@ -424,6 +436,8 @@ public class MineDataFragment extends BaseFragment {
     @Override
     protected void loadData() {
         getBottomTypeNetData();
+        //获取消息数量
+        getMessageCount(getActivity(), badgeMsg);
     }
 
 
