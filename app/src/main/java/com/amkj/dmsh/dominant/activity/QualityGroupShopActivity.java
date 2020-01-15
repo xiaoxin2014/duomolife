@@ -235,10 +235,10 @@ public class QualityGroupShopActivity extends BaseActivity {
                 finish();
                 break;
             case R.id.tv_header_shared:
-                new UMShareAction(this, "cover",
+                new UMShareAction(this, "",
                         "每天都有【9块9起】超值拼团购",
                         "邀请好友一起团购，团的超级实用，买对了就是省钱",
-                        "url", "", -1);
+                        "https://www.domolife.cn/m/template/share_template/group.html", "pages/group/group", -1);
                 break;
         }
     }

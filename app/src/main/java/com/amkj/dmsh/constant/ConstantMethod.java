@@ -1596,7 +1596,7 @@ public class ConstantMethod {
                         MessageTotalEntity.MessageTotalBean messageTotalBean = messageTotalEntity.getMessageTotalBean();
                         int totalCount = messageTotalBean.getSmTotal() + messageTotalBean.getLikeTotal()
                                 + messageTotalBean.getCommentTotal() + messageTotalBean.getOrderTotal()
-                                + messageTotalBean.getCommOffifialTotal();
+                                + messageTotalBean.getCommOffifialTotal() + messageTotalBean.getFocusTotal();
                         if (badgeMsg != null) {
                             badgeMsg.setBadgeNumber(totalCount);
                         }
