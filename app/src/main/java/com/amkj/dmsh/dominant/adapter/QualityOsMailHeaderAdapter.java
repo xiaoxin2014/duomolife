@@ -92,7 +92,7 @@ public class QualityOsMailHeaderAdapter extends BaseQuickAdapter<DMLThemeBean, B
                 //记录埋点参数sourceId(福利社专题对应的ID)
                 ConstantMethod.saveSourceId(context.getClass().getSimpleName(), String.valueOf(dMLThemeBean.getId()));
                 //统计福利社点击商品
-                totalWelfareProNum(context, dMLGoodsBean.getId(), dMLThemeBean.getId());
+                totalWelfareProNum(context, dMLGoodsBean.getId(), String.valueOf(dMLThemeBean.getId()));
             }
         });
         horGvAdapter.setOnLoadMoreListener(() -> {

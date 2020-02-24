@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.shopdetails.payutils.WXPay;
+import com.google.gson.Gson;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
@@ -46,7 +47,7 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
     public void onResp(BaseResp baseResp) {
         if (baseResp.getType() == COMMAND_PAY_BY_WX) {
             if (WXPay.getInstance() != null) {
-                WXPay.getInstance().onResp(baseResp.errCode);
+                WXPay.getInstance().onResp(new Gson().toJson(baseResp), baseResp.errCode);
                 finish();
             }
         }

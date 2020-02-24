@@ -197,7 +197,7 @@ public class QualityGroupShopMineActivity extends BaseActivity {
                     if (qualityWeChatIndent != null) {
                         if (qualityWeChatIndent.getCode().equals(SUCCESS_CODE)) {
                             //返回成功，调起微信支付接口
-                            doWXPay(qualityWeChatIndent.getResult().getPayKey());
+                            doWXPay(qualityWeChatIndent.getResult());
                         } else {
                             showToast(QualityGroupShopMineActivity.this, qualityWeChatIndent.getResult() == null
                                     ? qualityWeChatIndent.getMsg() : qualityWeChatIndent.getResult().getMsg());
@@ -208,7 +208,7 @@ public class QualityGroupShopMineActivity extends BaseActivity {
                     if (qualityAliPayIndent != null) {
                         if (qualityAliPayIndent.getCode().equals(SUCCESS_CODE)) {
                             //返回成功，调起支付宝支付接口
-                            doAliPay(qualityAliPayIndent.getResult().getPayKey());
+                            doAliPay(qualityAliPayIndent.getResult());
                         } else {
                             showToast(QualityGroupShopMineActivity.this, qualityWeChatIndent.getResult() == null
                                     ? qualityWeChatIndent.getMsg() : qualityWeChatIndent.getResult().getMsg());
@@ -238,9 +238,9 @@ public class QualityGroupShopMineActivity extends BaseActivity {
         });
     }
 
-    private void doWXPay(QualityCreateWeChatPayIndentBean.ResultBean.PayKeyBean pay_param) {
-        WXPay.init(getApplicationContext());//要在支付前调用
-        WXPay.getInstance().doPayDateObject(pay_param, new WXPay.WXPayResultCallBack() {
+    private void doWXPay(QualityCreateWeChatPayIndentBean.ResultBean resultBean) {
+        WXPay.init(this);//要在支付前调用
+        WXPay.getInstance().doPayDateObject(resultBean.getNo(), resultBean.getPayKey(), new WXPay.WXPayResultCallBack() {
             @Override
             public void onSuccess() {
 //                recordPaySuc();
@@ -271,8 +271,8 @@ public class QualityGroupShopMineActivity extends BaseActivity {
         });
     }
 
-    private void doAliPay(String pay_param) {
-        new AliPay(this, pay_param, new AliPay.AliPayResultCallBack() {
+    private void doAliPay(QualityCreateAliPayIndentBean.ResultBean resultBean) {
+        new AliPay(this, resultBean.getNo(), resultBean.getPayKey(), new AliPay.AliPayResultCallBack() {
             @Override
             public void onSuccess() {
 //                recordPaySuc();

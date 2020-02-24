@@ -22,7 +22,6 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import java.util.List;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_GOODS_IMG;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_GOODS_IMG_DIRECT_BUY;
 import static com.amkj.dmsh.utils.TimeUtils.getDateFormat;
@@ -69,14 +68,6 @@ public class EditorSelectAdapter extends BaseQuickAdapter<EditorBean, BaseViewHo
         }
         CommunalDetailAdapter communalDetailAdapter = new CommunalDetailAdapter(context, dataList);
         communalDetailAdapter.setEnableLoadMore(false);
-        communalDetailAdapter.setOnItemClickListener((adapter, view, position) -> {
-            CommunalDetailObjectBean communalDetailBean = (CommunalDetailObjectBean) view.getTag();
-            if (communalDetailBean != null) {
-                skipProductUrl(context, communalDetailBean.getItemTypeId(), communalDetailBean.getId());
-                //记录埋点参数sourceId
-                ConstantMethod.saveSourceId(context.getClass().getSimpleName(), String.valueOf(item.getId()));
-            }
-        });
         communalDetailAdapter.setOnItemChildClickListener((adapter, view, position) -> {
             CommunalWebDetailUtils.getCommunalWebInstance().setWebDataClick(context, view, context.loadHud);
             //记录埋点参数sourceId

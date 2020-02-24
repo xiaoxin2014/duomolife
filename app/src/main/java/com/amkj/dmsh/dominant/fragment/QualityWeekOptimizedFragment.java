@@ -1,6 +1,5 @@
 package com.amkj.dmsh.dominant.fragment;
 
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,7 +25,6 @@ import com.amkj.dmsh.dominant.bean.ShopBuyDetailEntity.ShopBuyDetailBean;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
@@ -171,17 +169,7 @@ public class QualityWeekOptimizedFragment extends BaseFragment {
                 getBuyListRecommend();
             }
         }, communal_recycler);
-        qualityBuyListAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                QualityBuyListBean qualityBuyListBean = (QualityBuyListBean) view.getTag();
-                if (qualityBuyListBean != null) {
-                    Intent intent = new Intent(getActivity(), ShopScrollDetailsActivity.class);
-                    intent.putExtra("productId", String.valueOf(qualityBuyListBean.getId()));
-                    startActivity(intent);
-                }
-            }
-        });
+
         qualityBuyListAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
@@ -324,15 +312,6 @@ public class QualityWeekOptimizedFragment extends BaseFragment {
                     }
                     CommunalWebDetailUtils.getCommunalWebInstance()
                             .setWebDataClick(getActivity(), shareDataBean, view, loadHud);
-                }
-            });
-            communalDetailAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-                @Override
-                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                    CommunalDetailObjectBean communalDetailBean = (CommunalDetailObjectBean) view.getTag();
-                    if (communalDetailBean != null) {
-                        ConstantMethod.skipProductUrl(getActivity(), communalDetailBean.getItemTypeId(), communalDetailBean.getId());
-                    }
                 }
             });
         }

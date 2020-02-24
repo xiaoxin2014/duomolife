@@ -52,8 +52,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.INDENT_INTEGRAL_PRODUCT;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRODUCT_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.MAIN_QUALITY;
-import static com.amkj.dmsh.constant.ConstantVariable.RECOMMEND_PAY_SUCCESS;
-import static com.amkj.dmsh.constant.ConstantVariable.RECOMMEND_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.Q_PAY_SUCCESS_AD_DIALOG;
 import static com.amkj.dmsh.constant.Url.Q_PAY_SUCCESS_PRODUCT;
@@ -115,19 +113,9 @@ public class DirectPaySuccessActivity extends BaseActivity {
                 .create());
         qualityTypeProductAdapter = new GoodProductAdapter(DirectPaySuccessActivity.this, typeDetails);
         qualityTypeProductAdapter.addHeaderView(headerView);
-        qualityTypeProductAdapter.setShopCarRecommend(true);
         communal_recycler.setVerticalScrollBarEnabled(false);
         communal_recycler.setAdapter(qualityTypeProductAdapter);
         qualityTypeProductAdapter.setEnableLoadMore(false);
-        qualityTypeProductAdapter.setOnItemClickListener((adapter, view, position) -> {
-            LikedProductBean likedProductBean = (LikedProductBean) view.getTag();
-            if (likedProductBean != null) {
-                Intent bundle = new Intent(DirectPaySuccessActivity.this, ShopScrollDetailsActivity.class);
-                bundle.putExtra("productId", String.valueOf(likedProductBean.getId()));
-                bundle.putExtra(RECOMMEND_TYPE, RECOMMEND_PAY_SUCCESS);
-                startActivity(bundle);
-            }
-        });
         TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
         screenHeight = app.getScreenHeight();
         communal_recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {

@@ -1,29 +1,21 @@
 package com.amkj.dmsh.homepage.activity;
 
-import android.content.Intent;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
-import com.amkj.dmsh.homepage.adapter.ProNoShopCarAdapter;
+import com.amkj.dmsh.dominant.adapter.GoodProductAdapter;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
-import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +28,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.H_SEARCH_PRODUCT_GOOD;
 
-;
 
 
 /**
@@ -60,7 +51,7 @@ public class SearchGoodProMoreActivity extends BaseActivity {
     RecyclerView communal_recycler;
     //    搜索商品
     private List<LikedProductBean> productSearList = new ArrayList<>();
-    private ProNoShopCarAdapter adapterProduct;
+    private GoodProductAdapter adapterProduct;
     private UserLikedProductEntity likedProduct;
 
     @Override
@@ -72,45 +63,16 @@ public class SearchGoodProMoreActivity extends BaseActivity {
     protected void initViews() {
         tl_normal_bar.setSelected(true);
         header_shared.setVisibility(View.INVISIBLE);
-        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                loadData();
-            }
-        });
+        smart_communal_refresh.setOnRefreshListener(refreshLayout -> loadData());
         tv_header_titleAll.setText("好物推荐");
         communal_recycler.setLayoutManager(new GridLayoutManager(SearchGoodProMoreActivity.this, 2));
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_gray_f)
                 .create());
-        adapterProduct = new ProNoShopCarAdapter(SearchGoodProMoreActivity.this, productSearList);
-        adapterProduct.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                LikedProductBean likedProductBean = (LikedProductBean) view.getTag();
-                if (likedProductBean != null) {
-                    Intent intent = new Intent();
-                    switch (likedProductBean.getType_id()) {
-                        case 0:
-                            intent.setClass(SearchGoodProMoreActivity.this, ShopTimeScrollDetailsActivity.class);
-                            break;
-                        case 1:
-                            intent.setClass(SearchGoodProMoreActivity.this, ShopScrollDetailsActivity.class);
-                            break;
-                        case 2:
-                            intent.setClass(SearchGoodProMoreActivity.this, IntegralScrollDetailsActivity.class);
-                            break;
-                    }
-                    if (likedProduct != null && !TextUtils.isEmpty(likedProduct.getRecommendFlag())) {
-                        intent.putExtra("recommendFlag", likedProduct.getRecommendFlag());
-                    }
-                    intent.putExtra("productId", String.valueOf(likedProductBean.getId()));
-                    startActivity(intent);
-                }
-            }
-        });
+        adapterProduct = new GoodProductAdapter(SearchGoodProMoreActivity.this, productSearList);
         adapterProduct.setEnableLoadMore(false);
+        communal_recycler.setAdapter(adapterProduct);
     }
 
     @Override

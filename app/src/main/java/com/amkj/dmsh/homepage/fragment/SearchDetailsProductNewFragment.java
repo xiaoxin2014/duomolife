@@ -21,7 +21,6 @@ import java.util.Map;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
 import static com.amkj.dmsh.constant.ConstantVariable.ALL_SEARCH_KEY;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
@@ -53,12 +52,6 @@ public class SearchDetailsProductNewFragment extends BaseSearchDetailFragment {
                 .setDividerId(R.drawable.item_divider_five_gray_f)
                 .create());
         adapterProduct = new ProNoShopCarAdapter(getActivity(), productSearList);
-        adapterProduct.setOnItemClickListener((adapter, view, position) -> {
-            LikedProductBean likedProductBean = (LikedProductBean) view.getTag();
-            if (likedProductBean != null) {
-                skipProductUrl(getActivity(), likedProductBean.getType_id(), likedProductBean.getId());
-            }
-        });
         adapterProduct.setSpanSizeLookup((gridLayoutManager, position) -> {
             if (productSearList.size() > 0) {
                 return productSearList.get(position).getItemType() == TYPE_0 ? 1 : 2;

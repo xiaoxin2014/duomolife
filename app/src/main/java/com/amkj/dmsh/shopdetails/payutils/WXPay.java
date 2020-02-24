@@ -1,13 +1,20 @@
 package com.amkj.dmsh.shopdetails.payutils;
 
-import android.content.Context;
+import android.app.Activity;
 
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
+import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateWeChatPayIndentBean.ResultBean.PayKeyBean;
+import com.google.gson.Gson;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.tencent.mm.opensdk.constants.Build;
 import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.amkj.dmsh.constant.Url.Q_UPDATE_PAY_RESULT;
 
 
 /**
@@ -24,6 +31,8 @@ public class WXPay {
     public static final int NO_OR_LOW_WX = 1;   //未安装微信或微信版本过低
     public static final int ERROR_PAY_PARAM = 2;  //支付参数错误
     public static final int ERROR_PAY = 3;  //支付失败
+    private final Activity mContext;
+    private String mOrderNo;
 
     public interface WXPayResultCallBack {
         void onSuccess(); //支付成功
@@ -33,14 +42,15 @@ public class WXPay {
         void onCancel();    //支付取消
     }
 
-    private WXPay(Context context) {
-        TinkerBaseApplicationLike app =(TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
+    private WXPay(Activity context) {
+        TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
         mWXApi = app.getApi();
+        mContext = context;
     }
 
-    public static void init(Context context) {
+    public static void init(Activity activity) {
         if (mWXPay == null) {
-            mWXPay = new WXPay(context);
+            mWXPay = new WXPay(activity);
         }
     }
 
@@ -52,7 +62,8 @@ public class WXPay {
         return mWXApi;
     }
 
-    public void doPayDateObject(PayKeyBean pay_param, WXPayResultCallBack callback) {
+    public void doPayDateObject(String orderNo, PayKeyBean pay_param, WXPayResultCallBack callback) {
+        mOrderNo = orderNo;
         mPayParam = pay_param;
         mCallback = callback;
         if (!check()) {
@@ -71,11 +82,12 @@ public class WXPay {
         req.timeStamp = mPayParam.getTimestamp();
         req.sign = mPayParam.getSign();
 
+        updatePayResult(0, new Gson().toJson(pay_param));
         mWXApi.sendReq(req);
     }
 
     //支付回调响应
-    public void onResp(int error_code) {
+    public void onResp(String baseResp, int error_code) {
         if (mCallback == null) {
             return;
         }
@@ -87,11 +99,23 @@ public class WXPay {
             mCallback.onCancel();
         }
 
+        updatePayResult(1, baseResp);
         mCallback = null;
     }
 
     //检测是否支持微信支付
     private boolean check() {
         return mWXApi.isWXAppInstalled() && mWXApi.getWXAppSupportAPI() >= Build.PAY_SUPPORTED_SDK_INT;
+    }
+
+    private void updatePayResult(int type, String result) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("orderNo", mOrderNo);
+//        map.put("outTradeNo", outTradeNo);
+//        map.put("tradeNo", tradeNo);
+        map.put("result", result);
+        map.put("type", type);//支付结果，0代表是请求支付，1代表是响应支付
+        map.put("payType", 1);//0代表是app的支付宝支付，1代表是app的微信支付
+        NetLoadUtils.getNetInstance().loadNetDataPost(mContext, Q_UPDATE_PAY_RESULT, map, null);
     }
 }

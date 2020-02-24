@@ -441,10 +441,10 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
                             //返回成功，调起微信支付接口
                             switch (payType) {
                                 case PAY_WX_PAY:
-                                    doWXPay(gson.fromJson(payKey, PayKeyBean.class));
+                                    doWXPay(orderCreateNo, gson.fromJson(payKey, PayKeyBean.class));
                                     break;
                                 case PAY_ALI_PAY:
-                                    doAliPay(payKey);
+                                    doAliPay(orderCreateNo, payKey);
                                     break;
                                 case PAY_UNION_PAY:
                                     PayKeyBean payKeyBean = gson.fromJson(payKey, PayKeyBean.class);
@@ -478,8 +478,8 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
         });
     }
 
-    private void doAliPay(String pay_param) {
-        new AliPay(this, pay_param, new AliPay.AliPayResultCallBack() {
+    private void doAliPay(String orderNo, String pay_param) {
+        new AliPay(this, orderNo, pay_param, new AliPay.AliPayResultCallBack() {
             @Override
             public void onSuccess() {
                 showToast(getApplication(), "支付成功");
@@ -521,9 +521,9 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
         }).doPay();
     }
 
-    private void doWXPay(PayKeyBean pay_param) {
-        WXPay.init(getApplicationContext());//要在支付前调用
-        WXPay.getInstance().doPayDateObject(pay_param, new WXPay.WXPayResultCallBack() {
+    private void doWXPay(String orderNo, PayKeyBean pay_param) {
+        WXPay.init(this);//要在支付前调用
+        WXPay.getInstance().doPayDateObject(orderNo, pay_param, new WXPay.WXPayResultCallBack() {
             @Override
             public void onSuccess() {
                 showToast(getApplication(), "支付成功");

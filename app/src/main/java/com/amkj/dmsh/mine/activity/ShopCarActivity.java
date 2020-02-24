@@ -23,7 +23,6 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.dominant.activity.QualityProductActActivity;
-import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
 import com.amkj.dmsh.dominant.adapter.GoodProductAdapter;
 import com.amkj.dmsh.mine.adapter.ShopCarGoodsAdapter;
 import com.amkj.dmsh.mine.bean.ActivityInfoBean;
@@ -40,7 +39,6 @@ import com.amkj.dmsh.shopdetails.bean.CombineGoodsBean;
 import com.amkj.dmsh.shopdetails.bean.EditGoodsSkuEntity;
 import com.amkj.dmsh.shopdetails.bean.ShopCarGoodsSku;
 import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
-import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.DoubleUtil;
@@ -81,8 +79,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.ADD_NUM;
 import static com.amkj.dmsh.constant.ConstantVariable.CHANGE_SKU;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.RECOMMEND_CAR;
-import static com.amkj.dmsh.constant.ConstantVariable.RECOMMEND_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.REDUCE_NUM;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_EIGHTY;
@@ -151,7 +147,7 @@ public class ShopCarActivity extends BaseActivity {
     private boolean isOnPause;
     private RecommendHeaderView recommendHeaderView;
     private View cartHeaderView;
-    private GoodProductAdapter proNoShopCarAdapter;
+    private GoodProductAdapter mGoodProductAdapter;
     private UserLikedProductEntity likedProduct;
     private AlertDialogHelper alertDialogHelper;
     private ShopCarEntity mShopCarNewInfoEntity;
@@ -839,7 +835,7 @@ public class ShopCarActivity extends BaseActivity {
                                 shopCarGoodsAdapter.addFooterView(cartHeaderView);
                                 recommendHeaderView.tv_pro_title.setText("-商品推荐-");
                             }
-                            proNoShopCarAdapter.notifyDataSetChanged();
+                            mGoodProductAdapter.notifyDataSetChanged();
                         }
                     }
                 }
@@ -858,33 +854,9 @@ public class ShopCarActivity extends BaseActivity {
             communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
                     // 设置分隔线资源ID
                     .setDividerId(R.drawable.item_divider_five_gray_f).create());
-            proNoShopCarAdapter = new GoodProductAdapter(ShopCarActivity.this, cartProRecommendList);
-            proNoShopCarAdapter.setShopCarRecommend(true);
-            communal_recycler_wrap.setAdapter(proNoShopCarAdapter);
-            proNoShopCarAdapter.setOnItemClickListener((adapter, view, position) -> {
-                LikedProductBean likedProductBean = (LikedProductBean) view.getTag();
-                if (likedProductBean != null) {
-                    Intent intent = new Intent();
-                    switch (likedProductBean.getType_id()) {
-                        case 0:
-                            intent.setClass(ShopCarActivity.this, ShopTimeScrollDetailsActivity.class);
-                            break;
-                        case 1:
-                            intent.setClass(ShopCarActivity.this, ShopScrollDetailsActivity.class);
-                            break;
-                        case 2:
-                            intent.setClass(ShopCarActivity.this, IntegralScrollDetailsActivity.class);
-                            break;
-                    }
-                    if (likedProduct != null && !TextUtils.isEmpty(likedProduct.getRecommendFlag())) {
-                        intent.putExtra("recommendFlag", likedProduct.getRecommendFlag());
-                    }
-                    intent.putExtra("productId", String.valueOf(likedProductBean.getId()));
-                    intent.putExtra(RECOMMEND_TYPE, RECOMMEND_CAR);
-                    startActivity(intent);
-                }
-            });
-            proNoShopCarAdapter.setEnableLoadMore(false);
+            mGoodProductAdapter = new GoodProductAdapter(ShopCarActivity.this, cartProRecommendList);
+            communal_recycler_wrap.setAdapter(mGoodProductAdapter);
+            mGoodProductAdapter.setEnableLoadMore(false);
         }
 
     }

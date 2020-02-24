@@ -183,7 +183,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
 
     @Override
     protected void loadData() {
-        String url =  Url.INDENT_INTEGRAL_DETAILS;
+        String url = Url.INDENT_INTEGRAL_DETAILS;
         Map<String, Object> params = new HashMap<>();
         params.put("no", indentNum);
         params.put("userId", userId);
@@ -348,7 +348,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
                 tv_indent_border_first_gray.setOnClickListener(this);
             } else if (30 <= statusCode && statusCode <= 40) {
 //                if (statusCode == 40) {
-                    tv_indent_border_first_gray.setVisibility(View.GONE);
+                tv_indent_border_first_gray.setVisibility(View.GONE);
 //                } else {
 //                    tv_indent_border_first_gray.setVisibility(View.VISIBLE);
 //                    tv_indent_border_first_gray.setText("评价");
@@ -395,7 +395,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
     }
 
     private void cancelIntegralIndent(String no) {
-        String url =  Url.Q_INDENT_CANCEL;
+        String url = Url.Q_INDENT_CANCEL;
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
         params.put("no", no);
@@ -427,7 +427,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
     }
 
     private void confirmOrder(OrderListBean orderListBean) {
-        String url =  Url.Q_INDENT_CONFIRM;
+        String url = Url.Q_INDENT_CONFIRM;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderListBean.getNo());
         params.put("userId", orderListBean.getUserId());
@@ -450,7 +450,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
     }
 
     private void requestRefundData(OrderListBean indentInfoBean) {
-        String url =  Url.Q_INDENT_APPLY_REFUND_CHECK;
+        String url = Url.Q_INDENT_APPLY_REFUND_CHECK;
         Map<String, Object> params = new HashMap<>();
         params.put("no", indentInfoBean.getNo());
         params.put("userId", indentInfoBean.getUserId());
@@ -789,7 +789,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
     }
 
     private void paymentIndent() {
-        String url =  Url.Q_PAYMENT_INDENT;
+        String url = Url.Q_PAYMENT_INDENT;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderListBean.getNo());
         params.put("userId", orderListBean.getUserId());
@@ -803,7 +803,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
                     if (qualityWeChatIndent != null) {
                         if (qualityWeChatIndent.getCode().equals(SUCCESS_CODE)) {
                             //返回成功，调起微信支付接口
-                            doWXPay(qualityWeChatIndent.getResult().getPayKey());
+                            doWXPay(qualityWeChatIndent.getResult());
                         } else {
                             showToast(IntegExchangeDetailActivity.this, qualityWeChatIndent.getResult() == null
                                     ? qualityWeChatIndent.getMsg() : qualityWeChatIndent.getResult().getMsg());
@@ -814,7 +814,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
                     if (qualityAliPayIndent != null) {
                         if (qualityAliPayIndent.getCode().equals(SUCCESS_CODE)) {
                             //返回成功，调起支付宝支付接口
-                            doAliPay(qualityAliPayIndent.getResult().getPayKey());
+                            doAliPay(qualityAliPayIndent.getResult());
                         } else {
                             showToast(IntegExchangeDetailActivity.this, qualityAliPayIndent.getResult() == null
                                     ? qualityAliPayIndent.getMsg() : qualityAliPayIndent.getResult().getMsg());
@@ -835,9 +835,9 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
         });
     }
 
-    private void doWXPay(QualityCreateWeChatPayIndentBean.ResultBean.PayKeyBean pay_param) {
-        WXPay.init(getApplicationContext());//要在支付前调用
-        WXPay.getInstance().doPayDateObject(pay_param, new WXPay.WXPayResultCallBack() {
+    private void doWXPay(QualityCreateWeChatPayIndentBean.ResultBean resultBean) {
+        WXPay.init(this);//要在支付前调用
+        WXPay.getInstance().doPayDateObject(resultBean.getNo(), resultBean.getPayKey(), new WXPay.WXPayResultCallBack() {
             @Override
             public void onSuccess() {
 //                recordPaySuc();
@@ -867,8 +867,8 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
         });
     }
 
-    private void doAliPay(String pay_param) {
-        new AliPay(this, pay_param, new AliPay.AliPayResultCallBack() {
+    private void doAliPay(QualityCreateAliPayIndentBean.ResultBean resultBean) {
+        new AliPay(this, resultBean.getNo(), resultBean.getPayKey(), new AliPay.AliPayResultCallBack() {
             @Override
             public void onSuccess() {
                 showToast(getApplication(), "支付成功");

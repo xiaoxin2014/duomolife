@@ -23,18 +23,11 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.addShopCarGetSku;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.skipGroupDetail;
+import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
-
-;
-
-/**
- * @author LGuiPeng
- * @email liuguipeng163@163.com
- * created on 2017/7/27
- * class description:无需加入购物车
- */
 
 public class ProNoShopCarAdapter extends BaseMultiItemQuickAdapter<LikedProductBean, BaseViewHolder> {
     private final Activity context;
@@ -51,6 +44,7 @@ public class ProNoShopCarAdapter extends BaseMultiItemQuickAdapter<LikedProductB
 
     @Override
     protected void convert(BaseViewHolder helper, LikedProductBean likedProductBean) {
+        if (likedProductBean == null) return;
         switch (helper.getItemViewType()) {
             case TYPE_1:
                 helper.setText(R.id.tv_pro_title, "- 同类热销商品 -");
@@ -68,6 +62,17 @@ public class ProNoShopCarAdapter extends BaseMultiItemQuickAdapter<LikedProductB
                         .setText(R.id.tv_qt_pro_price, "¥" + likedProductBean.getPrice())
                         .setText(R.id.tv_qt_pro_descrip, getStrings(likedProductBean.getSubtitle()))
                         .setGone(R.id.iv_pro_add_car, true);
+
+                helper.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (!TextUtils.isEmpty(likedProductBean.getGpInfoId())) {
+                            skipGroupDetail(context, likedProductBean.getGpInfoId(), likedProductBean.getId());
+                        } else {
+                            skipProductUrl(context, likedProductBean.getType_id(), likedProductBean.getId());
+                        }
+                    }
+                });
                 //加入购物车
                 if (likedProductBean.getType_id() == 1) {
                     helper.getView(R.id.iv_pro_add_car).setOnClickListener(v -> {

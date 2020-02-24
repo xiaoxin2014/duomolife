@@ -267,7 +267,7 @@ public class DoMoLifeWelfareDetailsFragment extends BaseFragment {
                     saveSourceId(getClass().getSimpleName(), welfareId);             //记录埋点参数sourceId
                     skipProductUrl(getActivity(), productListBean.getItemTypeId(), productListBean.getId());
                     //                    统计商品点击
-                    totalWelfareProNum(getActivity(), productListBean.getId(), Integer.parseInt(welfareId));
+                    totalWelfareProNum(getActivity(), productListBean.getId(), welfareId);
                 }
             }
         });
@@ -632,17 +632,6 @@ public class DoMoLifeWelfareDetailsFragment extends BaseFragment {
                     }
                     CommunalWebDetailUtils.getCommunalWebInstance()
                             .setWebDataClick(getActivity(), shareDataBean, view, loadHud);
-                }
-            });
-            communalWelfareDetailAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-                @Override
-                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                    CommunalDetailObjectBean communalDetailBean = (CommunalDetailObjectBean) view.getTag();
-                    if (communalDetailBean != null) {
-                        skipProductUrl(getActivity(), communalDetailBean.getItemTypeId(), communalDetailBean.getId());
-                        //                    统计商品点击
-                        totalWelfareProNum(getActivity(), communalDetailBean.getId(), Integer.parseInt(welfareId));
-                    }
                 }
             });
         }

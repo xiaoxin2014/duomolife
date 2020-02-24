@@ -33,7 +33,7 @@ public class AddClickDao {
     }
 
     //      统计文章点击商品
-    public static void totalProNum(Activity activity, int productId, int artId) {
+    public static void totalProNum(Activity activity, int productId, String artId) {
         String url = Url.TOTAL_PRO_NUM;
         Map<String, Object> params = new HashMap<>();
         //回复文章或帖子
@@ -43,7 +43,7 @@ public class AddClickDao {
     }
 
     //      统计福利社点击商品
-    public static void totalWelfareProNum(Activity activity, int productId, int topId) {
+    public static void totalWelfareProNum(Activity activity, int productId, String topId) {
         String url = Url.TOTAL_WELFARE_PRO_NUM;
         Map<String, Object> params = new HashMap<>();
         //回复文章或帖子

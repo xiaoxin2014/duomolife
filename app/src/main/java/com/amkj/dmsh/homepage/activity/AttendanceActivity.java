@@ -29,7 +29,7 @@ import com.amkj.dmsh.homepage.adapter.AttendanceAwardAdapter;
 import com.amkj.dmsh.homepage.adapter.HomeImgActivityAdapter;
 import com.amkj.dmsh.homepage.adapter.IntegralLotteryAdapter;
 import com.amkj.dmsh.homepage.adapter.IntegrationRecyclerAdapter;
-import com.amkj.dmsh.homepage.adapter.QualityCustomTopicAdapter;
+import com.amkj.dmsh.homepage.adapter.DoubleIntegralAdpter;
 import com.amkj.dmsh.homepage.bean.AttendanceDetailEntity;
 import com.amkj.dmsh.homepage.bean.AttendanceDetailEntity.AttendanceDetailBean;
 import com.amkj.dmsh.homepage.bean.AttendanceDetailEntity.LogListBean;
@@ -140,7 +140,7 @@ public class AttendanceActivity extends BaseActivity {
     private HomeImgActivityAdapter homeImgActivityAdapter;
     private IntegralDoubleHelper integralDoubleHelper;
     private List<LikedProductBean> doubleIntegrationList = new ArrayList();
-    private QualityCustomTopicAdapter qualityCustomTopicAdapter;
+    private DoubleIntegralAdpter mDoubleIntegralAdpter;
     private View hotActivityView;
     private AlertRuleDialogHelper alertLotteryRuleDialogHelper;
     private AlertRuleDialogHelper alertIntegralRuleDialogHelper;
@@ -643,7 +643,7 @@ public class AttendanceActivity extends BaseActivity {
                             doubleIntegrationList.add(likedProduct);
                         }
                     }
-                    qualityCustomTopicAdapter.notifyDataSetChanged();
+                    mDoubleIntegralAdpter.notifyDataSetChanged();
                 }
             }
 
@@ -982,15 +982,15 @@ public class AttendanceActivity extends BaseActivity {
 
 
                     .create());
-            qualityCustomTopicAdapter = new QualityCustomTopicAdapter(AttendanceActivity.this, doubleIntegrationList);
-            rv_integral_double.setAdapter(qualityCustomTopicAdapter);
-            qualityCustomTopicAdapter.setSpanSizeLookup(new BaseQuickAdapter.SpanSizeLookup() {
+            mDoubleIntegralAdpter = new DoubleIntegralAdpter(AttendanceActivity.this, doubleIntegrationList);
+            rv_integral_double.setAdapter(mDoubleIntegralAdpter);
+            mDoubleIntegralAdpter.setSpanSizeLookup(new BaseQuickAdapter.SpanSizeLookup() {
                 @Override
                 public int getSpanSize(GridLayoutManager gridLayoutManager, int position) {
                     return doubleIntegrationList.get(position).getItemType() == TYPE_2 ? 2 : 1;
                 }
             });
-            qualityCustomTopicAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            mDoubleIntegralAdpter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                     LikedProductBean likedProductBean = (LikedProductBean) view.getTag();
@@ -1001,7 +1001,7 @@ public class AttendanceActivity extends BaseActivity {
                     }
                 }
             });
-            qualityCustomTopicAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+            mDoubleIntegralAdpter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
                 @Override
                 public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
                     if (view.getId() == R.id.tv_integral_pro_type) {

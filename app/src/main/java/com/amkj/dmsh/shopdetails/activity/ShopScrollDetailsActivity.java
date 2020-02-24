@@ -1105,7 +1105,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         }
         ll_pro_buy_before.setVisibility(flex_buy_before.getChildCount() > 0 ? VISIBLE : GONE);
 
-
         //商品详情
         Properties prop = new Properties();
         prop.setProperty("proName", getStrings(shopProperty.getName()));

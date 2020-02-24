@@ -34,7 +34,6 @@ import com.amkj.dmsh.dominant.bean.ShopBuyDetailEntity.ShopBuyDetailBean;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
@@ -64,9 +63,7 @@ import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.addShopCarGetSku;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
@@ -219,17 +216,7 @@ public class QualityShopBuyListFragment extends BaseFragment {
                 }
             }
         });
-        qualityBuyListAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                QualityBuyListBean qualityBuyListBean = (QualityBuyListBean) view.getTag();
-                if (qualityBuyListBean != null) {
-                    Intent intent = new Intent(getActivity(), ShopScrollDetailsActivity.class);
-                    intent.putExtra("productId", String.valueOf(qualityBuyListBean.getId()));
-                    startActivity(intent);
-                }
-            }
-        });
+
         qualityBuyListAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
@@ -422,15 +409,6 @@ public class QualityShopBuyListFragment extends BaseFragment {
                     }
                     CommunalWebDetailUtils.getCommunalWebInstance()
                             .setWebDataClick(getActivity(), shareDataBean, view, loadHud);
-                }
-            });
-            communalDetailAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-                @Override
-                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                    CommunalDetailObjectBean communalDetailBean = (CommunalDetailObjectBean) view.getTag();
-                    if (communalDetailBean != null) {
-                        skipProductUrl(getActivity(), communalDetailBean.getItemTypeId(), communalDetailBean.getId());
-                    }
                 }
             });
         }

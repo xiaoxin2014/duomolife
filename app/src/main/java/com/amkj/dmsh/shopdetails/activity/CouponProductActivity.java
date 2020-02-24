@@ -10,8 +10,7 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
-import com.amkj.dmsh.dominant.adapter.QualityTypeProductAdapter;
+import com.amkj.dmsh.dominant.adapter.GoodProductAdapter;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
@@ -28,8 +27,6 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-import static com.amkj.dmsh.constant.ConstantMethod.addShopCarGetSku;
-import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
@@ -38,11 +35,9 @@ import static com.amkj.dmsh.constant.Url.Q_COUPON_PRODUCT_LIST;
 
 
 /**
- * @author LGuiPeng
- * @email liuguipeng163@163.com
- * created on 2018/1/2
- * version 3.0.6
- * class description:更多推荐 商品 专题
+ * Created by xiaoxin on 2020/1/17
+ * Version:v4.4.1
+ * ClassDescription :优惠券-选择指定商品优惠券-可用券商品
  */
 
 public class CouponProductActivity extends BaseActivity {
@@ -57,10 +52,10 @@ public class CouponProductActivity extends BaseActivity {
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
     //    商品列表
-    private List<LikedProductBean> couponProductList = new ArrayList();
+    private List<LikedProductBean> couponProductList = new ArrayList<>();
     private int page = 1;
     private String userCouponId;
-    private QualityTypeProductAdapter qualityTypeProductAdapter;
+    private GoodProductAdapter mGoodProductAdapter;
     private UserLikedProductEntity likedProductEntity;
 
     @Override
@@ -86,35 +81,12 @@ public class CouponProductActivity extends BaseActivity {
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_dp)
                 .create());
-        qualityTypeProductAdapter = new QualityTypeProductAdapter(CouponProductActivity.this, couponProductList);
-        communal_recycler.setAdapter(qualityTypeProductAdapter);
-        qualityTypeProductAdapter.setOnLoadMoreListener(() -> {
+        mGoodProductAdapter = new GoodProductAdapter(CouponProductActivity.this, couponProductList);
+        communal_recycler.setAdapter(mGoodProductAdapter);
+        mGoodProductAdapter.setOnLoadMoreListener(() -> {
             page++;
             getCouponProductData();
         }, communal_recycler);
-        qualityTypeProductAdapter.setOnItemClickListener((adapter, view, position) -> {
-            LikedProductBean likedProductBean = (LikedProductBean) view.getTag();
-            if (likedProductBean != null) {
-                Intent intent1 = new Intent(CouponProductActivity.this, ShopScrollDetailsActivity.class);
-                intent1.putExtra("productId", String.valueOf(likedProductBean.getId()));
-                startActivity(intent1);
-            }
-        });
-        qualityTypeProductAdapter.setOnItemChildClickListener((adapter, view, position) -> {
-            LikedProductBean likedProductBean = (LikedProductBean) view.getTag();
-            if (likedProductBean != null) {
-                switch (view.getId()) {
-                    case R.id.iv_pro_add_car:
-                        BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
-                        baseAddCarProInfoBean.setProductId(likedProductBean.getId());
-                        baseAddCarProInfoBean.setActivityCode(getStrings(likedProductBean.getActivityCode()));
-                        baseAddCarProInfoBean.setProName(getStrings(likedProductBean.getName()));
-                        baseAddCarProInfoBean.setProPic(getStrings(likedProductBean.getPicUrl()));
-                        addShopCarGetSku(CouponProductActivity.this, baseAddCarProInfoBean, loadHud);
-                        break;
-                }
-            }
-        });
     }
 
     @Override
@@ -136,7 +108,7 @@ public class CouponProductActivity extends BaseActivity {
                             loadHud.dismiss();
                         }
                         smart_communal_refresh.finishRefresh();
-                        qualityTypeProductAdapter.loadMoreComplete();
+                        mGoodProductAdapter.loadMoreComplete();
                         if (page == 1) {
                             couponProductList.clear();
                         }
@@ -146,13 +118,13 @@ public class CouponProductActivity extends BaseActivity {
                             if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
                                 couponProductList.addAll(likedProductEntity.getGoodsList());
                             } else if (likedProductEntity.getCode().equals(EMPTY_CODE)) {
-                                qualityTypeProductAdapter.loadMoreEnd();
+                                mGoodProductAdapter.loadMoreEnd();
                             } else {
-                                qualityTypeProductAdapter.loadMoreEnd();
+                                mGoodProductAdapter.loadMoreEnd();
                                 showToast(CouponProductActivity.this, likedProductEntity.getMsg());
                             }
-                            qualityTypeProductAdapter.disableLoadMoreIfNotFullPage();
-                            qualityTypeProductAdapter.notifyDataSetChanged();
+                            mGoodProductAdapter.disableLoadMoreIfNotFullPage();
+                            mGoodProductAdapter.notifyDataSetChanged();
                         }
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, couponProductList, likedProductEntity);
                     }
@@ -163,7 +135,7 @@ public class CouponProductActivity extends BaseActivity {
                             loadHud.dismiss();
                         }
                         smart_communal_refresh.finishRefresh();
-                        qualityTypeProductAdapter.loadMoreEnd(true);
+                        mGoodProductAdapter.loadMoreEnd(true);
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, couponProductList, likedProductEntity);
                     }
 

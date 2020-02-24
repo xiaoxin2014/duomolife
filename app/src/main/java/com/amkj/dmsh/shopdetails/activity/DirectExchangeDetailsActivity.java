@@ -1119,7 +1119,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
                     if (qualityWeChatIndent != null) {
                         if (qualityWeChatIndent.getCode().equals(SUCCESS_CODE)) {
                             //返回成功，调起微信支付接口
-                            doWXPay(qualityWeChatIndent.getResult().getPayKey());
+                            doWXPay(qualityWeChatIndent.getResult());
                         } else {
                             showToast(DirectExchangeDetailsActivity.this, qualityWeChatIndent.getResult() == null
                                     ? qualityWeChatIndent.getMsg() : qualityWeChatIndent.getResult().getMsg());
@@ -1130,7 +1130,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
                     if (qualityAliPayIndent != null) {
                         if (qualityAliPayIndent.getCode().equals(SUCCESS_CODE)) {
                             //返回成功，调起支付宝支付接口
-                            doAliPay(qualityAliPayIndent.getResult().getPayKey());
+                            doAliPay(qualityAliPayIndent.getResult());
                         } else {
                             showToast(DirectExchangeDetailsActivity.this, qualityAliPayIndent.getResult() == null
                                     ? qualityAliPayIndent.getMsg() : qualityAliPayIndent.getResult().getMsg());
@@ -1165,9 +1165,9 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
         });
     }
 
-    private void doWXPay(QualityCreateWeChatPayIndentBean.ResultBean.PayKeyBean pay_param) {
-        WXPay.init(getApplicationContext());//要在支付前调用
-        WXPay.getInstance().doPayDateObject(pay_param, new WXPay.WXPayResultCallBack() {
+    private void doWXPay(QualityCreateWeChatPayIndentBean.ResultBean pay_param) {
+        WXPay.init(this);//要在支付前调用
+        WXPay.getInstance().doPayDateObject(pay_param.getNo(), pay_param.getPayKey(), new WXPay.WXPayResultCallBack() {
             @Override
             public void onSuccess() {
 //                recordPaySuc();
@@ -1206,8 +1206,8 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
         }, 1000);
     }
 
-    private void doAliPay(String pay_param) {
-        new AliPay(this, pay_param, new AliPay.AliPayResultCallBack() {
+    private void doAliPay(QualityCreateAliPayIndentBean.ResultBean resultBean) {
+        new AliPay(this, resultBean.getNo(), resultBean.getPayKey(), new AliPay.AliPayResultCallBack() {
             @Override
             public void onSuccess() {
                 showToast(getApplication(), "支付成功");

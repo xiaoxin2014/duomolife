@@ -296,7 +296,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         tv_gp_sp_nor_price.getPaint().setAntiAlias(true);
         Intent intent = getIntent();
         gpInfoId = intent.getStringExtra("gpInfoId");
-        productId = intent.getStringExtra("productId");
+//        productId = intent.getStringExtra("productId");
         gpRecordId = intent.getStringExtra("gpRecordId");
         TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
         screenHeight = app.getScreenHeight();
@@ -476,12 +476,6 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
     protected void loadData() {
         //获取拼团信息
         getGroupShopDetails();
-        //获取商品评论
-        getComment();
-        //获取推荐文章
-        getArticalRecommend();
-        //获取更多拼团商品
-        getGoodsRecommend();
         getCarCount(getActivity());
     }
 
@@ -514,6 +508,12 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                                 if (mGroupShopDetailsBean != null) {
                                     setGroupShopDetailsData(mGroupShopDetailsBean);
                                     setProductData(mGroupShopDetailsBean);
+                                    //获取商品评论
+                                    getComment();
+                                    //获取推荐文章
+                                    getArticalRecommend();
+                                    //获取更多拼团商品
+                                    getGoodsRecommend();
                                 }
                             } else {
                                 showToast(QualityGroupShopDetailActivity.this, mGroupShopDetailsEntity.getMsg());
@@ -675,6 +675,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
 
     private void setGroupShopDetailsData(GroupShopDetailsBean groupShopDetailsBean) {
         gpRecordId = groupShopDetailsBean.getGpRecordId();
+        productId = String.valueOf(groupShopDetailsBean.getProductId());
         //设置商品标题
         String gpName = groupShopDetailsBean.getGpName();
         String productName = groupShopDetailsBean.getProductName();

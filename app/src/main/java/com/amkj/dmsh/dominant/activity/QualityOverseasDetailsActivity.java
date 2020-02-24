@@ -382,15 +382,6 @@ public class QualityOverseasDetailsActivity extends BaseActivity {
                             .setWebDataClick(QualityOverseasDetailsActivity.this, shareDataBean, view, loadHud);
                 }
             });
-            communalDescripAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-                @Override
-                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                    CommunalDetailObjectBean communalDetailBean = (CommunalDetailObjectBean) view.getTag();
-                    if (communalDetailBean != null) {
-                        ConstantMethod.skipProductUrl(QualityOverseasDetailsActivity.this, communalDetailBean.getItemTypeId(), communalDetailBean.getId());
-                    }
-                }
-            });
         }
     }
 

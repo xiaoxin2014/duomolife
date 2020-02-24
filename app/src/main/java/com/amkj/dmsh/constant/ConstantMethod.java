@@ -49,6 +49,7 @@ import com.amkj.dmsh.bean.HomeQualityFloatAdEntity;
 import com.amkj.dmsh.bean.ImageBean;
 import com.amkj.dmsh.bean.MessageBean;
 import com.amkj.dmsh.bean.RequestStatus;
+import com.amkj.dmsh.dominant.activity.QualityGroupShopDetailActivity;
 import com.amkj.dmsh.dominant.activity.QualityNewUserActivity;
 import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
 import com.amkj.dmsh.find.activity.ImagePagerActivity;
@@ -251,7 +252,7 @@ public class ConstantMethod {
             return 0;
         } else {
             try {
-                return Integer.parseInt(text);
+                return Integer.parseInt(stripTrailingZeros(text));
             } catch (NumberFormatException e) {
                 e.printStackTrace();
                 return 0;
@@ -1228,6 +1229,22 @@ public class ConstantMethod {
         }
     }
 
+    public static void skipProductUrl(Context context, int proTypeId, int id, String androidLink) {
+        if (!TextUtils.isEmpty(androidLink)) {
+            setSkipPath(context, androidLink, false);
+        } else {
+            skipProductUrl(context, proTypeId, id);
+        }
+    }
+
+    //跳转拼团详情
+    public static void skipGroupDetail(Context context, String gpInfoId, int productId) {
+        Intent intent = new Intent(context, QualityGroupShopDetailActivity.class);
+        intent.putExtra("gpInfoId", gpInfoId);
+        intent.putExtra("productId", String.valueOf(productId));
+        context.startActivity(intent);
+    }
+
     //跳转用户中心
     public static void skipUserCenter(Context context, int uid) {
         if (isContextExisted(context)) {
@@ -1276,13 +1293,6 @@ public class ConstantMethod {
             intent.putExtra("reminder", mScoreGoodsEntity.getContentReminder());
             activity.startActivity(intent);
         }
-    }
-
-    //跳转首页
-    private static void skipMainActivity(Context context) {
-        Intent intent = new Intent(context, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
     }
 
     //    获取系统权限

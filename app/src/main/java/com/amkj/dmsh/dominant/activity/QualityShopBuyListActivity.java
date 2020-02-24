@@ -37,7 +37,6 @@ import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
@@ -69,7 +68,6 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.addShopCarGetSku;
 import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -81,7 +79,7 @@ import static com.amkj.dmsh.constant.Url.QUALITY_SHOP_BUY_DETAIL;
 import static com.amkj.dmsh.constant.Url.QUALITY_SHOP_HISTORY_LIST;
 import static com.amkj.dmsh.constant.Url.QUALITY_SHOP_HISTORY_LIST_PRO;
 
-;
+
 
 
 /**
@@ -227,17 +225,6 @@ public class QualityShopBuyListActivity extends BaseActivity {
                     Intent intent = new Intent(QualityShopBuyListActivity.this, QualityShopHistoryListActivity.class);
                     intent.putExtra("listId", String.valueOf(qualityHistoryListBean.getId()));
                     ConstantMethod.saveSourceId(getClass().getSimpleName(), String.valueOf(qualityHistoryListBean.getId()));
-                    startActivity(intent);
-                }
-            }
-        });
-        qualityBuyListAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                QualityBuyListBean qualityBuyListBean = (QualityBuyListBean) view.getTag();
-                if (qualityBuyListBean != null) {
-                    Intent intent = new Intent(QualityShopBuyListActivity.this, ShopScrollDetailsActivity.class);
-                    intent.putExtra("productId", String.valueOf(qualityBuyListBean.getId()));
                     startActivity(intent);
                 }
             }
@@ -452,15 +439,6 @@ public class QualityShopBuyListActivity extends BaseActivity {
                     }
                     CommunalWebDetailUtils.getCommunalWebInstance()
                             .setWebDataClick(QualityShopBuyListActivity.this, shareDataBean, view, loadHud);
-                }
-            });
-            communalDetailAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-                @Override
-                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                    CommunalDetailObjectBean communalDetailBean = (CommunalDetailObjectBean) view.getTag();
-                    if (communalDetailBean != null) {
-                        skipProductUrl(QualityShopBuyListActivity.this, communalDetailBean.getItemTypeId(), communalDetailBean.getId());
-                    }
                 }
             });
         }

@@ -42,9 +42,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
 import static com.amkj.dmsh.constant.Url.Q_SP_DETAIL_RECOMMEND;
 
-;
-;
-
 /**
  * @author LGuiPeng
  * @email liuguipeng163@163.com
@@ -265,5 +262,4 @@ public class ProRecommendActivity extends BaseActivity {
     void goBack() {
         finish();
     }
-
 }

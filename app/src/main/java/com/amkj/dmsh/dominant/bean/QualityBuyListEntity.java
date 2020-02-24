@@ -51,6 +51,16 @@ public class QualityBuyListEntity extends BaseEntity{
         private boolean inCart;
         private String activityCode;
         private List<MarketLabelBean> marketLabelList;
+        //拼团商品专用字段
+        private String gpInfoId;
+
+        public String getGpInfoId() {
+            return gpInfoId;
+        }
+
+        public void setGpInfoId(String gpInfoId) {
+            this.gpInfoId = gpInfoId;
+        }
 
         public String getActivityCode() {
             return activityCode;

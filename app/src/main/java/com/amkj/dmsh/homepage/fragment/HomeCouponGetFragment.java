@@ -47,7 +47,6 @@ import butterknife.OnClick;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
@@ -273,15 +272,6 @@ public class HomeCouponGetFragment extends BaseFragment {
                     }
                     CommunalWebDetailUtils.getCommunalWebInstance()
                             .setWebDataClick(getActivity(), view, loadHud);
-                }
-            });
-            communalDetailAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-                @Override
-                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                    CommunalDetailObjectBean communalDetailBean = (CommunalDetailObjectBean) view.getTag();
-                    if (communalDetailBean != null) {
-                        skipProductUrl(getActivity(), communalDetailBean.getItemTypeId(), communalDetailBean.getId());
-                    }
                 }
             });
         }

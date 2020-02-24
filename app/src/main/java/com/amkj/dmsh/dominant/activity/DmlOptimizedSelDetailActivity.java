@@ -152,7 +152,7 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
                     dr_welfare_detail_pro.closeDrawers();
                     skipProductUrl(DmlOptimizedSelDetailActivity.this, productListBean.getItemTypeId(), productListBean.getId());
                     //                    统计商品点击
-                    totalProNum(getActivity(), productListBean.getId(), dmlOptimizedSelDetailBean.getId());
+                    totalProNum(getActivity(), productListBean.getId(), optimizedId);
                 }
             }
         });
@@ -177,14 +177,6 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
                 }
                 CommunalWebDetailUtils.getCommunalWebInstance()
                         .setWebDataClick(DmlOptimizedSelDetailActivity.this, shareDataBean, view, loadHud);
-            }
-        });
-        optimizedDetailsAdapter.setOnItemClickListener((adapter, view, position) -> {
-            CommunalDetailObjectBean communalDetailBean = (CommunalDetailObjectBean) view.getTag();
-            if (communalDetailBean != null) {
-                skipProductUrl(DmlOptimizedSelDetailActivity.this, communalDetailBean.getItemTypeId(), communalDetailBean.getId());
-                //                    统计商品点击
-                totalProNum(getActivity(), communalDetailBean.getId(), dmlOptimizedSelDetailBean.getId());
             }
         });
         //          关闭手势滑动
@@ -359,5 +351,9 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
                 badge.setBadgeNumber((int) message.result);
             }
         }
+    }
+
+    public String getOptimizedId() {
+        return optimizedId;
     }
 }

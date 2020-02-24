@@ -171,11 +171,11 @@ public class Url {
     public static final String H_ATTENDANCE_INTEGRAL_LOTTERY_RULE = "api/activity/getLotteryExplain";
     //    领券中心
     public static final String H_COUPON_CENTER_DATA = "api/reminder/getCouponCore";
-    //限时特惠详情
+    //    限时特惠详情
     public static final String H_TIME_GOODS_DETAILS = "api/goods/flashSale/getGoods";
-    //消息统计
+    //    消息统计
     public static final String H_MES_STATISTICS = "api/message/messageTotal";
-    //app最后登录时间
+    //     app最后登录时间
     public static final String H_LOGIN_LAST_TIME = "api/my/updateLastLogin";
     //    新人优惠弹窗
     public static final String H_NEW_USER_COUPON = "api/usertype/judgeUserType";
@@ -401,11 +401,10 @@ public class Url {
      */
     //首页轮播图
     public static final String Q_HOME_AD_LOOP = "api/goods/getAd";
-    //    二期订单创建
-//    public static final String Q_CREATE_INDENT = "api/goods/order/addOrderNew";
+    //    获取第三方支付结果
+    public static final String Q_UPDATE_PAY_RESULT = "api/goods/order/updatePayResult";
     //大营销中心订单创建
     public static final String Q_CREATE_INDENT = "api/goods/order/addOrderPayInfoNewV2";
-
     //    积分订单创建
     public static final String INTEGRAL_CREATE_INDENT = "api/integralorder/addIntegralOrder";
     //    再次购买

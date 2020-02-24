@@ -18,8 +18,9 @@ import java.util.List;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
+import static com.amkj.dmsh.constant.ConstantMethod.skipGroupDetail;
+import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
 
-;
 
 /**
  * @author LGuiPeng
@@ -41,27 +42,35 @@ public class QualityBuyListAdapter extends BaseQuickAdapter<QualityBuyListBean, 
         GlideImageLoaderUtil.loadFitCenter(context, (ImageView) helper.getView(R.id.iv_ql_bl_product), qualityBuyListBean.getPicUrl());
         helper.setText(R.id.tv_ql_bl_pro_name, getStrings(qualityBuyListBean.getName()))
                 .setText(R.id.tv_ql_bl_product_recommend, getStrings(qualityBuyListBean.getRecommendReason()))
-                .setText(R.id.tv_ql_bl_pro_price, getStringsChNPrice(context,qualityBuyListBean.getPrice()))
-                .setGone(R.id.iv_com_pro_tag_out, qualityBuyListBean.getQuantity() < 1 )
+                .setText(R.id.tv_ql_bl_pro_price, getStringsChNPrice(context, qualityBuyListBean.getPrice()))
+                .setGone(R.id.iv_com_pro_tag_out, qualityBuyListBean.getQuantity() < 1)
                 .addOnClickListener(R.id.iv_ql_bl_add_car).setTag(R.id.iv_ql_bl_add_car, qualityBuyListBean);
         ImageView iv_ql_bl_add_car = helper.getView(R.id.iv_ql_bl_add_car);
         iv_ql_bl_add_car.setSelected(qualityBuyListBean.isInCart());
         FlexboxLayout fbl_market_label = helper.getView(R.id.fbl_market_label);
-        if(qualityBuyListBean.getMarketLabelList()!=null
-                &&qualityBuyListBean.getMarketLabelList().size()>0){
+        if (qualityBuyListBean.getMarketLabelList() != null
+                && qualityBuyListBean.getMarketLabelList().size() > 0) {
             fbl_market_label.setVisibility(View.VISIBLE);
             fbl_market_label.removeAllViews();
-            if(qualityBuyListBean.getMarketLabelList()!=null
-                    &&qualityBuyListBean.getMarketLabelList().size()>0){
-                for (MarketLabelBean marketLabelBean:qualityBuyListBean.getMarketLabelList()) {
-                    if(!TextUtils.isEmpty(marketLabelBean.getTitle())){
-                        fbl_market_label.addView(ProductLabelCreateUtils.createLabelText(context,marketLabelBean.getTitle(),0));
+            if (qualityBuyListBean.getMarketLabelList() != null
+                    && qualityBuyListBean.getMarketLabelList().size() > 0) {
+                for (MarketLabelBean marketLabelBean : qualityBuyListBean.getMarketLabelList()) {
+                    if (!TextUtils.isEmpty(marketLabelBean.getTitle())) {
+                        fbl_market_label.addView(ProductLabelCreateUtils.createLabelText(context, marketLabelBean.getTitle(), 0));
                     }
                 }
             }
-        }else{
+        } else {
             fbl_market_label.setVisibility(View.GONE);
         }
+
+        helper.itemView.setOnClickListener(v -> {
+            if (!TextUtils.isEmpty(qualityBuyListBean.getGpInfoId())) {
+                skipGroupDetail(context, qualityBuyListBean.getGpInfoId(), qualityBuyListBean.getId());
+            } else {
+                skipProductUrl(context, 1, qualityBuyListBean.getId());
+            }
+        });
         helper.itemView.setTag(qualityBuyListBean);
     }
 }

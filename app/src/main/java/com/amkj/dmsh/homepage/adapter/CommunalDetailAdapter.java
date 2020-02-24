@@ -19,14 +19,19 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.ImageBean;
+import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.dominant.activity.DmlOptimizedSelDetailActivity;
+import com.amkj.dmsh.dominant.activity.DoMoLifeWelfareDetailsActivity;
 import com.amkj.dmsh.dominant.adapter.CatergoryGoodsAdapter;
 import com.amkj.dmsh.dominant.adapter.GoodProductAdapter;
 import com.amkj.dmsh.find.activity.ImagePagerActivity;
 import com.amkj.dmsh.find.bean.InvitationImgDetailEntity.InvitationImgDetailBean.TagsBean;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity;
+import com.amkj.dmsh.message.activity.OfficialNotifyDetailsActivity;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.adapter.InvitationProAdapter;
+import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
@@ -66,9 +71,13 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showImageActivity;
 import static com.amkj.dmsh.constant.ConstantVariable.IMG_REGEX_TAG;
+import static com.amkj.dmsh.constant.ConstantVariable.PRODUCT;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_TEXT;
 import static com.amkj.dmsh.constant.ConstantVariable.regexATextUrl;
+import static com.amkj.dmsh.dao.AddClickDao.totalOfficialProNum;
+import static com.amkj.dmsh.dao.AddClickDao.totalProNum;
+import static com.amkj.dmsh.dao.AddClickDao.totalWelfareProNum;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.NORTEXT;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_AUDIO;
@@ -146,15 +155,17 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
         addItemType(NORTEXT, R.layout.layout_article_details);
 //        淘宝优惠券
         addItemType(TYPE_LUCKY_MONEY, R.layout.adapter_article_details_item_tb_coupon);
+//        淘宝链接
+        addItemType(TYPE_LINK_TAOBAO, R.layout.layout_communal_taobao_link);
 //        自营商品优惠券
         addItemType(TYPE_COUPON, R.layout.adapter_article_details_item_direct_coupon);
-//        优惠券礼包
+//        自营商品优惠券礼包
         addItemType(TYPE_COUPON_PACKAGE, R.layout.adapter_article_details_item_direct_coupon);
-//        插入带有添加购物车商品
+//        带有添加购物车商品(插入一个商品)
         addItemType(TYPE_GOODS_WEL, R.layout.adapter_border_pro_wel);
-//        插入图片商品
+//        图片商品(插入一个商品并上传图片)
         addItemType(TYPE_GOODS_IMG, R.layout.layout_communal_cover_wrap);
-//        插入带有立即购买的图片商品
+//        带有立即购买的图片商品（(插入一个商品并上传图片，小编精选专属）
         addItemType(TYPE_GOODS_IMG_DIRECT_BUY, R.layout.layout_communal_cover_direct_buy);
 //        动态图片处理
         addItemType(TYPE_GIF_IMG, R.layout.layout_communal_img_gif);
@@ -164,14 +175,12 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
         addItemType(TYPE_AUDIO, R.layout.layout_article_audio);
 //        分享页面
         addItemType(TYPE_SHARE, R.layout.layout_communal_share_view);
-//         详情头部
+//        详情头部
         addItemType(TYPE_PRODUCT_TITLE, R.layout.layout_communal_detail_title);
 //        查看更多
         addItemType(TYPE_PRODUCT_MORE, R.layout.layout_communal_detail_more);
 //        标签
         addItemType(TYPE_PRODUCT_TAG, R.layout.layout_communal_flexbox);
-//        淘宝链接
-        addItemType(TYPE_LINK_TAOBAO, R.layout.layout_communal_taobao_link);
 //        商品推荐
         addItemType(TYPE_PRODUCT_RECOMMEND, R.layout.layout_top_communal_wrap);
 //        关联商品
@@ -180,9 +189,9 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
         addItemType(TYPE_EMPTY_OBJECT, R.layout.layout_empty_object);
 //        限时特惠商品详情头部
         addItemType(TYPE_PROMOTION_TITLE, R.layout.layout_promotion_product_details_header_title);
-//        并列商品2X
+//        并列商品2X(包含并列图片)
         addItemType(TYPE_GOODS_2X, R.layout.layout_communal_recycler_wrap);
-//        并列商品3X
+//        并列商品3X(包含并列图片)
         addItemType(TYPE_GOODS_3X, R.layout.layout_communal_recycler_wrap);
         this.context = context;
         urlMap = new HashMap<>();
@@ -213,34 +222,37 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                         .setText(R.id.tv_ql_bl_pro_price, "¥ " + detailObjectBean.getPrice())
                         .setGone(R.id.iv_ql_bl_add_car, detailObjectBean.getItemTypeId() == 1)
                         .addOnClickListener(R.id.iv_ql_bl_add_car).setTag(R.id.iv_ql_bl_add_car, detailObjectBean);
-                holder.itemView.setTag(detailObjectBean);
+                holder.itemView.setOnClickListener(v -> setGoodsClick(detailObjectBean.getItemTypeId(),
+                        detailObjectBean.getId(), detailObjectBean.getAndroidLink(), detailObjectBean.isSelfGoods()));
                 break;
             case TYPE_GOODS_IMG:
             case TYPE_GOODS_IMG_DIRECT_BUY:
                 final ImageView iv_communal_cover_wrap = holder.getView(R.id.iv_communal_cover_wrap);
-                GlideImageLoaderUtil.loadImgDynamicDrawable(context, iv_communal_cover_wrap, detailObjectBean.getNewPirUrl(), -1);
-                holder.addOnClickListener(R.id.iv_communal_cover_wrap).setTag(R.id.iv_communal_cover_wrap, R.id.iv_tag, detailObjectBean);
-                if (!imgList.contains(detailObjectBean.getNewPirUrl()) && !TextUtils.isEmpty(detailObjectBean.getNewPirUrl())) {
-                    imgList.add(detailObjectBean.getNewPirUrl());
+                GlideImageLoaderUtil.loadImgDynamicDrawable(context, iv_communal_cover_wrap, detailObjectBean.getPicUrl(), -1);
+                if (!imgList.contains(detailObjectBean.getPicUrl()) && !TextUtils.isEmpty(detailObjectBean.getPicUrl())) {
+                    imgList.add(detailObjectBean.getPicUrl());
                 }
-                holder.itemView.setTag(detailObjectBean);
+                holder.itemView.setOnClickListener(v -> setGoodsClick(detailObjectBean.getItemTypeId(),
+                        detailObjectBean.getId(), detailObjectBean.getAndroidLink(), detailObjectBean.isSelfGoods()));
                 break;
             case TYPE_GOODS_2X:
             case TYPE_GOODS_3X:
                 holder.communal_recycler_wrap.setLayoutManager(new GridLayoutManager(context, holder.getItemViewType() == TYPE_GOODS_2X ? 2 : 3));
                 holder.communal_recycler_wrap.setNestedScrollingEnabled(false);
                 if (detailObjectBean.getGoodsList().size() > 0) {
-                    if (detailObjectBean.getGoodsList().get(0).getType().contains("goodsX")) {
+                    int type = detailObjectBean.getGoodsList().get(0).getItemType();
+                    if (type == PRODUCT) {
                         if (holder.communal_recycler_wrap.getItemDecorationCount() < 1) {
                             holder.communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
                                     // 设置分隔线资源ID
-                                    .setDividerId(R.drawable.item_divider_five_dp).create());
+                                    .setDividerId(R.drawable.item_divider_five_gray_f).create());
                         }
                         if (holder.communal_recycler_wrap.getPaddingBottom() < 1) {
-                            holder.communal_recycler_wrap.setBackgroundColor(context.getResources().getColor(R.color.gray_bg));
+                            holder.communal_recycler_wrap.setBackgroundColor(context.getResources().getColor(R.color.light_gray_f));
                             holder.communal_recycler_wrap.setPadding(0, 0, 0, dp2px(context, 5));
                         }
                     } else {
+                        //并列图片不需要分割线
                         if (holder.communal_recycler_wrap.getItemDecorationCount() > 0) {
                             holder.communal_recycler_wrap.removeItemDecorationAt(0);
                         }
@@ -250,13 +262,20 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                     }
                 }
 
+                BaseQuickAdapter communalGoodListAdapter = null;
                 if (holder.getItemViewType() == TYPE_GOODS_2X) {
-                    GoodProductAdapter communalGoodListAdapter = new GoodProductAdapter(context, detailObjectBean.getGoodsList());
+                    communalGoodListAdapter = new GoodProductAdapter(context, detailObjectBean.getGoodsList(), true);
                     holder.communal_recycler_wrap.setAdapter(communalGoodListAdapter);
                 } else if (holder.getItemViewType() == TYPE_GOODS_3X) {
-                    CatergoryGoodsAdapter communalGoodListAdapter = new CatergoryGoodsAdapter((context), detailObjectBean.getGoodsList());
+                    communalGoodListAdapter = new CatergoryGoodsAdapter((context), detailObjectBean.getGoodsList(), true);
                     holder.communal_recycler_wrap.setAdapter(communalGoodListAdapter);
                 }
+
+                communalGoodListAdapter.setOnItemClickListener((adapter, view, position) -> {
+                    LikedProductBean likedProductBean = (LikedProductBean) view.getTag();
+                    setGoodsClick(likedProductBean.getType_id(),
+                            likedProductBean.getId(), likedProductBean.getAndroidLink(), "selfGoods".equals(likedProductBean.getType()));
+                });
 
                 break;
             case TYPE_PRODUCT_RECOMMEND:
@@ -493,6 +512,7 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                             tv_content_type.setLayoutParams(layoutParams1);
                         }
 
+                        //小编精选字体颜色处理
                         if (detailObjectBean.isEditor()) {
                             tv_content_type.setTextColor(context.getResources().getColor(R.color.text_login_gray_s));
                             tv_content_type.setTextSize(14);
@@ -592,6 +612,24 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                 break;
             default:
                 break;
+        }
+    }
+
+    //富文本商品点击事件
+    private void setGoodsClick(int itemTypeId, int id, String androidLink, boolean isSelfGoods) {
+        ConstantMethod.skipProductUrl(context, itemTypeId, id, androidLink);
+
+        if (TextUtils.isEmpty(androidLink) || isSelfGoods) {
+            //记录埋点参数sourceId
+            ConstantMethod.saveSourceId(context.getClass().getSimpleName(), String.valueOf(id));
+            //统计商品点击
+            if (context instanceof OfficialNotifyDetailsActivity) {
+                totalOfficialProNum(context, id, ((OfficialNotifyDetailsActivity) context).getNotifyId());
+            } else if (context instanceof DmlOptimizedSelDetailActivity) {
+                totalProNum(context, id, ((DmlOptimizedSelDetailActivity) context).getOptimizedId());
+            } else if (context instanceof DoMoLifeWelfareDetailsActivity) {
+                totalWelfareProNum(context, id, ((DoMoLifeWelfareDetailsActivity) context).getWelfareId());
+            }
         }
     }
 

@@ -1,17 +1,27 @@
 package com.amkj.dmsh.shopdetails.payutils;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Handler;
 import android.text.TextUtils;
 
 import com.alipay.sdk.app.PayTask;
+import com.amkj.dmsh.network.NetLoadUtils;
+import com.google.gson.Gson;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.amkj.dmsh.constant.Url.Q_UPDATE_PAY_RESULT;
 
 /**
  * 支付宝支付
  * Created by tsy on 16/6/1.
  */
 public class AliPay {
+    private final Activity mContext;
+    private final String mOrderNo;
     private String mParams;
     private PayTask mPayTask;
     private AliPayResultCallBack mCallback;
@@ -30,10 +40,13 @@ public class AliPay {
         void onCancel();    //支付取消
     }
 
-    public AliPay(Context context, String params, AliPayResultCallBack callback) {
+    public AliPay(Activity context, String orderNo, String params, AliPayResultCallBack callback) {
         mParams = params;
         mCallback = callback;
-        mPayTask = new PayTask((Activity) context);
+        mPayTask = new PayTask(context);
+        mContext = context;
+        mOrderNo = orderNo;
+        updatePayResult(0, params);
     }
 
     //支付
@@ -43,8 +56,8 @@ public class AliPay {
             @Override
             public void run() {
                 String result = mPayTask.pay(mParams, true);
-
                 final AliPayResult pay_result = new AliPayResult(result);
+                updatePayResult(1, pay_result.getResult());
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -72,5 +85,39 @@ public class AliPay {
                 });
             }
         }).start();
+    }
+
+    private void updatePayResult(int type, String result) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("orderNo", mOrderNo);
+        if (type == 1 && !TextUtils.isEmpty(result)) {
+            Map resultMap = new Gson().fromJson(result, Map.class);
+            Map responseMap = (Map) resultMap.get("alipay_trade_app_pay_response");
+            if (responseMap != null) {
+                String outTradeNo = (String) responseMap.get("out_trade_no");
+                String tradeNo = (String) responseMap.get("trade_no");
+                if (!TextUtils.isEmpty(outTradeNo)) {
+                    map.put("outTradeNo", outTradeNo);
+                }
+
+                if (!TextUtils.isEmpty(tradeNo)) {
+                    map.put("tradeNo", tradeNo);
+                }
+            }
+        }
+
+        if (type == 0) {
+            try {
+                String keyWord = URLDecoder.decode(result, "UTF-8");
+                map.put("result", keyWord);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        } else {
+            map.put("result", result);
+        }
+        map.put("payType", 0);//0代表是app的支付宝支付，1代表是app的微信支付
+        map.put("type", type);//支付结果，0代表是请求支付，1代表是响应支付
+        NetLoadUtils.getNetInstance().loadNetDataPost(mContext, Q_UPDATE_PAY_RESULT, map, null);
     }
 }

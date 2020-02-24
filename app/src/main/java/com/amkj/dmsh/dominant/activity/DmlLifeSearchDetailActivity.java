@@ -292,18 +292,7 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
                     dl_ql_search.closeDrawers();
                     skipProductUrl(DmlLifeSearchDetailActivity.this, productListBean.getItemTypeId(), productListBean.getId());
                     //                    统计商品点击
-                    totalWelfareProNum(DmlLifeSearchDetailActivity.this, productListBean.getId(), dmlSearchDetailBean.getId());
-                }
-            }
-        });
-        communalDescripAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                CommunalDetailObjectBean communalDetailBean = (CommunalDetailObjectBean) view.getTag();
-                if (communalDetailBean != null && communalDetailBean.getItemType() == CommunalDetailObjectBean.TYPE_GOODS_WEL) {
-                    skipProductUrl(DmlLifeSearchDetailActivity.this, communalDetailBean.getItemTypeId(), communalDetailBean.getId());
-                    //                    统计商品点击
-                    totalWelfareProNum(getActivity(), communalDetailBean.getId(), dmlSearchDetailBean.getId());
+                    totalWelfareProNum(DmlLifeSearchDetailActivity.this, productListBean.getId(), searchId);
                 }
             }
         });

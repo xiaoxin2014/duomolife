@@ -285,6 +285,7 @@ public class UserLikedProductEntity extends BaseEntity implements Comparable<Use
         private int quantity = 1;
         private int itemType;
         private String objectType;
+        private String styleType;
         private String tagContent;
         private String sellStatus;
         private String activityCode;
@@ -302,6 +303,24 @@ public class UserLikedProductEntity extends BaseEntity implements Comparable<Use
         @SerializedName(value = "android_link", alternate = "androidLink")
         private String androidLink;
         private List<MarketLabelBean> marketLabelList;
+        //拼团商品专用字段
+        private String gpInfoId;
+
+        public String getStyleType() {
+            return styleType;
+        }
+
+        public void setStyleType(String styleType) {
+            this.styleType = styleType;
+        }
+
+        public String getGpInfoId() {
+            return gpInfoId;
+        }
+
+        public void setGpInfoId(String gpInfoId) {
+            this.gpInfoId = gpInfoId;
+        }
 
         public int getTitleHead() {
             return titleHead;

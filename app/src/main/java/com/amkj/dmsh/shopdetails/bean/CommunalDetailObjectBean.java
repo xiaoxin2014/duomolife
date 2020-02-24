@@ -18,6 +18,8 @@ public class CommunalDetailObjectBean implements MultiItemEntity {
     private boolean firstLinePadding;
     private boolean isPost;  //是否是帖子富文本
     private boolean isEditor;  //是否是小编精选富文本
+    private String androidLink;  //android跳转链接
+    private boolean isSelfGoods;//是否是自营商品
     private int itemType;
     //    正常文本，网址
     private String content;
@@ -29,7 +31,7 @@ public class CommunalDetailObjectBean implements MultiItemEntity {
     //    价格
     private String price;
     //    商品类型 淘宝 0 自营1 积分 2
-    private int itemTypeId;
+    private int itemTypeId = 1;
     //    商品ID || 优惠券id
     private int id;
     //    优惠券新图片
@@ -105,6 +107,22 @@ public class CommunalDetailObjectBean implements MultiItemEntity {
 
     public CommunalDetailObjectBean(String content) {
         this.content = content;
+    }
+
+    public String getAndroidLink() {
+        return androidLink;
+    }
+
+    public void setAndroidLink(String androidLink) {
+        this.androidLink = androidLink;
+    }
+
+    public boolean isSelfGoods() {
+        return isSelfGoods;
+    }
+
+    public void setSelfGoods(boolean selfGoods) {
+        isSelfGoods = selfGoods;
     }
 
     public boolean isEditor() {

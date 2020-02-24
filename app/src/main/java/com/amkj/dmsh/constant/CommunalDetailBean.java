@@ -11,7 +11,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class CommunalDetailBean {
     private String type;
-    @SerializedName(value = "content",alternate = "goodsList")
+    @SerializedName(value = "content", alternate = {"goodsList", "objList"})
     private Object content;
     private int id;
     private String picUrl;
@@ -29,7 +29,6 @@ public class CommunalDetailBean {
     private String androidLink;
     private String text;
     private String title;
-
 
 
     public int getId() {

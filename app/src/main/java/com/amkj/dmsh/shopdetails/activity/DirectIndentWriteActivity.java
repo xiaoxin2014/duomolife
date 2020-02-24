@@ -52,7 +52,6 @@ import com.amkj.dmsh.shopdetails.bean.PriceInfoBean;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateAliPayIndentBean;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateUnionPayIndentEntity;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateWeChatPayIndentBean;
-import com.amkj.dmsh.shopdetails.bean.QualityCreateWeChatPayIndentBean.ResultBean.PayKeyBean;
 import com.amkj.dmsh.shopdetails.bean.ShopCarGoodsSkuTransmit;
 import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
 import com.amkj.dmsh.shopdetails.dialog.AlertDialogPurchase;
@@ -962,7 +961,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
             if (qualityWeChatIndent != null) {
                 if (qualityWeChatIndent.getCode().equals(SUCCESS_CODE)) {
                     //返回成功，调起微信支付接口
-                    doWXPay(qualityWeChatIndent.getResult().getPayKey());
+                    doWXPay(qualityWeChatIndent.getResult());
                     orderCreateNo = qualityWeChatIndent.getResult().getNo();
                 } else {
                     showImportantToast(DirectIndentWriteActivity.this, qualityWeChatIndent.getResult() != null &&
@@ -980,8 +979,8 @@ public class DirectIndentWriteActivity extends BaseActivity {
             if (qualityAliPayIndent != null) {
                 if (qualityAliPayIndent.getCode().equals(SUCCESS_CODE)) {
                     //返回成功，调起支付宝支付接口
-                    doAliPay(qualityAliPayIndent.getResult().getPayKey());
                     orderCreateNo = qualityAliPayIndent.getResult().getNo();
+                    doAliPay(qualityAliPayIndent.getResult());
                 } else {
                     //                            赠品送完刷新数据
                     if (qualityAliPayIndent.getResult() != null) {
@@ -1013,6 +1012,8 @@ public class DirectIndentWriteActivity extends BaseActivity {
             }
         }
         tv_indent_write_commit.setEnabled(true);
+
+
     }
 
     /**
@@ -1032,8 +1033,8 @@ public class DirectIndentWriteActivity extends BaseActivity {
     }
 
 
-    private void doAliPay(String pay_param) {
-        new AliPay(this, pay_param, new AliPay.AliPayResultCallBack() {
+    private void doAliPay(QualityCreateAliPayIndentBean.ResultBean resultBean) {
+        new AliPay(this, resultBean.getNo(), resultBean.getPayKey(), new AliPay.AliPayResultCallBack() {
             @Override
             public void onSuccess() {
                 showToast(DirectIndentWriteActivity.this, "支付成功");
@@ -1073,9 +1074,9 @@ public class DirectIndentWriteActivity extends BaseActivity {
         }).doPay();
     }
 
-    private void doWXPay(PayKeyBean pay_param) {
-        WXPay.init(getApplicationContext());//要在支付前调用
-        WXPay.getInstance().doPayDateObject(pay_param, new WXPay.WXPayResultCallBack() {
+    private void doWXPay(QualityCreateWeChatPayIndentBean.ResultBean resultBean) {
+        WXPay.init(this);//要在支付前调用
+        WXPay.getInstance().doPayDateObject(resultBean.getNo(), resultBean.getPayKey(), new WXPay.WXPayResultCallBack() {
             @Override
             public void onSuccess() {
                 showToast(DirectIndentWriteActivity.this, "支付成功");

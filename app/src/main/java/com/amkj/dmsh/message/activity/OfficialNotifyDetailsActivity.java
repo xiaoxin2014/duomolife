@@ -41,12 +41,10 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.H_MES_OFFICIAL_DETAILS;
-import static com.amkj.dmsh.dao.AddClickDao.totalOfficialProNum;
 
 ;
 ;
@@ -100,16 +98,6 @@ public class OfficialNotifyDetailsActivity extends BaseActivity {
         ButterKnife.bind(coverTitleView, coverView);
         contentOfficialAdapter.addHeaderView(coverView);
         communal_recycler.setAdapter(contentOfficialAdapter);
-        contentOfficialAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                CommunalDetailObjectBean communalDetailBean = (CommunalDetailObjectBean) view.getTag();
-                if (communalDetailBean != null) {
-                    skipProductUrl(OfficialNotifyDetailsActivity.this, communalDetailBean.getItemTypeId(), communalDetailBean.getId());
-                    totalOfficialProNum(getActivity(),communalDetailBean.getId(), notifyId);
-                }
-            }
-        });
         contentOfficialAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
@@ -246,4 +234,7 @@ public class OfficialNotifyDetailsActivity extends BaseActivity {
         TextView tv_article_details_time;
     }
 
+    public String getNotifyId() {
+        return notifyId;
+    }
 }
