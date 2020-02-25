@@ -221,6 +221,7 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                         .setText(R.id.tv_ql_bl_product_recommend, "")
                         .setText(R.id.tv_ql_bl_pro_price, "¥ " + detailObjectBean.getPrice())
                         .setGone(R.id.iv_ql_bl_add_car, detailObjectBean.getItemTypeId() == 1)
+                        .setGone(R.id.iv_com_pro_tag_out, detailObjectBean.getQuantity() < 1)
                         .addOnClickListener(R.id.iv_ql_bl_add_car).setTag(R.id.iv_ql_bl_add_car, detailObjectBean);
                 holder.itemView.setOnClickListener(v -> setGoodsClick(detailObjectBean.getItemTypeId(),
                         detailObjectBean.getId(), detailObjectBean.getAndroidLink(), detailObjectBean.isSelfGoods()));
@@ -272,7 +273,7 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                 }
 
                 communalGoodListAdapter.setOnItemClickListener((adapter, view, position) -> {
-                    LikedProductBean likedProductBean = (LikedProductBean) view.getTag();
+                    LikedProductBean likedProductBean = (LikedProductBean) (view instanceof ImageView ? view.getTag(R.id.iv_tag) : view.getTag());
                     setGoodsClick(likedProductBean.getType_id(),
                             likedProductBean.getId(), likedProductBean.getAndroidLink(), "selfGoods".equals(likedProductBean.getType()));
                 });

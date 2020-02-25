@@ -32,6 +32,8 @@ public class CommunalDetailObjectBean implements MultiItemEntity {
     private String price;
     //    商品类型 淘宝 0 自营1 积分 2
     private int itemTypeId = 1;
+    //    商品库存
+    private int quantity = 1;
     //    商品ID || 优惠券id
     private int id;
     //    优惠券新图片
@@ -107,6 +109,14 @@ public class CommunalDetailObjectBean implements MultiItemEntity {
 
     public CommunalDetailObjectBean(String content) {
         this.content = content;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 
     public String getAndroidLink() {

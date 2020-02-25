@@ -3,20 +3,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/border_top_bottom_line"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:background="@drawable/border_top_bottom_line"
-    android:paddingBottom="@dimen/sc_mm_30"
     android:paddingLeft="@dimen/sc_mm_24"
+    android:paddingTop="@dimen/sc_mm_30"
     android:paddingRight="@dimen/sc_mm_30"
-    android:paddingTop="@dimen/sc_mm_30">
+    android:paddingBottom="@dimen/sc_mm_30">
 
-    <ImageView
-        android:id="@+id/iv_ql_bl_product"
+    <RelativeLayout
+        android:id="@+id/rel_goods_layout"
         android:layout_width="@dimen/sc_mm_176"
-        android:layout_height="@dimen/sc_mm_176"
-        android:scaleType="centerCrop"
-         />
+        android:layout_height="@dimen/sc_mm_176">
+
+        <ImageView
+            android:id="@+id/iv_ql_bl_product"
+            android:layout_width="@dimen/sc_mm_176"
+            android:layout_height="@dimen/sc_mm_176"
+            android:scaleType="centerCrop" />
+
+        <include layout="@layout/layout_communal_pro_out_img" />
+    </RelativeLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -38,11 +46,11 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:layout_marginTop="@dimen/sc_mm_22"
                 android:id="@+id/tv_ql_bl_product_recommend"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
+                android:layout_marginTop="@dimen/sc_mm_22"
                 android:textColor="@color/sel_font_red_n_gray"
                 android:textSize="@dimen/sc_mm_24" />
         </RelativeLayout>
@@ -50,26 +58,26 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/sc_mm_22"
             android:gravity="center_vertical"
-            android:layout_marginTop="@dimen/sc_mm_22">
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/tv_ql_bl_pro_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:maxLines="1"
                 android:ellipsize="end"
                 android:gravity="left|center_vertical"
+                android:maxLines="1"
                 android:textColor="@color/sel_font_b_gray_un_red"
                 android:textSize="@dimen/sc_mm_30" />
 
             <ImageView
                 android:id="@+id/iv_ql_bl_add_car"
-                android:padding="@dimen/sc_mm_15"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:padding="@dimen/sc_mm_15"
                 android:src="@drawable/sel_ql_shop_b_car" />
         </LinearLayout>
     </LinearLayout>

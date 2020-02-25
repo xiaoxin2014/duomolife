@@ -94,9 +94,9 @@ public class CatergoryGoodsAdapter extends BaseMultiItemQuickAdapter<LikedProduc
             case AD_COVER:
                 ImageView iv_quality_good_product_ad = helper.getView(R.id.iv_quality_good_product_ad);
                 GlideImageLoaderUtil.loadCenterCrop(context, iv_quality_good_product_ad, getStrings(likedProductBean.getPicUrl()));
+                helper.itemView.setTag(R.id.iv_tag, likedProductBean);
                 break;
         }
-
         if (!isRichText) {
             helper.itemView.setOnClickListener(view -> {
                 if (helper.getItemViewType() != ConstantVariable.TITLE) {

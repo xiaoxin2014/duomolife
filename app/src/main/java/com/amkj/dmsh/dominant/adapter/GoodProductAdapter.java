@@ -61,6 +61,7 @@ public class GoodProductAdapter extends BaseMultiItemQuickAdapter<LikedProductBe
             case AD_COVER:
                 ImageView iv_quality_good_product_ad = helper.getView(R.id.iv_quality_good_product_ad);
                 GlideImageLoaderUtil.loadCenterCrop(context, iv_quality_good_product_ad, getStrings(likedProductBean.getPicUrl()));
+                helper.itemView.setTag(R.id.iv_tag, likedProductBean);
                 break;
             //普通商品（product类型）
             case PRODUCT:
@@ -105,9 +106,9 @@ public class GoodProductAdapter extends BaseMultiItemQuickAdapter<LikedProductBe
                 } else {
                     fbl_market_label.setVisibility(View.GONE);
                 }
+                helper.itemView.setTag(likedProductBean);
                 break;
         }
-        helper.itemView.setTag(likedProductBean);
         //点击商品进入详情
         if (!isRichText) {
             helper.itemView.setOnClickListener(v -> {

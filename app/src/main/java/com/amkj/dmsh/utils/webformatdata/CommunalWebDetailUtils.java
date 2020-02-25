@@ -134,7 +134,7 @@ public class CommunalWebDetailUtils {
                         }.getType());
                         goodList = goodList.size() > 3 ? goodList.subList(0, 3) : goodList;
                         for (LikedProductBean likedProductBean : goodList) {
-                            //封面图片:普通商品
+                            //图片:普通商品
                             likedProductBean.setItemType(type.contains("picture") || "picType".equals(likedProductBean.getStyleType()) ? ConstantVariable.AD_COVER : ConstantVariable.PRODUCT);
                         }
                         detailObjectBean.setGoodsList(goodList);
@@ -247,6 +247,9 @@ public class CommunalWebDetailUtils {
         detailObjectBean.setId(getStringChangeIntegers(hashMap.get("id") + ""));
         if (hashMap.get("itemTypeId") != null) {
             detailObjectBean.setItemTypeId(getStringChangeIntegers(hashMap.get("itemTypeId") + ""));
+        }
+        if (hashMap.get("quantity") != null) {
+            detailObjectBean.setQuantity(getStringChangeIntegers(hashMap.get("quantity") + ""));
         }
         detailObjectBean.setPicUrl((String) hashMap.get("picUrl"));
         detailObjectBean.setPrice(hashMap.get("price") + "");

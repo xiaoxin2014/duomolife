@@ -3,6 +3,7 @@
     android:id="@+id/iv_com_pro_tag_out"
     android:layout_width="@dimen/sc_mm_180"
     android:layout_height="@dimen/sc_mm_180"
+    android:layout_margin="@dimen/sc_mm_10"
     android:layout_centerInParent="true"
     android:src="@drawable/goods_sold_out"
     android:visibility="gone" />

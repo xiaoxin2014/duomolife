@@ -50,6 +50,7 @@ tinkerSupport {
     // 是否支持新增非export的Activity（注意：设置为true才能修改AndroidManifest文件）
     supportHotplugComponent = true
 
+    ignoreWarning = false
 }
 
 /**
@@ -59,7 +60,6 @@ tinkerSupport {
  */
 tinkerPatch {
     //oldApk ="${bakPath}/${appName}/app-release.apk"
-    ignoreWarning = false
     useSign = true
     dex {
         dexMode = "jar"

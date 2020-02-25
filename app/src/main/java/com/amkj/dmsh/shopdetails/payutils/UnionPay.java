@@ -66,8 +66,8 @@ public class UnionPay {
      *
      * @param orderNo
      */
-    public void unionPayResult(Activity activity,String orderNo) {
-        unionPayResult(activity,orderNo, "");
+    public void unionPayResult(Activity activity, String orderNo) {
+        unionPayResult(activity, orderNo, "");
     }
 
     /**
@@ -76,7 +76,7 @@ public class UnionPay {
      * @param orderNo
      * @param webResultValue web调用返回值
      */
-    public void unionPayResult(Activity activity,String orderNo, String webResultValue) {
+    public void unionPayResult(Activity activity, String orderNo, String webResultValue) {
         if (unionPayResultCallBack == null) {
             throw new NullPointerException("支付回调监听不能为空");
         }
@@ -95,37 +95,36 @@ public class UnionPay {
             params.put("uid", userId);
             //        版本号控制 3 组合商品赠品
             params.put("orderNo", orderNo);
-            NetLoadListenerHelper netLoadListenerHelper = new NetLoadListenerHelper() {
-                @Override
-                public void onSuccess(String result) {
-                    String code = "";
-                    String msg = "";
-                    try {
-                        JSONObject jsonObject = new JSONObject(result);
-                        code = (String) jsonObject.get("code");
-                        msg = (String) jsonObject.get("msg");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    if (!code.equals(ERROR_CODE)) {
-                        unionPayResultCallBack.onUnionPaySuccess(webResultValue);
-                    } else {
-                        unionPayResultCallBack.onUnionPayError(TextUtils.isEmpty(msg) ? "订单查询失败!" : msg);
-                    }
-                }
-
-                @Override
-                public void netClose() {
-                    unionPayResultCallBack.onUnionPayError("暂无联网，请稍后重试！");
-                }
-
-                @Override
-                public void onError(Throwable throwable) {
-                    unionPayResultCallBack.onUnionPayError("数据异常，请稍后重试！");
-                }
-            };
             NetLoadUtils.getNetInstance().loadNetDataPost(activity, Q_UNIONPAY_PAYMENT_INDENT
-                    , params, netLoadListenerHelper);
+                    , params, new NetLoadListenerHelper() {
+                        @Override
+                        public void onSuccess(String result) {
+                            String code = "";
+                            String msg = "";
+                            try {
+                                JSONObject jsonObject = new JSONObject(result);
+                                code = (String) jsonObject.get("code");
+                                msg = (String) jsonObject.get("msg");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            if (!code.equals(ERROR_CODE)) {
+                                unionPayResultCallBack.onUnionPaySuccess(webResultValue);
+                            } else {
+                                unionPayResultCallBack.onUnionPayError(TextUtils.isEmpty(msg) ? "订单查询失败!" : msg);
+                            }
+                        }
+
+                        @Override
+                        public void netClose() {
+                            unionPayResultCallBack.onUnionPayError("暂无联网，请稍后重试！");
+                        }
+
+                        @Override
+                        public void onError(Throwable throwable) {
+                            unionPayResultCallBack.onUnionPayError("数据异常，请稍后重试！");
+                        }
+                    });
         }
     }
 

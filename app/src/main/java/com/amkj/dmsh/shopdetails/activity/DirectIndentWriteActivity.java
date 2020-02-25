@@ -68,17 +68,13 @@ import com.amkj.dmsh.views.RectAddAndSubWriteView;
 import com.amkj.dmsh.views.bottomdialog.SkuDialog;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.klinker.android.link_builder.Link;
-import com.klinker.android.link_builder.LinkBuilder;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -104,18 +100,15 @@ import static com.amkj.dmsh.constant.ConstantVariable.OPEN_GROUP;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY_ALI_PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY_UNION_PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY_WX_PAY;
-import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.UNION_RESULT_CODE;
 import static com.amkj.dmsh.constant.Url.ADDRESS_LIST;
 import static com.amkj.dmsh.constant.Url.PAY_CANCEL;
-import static com.amkj.dmsh.constant.Url.PAY_ERROR;
 import static com.amkj.dmsh.constant.Url.Q_CREATE_GROUP_NEW_INDENT;
 import static com.amkj.dmsh.constant.Url.Q_CREATE_INDENT;
 import static com.amkj.dmsh.constant.Url.Q_NEW_RE_BUY_INDENT;
 import static com.amkj.dmsh.constant.Url.Q_PAYMENT_INDENT;
 import static com.amkj.dmsh.mine.biz.ShopCarDao.getCouponGoodsInfo;
-import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTimeAddSeconds;
 
 
 /**
@@ -996,7 +989,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
             qualityUnionIndent = gson.fromJson(result, QualityCreateUnionPayIndentEntity.class);
             if (qualityUnionIndent != null) {
                 if (qualityUnionIndent.getCode().equals(SUCCESS_CODE)) {
-                    //返回成功，调起微信支付接口
+                    //返回成功，调起银联支付接口
                     orderCreateNo = qualityUnionIndent.getQualityCreateUnionPayIndent().getNo();
                     unionPay(qualityUnionIndent);
                 } else {
@@ -1204,49 +1197,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
         }
     }
 
-    /**
-     * 支付失败弹窗
-     */
-    private void payError() {
-        Calendar calendar = Calendar.getInstance();
-        if (createIndentTime == null) {
-            createIndentTime = calendar.getTime();
-        }
-        if (current == null) {
-            current = calendar.getTime();
-        }
-        if (payErrorDialogHelper == null) {
-            NetLoadUtils.getNetInstance().loadNetDataPost(this, PAY_ERROR, new NetLoadListenerHelper() {
-                @Override
-                public void onSuccess(String result) {
-                    RequestStatus requestStatus = RequestStatus.objectFromData(result);
-                    if (requestStatus != null && SUCCESS_CODE.equals(requestStatus.getCode())) {
-                        setRefundTime(requestStatus);
-                        if (!TextUtils.isEmpty(payErrorMsg)) {
-                            payErrorDialogHelper = new AlertDialogHelper(DirectIndentWriteActivity.this);
-                            payErrorDialogHelper.setMsgTextGravity(Gravity.CENTER).setTitle("支付失败")
-                                    .setMsg(payErrorMsg.toString()).setCancelText("确认离开").setConfirmText("继续支付")
-                                    .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s))
-                                    .setCancelable(false);
-                            payErrorDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
-                                @Override
-                                public void confirm() {
-                                }
-
-                                @Override
-                                public void cancel() {
-                                    finish();
-                                }
-                            });
-                            payErrorDialogHelper.show();
-                        }
-                    }
-                }
-            });
-        } else {
-            payErrorDialogHelper.show();
-        }
-    }
 
     /**
      * 订单支付取消弹窗
@@ -1276,6 +1226,8 @@ public class DirectIndentWriteActivity extends BaseActivity {
                             }
                         });
                         payCancelDialogHelper.show();
+                    }else {
+                        finish();
                     }
                 }
 
@@ -1286,66 +1238,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
             });
         } else {
             finish();
-        }
-    }
-
-
-    /**
-     * 设置退款倒计时
-     *
-     * @param requestStatus
-     */
-    private void setRefundTime(final RequestStatus requestStatus) {
-        //            创建时间加倒计时间 大于等于当前时间 展示倒计时
-        if (isEndOrStartTimeAddSeconds(createIndentTime
-                , current
-                , requestStatus.getSecond())) {
-            setReFundTimeDown(requestStatus);
-            if (constantMethod == null) {
-                constantMethod = new ConstantMethod();
-            }
-            constantMethod.createSchedule();
-            constantMethod.setRefreshTimeListener(() -> setReFundTimeDown(requestStatus));
-        } else {
-            if (constantMethod != null) {
-                constantMethod.stopSchedule();
-            }
-            if (payErrorDialogHelper != null) {
-                payErrorDialogHelper.setMsg("订单已失效");
-            }
-        }
-    }
-
-    /**
-     * 更新退款倒计时
-     *
-     * @param requestStatus
-     */
-    private void setReFundTimeDown(RequestStatus requestStatus) {
-        try {
-            requestStatus.setSecond(requestStatus.getSecond() - 1);
-            long overTime = requestStatus.getSecond() * 1000;
-            long ms = createIndentTime.getTime() + overTime - current.getTime();
-            if (ms >= 0) {
-                int hour = (int) ((ms % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                int minute = (int) ((ms % (1000 * 60 * 60)) / (1000 * 60));
-                String timeMsg = (String.format(getString(R.string.pay_failed), hour, minute));
-                Link link = new Link(Pattern.compile(REGEX_NUM));
-                link.setTextColor(0xffff5e6b);
-                link.setUnderlined(false);
-                link.setHighlightAlpha(0f);
-                payErrorMsg = LinkBuilder.from(DirectIndentWriteActivity.this, timeMsg)
-                        .addLink(link)
-                        .build();
-            } else {
-                if (payErrorDialogHelper != null) {
-                    payErrorDialogHelper.dismiss();
-                }
-            }
-        } catch (Exception e) {
-            if (payErrorDialogHelper != null) {
-                payErrorDialogHelper.dismiss();
-            }
         }
     }
 
@@ -1437,7 +1329,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                     if (unionPay != null) {
                         unionPay.unionPayResult(this, !TextUtils.isEmpty(orderCreateNo) ? orderCreateNo : orderNo, webManualFinish);
                     } else {
-                        payError();
+                        skipIndentDetail();
                     }
                     break;
             }
