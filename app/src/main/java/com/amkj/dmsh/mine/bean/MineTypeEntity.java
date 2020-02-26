@@ -1,6 +1,7 @@
 package com.amkj.dmsh.mine.bean;
 
 import com.amkj.dmsh.base.BaseTimeEntity;
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -48,21 +49,20 @@ public class MineTypeEntity extends BaseTimeEntity{
          * webUrl : https://www.domolife.cn/m/template/order_template/cart.html
          * iconUrl : http://image.domolife.cn/platform/4hZtyZzJPn1543390477783.png
          */
-        private boolean isGetCartTip;//自定义参数，调GetCartTip接口时才需要更新购物车数量
         private String name;
         private String androidUrl;
         private String iconUrl;
-
-        public boolean isGetCartTip() {
-            return isGetCartTip;
-        }
-
-        public void setGetCartTip(boolean getCartTip) {
-            isGetCartTip = getCartTip;
-        }
-
+        private String id;
         //        自定义参数 消息提醒
         private int mesCount;
+
+        public int getId() {
+            return ConstantMethod.getStringChangeIntegers(id);
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
 
         public String getName() {
             return name;

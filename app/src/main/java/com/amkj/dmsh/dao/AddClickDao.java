@@ -14,6 +14,8 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.Url.TOTAL_ACTIVITY_MSG_COUNT;
 import static com.amkj.dmsh.constant.Url.TOTAL_AD_COUNT;
+import static com.amkj.dmsh.constant.Url.TOTAL_DYNAMIC_COUNT;
+import static com.amkj.dmsh.constant.Url.TOTAL_MYDEFINEDICON_COUNT;
 import static com.amkj.dmsh.constant.Url.TOTAL_NOTIFY_MSG_COUNT;
 
 /**
@@ -67,7 +69,7 @@ public class AddClickDao {
         adClickTotal(activity, adId, 0);
     }
 
-    //    统计广告点击
+    //    统计广告点击（营销弹窗为1,其他为0）
     public static void adClickTotal(Activity activity, int adId, int type) {
         Map<String, Object> params = new HashMap<>();
         //回复文章或帖子
@@ -114,6 +116,24 @@ public class AddClickDao {
                 params.put("uid", userId);
             }
             NetLoadUtils.getNetInstance().loadNetDataPost(activity, TOTAL_ACTIVITY_MSG_COUNT, params, null);
+        }
+    }
+
+    //统计首页动态专区点击
+    public static void addDynamicClick(Activity activity, int id) {
+        if (id > 0) {
+            Map<String, Object> params = new HashMap<>();
+            params.put("id", id);
+            NetLoadUtils.getNetInstance().loadNetDataPost(activity, TOTAL_DYNAMIC_COUNT, params, null);
+        }
+    }
+
+    //统计我的十二宫格点击
+    public static void addMyDefinedIconClick(Activity activity, int id) {
+        if (id > 0) {
+            Map<String, Object> params = new HashMap<>();
+            params.put("id", id);
+            NetLoadUtils.getNetInstance().loadNetDataPost(activity, TOTAL_MYDEFINEDICON_COUNT, params, null);
         }
     }
 }

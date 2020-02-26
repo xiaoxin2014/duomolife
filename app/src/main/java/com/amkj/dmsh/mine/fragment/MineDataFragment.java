@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Paint;
 import android.support.annotation.NonNull;
 import android.support.text.emoji.widget.EmojiTextView;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,7 +29,7 @@ import com.amkj.dmsh.bean.MessageBean;
 import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
-import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.dao.AddClickDao;
 import com.amkj.dmsh.dao.UserDao;
 import com.amkj.dmsh.homepage.activity.AttendanceActivity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
@@ -83,6 +84,7 @@ import q.rorbin.badgeview.Badge;
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
 import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.MINE_BOTTOM_TYPE;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getMessageCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -156,6 +158,8 @@ public class MineDataFragment extends BaseFragment {
     //    我的模块
     @BindView(R.id.communal_recycler_wrap)
     public RecyclerView communal_recycler_wrap;
+    @BindView(R.id.cardview)
+    public CardView cardview;
     @BindView(R.id.ad_mine)
     public ConvenientBanner ad_mine;
     @BindView(R.id.tv_personal_data_sup)
@@ -182,14 +186,12 @@ public class MineDataFragment extends BaseFragment {
     private final String[] typeIndentPic = {"i_w_pay_icon", "i_w_send_icon", "i_w_appraise_icon", "i_w_evaluate_icon", "i_s_af_icon"};
     //    跳转登录请求码
     private QualityTypeBean qualityTypeBean;
-    private String packageName = "";
     private CBViewHolderCreator cbViewHolderCreator;
     private QyServiceUtils qyInstance;
     private SharedPreferences mineTypeShared;
     private MineTypeEntity mineTypeEntity;
     private DirectIndentCountEntity mDirectIndentCountEntity;
     private Badge badgeMsg;
-    private boolean isFirst = true;
 
     @Override
     protected int getContentView() {
@@ -203,46 +205,7 @@ public class MineDataFragment extends BaseFragment {
         tv_mine_get_score_more.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG); //下划线
         mTvBindPhone.getPaint().setAntiAlias(true);
         mTvBindPhone.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
-        GridLayoutManager manager = new GridLayoutManager(getActivity(), 4);
-        communal_recycler_wrap.setLayoutManager(manager);
-        communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
-                // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_gray_f_two_px).create());
-        communal_recycler_wrap.setNestedScrollingEnabled(false);
-        mineTypeList = new ArrayList<>();
-        MineTypeEntity bottomLocalData = getBottomLocalData();
-        if (bottomLocalData != null && bottomLocalData.getMineTypeBeanList() != null
-                && bottomLocalData.getMineTypeBeanList().size() > 0) {
-            mineTypeList.addAll(bottomLocalData.getMineTypeBeanList());
-        } else {
-            if (getActivity() == null) {
-                packageName = "com.amkj.dmsh";
-            } else {
-                packageName = getActivity().getPackageName();
-            }
-            for (int i = 0; i < typeMineName.length; i++) {
-                MineTypeBean mineTypeBean = new MineTypeBean();
-                mineTypeBean.setName(typeMineName[i]);
-                mineTypeBean.setIconUrl("android.resource://" + packageName + "/drawable/" + typeMinePic[i]);
-                mineTypeBean.setAndroidUrl(typeMineUrl[i]);
-                mineTypeList.add(mineTypeBean);
-            }
-        }
-        typeMineAdapter = new MineTypeAdapter(getActivity(), mineTypeList);
-        communal_recycler_wrap.setAdapter(typeMineAdapter);
-        typeMineAdapter.setOnItemClickListener((adapter, view, position) -> {
-            MineTypeBean mineTypeBean = (MineTypeBean) view.getTag();
-            if (mineTypeBean != null) {
-                if (mineTypeBean.getAndroidUrl().equals("app://AppDataActivity") && communalUserInfoBean != null) {
-                    String mobile = communalUserInfoBean.getMobile();
-                    setSkipPath(getActivity(), "app://AppDataActivity?mobile=" + mobile, false);
-                } else {
-                    setSkipPath(getActivity(), mineTypeBean.getAndroidUrl(), false);
-                }
-            }
-        });
-
-//        我的订单模块
+        //初始化我的订单模块
         indentTypeList = new ArrayList<>();
         for (int i = 0; i < typeIndentName.length; i++) {
             qualityTypeBean = new QualityTypeBean();
@@ -288,8 +251,148 @@ public class MineDataFragment extends BaseFragment {
                 }
             }
         });
+
+        //初始化十二宫格
+        GridLayoutManager manager = new GridLayoutManager(getActivity(), 4);
+        communal_recycler_wrap.setLayoutManager(manager);
+        communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
+                // 设置分隔线资源ID
+                .setDividerId(R.drawable.item_divider_gray_f_two_px).create());
+        communal_recycler_wrap.setNestedScrollingEnabled(false);
+        mineTypeList = new ArrayList<>();
+        MineTypeEntity bottomLocalData = getBottomLocalData();
+        if (bottomLocalData != null && bottomLocalData.getMineTypeBeanList() != null) {
+            mineTypeList.addAll(bottomLocalData.getMineTypeBeanList());
+        } else {
+            for (int i = 0; i < typeMineName.length; i++) {
+                MineTypeBean mineTypeBean = new MineTypeBean();
+                mineTypeBean.setName(typeMineName[i]);
+                mineTypeBean.setIconUrl("android.resource://" + "com.amkj.dmsh" + "/drawable/" + typeMinePic[i]);
+                mineTypeBean.setAndroidUrl(typeMineUrl[i]);
+                mineTypeList.add(mineTypeBean);
+            }
+        }
+        typeMineAdapter = new MineTypeAdapter(getActivity(), mineTypeList);
+        communal_recycler_wrap.setAdapter(typeMineAdapter);
+        typeMineAdapter.setOnItemClickListener((adapter, view, position) -> {
+            MineTypeBean mineTypeBean = (MineTypeBean) view.getTag();
+            if (mineTypeBean != null) {
+                if ("app://AppDataActivity".equals(mineTypeBean.getAndroidUrl()) && communalUserInfoBean != null) {
+                    String mobile = communalUserInfoBean.getMobile();
+                    setSkipPath(getActivity(), "app://AppDataActivity?mobile=" + mobile, false);
+                } else {
+                    setSkipPath(getActivity(), mineTypeBean.getAndroidUrl(), false);
+                }
+                //统计十二宫格点击
+                AddClickDao.addMyDefinedIconClick(getActivity(), mineTypeBean.getId());
+            }
+        });
+
+        //初始化客服
         setQyService();
-        ad_mine.setVisibility(View.GONE);
+    }
+
+    @Override
+    protected void loadData() {
+        getBottomTypeNetData();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        SavePersonalInfoBean personalInfo = getPersonalInfo(getActivity());
+        if (personalInfo.isLogin()) {
+            getNetDataInfo();
+            getDoMeIndentDataCount();
+            getMineAd();
+            getMessageCount(getActivity(), badgeMsg);
+            getCarCount(getActivity());
+        } else {
+            setErrorUserData();
+        }
+    }
+
+    //获取用户信息
+    private void getNetDataInfo() {
+        LinkedHashMap<String, String> params = new LinkedHashMap<>();
+        params.put("uid", String.valueOf(userId));
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(getActivity(), MINE_PAGE
+                , params, false, new NetCacheLoadListenerHelper() {
+                    @Override
+                    public void onSuccessCacheResult(CacheResult<String> cacheResult) {
+                        if (cacheResult == null || TextUtils.isEmpty(cacheResult.data)) {
+                            return;
+                        }
+                        Gson gson = new Gson();
+                        CommunalUserInfoEntity minePageData = gson.fromJson(cacheResult.data, CommunalUserInfoEntity.class);
+                        communalUserInfoBean = minePageData.getCommunalUserInfoBean();
+                        if (communalUserInfoBean != null && minePageData.getCode().equals(SUCCESS_CODE)) {
+                            ll_mime_no_login.setVisibility(View.GONE);
+                            ll_mine_login.setVisibility(View.VISIBLE);
+                            setData(communalUserInfoBean);
+                            setDeviceInfo(getActivity(), communalUserInfoBean.getApp_version_no()
+                                    , communalUserInfoBean.getDevice_model()
+                                    , communalUserInfoBean.getDevice_sys_version(), communalUserInfoBean.getSysNotice());
+                        } else {
+                            setErrorUserData();
+                            showToast(getActivity(), minePageData.getMsg());
+                        }
+                    }
+
+                    @Override
+                    public void onNotNetOrException() {
+                        setErrorUserData();
+                    }
+                });
+    }
+
+    //设置用户数据
+    private void setData(final CommunalUserInfoBean communalUserInfoBean) {
+        tv_mine_name.setText(getStrings(communalUserInfoBean.getNickname()));
+        tv_mine_att_count.setText(String.valueOf(communalUserInfoBean.getFllow()));
+        tv_mine_fans_count.setText(String.valueOf(communalUserInfoBean.getFans()));
+        tv_mine_inv_count.setText(String.valueOf(communalUserInfoBean.getDocumentcount()));
+        tv_mine_score.setText(String.valueOf(communalUserInfoBean.getScore()));
+        boolean bindingWx = communalUserInfoBean.isBindingWx();
+        if (!bindingWx) {//没有绑定微信
+            mTvBindPhone.setText("关联微信账号");
+            mTvBindPhone.setVisibility(View.VISIBLE);
+        } else if (TextUtils.isEmpty(communalUserInfoBean.getMobile())) {//没有绑定手机号
+            mTvBindPhone.setText("关联手机账号");
+            mTvBindPhone.setVisibility(View.VISIBLE);
+        } else {
+            mTvBindPhone.setVisibility(View.GONE);
+        }
+        GlideImageLoaderUtil.loadHeaderImg(getActivity(), iv_mine_header, !TextUtils.isEmpty(communalUserInfoBean.getAvatar())
+                ? ImageConverterUtils.getFormatImg(communalUserInfoBean.getAvatar()) : "");
+        GlideImageLoaderUtil.loadImage(getActivity(), iv_mine_page_bg, !TextUtils.isEmpty(communalUserInfoBean.getBgimg_url())
+                ? ImageConverterUtils.getFormatImg(communalUserInfoBean.getBgimg_url()) : BASE_RESOURCE_DRAW + R.drawable.mine_no_login_bg);
+        setBottomTypeCount(communalUserInfoBean);
+        CommunalUserInfoBean.NoticeInfoBean noticeInfo = communalUserInfoBean.getNoticeInfo();
+        if (noticeInfo != null && !TextUtils.isEmpty(noticeInfo.getContent())) {
+            rel_personal_data_sup.setVisibility(View.VISIBLE);
+            tv_personal_data_sup.setText(getStrings(noticeInfo.getContent()));
+        } else {
+            rel_personal_data_sup.setVisibility(View.GONE);
+        }
+    }
+
+    //设置十二宫格相关数量
+    private void setBottomTypeCount(CommunalUserInfoBean userData) {
+        for (int i = 0; i < mineTypeList.size(); i++) {
+            MineTypeBean mineTypeBean = mineTypeList.get(i);
+            String androidLink = getStrings(mineTypeBean.getAndroidUrl());
+            if (userData == null) {
+                mineTypeBean.setMesCount(0);
+            } else if (androidLink.contains("DirectMyCouponActivity")) {//优惠券
+                mineTypeBean.setMesCount(userData.getCouponTotal());
+            } else if (androidLink.contains("IntegralProductIndentActivity")) {//积分订单
+                mineTypeBean.setMesCount(userData.getJfTotal());
+            } else if (!androidLink.contains("ShopCarActivity")) {
+                mineTypeBean.setMesCount(0);
+            }
+        }
+        typeMineAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -325,130 +428,11 @@ public class MineDataFragment extends BaseFragment {
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        //刷新我的界面
-        getLoginStatus();
-        getMineAd();
-        if (!isFirst) {
-            getMessageCount(getActivity(), badgeMsg);
-        }
-        isFirst = false;
-    }
-
-
-    private void getLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(getActivity());
-        if (personalInfo.isLogin()) {
-            getNetDataInfo();
-        } else {
-            try {
-                setErrorUserData();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * 个人数据
-     *
-     * @param communalUserInfoBean 用户信息
-     */
-    private void setData(final CommunalUserInfoBean communalUserInfoBean) {
-        tv_mine_name.setText(getStrings(communalUserInfoBean.getNickname()));
-        tv_mine_att_count.setText(String.valueOf(communalUserInfoBean.getFllow()));
-        tv_mine_fans_count.setText(String.valueOf(communalUserInfoBean.getFans()));
-        tv_mine_inv_count.setText(String.valueOf(communalUserInfoBean.getDocumentcount()));
-        tv_mine_score.setText(String.valueOf(communalUserInfoBean.getScore()));
-        boolean bindingWx = communalUserInfoBean.isBindingWx();
-        if (!bindingWx) {//没有绑定微信
-            mTvBindPhone.setText("关联微信账号");
-            mTvBindPhone.setVisibility(View.VISIBLE);
-        } else if (TextUtils.isEmpty(communalUserInfoBean.getMobile())) {//没有绑定手机号
-            mTvBindPhone.setText("关联手机账号");
-            mTvBindPhone.setVisibility(View.VISIBLE);
-        } else {
-            mTvBindPhone.setVisibility(View.GONE);
-        }
-        GlideImageLoaderUtil.loadHeaderImg(getActivity(), iv_mine_header, !TextUtils.isEmpty(communalUserInfoBean.getAvatar())
-                ? ImageConverterUtils.getFormatImg(communalUserInfoBean.getAvatar()) : "");
-        GlideImageLoaderUtil.loadImage(getActivity(), iv_mine_page_bg, !TextUtils.isEmpty(communalUserInfoBean.getBgimg_url())
-                ? ImageConverterUtils.getFormatImg(communalUserInfoBean.getBgimg_url()) : BASE_RESOURCE_DRAW + R.drawable.mine_no_login_bg);
-        setBottomTypeCount(communalUserInfoBean);
-        CommunalUserInfoBean.NoticeInfoBean noticeInfo = communalUserInfoBean.getNoticeInfo();
-        if (noticeInfo != null && !TextUtils.isEmpty(noticeInfo.getContent())) {
-            rel_personal_data_sup.setVisibility(View.VISIBLE);
-            tv_personal_data_sup.setText(getStrings(noticeInfo.getContent()));
-        } else {
-            rel_personal_data_sup.setVisibility(View.GONE);
-        }
-    }
-
-    /**
-     * 设置底栏购物车 优惠券 积分订单数量
-     *
-     * @param userData
-     */
-    private void setBottomTypeCount(CommunalUserInfoBean userData) {
-        if (userData != null) {
-            for (int i = 0; i < mineTypeList.size(); i++) {
-                MineTypeBean mineTypeBean = mineTypeList.get(i);
-                String androidLink = getStrings(mineTypeBean.getAndroidUrl());
-                if (androidLink.contains("ShopCarActivity")) {
-                    mineTypeBean.setGetCartTip(false);
-                } else if (androidLink.contains("DirectMyCouponActivity")) {
-                    mineTypeBean.setMesCount(userData.getCouponTotal());
-                } else if (androidLink.contains("IntegralProductIndentActivity")) {
-                    mineTypeBean.setMesCount(userData.getJfTotal());
-                } else {
-                    mineTypeBean.setMesCount(0);
-                }
-            }
-        } else {
-            for (int i = 0; i < mineTypeList.size(); i++) {
-                MineTypeBean mineTypeBean = mineTypeList.get(i);
-                mineTypeBean.setMesCount(0);
-            }
-        }
-        typeMineAdapter.notifyDataSetChanged();
-        getCarCount(getActivity());
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != RESULT_OK) {
-            return;
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-        try {
-            CallbackContext.onActivityResult(requestCode, resultCode, data);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        /**
-         * 销毁电商SDK相关资源引用，防止内存泄露
-         */
-        AlibcTradeSDK.destory();
-    }
-
-    @Override
-    protected void loadData() {
-        getBottomTypeNetData();
-        //获取消息数量
-        getMessageCount(getActivity(), badgeMsg);
-    }
-
 
     /**
      * 获取订单数量显示
      */
     private void getDoMeIndentDataCount() {
-        if (userId < 1) {
-            setCountData(null);
-            return;
-        }
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Q_QUERY_INDENT_COUNT, params, new NetLoadListenerHelper() {
@@ -458,38 +442,15 @@ public class MineDataFragment extends BaseFragment {
                 mDirectIndentCountEntity = gson.fromJson(result, DirectIndentCountEntity.class);
                 if (mDirectIndentCountEntity != null) {
                     if (mDirectIndentCountEntity.getCode().equals(SUCCESS_CODE)) {
-                        setCountData(mDirectIndentCountEntity.getDirectIndentCountBean());
+                        setIndentCount(mDirectIndentCountEntity.getDirectIndentCountBean());
                     }
                 }
             }
         });
     }
 
-    /**
-     * 获取底部数据
-     */
-    private void getBottomTypeNetData() {
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), MINE_BOTTOM_DATA, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                MineTypeEntity mineTypeEntity = new Gson().fromJson(result, MineTypeEntity.class);
-                if (mineTypeEntity != null && SUCCESS_CODE.equals(mineTypeEntity.getCode())) {
-                    MineTypeEntity bottomLocalData = getBottomLocalData();
-                    if (bottomLocalData == null ||
-                            !getStrings(bottomLocalData.getUpdateTime()).equals(getStrings(mineTypeEntity.getUpdateTime()))) {
-                        saveBottomLocalData(result);
-                    }
-                } else {
-//                    清除底部宫格数据
-                    if (getBottomShared() != null) {
-                        getBottomShared().edit().clear().apply();
-                    }
-                }
-            }
-        });
-    }
-
-    private void setCountData(DirectIndentCountBean messageTotalBean) {
+    //设置订单数量
+    private void setIndentCount(DirectIndentCountBean messageTotalBean) {
         if (messageTotalBean != null) {
             //待付款
             indentTypeList.get(0).setType(messageTotalBean.getWaitPayNum());
@@ -510,52 +471,39 @@ public class MineDataFragment extends BaseFragment {
         indentTypeAdapter.notifyDataSetChanged();
     }
 
-    /**
-     * 请求用户数据
-     */
-    private void getNetDataInfo() {
-        LinkedHashMap<String, String> params = new LinkedHashMap<>();
-        params.put("uid", String.valueOf(userId));
-        NetLoadUtils.getNetInstance().loadNetDataGetCache(getActivity(), MINE_PAGE
-                , params, false, new NetCacheLoadListenerHelper() {
-                    @Override
-                    public void onSuccessCacheResult(CacheResult<String> cacheResult) {
-                        if (cacheResult == null || TextUtils.isEmpty(cacheResult.data)) {
-                            return;
-                        }
-                        Gson gson = new Gson();
-                        CommunalUserInfoEntity minePageData = gson.fromJson(cacheResult.data, CommunalUserInfoEntity.class);
-                        communalUserInfoBean = minePageData.getCommunalUserInfoBean();
-                        if (communalUserInfoBean != null) {
-                            if (minePageData.getCode().equals(SUCCESS_CODE)) {
-                                ll_mime_no_login.setVisibility(View.GONE);
-                                ll_mine_login.setVisibility(View.VISIBLE);
-                                setData(communalUserInfoBean);
-                                getDoMeIndentDataCount();
-                                setDeviceInfo(getActivity(), communalUserInfoBean.getApp_version_no()
-                                        , communalUserInfoBean.getDevice_model()
-                                        , communalUserInfoBean.getDevice_sys_version(), communalUserInfoBean.getSysNotice());
-                            } else {
-                                setErrorUserData();
-                                showToast(getActivity(), minePageData.getMsg());
-                            }
-                        } else {
-                            setErrorUserData();
-                            showToast(getActivity(), minePageData.getMsg());
-                        }
+    //获取十二宫格数据
+    private void getBottomTypeNetData() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), MINE_BOTTOM_DATA, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                MineTypeEntity mineTypeEntity = new Gson().fromJson(result, MineTypeEntity.class);
+                if (mineTypeEntity != null && SUCCESS_CODE.equals(mineTypeEntity.getCode())) {
+                    MineTypeEntity bottomLocalData = getBottomLocalData();
+                    if (bottomLocalData == null ||
+                            !getStrings(bottomLocalData.getUpdateTime()).equals(getStrings(mineTypeEntity.getUpdateTime()))) {
+                        saveBottomLocalData(result);
                     }
-
-                    @Override
-                    public void onNotNetOrException() {
-                        setErrorUserData();
+                } else {
+                    //清除十二宫格数据
+                    if (getBottomShared() != null) {
+                        getBottomShared().edit().clear().apply();
                     }
-                });
+                }
+            }
+        });
     }
 
+
+    //设置未登录状态
     private void setErrorUserData() {
-        initLoggedView();
-        setBottomTypeCount(null);
-        getDoMeIndentDataCount();
+        try {
+            initLoggedView();
+            setBottomTypeCount(null);
+            setIndentCount(null);
+            badgeMsg.setBadgeNumber(0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     //    我的模块 广告
@@ -571,15 +519,14 @@ public class MineDataFragment extends BaseFragment {
                 if (adActivityEntity != null) {
                     if (adActivityEntity.getCode().equals(SUCCESS_CODE)) {
                         setMineAdData(adActivityEntity);
-                    } else {
-                        ad_mine.setVisibility(View.GONE);
                     }
                 }
+                cardview.setVisibility(adBeanList.size() > 0 ? View.VISIBLE : View.GONE);
             }
 
             @Override
             public void onNotNetOrException() {
-                ad_mine.setVisibility(View.GONE);
+                cardview.setVisibility(adBeanList.size() > 0 ? View.VISIBLE : View.GONE);
             }
         });
     }
@@ -590,24 +537,26 @@ public class MineDataFragment extends BaseFragment {
      * @param adActivityEntity
      */
     private void setMineAdData(CommunalADActivityEntity adActivityEntity) {
-        adBeanList.addAll(adActivityEntity.getCommunalADActivityBeanList());
-        ad_mine.setVisibility(View.VISIBLE);
-        if (cbViewHolderCreator == null) {
-            cbViewHolderCreator = new CBViewHolderCreator() {
-                @Override
-                public Holder createHolder(View itemView) {
-                    return new CommunalAdHolderView(itemView, getActivity(), true);
-                }
+        List<CommunalADActivityBean> adList = adActivityEntity.getCommunalADActivityBeanList();
+        if (adList != null && adList.size() > 0) {
+            adBeanList.addAll(adList);
+            if (cbViewHolderCreator == null) {
+                cbViewHolderCreator = new CBViewHolderCreator() {
+                    @Override
+                    public Holder createHolder(View itemView) {
+                        return new CommunalAdHolderView(itemView, getActivity(), true);
+                    }
 
-                @Override
-                public int getLayoutId() {
-                    return R.layout.layout_ad_image_video;
-                }
-            };
+                    @Override
+                    public int getLayoutId() {
+                        return R.layout.layout_ad_image_video;
+                    }
+                };
+            }
+            ad_mine.setPages(getActivity(), cbViewHolderCreator, adBeanList).setCanLoop(true).setPointViewVisible(true)
+                    .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
+                    .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
         }
-        ad_mine.setPages(getActivity(), cbViewHolderCreator, adBeanList).setCanLoop(true).setPointViewVisible(true)
-                .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
-                .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
     }
 
     /**
@@ -623,124 +572,100 @@ public class MineDataFragment extends BaseFragment {
         GlideImageLoaderUtil.loadCenterCrop(getActivity(), iv_mine_page_bg, BASE_RESOURCE_DRAW + R.drawable.mine_no_login_bg);
     }
 
-    public void skipLoginPage() {
-        ConstantMethod.getLoginStatus(this);
-    }
 
-    // 个人资料设置 -》头像设置
-    @OnClick({R.id.iv_mine_header})
-    void skipPersonal(View view) {
-        Intent intent = new Intent(getActivity(), PersonalDataActivity.class);
-        startActivity(intent);
-    }
-
-    // 2016/8/18 跳转粉丝页
-    @OnClick(R.id.ll_mine_fans_count)
-    void skipFans(View view) {
-        if (userId != 0) {
-            Intent intent = new Intent(getActivity(), UserFansAttentionActivity.class);
-            intent.putExtra("type", "fans");
-            intent.putExtra("fromPage", "mine");
-            intent.putExtra("userId", userId);
-            startActivity(intent);
-        } else {
-            skipLoginPage();
+    @OnClick({R.id.iv_mine_header, R.id.ll_mine_fans_count, R.id.ll_mine_att_count, R.id.ll_mine_inv_count, R.id.tv_mine_all_indent, R.id.iv_mine_mes,
+            R.id.tv_no_login_show, R.id.rel_mine_info, R.id.ll_mime_no_login, R.id.rel_integral_more, R.id.tv_personal_data_sup, R.id.tv_bind_phone})
+    public void onViewClicked(View view) {
+        if (userId < 0) {
+            getLoginStatus(this);
+            return;
         }
-    }
-
-    //  2016/8/18 跳转关注页
-    @OnClick(R.id.ll_mine_att_count)
-    void skipAttention(View view) {
-        if (userId != 0) {
-            Intent intent = new Intent(getActivity(), UserFansAttentionActivity.class);
-            intent.putExtra("type", "attention");
-            intent.putExtra("fromPage", "mine");
-            intent.putExtra("userId", userId);
-            startActivity(intent);
-        } else {
-            skipLoginPage();
-        }
-    }
-
-    //    我的帖子
-    @OnClick(R.id.ll_mine_inv_count)
-    void skipInvitation(View view) {
-        Intent intent = new Intent(getActivity(), MyPostActivity.class);
-        startActivity(intent);
-    }
-
-    //    全部订单
-    @OnClick({R.id.tv_mine_all_indent})
-    void skipAllIndent(View view) {
-        Intent intent = new Intent();
-        intent.setClass(getActivity(), DoMoIndentAllActivity.class);
-        intent.putExtra("tab", "all");
-        if (mDirectIndentCountEntity != null && mDirectIndentCountEntity.getDirectIndentCountBean() != null) {
-            intent.putExtra("waitEvaluateNum", mDirectIndentCountEntity.getDirectIndentCountBean().getWaitEvaluateNum());
-        }
-        startActivity(intent);
-    }
-
-    //    跳转消息
-    @OnClick(R.id.iv_mine_mes)
-    void skipMes(View view) {
-        Intent intent = new Intent(getActivity(), MessageActivity.class);
-        startActivity(intent);
-    }
-
-    //    跳转登录
-    @OnClick(R.id.tv_no_login_show)
-    void skipLogin(View view) {
-        Intent intent = new Intent(getActivity(), MineLoginActivity.class);
-        startActivityForResult(intent, IS_LOGIN_CODE);
-    }
-
-
-    //    登录点击背景
-    @OnClick({R.id.rel_mine_info, R.id.ll_mime_no_login})
-    void changeBg(View view) {
-        if (userId > 0 && communalUserInfoBean != null) {
-            Intent intent = new Intent(getActivity(), PersonalBgImgActivity.class);
-            intent.putExtra("imgUrl", getStrings(communalUserInfoBean.getBgimg_url()));
-            startActivity(intent);
-        }
-    }
-
-    //    跳转签到
-    @OnClick(R.id.rel_integral_more)
-    void skipAtt(View view) {
-        Intent intent = new Intent(getActivity(), AttendanceActivity.class);
-        startActivity(intent);
-    }
-
-    @OnClick(R.id.tv_personal_data_sup)
-    void personalSupply(View view) {
-        if (communalUserInfoBean != null && communalUserInfoBean.getNoticeInfo() != null
-                && !TextUtils.isEmpty(communalUserInfoBean.getNoticeInfo().getAndroid_link())) {
-            setSkipPath(getActivity(), communalUserInfoBean.getNoticeInfo().getAndroid_link(), false);
-        }
-    }
-
-    //微信登录绑定手机号或者绑定微信
-    @OnClick(R.id.tv_bind_phone)
-    void bindPhone(View view) {
-        if (userId > 0) {
-            if (communalUserInfoBean != null) {
-                boolean bindingWx = communalUserInfoBean.isBindingWx();
-                if (!bindingWx) {
-                    //绑定微信
-                    UMShareConfig config = new UMShareConfig();
-                    config.isNeedAuthOnGetUserInfo(true);
-                    UMShareAPI.get(getActivity()).setShareConfig(config);
-                    // 打开微信授权
-                    UMShareAPI.get(getActivity()).getPlatformInfo(getActivity(), WEIXIN, getDataInfoListener);
-                } else {
-                    UserDao.bindPhoneByWx(getActivity());
+        Intent intent = null;
+        switch (view.getId()) {
+            //设置头像
+            case R.id.iv_mine_header:
+                intent = new Intent(getActivity(), PersonalDataActivity.class);
+                startActivity(intent);
+                break;
+            //跳转粉丝页
+            case R.id.ll_mine_fans_count:
+                intent = new Intent(getActivity(), UserFansAttentionActivity.class);
+                intent.putExtra("type", "fans");
+                intent.putExtra("fromPage", "mine");
+                intent.putExtra("userId", userId);
+                startActivity(intent);
+                break;
+            //跳转关注页
+            case R.id.ll_mine_att_count:
+                intent = new Intent(getActivity(), UserFansAttentionActivity.class);
+                intent.putExtra("type", "attention");
+                intent.putExtra("fromPage", "mine");
+                intent.putExtra("userId", userId);
+                startActivity(intent);
+                break;
+            //我的帖子
+            case R.id.ll_mine_inv_count:
+                intent = new Intent(getActivity(), MyPostActivity.class);
+                startActivity(intent);
+                break;
+            //全部订单
+            case R.id.tv_mine_all_indent:
+                intent = new Intent();
+                intent.setClass(getActivity(), DoMoIndentAllActivity.class);
+                intent.putExtra("tab", "all");
+                if (mDirectIndentCountEntity != null && mDirectIndentCountEntity.getDirectIndentCountBean() != null) {
+                    intent.putExtra("waitEvaluateNum", mDirectIndentCountEntity.getDirectIndentCountBean().getWaitEvaluateNum());
                 }
-            }
+                startActivity(intent);
+                break;
+            //我的消息
+            case R.id.iv_mine_mes:
+                intent = new Intent(getActivity(), MessageActivity.class);
+                startActivity(intent);
+                break;
+            //跳转登录页
+            case R.id.tv_no_login_show:
+                intent = new Intent(getActivity(), MineLoginActivity.class);
+                startActivityForResult(intent, IS_LOGIN_CODE);
+                break;
+            //更换封面
+            case R.id.rel_mine_info:
+            case R.id.ll_mime_no_login:
+                if (communalUserInfoBean != null) {
+                    intent = new Intent(getActivity(), PersonalBgImgActivity.class);
+                    intent.putExtra("imgUrl", getStrings(communalUserInfoBean.getBgimg_url()));
+                    startActivity(intent);
+                }
+                break;
+            //获取更多积分
+            case R.id.rel_integral_more:
+                intent = new Intent(getActivity(), AttendanceActivity.class);
+                startActivity(intent);
+                break;
+            //生日提醒
+            case R.id.tv_personal_data_sup:
+                if (communalUserInfoBean != null && communalUserInfoBean.getNoticeInfo() != null
+                        && !TextUtils.isEmpty(communalUserInfoBean.getNoticeInfo().getAndroid_link())) {
+                    setSkipPath(getActivity(), communalUserInfoBean.getNoticeInfo().getAndroid_link(), false);
+                }
+                break;
+            //绑定手机号
+            case R.id.tv_bind_phone:
+                if (communalUserInfoBean != null) {
+                    boolean bindingWx = communalUserInfoBean.isBindingWx();
+                    if (!bindingWx) {
+                        //绑定微信
+                        UMShareConfig config = new UMShareConfig();
+                        config.isNeedAuthOnGetUserInfo(true);
+                        UMShareAPI.get(getActivity()).setShareConfig(config);
+                        // 打开微信授权
+                        UMShareAPI.get(getActivity()).getPlatformInfo(getActivity(), WEIXIN, getDataInfoListener);
+                    } else {
+                        UserDao.bindPhoneByWx(getActivity());
+                    }
+                }
+                break;
 
-        } else {
-            getLoginStatus();
         }
     }
 
@@ -827,14 +752,6 @@ public class MineDataFragment extends BaseFragment {
         });
     }
 
-
-    @Override
-    protected void postEventResult(@NonNull EventMessage message) {
-        if (TOKEN_EXPIRE_LOG_OUT.equals(message.type)) {
-            setErrorUserData();
-        }
-    }
-
     /**
      * 获取底部轻量级存储对象
      *
@@ -850,11 +767,7 @@ public class MineDataFragment extends BaseFragment {
         return mineTypeShared;
     }
 
-    /**
-     * 保存底部数据
-     *
-     * @param typeData
-     */
+    //保存十二宫格
     public void saveBottomLocalData(String typeData) {
         SharedPreferences bottomShared = getBottomShared();
         if (bottomShared != null && !TextUtils.isEmpty(typeData)) {
@@ -864,9 +777,7 @@ public class MineDataFragment extends BaseFragment {
         }
     }
 
-    /**
-     * 获取底部数据
-     */
+    //获取本地十二宫格数据
     public MineTypeEntity getBottomLocalData() {
         try {
             if (mineTypeEntity == null) {
@@ -887,6 +798,40 @@ public class MineDataFragment extends BaseFragment {
         }
     }
 
+    //更新购物车商品数量
+    public void getCarCount(Activity activity) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("userId", userId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(activity, Q_QUERY_CAR_COUNT, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                Gson gson = new Gson();
+                MessageBean requestStatus = gson.fromJson(result, MessageBean.class);
+                if (requestStatus != null) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
+                        int cartNumber = requestStatus.getResult();
+                        updateShopCartNum(cartNumber);
+                    }
+                }
+            }
+        });
+    }
+
+    private void updateShopCartNum(int num) {
+        if (mineTypeList != null && mineTypeList.size() > 0 && typeMineAdapter != null) {
+            for (int i = 0; i < mineTypeList.size(); i++) {
+                MineTypeBean mineTypeBean = mineTypeList.get(i);
+                String androidLink = getStrings(mineTypeBean.getAndroidUrl());
+                if (!TextUtils.isEmpty(androidLink) && androidLink.contains("ShopCarActivity")) {
+                    mineTypeBean.setMesCount(num);
+                    typeMineAdapter.notifyItemChanged(i);
+                    break;
+                }
+            }
+        }
+    }
+
+
     @Override
     public void initImmersionBar() {
         ImmersionBar.with(this).titleBar(rel_header_mine)
@@ -903,43 +848,28 @@ public class MineDataFragment extends BaseFragment {
         return false;
     }
 
-    //更新购物车商品数量
-    public void getCarCount(Activity activity) {
-        if (userId > 0) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("userId", userId);
-            NetLoadUtils.getNetInstance().loadNetDataPost(activity, Q_QUERY_CAR_COUNT, params, new NetLoadListenerHelper() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    MessageBean requestStatus = gson.fromJson(result, MessageBean.class);
-                    if (requestStatus != null) {
-                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                            int cartNumber = requestStatus.getResult();
-                            updateShopCartNum(cartNumber);
-                        }
-                    }
-                }
-            });
-        } else {
-            updateShopCartNum(0);
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != RESULT_OK) {
+            return;
         }
+        super.onActivityResult(requestCode, resultCode, data);
+        try {
+            CallbackContext.onActivityResult(requestCode, resultCode, data);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        /**
+         * 销毁电商SDK相关资源引用，防止内存泄露
+         */
+        AlibcTradeSDK.destory();
     }
 
-    private void updateShopCartNum(int num) {
-        int position = 0;
-        if (mineTypeList != null && mineTypeList.size() > 0 && typeMineAdapter != null) {
-            for (int i = 0; i < mineTypeList.size(); i++) {
-                MineTypeBean mineTypeBean = mineTypeList.get(i);
-                String androidLink = getStrings(mineTypeBean.getAndroidUrl());
-                if (androidLink.contains("ShopCarActivity")) {
-                    mineTypeBean.setGetCartTip(true);
-                    mineTypeBean.setMesCount(num);
-                    position = i;
-                    break;
-                }
-            }
-            typeMineAdapter.notifyItemChanged(position);
+    @Override
+    protected void postEventResult(@NonNull EventMessage message) {
+        if (TOKEN_EXPIRE_LOG_OUT.equals(message.type)) {
+            setErrorUserData();
         }
     }
 }

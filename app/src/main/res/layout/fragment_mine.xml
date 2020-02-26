@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@color/white"
-              android:focusable="true"
-              android:focusableInTouchMode="true">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -16,7 +16,7 @@
             android:descendantFocusability="blocksDescendants"
             android:orientation="vertical">
 
-            <include layout="@layout/layout_mine_head"/>
+            <include layout="@layout/layout_mine_head" />
 
             <RelativeLayout
                 android:id="@+id/rel_personal_data_sup"
@@ -31,7 +31,7 @@
                     android:layout_width="@dimen/sc_mm_40"
                     android:layout_height="@dimen/sc_mm_40"
                     android:layout_centerVertical="true"
-                    android:src="@drawable/mine_tips"/>
+                    android:src="@drawable/mine_tips" />
 
                 <TextView
                     android:id="@+id/tv_personal_data_sup"
@@ -43,17 +43,17 @@
                     android:gravity="center_vertical"
                     android:maxLines="2"
                     android:textColor="@color/text_login_gray_s"
-                    android:textSize="@dimen/sc_mm_28"/>
+                    android:textSize="@dimen/sc_mm_28" />
             </RelativeLayout>
 
-            <android.support.v7.widget.CardView
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
+            <android.support.v7.widget.CardView xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/cardview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/sc_mm_20"
                 android:layout_marginTop="@dimen/sc_mm_20"
                 android:layout_marginRight="@dimen/sc_mm_20"
+                android:visibility="gone"
                 app:cardBackgroundColor="@color/white"
                 app:cardCornerRadius="@dimen/sc_mm_12"
                 app:cardElevation="0dp">
@@ -61,7 +61,7 @@
                 <com.bigkoo.convenientbanner.ConvenientBanner
                     android:id="@+id/ad_mine"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/sc_mm_160"/>
+                    android:layout_height="@dimen/sc_mm_160" />
             </android.support.v7.widget.CardView>
 
             <RelativeLayout
@@ -76,7 +76,7 @@
                     android:layout_marginLeft="@dimen/sc_mm_26"
                     android:text="我的订单"
                     android:textColor="@color/text_black_t"
-                    android:textSize="@dimen/sc_mm_32"/>
+                    android:textSize="@dimen/sc_mm_32" />
 
                 <TextView
                     android:id="@+id/tv_mine_all_indent"
@@ -91,7 +91,7 @@
                     android:paddingRight="@dimen/sc_mm_20"
                     android:text="查看全部订单"
                     android:textColor="@color/text_gray_hint_n"
-                    android:textSize="@dimen/sc_mm_28"/>
+                    android:textSize="@dimen/sc_mm_28" />
             </RelativeLayout>
 
             <LinearLayout
@@ -106,9 +106,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/sc_mm_20"
                     android:background="@color/white"
-                    android:scrollbars="none"/>
+                    android:scrollbars="none" />
 
-                <include layout="@layout/layout_communal_recycler_wrap"/>
+                <include layout="@layout/layout_communal_recycler_wrap" />
 
             </LinearLayout>
         </LinearLayout>

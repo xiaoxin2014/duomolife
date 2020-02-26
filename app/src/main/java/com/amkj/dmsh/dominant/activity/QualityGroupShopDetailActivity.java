@@ -926,7 +926,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                             , (mGroupShopDetailsBean.isProductGroup() ? getStringsFormat(this, R.string.group_price, mGroupShopDetailsBean.getGpPrice()) : "") + (!TextUtils.isEmpty(mGroupShopDetailsBean.getGpName()) ? mGroupShopDetailsBean.getGpName() : mGroupShopDetailsBean.getProductName())
                             , ""
                             , ""
-                            , (mGroupShopDetailsBean.isProductGroup() ? "pages/groupDetails/groupDetails?id=" : "pages/LotteryGroup/LotteryGroup?gpInfoId=") + mGroupShopDetailsBean.getGpInfoId(),
+                            , (mGroupShopDetailsBean.isProductGroup() ? "pages/groupDetails/groupDetails?id=" : "pages/LotteryGroup/lotteryGroup?gpInfoId=") + mGroupShopDetailsBean.getGpInfoId(),
                             mGroupShopDetailsBean.getGpInfoId(), -1, "1");
                 }
                 break;

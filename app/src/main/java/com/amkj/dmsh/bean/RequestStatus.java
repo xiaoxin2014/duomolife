@@ -21,6 +21,8 @@ public class RequestStatus extends BaseTimeEntity {
     //    新人专享 封面图
     @SerializedName(value = "imgUrl", alternate = "picUrl")
     private String imgUrl;
+    @SerializedName(value = "android_link", alternate = "androidLink")
+    private String androidLink;
     private int orderRefundProductId;
     private String version;
     private long second;
@@ -66,6 +68,14 @@ public class RequestStatus extends BaseTimeEntity {
 
     public static RequestStatus objectFromData(String str) {
         return new Gson().fromJson(str, RequestStatus.class);
+    }
+
+    public String getAndroidLink() {
+        return androidLink;
+    }
+
+    public void setAndroidLink(String androidLink) {
+        this.androidLink = androidLink;
     }
 
     public String getType() {

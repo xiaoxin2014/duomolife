@@ -185,13 +185,17 @@ public class Url {
     public static final String TOTAL_WELFARE_PRO_NUM = "api/goods/addTopicProductNum";
     //    统计官方通知点击商品数
     public static final String TOTAL_OFFICIAL_PRO_NUM = "api/goods/addCommProductNum";
-    //    统计广告点击
+    //    统计广告点击数
     public static final String TOTAL_AD_COUNT = "api/home/addAdClickCount";
-    //    统计通知消息点击
+    //    统计通知消息点击数
     public static final String TOTAL_NOTIFY_MSG_COUNT = "api/message/addClickNumByPlatform";
-    //    统计活动消息点击
+    //    统计活动消息点击数
     public static final String TOTAL_ACTIVITY_MSG_COUNT = "api/message/addClickNumByActivityInfo";
-    //    统计极光消息打开数目
+    //    统计动态专区点击数
+    public static final String TOTAL_DYNAMIC_COUNT = "api/home/addDynamicAreaCount";
+    //    统计十二宫格
+    public static final String TOTAL_MYDEFINEDICON_COUNT = "api/home/addMyDefinedClickCount";
+    //    统计极光消息打开数
     public static final String TOTAL_JPUSH_COUNT = "api/home/addPushClickNum";
     //    官方详情
     public static final String H_MES_OFFICIAL = "api/message/newOfficialCommentList";

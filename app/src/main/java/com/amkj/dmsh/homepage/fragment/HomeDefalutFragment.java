@@ -89,6 +89,7 @@ import static com.amkj.dmsh.constant.Url.H_DML_THEME;
 import static com.amkj.dmsh.constant.Url.QUALITY_SHOP_GOODS_PRO;
 import static com.amkj.dmsh.constant.Url.Q_PRODUCT_TYPE_LIST;
 import static com.amkj.dmsh.dao.AddClickDao.adClickTotal;
+import static com.amkj.dmsh.dao.AddClickDao.addDynamicClick;
 
 
 /**
@@ -669,22 +670,23 @@ public class HomeDefalutFragment extends BaseFragment {
     @OnClick({R.id.rl_more_welfare_topic, R.id.rl_more_nice_topic, R.id.tv_more_nice_topic, R.id.rl_more_artical, R.id.tv_refresh_artical, R.id.ll_dynamic})
     public void onViewClicked(View view) {
         Intent intent;
+        if (getActivity() == null) return;
         switch (view.getId()) {
             //跳转福利社列表
             case R.id.rl_more_welfare_topic:
                 intent = new Intent(getActivity(), DoMoLifeWelfareActivity.class);
-                if (getActivity() != null) startActivity(intent);
+                startActivity(intent);
                 break;
             //跳转好物列表
             case R.id.rl_more_nice_topic:
             case R.id.tv_more_nice_topic:
                 intent = new Intent(getActivity(), QualityGoodActivity.class);
-                if (getActivity() != null) startActivity(intent);
+                startActivity(intent);
                 break;
             //跳转文章列表
             case R.id.rl_more_artical:
                 intent = new Intent(getActivity(), ArticleTypeActivity.class);
-                if (getActivity() != null) startActivity(intent);
+                startActivity(intent);
                 break;
             //换一批文章
             case R.id.tv_refresh_artical:
@@ -699,11 +701,17 @@ public class HomeDefalutFragment extends BaseFragment {
                     getArticleTypeList(true);
                 }
                 break;
+            //动态专区
             case R.id.ll_dynamic:
-                //跳转新人专区
-                intent = new Intent(getActivity(), QualityNewUserActivity.class);
-                if (getActivity() != null) {
-                    startActivity(intent);
+                if (mHomeDynamicEntity != null) {
+                    addDynamicClick(getActivity(), mHomeDynamicEntity.getId());
+                    String link = mHomeDynamicEntity.getLink();
+                    if (TextUtils.isEmpty(link)) {
+                        intent = new Intent(getActivity(), QualityNewUserActivity.class);
+                        startActivity(intent);
+                    } else {
+                        setSkipPath(getActivity(), link, false);
+                    }
                 }
                 break;
         }

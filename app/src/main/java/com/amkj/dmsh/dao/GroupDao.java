@@ -30,7 +30,7 @@ public class GroupDao {
             boolean lotteryGroup = !TextUtils.isEmpty(orderNo) ? "3".equals(qualityGroupShareBean.getType()) : GROUP_LOTTERY.equals(qualityGroupShareBean.getType());
             int gpInfoId = qualityGroupShareBean.getGpInfoId();
             String gpRecordId = qualityGroupShareBean.getGpRecordId();
-            String prefix = lotteryGroup ? "pages/LotteryGroup/LotteryGroup" : "pages/groupDetails/groupDetails";
+            String prefix = lotteryGroup ? "pages/LotteryGroup/lotteryGroup" : "pages/groupDetails/groupDetails";
             String suffix = TextUtils.isEmpty(orderNo) ? ((lotteryGroup ? "?gpInfoId=" : "?id=") + gpInfoId + "&gpRecordId=" + gpRecordId) : "?orderNo=" + orderNo;
             new UMShareAction((BaseActivity) activity
                     , qualityGroupShareBean.getCoverImage()
@@ -48,7 +48,7 @@ public class GroupDao {
                 , (mGroupShopDetailsBean.isProductGroup() ? getStringsFormat(activity, R.string.group_price, mGroupShopDetailsBean.getGpPrice()) : "") + (!TextUtils.isEmpty(mGroupShopDetailsBean.getGpName()) ? mGroupShopDetailsBean.getGpName() : mGroupShopDetailsBean.getProductName())
                 , ""
                 , ""
-                , (mGroupShopDetailsBean.isProductGroup() ? "pages/groupDetails/groupDetails?id=" : "pages/LotteryGroup/LotteryGroup?gpInfoId=") + mGroupShopDetailsBean.getGpInfoId(),
+                , (mGroupShopDetailsBean.isProductGroup() ? "pages/groupDetails/groupDetails?id=" : "pages/LotteryGroup/lotteryGroup?gpInfoId=") + mGroupShopDetailsBean.getGpInfoId(),
                 mGroupShopDetailsBean.getGpInfoId(), -1, "1");
     }
 }

@@ -37,11 +37,9 @@ public class MineTypeAdapter extends BaseQuickAdapter<MineTypeBean, MineTypeAdap
     protected void convert(TypeViewHolderHelper helper, MineTypeBean mineTypeBean) {
         Badge badge = helper.badge;
         if (badge != null) {
-            if (badge.getBadgeNumber() != mineTypeBean.getMesCount()) {
-                if (!"ShopCarActivity".equals(mineTypeBean.getAndroidUrl()) || ("ShopCarActivity".equals(mineTypeBean.getAndroidUrl()) && mineTypeBean.isGetCartTip())) {
-                    badge.setBadgeNumber(mineTypeBean.getMesCount());
-                }
-            }
+//            if (!"ShopCarActivity".equals(mineTypeBean.getAndroidUrl()) || mineTypeBean.isGetCartTip()) {
+            badge.setBadgeNumber(mineTypeBean.getMesCount());
+//            }
         }
         GlideImageLoaderUtil.loadFitCenter(context, helper.iv_mine_type_icon, mineTypeBean.getIconUrl());
         helper.setText(R.id.tv_mine_type_title, getStrings(mineTypeBean.getName()))

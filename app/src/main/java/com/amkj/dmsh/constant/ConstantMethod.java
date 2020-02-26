@@ -1183,10 +1183,8 @@ public class ConstantMethod {
                                 @Override
                                 public void imageClick() {
                                     alertDialogAdImage.dismiss();
-                                    Intent intent = new Intent(context, DoMoLifeCommunalActivity.class);
-                                    intent.putExtra("loadUrl", LOTTERY_URL);
-                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    context.startActivity(intent);
+                                    String androidLink = requestStatus.getAndroidLink();
+                                    setSkipPath(context, TextUtils.isEmpty(androidLink) ? LOTTERY_URL : androidLink, false);
                                 }
                             });
                             alertDialogAdImage.setImage(bitmap);
