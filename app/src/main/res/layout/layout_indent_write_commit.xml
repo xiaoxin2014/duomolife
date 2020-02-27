@@ -28,7 +28,7 @@
         android:id="@+id/tv_indent_write_commit"
         android:layout_width="@dimen/sc_mm_250"
         android:layout_height="match_parent"
-        android:background="@drawable/sel_nor_red_un_gray"
+        android:background="@color/text_normal_red"
         android:gravity="center"
         android:text="提交订单"
         android:textColor="@android:color/white"

@@ -71,7 +71,6 @@ import com.google.gson.reflect.TypeToken;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,12 +83,14 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.dismissLoadhud;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.setEtFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.showImportantToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showLoadhud;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
@@ -160,12 +161,8 @@ public class DirectIndentWriteActivity extends BaseActivity {
     private IndentDiscountAdapter indentDiscountAdapter;
     private IndentWriteEntity identWriteEntity;
     private boolean isReal = false;
-    private Date createIndentTime;
     private ConstantMethod constantMethod;
-    private Date current;
-    private CharSequence payErrorMsg;
     private IndentWriteBean indentWriteBean;
-    private AlertDialogHelper payErrorDialogHelper;
     private AlertDialogHelper payCancelDialogHelper;
     private QualityCreateUnionPayIndentEntity qualityUnionIndent;
     private UnionPay unionPay;
@@ -504,8 +501,9 @@ public class DirectIndentWriteActivity extends BaseActivity {
         showPurchaseDialog(indentWriteBean);
         //实名制相关
         isReal = indentWriteBean.isReal();
-//        偏远地区
-//        tv_indent_write_commit.setEnabled(indentWriteBean.getAllProductNotBuy() == 0);
+        //商品中包含失效，已抢光或者偏远地区商品
+        tv_indent_write_commit.setBackgroundResource(indentWriteBean.getAllProductNotBuy() == 0 ? R.color.text_normal_red : R.color.text_gray_c);
+        //实名信息
         setOverseaData(indentWriteBean);
         //金额信息
         setDiscounts(indentWriteBean.getPriceInfos());
@@ -737,6 +735,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
      * 创建拼团订单
      */
     private void createGroupIndent(final String payWay, GroupShopDetailsBean groupShopDetailsBean) {
+        showLoadhud(this);
         String message = pullFootView.edt_direct_product_note.getText().toString().trim();
         Map<String, Object> params = new HashMap<>();
         //用户ID
@@ -800,17 +799,8 @@ public class DirectIndentWriteActivity extends BaseActivity {
 
             @Override
             public void onNotNetOrException() {
-                tv_indent_write_commit.setEnabled(true);
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
+                dismissLoadhud(getActivity());
                 showImportantToast(DirectIndentWriteActivity.this, R.string.do_failed);
-            }
-
-            @Override
-            public void netClose() {
-                showImportantToast(DirectIndentWriteActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
@@ -819,9 +809,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
      * 创建普通订单
      */
     private void createIndent() {
-        if (loadHud != null) {
-            loadHud.show();
-        }
+        showLoadhud(this);
         String message = pullFootView.edt_direct_product_note.getText().toString().trim();
         Map<String, Object> params = new HashMap<>();
         //用户ID
@@ -877,28 +865,13 @@ public class DirectIndentWriteActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_CREATE_INDENT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-//                if (pullFootView.rect_indent_number.getVisibility() == VISIBLE) {
-//                    pullFootView.rect_indent_number.setVisibility(GONE);
-//                }
                 dealingIndentPayResult(result);
             }
 
             @Override
             public void onNotNetOrException() {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-                tv_indent_write_commit.setEnabled(true);
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
+                dismissLoadhud(getActivity());
                 showImportantToast(DirectIndentWriteActivity.this, R.string.do_failed);
-            }
-
-            @Override
-            public void netClose() {
-                showImportantToast(DirectIndentWriteActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
@@ -924,17 +897,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
 
             @Override
             public void onNotNetOrException() {
-                tv_indent_write_commit.setEnabled(true);
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
                 showImportantToast(DirectIndentWriteActivity.this, R.string.do_failed);
-            }
-
-            @Override
-            public void netClose() {
-                showImportantToast(DirectIndentWriteActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
@@ -945,9 +908,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
      * @param result 处理订单返回数据
      */
     private void dealingIndentPayResult(String result) {
-        if (loadHud != null) {
-            loadHud.dismiss();
-        }
+        dismissLoadhud(this);
         Gson gson = new Gson();
         if (payWay.equals(PAY_WX_PAY)) {
             qualityWeChatIndent = gson.fromJson(result, QualityCreateWeChatPayIndentBean.class);
@@ -1004,9 +965,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
                 }
             }
         }
-        tv_indent_write_commit.setEnabled(true);
-
-
     }
 
     /**
@@ -1226,7 +1184,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                             }
                         });
                         payCancelDialogHelper.show();
-                    }else {
+                    } else {
                         finish();
                     }
                 }
@@ -1494,10 +1452,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
             if (constantMethod.alertImportDialogHelper != null) {
                 constantMethod.alertImportDialogHelper.dismiss();
             }
-        }
-        if (payErrorDialogHelper != null
-                && payErrorDialogHelper.getAlertDialog() != null && payErrorDialogHelper.getAlertDialog().isShowing()) {
-            payErrorDialogHelper.dismiss();
         }
         if (payCancelDialogHelper != null
                 && payCancelDialogHelper.getAlertDialog() != null && payCancelDialogHelper.getAlertDialog().isShowing()) {

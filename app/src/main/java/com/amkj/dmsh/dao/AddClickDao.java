@@ -71,13 +71,15 @@ public class AddClickDao {
 
     //    统计广告点击（营销弹窗为1,其他为0）
     public static void adClickTotal(Activity activity, int adId, int type) {
-        Map<String, Object> params = new HashMap<>();
-        //回复文章或帖子
-        params.put("id", adId);
-        if (type != 0) {
-            params.put("type", type);
+        if (adId > 0) {
+            Map<String, Object> params = new HashMap<>();
+            //回复文章或帖子
+            params.put("id", adId);
+            if (type != 0) {
+                params.put("type", type);
+            }
+            NetLoadUtils.getNetInstance().loadNetDataPost(activity, TOTAL_AD_COUNT, params, null);
         }
-        NetLoadUtils.getNetInstance().loadNetDataPost(activity, TOTAL_AD_COUNT, params, null);
     }
 
 

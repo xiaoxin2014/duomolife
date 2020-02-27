@@ -49,6 +49,7 @@ import com.amkj.dmsh.bean.HomeQualityFloatAdEntity;
 import com.amkj.dmsh.bean.ImageBean;
 import com.amkj.dmsh.bean.MessageBean;
 import com.amkj.dmsh.bean.RequestStatus;
+import com.amkj.dmsh.dao.AddClickDao;
 import com.amkj.dmsh.dominant.activity.QualityGroupShopDetailActivity;
 import com.amkj.dmsh.dominant.activity.QualityNewUserActivity;
 import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
@@ -1185,6 +1186,7 @@ public class ConstantMethod {
                                     alertDialogAdImage.dismiss();
                                     String androidLink = requestStatus.getAndroidLink();
                                     setSkipPath(context, TextUtils.isEmpty(androidLink) ? LOTTERY_URL : androidLink, false);
+                                    AddClickDao.adClickTotal(context, requestStatus.getId());
                                 }
                             });
                             alertDialogAdImage.setImage(bitmap);

@@ -23,6 +23,7 @@ import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
+import com.amkj.dmsh.utils.TimeUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
@@ -246,6 +247,9 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
                 backgroundInfo.setColor(getResources().getColor(R.color.text_normal_red));
                 dynamic.setBackgroundInfo(backgroundInfo);
                 countdownView.dynamicShow(dynamic.build());
+                String timeformat = TimeUtils.getTimeDifferenceText(gpEndTime, formatter.format(startTime));
+                //倒计时样式格式化
+                countdownView.customTimeShow(timeformat.contains("天"), timeformat.contains("时"), timeformat.contains("分"), timeformat.contains("秒"), false);
                 countdownView.updateShow(endTime.getTime() - startTime.getTime() - mGroupShopDetailsEntity.getSecond() * 1000);
                 groupShareJoinView.tv_show_communal_time_status.setText("剩余");
                 if (!isEndOrStartTime(mGroupShopDetailsEntity.getCurrentTime()
