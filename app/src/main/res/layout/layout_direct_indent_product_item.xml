@@ -20,19 +20,6 @@
 
     <include layout="@layout/item_refund_detail_product"/>
 
-    <TextView
-        android:id="@+id/tv_indent_write_reason"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/sc_mm_50"
-        android:ellipsize="end"
-        android:gravity="center_vertical"
-        android:lines="1"
-        android:paddingLeft="@dimen/gap_left"
-        android:paddingRight="@dimen/gap_right"
-        android:textColor="@color/text_normal_red"
-        android:textSize="@dimen/sc_mm_22"
-        android:visibility="gone"/>
-
     <include layout="@layout/layout_present"/>
 
     <RelativeLayout

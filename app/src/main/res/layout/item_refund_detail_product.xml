@@ -1,85 +1,71 @@
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_product"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="@dimen/sc_mm_210">
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/sc_mm_30"
+    android:paddingTop="@dimen/sc_mm_30"
+    android:paddingRight="@dimen/sc_mm_30"
+    android:paddingBottom="@dimen/sc_mm_9">
 
     <LinearLayout
-        android:id="@+id/ll_product"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_marginBottom="@dimen/sc_mm_9"
+        android:background="@color/white"
         android:gravity="center_vertical"
-        android:minHeight="@dimen/sc_mm_210"
         android:orientation="horizontal">
 
 
         <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/gap_left">
+            android:id="@+id/rl_cover"
+            android:layout_width="@dimen/sc_mm_176"
+            android:layout_height="@dimen/sc_mm_176">
 
             <ImageView
                 android:id="@+id/iv_direct_indent_pro"
-                android:layout_width="@dimen/sc_mm_120"
-                android:layout_height="@dimen/sc_mm_120"
-                android:layout_centerHorizontal="true"
-                android:scaleType="centerCrop"/>
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/home_goods_bg"
+                android:padding="@dimen/sc_mm_1"
+                android:scaleType="centerCrop" />
 
             <TextView
-                android:id="@+id/tv_pro_new_user_favor"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/iv_direct_indent_pro"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="@dimen/sc_mm_5"
-                android:lines="1"
-                android:maxWidth="@dimen/sc_mm_150"
-                android:textColor="@color/text_normal_red"
-                android:textSize="@dimen/sc_mm_22"
-                android:visibility="gone"/>
+                android:id="@+id/tv_move"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/sc_mm_36"
+                android:layout_alignParentBottom="true"
+                android:background="@color/translucence_text_normal_red"
+                android:gravity="center"
+                android:text="点击移除"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sc_mm_24"
+                android:visibility="gone" />
         </RelativeLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/sc_mm_30"
-            android:orientation="vertical"
-            android:paddingRight="@dimen/gap_right">
+            android:layout_height="@dimen/sc_mm_176"
+            android:layout_marginLeft="@dimen/sc_mm_30">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:id="@+id/iv_indent_product_del"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:padding="@dimen/sc_mm_10"
-                    android:paddingLeft="@dimen/sc_mm_15"
-                    android:src="@drawable/product_del_icon"
-                    android:visibility="gone"/>
-
-                <TextView
-                    android:id="@+id/tv_direct_indent_pro_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toLeftOf="@id/iv_indent_product_del"
-                    android:ellipsize="end"
-                    android:gravity="center_vertical"
-                    android:lines="1"
-                    android:textColor="@color/text_black_t"
-                    android:textSize="@dimen/sc_mm_28"/>
-            </RelativeLayout>
-
-            <LinearLayout
+            <TextView
+                android:id="@+id/tv_direct_indent_pro_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/sc_mm_14"
+                android:ellipsize="end"
                 android:gravity="center_vertical"
+                android:maxLines="2"
+                android:text="@string/defaul"
+                android:textColor="@color/text_black_t"
+                android:textSize="@dimen/sc_mm_28" />
+
+            <LinearLayout
+                android:id="@+id/ll_sku"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_direct_indent_pro_name"
+                android:layout_marginTop="@dimen/sc_mm_8"
                 android:orientation="horizontal">
 
                 <TextView
@@ -91,21 +77,23 @@
                     android:ellipsize="end"
                     android:enabled="true"
                     android:lines="1"
+                    android:text="@string/defaul"
                     android:textColor="@color/home_text_color"
-                    android:textSize="@dimen/sc_mm_22"/>
+                    android:textSize="@dimen/sc_mm_22" />
 
                 <TextView
                     android:id="@+id/tv_direct_pro_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="@string/defaul"
                     android:textColor="@color/text_black_t"
-                    android:textSize="@dimen/sc_mm_28"/>
+                    android:textSize="@dimen/sc_mm_28" />
             </LinearLayout>
 
             <RelativeLayout
+                android:layout_alignParentBottom="true"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/sc_mm_18">
+                android:layout_height="@dimen/sc_mm_60">
 
                 <TextView
                     android:id="@+id/tv_direct_indent_pro_price"
@@ -115,23 +103,24 @@
                     android:ellipsize="end"
                     android:gravity="bottom"
                     android:lines="1"
+                    android:text="@string/defaul"
                     android:textColor="@color/sel_red_black_font_color"
-                    android:textSize="@dimen/sc_mm_28"/>
+                    android:textSize="@dimen/sc_mm_28" />
 
                 <FrameLayout
                     android:id="@+id/fl_dir_indent_pro_status"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:padding="@dimen/sc_mm_5">
+                    android:layout_centerVertical="true">
 
                     <TextView
+                        android:enabled="false"
+                        android:layout_gravity="center_vertical"
                         android:id="@+id/tv_dir_indent_pro_status"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@drawable/sel_border_clickable_gray_white"
-                        android:enabled="false"
                         android:gravity="center"
                         android:paddingLeft="@dimen/sc_mm_15"
                         android:paddingTop="@dimen/sc_mm_10"
@@ -139,7 +128,7 @@
                         android:paddingBottom="@dimen/sc_mm_10"
                         android:textColor="@color/sel_text_enable_light_blue_gray"
                         android:textSize="@dimen/sc_mm_28"
-                        android:visibility="visible"/>
+                        android:visibility="visible" />
                 </FrameLayout>
 
                 <TextView
@@ -150,7 +139,7 @@
                     android:layout_centerVertical="true"
                     android:textColor="@color/text_login_blue_z"
                     android:textSize="@dimen/sc_mm_24"
-                    android:visibility="gone"/>
+                    android:visibility="gone" />
 
                 <ImageView
                     android:id="@+id/iv_indent_pro_use_cp"
@@ -160,26 +149,22 @@
                     android:layout_centerVertical="true"
                     android:src="@drawable/no_use_coupon_icon"
                     android:textColor="@color/text_login_blue_z"
-                    android:visibility="gone"/>
+                    android:visibility="gone" />
             </RelativeLayout>
-        </LinearLayout>
+        </RelativeLayout>
     </LinearLayout>
 
-    <RelativeLayout
-        android:id="@+id/rl_del"
+    <TextView
+        android:id="@+id/tv_indent_write_reason"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/translucence"
-        android:visibility="gone">
-
-        <TextView
-            android:layout_width="@dimen/sc_mm_180"
-            android:layout_height="@dimen/sc_mm_60"
-            android:layout_centerInParent="true"
-            android:background="@drawable/shap_delete_bg"
-            android:gravity="center"
-            android:text="移除"
-            android:textColor="@color/text_normal_red"
-            android:textSize="@dimen/sc_mm_28"/>
-    </RelativeLayout>
-</FrameLayout>
+        android:layout_height="@dimen/sc_mm_40"
+        android:background="@color/light_gray_f"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:lines="1"
+        android:paddingLeft="@dimen/sc_mm_16"
+        android:paddingRight="@dimen/sc_mm_16"
+        android:textColor="@color/text_normal_red"
+        android:textSize="@dimen/sc_mm_24"
+        android:visibility="gone" />
+</LinearLayout>

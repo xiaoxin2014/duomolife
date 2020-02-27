@@ -67,6 +67,7 @@
     <color name="rmb_small">#ff5a6b</color>
     <color name="bg_home_topic_gray">#f7f7f7</color>
     <color name="text_normal_red">#ff5e6b</color>
+    <color name="translucence_text_normal_red">#7fff5e6b</color>
     <color name="text_red_color">#ff6d6d</color>
     <color name="text_pink_bs_color">#ffb6bc</color>
     <color name="bg_pink_ffen_color">#ffe9eb</color>

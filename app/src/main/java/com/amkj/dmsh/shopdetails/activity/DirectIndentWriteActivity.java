@@ -293,7 +293,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                             startActivity(intent1);
                         }
                         break;
-                    case R.id.rl_del:
+                    case R.id.rl_cover:
                         for (IndentProDiscountBean discountBean : discountBeanList) {
                             if (productInfoBean.getId() == discountBean.getId()) {
                                 discountBeanList.remove(discountBean);
@@ -719,7 +719,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                 } else if (isReal && (pullHeaderView.et_oversea_name.getText().toString().length() <= 0 || pullHeaderView.et_oversea_card.getText().toString().length() <= 0)) {
                     showImportantToast(this, "因国家海关要求，购买跨境商品时需完善实名信息后方可购买");
                 } else if (indentWriteBean.getAllProductNotBuy() == 1) {
-                    showImportantToast(this, "所选商品内包含无法配送商品，请移除后再提交订单");
+                    showImportantToast(this, "订单内含有无法购买的商品，请移除后再提交");
                 } else if (type.equals(INDENT_GROUP_SHOP) && groupShopDetailsBean != null) {
                     createGroupIndent(payWay, groupShopDetailsBean);
                 } else if (type.equals(INDENT_W_TYPE) && productInfoList.size() > 0) {
