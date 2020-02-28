@@ -59,6 +59,7 @@ import com.amkj.dmsh.shopdetails.bean.GoodsCommentEntity.GoodsCommentBean;
 import com.amkj.dmsh.shopdetails.bean.ShopRecommendHotTopicEntity;
 import com.amkj.dmsh.shopdetails.bean.ShopRecommendHotTopicEntity.ShopRecommendHotTopicBean;
 import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
+import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.TimeUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
@@ -71,6 +72,7 @@ import com.amkj.dmsh.views.flycoTablayout.listener.OnTabSelectListener;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.flexbox.JustifyContent;
 import com.google.gson.Gson;
@@ -106,13 +108,13 @@ import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.JOIN_GROUP;
 import static com.amkj.dmsh.constant.ConstantVariable.OPEN_GROUP;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
 import static com.amkj.dmsh.constant.Url.BASE_SHARE_PAGE_TWO;
 import static com.amkj.dmsh.constant.Url.GROUP_SHOP_JOIN_NEW_INDEX;
 import static com.amkj.dmsh.constant.Url.GROUP_SHOP_JOIN_NRE_USER;
 import static com.amkj.dmsh.constant.Url.GROUP_SHOP_NEW_DETAILS;
+import static com.amkj.dmsh.constant.Url.SHOP_EVA_LIKE;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODUCT_TITLE;
 import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTime;
@@ -353,13 +355,35 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         rv_group_rule.setAdapter(gpRuleDetailsAdapter);
 
         //初始化评论列表
-        rv_comment.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        rv_comment.setLayoutManager(new LinearLayoutManager(this));
         directEvaluationAdapter = new DirectEvaluationAdapter(this, goodsComments);
-        View footView = View.inflate(this, R.layout.layout_click_more_evaluate, null);
-        footView.setOnClickListener(v -> skipMoreEvaluate());
-        directEvaluationAdapter.addFooterView(footView, -1, LinearLayout.HORIZONTAL);
         rv_comment.setNestedScrollingEnabled(false);
         rv_comment.setAdapter(directEvaluationAdapter);
+        directEvaluationAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+            @Override
+            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                switch (view.getId()) {
+                    case R.id.img_direct_avatar:
+                        GoodsCommentBean goodsCommentBean = (GoodsCommentBean) view.getTag(R.id.iv_avatar_tag);
+                        if (goodsCommentBean != null) {
+                            Intent intent = new Intent(QualityGroupShopDetailActivity.this, UserPagerActivity.class);
+                            intent.putExtra("userId", String.valueOf(goodsCommentBean.getUserId()));
+                            startActivity(intent);
+                        }
+                        break;
+                    case R.id.tv_eva_count:
+                        goodsCommentBean = (GoodsCommentBean) view.getTag();
+                        if (goodsCommentBean != null && !goodsCommentBean.isFavor()) {
+                            if (userId > 0) {
+                                setProductEvaLike(view);
+                            } else {
+                                getLoginStatus(QualityGroupShopDetailActivity.this);
+                            }
+                        }
+                        break;
+                }
+            }
+        });
 
         //推荐文章
         mLlArtical.setOnClickListener(v -> {
@@ -534,7 +558,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
     private void getComment() {
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", 1);
-        params.put("showCount", TOTAL_COUNT_TEN);
+        params.put("showCount", 1);
         params.put("id", productId);
         if (userId > 0) {
             params.put("uid", userId);
@@ -555,11 +579,23 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                 }
                 ll_comment.setVisibility(goodsComments.size() > 0 ? VISIBLE : GONE);
                 directEvaluationAdapter.notifyDataSetChanged();
-                if (goodsComments.size() < TOTAL_COUNT_TEN) {
-                    directEvaluationAdapter.removeAllFooterView();
-                }
+//                if (goodsComments.size() < TOTAL_COUNT_TEN) {
+//                    directEvaluationAdapter.removeAllFooterView();
+//                }
             }
         });
+    }
+
+    private void setProductEvaLike(View view) {
+        GoodsCommentBean goodsCommentBean = (GoodsCommentBean) view.getTag();
+        TextView tv_eva_like = (TextView) view;
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", goodsCommentBean.getId());
+        params.put("uid", userId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, SHOP_EVA_LIKE, params, null);
+        goodsCommentBean.setFavor(!goodsCommentBean.isFavor());
+        tv_eva_like.setSelected(!tv_eva_like.isSelected());
+        tv_eva_like.setText(ConstantMethod.getNumCount(tv_eva_like.isSelected(), goodsCommentBean.isFavor(), goodsCommentBean.getLikeNum(), "赞"));
     }
 
     private void setProductData(final GroupShopDetailsBean groupShopDetailsBean) {
@@ -718,7 +754,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
             } else {
                 ll_group_buy.setEnabled(true);
                 if (mGroupShopDetailsBean.isLotteryGroup()) {
-                    tv_sp_details_join_buy_price.setText(ConstantMethod.getStringsFormat(this, R.string.lottery_price, groupShopDetailsBean.getGpPrice()));
+                    tv_sp_details_join_buy_price.setText(getStringsFormat(this, R.string.lottery_price, groupShopDetailsBean.getGpPrice()));
                     tv_sp_details_join_count.setVisibility(GONE);
                 } else {
                     tv_sp_details_join_buy_price.setText(getStringsChNPrice(this, groupShopDetailsBean.getGpPrice()));

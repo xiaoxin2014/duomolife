@@ -70,6 +70,7 @@ import com.amkj.dmsh.shopdetails.bean.ShopRecommendHotTopicEntity;
 import com.amkj.dmsh.shopdetails.bean.ShopRecommendHotTopicEntity.ShopRecommendHotTopicBean;
 import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
 import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
+import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean.MarketLabelBean;
 import com.amkj.dmsh.utils.CountDownTimer;
 import com.amkj.dmsh.utils.LifecycleHandler;
@@ -134,7 +135,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
 import static com.amkj.dmsh.constant.ConstantVariable.isShowTint;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
@@ -528,13 +528,32 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         badge = getBadge(getActivity(), fl_header_service);
 
         //初始化评论列表
-        communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(getActivity()));
         directEvaluationAdapter = new DirectEvaluationAdapter(getActivity(), goodsComments);
-        View footView = View.inflate(this, R.layout.layout_click_more_evaluate, null);
-        directEvaluationAdapter.addFooterView(footView, -1, LinearLayout.HORIZONTAL);
-        footView.setOnClickListener(v -> skipMoreEvaluate());
         communal_recycler_wrap.setNestedScrollingEnabled(false);
         communal_recycler_wrap.setAdapter(directEvaluationAdapter);
+        directEvaluationAdapter.setOnItemChildClickListener((adapter, view, position) -> {
+            switch (view.getId()) {
+                case R.id.img_direct_avatar:
+                    GoodsCommentBean goodsCommentBean = (GoodsCommentBean) view.getTag(R.id.iv_avatar_tag);
+                    if (goodsCommentBean != null) {
+                        Intent intent1 = new Intent(getActivity(), UserPagerActivity.class);
+                        intent1.putExtra("userId", String.valueOf(goodsCommentBean.getUserId()));
+                        startActivity(intent1);
+                    }
+                    break;
+                case R.id.tv_eva_count:
+                    goodsCommentBean = (GoodsCommentBean) view.getTag();
+                    if (goodsCommentBean != null && !goodsCommentBean.isFavor()) {
+                        if (userId > 0) {
+                            setProductEvaLike(view);
+                        } else {
+                            getLoginStatus(getActivity());
+                        }
+                    }
+                    break;
+            }
+        });
 
         //初始化组合商品列表
         LinearLayoutManager groupManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
@@ -737,7 +756,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         String url = Url.Q_SHOP_DETAILS_COMMENT;
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", 1);
-        params.put("showCount", TOTAL_COUNT_TEN);
+        params.put("showCount", 1);
         params.put("id", shopPropertyBean.getId());
         if (userId > 0) {
             params.put("uid", userId);
@@ -757,11 +776,24 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 }
                 rel_shop_details_comment.setVisibility(goodsComments.size() > 0 ? View.VISIBLE : GONE);
                 directEvaluationAdapter.notifyDataSetChanged();
-                if (goodsComments.size() < TOTAL_COUNT_TEN) {
-                    directEvaluationAdapter.removeAllFooterView();
-                }
+//                if (goodsComments.size() < TOTAL_COUNT_TEN) {
+//                    directEvaluationAdapter.removeAllFooterView();
+//                }
             }
         });
+    }
+
+    private void setProductEvaLike(View view) {
+        GoodsCommentBean goodsCommentBean = (GoodsCommentBean) view.getTag();
+        TextView tv_eva_like = (TextView) view;
+        String url = Url.SHOP_EVA_LIKE;
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", goodsCommentBean.getId());
+        params.put("uid", userId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, null);
+        goodsCommentBean.setFavor(!goodsCommentBean.isFavor());
+        tv_eva_like.setSelected(!tv_eva_like.isSelected());
+        tv_eva_like.setText(ConstantMethod.getNumCount(tv_eva_like.isSelected(), goodsCommentBean.isFavor(), goodsCommentBean.getLikeNum(), "赞"));
     }
 
 
