@@ -407,12 +407,14 @@ public class DirectIndentWriteActivity extends BaseActivity {
                     }
                     productInfoList.clear();
                     identWriteEntity = new Gson().fromJson(result, IndentWriteEntity.class);
-                    if (identWriteEntity != null && identWriteEntity.getIndentWriteBean() != null) {
-                        indentWriteBean = identWriteEntity.getIndentWriteBean();
-                        List<ProductsBean> products = indentWriteBean.getProducts();
+                    if (identWriteEntity != null) {
                         if (identWriteEntity.getCode().equals(SUCCESS_CODE)) {
-                            if (products != null && products.size() > 0) {
-                                setDiscountsInfo(indentWriteBean);
+                            indentWriteBean = identWriteEntity.getIndentWriteBean();
+                            if (indentWriteBean != null) {
+                                List<ProductsBean> products = indentWriteBean.getProducts();
+                                if (products != null && products.size() > 0) {
+                                    setDiscountsInfo(indentWriteBean);
+                                }
                             }
                         } else if (identWriteEntity.getCode().equals(EMPTY_CODE)) {
                             showImportantToast(DirectIndentWriteActivity.this, R.string.invalidData);

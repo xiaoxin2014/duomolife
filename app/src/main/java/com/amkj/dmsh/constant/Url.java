@@ -65,12 +65,8 @@ public class Url {
     public static final String LOGIN_ACCOUNT = "api/my/mobileAndPasswordToLogin";
     //    手机号验证码登录
     public static final String LOGIN_CHECK_SMS_CODE = "api/my/mobileToLogin";
-    //    第三方登录
-    public static final String MINE_OTHER_ACCOUNT = "api/my/syncLogin";
     //    新版第三方登录
     public static final String MINE_OTHER_NEW_ACCOUNT = "api/third/thirdLogin";
-    //   账号安全，第三方账号绑定手机
-    public static final String MINE_BIND_ACCOUNT_MOBILE = "api/my/syncLoginBindMobile";
     //   账号安全，微信账号绑定手机
     public static final String MINE_BIND_WX_MOBILE = "api/third/thirdBindingMobile";
     //  绑定未注册的手机时设置密码
@@ -79,10 +75,6 @@ public class Url {
 
     //    首页文章分类列表
     public static final String H_CATEGORY_LIST = "api/home/getNewCategoryList";
-    //    首页热门活动列表
-    public static final String H_HOT_ACTIVITY_LIST = "api/home/getAdByActivity?version=3";
-    //    首页专区广告
-    public static final String H_REGION_ACTIVITY = "api/home/getHomeAdTopic";
     //    首页,良品浮窗广告
     public static final String H_Q_FLOAT_AD = "api/home/getAdByHomeFloat";
     //    首页 跑马灯效果
@@ -123,14 +115,6 @@ public class Url {
     public static final String H_SEARCH_PRODUCT_RECOMMEND = "api/search/searchRecommendCategory";
     //    搜索产品无商品推荐
     public static final String H_SEARCH_PRODUCT_GOOD = "api/search/searchRecommendGoodThings";
-    //    搜索专题
-    public static final String H_HOT_SEARCH_SPECIAL = "api/search/searchDucumentAndTopiclist";
-    //    搜索帖子
-    public static final String H_HOT_SEARCH_INVITATION = "api/search/searchPostlist";
-    //    搜索用户
-    public static final String H_HOT_SEARCH_USER = "api/search/searchMemberlist";
-    //    搜索话题
-    public static final String H_HOT_SEARCH_TOPIC = "api/search/searchTopiclist";
     //  搜索留言
     public static final String SEARCH_LEAVE_MES = "api/search/saveAdvise";
     //  新版分享

@@ -1,6 +1,5 @@
 package com.amkj.dmsh.mine.fragment;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Paint;
@@ -25,10 +24,10 @@ import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
-import com.amkj.dmsh.bean.MessageBean;
 import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
+import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.dao.AddClickDao;
 import com.amkj.dmsh.dao.UserDao;
 import com.amkj.dmsh.homepage.activity.AttendanceActivity;
@@ -43,7 +42,6 @@ import com.amkj.dmsh.mine.adapter.MineTypeAdapter;
 import com.amkj.dmsh.mine.bean.MineTypeEntity;
 import com.amkj.dmsh.mine.bean.MineTypeEntity.MineTypeBean;
 import com.amkj.dmsh.mine.bean.OtherAccountBindEntity.OtherAccountBindInfo;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.network.NetCacheLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
@@ -71,6 +69,8 @@ import com.umeng.socialize.UMShareAPI;
 import com.umeng.socialize.UMShareConfig;
 import com.umeng.socialize.bean.SHARE_MEDIA;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -84,6 +84,7 @@ import q.rorbin.badgeview.Badge;
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
 import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.MINE_BOTTOM_TYPE;
+import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getMessageCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
@@ -104,9 +105,7 @@ import static com.amkj.dmsh.constant.Url.MINE_BIND_ACCOUNT;
 import static com.amkj.dmsh.constant.Url.MINE_BOTTOM_DATA;
 import static com.amkj.dmsh.constant.Url.MINE_PAGE;
 import static com.amkj.dmsh.constant.Url.MINE_PAGE_AD;
-import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 import static com.amkj.dmsh.constant.Url.Q_QUERY_INDENT_COUNT;
-import static com.amkj.dmsh.dao.UserDao.getPersonalInfo;
 import static com.umeng.socialize.bean.SHARE_MEDIA.WEIXIN;
 
 /**
@@ -288,7 +287,7 @@ public class MineDataFragment extends BaseFragment {
             }
         });
 
-        //初始化客服
+        //设置客服消息监听
         setQyService();
     }
 
@@ -300,8 +299,7 @@ public class MineDataFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        SavePersonalInfoBean personalInfo = getPersonalInfo(getActivity());
-        if (personalInfo.isLogin()) {
+        if (userId > 0) {
             getNetDataInfo();
             getDoMeIndentDataCount();
             getMineAd();
@@ -384,6 +382,8 @@ public class MineDataFragment extends BaseFragment {
             String androidLink = getStrings(mineTypeBean.getAndroidUrl());
             if (userData == null) {
                 mineTypeBean.setMesCount(0);
+                //清空所有购物车数量
+                EventBus.getDefault().post(new EventMessage(ConstantVariable.UPDATE_CAR_NUM, 0));
             } else if (androidLink.contains("DirectMyCouponActivity")) {//优惠券
                 mineTypeBean.setMesCount(userData.getCouponTotal());
             } else if (androidLink.contains("IntegralProductIndentActivity")) {//积分订单
@@ -471,6 +471,21 @@ public class MineDataFragment extends BaseFragment {
         indentTypeAdapter.notifyDataSetChanged();
     }
 
+    //更新购物车数量
+    private void updateShopCartNum(int num) {
+        if (mineTypeList != null && mineTypeList.size() > 0 && typeMineAdapter != null) {
+            for (int i = 0; i < mineTypeList.size(); i++) {
+                MineTypeBean mineTypeBean = mineTypeList.get(i);
+                String androidLink = getStrings(mineTypeBean.getAndroidUrl());
+                if (!TextUtils.isEmpty(androidLink) && androidLink.contains("ShopCarActivity")) {
+                    mineTypeBean.setMesCount(num);
+                    typeMineAdapter.notifyItemChanged(i);
+                    break;
+                }
+            }
+        }
+    }
+
     //获取十二宫格数据
     private void getBottomTypeNetData() {
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), MINE_BOTTOM_DATA, new NetLoadListenerHelper() {
@@ -500,7 +515,7 @@ public class MineDataFragment extends BaseFragment {
             initLoggedView();
             setBottomTypeCount(null);
             setIndentCount(null);
-            badgeMsg.setBadgeNumber(0);
+            badgeMsg.setBadgeNumber(0);//清空消息数
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -798,39 +813,6 @@ public class MineDataFragment extends BaseFragment {
         }
     }
 
-    //更新购物车商品数量
-    public void getCarCount(Activity activity) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("userId", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(activity, Q_QUERY_CAR_COUNT, params, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                Gson gson = new Gson();
-                MessageBean requestStatus = gson.fromJson(result, MessageBean.class);
-                if (requestStatus != null) {
-                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        int cartNumber = requestStatus.getResult();
-                        updateShopCartNum(cartNumber);
-                    }
-                }
-            }
-        });
-    }
-
-    private void updateShopCartNum(int num) {
-        if (mineTypeList != null && mineTypeList.size() > 0 && typeMineAdapter != null) {
-            for (int i = 0; i < mineTypeList.size(); i++) {
-                MineTypeBean mineTypeBean = mineTypeList.get(i);
-                String androidLink = getStrings(mineTypeBean.getAndroidUrl());
-                if (!TextUtils.isEmpty(androidLink) && androidLink.contains("ShopCarActivity")) {
-                    mineTypeBean.setMesCount(num);
-                    typeMineAdapter.notifyItemChanged(i);
-                    break;
-                }
-            }
-        }
-    }
-
 
     @Override
     public void initImmersionBar() {
@@ -870,6 +852,8 @@ public class MineDataFragment extends BaseFragment {
     protected void postEventResult(@NonNull EventMessage message) {
         if (TOKEN_EXPIRE_LOG_OUT.equals(message.type)) {
             setErrorUserData();
+        } else if (ConstantVariable.UPDATE_CAR_NUM.equals(message.type)) {
+            updateShopCartNum((int) message.result);
         }
     }
 }

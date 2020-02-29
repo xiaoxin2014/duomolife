@@ -5,6 +5,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.amkj.dmsh.base.BaseEntity;
+import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -33,7 +34,7 @@ public class UserAttentionFansEntity extends BaseEntity{
         this.userAttentionFansList = userAttentionFansList;
     }
 
-    public static class UserAttentionFansBean implements Parcelable {
+    public static class UserAttentionFansBean implements Parcelable , MultiItemEntity {
         private boolean flag;
         private String fnickname;
         private String favatar;
@@ -144,6 +145,11 @@ public class UserAttentionFansEntity extends BaseEntity{
                 return new UserAttentionFansBean[size];
             }
         };
+
+        @Override
+        public int getItemType() {
+            return 0;
+        }
     }
 
 }

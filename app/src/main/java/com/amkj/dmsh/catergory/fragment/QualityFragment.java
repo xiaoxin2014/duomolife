@@ -24,7 +24,6 @@ import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.homepage.activity.AllSearchDetailsNewActivity;
 import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
 import com.amkj.dmsh.homepage.activity.ArticleTypeActivity;
-import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
@@ -43,10 +42,7 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatAd;
-import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
-import static com.amkj.dmsh.dao.AddClickDao.adClickTotal;
 
 /**
  * Created by xiaoxin on 2019/4/19 0019
@@ -217,20 +213,9 @@ public class QualityFragment extends BaseFragment {
     }
 
 
-    @OnClick({R.id.tv_search, R.id.iv_float_ad_icon})
+    @OnClick({R.id.tv_search})
     public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.tv_search:
-                Intent intent = new Intent(getActivity(), AllSearchDetailsNewActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.iv_float_ad_icon:
-                CommunalADActivityEntity.CommunalADActivityBean communalADActivityBean = (CommunalADActivityEntity.CommunalADActivityBean) view.getTag(R.id.iv_tag);
-                if (communalADActivityBean != null) {
-                    adClickTotal(getActivity(), communalADActivityBean.getId());
-                    setSkipPath(getActivity(), getStrings(communalADActivityBean.getAndroidLink()), false);
-                }
-                break;
-        }
+        Intent intent = new Intent(getActivity(), AllSearchDetailsNewActivity.class);
+        startActivity(intent);
     }
 }

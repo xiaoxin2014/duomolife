@@ -11,11 +11,11 @@ import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.bean.PostCommentEntity;
-import com.amkj.dmsh.find.bean.BaseFavorBean;
 import com.amkj.dmsh.find.bean.PostEntity.PostBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.bean.GoodsCommentEntity;
+import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
@@ -45,15 +45,22 @@ import static com.amkj.dmsh.constant.Url.UPDATE_ATTENTION;
  * ClassDescription :轻量级接口Dao类
  */
 public class SoftApiDao {
+    public interface FollowCompleteListener {
+        void followComplete(boolean isFollow);
+    }
 
     //关注用户
-    public static void followUser(BaseActivity activity, int uid, TextView tvFollow, BaseFavorBean item) {
+    public static void followUser(BaseActivity activity, int buid, TextView tvFollow, MultiItemEntity item) {
+        followUser(activity, buid, tvFollow, item, null);
+    }
+
+    public static void followUser(BaseActivity activity, int buid, TextView tvFollow, MultiItemEntity item, FollowCompleteListener followCompleteListener) {
         if (userId > 0) {
             activity.loadHud.show();
             boolean isFollow = tvFollow.isSelected();
             Map<String, Object> params = new HashMap<>();
             params.put("fuid", userId);
-            params.put("buid", uid);
+            params.put("buid", buid);
             params.put("ftype", isFollow ? "cancel" : "add");
             NetLoadUtils.getNetInstance().loadNetDataPost(activity, UPDATE_ATTENTION, params, new NetLoadListenerHelper() {
                 @Override
@@ -62,11 +69,17 @@ public class SoftApiDao {
                     RequestStatus requestStatus = new Gson().fromJson(result, RequestStatus.class);
                     if (requestStatus != null) {
                         if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                            EventBus.getDefault().post(new EventMessage(UPDATE_FOLLOW_STATUS, !isFollow));
                             if (item != null) {
                                 tvFollow.setSelected(!isFollow);
                                 tvFollow.setText(!isFollow ? "已关注" : (item.getItemType() == NEW_FANS ? "回粉" : "关注"));
+                            } else {
+                                EventBus.getDefault().post(new EventMessage(UPDATE_FOLLOW_STATUS, !isFollow));
                             }
+
+                            if (followCompleteListener != null) {
+                                followCompleteListener.followComplete(!isFollow);
+                            }
+
                             showToast(!isFollow ? "已关注" : "已取消关注");
                         } else {
                             showToastRequestMsg(activity, requestStatus);
@@ -83,6 +96,7 @@ public class SoftApiDao {
             getLoginStatus(activity);
         }
     }
+
 
     //关注话题
     public static void followTopic(BaseActivity activity, int topicId, TextView tvFollow) {

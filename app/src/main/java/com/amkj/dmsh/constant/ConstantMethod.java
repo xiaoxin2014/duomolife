@@ -58,6 +58,7 @@ import com.amkj.dmsh.find.activity.JoinTopicActivity;
 import com.amkj.dmsh.find.activity.PostDetailActivity;
 import com.amkj.dmsh.find.activity.TopicDetailActivity;
 import com.amkj.dmsh.homepage.activity.DoMoLifeCommunalActivity;
+import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.ScoreGoodsEntity;
 import com.amkj.dmsh.homepage.bean.ScoreGoodsEntity.ScoreGoodsBean;
 import com.amkj.dmsh.message.bean.MessageTotalEntity;
@@ -150,6 +151,7 @@ import static com.amkj.dmsh.constant.UMShareAction.routineId;
 import static com.amkj.dmsh.constant.Url.H_Q_FLOAT_AD;
 import static com.amkj.dmsh.constant.Url.LOTTERY_URL;
 import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
+import static com.amkj.dmsh.dao.AddClickDao.adClickTotal;
 import static com.amkj.dmsh.dao.BaiChuanDao.isTaoBaoUrl;
 import static com.amkj.dmsh.dao.BaiChuanDao.skipAliBC;
 import static com.yanzhenjie.permission.AndPermission.getFileUri;
@@ -1088,11 +1090,15 @@ public class ConstantMethod {
                 HomeQualityFloatAdEntity floatAdEntity = gson.fromJson(result, HomeQualityFloatAdEntity.class);
                 if (floatAdEntity != null) {
                     if (floatAdEntity.getCode().equals(SUCCESS_CODE)) {
-                        if (floatAdEntity.getCommunalADActivityBean() != null) {
+                        CommunalADActivityEntity.CommunalADActivityBean communalADActivityBean = floatAdEntity.getCommunalADActivityBean();
+                        if (communalADActivityBean != null) {
                             iv_float_ad_icon.setVisibility(View.VISIBLE);
                             GlideImageLoaderUtil.loadFitCenter(activity, iv_float_ad_icon,
-                                    getStrings(floatAdEntity.getCommunalADActivityBean().getPicUrl()));
-                            iv_float_ad_icon.setTag(R.id.iv_tag, floatAdEntity.getCommunalADActivityBean());
+                                    getStrings(communalADActivityBean.getPicUrl()));
+                            iv_float_ad_icon.setOnClickListener(v -> {
+                                adClickTotal(activity, communalADActivityBean.getId());
+                                setSkipPath(activity, getStrings(communalADActivityBean.getAndroidLink()), false);
+                            });
                         }
                     } else {
                         iv_float_ad_icon.setVisibility(View.GONE);
@@ -2408,25 +2414,6 @@ public class ConstantMethod {
             return text;
         }
     }
-
-    /**
-     * 高精度相除
-     *
-     * @param v1
-     * @param v2
-     * @param scale 保留小数
-     * @return
-     */
-    public static double div(double v1, double v2, int scale) {
-        if (scale < 0) {
-            throw new IllegalArgumentException(
-                    "The scale must be a positive integer or zero");
-        }
-        BigDecimal b1 = new BigDecimal(Double.toString(v1));
-        BigDecimal b2 = new BigDecimal(Double.toString(v2));
-        return b1.divide(b2, scale, BigDecimal.ROUND_HALF_UP).doubleValue();
-    }
-
 
     //根据类名获取sourceType
     public static int getSourceType(String className) {

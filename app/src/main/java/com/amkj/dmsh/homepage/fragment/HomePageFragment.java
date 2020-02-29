@@ -23,7 +23,6 @@ import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.homepage.RollMsgIdDataSave;
 import com.amkj.dmsh.homepage.activity.AllSearchDetailsNewActivity;
 import com.amkj.dmsh.homepage.adapter.HomePageNewAdapter;
-import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.HomeCommonEntity;
 import com.amkj.dmsh.homepage.bean.HomeCommonEntity.HomeCommonBean;
 import com.amkj.dmsh.homepage.bean.MarqueeTextEntity;
@@ -52,16 +51,13 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatAd;
 import static com.amkj.dmsh.constant.ConstantMethod.getMessageCount;
-import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getTopBadge;
-import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_ALL;
 import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.GTE_HOME_NAVBAR;
 import static com.amkj.dmsh.constant.Url.H_Q_MARQUEE_AD;
-import static com.amkj.dmsh.dao.AddClickDao.adClickTotal;
 
 /**
  * Created by xiaoxin on 2019/4/12 0012
@@ -259,15 +255,6 @@ public class HomePageFragment extends BaseFragment {
                 isAutoClose = true;
                 ll_home_marquee.setVisibility(View.GONE);
                 break;
-        }
-    }
-
-    @OnClick(R.id.iv_float_ad_icon)
-    void floatAdSkip(View view) {
-        CommunalADActivityEntity.CommunalADActivityBean communalADActivityBean = (CommunalADActivityEntity.CommunalADActivityBean) view.getTag(R.id.iv_tag);
-        if (communalADActivityBean != null) {
-            adClickTotal(getActivity(), communalADActivityBean.getId());
-            setSkipPath(getActivity(), getStrings(communalADActivityBean.getAndroidLink()), false);
         }
     }
 

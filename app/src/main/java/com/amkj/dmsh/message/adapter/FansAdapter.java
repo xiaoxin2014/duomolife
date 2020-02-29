@@ -1,6 +1,7 @@
 package com.amkj.dmsh.message.adapter;
 
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -50,6 +51,7 @@ public class FansAdapter extends BaseMultiItemQuickAdapter<FansEntity.FansBean, 
                 GlideImageLoaderUtil.loadRoundImg(activity, ivCover, item.getAvatar(), AutoSizeUtils.mm2px(mAppContext, 80));
                 helper.setText(R.id.tv_user_name, getStrings(item.getNickname()))
                         .setText(R.id.tv_time, getStrings(item.getCreateTime()))
+                        .setGone(R.id.tv_time, !TextUtils.isEmpty(item.getCreateTime()))
                         .setText(R.id.tv_user_name, getStrings(item.getNickname()));
                 TextView tvFollow = helper.getView(R.id.tv_follow);
                 tvFollow.setSelected(item.getIsFocus());
@@ -57,7 +59,12 @@ public class FansAdapter extends BaseMultiItemQuickAdapter<FansEntity.FansBean, 
                 //点击头像
                 ivCover.setOnClickListener(v -> ConstantMethod.skipUserCenter(activity, getStringChangeIntegers(item.getUid())));
                 //关注或取消
-                tvFollow.setOnClickListener(v -> SoftApiDao.followUser(activity, getStringChangeIntegers(item.getUid()), tvFollow, item));
+                tvFollow.setOnClickListener(v -> SoftApiDao.followUser(activity, getStringChangeIntegers(item.getUid()), tvFollow, item, new SoftApiDao.FollowCompleteListener() {
+                    @Override
+                    public void followComplete(boolean isFollow) {
+                        item.setIsFocus(isFollow);
+                    }
+                }));
                 break;
         }
 

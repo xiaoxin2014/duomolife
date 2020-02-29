@@ -17,7 +17,6 @@ import com.amkj.dmsh.find.XFLinearLayoutManager;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean.PictureBean;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean.RelevanceProBean;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.user.adapter.InvitationProAdapter;
@@ -40,10 +39,10 @@ import static com.amkj.dmsh.constant.ConstantMethod.showImageActivity;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.skipPostDetail;
 import static com.amkj.dmsh.constant.ConstantMethod.skipTopicDetail;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_URL;
 import static com.amkj.dmsh.constant.ConstantVariable.TOPIC_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
-import static com.amkj.dmsh.dao.UserDao.getPersonalInfo;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 
 ;
@@ -61,13 +60,11 @@ public class PullUserInvitationAdapter extends BaseQuickAdapter<InvitationDetail
     private List<PictureBean> pictureBeanList;
     private List<PictureBean> pathList = new ArrayList<>();
     private String descriptionContent;
-    private int userId;
 
     public PullUserInvitationAdapter(Activity context, List<InvitationDetailBean> invitationSearchList, String type) {
         super(R.layout.adapter_find_recommend, invitationSearchList);
         this.context = context;
         this.type = type;
-        isLoginStatus();
     }
 
     @Override
@@ -343,12 +340,6 @@ public class PullUserInvitationAdapter extends BaseQuickAdapter<InvitationDetail
         }
     }
 
-    private void isLoginStatus() {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(context);
-        if (personalInfo.isLogin()) {
-            userId = personalInfo.getUid();
-        }
-    }
 
     public class InvitationViewHolder extends BaseViewHolder {
         private RecyclerView communal_recycler_wrap;

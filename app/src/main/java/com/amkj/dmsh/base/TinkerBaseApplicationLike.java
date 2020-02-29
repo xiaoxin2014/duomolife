@@ -31,6 +31,7 @@ import com.amkj.dmsh.BuildConfig;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.dao.UserDao;
 import com.amkj.dmsh.netloadpage.NetEmptyCallback;
 import com.amkj.dmsh.netloadpage.NetErrorCallback;
 import com.amkj.dmsh.netloadpage.NetLoadCallback;
@@ -168,6 +169,8 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
     @Override
     public void onCreate() {
         mAppContext = getApplication().getApplicationContext();
+        //每次启动app自动获取登录信息
+        UserDao.getPersonalInfo(mAppContext);
         //当 App 中出现多进程, 并且您需要适配所有的进程, 就需要在 App 初始化时调用 initCompatMultiProcess()
         AutoSize.initCompatMultiProcess(mAppContext);
         //RxJava2默认不会帮我们处理异常，为了避免app会崩溃，这里手动处理
@@ -371,7 +374,7 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
      * @param activity
      */
     private void saveUpdateDate(Activity activity) {
-        SaveUpdateImportDateUtils.getUpdateDataUtilsInstance().getMainIconData(activity,3);
+        SaveUpdateImportDateUtils.getUpdateDataUtilsInstance().getMainIconData(activity, 3);
         SaveUpdateImportDateUtils.getUpdateDataUtilsInstance().getLaunchBanner(activity);
     }
 

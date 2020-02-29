@@ -25,6 +25,7 @@ import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.dao.AddClickDao;
 import com.amkj.dmsh.dominant.activity.DoMoLifeWelfareActivity;
 import com.amkj.dmsh.dominant.activity.QualityNewUserActivity;
 import com.amkj.dmsh.dominant.adapter.GoodProductAdapter;
@@ -236,6 +237,7 @@ public class HomeDefalutFragment extends BaseFragment {
             //跳转对应专区
             if (!TextUtils.isEmpty(homeCommonBean.getLink())) {
                 setSkipPath(getActivity(), homeCommonBean.getLink(), false);
+                AddClickDao.adClickTotal(getActivity(), homeCommonBean.getId());
             }
         });
         mRvSpecialZone.addItemDecoration(new ItemDecoration.Builder()

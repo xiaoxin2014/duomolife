@@ -38,7 +38,9 @@ import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
-
+/**
+ * ClassDescription :关注列表
+ */
 public class UserFansAttentionActivity extends BaseActivity {
     @BindView(R.id.smart_communal_refresh)
     SmartRefreshLayout smart_communal_refresh;
@@ -81,6 +83,9 @@ public class UserFansAttentionActivity extends BaseActivity {
                 .setDividerId(R.drawable.item_divider_gray_f_two_px)
                 .create());
         communal_recycler.setAdapter(detailsUserAdapter);
+        smart_communal_refresh.setOnRefreshListener(refreshLayout -> {
+            loadData();
+        });
         detailsUserAdapter.setOnLoadMoreListener(() -> {
             page++;
             getData();

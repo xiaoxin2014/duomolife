@@ -41,7 +41,7 @@ import static com.amkj.dmsh.constant.Url.H_MES_LIKED;
 
 
 /**
- * Created by atd48 on 2016/7/11.
+ * ClassDescription :消息中心-点赞列表
  */
 public class MessageLikedActivity extends BaseActivity {
     @BindView(R.id.tv_header_title)
@@ -90,28 +90,26 @@ public class MessageLikedActivity extends BaseActivity {
         }, communal_recycler);
         setFloatingButton(download_btn_communal, communal_recycler);
         messageCommunalAdapter.setOnItemChildClickListener((adapter, view, position) -> {
-            ArticleCommentBean articleCommentBean = (ArticleCommentBean) view.getTag(R.id.iv_avatar_tag);
-            if (articleCommentBean == null) {
-                articleCommentBean = (ArticleCommentBean) view.getTag();
-            }
-            if (articleCommentBean != null) {
+            try {
                 Intent intent = new Intent();
                 switch (view.getId()) {
                     case R.id.iv_inv_user_avatar:
+                        ArticleCommentBean articleCommentBean1 = (ArticleCommentBean) view.getTag(R.id.iv_avatar_tag);
                         intent.setClass(MessageLikedActivity.this, UserPagerActivity.class);
-                        intent.putExtra("userId", String.valueOf(articleCommentBean.getUid()));
+                        intent.putExtra("userId", String.valueOf(articleCommentBean1.getUid()));
                         startActivity(intent);
                         break;
                     case R.id.rel_adapter_message_communal:
-                        if (articleCommentBean.getStatus() == 1) {
-                            switch (articleCommentBean.getObj()) {
+                        ArticleCommentBean articleCommentBean2 = (ArticleCommentBean) view.getTag();
+                        if (articleCommentBean2.getStatus() == 1) {
+                            switch (articleCommentBean2.getObj()) {
                                 case "doc":
                                 case "post":
-                                    skipPostDetail(getActivity(), String.valueOf(articleCommentBean.getObject_id()), 2);
+                                    skipPostDetail(getActivity(), String.valueOf(articleCommentBean2.getObject_id()), 2);
                                     break;
                                 case "proEvaluate":
                                     intent.setClass(MessageLikedActivity.this, ShopScrollDetailsActivity.class);
-                                    intent.putExtra("productId", String.valueOf(articleCommentBean.getObject_id()));
+                                    intent.putExtra("productId", String.valueOf(articleCommentBean2.getObject_id()));
                                     startActivity(intent);
                                     break;
                             }
@@ -120,9 +118,17 @@ public class MessageLikedActivity extends BaseActivity {
                         }
                         break;
                     case R.id.tv_follow:
-                        SoftApiDao.followUser(getActivity(), articleCommentBean.getUid(), ((TextView) view), articleCommentBean);
+                        ArticleCommentBean articleCommentBean3 = (ArticleCommentBean) view.getTag();
+                        SoftApiDao.followUser(getActivity(), articleCommentBean3.getUid(), ((TextView) view), articleCommentBean3, new SoftApiDao.FollowCompleteListener() {
+                            @Override
+                            public void followComplete(boolean isFollow) {
+                                articleCommentBean3.setIsFocus(isFollow);
+                            }
+                        });
                         break;
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
     }

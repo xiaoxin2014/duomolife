@@ -17,8 +17,6 @@ import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.activity.CommentDetailsActivity;
 import com.amkj.dmsh.dominant.bean.DmlSearchCommentEntity.DmlSearchCommentBean;
 import com.amkj.dmsh.dominant.bean.DmlSearchCommentEntity.DmlSearchCommentBean.ReplyCommListBean;
-import com.amkj.dmsh.mine.activity.MineLoginActivity;
-import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.utils.CommunalCopyTextUtils;
@@ -34,9 +32,10 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_COMMENT_TOTAL_COUNT;
-import static com.amkj.dmsh.dao.UserDao.getPersonalInfo;
 
 ;
 
@@ -51,7 +50,7 @@ public class ArticleCommentAdapter extends BaseQuickAdapter<DmlSearchCommentBean
     private final Activity context;
     private final String commentType;
 
-    public ArticleCommentAdapter(Activity context, List<DmlSearchCommentBean> articleCommentList,String commentType) {
+    public ArticleCommentAdapter(Activity context, List<DmlSearchCommentBean> articleCommentList, String commentType) {
         super(R.layout.adapter_article_comment, articleCommentList);
         this.context = context;
         this.commentType = commentType;
@@ -94,9 +93,9 @@ public class ArticleCommentAdapter extends BaseQuickAdapter<DmlSearchCommentBean
                 if (replyCommListBean != null) {
                     if (replyCommListBean.getItemType() == ConstantVariable.TYPE_1) {
                         Intent intent = new Intent(context, CommentDetailsActivity.class);
-                        intent.putExtra("commentId",String.valueOf(replyCommListBean.getId()));
-                        intent.putExtra("objId",String.valueOf(replyCommListBean.getObj_id()));
-                        intent.putExtra("commentType",commentType);
+                        intent.putExtra("commentId", String.valueOf(replyCommListBean.getId()));
+                        intent.putExtra("objId", String.valueOf(replyCommListBean.getObj_id()));
+                        intent.putExtra("commentType", commentType);
                         context.startActivity(intent);
                     }
                 }
@@ -119,7 +118,12 @@ public class ArticleCommentAdapter extends BaseQuickAdapter<DmlSearchCommentBean
                                     ? replyCommBean.getLike_num() + 1 : replyCommBean.getLike_num() - 1 < 0
                                     ? 0 : replyCommBean.getLike_num() - 1);
                             replyCommList.set(position, replyCommBean);
-                            isLoginStatus(view, replyCommList);
+                            if (userId > 0) {
+                                setCommentLike(userId, view);
+                                EventBus.getDefault().post(new EventMessage("replyComm", replyCommList));
+                            } else {
+                                getLoginStatus(context);
+                            }
                             break;
                         case R.id.tv_comm_comment_receive:
                             EventBus.getDefault().post(new EventMessage("showEditView", replyCommListBean));
@@ -151,33 +155,17 @@ public class ArticleCommentAdapter extends BaseQuickAdapter<DmlSearchCommentBean
         context.startActivity(intent);
     }
 
-    public void isLoginStatus(View v, List<ReplyCommListBean> replyCommList) {
-        SavePersonalInfoBean personalInfo = getPersonalInfo(context);
-        if (personalInfo.isLogin()) {
-            //登陆成功，加载信息
-            int uid = personalInfo.getUid();
-            //登陆成功处理
-            setCommentLike(uid, v);
-            EventBus.getDefault().post(new EventMessage("replyComm", replyCommList));
-        } else {
-            //未登录跳转登录页
-            Intent intent = new Intent(context, MineLoginActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            ((Activity) context).startActivityForResult(intent, ConstantVariable.IS_LOGIN_CODE);
-        }
-    }
-
     private void setCommentLike(int uid, View view) {
         ReplyCommListBean replyCommListBean = (ReplyCommListBean) view.getTag();
         TextView textView = (TextView) view;
         textView.setSelected(!textView.isSelected());
-        String url =  Url.FIND_AND_COMMENT_FAV;
+        String url = Url.FIND_AND_COMMENT_FAV;
         Map<String, Object> params = new HashMap<>();
         //用户id
         params.put("tuid", uid);
         //评论id
         params.put("id", replyCommListBean.getId());
-        NetLoadUtils.getNetInstance().loadNetDataPost(context,url,params,null);
+        NetLoadUtils.getNetInstance().loadNetDataPost(context, url, params, null);
         String likeCount = getNumber(textView.getText().toString().trim());
         int likeNum = Integer.parseInt(likeCount);
         textView.setText(String.valueOf(textView.isSelected()
@@ -200,7 +188,7 @@ public class ArticleCommentAdapter extends BaseQuickAdapter<DmlSearchCommentBean
         public ArticleViewHolder(View view) {
             super(view);
             communal_recycler_wrap = (RecyclerView) view.findViewById(R.id.communal_recycler_wrap);
-            if(communal_recycler_wrap!=null){
+            if (communal_recycler_wrap != null) {
                 communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(context));
                 communal_recycler_wrap.setBackgroundColor(Color.TRANSPARENT);
                 communal_recycler_wrap.setNestedScrollingEnabled(false);

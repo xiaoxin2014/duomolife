@@ -14,8 +14,8 @@ public class BaseFavorBean implements MultiItemEntity {
         return "1".equals(isFocus);
     }
 
-    public void setIsFocus(String isFocus) {
-        this.isFocus = isFocus;
+    public void setIsFocus(boolean isFocus) {
+        this.isFocus = isFocus ? "1" : "0";
     }
 
     private int itemType;
