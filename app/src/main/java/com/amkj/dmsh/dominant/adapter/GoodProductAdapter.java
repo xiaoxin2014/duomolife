@@ -9,6 +9,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.dao.AddClickDao;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean.MarketLabelBean;
 import com.amkj.dmsh.utils.ProductLabelCreateUtils;
@@ -28,7 +29,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.skipGroupDetail;
 import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
 import static com.amkj.dmsh.constant.ConstantVariable.AD_COVER;
 import static com.amkj.dmsh.constant.ConstantVariable.PRODUCT;
-import static com.amkj.dmsh.dao.AddClickDao.adClickTotal;
 
 
 /**
@@ -112,14 +112,15 @@ public class GoodProductAdapter extends BaseMultiItemQuickAdapter<LikedProductBe
         //点击商品进入详情
         if (!isRichText) {
             helper.itemView.setOnClickListener(v -> {
-                if (!TextUtils.isEmpty(likedProductBean.getGpInfoId())) {//富文本不需要判断是否是拼团商品
-                    skipGroupDetail(context, likedProductBean.getGpInfoId(), likedProductBean.getId());
-                } else {
-                    skipProductUrl(context, likedProductBean.getType_id(), likedProductBean.getId(), likedProductBean.getAndroidLink());
-                }
                 //3.1.9 加入好物广告统计
                 if (likedProductBean.getItemType() == AD_COVER) {
-                    adClickTotal(context, likedProductBean.getId());
+                    AddClickDao.adClickTotal(context, likedProductBean.getAndroidLink(), likedProductBean.getId(), true);
+                } else {
+                    if (!TextUtils.isEmpty(likedProductBean.getGpInfoId())) {
+                        skipGroupDetail(context, likedProductBean.getGpInfoId());
+                    } else {
+                        skipProductUrl(context, likedProductBean.getType_id(), likedProductBean.getId(), likedProductBean.getAndroidLink());
+                    }
                 }
             });
         }

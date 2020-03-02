@@ -108,7 +108,7 @@ public class HomeWelfareAdapter extends CommonPagerAdapter<HomeWelfareBean> {
             UserLikedProductEntity.LikedProductBean likedProductBean = (UserLikedProductEntity.LikedProductBean) view.getTag();
             if (likedProductBean != null) {
                 if (!TextUtils.isEmpty(likedProductBean.getGpInfoId())) {
-                    skipGroupDetail(mContext, likedProductBean.getGpInfoId(), likedProductBean.getId());
+                    skipGroupDetail(mContext, likedProductBean.getGpInfoId());
                 } else {
                     skipProductUrl(mContext, 1, likedProductBean.getId());
                 }

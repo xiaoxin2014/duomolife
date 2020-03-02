@@ -100,8 +100,8 @@ public class CatergoryGoodsAdapter extends BaseMultiItemQuickAdapter<LikedProduc
         if (!isRichText) {
             helper.itemView.setOnClickListener(view -> {
                 if (helper.getItemViewType() != ConstantVariable.TITLE) {
-                    if (!TextUtils.isEmpty(likedProductBean.getGpInfoId())) {//富文本不需要判断是否是拼团商品
-                        skipGroupDetail(context, likedProductBean.getGpInfoId(), likedProductBean.getId());
+                    if (!TextUtils.isEmpty(likedProductBean.getGpInfoId())) {
+                        skipGroupDetail(context, likedProductBean.getGpInfoId());
                     } else {
                         skipProductUrl(context, 1, likedProductBean.getId(), likedProductBean.getAndroidLink());
                     }

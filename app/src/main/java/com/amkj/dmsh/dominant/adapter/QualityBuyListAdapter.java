@@ -66,7 +66,7 @@ public class QualityBuyListAdapter extends BaseQuickAdapter<QualityBuyListBean, 
 
         helper.itemView.setOnClickListener(v -> {
             if (!TextUtils.isEmpty(qualityBuyListBean.getGpInfoId())) {
-                skipGroupDetail(context, qualityBuyListBean.getGpInfoId(), qualityBuyListBean.getId());
+                skipGroupDetail(context, qualityBuyListBean.getGpInfoId());
             } else {
                 skipProductUrl(context, 1, qualityBuyListBean.getId());
             }

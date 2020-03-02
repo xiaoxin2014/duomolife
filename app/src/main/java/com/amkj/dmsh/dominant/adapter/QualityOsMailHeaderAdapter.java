@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.DMLThemeEntity;
 import com.amkj.dmsh.bean.DMLThemeEntity.DMLThemeBean;
 import com.amkj.dmsh.bean.DMLThemeEntity.DMLThemeBean.DMLGoodsBean;
@@ -37,7 +38,7 @@ import static com.amkj.dmsh.dao.AddClickDao.totalWelfareProNum;
  * @author LGuiPeng
  * @email liuguipeng163@163.com
  * created on 2017/6/30
- * class description:请输入类描述
+ * class description:福利社专题列表适配器
  */
 
 public class QualityOsMailHeaderAdapter extends BaseQuickAdapter<DMLThemeBean, BaseViewHolder> {
@@ -64,6 +65,11 @@ public class QualityOsMailHeaderAdapter extends BaseQuickAdapter<DMLThemeBean, B
                 DMLThemeBean dMLThemeBean = (DMLThemeBean) view.getTag(R.id.iv_tag);
                 if (dMLThemeBean != null) {
                     Intent intent = new Intent();
+                    if (context instanceof BaseActivity) {
+                        intent.putExtra("sourceType", ((BaseActivity) context).getSourceType());
+                        intent.putExtra("sourceId", ((BaseActivity) context).getSourceId());
+                    }
+
                     if (type.equals("welfare")) {
                         intent.putExtra("welfareId", String.valueOf(dMLThemeBean.getId()));
                         intent.setClass(context, DoMoLifeWelfareDetailsActivity.class);

@@ -3,6 +3,7 @@ package com.amkj.dmsh.dao;
 import android.app.Activity;
 import android.text.TextUtils;
 
+import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.message.bean.MessageNotifyEntity.MessageNotifyBean;
 import com.amkj.dmsh.network.NetLoadUtils;
@@ -11,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.Url.TOTAL_ACTIVITY_MSG_COUNT;
 import static com.amkj.dmsh.constant.Url.TOTAL_AD_COUNT;
@@ -65,20 +67,46 @@ public class AddClickDao {
     }
 
     //    统计广告点击
-    public static void adClickTotal(Activity activity, int adId) {
-        adClickTotal(activity, adId, 0);
-    }
+    public static void adClickTotal(Activity activity, String androidLink, int adId, boolean addSource) {
+        if (!TextUtils.isEmpty(androidLink)) {
+            setSkipPath(activity, androidLink + (addSource ? ((androidLink.contains("?") ? "&" : "?") +
+                    "sourceType=" + ConstantVariable.AD + "&sourceId=" + adId) : ""), false);
+        }
 
-    //    统计广告点击（营销弹窗为1,其他为0）
-    public static void adClickTotal(Activity activity, int adId, int type) {
         if (adId > 0) {
             Map<String, Object> params = new HashMap<>();
             //回复文章或帖子
             params.put("id", adId);
-            if (type != 0) {
-                params.put("type", type);
-            }
             NetLoadUtils.getNetInstance().loadNetDataPost(activity, TOTAL_AD_COUNT, params, null);
+        }
+    }
+
+    //    统计营销弹窗点击点击
+    public static void addMarketClick(Activity activity, String androidLink, int adId) {
+        if (!TextUtils.isEmpty(androidLink)) {
+            setSkipPath(activity, androidLink + (androidLink.contains("?") ? "&" : "?") +
+                    "sourceType=" + ConstantVariable.POPUP + "&sourceId=" + adId, false);
+        }
+
+        if (adId > 0) {
+            Map<String, Object> params = new HashMap<>();
+            //回复文章或帖子
+            params.put("id", adId);
+            params.put("type", 1);
+            NetLoadUtils.getNetInstance().loadNetDataPost(activity, TOTAL_AD_COUNT, params, null);
+        }
+    }
+
+    //统计首页动态专区点击
+    public static void addDynamicClick(Activity activity, String androidLink, int adId) {
+        if (!TextUtils.isEmpty(androidLink)) {
+            setSkipPath(activity, androidLink + (androidLink.contains("?") ? "&" : "?") +
+                    "sourceType=" + ConstantVariable.DYNAMIC_AREA + "&souceId=" + adId, false);
+        }
+        if (adId > 0) {
+            Map<String, Object> params = new HashMap<>();
+            params.put("id", adId);
+            NetLoadUtils.getNetInstance().loadNetDataPost(activity, TOTAL_DYNAMIC_COUNT, params, null);
         }
     }
 
@@ -121,14 +149,6 @@ public class AddClickDao {
         }
     }
 
-    //统计首页动态专区点击
-    public static void addDynamicClick(Activity activity, int id) {
-        if (id > 0) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("id", id);
-            NetLoadUtils.getNetInstance().loadNetDataPost(activity, TOTAL_DYNAMIC_COUNT, params, null);
-        }
-    }
 
     //统计我的十二宫格点击
     public static void addMyDefinedIconClick(Activity activity, int id) {

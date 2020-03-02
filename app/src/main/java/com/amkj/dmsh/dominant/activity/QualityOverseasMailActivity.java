@@ -107,7 +107,6 @@ public class QualityOverseasMailActivity extends BaseActivity {
     private QualityOsMailHeaderAdapter qualityOsMailHeaderAdapter;
     private OverseasHeaderView overseasHeaderView;
     private Badge badge;
-    private String type = "overseas";
     private String categoryType;
     private String categoryId;
     private String categoryName;
@@ -178,7 +177,7 @@ public class QualityOverseasMailActivity extends BaseActivity {
 
 
                 .create());
-        qualityOsMailHeaderAdapter = new QualityOsMailHeaderAdapter(QualityOverseasMailActivity.this, themeList, type);
+        qualityOsMailHeaderAdapter = new QualityOsMailHeaderAdapter(QualityOverseasMailActivity.this, themeList, "overseas");
         overseasHeaderView.communal_recycler_wrap.setAdapter(qualityOsMailHeaderAdapter);
         TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
         screenHeight = app.getScreenHeight();
@@ -228,7 +227,7 @@ public class QualityOverseasMailActivity extends BaseActivity {
         if (userId > 0) {
             params.put("uid", userId);
         }
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,QUALITY_OVERSEAS_LIST,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, QUALITY_OVERSEAS_LIST, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 qualityTypeProductAdapter.loadMoreComplete();
@@ -365,12 +364,12 @@ public class QualityOverseasMailActivity extends BaseActivity {
     }
 
     private void getAdTypeData() {
-        String url =  Q_QUALITY_TYPE_AD;
+        String url = Q_QUALITY_TYPE_AD;
         Map<String, Object> params = new HashMap<>();
         params.put("categoryType", categoryType);
         params.put("categoryId", categoryId);
         params.put("vidoShow", "1");
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_QUALITY_TYPE_AD,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_QUALITY_TYPE_AD, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();

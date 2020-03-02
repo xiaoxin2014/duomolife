@@ -13,7 +13,7 @@ import java.util.Map;
 
 /**
  * Created by xiaoxin on 2019/12/3
- * Version:v4.4.1
+ * Version:v4.4.0
  * ClassDescription :自定义专区viewpager适配器
  */
 public class QualityCustomAdapter extends FragmentPagerAdapter {

@@ -53,6 +53,7 @@ import com.amkj.dmsh.constant.AppUpdateUtils;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.dao.AddClickDao;
 import com.amkj.dmsh.dominant.dialog.AlertDialogGroup;
 import com.amkj.dmsh.find.fragment.FindFragment;
 import com.amkj.dmsh.homepage.activity.MainPageTabBarActivity;
@@ -110,7 +111,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeBoolean;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
 import static com.amkj.dmsh.constant.ConstantMethod.setDeviceInfo;
-import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.COUPON_POPUP;
 import static com.amkj.dmsh.constant.ConstantVariable.FORCE_UPDATE;
@@ -138,7 +138,6 @@ import static com.amkj.dmsh.constant.Url.CHECK_CLEAR_USER_DATA;
 import static com.amkj.dmsh.constant.Url.GET_UNIFIED_POPUP;
 import static com.amkj.dmsh.constant.Url.GROUP_GET_GP_POPUP;
 import static com.amkj.dmsh.constant.Url.H_AD_DIALOG;
-import static com.amkj.dmsh.dao.AddClickDao.adClickTotal;
 import static com.amkj.dmsh.dao.UserDao.getPersonalInfo;
 import static com.amkj.dmsh.dao.UserDao.savePersonalInfoCache;
 import static com.amkj.dmsh.utils.ServiceDownUtils.INSTALL_APP_PROGRESS;
@@ -1084,8 +1083,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 alertDialogAdImage.show();
                 alertDialogAdImage.setAlertClickListener(() -> {
                     alertDialogAdImage.dismiss();
-                    adClickTotal(getActivity(), communalADActivityBean.getId(), 1);
-                    setSkipPath(MainActivity.this, communalADActivityBean.getAndroidLink(), false);
+                    AddClickDao.addMarketClick(getActivity(), communalADActivityBean.getAndroidLink(), communalADActivityBean.getId());
                 });
                 alertDialogAdImage.setImage(bitmap);
             }

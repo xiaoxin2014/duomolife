@@ -67,7 +67,7 @@ public class ProNoShopCarAdapter extends BaseMultiItemQuickAdapter<LikedProductB
                     @Override
                     public void onClick(View v) {
                         if (!TextUtils.isEmpty(likedProductBean.getGpInfoId())) {
-                            skipGroupDetail(context, likedProductBean.getGpInfoId(), likedProductBean.getId());
+                            skipGroupDetail(context, likedProductBean.getGpInfoId());
                         } else {
                             skipProductUrl(context, likedProductBean.getType_id(), likedProductBean.getId());
                         }

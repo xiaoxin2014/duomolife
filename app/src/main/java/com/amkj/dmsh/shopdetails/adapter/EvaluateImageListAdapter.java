@@ -16,7 +16,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
 
 /**
  * Created by xiaoxin on 2020/1/6
- * Version:v4.4.1
+ * Version:v4.4.0
  * ClassDescription :商品评论图片适配器
  */
 

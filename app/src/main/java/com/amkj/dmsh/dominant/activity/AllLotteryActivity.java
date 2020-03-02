@@ -21,7 +21,7 @@ import butterknife.OnClick;
 
 /**
  * Created by xiaoxin on 2019/12/27
- * Version:v4.4.1
+ * Version:v4.4.0
  * ClassDescription :抽奖团全部中奖名单
  */
 public class AllLotteryActivity extends BaseActivity {

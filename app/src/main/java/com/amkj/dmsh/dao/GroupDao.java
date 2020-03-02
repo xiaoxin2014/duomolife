@@ -14,7 +14,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.GROUP_LOTTERY;
 
 /**
  * Created by xiaoxin on 2019/12/28
- * Version:v4.4.1
+ * Version:v4.4.0
  * ClassDescription :拼团相关Dao类
  */
 public class GroupDao {

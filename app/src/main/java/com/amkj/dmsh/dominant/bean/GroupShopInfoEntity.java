@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * Created by xiaoxin on 2019/12/13
- * Version:v4.4.1
+ * Version:v4.4.0
  * ClassDescription :团购商品详情实体类
  */
 public class GroupShopInfoEntity extends BaseTimeEntity {

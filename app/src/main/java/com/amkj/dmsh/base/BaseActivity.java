@@ -1,6 +1,7 @@
 package com.amkj.dmsh.base;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -58,6 +59,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     public LoadService loadService;
     public Map<String, Object> commonMap = new HashMap<>();
     private String mSimpleName;
+    private String sourceType;//广告位来源sourceType
+    private String sourceId;//广告位来源sourceId
     private int scrollY;
 
     @Override
@@ -76,7 +79,12 @@ public abstract class BaseActivity extends AppCompatActivity {
 //                .setDimAmount(0.5f)
         //Api通用参数初始化
         commonMap.put("reqId", UUID.randomUUID().toString().replaceAll("-", ""));
-//        commonMap.put("reqId", String.valueOf(System.currentTimeMillis()));
+        //获取从广告位进入埋点参数
+        if (getIntent() != null) {
+            Intent intent = getIntent();
+            sourceType = intent.getStringExtra("sourceType");
+            sourceId = intent.getStringExtra("sourceId");
+        }
         // 重新加载逻辑
         if (isAddLoad()) {
             loadService = LoadSir.getDefault().register(getLoadView() != null ? getLoadView() : this, new Callback.OnReloadListener() {
@@ -349,5 +357,13 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public void setScrollY(int scrollY) {
         this.scrollY = scrollY;
+    }
+
+    public String getSourceType() {
+        return sourceType;
+    }
+
+    public String getSourceId() {
+        return sourceId;
     }
 }

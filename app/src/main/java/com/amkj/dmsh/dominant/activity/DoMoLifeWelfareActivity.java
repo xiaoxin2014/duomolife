@@ -81,7 +81,7 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
     RecyclerView communal_recycler;
     //    滚动至顶部
     @BindView(R.id.download_btn_communal)
-    public FloatingActionButton download_btn_communal;
+    FloatingActionButton download_btn_communal;
     @BindView(R.id.tv_header_title)
     TextView tv_header_titleAll;
     @BindView(R.id.iv_img_service)

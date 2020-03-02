@@ -151,7 +151,6 @@ import static com.amkj.dmsh.constant.UMShareAction.routineId;
 import static com.amkj.dmsh.constant.Url.H_Q_FLOAT_AD;
 import static com.amkj.dmsh.constant.Url.LOTTERY_URL;
 import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
-import static com.amkj.dmsh.dao.AddClickDao.adClickTotal;
 import static com.amkj.dmsh.dao.BaiChuanDao.isTaoBaoUrl;
 import static com.amkj.dmsh.dao.BaiChuanDao.skipAliBC;
 import static com.yanzhenjie.permission.AndPermission.getFileUri;
@@ -482,18 +481,6 @@ public class ConstantMethod {
         return strings1.toArray(new String[strings1.size()]);
     }
 
-
-    /**
-     * 是否从轮播图跳转商品详情
-     *
-     * @param context         上下文
-     * @param link            链接
-     * @param isBannerPage    是否是轮播图
-     * @param isCloseActivity 跳转是否关闭界面
-     */
-    public static void setSkipPath(Context context, String link, boolean isBannerPage, boolean isCloseActivity) {
-        setSkipPath(context, link, isCloseActivity);
-    }
 
     /**
      * @param context         上下文
@@ -1096,8 +1083,7 @@ public class ConstantMethod {
                             GlideImageLoaderUtil.loadFitCenter(activity, iv_float_ad_icon,
                                     getStrings(communalADActivityBean.getPicUrl()));
                             iv_float_ad_icon.setOnClickListener(v -> {
-                                adClickTotal(activity, communalADActivityBean.getId());
-                                setSkipPath(activity, getStrings(communalADActivityBean.getAndroidLink()), false);
+                                AddClickDao.adClickTotal(activity, communalADActivityBean.getAndroidLink(), communalADActivityBean.getId(), true);
                             });
                         }
                     } else {
@@ -1191,8 +1177,7 @@ public class ConstantMethod {
                                 public void imageClick() {
                                     alertDialogAdImage.dismiss();
                                     String androidLink = requestStatus.getAndroidLink();
-                                    setSkipPath(context, TextUtils.isEmpty(androidLink) ? LOTTERY_URL : androidLink, false);
-                                    AddClickDao.adClickTotal(context, requestStatus.getId());
+                                    AddClickDao.adClickTotal(context, TextUtils.isEmpty(androidLink) ? LOTTERY_URL : androidLink, requestStatus.getId(), false);
                                 }
                             });
                             alertDialogAdImage.setImage(bitmap);
@@ -1244,10 +1229,9 @@ public class ConstantMethod {
     }
 
     //跳转拼团详情
-    public static void skipGroupDetail(Context context, String gpInfoId, int productId) {
+    public static void skipGroupDetail(Context context, String gpInfoId) {
         Intent intent = new Intent(context, QualityGroupShopDetailActivity.class);
         intent.putExtra("gpInfoId", gpInfoId);
-        intent.putExtra("productId", String.valueOf(productId));
         context.startActivity(intent);
     }
 
@@ -1542,7 +1526,6 @@ public class ConstantMethod {
             if (!TextUtils.isEmpty(shopCarGoodsSku.getActivityCode())) {
                 params.put("activityCode", shopCarGoodsSku.getActivityCode());
             }
-            addSourceParameter(params);
             NetLoadUtils.getNetInstance().loadNetDataPost(activity, url, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
@@ -2419,27 +2402,27 @@ public class ConstantMethod {
     public static int getSourceType(String className) {
         switch (className) {
             case "ArticleOfficialActivity"://文章
-                return 1;
+                return ConstantVariable.ARTICLE;
             case "QualityShopBuyListActivity"://必买清单
             case "QualityShopBuyListFragment"://必买清单
             case "QualityShopHistoryListActivity"://历史清单
-                return 2;
+                return ConstantVariable.MUST_BUY_TOPIC;
             case "DoMoLifeWelfareActivity"://福利社专题列表
             case "DoMoLifeWelfareFragment"://福利社专题列表
             case "DoMoLifeWelfareDetailsActivity"://福利社专题详情
             case "DoMoLifeWelfareDetailsFragment"://福利社专题详情
             case "HomeDefalutFragment"://首页良品商城福利社专区
-                return 3;
+                return ConstantVariable.WELFARE_TOPIC;
             case "DmlOptimizedSelDetailActivity"://多么定制详情
-                return 4;
+                return ConstantVariable.SUPER_GOOD;
             case "EditorSelectActivity"://小编精选
             case "EditorSelectFragment"://小编精选
-                return 5;
+                return ConstantVariable.REDACTOR_PICKED;
             case "QualityWeekOptimizedActivity"://每周优选
             case "QualityWeekOptimizedFragment"://每周优选
-                return 6;
+                return ConstantVariable.WEEKLY_ZONE;
             case "PostDetailActivity"://帖子详情
-                return 7;
+                return ConstantVariable.POST;
             default:
                 return -1;
         }
@@ -2459,36 +2442,23 @@ public class ConstantMethod {
     }
 
     //根据类名获取sourceId
-    private static String getSourceId(String className) {
+    public static String getSourceId(String className) {
         return (String) ((TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike()).getSourceMap().get(className);
     }
 
     //添加埋点来源参数
     public static void addSourceParameter(Map<String, Object> params) {
-        //添加埋点来源参数
         TinkerBaseApplicationLike tinkerBaseApplicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-        String simpleName = tinkerBaseApplicationLike.getPreviousActivity();
-        int sourceType = getSourceType(simpleName);
-        String sourceId = getSourceId(simpleName);
-        //如果没有找到对应的埋点Activity,再次判断是否是从首页Tab栏的Fragment进入的
-        if (sourceType == -1) {
-            String mainCheckedFragment = getMainCheckedFragment(tinkerBaseApplicationLike);
-            //如果是，重新获取SourceType和SourceId
-            if (!TextUtils.isEmpty(mainCheckedFragment)) {
-                sourceType = getSourceType(mainCheckedFragment);
-                sourceId = getSourceId(mainCheckedFragment);
-            }
-        }
-
-        if (sourceType != -1 && !TextUtils.isEmpty(sourceId)) {
-            params.put("sourceType", sourceType);
-            params.put("sourceId", sourceId);
+        String[] sourceParameter = tinkerBaseApplicationLike.getPreviousActivity();
+        if (!TextUtils.isEmpty(sourceParameter[0])) {
+            params.put("sourceType", sourceParameter[0]);
+            params.put("sourceId", sourceParameter[1]);
         }
     }
 
 
     //如果没有找到对应的埋点Activity,再次判断是否是从首页Tab栏的Fragment进入的
-    private static String getMainCheckedFragment(TinkerBaseApplicationLike tinkerBaseApplicationLike) {
+    public static String getMainCheckedFragment(TinkerBaseApplicationLike tinkerBaseApplicationLike) {
         String FragmentName = "";
         LinkedList<Activity> activityLinkedList = tinkerBaseApplicationLike.getActivityLinkedList();
         for (int i = 0; i < activityLinkedList.size(); i++) {

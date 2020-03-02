@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.dao.AddClickDao;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
@@ -14,8 +15,6 @@ import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.Holder;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
-import static com.amkj.dmsh.dao.AddClickDao.adClickTotal;
 
 
 /**
@@ -95,8 +94,7 @@ public class CommunalAdHolderView extends Holder<CommunalADActivityBean> {
                     public void onClick(View v) {
                         CommunalADActivityBean communalADActivity = (CommunalADActivityBean) v.getTag(R.id.iv_tag);
                         if (communalADActivity != null) {
-                            adClickTotal(context, communalADActivityBean.getId());
-                            setSkipPath(context, communalADActivity.getAndroidLink(), true, false);
+                            AddClickDao.adClickTotal(context, communalADActivity.getAndroidLink(), communalADActivityBean.getId(), true);
                         }
                     }
                 });
