@@ -469,7 +469,7 @@ public class ConstantVariable {
     public static final int  REDACTOR_PICKED= 5;//小编精选
     public static final int WEEKLY_ZONE = 6;//每周优选
     public static final int POST = 7;//帖子详情
-    public static final int AD = 8;//广告
+    public static final int AD = 8;//广告（轮播，启动广告，浮动广告，好物广告）
     public static final int POPUP = 9;//营销弹窗
     public static final int DYNAMIC_AREA = 10;//首页动态专区
 

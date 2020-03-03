@@ -101,7 +101,7 @@ public class AddClickDao {
     public static void addDynamicClick(Activity activity, String androidLink, int adId) {
         if (!TextUtils.isEmpty(androidLink)) {
             setSkipPath(activity, androidLink + (androidLink.contains("?") ? "&" : "?") +
-                    "sourceType=" + ConstantVariable.DYNAMIC_AREA + "&souceId=" + adId, false);
+                    "sourceType=" + ConstantVariable.DYNAMIC_AREA + "&sourceId=" + adId, false);
         }
         if (adId > 0) {
             Map<String, Object> params = new HashMap<>();

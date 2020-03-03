@@ -27,8 +27,7 @@ import java.util.List;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.skipGroupDetail;
-import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
+import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.dao.AddClickDao.totalWelfareProNum;
 
 /**
@@ -106,14 +105,15 @@ public class HomeWelfareAdapter extends CommonPagerAdapter<HomeWelfareBean> {
         };
         topicGoodsAdapter.setOnItemClickListener((adapter, view, position1) -> {
             UserLikedProductEntity.LikedProductBean likedProductBean = (UserLikedProductEntity.LikedProductBean) view.getTag();
+            String androidLink = "";
             if (likedProductBean != null) {
                 if (!TextUtils.isEmpty(likedProductBean.getGpInfoId())) {
-                    skipGroupDetail(mContext, likedProductBean.getGpInfoId());
+                    androidLink = "app://QualityGroupShopDetailActivity?gpInfoId=" + likedProductBean.getGpInfoId();
                 } else {
-                    skipProductUrl(mContext, 1, likedProductBean.getId());
+                    androidLink = "app://ShopScrollDetailsActivity?productId=" + likedProductBean.getId();
                 }
-                //记录埋点参数sourceId(福利社专题对应的ID)
-                ConstantMethod.saveSourceId(HomeDefalutFragment.class.getSimpleName(), item.getId());
+                //添加埋点来源参数
+                setSkipPath(mContext, androidLink + "&sourceType=3&sourceId=" + item.getId(), false);
                 //统计福利社点击商品
                 totalWelfareProNum(mContext, likedProductBean.getId(), item.getId());
             }
