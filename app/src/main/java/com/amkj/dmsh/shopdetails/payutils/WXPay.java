@@ -5,7 +5,6 @@ import android.app.Activity;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateWeChatPayIndentBean.ResultBean.PayKeyBean;
-import com.google.gson.Gson;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.tencent.mm.opensdk.constants.Build;
 import com.tencent.mm.opensdk.modelpay.PayReq;
@@ -82,7 +81,7 @@ public class WXPay {
         req.timeStamp = mPayParam.getTimestamp();
         req.sign = mPayParam.getSign();
 
-        updatePayResult(0, new Gson().toJson(pay_param));
+//        updatePayResult(0, new Gson().toJson(pay_param));
         mWXApi.sendReq(req);
     }
 
@@ -99,7 +98,7 @@ public class WXPay {
             mCallback.onCancel();
         }
 
-        updatePayResult(1, baseResp);
+//        updatePayResult(1, baseResp);
         mCallback = null;
     }
 

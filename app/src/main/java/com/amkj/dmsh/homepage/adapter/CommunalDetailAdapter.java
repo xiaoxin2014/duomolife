@@ -621,8 +621,6 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
         ConstantMethod.skipProductUrl(context, itemTypeId, id, androidLink);
 
         if (TextUtils.isEmpty(androidLink) || isSelfGoods) {
-            //记录埋点参数sourceId
-            ConstantMethod.saveSourceId(context.getClass().getSimpleName(), String.valueOf(id));
             //统计商品点击
             if (context instanceof OfficialNotifyDetailsActivity) {
                 totalOfficialProNum(context, id, ((OfficialNotifyDetailsActivity) context).getNotifyId());

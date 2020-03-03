@@ -46,7 +46,7 @@ public class AliPay {
         mPayTask = new PayTask(context);
         mContext = context;
         mOrderNo = orderNo;
-        updatePayResult(0, params);
+//        updatePayResult(0, params);
     }
 
     //支付
@@ -57,7 +57,7 @@ public class AliPay {
             public void run() {
                 String result = mPayTask.pay(mParams, true);
                 final AliPayResult pay_result = new AliPayResult(result);
-                updatePayResult(1, pay_result.getResult());
+//                updatePayResult(1, pay_result.getResult());
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
