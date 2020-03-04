@@ -178,7 +178,7 @@ public class QualityTypeHotSaleProFragment extends BaseFragment {
     private void setHotSaleShaftData(List<HotSaleShaftBean> hotSaleShaft) {
         int currentTab = stdDominantHotSale.getCurrentTab();
         if (hotSaleShaft != null && hotSaleShaft.size() > 0) {
-            QualityHotSaleAdapter qualityHotSaleAdapter = new QualityHotSaleAdapter(getActivity().getSupportFragmentManager(), hotSaleShaft);
+            QualityHotSaleAdapter qualityHotSaleAdapter = new QualityHotSaleAdapter(getChildFragmentManager(), hotSaleShaft);
             stdDominantHotSale.setVisibility(View.VISIBLE);
             if (screenWidth == 0) {
                 TinkerBaseApplicationLike applicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();

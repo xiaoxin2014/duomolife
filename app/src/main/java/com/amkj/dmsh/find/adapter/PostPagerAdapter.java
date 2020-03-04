@@ -26,12 +26,6 @@ public class PostPagerAdapter extends FragmentPagerAdapter {
         params.put("topicId", topicId);
     }
 
-    public PostPagerAdapter(FragmentManager fm, String userId, String[] titles) {
-        super(fm);
-        mTitles = titles;
-        params.put("userId", userId);
-    }
-
     @Override
     public int getCount() {
         return mTitles.length;

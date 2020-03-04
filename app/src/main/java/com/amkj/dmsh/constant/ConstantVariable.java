@@ -384,6 +384,7 @@ public class ConstantVariable {
     public static final String UPDATE_SEARCH_NUM = "updateSearchNum";//刷新搜索结果数量
     public static final String UPDATE_USER_PAGER = "updateUserPager";//刷新用户主页信息
     public static final String SEARCH_DATA = "searchData";    //    搜索 获取传递信息参数
+    public static final String UPDATE_CUSTOM_NAME = "updateCustomName";    //    更新自定义专区tab名称
 
 
     /**

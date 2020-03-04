@@ -6,6 +6,9 @@ import android.support.v7.widget.RecyclerView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
+import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.bean.TabNameBean;
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.dominant.adapter.CatergoryGoodsAdapter;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
@@ -14,6 +17,8 @@ import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,6 +32,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
+import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_CUSTOM_NAME;
 import static com.amkj.dmsh.constant.Url.Q_CUSTOM_PRO_LIST;
 
 /**
@@ -42,6 +48,8 @@ public class GroupCustomTopicFragment extends BaseFragment {
     private List<LikedProductBean> customProList = new ArrayList<>();
     private UserLikedProductEntity userLikedProductEntity;
     private String productType;
+    private String position;
+
 
     @Override
     protected int getContentView() {
@@ -103,8 +111,11 @@ public class GroupCustomTopicFragment extends BaseFragment {
                             } else {
                                 showToast(getActivity(), userLikedProductEntity.getMsg());
                             }
+
+                            EventBus.getDefault().post(new EventMessage(UPDATE_CUSTOM_NAME, new TabNameBean(userLikedProductEntity.getZoneName(), ConstantMethod.getStringChangeIntegers(position))));
                         }
                         qualityCustomTopicAdapter.notifyDataSetChanged();
+
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, customProList, userLikedProductEntity);
                     }
 
@@ -120,5 +131,6 @@ public class GroupCustomTopicFragment extends BaseFragment {
     @Override
     protected void getReqParams(Bundle bundle) {
         productType = bundle.getString("productType");
+        position = bundle.getString("position");
     }
 }

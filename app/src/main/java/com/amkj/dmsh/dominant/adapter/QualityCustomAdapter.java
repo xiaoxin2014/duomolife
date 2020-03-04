@@ -28,6 +28,7 @@ public class QualityCustomAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         params.put("productType", mProductTypeList.get(position));
+        params.put("position",String.valueOf(position));
         return BaseFragment.newInstance(GroupCustomTopicFragment.class, null, params);
     }
 

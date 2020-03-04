@@ -156,7 +156,7 @@ public class WholePointSpikeProductFragment extends BaseFragment {
                 sWidth = (int) (screenWidth * 1f / timeAxisInfoList.size());
             }
             stdPointSpikeType.setTabWidth(sWidth);
-            PointSpikeTimeShaftAdapter spikeTimeShaftAdapter = new PointSpikeTimeShaftAdapter(getActivity().getSupportFragmentManager(), timeAxisInfoList);
+            PointSpikeTimeShaftAdapter spikeTimeShaftAdapter = new PointSpikeTimeShaftAdapter(getChildFragmentManager(), timeAxisInfoList);
             vpPointSpikeContainer.setAdapter(spikeTimeShaftAdapter);
             stdPointSpikeType.setViewPager(vpPointSpikeContainer, customTabDoubleEntities);
 

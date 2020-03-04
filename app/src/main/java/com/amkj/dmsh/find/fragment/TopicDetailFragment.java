@@ -102,7 +102,7 @@ public class TopicDetailFragment extends BaseFragment {
             updateCurrentPostFragment();
         });
 
-        PostPagerAdapter adapter = new PostPagerAdapter(getActivity().getSupportFragmentManager(), titles, topicId);
+        PostPagerAdapter adapter = new PostPagerAdapter(getChildFragmentManager(), titles, topicId);
         vp_post.setOffscreenPageLimit(titles.length - 1);
         vp_post.setAdapter(adapter);
         mSlidingTabLayout.setViewPager(vp_post);

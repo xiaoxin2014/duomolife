@@ -66,7 +66,7 @@ public class ArticleTypeFragment extends BaseFragment {
                     if (categoryTypeList != null && categoryTypeList.size() > 0) {
                         mCategoryTypeList.addAll(categoryTypeList);
                         mCategoryTypeList.add(new CategoryTypeBean("全部"));
-                        HomeArticleTypeAdapter qualityPageAdapter = new HomeArticleTypeAdapter(getActivity().getSupportFragmentManager(), categoryTypeList);
+                        HomeArticleTypeAdapter qualityPageAdapter = new HomeArticleTypeAdapter(getChildFragmentManager(), categoryTypeList);
                         mViewpagerContainer.setAdapter(qualityPageAdapter);
                         mStbArtical.setViewPager(mViewpagerContainer);
                         mViewpagerContainer.setOffscreenPageLimit(mCategoryTypeList.size() - 1);

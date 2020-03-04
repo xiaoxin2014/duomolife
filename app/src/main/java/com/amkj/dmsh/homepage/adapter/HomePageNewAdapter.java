@@ -48,7 +48,7 @@ public class HomePageNewAdapter extends FragmentPagerAdapter {
     private final List<HomeCommonBean> mHomeCommonBeanList;
     private String[] actionArrays = {"app://HomeDefalutFragment", "app://QualityNewUserActivity", "app://QualityTypeHotSaleProActivity", "app://QualityNewProActivity", "app://HomeCouponGetActivity", "app://DmlOptimizedSelActivity",
             "app://DoMoLifeWelfareActivity", "app://EditorSelectActivity", "app://WholePointSpikeProductActivity", "app://QualityGroupShopActivity", "app://DoMoLifeWelfareDetailsActivity", "app://DuomoLifeActivity",
-            "app://QualityCustomTopicActivity", "app://QualityWeekOptimizedActivity", "app://QualityShopBuyListActivity", "app://ArticleTypeActivity", "app://CouponZoneActivity", "app://TopicDetailActivity","app://AttendanceActivity"};
+            "app://QualityCustomTopicActivity", "app://QualityWeekOptimizedActivity", "app://QualityShopBuyListActivity", "app://ArticleTypeActivity", "app://CouponZoneActivity", "app://TopicDetailActivity", "app://AttendanceActivity"};
     private String prefix = "app://";
 
     public HomePageNewAdapter(FragmentManager fm, List<HomeCommonBean> homeCommonBeanList) {
@@ -62,19 +62,14 @@ public class HomePageNewAdapter extends FragmentPagerAdapter {
             String link = bean.getLink().trim();
             if (TextUtils.isEmpty(link)) {
                 iterator.remove();
-            } else {
-                if (link.contains(prefix) && !actionList.contains(link)) {
-                    int prefixLength = link.indexOf(prefix) + prefix.length();
-                    int urlIndex = link.indexOf("?", prefixLength);
-                    if (urlIndex != -1) {
-                        link = link.substring(link.indexOf(prefix), urlIndex).trim();
-                        if (!actionList.contains(link)) {
-                            iterator.remove();
-                        }
-                    } else {
-                        iterator.remove();
-                    }
-
+            } else if (link.contains(prefix)) {
+                int prefixLength = link.indexOf(prefix) + prefix.length();
+                int urlIndex = link.indexOf("?", prefixLength);
+                if (urlIndex != -1) {
+                    link = link.substring(link.indexOf(prefix), urlIndex).trim();
+                }
+                if (!actionList.contains(link)) {
+                    iterator.remove();
                 }
             }
         }

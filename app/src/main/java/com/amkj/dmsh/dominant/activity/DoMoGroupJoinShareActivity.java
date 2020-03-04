@@ -1,6 +1,7 @@
 package com.amkj.dmsh.dominant.activity;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,8 +14,11 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.bean.TabNameBean;
 import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.dao.GroupDao;
 import com.amkj.dmsh.dominant.adapter.QualityCustomAdapter;
 import com.amkj.dmsh.dominant.bean.GroupShopDetailsEntity;
@@ -81,7 +85,7 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
     private String orderNo;
     private ConstantMethod constantMethod;
     private QualityCustomAdapter qualityCustomAdapter;
-    private String[] titles = {"9.9包邮", "热销爆品", "面膜专场"};
+    private String[] titles = {"自定义专区1", "自定义专区2", "自定义专区3"};
     private List<String> mProductTypeList = new ArrayList<>();
     private GroupShopDetailsEntity mGroupShopDetailsEntity;
     private GroupShopDetailsEntity.GroupShopDetailsBean mGroupShopDetailsBean;
@@ -249,7 +253,7 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
                 countdownView.dynamicShow(dynamic.build());
                 String timeformat = TimeUtils.getTimeDifferenceText(gpEndTime, formatter.format(startTime));
                 //倒计时样式格式化
-                countdownView.customTimeShow(timeformat.contains("天"), timeformat.contains("时"), timeformat.contains("分"), timeformat.contains("秒"), false);
+                countdownView.customTimeShow(timeformat.contains("天"), timeformat.contains("时"), timeformat.contains("分"), !timeformat.contains("天"), false);
                 countdownView.updateShow(endTime.getTime() - startTime.getTime() - mGroupShopDetailsEntity.getSecond() * 1000);
                 groupShareJoinView.tv_show_communal_time_status.setText("剩余");
                 if (!isEndOrStartTime(mGroupShopDetailsEntity.getCurrentTime()
@@ -357,4 +361,21 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+
+
+    @Override
+    protected void postEventResult(@NonNull EventMessage message) {
+        if (message.type.equals(ConstantVariable.UPDATE_CUSTOM_NAME)) {
+            try {
+                if (mSlidingTablayout != null) {
+                    TabNameBean tabNameBean = (TabNameBean) message.result;
+                    TextView titleView = mSlidingTablayout.getTitleView(tabNameBean.getPosition());
+                    titleView.setText(tabNameBean.getTabName());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }
