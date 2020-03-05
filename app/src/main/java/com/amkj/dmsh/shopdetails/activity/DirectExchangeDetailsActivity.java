@@ -1019,7 +1019,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
                     GroupShopDetailsBean groupShopDetailsBean = new GroupShopDetailsBean();
                     groupShopDetailsBean.setCoverImage(orderProductInfoBean.getPicUrl());
                     groupShopDetailsBean.setGpName(orderProductInfoBean.getName());
-                    groupShopDetailsBean.setType(type);
+                    groupShopDetailsBean.setType(orderDetailBean.getType());
                     GroupDao.invitePartnerGroup(getActivity(), groupShopDetailsBean, orderDetailBean.getNo());
                 } catch (Exception exception) {
                     showToast(this, "邀请失败");

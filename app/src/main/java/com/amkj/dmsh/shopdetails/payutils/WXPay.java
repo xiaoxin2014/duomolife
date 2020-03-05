@@ -5,11 +5,14 @@ import android.app.Activity;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateWeChatPayIndentBean.ResultBean.PayKeyBean;
+import com.google.gson.GsonBuilder;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.tencent.mm.opensdk.constants.Build;
 import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -81,7 +84,7 @@ public class WXPay {
         req.timeStamp = mPayParam.getTimestamp();
         req.sign = mPayParam.getSign();
 
-//        updatePayResult(0, new Gson().toJson(pay_param));
+        updatePayResult(0, new GsonBuilder().disableHtmlEscaping().create().toJson(pay_param), -1);
         mWXApi.sendReq(req);
     }
 
@@ -98,7 +101,7 @@ public class WXPay {
             mCallback.onCancel();
         }
 
-//        updatePayResult(1, baseResp);
+        updatePayResult(1, baseResp, error_code);
         mCallback = null;
     }
 
@@ -107,14 +110,27 @@ public class WXPay {
         return mWXApi.isWXAppInstalled() && mWXApi.getWXAppSupportAPI() >= Build.PAY_SUPPORTED_SDK_INT;
     }
 
-    private void updatePayResult(int type, String result) {
+    private void updatePayResult(int type, String result, int code) {
         Map<String, Object> map = new HashMap<>();
         map.put("orderNo", mOrderNo);
 //        map.put("outTradeNo", outTradeNo);
 //        map.put("tradeNo", tradeNo);
-        map.put("result", result);
+        if (type == 0) {
+            try {
+                String keyWord = URLDecoder.decode(result, "UTF-8");
+                map.put("result", keyWord);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        } else {
+            map.put("result", result);
+        }
         map.put("type", type);//支付结果，0代表是请求支付，1代表是响应支付
         map.put("payType", 1);//0代表是app的支付宝支付，1代表是app的微信支付
+        //响应支付时加上状态，1成功，0
+        if (type == 1) {
+            map.put("status", code == 0 ? 1 : 0);
+        }
         NetLoadUtils.getNetInstance().loadNetDataPost(mContext, Q_UPDATE_PAY_RESULT, map, null);
     }
 }

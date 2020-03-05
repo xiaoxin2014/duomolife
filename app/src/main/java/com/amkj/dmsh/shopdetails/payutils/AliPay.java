@@ -46,7 +46,7 @@ public class AliPay {
         mPayTask = new PayTask(context);
         mContext = context;
         mOrderNo = orderNo;
-//        updatePayResult(0, params);
+        updatePayResult(0, params, "");
     }
 
     //支付
@@ -57,7 +57,8 @@ public class AliPay {
             public void run() {
                 String result = mPayTask.pay(mParams, true);
                 final AliPayResult pay_result = new AliPayResult(result);
-//                updatePayResult(1, pay_result.getResult());
+                String resultStatus = pay_result.getResultStatus();
+                updatePayResult(1, pay_result.getResult(), resultStatus);
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -69,7 +70,6 @@ public class AliPay {
                             return;
                         }
 
-                        String resultStatus = pay_result.getResultStatus();
                         if (TextUtils.equals(resultStatus, "9000")) {    //支付成功
                             mCallback.onSuccess();
                         } else if (TextUtils.equals(resultStatus, "8000")) { //支付结果因为支付渠道原因或者系统原因还在等待支付结果确认，最终交易是否成功以服务端异步通知为准（小概率状态）
@@ -87,10 +87,19 @@ public class AliPay {
         }).start();
     }
 
-    private void updatePayResult(int type, String result) {
+    private void updatePayResult(int type, String result, String code) {
         Map<String, Object> map = new HashMap<>();
         map.put("orderNo", mOrderNo);
-        if (type == 1 && !TextUtils.isEmpty(result)) {
+
+
+        if (type == 0) {
+            try {
+                String keyWord = URLDecoder.decode(result, "UTF-8");
+                map.put("result", keyWord);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        } else if (type == 1 && !TextUtils.isEmpty(result)) {
             Map resultMap = new Gson().fromJson(result, Map.class);
             Map responseMap = (Map) resultMap.get("alipay_trade_app_pay_response");
             if (responseMap != null) {
@@ -103,18 +112,11 @@ public class AliPay {
                 if (!TextUtils.isEmpty(tradeNo)) {
                     map.put("tradeNo", tradeNo);
                 }
-            }
-        }
 
-        if (type == 0) {
-            try {
-                String keyWord = URLDecoder.decode(result, "UTF-8");
-                map.put("result", keyWord);
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
+                map.put("result", new Gson().toJson(responseMap));
             }
-        } else {
-            map.put("result", result);
+            map.put("status", "9000".equals(code) ? 1 : 0);
+
         }
         map.put("payType", 0);//0代表是app的支付宝支付，1代表是app的微信支付
         map.put("type", type);//支付结果，0代表是请求支付，1代表是响应支付

@@ -163,7 +163,7 @@ public class DoMoIndentWaitSendFragment extends BaseFragment {
                             GroupShopDetailsBean groupShopDetailsBean = new GroupShopDetailsBean();
                             groupShopDetailsBean.setCoverImage(goodsBean.getPicUrl());
                             groupShopDetailsBean.setGpName(goodsBean.getName());
-                            groupShopDetailsBean.setType(type);
+                            groupShopDetailsBean.setType(orderListBean.getType());
                             GroupDao.invitePartnerGroup(getActivity(), groupShopDetailsBean, orderListBean.getNo());
                         }
                         break;

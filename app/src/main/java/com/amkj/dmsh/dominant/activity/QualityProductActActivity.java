@@ -233,7 +233,7 @@ public class QualityProductActActivity extends BaseActivity {
                             List<LikedProductBean> goodsList = likedProductEntity.getGoodsList();
                             if (likedProductEntity.getCode().equals(SUCCESS_CODE) && goodsList != null && goodsList.size() > 0) {
                                 setActProInfo(likedProductEntity);
-                                actProActivityList.addAll(likedProductEntity.getGoodsList());
+                                actProActivityList.addAll(goodsList);
                                 qualityTypeProductAdapter.loadMoreComplete();
                             } else if (likedProductEntity.getCode().equals(ERROR_CODE)) {
                                 showToast(QualityProductActActivity.this, likedProductEntity.getMsg());
@@ -274,7 +274,7 @@ public class QualityProductActActivity extends BaseActivity {
             long dateEnd = formatter.parse(activityEndTime).getTime();
             long dateCurret = !TextUtils.isEmpty(currentTime) ? formatter.parse(currentTime).getTime() : System.currentTimeMillis();
             //活动未开始
-            if (!isEndOrStartTime( likedProductEntity.getCurrentTime(),likedProductEntity.getActivityStartTime())) {
+            if (!isEndOrStartTime(likedProductEntity.getCurrentTime(), likedProductEntity.getActivityStartTime())) {
                 tipView.setText(tipView.getId() == R.id.tv_count_time_before_white ? "距开始还有" : "距开始");
                 CountDownTimer countDownTimer = new CountDownTimer(this, dateStart + 1 - dateCurret, 1000) {
                     @Override
@@ -365,9 +365,9 @@ public class QualityProductActActivity extends BaseActivity {
 
     @OnClick(R.id.iv_img_share)
     void setShare() {
-        if (likedProductEntity != null && likedProductEntity.getGoodsList() != null
-                && likedProductEntity.getGoodsList().size() > 0) {
-            LikedProductBean likedProductBean = likedProductEntity.getGoodsList().get(0);
+        if (likedProductEntity != null && actProActivityList != null
+                && actProActivityList.size() > 0) {
+            LikedProductBean likedProductBean = actProActivityList.get(0);
             new UMShareAction(QualityProductActActivity.this
                     , likedProductBean.getPicUrl()
                     , getStrings(likedProductEntity.getTitle())

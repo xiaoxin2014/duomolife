@@ -4,7 +4,6 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:id="@+id/fbl_market_label"
-    android:visibility="gone"
     app:dividerDrawable="@drawable/item_divider_img_white"
     app:showDivider="middle"
     app:flexWrap="wrap"
