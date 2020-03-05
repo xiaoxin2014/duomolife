@@ -37,7 +37,7 @@ import static com.amkj.dmsh.constant.Url.Q_CUSTOM_PRO_LIST;
 
 /**
  * Created by xiaoxin on 2019/12/3
- * Version:v4.4.1
+ * Version:v4.4.0
  * ClassDescription :拼团详情自定义专区
  */
 public class GroupCustomTopicFragment extends BaseFragment {

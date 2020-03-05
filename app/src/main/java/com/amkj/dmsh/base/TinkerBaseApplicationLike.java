@@ -28,6 +28,7 @@ import com.alibaba.sdk.android.oss.OSSClient;
 import com.alibaba.sdk.android.oss.common.auth.OSSCredentialProvider;
 import com.alibaba.sdk.android.oss.common.auth.OSSPlainTextAKSKCredentialProvider;
 import com.amkj.dmsh.BuildConfig;
+import com.amkj.dmsh.MainActivity;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
@@ -86,6 +87,7 @@ import me.jessyan.autosize.unit.Subunits;
 
 import static android.content.Context.MODE_PRIVATE;
 import static com.amkj.dmsh.constant.ConstantMethod.createExecutor;
+import static com.amkj.dmsh.constant.ConstantMethod.getSourceType;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.OSS_BUCKET_NAME;
 import static com.amkj.dmsh.constant.ConstantVariable.OSS_OBJECT;
@@ -870,20 +872,63 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
     }
 
     /**
-     * 寻找当前Activity的前一个埋点Activity
+     * 寻找倒数第一个埋点Activity
      *
      * @return 返回类名
      */
-    public String getPreviousActivity() {
-        for (int i = activityLinkedList.size() - 1; i >= 0; i--) {
-            Activity activity = activityLinkedList.get(i);
-            String simpleName = activity.getClass().getSimpleName();
-            if (ConstantMethod.getSourceType(simpleName) != -1) {
-                return simpleName;
+    public String[] getPreviousActivity() {
+        String[] sourceParameter = new String[0];
+        try {
+            sourceParameter = new String[2];
+            for (int i = activityLinkedList.size() - 1; i >= 0; i--) {
+                Activity activity = activityLinkedList.get(i);
+                String simpleName = activity.getClass().getSimpleName();
+                int sourceType = getSourceType(simpleName);
+                if (sourceType != -1) {
+                    String sourceId = ConstantMethod.getSourceId(simpleName);
+                    //如果某个广告位既是一个专区又是一个广告，则sourceType 要传2个，逗号隔开，sourceId 也逗号隔开
+                    String adSourceType = ((BaseActivity) activity).getSourceType();
+                    String adSourceId = ((BaseActivity) activity).getSourceId();
+                    sourceParameter[0] = sourceType + (!TextUtils.isEmpty(adSourceType) ? "," + adSourceType : "");
+                    sourceParameter[1] = sourceId + (!TextUtils.isEmpty(adSourceId) ? "," + adSourceId : "");
+                    return sourceParameter;
+                }
             }
+
+            //查找倒数第一个从广告进入的埋点Activity（轮播，启动广告，浮动广告，好物广告，营销弹窗，动态专区）
+            for (int i = activityLinkedList.size() - 1; i >= 0; i--) {
+                Activity activity = activityLinkedList.get(i);
+                if (activity instanceof BaseActivity && !TextUtils.isEmpty(((BaseActivity) activity).getSourceType())) {
+                    sourceParameter[0] = ((BaseActivity) activity).getSourceType();
+                    sourceParameter[1] = ((BaseActivity) activity).getSourceId();
+                    return sourceParameter;
+                }
+            }
+
+
+            //如果没有找到对应的埋点Activity,再次判断是否是从首页Tab栏的Fragment进入的
+            for (int i = 0; i < activityLinkedList.size(); i++) {
+                Activity activity = activityLinkedList.get(i);
+                if (activity != null && !activity.isFinishing()) {
+                    if (activity instanceof MainActivity) {
+                        String FragmentName = ((MainActivity) activity).getCheckedFragmentName();
+                        int sourceType = getSourceType(FragmentName);
+                        if (sourceType != -1) {
+                            String sourceId = ConstantMethod.getSourceId(FragmentName);
+                            sourceParameter[0] = String.valueOf(sourceType);
+                            sourceParameter[1] = sourceId;
+                            return sourceParameter;
+                        }
+                        break;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        return "";
+
+        return sourceParameter;
     }
 
     /**

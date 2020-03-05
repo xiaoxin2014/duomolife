@@ -19,7 +19,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 
 /**
  * Created by xiaoxin on 2019/12/26
- * Version:v4.4.1
+ * Version:v4.4.0
  * ClassDescription :更多拼团商品
  */
 public class GroupRecommendAdapter extends BaseQuickAdapter<QualityGroupBean, BaseViewHolder> {

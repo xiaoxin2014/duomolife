@@ -27,7 +27,6 @@ import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dao.AddClickDao;
 import com.amkj.dmsh.dominant.activity.DoMoLifeWelfareActivity;
-import com.amkj.dmsh.dominant.activity.QualityNewUserActivity;
 import com.amkj.dmsh.dominant.adapter.GoodProductAdapter;
 import com.amkj.dmsh.dominant.adapter.HomeCatergoryAdapter;
 import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
@@ -76,7 +75,6 @@ import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_ID;
 import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_NAME;
@@ -89,7 +87,6 @@ import static com.amkj.dmsh.constant.Url.H_AD_LIST;
 import static com.amkj.dmsh.constant.Url.H_DML_THEME;
 import static com.amkj.dmsh.constant.Url.QUALITY_SHOP_GOODS_PRO;
 import static com.amkj.dmsh.constant.Url.Q_PRODUCT_TYPE_LIST;
-import static com.amkj.dmsh.dao.AddClickDao.adClickTotal;
 import static com.amkj.dmsh.dao.AddClickDao.addDynamicClick;
 
 
@@ -222,8 +219,7 @@ public class HomeDefalutFragment extends BaseFragment {
         mHomeTopAdapter.setOnItemClickListener((adapter, view, position) -> {
             HomeCommonBean homeCommonBean = (HomeCommonBean) view.getTag();
             if (homeCommonBean != null) {
-                setSkipPath(getActivity(), homeCommonBean.getLink(), false);
-                adClickTotal(getActivity(), homeCommonBean.getId());
+                AddClickDao.adClickTotal(getActivity(), homeCommonBean.getLink(), homeCommonBean.getId(),false);
             }
         });
 
@@ -236,8 +232,7 @@ public class HomeDefalutFragment extends BaseFragment {
             HomeCommonBean homeCommonBean = (HomeCommonBean) view.getTag();
             //跳转对应专区
             if (!TextUtils.isEmpty(homeCommonBean.getLink())) {
-                setSkipPath(getActivity(), homeCommonBean.getLink(), false);
-                AddClickDao.adClickTotal(getActivity(), homeCommonBean.getId());
+                AddClickDao.adClickTotal(getActivity(), homeCommonBean.getLink(), homeCommonBean.getId(),false);
             }
         });
         mRvSpecialZone.addItemDecoration(new ItemDecoration.Builder()
@@ -706,14 +701,7 @@ public class HomeDefalutFragment extends BaseFragment {
             //动态专区
             case R.id.ll_dynamic:
                 if (mHomeDynamicEntity != null) {
-                    addDynamicClick(getActivity(), mHomeDynamicEntity.getId());
-                    String link = mHomeDynamicEntity.getLink();
-                    if (TextUtils.isEmpty(link)) {
-                        intent = new Intent(getActivity(), QualityNewUserActivity.class);
-                        startActivity(intent);
-                    } else {
-                        setSkipPath(getActivity(), link, false);
-                    }
+                    addDynamicClick(getActivity(), mHomeDynamicEntity.getLink(),mHomeDynamicEntity.getId());
                 }
                 break;
         }

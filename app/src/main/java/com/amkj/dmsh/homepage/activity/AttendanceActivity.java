@@ -26,10 +26,10 @@ import com.amkj.dmsh.dao.AddClickDao;
 import com.amkj.dmsh.dominant.activity.QualityCustomTopicActivity;
 import com.amkj.dmsh.homepage.AttendanceMarqueeView;
 import com.amkj.dmsh.homepage.adapter.AttendanceAwardAdapter;
+import com.amkj.dmsh.homepage.adapter.DoubleIntegralAdpter;
 import com.amkj.dmsh.homepage.adapter.HomeImgActivityAdapter;
 import com.amkj.dmsh.homepage.adapter.IntegralLotteryAdapter;
 import com.amkj.dmsh.homepage.adapter.IntegrationRecyclerAdapter;
-import com.amkj.dmsh.homepage.adapter.DoubleIntegralAdpter;
 import com.amkj.dmsh.homepage.bean.AttendanceDetailEntity;
 import com.amkj.dmsh.homepage.bean.AttendanceDetailEntity.AttendanceDetailBean;
 import com.amkj.dmsh.homepage.bean.AttendanceDetailEntity.LogListBean;
@@ -74,7 +74,6 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.isEmptyStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -962,8 +961,7 @@ public class AttendanceActivity extends BaseActivity {
             homeImgActivityAdapter.setOnItemClickListener((adapter, view, position) -> {
                 CommunalADActivityBean communalADActivityBean = (CommunalADActivityBean) view.getTag();
                 if (communalADActivityBean != null) {
-                    setSkipPath(AttendanceActivity.this, communalADActivityBean.getAndroidLink(), false);
-                    AddClickDao.adClickTotal(getActivity(),communalADActivityBean.getId());
+                    AddClickDao.adClickTotal(getActivity(), communalADActivityBean.getAndroidLink(),communalADActivityBean.getId(),false);
                 }
             });
         }

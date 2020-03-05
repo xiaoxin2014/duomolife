@@ -18,7 +18,7 @@ import butterknife.OnClick;
 
 /**
  * Created by xiaoxin on 2019/12/2 0018
- * Version：V4.4.1
+ * Version：V4.4.0
  * ClassDescription :拼团相关底部控件
  */
 public class GroupBottomView extends LinearLayout {

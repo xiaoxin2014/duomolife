@@ -18,6 +18,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.HomeQualityFloatAdEntity;
+import com.amkj.dmsh.dao.AddClickDao;
 import com.amkj.dmsh.dominant.adapter.GoodProductAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
@@ -45,7 +46,6 @@ import butterknife.OnClick;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
-import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_INTEGRAL_PRODUCT;
@@ -55,7 +55,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.MAIN_QUALITY;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.Q_PAY_SUCCESS_AD_DIALOG;
 import static com.amkj.dmsh.constant.Url.Q_PAY_SUCCESS_PRODUCT;
-import static com.amkj.dmsh.dao.AddClickDao.adClickTotal;
 
 
 /**
@@ -197,8 +196,7 @@ public class DirectPaySuccessActivity extends BaseActivity {
                 alertDialogAdImage.setAlertClickListener(new AlertDialogImage.AlertImageClickListener() {
                     @Override
                     public void imageClick() {
-                        adClickTotal(getActivity(), communalADActivityBean.getId());
-                        setSkipPath(DirectPaySuccessActivity.this, communalADActivityBean.getAndroidLink(), false);
+                        AddClickDao.adClickTotal(getActivity(),communalADActivityBean.getAndroidLink(), communalADActivityBean.getId(),false);
                         alertDialogAdImage.dismiss();
                     }
                 });

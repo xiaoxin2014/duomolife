@@ -413,8 +413,6 @@ public class GroupMatchActivity extends BaseActivity {
         if (!TextUtils.isEmpty(combines)) {
             params.put("combines", combines);
         }
-        //添加埋点来源参数
-        ConstantMethod.addSourceParameter(params);
         NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.Q_COMBINE_PRODUCT_ADD_CAR, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {

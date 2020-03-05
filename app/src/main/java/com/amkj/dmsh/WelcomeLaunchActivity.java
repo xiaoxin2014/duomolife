@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.utils.LifecycleHandler;
+import com.amkj.dmsh.dao.AddClickDao;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 
 import java.util.regex.Matcher;
@@ -27,8 +27,6 @@ import static com.amkj.dmsh.MainActivity.ImgKey;
 import static com.amkj.dmsh.MainActivity.LauncherAdIdKey;
 import static com.amkj.dmsh.MainActivity.SkipUrlKey;
 import static com.amkj.dmsh.MainActivity.TimeKey;
-import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
-import static com.amkj.dmsh.dao.AddClickDao.adClickTotal;
 
 ;
 
@@ -156,16 +154,12 @@ public class WelcomeLaunchActivity extends BaseActivity {
     }
 
     private void setSkipLocalPath(String link) {
-//        启动广告点击统计
-        adClickTotal(this, launcherAdId);
         //延迟关闭页面，否则广告接口无法统计到
-        new LifecycleHandler(this).postDelayed(() -> {
-            getWindow().setFlags(
-                    WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN,
-                    WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-            setSkipPath(WelcomeLaunchActivity.this, link, false);
-        }, 100);
-
+        getWindow().setFlags(
+                WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+        //启动广告点击统计
+        AddClickDao.adClickTotal(this, link, launcherAdId, true);
     }
 
     @Override

@@ -86,18 +86,18 @@ public class JzVideoPlayerStatus extends JzVideoPlayerStatusDialog {
             setADVideoView();
         }
         Log.d(TAG + "volume", "setUp: " + currentScreen + "控件状态->"
-                + iv_video_volume.isSelected() + "\t"+"音量->"+volumeOn);
+                + iv_video_volume.isSelected() + "\t" + "音量->" + volumeOn);
         syncVideoVolume();
     }
 
     /**
-     *进去全屏
+     * 进去全屏
      */
     @Override
     public void startWindowFullscreen() {
         super.startWindowFullscreen();
         ImageView imageView = JzvdMgr.getSecondFloor().findViewById(R.id.iv_video_volume);
-        if(imageView.getVisibility() == VISIBLE){
+        if (imageView.getVisibility() == VISIBLE) {
             imageView.setSelected(volumeOn);
         }
     }
@@ -109,7 +109,7 @@ public class JzVideoPlayerStatus extends JzVideoPlayerStatusDialog {
     public void playOnThisJzvd() {
         super.playOnThisJzvd();
         ImageView imageView = JzvdMgr.getFirstFloor().findViewById(R.id.iv_video_volume);
-        if(imageView.getVisibility() == VISIBLE){
+        if (imageView.getVisibility() == VISIBLE) {
             imageView.setSelected(volumeOn);
         }
     }
@@ -229,7 +229,7 @@ public class JzVideoPlayerStatus extends JzVideoPlayerStatusDialog {
                     if (currentState == CURRENT_STATE_PLAYING) {
                         onStatePause();
                     }
-                    setSkipPath(getContext(), linkedHashMap.get(urlType).toString(), true, false);
+                    setSkipPath(getContext(), linkedHashMap.get(urlType).toString(), false);
                 }
                 break;
             case R.id.iv_video_volume:
@@ -266,7 +266,7 @@ public class JzVideoPlayerStatus extends JzVideoPlayerStatusDialog {
      * 同步音量状态
      */
     private void syncVideoVolume() {
-        if(iv_video_volume.getVisibility() == VISIBLE){
+        if (iv_video_volume.getVisibility() == VISIBLE) {
             iv_video_volume.setSelected(volumeOn);
         }
     }

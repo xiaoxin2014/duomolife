@@ -458,4 +458,20 @@ public class ConstantVariable {
     public static final String PUSH_OPEN_REMIND = "23";//推送通知打开提醒
     public static final String APP_REMARK_GUDIANCE = "24";//app评分引导
     public static final String MARKING_POPUP = "31";//营销弹窗
+
+
+    /**
+     * 商品数据埋点来源类型
+     */
+    public static final int ARTICLE = 1;//文章
+    public static final int MUST_BUY_TOPIC = 2;//必买清单专题
+    public static final int WELFARE_TOPIC = 3;//福利社专题
+    public static final int SUPER_GOOD = 4;//定制专题
+    public static final int  REDACTOR_PICKED= 5;//小编精选
+    public static final int WEEKLY_ZONE = 6;//每周优选
+    public static final int POST = 7;//帖子详情
+    public static final int AD = 8;//广告（轮播，启动广告，浮动广告，好物广告）
+    public static final int POPUP = 9;//营销弹窗
+    public static final int DYNAMIC_AREA = 10;//首页动态专区
+
 }

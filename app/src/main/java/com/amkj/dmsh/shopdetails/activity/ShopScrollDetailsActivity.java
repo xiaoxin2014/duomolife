@@ -1434,8 +1434,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             if (!TextUtils.isEmpty(shopCarGoodsSkuDif.getActivityCode())) {
                 params.put("activityCode", shopCarGoodsSkuDif.getActivityCode());
             }
-            //添加埋点来源参数
-            ConstantMethod.addSourceParameter(params);
             NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
@@ -1532,8 +1530,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         params.put("uid", userId);
         params.put("object_id", shopPropertyBean.getId());
         params.put("type", "goods");
-        //添加埋点来源参数
-        ConstantMethod.addSourceParameter(params);
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {

@@ -26,10 +26,10 @@ import com.amkj.dmsh.homepage.activity.IntegralGetActivity;
 import com.amkj.dmsh.homepage.activity.IntegralProductShopActivity;
 import com.amkj.dmsh.homepage.activity.MineIntegralLotteryAwardActivity;
 import com.amkj.dmsh.homepage.adapter.AttendanceAwardAdapter;
+import com.amkj.dmsh.homepage.adapter.DoubleIntegralAdpter;
 import com.amkj.dmsh.homepage.adapter.HomeImgActivityAdapter;
 import com.amkj.dmsh.homepage.adapter.IntegralLotteryAdapter;
 import com.amkj.dmsh.homepage.adapter.IntegrationRecyclerAdapter;
-import com.amkj.dmsh.homepage.adapter.DoubleIntegralAdpter;
 import com.amkj.dmsh.homepage.bean.AttendanceDetailEntity;
 import com.amkj.dmsh.homepage.bean.AttendanceDetailEntity.AttendanceDetailBean;
 import com.amkj.dmsh.homepage.bean.AttendanceDetailEntity.LogListBean;
@@ -73,7 +73,6 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.isEmptyStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -909,8 +908,7 @@ public class AttendanceFragment extends BaseFragment {
             homeImgActivityAdapter.setOnItemClickListener((adapter, view, position) -> {
                 CommunalADActivityBean communalADActivityBean = (CommunalADActivityBean) view.getTag();
                 if (communalADActivityBean != null) {
-                    setSkipPath(getActivity(), communalADActivityBean.getAndroidLink(), false);
-                    AddClickDao.adClickTotal(getActivity(),communalADActivityBean.getId());
+                    AddClickDao.adClickTotal(getActivity(),communalADActivityBean.getAndroidLink(),communalADActivityBean.getId(),false);
                 }
             });
         }

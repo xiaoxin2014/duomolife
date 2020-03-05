@@ -619,7 +619,6 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
     //富文本商品点击事件
     private void setGoodsClick(int itemTypeId, int id, String androidLink, boolean isSelfGoods) {
         ConstantMethod.skipProductUrl(context, itemTypeId, id, androidLink);
-
         if (TextUtils.isEmpty(androidLink) || isSelfGoods) {
             //统计商品点击
             if (context instanceof OfficialNotifyDetailsActivity) {

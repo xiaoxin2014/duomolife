@@ -69,7 +69,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.addShopCarGetSku;
 import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
@@ -78,8 +77,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.QUALITY_SHOP_BUY_DETAIL;
 import static com.amkj.dmsh.constant.Url.QUALITY_SHOP_HISTORY_LIST;
 import static com.amkj.dmsh.constant.Url.QUALITY_SHOP_HISTORY_LIST_PRO;
-
-
 
 
 /**
@@ -224,6 +221,8 @@ public class QualityShopBuyListActivity extends BaseActivity {
                     dr_communal_pro.closeDrawers();
                     Intent intent = new Intent(QualityShopBuyListActivity.this, QualityShopHistoryListActivity.class);
                     intent.putExtra("listId", String.valueOf(qualityHistoryListBean.getId()));
+                    intent.putExtra("sourceType", getSourceType());
+                    intent.putExtra("sourceId", getSourceId());
                     ConstantMethod.saveSourceId(getClass().getSimpleName(), String.valueOf(qualityHistoryListBean.getId()));
                     startActivity(intent);
                 }

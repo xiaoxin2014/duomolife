@@ -25,7 +25,7 @@ import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTime;
 
 /**
  * Created by xiaoxin on 2019/12/30
- * Version:v4.4.1
+ * Version:v4.4.0
  * ClassDescription :提示拼团未完成弹窗
  */
 public class AlertDialogGroup {

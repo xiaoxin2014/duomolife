@@ -36,7 +36,7 @@ import static com.amkj.dmsh.constant.Url.Q_COUPON_PRODUCT_LIST;
 
 /**
  * Created by xiaoxin on 2020/1/17
- * Version:v4.4.1
+ * Version:v4.4.0
  * ClassDescription :优惠券-选择指定商品优惠券-可用券商品
  */
 

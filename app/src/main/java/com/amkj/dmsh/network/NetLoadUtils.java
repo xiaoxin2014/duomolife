@@ -39,6 +39,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -73,6 +74,8 @@ public class NetLoadUtils<T, E extends BaseEntity> {
     public static String uid;
     private AlertDialogHelper mNotificationAlertDialogHelper;
     private long mLastTime;
+    //需要添加埋点的接口（收藏商品，加购以及创建订单）
+    private String[] sourceUrl = new String[]{Url.Q_COMBINE_PRODUCT_ADD_CAR, Url.Q_SHOP_DETAILS_ADD_CAR, Url.Q_SP_DETAIL_PRO_COLLECT, Url.Q_CREATE_GROUP_NEW_INDENT, Url.Q_CREATE_INDENT};
 
     private NetLoadUtils() {
     }
@@ -120,6 +123,12 @@ public class NetLoadUtils<T, E extends BaseEntity> {
         if (context instanceof BaseActivity) {
             map.putAll(((BaseActivity) context).commonMap);
         }
+
+        //添加埋点来源参数
+        if (Arrays.asList(sourceUrl).contains(url)) {
+            ConstantMethod.addSourceParameter(map);
+        }
+
         if (NetWorkUtils.checkNet(context)) {
             HttpParams httpParams = getHttpParams(map);
 
