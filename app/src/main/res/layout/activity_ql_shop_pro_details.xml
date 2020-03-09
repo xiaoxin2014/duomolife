@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:focusable="true"
@@ -17,14 +16,13 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <com.scwang.smartrefresh.layout.SmartRefreshLayout
-                xmlns:android="http://schemas.android.com/apk/res/android"
+            <com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/smart_ql_sp_pro_details"
                 android:layout_width="match_parent"
                 android:layout_height="0px"
                 android:layout_weight="1">
 
-                <include layout="@layout/layout_refresh_header_gif"/>
+                <include layout="@layout/layout_refresh_header_gif" />
 
                 <android.support.v4.widget.NestedScrollView
                     android:id="@+id/scroll_pro"
@@ -51,7 +49,7 @@
                                 <com.bigkoo.convenientbanner.ConvenientBanner
                                     android:id="@+id/banner_ql_sp_pro_details"
                                     android:layout_width="match_parent"
-                                    android:layout_height="match_parent"/>
+                                    android:layout_height="match_parent" />
 
                                 <TextView
                                     android:id="@+id/tv_group_product"
@@ -65,7 +63,7 @@
                                     android:text="@string/group_discount"
                                     android:textColor="@color/white"
                                     android:textSize="@dimen/sc_mm_22"
-                                    android:visibility="visible"/>
+                                    android:visibility="visible" />
                             </RelativeLayout>
 
                             <RelativeLayout
@@ -76,16 +74,16 @@
                                 android:paddingTop="@dimen/sc_mm_22"
                                 android:visibility="gone">
 
-                                <include layout="@layout/layout_down_time_prodetails"/>
+                                <include layout="@layout/layout_down_time_prodetails" />
                             </RelativeLayout>
 
                             <include
                                 layout="@layout/layout_product_activity_detail"
-                                android:visibility="gone"/>
+                                android:visibility="gone" />
 
                             <include
                                 layout="@layout/layout_countdown_time_bottom"
-                                android:visibility="gone"/>
+                                android:visibility="gone" />
 
                             <TextView
                                 android:id="@+id/tv_ql_sp_pro_sc_name"
@@ -99,24 +97,75 @@
                                 android:paddingBottom="@dimen/sc_mm_10"
                                 android:textColor="@color/text_black_t"
                                 android:textSize="@dimen/sc_mm_32"
-                                android:visibility="visible"/>
+                                android:visibility="visible" />
 
-                            <include layout="@layout/layout_scrool_detail_price"/>
+                            <include layout="@layout/layout_scrool_detail_price" />
 
-                            <com.google.android.flexbox.FlexboxLayout
-                                xmlns:app="http://schemas.android.com/apk/res-auto"
-                                android:id="@+id/fbl_details_market_label"
+                            <LinearLayout
+                                android:id="@+id/ll_market_and_province"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="@dimen/sc_mm_30"
                                 android:layout_marginRight="@dimen/sc_mm_30"
-                                android:layout_marginBottom="@dimen/sc_mm_30"
-                                android:visibility="gone"
-                                app:dividerDrawable="@drawable/item_divider_nine_dp_white"
-                                app:showDivider="middle"/>
+                                android:layout_marginBottom="@dimen/sc_mm_20"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal"
+                                android:visibility="gone">
 
-                            <com.google.android.flexbox.FlexboxLayout
-                                xmlns:app="http://schemas.android.com/apk/res-auto"
+                                <com.google.android.flexbox.FlexboxLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+                                    android:id="@+id/fbl_details_market_label"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:visibility="invisible"
+                                    app:dividerDrawable="@drawable/item_divider_nine_dp_white"
+                                    app:showDivider="middle" />
+
+                                <LinearLayout
+                                    android:id="@+id/ll_shippingProvince"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginLeft="@dimen/sc_mm_30"
+                                    android:gravity="center_vertical"
+                                    android:orientation="horizontal"
+                                    android:visibility="gone">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:drawableLeft="@drawable/province"
+                                        android:drawablePadding="@dimen/sc_mm_5"
+                                        android:text="发货："
+                                        android:textColor="@color/text_login_gray_s"
+                                        android:textSize="@dimen/sc_mm_24" />
+
+                                    <TextView
+                                        android:id="@+id/tv_shippingProvince"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:drawablePadding="@dimen/sc_mm_10"
+                                        android:textColor="@color/text_black_t"
+                                        android:textSize="@dimen/sc_mm_24" />
+                                </LinearLayout>
+                            </LinearLayout>
+
+                            <TextView
+                                android:id="@+id/tv_preSaleDeliveryTime"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/sc_mm_30"
+                                android:layout_marginRight="@dimen/sc_mm_30"
+                                android:layout_marginBottom="@dimen/sc_mm_20"
+                                android:background="@color/bg_gray_f_n"
+                                android:gravity="center_vertical"
+                                android:paddingLeft="@dimen/sc_mm_20"
+                                android:paddingTop="@dimen/sc_mm_10"
+                                android:paddingBottom="@dimen/sc_mm_10"
+                                android:text="@string/preSaleDeliveryTime"
+                                android:textColor="@color/text_black_t"
+                                android:textSize="@dimen/sc_mm_24" />
+
+                            <com.google.android.flexbox.FlexboxLayout xmlns:app="http://schemas.android.com/apk/res-auto"
                                 android:id="@+id/flex_product_point"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -128,13 +177,13 @@
                                 android:visibility="gone"
                                 app:dividerDrawable="@drawable/item_divider_product_tag_transparent"
                                 app:flexDirection="column"
-                                app:showDivider="middle"/>
+                                app:showDivider="middle" />
 
                             <android.support.v7.widget.RecyclerView
                                 android:id="@+id/rv_shop_details_text_communal"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:scrollbars="none"/>
+                                android:scrollbars="none" />
 
                             <LinearLayout
                                 android:id="@+id/ll_sp_pro_sku_value"
@@ -156,7 +205,7 @@
                                     android:paddingRight="@dimen/sc_mm_30"
                                     android:text="选择商品属性"
                                     android:textColor="@color/color_blue_reply_com"
-                                    android:textSize="@dimen/sc_mm_30"/>
+                                    android:textSize="@dimen/sc_mm_30" />
                             </LinearLayout>
 
                             <LinearLayout
@@ -176,38 +225,37 @@
                                     android:paddingTop="@dimen/sc_mm_30"
                                     android:text="组合套餐"
                                     android:textColor="@color/text_black_t"
-                                    android:textSize="@dimen/sc_mm_30"/>
+                                    android:textSize="@dimen/sc_mm_30" />
 
                                 <android.support.v7.widget.RecyclerView
                                     android:id="@+id/rv_goods_group"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="@dimen/sc_mm_30"
-                                    android:scrollbars="none"/>
+                                    android:scrollbars="none" />
                             </LinearLayout>
 
 
                             <LinearLayout
-                                android:showDividers="beginning"
-                                android:divider="@drawable/divider_ll_10dp_gray_bg"
                                 android:id="@+id/rel_shop_details_comment"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:divider="@drawable/divider_ll_10dp_gray_bg"
                                 android:orientation="vertical"
+                                android:showDividers="beginning"
                                 android:visibility="gone">
 
-                                <include layout="@layout/layout_product_comment_eva"/>
+                                <include layout="@layout/layout_product_comment_eva" />
 
                                 <android.support.v7.widget.RecyclerView
                                     android:id="@+id/communal_recycler_wrap"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:background="@color/white"
-                                    android:scrollbars="none"/>
+                                    android:scrollbars="none" />
                             </LinearLayout>
 
-                            <include
-                                layout="@layout/item_recommend_artical"/>
+                            <include layout="@layout/item_recommend_artical" />
 
                             <LinearLayout
                                 android:id="@+id/ll_product_recommend"
@@ -226,14 +274,14 @@
                                     android:paddingTop="@dimen/sc_mm_30"
                                     android:text="相关商品推荐"
                                     android:textColor="@color/text_black_t"
-                                    android:textSize="@dimen/sc_mm_30"/>
+                                    android:textSize="@dimen/sc_mm_30" />
 
                                 <android.support.v7.widget.RecyclerView
                                     android:id="@+id/rv_goods_recommend"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="@dimen/sc_mm_30"
-                                    android:scrollbars="none"/>
+                                    android:scrollbars="none" />
                             </LinearLayout>
 
                             <LinearLayout
@@ -247,8 +295,7 @@
                                 android:paddingTop="@dimen/dp_10"
                                 android:paddingRight="@dimen/sc_mm_30">
 
-                                <com.google.android.flexbox.FlexboxLayout
-                                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                                <com.google.android.flexbox.FlexboxLayout xmlns:app="http://schemas.android.com/apk/res-auto"
                                     android:id="@+id/flex_product_tag"
                                     android:layout_width="0dp"
                                     android:layout_height="@dimen/sc_mm_80"
@@ -257,7 +304,7 @@
                                     android:paddingBottom="@dimen/sc_mm_24"
                                     app:dividerDrawable="@drawable/item_divider_product_tag"
                                     app:flexWrap="wrap"
-                                    app:showDivider="middle"/>
+                                    app:showDivider="middle" />
 
                                 <ImageView
                                     android:id="@+id/iv_more_tag"
@@ -266,7 +313,7 @@
                                     android:layout_gravity="center_vertical"
                                     android:layout_marginLeft="@dimen/sc_mm_20"
                                     android:src="@drawable/right_btn_nor"
-                                    android:visibility="gone"/>
+                                    android:visibility="gone" />
                             </LinearLayout>
 
                             <LinearLayout
@@ -283,10 +330,9 @@
                                     android:layout_height="wrap_content"
                                     android:text="购前须知"
                                     android:textColor="@color/text_black_t"
-                                    android:textSize="@dimen/sc_mm_30"/>
+                                    android:textSize="@dimen/sc_mm_30" />
 
-                                <com.google.android.flexbox.FlexboxLayout
-                                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                                <com.google.android.flexbox.FlexboxLayout xmlns:app="http://schemas.android.com/apk/res-auto"
                                     android:id="@+id/flex_bug_before"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
@@ -295,7 +341,7 @@
                                     android:padding="@dimen/sc_mm_27"
                                     app:dividerDrawable="@drawable/item_divider_product_tag_transparent"
                                     app:flexDirection="column"
-                                    app:showDivider="middle"/>
+                                    app:showDivider="middle" />
                             </LinearLayout>
                         </LinearLayout>
 
@@ -303,18 +349,18 @@
                             android:id="@+id/rv_product_details"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:scrollbars="none"/>
+                            android:scrollbars="none" />
                     </LinearLayout>
                 </android.support.v4.widget.NestedScrollView>
             </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
-            <include layout="@layout/layout_shop_details_bottom"/>
+            <include layout="@layout/layout_shop_details_bottom" />
         </LinearLayout>
 
-        <include layout="@layout/layout_communal_floating"/>
+        <include layout="@layout/layout_communal_floating" />
     </FrameLayout>
 
-    <include layout="@layout/layout_ql_product_scroll_detail_header"/>
+    <include layout="@layout/layout_ql_product_scroll_detail_header" />
 
     <TextView
         android:id="@+id/tv_product_share_tint"
@@ -329,5 +375,5 @@
         android:text="分享有惊喜"
         android:textColor="@color/white"
         android:textSize="@dimen/sc_mm_24"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 </RelativeLayout>

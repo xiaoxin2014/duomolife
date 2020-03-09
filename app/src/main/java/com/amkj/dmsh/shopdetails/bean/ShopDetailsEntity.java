@@ -88,10 +88,27 @@ public class ShopDetailsEntity extends BaseEntity {
         private List<CouponJsonBean> couponJson;
         private List<CommunalDetailBean> itemBody;
         private String maxDiscounts;
+        private String shippingProvince;
+        private String  preSaleDeliveryTime;
 
         //自定义字段
         private long addSecond;
 
+        public String getShippingProvince() {
+            return shippingProvince;
+        }
+
+        public void setShippingProvince(String shippingProvince) {
+            this.shippingProvince = shippingProvince;
+        }
+
+        public String getPreSaleDeliveryTime() {
+            return preSaleDeliveryTime;
+        }
+
+        public void setPreSaleDeliveryTime(String preSaleDeliveryTime) {
+            this.preSaleDeliveryTime = preSaleDeliveryTime;
+        }
 
         public boolean isHasPresent() {
             return hasPresent;
