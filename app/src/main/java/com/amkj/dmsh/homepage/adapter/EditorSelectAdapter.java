@@ -11,7 +11,6 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.EditorEntity.EditorBean;
 import com.amkj.dmsh.bean.EditorEntity.EditorBean.AttachProductListBean;
-import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
@@ -68,11 +67,6 @@ public class EditorSelectAdapter extends BaseQuickAdapter<EditorBean, BaseViewHo
         }
         CommunalDetailAdapter communalDetailAdapter = new CommunalDetailAdapter(context, dataList);
         communalDetailAdapter.setEnableLoadMore(false);
-        communalDetailAdapter.setOnItemChildClickListener((adapter, view, position) -> {
-            CommunalWebDetailUtils.getCommunalWebInstance().setWebDataClick(context, view, context.loadHud);
-            //记录埋点参数sourceId
-            ConstantMethod.saveSourceId(context.getClass().getSimpleName(), String.valueOf(item.getId()));
-        });
         rvPicGoods.setAdapter(communalDetailAdapter);
 
         //初始化商品列表
@@ -95,8 +89,6 @@ public class EditorSelectAdapter extends BaseQuickAdapter<EditorBean, BaseViewHo
                 //进入商品详情
                 Intent intent = new Intent(context, ShopScrollDetailsActivity.class);
                 intent.putExtra("productId", String.valueOf(attachProductBean.getProductId()));
-                //记录埋点参数sourceId
-                ConstantMethod.saveSourceId(context.getClass().getSimpleName(), String.valueOf(item.getId()));
                 context.startActivity(intent);
             }
         });

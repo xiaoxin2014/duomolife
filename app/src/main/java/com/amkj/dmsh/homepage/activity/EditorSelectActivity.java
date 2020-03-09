@@ -11,6 +11,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.EditorEntity;
 import com.amkj.dmsh.bean.EditorEntity.EditorBean;
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.homepage.adapter.EditorSelectAdapter;
@@ -68,6 +69,8 @@ public class EditorSelectActivity extends BaseActivity {
     protected void initViews() {
         mTvHeaderTitle.setText("小编精选");
         mIvImgService.setVisibility(View.GONE);
+        //记录埋点参数sourceId
+        ConstantMethod.saveSourceId(getSimpleName(), "0");
         initRv();
     }
 

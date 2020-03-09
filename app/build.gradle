@@ -214,12 +214,12 @@ dependencies {
     implementation 'com.ali.auth.sdk:alibabauth_ext:2.0.0.6@aar'
 
     //appLink（必选，打通“手机淘宝”与三方app的桥梁，实现手机淘宝与三方app之间的往返跳转,包括登陆时跳手淘授权,用手淘打开商品页,店铺等）
-    implementation 'com.alibaba.sdk.android:alibc_link_partner:4.1.6@aar'
+    implementation 'com.alibaba.sdk.android:alibc_link_partner:4.1.15@aar'
 
     //基础电商组件（必选，包含打开detail,淘客分佣,jsbridge注入等功能）
-    implementation 'com.alibaba.sdk.android:AlibcTradeCommon:4.0.0.0@aar'
-    implementation 'com.alibaba.sdk.android:AlibcTradeBiz:4.0.0.0@aar'
-    implementation 'com.alibaba.sdk.android:nb_trade:4.0.0.0@aar'
+    implementation 'com.alibaba.sdk.android:AlibcTradeCommon:4.0.0.8@aar'
+    implementation 'com.alibaba.sdk.android:AlibcTradeBiz:4.0.0.8@aar'
+    implementation 'com.alibaba.sdk.android:nb_trade:4.0.0.8@aar'
 
     //【可选】仅供特殊合作伙伴使用
     implementation 'com.ali.auth.sdk:alibabauth_accountlink:1.4.2@jar'

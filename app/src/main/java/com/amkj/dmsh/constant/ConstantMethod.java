@@ -2411,7 +2411,6 @@ public class ConstantMethod {
             case "DoMoLifeWelfareFragment"://福利社专题列表
             case "DoMoLifeWelfareDetailsActivity"://福利社专题详情
             case "DoMoLifeWelfareDetailsFragment"://福利社专题详情
-            case "HomeDefalutFragment"://首页良品商城福利社专区
                 return ConstantVariable.WELFARE_TOPIC;
             case "DmlOptimizedSelDetailActivity"://多么定制详情
                 return ConstantVariable.SUPER_GOOD;

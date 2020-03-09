@@ -97,19 +97,23 @@ public class BaiChuanDao {
         taokeParams.extraParams.put("taokeAppkey", TAOBAO_APPKEY);
         if (!TextUtils.isEmpty(tbUrl)) {
             if (isTaoBaoUrl(tbUrl) || isTbUrl) {
-                // 以显示传入url的方式打开页面（第二个参数是套件名称）
-                AlibcTrade.openByUrl(context, "", tbUrl, null,
-                        new WebViewClient(), new WebChromeClient(), showParams,
-                        taokeParams, trackParams, new AlibcTradeCallback() {
-                            @Override
-                            public void onTradeSuccess(AlibcTradeResult tradeResult) {
-                            }
+                try {
+                    // 以显示传入url的方式打开页面（第二个参数是套件名称）
+                    AlibcTrade.openByUrl(context, "", tbUrl, null,
+                            new WebViewClient(), new WebChromeClient(), showParams,
+                            taokeParams, trackParams, new AlibcTradeCallback() {
+                                @Override
+                                public void onTradeSuccess(AlibcTradeResult tradeResult) {
+                                }
 
-                            @Override
-                            public void onFailure(int code, String msg) {
-                                showToast(context, msg);
-                            }
-                        });
+                                @Override
+                                public void onFailure(int code, String msg) {
+                                    showToast(context, msg);
+                                }
+                            });
+                } catch (Exception e) {
+                    showToast(context, "跟团失败");
+                }
             } else {
                 //                     网页地址
                 Intent intent = new Intent();
