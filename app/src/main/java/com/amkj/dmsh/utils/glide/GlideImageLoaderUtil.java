@@ -12,6 +12,7 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -71,13 +72,46 @@ public class GlideImageLoaderUtil {
      * @param imgUrl
      */
     public static void loadFitCenter(Context context, ImageView iv, String imgUrl) {
+        loadFitCenter(context, iv, imgUrl, false);
+    }
+
+    public static void loadFitCenter(Context context, ImageView iv, String imgUrl, boolean isBase64) {
         if (null != context && iv != null) {
-            Glide.with(context).load(imgUrl)
+            Glide.with(context).load(isBase64 ? base64ToBitmap(imgUrl) : imgUrl)
                     .apply(new RequestOptions().fitCenter()
                             .diskCacheStrategy(DiskCacheStrategy.DATA)
                             .error(R.drawable.load_loading_image))
                     .transition(withCrossFade())
                     .into(iv);
+        }
+    }
+
+
+    //base64转bitmap
+    public static Bitmap base64ToBitmap(String base64String) {
+        try {
+            //不占用内存的情况下获取bitmap宽高
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            byte[] decode1 = Base64.decode(base64String.replaceAll("data:image/png;base64,", ""), Base64.DEFAULT);
+            BitmapFactory.decodeByteArray(decode1, 0, decode1.length, options);
+            int imgWidth = options.outWidth;
+
+            //采样率压缩
+            int screenWidth = ((TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike()).getScreenWidth();
+            if (imgWidth > screenWidth) {
+                double inSampleSize = imgWidth * 1.0f / screenWidth;
+                options.inSampleSize = (int) Math.round(inSampleSize);//采样率只支持整数，所以这里采取4舍5入
+            }
+
+            //质量压缩
+            options.inJustDecodeBounds = false;
+            options.inPreferredConfig = Bitmap.Config.RGB_565;
+            //如果有前缀解码时会抛异常java.lang.IllegalArgumentException: bad base-64
+            byte[] decode = Base64.decode(base64String.replaceAll("data:image/png;base64,", ""), Base64.DEFAULT);
+            return BitmapFactory.decodeByteArray(decode, 0, decode.length, options);
+        } catch (Exception e) {
+            return null;
         }
     }
 
@@ -156,7 +190,8 @@ public class GlideImageLoaderUtil {
      * @param iv
      * @param imgUrl
      */
-    public static void loadThumbCenterCrop(Context context, final ImageView iv, String imgUrl, String waterRemark) {
+    public static void loadThumbCenterCrop(Context context, final ImageView iv, String
+            imgUrl, String waterRemark) {
         if (null != context && iv != null) {
             Glide.with(context).load(getThumbImgUrl(imgUrl, waterRemark))
                     .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA)
@@ -216,7 +251,8 @@ public class GlideImageLoaderUtil {
     /**
      * 加载正方形图片
      */
-    public static void loadSquareImg(Context context, final ImageView iv, String imgUrl, String waterRemark, int sizeValue) {
+    public static void loadSquareImg(Context context, final ImageView iv, String imgUrl, String
+            waterRemark, int sizeValue) {
         if (null != context && iv != null) {
             Glide.with(context).load(getSquareImgUrl(imgUrl, sizeValue, waterRemark))
                     .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA)
@@ -424,6 +460,7 @@ public class GlideImageLoaderUtil {
     }
 
     /**
+     *
      */
     public static void loadRoundImg(final Context context, final ImageView iv,
                                     String imgUrl, int radius, RoundedCornersTransformation.CornerType cornerType) {
@@ -449,7 +486,8 @@ public class GlideImageLoaderUtil {
      * @param loaderFinishListener
      * @see ImageLoaderFinishListener
      */
-    public static void loadFinishImgDrawable(final Context context, String imgUrl, final ImageLoaderFinishListener loaderFinishListener) {
+    public static void loadFinishImgDrawable(final Context context, String imgUrl,
+                                             final ImageLoaderFinishListener loaderFinishListener) {
         if (null != context) {
             Observable.create(new ObservableOnSubscribe<Bitmap>() {
                 @Override
@@ -512,7 +550,8 @@ public class GlideImageLoaderUtil {
      *
      * @param with 图片指定尺寸  -1表示屏幕宽度
      */
-    public static void loadImgDynamicDrawable(final Context context, final ImageView imageView, String imgUrl, int with) {
+    public static void loadImgDynamicDrawable(final Context context,
+                                              final ImageView imageView, String imgUrl, int with) {
         if (null != context && imageView != null && !TextUtils.isEmpty(imgUrl)) {
             Map<String, Object> params = new HashMap<>();
             params.put("imgUrl", imgUrl);
@@ -752,7 +791,8 @@ public class GlideImageLoaderUtil {
      * @param originalImgUrl
      * @param originalLoaderFinishListener
      */
-    public static void downOriginalImg(Context context, String originalImgUrl, final OriginalLoaderFinishListener originalLoaderFinishListener) {
+    public static void downOriginalImg(Context context, String originalImgUrl,
+                                       final OriginalLoaderFinishListener originalLoaderFinishListener) {
         if (null != context) {
             Observable.create(new ObservableOnSubscribe<File>() {
                 @Override
@@ -1004,7 +1044,8 @@ public class GlideImageLoaderUtil {
      *
      * @param picUrl
      */
-    public static void saveImageToFile(Context context, String picUrl, String saveFilePath, OriginalLoaderFinishListener imageLoaderListener) {
+    public static void saveImageToFile(Context context, String picUrl, String
+            saveFilePath, OriginalLoaderFinishListener imageLoaderListener) {
         if (TextUtils.isEmpty(picUrl)) {
             return;
         }

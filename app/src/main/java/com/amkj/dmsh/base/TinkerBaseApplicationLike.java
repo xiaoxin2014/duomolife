@@ -30,6 +30,7 @@ import com.alibaba.sdk.android.oss.common.auth.OSSPlainTextAKSKCredentialProvide
 import com.amkj.dmsh.BuildConfig;
 import com.amkj.dmsh.MainActivity;
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.bean.ImageBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dao.UserDao;
@@ -133,6 +134,8 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
     private Map<String, Object> ossMap;
     //统计订单来源
     private Map<String, Object> sourceMap = new HashMap<>();
+    //intent传递数据有大小限制，所以保存在全局做一个中转
+    private List<ImageBean> imageBeanList = new ArrayList<>();
     private int activityCount = 0;
 
     public TinkerBaseApplicationLike(Application application, int tinkerFlags,
@@ -976,5 +979,14 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
 
     public LinkedList<Activity> getActivityLinkedList() {
         return activityLinkedList;
+    }
+
+    public List<ImageBean> getImageBeanList() {
+        return imageBeanList;
+    }
+
+    public void setImageBeanList(List<ImageBean> imageBeanList) {
+        this.imageBeanList.clear();
+        this.imageBeanList.addAll(imageBeanList);
     }
 }

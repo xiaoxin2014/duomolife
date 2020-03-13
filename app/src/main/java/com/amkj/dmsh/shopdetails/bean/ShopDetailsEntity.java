@@ -9,7 +9,10 @@ import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by atd48 on 2016/10/4.
@@ -85,14 +88,35 @@ public class ShopDetailsEntity extends BaseEntity {
         private List<PropsBean> props;
         private List<TagsBean> tags;
         private List<String> preSaleInfo;
+        private List<Map<String, String>> newPreSaleInfo;
         private List<CouponJsonBean> couponJson;
         private List<CommunalDetailBean> itemBody;
         private String maxDiscounts;
         private String shippingProvince;
-        private String  preSaleDeliveryTime;
+        private String preSaleDeliveryTime;
 
         //自定义字段
         private long addSecond;
+
+        public List<Map<String, String>> getNewPreSaleInfo() {
+            //兼容旧版本数据
+            if (newPreSaleInfo != null && newPreSaleInfo.size() > 0) {
+                return newPreSaleInfo;
+            } else if (preSaleInfo != null && preSaleInfo.size() > 0) {
+                newPreSaleInfo = new ArrayList<>();
+                for (int i = 0; i < preSaleInfo.size(); i++) {
+                    String text = preSaleInfo.get(i);
+                    Map<String, String> map = new HashMap<>();
+                    map.put("text", text);
+                    newPreSaleInfo.add(map);
+                }
+            }
+            return newPreSaleInfo;
+        }
+
+        public void setNewPreSaleInfo(List<Map<String, String>> newPreSaleInfo) {
+            this.newPreSaleInfo = newPreSaleInfo;
+        }
 
         public String getShippingProvince() {
             return shippingProvince;

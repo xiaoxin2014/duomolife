@@ -3,7 +3,6 @@ package com.amkj.dmsh.homepage.adapter;
 import android.content.Context;
 import android.graphics.Paint;
 import android.support.annotation.Nullable;
-import android.view.View;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
@@ -49,7 +48,7 @@ public class HomeZoneAdapter extends BaseQuickAdapter<HomeCommonBean, BaseViewHo
         }
 
         //专区右边商品
-        helper.getView(R.id.ll_right).setVisibility(productInfoList.size() > 1 ? View.VISIBLE : View.GONE);
+//        helper.getView(R.id.ll_right).setVisibility(productInfoList.size() > 1 ? View.VISIBLE : View.GONE);
         if (productInfoList.size() > 1) {
             ProductInfoListBean rightBean = productInfoList.get(1);
             if (rightBean != null) {

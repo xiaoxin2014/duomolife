@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f6f5f8"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_ql_cart_share_header" />
+
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:cube_ptr="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/smart_communal_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        cube_ptr:srlEnableOverScrollBounce="false">
+
+        <include layout="@layout/layout_refresh_header_gif" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/sc_mm_104"
+                android:background="@color/white"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/sc_mm_30"
+                    android:text="开票状态"
+                    android:textColor="@color/text_black_t"
+                    android:textSize="@dimen/sc_mm_28" />
+
+                <TextView
+                    android:id="@+id/tv_invoice_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/sc_mm_24"
+                    android:text="@string/defaul"
+                    android:textColor="@color/text_login_blue_z"
+                    android:textSize="@dimen/sc_mm_28" />
+
+                <TextView
+                    android:id="@+id/tv_complete_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/invoice_complete_time"
+                    android:textColor="@color/text_login_gray_s"
+                    android:textSize="@dimen/sc_mm_24"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <android.support.v4.widget.NestedScrollView
+                android:scrollbars="none"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rv_invoice"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/sc_mm_15"
+                        android:layout_marginTop="@dimen/sc_mm_15"
+                        android:layout_marginRight="@dimen/sc_mm_15"
+                        android:scrollbars="none" />
+
+                    <TextView
+                        android:id="@+id/tv_apply_for"
+                        style="@style/invoice_bt_bg"
+                        android:text="@string/apply_invoice"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/tv_save"
+                        style="@style/invoice_bt_bg"
+                        android:text="@string/save_invoice"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:id="@+id/tv_send_email"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/sc_mm_30"
+                        android:gravity="center"
+                        android:longClickable="false"
+                        android:text="@string/invoice_send_email"
+                        android:textColor="@color/text_black_t"
+                        android:textSize="@dimen/sc_mm_28"
+                        android:visibility="gone" />
+                </LinearLayout>
+            </android.support.v4.widget.NestedScrollView>
+        </LinearLayout>
+
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+</LinearLayout>

@@ -290,4 +290,10 @@
     <string name="only_price">只要¥%s哦~</string>
     <string name="lottery_price">%s元抢</string>
     <string name="preSaleDeliveryTime">预计发货时间  %s</string>
+    <string name="apply_invoice">去申请发票</string>
+    <string name="save_invoice">保存发票</string>
+    <string name="invoice_send_email">将发票pdf原件发送至邮箱</string>
+    <string name="input_email_address">输入邮箱地址</string>
+    <string name="type">类型</string>
+    <string name="invoice_complete_time">（7个工作日内完成）</string>
 </resources>

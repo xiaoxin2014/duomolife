@@ -304,4 +304,14 @@
         <item name="android:windowEnterAnimation">@anim/abc_popup_enter</item>
         <item name="android:windowExitAnimation">@anim/abc_popup_exit</item>
     </style>
+
+    <style name="invoice_bt_bg">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/sc_mm_74</item>
+        <item name="android:layout_margin">@dimen/sc_mm_30</item>
+        <item name="android:background">@drawable/sel_invoice_bg</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/sc_mm_28</item>
+    </style>
 </resources>

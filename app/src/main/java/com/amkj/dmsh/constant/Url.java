@@ -522,6 +522,8 @@ public class Url {
     public static final String INDENT_DRAW_UP_INVOICE = "api/reminder/getReminderAsInvoice";
     //    发票详情
     public static final String INVOICE_DETAIL = "api/goods/order/getInvoice";
+    //    邮件发送发票
+    public static final String SEND_INVOICE = "api/home/sendInvoiceMail";
     //    开发票
     public static final String INVOICE_DRAW_UP = "api/goods/order/addInvoice";
     //    全部团购

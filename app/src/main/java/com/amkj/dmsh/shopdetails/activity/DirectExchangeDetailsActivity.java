@@ -1004,10 +1004,8 @@ public class DirectExchangeDetailsActivity extends BaseActivity implements View.
                 break;
             case PRO_INVOICE:
 //                        发票详情
-                intent.setClass(DirectExchangeDetailsActivity.this, DirectIndentInvoiceActivity.class);
-                bundle = new Bundle();
-                bundle.putParcelable("indentInfo", orderDetailBean);
-                intent.putExtras(bundle);
+                intent.setClass(DirectExchangeDetailsActivity.this, InvoiceDetailActivity.class);
+                intent.putExtra("orderNo", orderDetailBean.getNo());
                 startActivity(intent);
                 break;
             case INVITE_GROUP:

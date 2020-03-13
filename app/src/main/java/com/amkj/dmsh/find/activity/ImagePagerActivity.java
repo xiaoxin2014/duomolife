@@ -68,12 +68,16 @@ public class ImagePagerActivity extends Activity {
 
 
     public static void startImagePagerActivity(Context context, String imageType, List<ImageBean> imgUrls, int position, ImageSize imageSize) {
-        Intent intent = new Intent(context, ImagePagerActivity.class);
-        intent.putParcelableArrayListExtra(INTENT_IMGURLS, (ArrayList<? extends Parcelable>) imgUrls);
-        intent.putExtra(INTENT_POSITION, position);
-        intent.putExtra(INTENT_IMAGESIZE, imageSize);
-        intent.putExtra(INTENT_IMAGE_TYPE, imageType);
-        context.startActivity(intent);
+        try {
+            Intent intent = new Intent(context, ImagePagerActivity.class);
+            intent.putParcelableArrayListExtra(INTENT_IMGURLS, (ArrayList<? extends Parcelable>) imgUrls);
+            intent.putExtra(INTENT_POSITION, position);
+            intent.putExtra(INTENT_IMAGESIZE, imageSize);
+            intent.putExtra(INTENT_IMAGE_TYPE, imageType);
+            context.startActivity(intent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -138,6 +142,9 @@ public class ImagePagerActivity extends Activity {
         Intent intent = getIntent();
         startPos = intent.getIntExtra(INTENT_POSITION, 0);
         imgUrls = intent.getParcelableArrayListExtra(INTENT_IMGURLS);
+        if (imgUrls==null){
+            imgUrls = ((TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike()).getImageBeanList();
+        }
         imageSize = (ImageSize) intent.getSerializableExtra(INTENT_IMAGESIZE);
         imageType = intent.getStringExtra(INTENT_IMAGE_TYPE);
         if (imgUrls == null || imgUrls.size() < 1) {

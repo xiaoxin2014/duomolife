@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_ql_cart_share_header" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sc_mm_100"
+        android:background="@drawable/border_bottom_line"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/sc_mm_30"
+        android:paddingRight="@dimen/sc_mm_30">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/type"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_28" />
+
+        <RadioGroup
+            android:id="@+id/rg_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/sc_mm_40"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/rb_personal"
+                android:layout_width="@dimen/sc_mm_110"
+                android:layout_height="@dimen/sc_mm_50"
+                android:background="@drawable/selector_invoince_type_bg"
+                android:button="@null"
+                android:checked="true"
+                android:gravity="center"
+                android:text="个人"
+                android:textColor="@drawable/sel_invoice_type_color"
+                android:textSize="@dimen/sc_mm_28" />
+
+            <RadioButton
+                android:id="@+id/rb_company"
+                android:layout_width="@dimen/sc_mm_110"
+                android:layout_height="@dimen/sc_mm_50"
+                android:layout_marginLeft="@dimen/sc_mm_30"
+                android:background="@drawable/selector_invoince_type_bg"
+                android:button="@null"
+                android:gravity="center"
+                android:text="公司"
+                android:textColor="@drawable/sel_invoice_type_color"
+                android:textSize="@dimen/sc_mm_28" />
+
+        </RadioGroup>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_title"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sc_mm_100"
+        android:background="@drawable/border_bottom_line"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/sc_mm_30"
+        android:paddingRight="@dimen/sc_mm_30">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="抬头"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_28" />
+
+        <EditText
+            android:textSize="@dimen/sc_mm_28"
+            android:id="@+id/et_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/sc_mm_40"
+            android:background="@color/white" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_taxpayer_on"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sc_mm_100"
+        android:background="@drawable/border_bottom_line"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/sc_mm_30"
+        android:paddingRight="@dimen/sc_mm_30"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="纳税人识别号"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_28" />
+
+        <EditText
+            android:textSize="@dimen/sc_mm_28"
+            android:id="@+id/et_taxpayer_on"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/sc_mm_40"
+            android:background="@color/white" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_save"
+        style="@style/invoice_bt_bg"
+        android:text="@string/save_invoice" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/sc_mm_30"
+        android:layout_marginRight="@dimen/sc_mm_30"
+        android:paddingBottom="@dimen/sc_mm_200"
+        android:background="@color/white"
+        android:lineSpacingExtra="@dimen/sc_mm_12"
+        android:text="温馨提示\n 1.平台默认只提供电子普通发票，开票时间在确认收货后7个工作日内出票；\n 2.企业大宗交易采购如需申请纸质专用发票，请提前联系客服；\n 3.如一个订单多件商品，只需开一件商品或者需要分开开票的请与人工客服沟通后再申请。"
+        android:textColor="@color/text_login_gray_s"
+        android:textSize="@dimen/sc_mm_24" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#f6f5f8" />
+</LinearLayout>

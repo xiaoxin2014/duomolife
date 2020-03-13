@@ -130,11 +130,15 @@
                                     android:orientation="horizontal"
                                     android:visibility="gone">
 
+                                    <ImageView
+                                        android:layout_width="@dimen/sc_mm_16"
+                                        android:layout_height="@dimen/sc_mm_21"
+                                        android:src="@drawable/province" />
+
                                     <TextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:drawableLeft="@drawable/province"
-                                        android:drawablePadding="@dimen/sc_mm_5"
+                                        android:layout_marginLeft="@dimen/sc_mm_5"
                                         android:text="发货："
                                         android:textColor="@color/text_login_gray_s"
                                         android:textSize="@dimen/sc_mm_24" />

@@ -97,6 +97,15 @@ public class IndentInvoiceEntity extends BaseEntity {
             private String bankOfDeposit;
             private String account;
             private int status;
+            private String imgBase64Arr;
+
+            public String getImgBase64Arr() {
+                return imgBase64Arr;
+            }
+
+            public void setImgBase64Arr(String imgBase64Arr) {
+                this.imgBase64Arr = imgBase64Arr;
+            }
 
             public String getImgUrl() {
                 return imgUrl;

@@ -1139,14 +1139,19 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         setSeviceTag(shopProperty, ll_layout_pro_sc_tag, flex_product_tag);
 
         //购前须知标签
-        List<String> preSaleInfo = shopProperty.getPreSaleInfo();
-        if (preSaleInfo != null && preSaleInfo.size() > 0) {
+        List<Map<String, String>> newPreSaleInfo = shopProperty.getNewPreSaleInfo();
+        if (newPreSaleInfo != null && newPreSaleInfo.size() > 0) {
             flex_buy_before.removeAllViews();
-            for (int i = 0; i < preSaleInfo.size(); i++) {
-                String tagName = preSaleInfo.get(i);
+            for (int i = 0; i < newPreSaleInfo.size(); i++) {
+                Map<String, String> map = newPreSaleInfo.get(i);
+                String color = map.get("color");
+                String tagName = map.get("text");
                 if (!TextUtils.isEmpty(tagName)) {
                     TextView textView = (TextView) LayoutInflater.from(getActivity()).inflate(R.layout.layout_buy_before_tag, null, false);
                     textView.setText(getStrings(tagName));
+                    if (!TextUtils.isEmpty(color)) {
+                        textView.setTextColor(Color.parseColor(color));
+                    }
                     flex_buy_before.addView(textView);
                 }
             }
