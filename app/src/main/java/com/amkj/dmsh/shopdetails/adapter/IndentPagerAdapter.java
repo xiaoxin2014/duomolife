@@ -5,11 +5,10 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.amkj.dmsh.base.BaseFragment;
-import com.amkj.dmsh.shopdetails.fragment.DoMoIndentDeliveredFragment;
-import com.amkj.dmsh.shopdetails.fragment.DoMoIndentWaitAppraiseFragment;
-import com.amkj.dmsh.shopdetails.fragment.DoMoIndentWaitPayFragment;
-import com.amkj.dmsh.shopdetails.fragment.DoMoIndentWaitSendFragment;
-import com.amkj.dmsh.shopdetails.fragment.DuMoIndentAllFragment;
+import com.amkj.dmsh.shopdetails.fragment.DoMoIndentNewFragment;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author LGuiPeng
@@ -28,19 +27,9 @@ public class IndentPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        switch (position) {
-            case 0:
-                return BaseFragment.newInstance(DuMoIndentAllFragment.class, null, null);
-            case 1:
-                return BaseFragment.newInstance(DoMoIndentWaitPayFragment.class, null, null);
-            case 2:
-                return BaseFragment.newInstance(DoMoIndentWaitSendFragment.class, null, null);
-            case 3:
-                return BaseFragment.newInstance(DoMoIndentDeliveredFragment.class, null, null);
-            case 4:
-                return BaseFragment.newInstance(DoMoIndentWaitAppraiseFragment.class, null, null);
-        }
-        return null;
+        Map<String, Object> map = new HashMap<>();
+        map.put("type", position);
+        return BaseFragment.newInstance(DoMoIndentNewFragment.class, null, map);
     }
 
     @Override

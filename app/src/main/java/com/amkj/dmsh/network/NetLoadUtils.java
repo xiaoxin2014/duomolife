@@ -178,7 +178,6 @@ public class NetLoadUtils<T, E extends BaseEntity> {
                 showToast(context, R.string.unConnectedNetwork);
                 if (netLoadListener != null) {
                     netLoadListener.onNotNetOrException();
-                    netLoadListener.netClose();
                 }
             } catch (Exception e) {
                 e.printStackTrace();

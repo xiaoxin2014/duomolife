@@ -24,7 +24,6 @@ import com.amkj.dmsh.shopdetails.activity.DirectLogisticsDetailsActivity;
 import com.amkj.dmsh.shopdetails.adapter.DoMoIndentListAdapter;
 import com.amkj.dmsh.shopdetails.bean.DirectApplyRefundBean;
 import com.amkj.dmsh.shopdetails.bean.DirectApplyRefundBean.DirectRefundProBean;
-import com.amkj.dmsh.shopdetails.bean.DirectAppraisePassBean;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.OrderListBean;
 import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.OrderListBean.GoodsBean;
@@ -68,28 +67,29 @@ import static com.amkj.dmsh.constant.Url.Q_INQUIRY_WAIT_SEND_EXPEDITING;
 
 
 /**
- * Created by atd48 on 2016/8/23.
+ * Created by xiaoxin on 2020/3/14
+ * Version:v4.4.3
+ * ClassDescription :订单列表重构
  */
-public class DuMoIndentAllFragment extends BaseFragment {
+public class DoMoIndentNewFragment extends BaseFragment {
     @BindView(R.id.smart_communal_refresh)
     SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
-    //    滚动至顶部
     @BindView(R.id.download_btn_communal)
     public FloatingActionButton download_btn_communal;
-    List<OrderListBean> orderListBeanList = new ArrayList();
-    //根据type类型分类DuomoIndentPayFragment
+    List<OrderListBean> orderListBeanList = new ArrayList<>();
     private int page = 1;
     private DoMoIndentListAdapter doMoIndentListAdapter;
-    private List<DirectAppraisePassBean> directAppraisePassList = new ArrayList<>();
     private OrderListBean orderBean;
-    private DirectAppraisePassBean directAppraisePassBean;
     private boolean isOnPause = false;
     private InquiryOrderEntry inquiryOrderEntry;
     private AlertDialogHelper delOrderDialogHelper;
     private AlertDialogHelper cancelOrderDialogHelper;
     private AlertDialogHelper confirmOrderDialogHelper;
+    //0.全部订单  1.待付款  2.待发货 3.待收货 4.待评价
+    private String[] urls = new String[]{Url.Q_INQUIRY_ALL_ORDER, Url.Q_INQUIRY_WAIT_PAY, Url.Q_INQUIRY_WAIT_SEND, Url.Q_INQUIRY_DEL_IVERED, Url.Q_INQUIRY_FINISH};
+    private int mType;
 
     @Override
     protected int getContentView() {
@@ -105,155 +105,155 @@ public class DuMoIndentAllFragment extends BaseFragment {
                 .setDividerId(R.drawable.item_divider_ten_dp).create());
         doMoIndentListAdapter = new DoMoIndentListAdapter(getActivity(), orderListBeanList);
         communal_recycler.setAdapter(doMoIndentListAdapter);
-
         setFloatingButton(download_btn_communal, communal_recycler);
         smart_communal_refresh.setOnRefreshListener(refreshLayout -> loadData());
         doMoIndentListAdapter.setOnLoadMoreListener(() -> {
             page++;
-            getAllIndent();
+            getIndentList();
         }, communal_recycler);
 
-        doMoIndentListAdapter.setOnClickViewListener(new DoMoIndentListAdapter.OnClickViewListener() {
-            @Override
-            public void click(String type, OrderListBean orderListBean) {
-                orderBean = orderListBean;
-                if (orderBean == null) return;
-                Intent intent = new Intent();
-                Bundle bundle;
-                switch (type) {
-                    case BUY_AGAIN:
-//                        再次购买
-                        intent.setClass(getActivity(), DirectIndentWriteActivity.class);
-                        intent.putExtra("orderNo", orderListBean.getNo());
-                        startActivity(intent);
-                        break;
-                    case REMIND_DELIVERY:
-                        if (loadHud != null) {
-                            loadHud.show();
-                        }
-                        setRemindDelivery(orderBean);
-                        break;
-                    case CANCEL_ORDER:
-//                        取消订单
-                        if (cancelOrderDialogHelper == null) {
-                            cancelOrderDialogHelper = new AlertDialogHelper(getActivity());
-                            cancelOrderDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
-                                    .setMsg("确定要取消当前订单？").setCancelText("取消").setConfirmText("确定")
-                                    .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s));
-                            cancelOrderDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
-                                @Override
-                                public void confirm() {
-                                    cancelOrder();
-                                }
-
-                                @Override
-                                public void cancel() {
-                                }
-                            });
-                        }
-                        cancelOrderDialogHelper.show();
-                        break;
-                    case CANCEL_PAY_ORDER:
-                        DirectApplyRefundBean refundBean = new DirectApplyRefundBean();
-                        refundBean.setType(3);
-                        refundBean.setOrderNo(orderListBean.getNo());
-                        List<DirectRefundProBean> directProList = new ArrayList<>();
-                        List<CartProductInfoBean> cartProductInfoList;
-                        DirectRefundProBean directRefundProBean;
-                        for (int i = 0; i < orderListBean.getGoods().size(); i++) {
-                            GoodsBean goodsBean = orderListBean.getGoods().get(i);
-                            cartProductInfoList = new ArrayList<>();
-                            directRefundProBean = new DirectRefundProBean();
-                            directRefundProBean.setId(goodsBean.getId());
-                            directRefundProBean.setOrderProductId(goodsBean.getOrderProductId());
-                            directRefundProBean.setCount(goodsBean.getCount());
-                            directRefundProBean.setName(goodsBean.getName());
-                            directRefundProBean.setPicUrl(goodsBean.getPicUrl());
-                            directRefundProBean.setSaleSkuValue(goodsBean.getSaleSkuValue());
-                            directRefundProBean.setPrice(goodsBean.getPrice());
-                            if (goodsBean.getPresentProductInfoList() != null && goodsBean.getPresentProductInfoList().size() > 0) {
-                                cartProductInfoList.addAll(goodsBean.getPresentProductInfoList());
+        doMoIndentListAdapter.setOnClickViewListener((type, orderListBean) -> {
+            orderBean = orderListBean;
+            if (orderBean == null) return;
+            Intent intent = new Intent();
+            Bundle bundle;
+            switch (type) {
+                //再次购买
+                case BUY_AGAIN:
+                    intent.setClass(getActivity(), DirectIndentWriteActivity.class);
+                    intent.putExtra("orderNo", orderListBean.getNo());
+                    startActivity(intent);
+                    break;
+                //提醒发货
+                case REMIND_DELIVERY:
+                    if (loadHud != null) {
+                        loadHud.show();
+                    }
+                    setRemindDelivery(orderBean);
+                    break;
+                //取消订单（待支付）
+                case CANCEL_ORDER:
+                    if (cancelOrderDialogHelper == null) {
+                        cancelOrderDialogHelper = new AlertDialogHelper(getActivity());
+                        cancelOrderDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
+                                .setMsg("确定要取消当前订单？").setCancelText("取消").setConfirmText("确定")
+                                .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s));
+                        cancelOrderDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                            @Override
+                            public void confirm() {
+                                cancelOrder();
                             }
-                            if (goodsBean.getCombineProductInfoList() != null && goodsBean.getCombineProductInfoList().size() > 0) {
-                                cartProductInfoList.addAll(goodsBean.getCombineProductInfoList());
-                            }
-                            if (cartProductInfoList.size() > 0) {
-                                directRefundProBean.setCartProductInfoList(cartProductInfoList);
-                            }
-                            directProList.add(directRefundProBean);
-                        }
-                        refundBean.setDirectRefundProList(directProList);
-                        intent.setClass(getActivity(), DirectApplyRefundActivity.class);
-                        intent.putExtra(REFUND_TYPE, REFUND_TYPE);
-                        bundle = new Bundle();
-                        bundle.putParcelable("refundPro", refundBean);
-                        intent.putExtras(bundle);
-                        startActivity(intent);
-                        break;
-                    case PAY:
-                        intent.setClass(getActivity(), DirectExchangeDetailsActivity.class);
-                        intent.putExtra("orderNo", orderListBean.getNo());
-                        startActivity(intent);
-                        break;
-                    case CHECK_LOG:
-                    case LITTER_CONSIGN:
-//                        查看物流
-                        intent.setClass(getActivity(), DirectLogisticsDetailsActivity.class);
-                        intent.putExtra("orderNo", orderListBean.getNo());
-                        startActivity(intent);
-                        break;
-                    case CONFIRM_ORDER:
-//                        确认收货
-                        if (confirmOrderDialogHelper == null) {
-                            confirmOrderDialogHelper = new AlertDialogHelper(getActivity());
-                            confirmOrderDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
-                                    .setMsg("确定已收到货物?").setCancelText("取消").setConfirmText("确定")
-                                    .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s));
-                            confirmOrderDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
-                                @Override
-                                public void confirm() {
-                                    confirmOrder();
-                                }
 
-                                @Override
-                                public void cancel() {
-                                }
-                            });
+                            @Override
+                            public void cancel() {
+                            }
+                        });
+                    }
+                    cancelOrderDialogHelper.show();
+                    break;
+                //取消订单(待发货)
+                case CANCEL_PAY_ORDER:
+                    DirectApplyRefundBean refundBean = new DirectApplyRefundBean();
+                    refundBean.setType(3);
+                    refundBean.setOrderNo(orderListBean.getNo());
+                    List<DirectRefundProBean> directProList = new ArrayList<>();
+                    List<CartProductInfoBean> cartProductInfoList;
+                    DirectRefundProBean directRefundProBean;
+                    for (int i = 0; i < orderListBean.getGoods().size(); i++) {
+                        GoodsBean goodsBean = orderListBean.getGoods().get(i);
+                        cartProductInfoList = new ArrayList<>();
+                        directRefundProBean = new DirectRefundProBean();
+                        directRefundProBean.setId(goodsBean.getId());
+                        directRefundProBean.setOrderProductId(goodsBean.getOrderProductId());
+                        directRefundProBean.setCount(goodsBean.getCount());
+                        directRefundProBean.setName(goodsBean.getName());
+                        directRefundProBean.setPicUrl(goodsBean.getPicUrl());
+                        directRefundProBean.setSaleSkuValue(goodsBean.getSaleSkuValue());
+                        directRefundProBean.setPrice(goodsBean.getPrice());
+                        if (goodsBean.getPresentProductInfoList() != null && goodsBean.getPresentProductInfoList().size() > 0) {
+                            cartProductInfoList.addAll(goodsBean.getPresentProductInfoList());
                         }
-                        confirmOrderDialogHelper.show();
-                        break;
-                    case DEL:
-//                        删除订单
-                        if (delOrderDialogHelper == null) {
-                            delOrderDialogHelper = new AlertDialogHelper(getActivity());
-                            delOrderDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
-                                    .setMsg("确定要删除该订单？").setCancelText("取消").setConfirmText("确定")
-                                    .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s));
-                            delOrderDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
-                                @Override
-                                public void confirm() {
-                                    delOrder();
-                                }
+                        if (goodsBean.getCombineProductInfoList() != null && goodsBean.getCombineProductInfoList().size() > 0) {
+                            cartProductInfoList.addAll(goodsBean.getCombineProductInfoList());
+                        }
+                        if (cartProductInfoList.size() > 0) {
+                            directRefundProBean.setCartProductInfoList(cartProductInfoList);
+                        }
+                        directProList.add(directRefundProBean);
+                    }
+                    refundBean.setDirectRefundProList(directProList);
+                    intent.setClass(getActivity(), DirectApplyRefundActivity.class);
+                    intent.putExtra(REFUND_TYPE, REFUND_TYPE);
+                    bundle = new Bundle();
+                    bundle.putParcelable("refundPro", refundBean);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                    break;
+                //订单支付
+                case PAY:
+                    intent.setClass(getActivity(), DirectExchangeDetailsActivity.class);
+                    intent.putExtra("orderNo", orderListBean.getNo());
+                    startActivity(intent);
+                    break;
+                //查看物流，部分发货
+                case CHECK_LOG:
+                case LITTER_CONSIGN:
+                    intent.setClass(getActivity(), DirectLogisticsDetailsActivity.class);
+                    intent.putExtra("orderNo", orderListBean.getNo());
+                    startActivity(intent);
+                    break;
+                //确认收货
+                case CONFIRM_ORDER:
+                    if (confirmOrderDialogHelper == null) {
+                        confirmOrderDialogHelper = new AlertDialogHelper(getActivity());
+                        confirmOrderDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
+                                .setMsg("确定已收到货物?").setCancelText("取消").setConfirmText("确定")
+                                .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s));
+                        confirmOrderDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                            @Override
+                            public void confirm() {
+                                confirmOrder();
+                            }
 
-                                @Override
-                                public void cancel() {
-                                }
-                            });
-                        }
-                        delOrderDialogHelper.show();
-                        break;
-                    case INVITE_GROUP:
-                        List<GoodsBean> goods = orderListBean.getGoods();
-                        if (goods != null && goods.size() > 0) {
-                            GoodsBean goodsBean = goods.get(0);
-                            GroupShopDetailsBean groupShopDetailsBean = new GroupShopDetailsBean();
-                            groupShopDetailsBean.setCoverImage(goodsBean.getPicUrl());
-                            groupShopDetailsBean.setGpName(goodsBean.getName());
-                            groupShopDetailsBean.setType(orderListBean.getType());
-                            GroupDao.invitePartnerGroup(getActivity(), groupShopDetailsBean, orderListBean.getNo());
-                        }
-                        break;
-                }
+                            @Override
+                            public void cancel() {
+                            }
+                        });
+                    }
+                    confirmOrderDialogHelper.show();
+                    break;
+                //删除订单
+                case DEL:
+                    if (delOrderDialogHelper == null) {
+                        delOrderDialogHelper = new AlertDialogHelper(getActivity());
+                        delOrderDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
+                                .setMsg("确定要删除该订单？").setCancelText("取消").setConfirmText("确定")
+                                .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s));
+                        delOrderDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                            @Override
+                            public void confirm() {
+                                delOrder();
+                            }
+
+                            @Override
+                            public void cancel() {
+                            }
+                        });
+                    }
+                    delOrderDialogHelper.show();
+                    break;
+                //邀请参团
+                case INVITE_GROUP:
+                    List<GoodsBean> goods = orderListBean.getGoods();
+                    if (goods != null && goods.size() > 0) {
+                        GoodsBean goodsBean = goods.get(0);
+                        GroupShopDetailsBean groupShopDetailsBean = new GroupShopDetailsBean();
+                        groupShopDetailsBean.setCoverImage(goodsBean.getPicUrl());
+                        groupShopDetailsBean.setGpName(goodsBean.getName());
+                        groupShopDetailsBean.setType(orderListBean.getType());
+                        GroupDao.invitePartnerGroup(getActivity(), groupShopDetailsBean, orderListBean.getNo());
+                    }
+                    break;
             }
         });
     }
@@ -261,7 +261,7 @@ public class DuMoIndentAllFragment extends BaseFragment {
     @Override
     protected void loadData() {
         page = 1;
-        getAllIndent();
+        getIndentList();
     }
 
     @Override
@@ -269,16 +269,18 @@ public class DuMoIndentAllFragment extends BaseFragment {
         return true;
     }
 
-    private void getAllIndent() {
-        String url = Url.Q_INQUIRY_ALL_ORDER;
+    //获取订单列表数据
+    private void getIndentList() {
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
         params.put("showCount", TOTAL_COUNT_TEN);
         params.put("currentPage", page);
-        params.put("orderType", "currency");
-//        版本号控制 3 组合商品赠品
+        if (mType == 0 || mType == 2 || mType == 3) {
+            params.put("orderType", "currency");
+        }
+        //版本号控制 3 组合商品赠品
         params.put("version", 3);
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), url, params, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), urls[mType], params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
@@ -394,11 +396,7 @@ public class DuMoIndentAllFragment extends BaseFragment {
         });
     }
 
-    /**
-     * 设置催发货
-     *
-     * @param orderBean
-     */
+    //提醒发货
     private void setRemindDelivery(OrderListBean orderBean) {
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
@@ -452,5 +450,12 @@ public class DuMoIndentAllFragment extends BaseFragment {
             loadData();
         }
         isOnPause = true;
+    }
+
+    @Override
+    protected void getReqParams(Bundle bundle) {
+        if (bundle != null) {
+            mType = (int) bundle.get("type");
+        }
     }
 }
