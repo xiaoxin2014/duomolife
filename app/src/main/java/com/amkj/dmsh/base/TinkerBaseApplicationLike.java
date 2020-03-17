@@ -45,8 +45,12 @@ import com.amkj.dmsh.utils.FileCacheUtils;
 import com.amkj.dmsh.utils.FileStreamUtils;
 import com.amkj.dmsh.utils.SaveUpdateImportDateUtils;
 import com.kingja.loadsir.core.LoadSir;
+import com.lzf.easyfloat.EasyFloat;
 import com.microquation.linkedme.android.LinkedME;
 import com.mob.MobSDK;
+import com.qiyukf.unicorn.api.Unicorn;
+import com.qiyukf.unicorn.api.UnreadCountChangeListener;
+import com.qiyukf.unicorn.api.msg.UnicornMessage;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
 import com.tencent.bugly.Bugly;
@@ -65,6 +69,7 @@ import com.umeng.commonsdk.UMConfigure;
 import com.umeng.socialize.PlatformConfig;
 import com.umeng.socialize.UMShareAPI;
 
+import org.greenrobot.eventbus.EventBus;
 import org.lasque.tusdk.core.TuSdk;
 
 import java.io.File;
@@ -93,6 +98,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.OSS_BUCKET_NAME;
 import static com.amkj.dmsh.constant.ConstantVariable.OSS_OBJECT;
 import static com.amkj.dmsh.constant.ConstantVariable.OSS_URL;
+import static com.amkj.dmsh.constant.ConstantVariable.RECEIVED_NEW_QY_MESSAGE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_ID;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_NAME;
 import static com.amkj.dmsh.constant.ConstantVariable.isDebugTag;
@@ -318,8 +324,17 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
             //      jPush 初始化
             JPushInterface.setDebugMode(isDebugTag);    // 设置开启日志,发布时请关闭日志
             JPushInterface.init(mAppContext);
-//            必须在主线程调用
+            //全局悬浮弹窗初始化
+            EasyFloat.init(getApplication(), isDebugTag);
+            //七鱼初始化以及新消息监听(必须在主线程调用)
             QyServiceUtils.getQyInstance().initQyService(getApplication().getApplicationContext());
+            QyServiceUtils.getQyInstance().getServiceCount(new UnreadCountChangeListener() {
+                @Override
+                public void onUnreadCountChange(int count) {
+                    UnicornMessage message = Unicorn.queryLastMessage();
+                    EventBus.getDefault().post(new EventMessage(RECEIVED_NEW_QY_MESSAGE, message));
+                }
+            });
             createExecutor().execute(new Runnable() {
                 @Override
                 public void run() {
@@ -933,6 +948,7 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
 
         return sourceParameter;
     }
+
 
     /**
      * 获取 webUrlTransform

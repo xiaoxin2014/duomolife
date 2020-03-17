@@ -1,5 +1,6 @@
 package com.amkj.dmsh.base;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -11,6 +12,8 @@ import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -24,6 +27,9 @@ import com.amkj.dmsh.netloadpage.NetEmptyCallback;
 import com.amkj.dmsh.netloadpage.NetLoadCallback;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
+import com.amkj.dmsh.utils.LifecycleHandler;
+import com.amkj.dmsh.utils.TimeUtils;
+import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.gyf.barlibrary.ImmersionBar;
 import com.hjq.toast.ToastUtils;
 import com.kaopiz.kprogresshud.KProgressHUD;
@@ -31,7 +37,14 @@ import com.kingja.loadsir.callback.Callback;
 import com.kingja.loadsir.core.LoadService;
 import com.kingja.loadsir.core.LoadSir;
 import com.kingja.loadsir.core.Transport;
+import com.lzf.easyfloat.EasyFloat;
+import com.lzf.easyfloat.enums.ShowPattern;
+import com.lzf.easyfloat.interfaces.OnFloatCallbacks;
+import com.lzf.easyfloat.permission.PermissionUtils;
 import com.melnykov.fab.FloatingActionButton;
+import com.qiyukf.unicorn.api.msg.MsgTypeEnum;
+import com.qiyukf.unicorn.api.msg.UnicornMessage;
+import com.qiyukf.unicorn.ui.activity.ServiceMessageActivity;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.tencent.stat.StatService;
 import com.umeng.analytics.MobclickAgent;
@@ -39,6 +52,7 @@ import com.umeng.analytics.MobclickAgent;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,6 +66,8 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
+import static com.amkj.dmsh.constant.ConstantVariable.RECEIVED_NEW_QY_MESSAGE;
 
 
 public abstract class BaseActivity extends AppCompatActivity {
@@ -62,6 +78,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     private String sourceType;//广告位来源sourceType
     private String sourceId;//广告位来源sourceId
     private int scrollY;
+    private AlertDialogHelper mAlertDialogQyMsg;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -219,8 +236,18 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (message == null) {
             return;
         }
-        BaseActivity.this.postEventResult(message);
 
+        try {
+            if (message.type.equals(RECEIVED_NEW_QY_MESSAGE) && message.result != null && !EasyFloat.appFloatIsShow()) {
+                Activity last = ((TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike()).getActivityLinkedList().getLast();
+                if (getSimpleName().equals(last.getClass().getSimpleName())) {
+                    showQYMessage((UnicornMessage) message.result);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        BaseActivity.this.postEventResult(message);
     }
 
 
@@ -333,6 +360,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
         // 必须调用该方法，防止内存泄漏
         ImmersionBar.with(this).destroy();
+        if (mAlertDialogQyMsg != null && mAlertDialogQyMsg.isShowing()) {
+            mAlertDialogQyMsg.dismiss();
+        }
     }
 
     @Override
@@ -365,5 +395,108 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public String getSourceId() {
         return sourceId;
+    }
+
+    public void showQYMessage(UnicornMessage message) {
+        if (!PermissionUtils.checkPermission(this)) {
+            mAlertDialogQyMsg = new AlertDialogHelper(getActivity());
+            mAlertDialogQyMsg.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                @Override
+                public void confirm() {
+                    PermissionUtils.requestPermission(getActivity(), b -> {
+                        if (b) {
+                            //MsgTypeEnum.text
+                            MsgTypeEnum msgType = message.getMsgType();
+                            long msgTime = message.getTime();
+                            String content = message.getContent();
+                            EasyFloat.with(getActivity())
+                                    // 设置浮窗xml布局文件，并可设置详细信息
+                                    .setLayout(R.layout.layout_qy_float_msg, view -> {
+                                        TextView tvName = view.findViewById(R.id.tv_name);
+                                        TextView tvTime = view.findViewById(R.id.tv_time);
+                                        TextView tvContent = view.findViewById(R.id.tv_content);
+                                        int[] time = TimeUtils.getDayHourMinuteSecond(Math.abs(System.currentTimeMillis() - msgTime));
+                                        if (time != null) {
+                                            if (time[0] > 0) {
+                                                tvTime.setText(time[0] + "天前");
+                                            } else if (time[1] > 0) {
+                                                tvTime.setText(time[1] + "小时前");
+                                            } else if (time[2] > 0) {
+                                                tvTime.setText(time[2] + "分钟前");
+                                            } else if (time[3] >= 10) {
+                                                tvTime.setText(time[3] + "秒前");
+                                            } else {
+                                                tvTime.setText("刚刚");
+                                            }
+                                        }
+                                        tvContent.setText(msgType == MsgTypeEnum.text ? content : "您有新消息待查看！");
+                                        view.setOnClickListener(v -> {
+                                            EasyFloat.dismissAppFloat();
+                                            setSkipPath(getActivity(), "app://ManagerServiceChat", false);
+                                        });
+                                    })
+                                    // 设置浮窗显示类型，默认只在当前Activity显示，可选一直显示、仅前台显示、仅后台显示
+                                    .setShowPattern(ShowPattern.FOREGROUND)
+                                    // 设置浮窗是否可拖拽，默认可拖拽
+                                    .setDragEnable(true)
+                                    // 设置浮窗的对齐方式和坐标偏移量
+                                    .setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, AutoSizeUtils.mm2px(getActivity(), 120))
+                                    // 设置宽高是否充满父布局，直接在xml设置match_parent属性无效
+                                    .setMatchParent(false, false)
+                                    //客服页面时不用显示弹窗
+                                    .setFilter(ServiceMessageActivity.class)
+                                    // 浮窗的一些状态回调，如：创建结果、显示、隐藏、销毁、touchEvent、拖拽过程、拖拽结束。
+                                    // ps：通过Kotlin DSL实现的回调，可以按需复写方法，用到哪个写哪个
+                                    .registerCallbacks(new OnFloatCallbacks() {
+                                        @Override
+                                        public void createdResult(boolean b, @org.jetbrains.annotations.Nullable String s, @org.jetbrains.annotations.Nullable View view) {
+
+                                        }
+
+                                        @Override
+                                        public void show(@NotNull View view) {
+                                            new LifecycleHandler(getActivity()).postDelayed(EasyFloat::dismissAppFloat, 3000);
+                                        }
+
+                                        @Override
+                                        public void hide(@NotNull View view) {
+
+                                        }
+
+                                        @Override
+                                        public void dismiss() {
+
+                                        }
+
+                                        @Override
+                                        public void touchEvent(@NotNull View view, @NotNull MotionEvent motionEvent) {
+
+                                        }
+
+                                        @Override
+                                        public void drag(@NotNull View view, @NotNull MotionEvent motionEvent) {
+
+                                        }
+
+                                        @Override
+                                        public void dragEnd(@NotNull View view) {
+
+                                        }
+                                    }).show();
+                        }
+                    });
+                }
+
+                @Override
+                public void cancel() {
+                    mAlertDialogQyMsg.dismiss();
+                }
+            });
+            mAlertDialogQyMsg.setTitle("通知提示")
+                    .setMsg("您有新的客服消息，打开“多么生活”悬浮窗功能可实时接收")
+                    .setSingleButton(true)
+                    .setConfirmText("去设置");
+            mAlertDialogQyMsg.show();
+        }
     }
 }

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/sc_mm_664"
+    android:layout_height="@dimen/sc_mm_256"
+    android:background="@drawable/border_cir_7dp_bg_white"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sc_mm_84"
+        android:layout_marginLeft="@dimen/sc_mm_18"
+        android:layout_marginRight="@dimen/sc_mm_30"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="@dimen/sc_mm_48"
+            android:layout_height="@dimen/sc_mm_48"
+            android:src="@drawable/domolife_logo" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/sc_mm_14"
+            android:text="客服 :"
+            android:textColor="@color/color_blue_reply_com"
+            android:textSize="@dimen/sc_mm_28" />
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/sc_mm_20"
+            android:layout_weight="1"
+            android:text="多么生活"
+            android:textColor="#999"
+            android:textSize="@dimen/sc_mm_28" />
+
+        <TextView
+            android:id="@+id/tv_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/defaul"
+            android:textColor="#67a4ea"
+            android:textSize="@dimen/sc_mm_26" />
+    </LinearLayout>
+
+    <TextView
+        android:maxLines="2"
+        android:id="@+id/tv_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/bgColor_alertview_alert"
+        android:ellipsize="end"
+        android:paddingLeft="@dimen/sc_mm_26"
+        android:paddingTop="@dimen/sc_mm_20"
+        android:text="@string/defaul"
+        android:textColor="@color/text_login_gray_s"
+        android:textSize="@dimen/sc_mm_28" />
+
+    <TextView
+        android:id="@+id/tv_response"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/sc_mm_18"
+        android:gravity="center"
+        android:text="去回复"
+        android:textColor="#888"
+        android:textSize="@dimen/sc_mm_28" />
+</LinearLayout>

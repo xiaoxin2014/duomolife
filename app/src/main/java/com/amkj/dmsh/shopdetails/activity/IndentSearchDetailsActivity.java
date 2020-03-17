@@ -33,7 +33,6 @@ import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -312,7 +311,9 @@ public class IndentSearchDetailsActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
-                doMoIndentListAdapter.loadMoreComplete();
+                if (page == 1) {
+                    orderListBeanList.clear();
+                }
                 Gson gson = new Gson();
                 String code = "";
                 String msg = "";
@@ -320,42 +321,44 @@ public class IndentSearchDetailsActivity extends BaseActivity {
                     JSONObject jsonObject = new JSONObject(result);
                     code = (String) jsonObject.get("code");
                     msg = (String) jsonObject.get("msg");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                if (page == 1) {
-                    orderListBeanList.clear();
-                }
-                if (code.equals(SUCCESS_CODE)) {
                     inquiryOrderEntry = gson.fromJson(result, InquiryOrderEntry.class);
-                    InquiryOrderEntry.OrderInquiryDateEntry orderInquiryDateEntry = inquiryOrderEntry.getOrderInquiryDateEntry();
-                    if (!TextUtils.isEmpty(orderInquiryDateEntry.getCurrentTime())) {
-                        for (int i = 0; i < orderInquiryDateEntry.getOrderList().size(); i++) {
-                            OrderListBean orderListBean = inquiryOrderEntry.getOrderInquiryDateEntry().getOrderList().get(i);
-                            orderListBean.setCurrentTime(orderInquiryDateEntry.getCurrentTime());
+                    if (inquiryOrderEntry != null) {
+                        InquiryOrderEntry.OrderInquiryDateEntry orderInquiryDateEntry = inquiryOrderEntry.getOrderInquiryDateEntry();
+                        List<OrderListBean> orderList = orderInquiryDateEntry.getOrderList();
+                        if (orderList == null || orderList.size() < 1 || EMPTY_CODE.equals(code)) {
+                            doMoIndentListAdapter.loadMoreEnd();
+                        } else if (SUCCESS_CODE.equals(code)) {
+                            if (!TextUtils.isEmpty(orderInquiryDateEntry.getCurrentTime())) {
+                                for (int i = 0; i < orderInquiryDateEntry.getOrderList().size(); i++) {
+                                    OrderListBean orderListBean = orderList.get(i);
+                                    orderListBean.setCurrentTime(orderInquiryDateEntry.getCurrentTime());
+                                }
+                            }
+                            INDENT_PRO_STATUS = inquiryOrderEntry.getOrderInquiryDateEntry().getStatus();
+                            orderListBeanList.addAll(orderList);
+                            //不满一页
+                            if (orderListBeanList.size() < TOTAL_COUNT_TEN) {
+                                doMoIndentListAdapter.loadMoreEnd();
+                            } else {
+                                doMoIndentListAdapter.loadMoreComplete();
+                            }
+                        } else {
+                            showToast(getActivity(), msg);
+                            doMoIndentListAdapter.loadMoreFail();
                         }
                     }
-                    INDENT_PRO_STATUS = inquiryOrderEntry.getOrderInquiryDateEntry().getStatus();
-                    orderListBeanList.addAll(inquiryOrderEntry.getOrderInquiryDateEntry().getOrderList());
-                } else if (!code.equals(EMPTY_CODE)) {
-                    showToast(IndentSearchDetailsActivity.this, msg);
-                }else{
-                    doMoIndentListAdapter.loadMoreEnd();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
                 doMoIndentListAdapter.notifyDataSetChanged();
-                NetLoadUtils.getNetInstance().showLoadSirString(loadService,orderListBeanList,code);
+                NetLoadUtils.getNetInstance().showLoadSirString(loadService, orderListBeanList, code);
             }
 
             @Override
             public void onNotNetOrException() {
                 smart_communal_refresh.finishRefresh();
                 doMoIndentListAdapter.loadMoreEnd(true);
-                NetLoadUtils.getNetInstance().showLoadSir(loadService,orderListBeanList, inquiryOrderEntry);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(mAppContext, R.string.unConnectedNetwork);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, orderListBeanList, inquiryOrderEntry);
             }
 
             @Override
@@ -377,11 +380,11 @@ public class IndentSearchDetailsActivity extends BaseActivity {
 
     //  订单删除
     private void delOrder() {
-        String url =  Q_INDENT_DEL;
+        String url = Q_INDENT_DEL;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderBean.getNo());
         params.put("userId", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_INDENT_DEL,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_INDENT_DEL, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -399,12 +402,12 @@ public class IndentSearchDetailsActivity extends BaseActivity {
     }
 
     private void confirmOrder() {
-        String url =  Q_INDENT_CONFIRM;
+        String url = Q_INDENT_CONFIRM;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderBean.getNo());
         params.put("userId", userId);
         params.put("orderProductId", 0);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_INDENT_CONFIRM,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_INDENT_CONFIRM, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -423,11 +426,11 @@ public class IndentSearchDetailsActivity extends BaseActivity {
 
     //  取消订单
     private void cancelOrder() {
-        String url =  Q_INDENT_CANCEL;
+        String url = Q_INDENT_CANCEL;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderBean.getNo());
         params.put("userId", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_INDENT_CANCEL,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_INDENT_CANCEL, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -444,12 +447,12 @@ public class IndentSearchDetailsActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(IndentSearchDetailsActivity.this,R.string.do_failed);
+                showToast(IndentSearchDetailsActivity.this, R.string.do_failed);
             }
 
             @Override
             public void netClose() {
-                showToast(IndentSearchDetailsActivity.this,R.string.unConnectedNetwork);
+                showToast(IndentSearchDetailsActivity.this, R.string.unConnectedNetwork);
             }
         });
     }

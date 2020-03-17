@@ -182,6 +182,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     //    底部限制98 padding top&bottom 10*2 drawablepadding 10 textsize 20
     private float iconHeight = 32f;
     private AlertDialogGroup mAlertDialogGroup;
+    private AlertDialogHelper mAlertDialogNotify;
 
 
     @Override
@@ -243,6 +244,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }
             }
         });
+
     }
 
     //统一弹窗规则接口
@@ -1106,8 +1108,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     if (sysNotificationEntity != null && sysNotificationEntity.getSysNotificationBean() != null &&
                             SUCCESS_CODE.equals(sysNotificationEntity.getCode())) {
                         SysNotificationEntity.SysNotificationBean sysNotificationBean = sysNotificationEntity.getSysNotificationBean();
-                        AlertDialogHelper alertDialogHelper = new AlertDialogHelper(getActivity());
-                        alertDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                        mAlertDialogNotify = new AlertDialogHelper(getActivity());
+                        mAlertDialogNotify.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
                             @Override
                             public void confirm() {
                                 // 根据isOpened结果，判断是否需要提醒用户跳转AppInfo页面，去打开App通知权限
@@ -1116,20 +1118,20 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                                 Uri uri = Uri.fromParts("package", getActivity().getPackageName(), null);
                                 intent.setData(uri);
                                 getActivity().startActivity(intent);
-                                alertDialogHelper.dismiss();
+                                mAlertDialogNotify.dismiss();
                             }
 
                             @Override
                             public void cancel() {
-                                alertDialogHelper.dismiss();
+                                mAlertDialogNotify.dismiss();
                             }
                         });
-                        alertDialogHelper.setTitle("通知提示")
+                        mAlertDialogNotify.setTitle("通知提示")
                                 .setMsg(TextUtils.isEmpty(sysNotificationBean.getContent()) ? "“多么生活”想给您发送通知,方便我们更好的为您服务，限时秒杀不再错过。" :
                                         sysNotificationBean.getContent())
                                 .setSingleButton(true)
                                 .setConfirmText("去设置");
-                        alertDialogHelper.show();
+                        mAlertDialogNotify.show();
                     }
                 }
             });
@@ -1343,6 +1345,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
         if (alertDialogHelper != null && alertDialogHelper.isShowing()) {
             alertDialogHelper.dismiss();
+        }
+        if (mAlertDialogNotify != null && mAlertDialogNotify.isShowing()) {
+            mAlertDialogNotify.dismiss();
         }
         if (alertDialogAdImage != null && alertDialogAdImage.isShowing()) {
             alertDialogAdImage.dismiss();

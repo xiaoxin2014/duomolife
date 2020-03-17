@@ -386,6 +386,7 @@ public class ConstantVariable {
     public static final String SEARCH_DATA = "searchData";    //    搜索 获取传递信息参数
     public static final String UPDATE_CUSTOM_NAME = "updateCustomName";    //    更新自定义专区tab名称
     public static final String INVOICE_APPLY_SUCCESS = "invoiceApplySuccess";    //发票开具成功，刷新发票详情
+    public static final String RECEIVED_NEW_QY_MESSAGE = "receivedNewQyMessage";    //收到新的七鱼客服消息
 
 
 

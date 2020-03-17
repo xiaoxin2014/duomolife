@@ -18,8 +18,6 @@ import com.amkj.dmsh.shopdetails.bean.DirectLogisticsEntity.DirectLogisticsBean.
 import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
 import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -75,12 +73,7 @@ public class DirectLogisticsDetailsActivity extends BaseActivity {
         Intent intent = getIntent();
         orderNo = intent.getStringExtra("orderNo");
         stl_direct_logistics_details.setTextsize(AutoSizeUtils.mm2px(mAppContext, 28));
-        smart_logistic_refresh.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                loadData();
-            }
-        });
+        smart_logistic_refresh.setOnRefreshListener(refreshLayout -> loadData());
     }
 
     @Override

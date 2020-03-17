@@ -33,7 +33,6 @@ import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -87,7 +86,7 @@ public class DoMoIndentNewFragment extends BaseFragment {
     private AlertDialogHelper delOrderDialogHelper;
     private AlertDialogHelper cancelOrderDialogHelper;
     private AlertDialogHelper confirmOrderDialogHelper;
-    //0.全部订单  1.待付款  2.待发货 3.待收货 4.待评价
+    //0.全部订单  1.待付款  2.待发货  3.待收货  4.待评价
     private String[] urls = new String[]{Url.Q_INQUIRY_ALL_ORDER, Url.Q_INQUIRY_WAIT_PAY, Url.Q_INQUIRY_WAIT_SEND, Url.Q_INQUIRY_DEL_IVERED, Url.Q_INQUIRY_FINISH};
     private int mType;
 
@@ -284,7 +283,9 @@ public class DoMoIndentNewFragment extends BaseFragment {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
-                doMoIndentListAdapter.loadMoreComplete();
+                if (page == 1) {
+                    orderListBeanList.clear();
+                }
                 Gson gson = new Gson();
                 String code = "";
                 String msg = "";
@@ -292,27 +293,34 @@ public class DoMoIndentNewFragment extends BaseFragment {
                     JSONObject jsonObject = new JSONObject(result);
                     code = (String) jsonObject.get("code");
                     msg = (String) jsonObject.get("msg");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                if (page == 1) {
-                    orderListBeanList.clear();
-                }
-                if (code.equals(SUCCESS_CODE)) {
                     inquiryOrderEntry = gson.fromJson(result, InquiryOrderEntry.class);
-                    InquiryOrderEntry.OrderInquiryDateEntry orderInquiryDateEntry = inquiryOrderEntry.getOrderInquiryDateEntry();
-                    if (!TextUtils.isEmpty(orderInquiryDateEntry.getCurrentTime())) {
-                        for (int i = 0; i < orderInquiryDateEntry.getOrderList().size(); i++) {
-                            OrderListBean orderListBean = inquiryOrderEntry.getOrderInquiryDateEntry().getOrderList().get(i);
-                            orderListBean.setCurrentTime(orderInquiryDateEntry.getCurrentTime());
+                    if (inquiryOrderEntry != null) {
+                        InquiryOrderEntry.OrderInquiryDateEntry orderInquiryDateEntry = inquiryOrderEntry.getOrderInquiryDateEntry();
+                        List<OrderListBean> orderList = orderInquiryDateEntry.getOrderList();
+                        if (orderList == null || orderList.size() < 1 || EMPTY_CODE.equals(code)) {
+                            doMoIndentListAdapter.loadMoreEnd();
+                        } else if (SUCCESS_CODE.equals(code)) {
+                            if (!TextUtils.isEmpty(orderInquiryDateEntry.getCurrentTime())) {
+                                for (int i = 0; i < orderInquiryDateEntry.getOrderList().size(); i++) {
+                                    OrderListBean orderListBean = orderList.get(i);
+                                    orderListBean.setCurrentTime(orderInquiryDateEntry.getCurrentTime());
+                                }
+                            }
+                            INDENT_PRO_STATUS = inquiryOrderEntry.getOrderInquiryDateEntry().getStatus();
+                            orderListBeanList.addAll(orderList);
+                            //不满一页
+                            if (orderListBeanList.size() < TOTAL_COUNT_TEN) {
+                                doMoIndentListAdapter.loadMoreEnd();
+                            } else {
+                                doMoIndentListAdapter.loadMoreComplete();
+                            }
+                        } else {
+                            showToast(getActivity(), msg);
+                            doMoIndentListAdapter.loadMoreFail();
                         }
                     }
-                    INDENT_PRO_STATUS = inquiryOrderEntry.getOrderInquiryDateEntry().getStatus();
-                    orderListBeanList.addAll(inquiryOrderEntry.getOrderInquiryDateEntry().getOrderList());
-                } else if (!code.equals(EMPTY_CODE)) {
-                    showToast(getActivity(), msg);
-                } else {
-                    doMoIndentListAdapter.loadMoreEnd();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
                 doMoIndentListAdapter.notifyDataSetChanged();
                 NetLoadUtils.getNetInstance().showLoadSirString(loadService, orderListBeanList, code);

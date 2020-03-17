@@ -108,7 +108,6 @@ public class QualityGroupShopActivity extends BaseActivity {
         setFloatingButton(download_btn_communal, communal_recycler);
     }
 
-
     @Override
     protected void loadData() {
         page = 1;

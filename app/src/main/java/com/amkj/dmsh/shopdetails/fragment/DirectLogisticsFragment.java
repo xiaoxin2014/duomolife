@@ -16,9 +16,6 @@ import com.amkj.dmsh.shopdetails.bean.DirectLogisticPacketBean;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-;
-;
-
 
 /**
  * @author LGuiPeng
@@ -46,11 +43,11 @@ public class DirectLogisticsFragment extends BaseFragment {
         View headerView = LayoutInflater.from(getActivity()).inflate(R.layout.layout_direct_logistics_header, null, false);
         directLogisticsHeadView = new DirectLogisticsHeadView();
         ButterKnife.bind(directLogisticsHeadView, headerView);
-//        头部商品信息
+        //头部商品信息
         DirectLogisticsHeaderAdapter directLogisticsHeaderAdapter = new DirectLogisticsHeaderAdapter(getActivity(), directLogisticPacketBean.getDirectGoods());
         directLogisticsHeadView.communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(getActivity()));
         directLogisticsHeadView.communal_recycler_wrap.setAdapter(directLogisticsHeaderAdapter);
-
+        directLogisticsHeadView.communal_recycler_wrap.setNestedScrollingEnabled(false);
         directLogisticsAdapter = new DirectLogisticsAdapter(directLogisticPacketBean.getLogisticPacketList());
         directLogisticsAdapter.addHeaderView(headerView);
         communal_recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -87,6 +84,5 @@ public class DirectLogisticsFragment extends BaseFragment {
         //        订单号
         @BindView(R.id.tv_logistics_indent_express_number)
         TextView tv_logis_indent_exp_number;
-
     }
 }

@@ -181,9 +181,10 @@ public class TimeUtils {
         return abs;
     }
 
+
     /**
      * 获取两个时间之间的时间差
-     *
+     * <p>
      * 当大于24小时时显示：天+小时
      * 当大于1小时小于24小时时显示：小时+分
      * 当小于1小时时显示：分+秒
@@ -195,19 +196,16 @@ public class TimeUtils {
             long time1 = formatter.parse(t1).getTime();
             long time2 = formatter.parse(t2).getTime();
             long abs = Math.abs(time1 - time2);
-            int day = (int) (abs / (1000 * 60 * 60 * 24));
-            int hour = (int) ((abs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            int minute = (int) ((abs % (1000 * 60 * 60)) / (1000 * 60));
-            int second = (int) ((abs % (1000 * 60)) / 1000);
+            int[] time = getDayHourMinuteSecond(abs);
 
-            if (day != 0) {
-                timeDifference = day + "天" + hour + "时";
-            } else if (hour != 0) {
-                timeDifference = hour + "时" + minute + "分";
+            if (time[0] != 0) {
+                timeDifference = time[0] + "天" + time[1] + "时";
+            } else if (time[1] != 0) {
+                timeDifference = time[1] + "时" + time[2] + "分";
             } else {
-                timeDifference = minute + "分" + second + "秒";
+                timeDifference = time[2] + "分" + time[3] + "秒";
             }
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -221,14 +219,24 @@ public class TimeUtils {
      * @param showZeroDay 是否显示0天
      */
     public static String getCoutDownTime(long coutTime, boolean showZeroDay) {
+        int[] time = getDayHourMinuteSecond(coutTime);
+        if (time != null) {
+            return (!showZeroDay && time[0] == 0 ? "" : time[0] + "天") + (time[1] < 10 ? "0" + time[1] : time[1]) + ":" + (time[2] < 10 ? "0" + time[2] : time[2]) + ":" + (time[3] < 10 ? "0" + time[3] : time[3]);
+        } else {
+            return "";
+        }
+    }
+
+    //毫秒转换成天 时分秒
+    public static int[] getDayHourMinuteSecond(long coutTime) {
         try {
             int day = (int) (coutTime / (1000 * 60 * 60 * 24));
             int hour = (int) ((coutTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             int minute = (int) ((coutTime % (1000 * 60 * 60)) / (1000 * 60));
             int second = (int) ((coutTime % (1000 * 60)) / 1000);
-            return (!showZeroDay && day == 0 ? "" : day + "天") + (hour < 10 ? "0" + hour : hour) + ":" + (minute < 10 ? "0" + minute : minute) + ":" + (second < 10 ? "0" + second : second);
+            return new int[]{day, hour, minute, second};
         } catch (Exception e) {
-            return "";
+            return null;
         }
     }
 
