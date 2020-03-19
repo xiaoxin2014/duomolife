@@ -37,7 +37,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
  * @email liuguipeng163@163.com
  * created on 2018/6/6
  * version 3.1.3
- * class description:默认样式dialog
+ * class description:分享统一弹窗
  */
 public class AlertDialogShareHelper {
     private final View loadView;

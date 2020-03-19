@@ -19,16 +19,19 @@ import java.util.Map;
 public class QualityCustomAdapter extends FragmentPagerAdapter {
     private Map<String, Object> params = new HashMap<>();
     private List<String> mProductTypeList;
+    private String mSimpleName;
 
-    public QualityCustomAdapter(FragmentManager fm, List<String> productTypeList) {
+    public QualityCustomAdapter(FragmentManager fm, List<String> productTypeList,String simpleName) {
         super(fm);
         mProductTypeList = productTypeList;
+        mSimpleName=simpleName;
     }
 
     @Override
     public Fragment getItem(int position) {
         params.put("productType", mProductTypeList.get(position));
         params.put("position",String.valueOf(position));
+        params.put("simpleName",mSimpleName);
         return BaseFragment.newInstance(GroupCustomTopicFragment.class, null, params);
     }
 

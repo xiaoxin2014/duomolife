@@ -296,4 +296,7 @@
     <string name="input_email_address">输入邮箱地址</string>
     <string name="type">类型</string>
     <string name="invoice_complete_time">（7个工作日内完成）</string>
+    <string name="receive_express_msg">打开系统消息，随时接受物流动态，前往开启</string>
+    <string name="join_activity_need_integral">参与本次活动需要扣除%s积分</string>
+
 </resources>

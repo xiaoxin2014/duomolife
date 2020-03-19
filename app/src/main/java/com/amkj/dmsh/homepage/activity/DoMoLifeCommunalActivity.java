@@ -871,7 +871,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
      */
     private void openNotification(JsInteractiveBean jsInteractiveBean) {
         if (jsInteractiveBean.getOtherData() != null) {
-            if (!getDeviceAppNotificationStatus(DoMoLifeCommunalActivity.this)) {
+            if (!getDeviceAppNotificationStatus()) {
                 if (notificationAlertDialogHelper == null) {
                     notificationAlertDialogHelper = new AlertDialogHelper(DoMoLifeCommunalActivity.this);
                     notificationAlertDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
@@ -1184,7 +1184,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
      * 回调通知开关
      */
     private void notificationStatusCallback() {
-        webViewJs(String.format(getResources().getString(R.string.web_notification_status), getDeviceAppNotificationStatus(DoMoLifeCommunalActivity.this) ? 1 : 0));
+        webViewJs(String.format(getResources().getString(R.string.web_notification_status), getDeviceAppNotificationStatus() ? 1 : 0));
     }
 
     /**

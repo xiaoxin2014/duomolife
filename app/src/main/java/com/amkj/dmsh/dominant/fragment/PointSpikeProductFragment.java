@@ -115,7 +115,7 @@ public class PointSpikeProductFragment extends BaseFragment {
                         case R.id.tv_point_spike_done:
                             if (timeAxisProductListBean.getStatusCode() == 0) {
                                 if (userId > 0) {
-                                    if (timeAxisProductListBean.getIsNotice() == 0 && !getDeviceAppNotificationStatus(activityWeakReference.get())) {
+                                    if (timeAxisProductListBean.getIsNotice() == 0 && !getDeviceAppNotificationStatus()) {
                                         if (notificationAlertDialogHelper == null) {
                                             notificationAlertDialogHelper = new AlertDialogHelper(activityWeakReference.get());
                                             notificationAlertDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {

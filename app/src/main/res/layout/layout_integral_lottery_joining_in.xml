@@ -3,32 +3,49 @@
     android:id="@+id/ll_integral_lottery_joined"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
     android:layout_gravity="center"
-    android:gravity="center">
+    android:gravity="center"
+    android:orientation="horizontal">
+
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
+
         <TextView
-            android:layout_width="wrap_content"
             android:id="@+id/tv_integral_lottery_code"
-            android:textColor="@color/text_yel_f_s"
-            android:text="@string/integral_lottery_code"
-            android:textSize="@dimen/sc_mm_34"
-            android:layout_height="wrap_content" />
-        <TextView
             android:layout_width="wrap_content"
-            android:layout_below="@id/tv_integral_lottery_code"
+            android:layout_height="wrap_content"
+            android:text="@string/integral_lottery_code"
+            android:textColor="@color/text_yel_f_s"
+            android:textSize="@dimen/sc_mm_34" />
+
+        <TextView
             android:id="@+id/tv_integral_lottery_invite_rule"
-            android:textColor="@color/text_login_gray_s"
-            android:textSize="@dimen/sc_mm_26"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_integral_lottery_code"
             android:layout_marginTop="@dimen/sc_mm_24"
             android:text="邀请好友可额外获得1个夺宝码"
-            android:layout_height="wrap_content" />
+            android:textColor="@color/text_login_gray_s"
+            android:textSize="@dimen/sc_mm_26" />
+
+        <TextView
+            android:id="@+id/tv_limit"
+            android:visibility="gone"
+            android:layout_marginTop="@dimen/sc_mm_24"
+            android:layout_below="@id/tv_integral_lottery_code"
+            android:layout_width="@dimen/sc_mm_410"
+            android:layout_height="@dimen/sc_mm_44"
+            android:background="@drawable/shape_join_limit"
+            android:gravity="center"
+            android:text="本场活动你已达活动上限制"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sc_mm_22" />
     </RelativeLayout>
+
     <ImageView
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/sc_mm_80"
-        android:src="@drawable/att_integ_next"
-        android:layout_height="wrap_content" />
+        android:src="@drawable/att_integ_next" />
 </LinearLayout>

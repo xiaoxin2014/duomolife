@@ -8,10 +8,12 @@ package com.amkj.dmsh.bean;
 public class TabNameBean {
     private String tabName;
     private int position;
+    private String simpleName;
 
-    public TabNameBean(String tabName, int position) {
+    public TabNameBean(String tabName, int position, String simpleName) {
         this.tabName = tabName;
         this.position = position;
+        this.simpleName = simpleName;
     }
 
     public String getTabName() {
@@ -25,5 +27,17 @@ public class TabNameBean {
 
     public void setPosition(int position) {
         this.position = position;
+    }
+
+    public void setTabName(String tabName) {
+        this.tabName = tabName;
+    }
+
+    public String getSimpleName() {
+        return simpleName;
+    }
+
+    public void setSimpleName(String simpleName) {
+        this.simpleName = simpleName;
     }
 }

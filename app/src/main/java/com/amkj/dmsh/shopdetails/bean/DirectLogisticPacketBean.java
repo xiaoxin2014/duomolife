@@ -19,6 +19,7 @@ import java.util.List;
 public class DirectLogisticPacketBean implements Parcelable{
     private String expressNo;
     private String expressCompany;
+    private String address;//收货地址
     private List<LogisticsProductPacketBean> directGoods;
     private List<LogisticTextBean> logisticPacketList;
 
@@ -28,6 +29,14 @@ public class DirectLogisticPacketBean implements Parcelable{
 
     public void setExpressNo(String expressNo) {
         this.expressNo = expressNo;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getExpressCompany() {

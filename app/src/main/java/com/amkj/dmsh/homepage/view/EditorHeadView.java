@@ -91,7 +91,7 @@ public class EditorHeadView extends LinearLayout {
      * 打开app通知
      */
     private void openNotification() {
-        if (!getDeviceAppNotificationStatus(mContext)) {
+        if (!getDeviceAppNotificationStatus()) {
             AlertDialogHelper notificationAlertDialogHelper = new AlertDialogHelper(mContext);
             notificationAlertDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
                 @Override

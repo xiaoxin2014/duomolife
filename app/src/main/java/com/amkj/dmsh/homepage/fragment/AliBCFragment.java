@@ -884,7 +884,7 @@ public class AliBCFragment extends BaseFragment {
         if (activityWeakReference.get() == null) {
             return;
         }
-        if (jsInteractiveBean.getOtherData() != null && !getDeviceAppNotificationStatus(activityWeakReference.get())) {
+        if (jsInteractiveBean.getOtherData() != null && !getDeviceAppNotificationStatus()) {
             if (notificationAlertDialogHelper == null) {
                 notificationAlertDialogHelper = new AlertDialogHelper(activityWeakReference.get());
                 notificationAlertDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
@@ -1210,7 +1210,7 @@ public class AliBCFragment extends BaseFragment {
         if (activityWeakReference.get() == null) {
             return;
         }
-        webViewJs(String.format(getResources().getString(R.string.web_notification_status), getDeviceAppNotificationStatus(activityWeakReference.get()) ? 1 : 0));
+        webViewJs(String.format(getResources().getString(R.string.web_notification_status), getDeviceAppNotificationStatus() ? 1 : 0));
     }
 
     /**

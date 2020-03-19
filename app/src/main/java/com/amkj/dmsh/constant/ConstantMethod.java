@@ -1393,7 +1393,7 @@ public class ConstantMethod {
 //        app版本
         String versionName = getVersionName(context);
 //        获取app通知开关
-        int notificationStatus = getDeviceAppNotificationStatus(context) ? 1 : 0;
+        int notificationStatus = getDeviceAppNotificationStatus() ? 1 : 0;
 
         if (!getStrings(oldVersionName).equals(versionName)
                 || !getStrings(oldMobileModel).equals(mobileModel)
@@ -1402,8 +1402,9 @@ public class ConstantMethod {
         }
     }
 
-    public static boolean getDeviceAppNotificationStatus(Context context) {
-        NotificationManagerCompat manager = NotificationManagerCompat.from(context.getApplicationContext());
+    //是否打开系统通知
+    public static boolean getDeviceAppNotificationStatus() {
+        NotificationManagerCompat manager = NotificationManagerCompat.from(mAppContext);
         return manager.areNotificationsEnabled();
     }
 

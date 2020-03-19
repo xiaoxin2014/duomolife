@@ -170,7 +170,7 @@ public class MessageActivity extends BaseActivity {
         }
 
         //判断通知是否打开
-        mRlOpenMsg.setVisibility(!getDeviceAppNotificationStatus(this) ? View.VISIBLE : View.GONE);
+        mRlOpenMsg.setVisibility(!getDeviceAppNotificationStatus() ? View.VISIBLE : View.GONE);
         super.onResume();
     }
 

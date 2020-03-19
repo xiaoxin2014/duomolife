@@ -6,7 +6,7 @@
     android:minHeight="@dimen/sc_mm_88"
     android:id="@+id/tl_normal_bar"
     android:paddingBottom="@dimen/sc_mm_1"
-    android:background="@drawable/sel_bg_border_gray_white"
+    android:background="@drawable/border_bottom_line"
     app:layout_collapseMode="pin"
     app:contentInsetStart="0dp">
 

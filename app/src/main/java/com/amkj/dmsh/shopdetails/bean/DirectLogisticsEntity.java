@@ -28,6 +28,15 @@ public class DirectLogisticsEntity extends BaseEntity {
         @SerializedName("logistics")
         private List<List<LogisticsProductPacketBean>> logisticsProductPacketList;
         private List<List<LogisticsProductPacketBean>> presentLogistics;
+        private String address;
+
+        public String getAddress() {
+            return address;
+        }
+
+        public void setAddress(String address) {
+            this.address = address;
+        }
 
         public List<List<LogisticsProductPacketBean>> getPresentLogistics() {
             return presentLogistics;
@@ -272,6 +281,11 @@ public class DirectLogisticsEntity extends BaseEntity {
 
                         private String time;
                         private String status;
+
+                        public LogisticTextBean(String time, String status) {
+                            this.time = time;
+                            this.status = status;
+                        }
 
                         public String getTime() {
                             return time;

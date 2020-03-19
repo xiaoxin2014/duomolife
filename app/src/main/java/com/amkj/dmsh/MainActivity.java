@@ -1100,7 +1100,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     //检查推送权限
     public void checkPushPermission(RequestStatus requestStatus) {
         SharedPreUtils.setParam(InvokeTimeFileName, PUSH_OPEN_REMIND, TimeUtils.getCurrentTime(requestStatus));//记录调用时间
-        if (isContextExisted(getActivity()) && !getDeviceAppNotificationStatus(getActivity())) {
+        if (isContextExisted(getActivity()) && !getDeviceAppNotificationStatus()) {
             NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), APP_SYS_NOTIFICATION, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {

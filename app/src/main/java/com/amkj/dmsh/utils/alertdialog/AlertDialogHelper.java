@@ -38,14 +38,14 @@ public class AlertDialogHelper {
     private int confirmTextColor;
     private boolean isFirstSet = true;
     private AlertConfirmCancelListener alertConfirmCancelListener;
-    private final AlertDialog defaultAlertDialog;
-    private final TextView tv_alert_title;
-    private final TextView tv_alert_confirm;
-    private final TextView tv_alert_cancel;
-    private final TextView tv_alert_message;
-    private final String CANCEL = "cancel";
-    private final String CONFIRM = "confirm";
-    private final View dialogView;
+    private AlertDialog defaultAlertDialog;
+    private TextView tv_alert_title;
+    private TextView tv_alert_confirm;
+    private TextView tv_alert_cancel;
+    private TextView tv_alert_message;
+    private String CANCEL = "cancel";
+    private String CONFIRM = "confirm";
+    private View dialogView;
     View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -61,11 +61,17 @@ public class AlertDialogHelper {
         }
     };
 
+    public AlertDialogHelper() {
+    }
 
     public AlertDialogHelper(Context context) {
+        this(context, 0);
+    }
+
+    public AlertDialogHelper(Context context, int layoutId) {
         this.context = context;
         AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.service_dialog_theme);
-        dialogView = LayoutInflater.from(context).inflate(R.layout.layout_alert_dialog_video_network, null, false);
+        dialogView = LayoutInflater.from(context).inflate(layoutId == 0 ? R.layout.layout_alert_dialog_video_network : layoutId, null, false);
         builder.setCancelable(true);
         tv_alert_title = dialogView.findViewById(R.id.tv_alert_title);
         tv_alert_message = dialogView.findViewById(R.id.tv_alert_message);
@@ -302,4 +308,8 @@ public class AlertDialogHelper {
         void cancel();
     }
 
+
+    public View getDialogView() {
+        return dialogView;
+    }
 }

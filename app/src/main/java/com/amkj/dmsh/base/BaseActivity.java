@@ -381,7 +381,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         return this;
     }
 
-    protected String getSimpleName() {
+    public String getSimpleName() {
         return mSimpleName;
     }
 

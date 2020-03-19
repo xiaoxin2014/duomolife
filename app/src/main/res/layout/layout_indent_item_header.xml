@@ -4,7 +4,7 @@
     android:orientation="horizontal"
     android:background="@drawable/border_bottom_line"
     android:gravity="center_vertical"
-    android:layout_height="@dimen/sc_mm_90">
+    android:layout_height="@dimen/sc_mm_65">
     <FrameLayout
         android:layout_width="wrap_content"
         android:layout_weight="1"
@@ -20,7 +20,7 @@
     </FrameLayout>
     <TextView
         android:layout_width="wrap_content"
-        android:textColor="@color/text_login_gray_s"
+        android:textColor="@color/text_login_blue_z"
         android:layout_gravity="center_vertical"
         android:textSize="@dimen/sc_mm_26"
         android:layout_marginRight="@dimen/gap_right"

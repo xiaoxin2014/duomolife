@@ -49,6 +49,7 @@ public class GroupCustomTopicFragment extends BaseFragment {
     private UserLikedProductEntity userLikedProductEntity;
     private String productType;
     private String position;
+    private String simpleName;
 
 
     @Override
@@ -112,7 +113,7 @@ public class GroupCustomTopicFragment extends BaseFragment {
                                 showToast(getActivity(), userLikedProductEntity.getMsg());
                             }
 
-                            EventBus.getDefault().post(new EventMessage(UPDATE_CUSTOM_NAME, new TabNameBean(userLikedProductEntity.getZoneName(), ConstantMethod.getStringChangeIntegers(position))));
+                            EventBus.getDefault().post(new EventMessage(UPDATE_CUSTOM_NAME, new TabNameBean(userLikedProductEntity.getZoneName(), ConstantMethod.getStringChangeIntegers(position),simpleName)));
                         }
                         qualityCustomTopicAdapter.notifyDataSetChanged();
 
@@ -132,5 +133,6 @@ public class GroupCustomTopicFragment extends BaseFragment {
     protected void getReqParams(Bundle bundle) {
         productType = bundle.getString("productType");
         position = bundle.getString("position");
+        simpleName = bundle.getString("simpleName");
     }
 }

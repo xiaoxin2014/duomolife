@@ -8,46 +8,38 @@
 
     <include layout="@layout/activity_domolife_header" />
 
-    <com.scwang.smartrefresh.layout.SmartRefreshLayout
-        android:id="@+id/smart_logistic_refresh"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <include layout="@layout/layout_refresh_header_gif" />
-
-        <LinearLayout
+        <RelativeLayout
+            android:id="@+id/rel_direct_logistics_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="@dimen/sc_mm_80"
+            android:background="@drawable/border_bottom_line"
+            android:gravity="center"
+            android:visibility="visible">
 
-            <RelativeLayout
-                android:id="@+id/rel_direct_logistics_layout"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/sc_mm_80"
-                android:background="@drawable/border_top_bottom_line"
-                android:gravity="center"
-                android:visibility="visible">
+            <com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout
+                android:id="@+id/stl_direct_logistics_details"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                app:tl_indicator_color="@color/text_login_blue_z"
+                app:tl_indicator_corner_radius="@dimen/dimen_1dp"
+                app:tl_indicator_gravity="BOTTOM"
+                app:tl_indicator_width="0dp"
+                app:tl_indicator_width_equal_title="true"
+                app:tl_tab_space_equal="true"
+                app:tl_textSelectColor="@color/text_login_blue_z"
+                app:tl_textUnselectColor="@color/text_black_t"
+                app:tl_textsize="@dimen/sc_mm_28" />
+        </RelativeLayout>
 
-                <com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout
-                    android:id="@+id/stl_direct_logistics_details"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_centerInParent="true"
-                    app:tl_indicator_color="@color/text_login_blue_z"
-                    app:tl_indicator_corner_radius="@dimen/dimen_1dp"
-                    app:tl_indicator_gravity="BOTTOM"
-                    app:tl_indicator_width="0dp"
-                    app:tl_indicator_width_equal_title="true"
-                    app:tl_tab_space_equal="true"
-                    app:tl_textSelectColor="@color/text_login_blue_z"
-                    app:tl_textUnselectColor="@color/text_black_t"
-                    app:tl_textsize="@dimen/sc_mm_28" />
-            </RelativeLayout>
-
-            <android.support.v4.view.ViewPager
-                android:id="@+id/vp_direct_logistics_details"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </LinearLayout>
-    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+        <android.support.v4.view.ViewPager
+            android:id="@+id/vp_direct_logistics_details"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
 </LinearLayout>

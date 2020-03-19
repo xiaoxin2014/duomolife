@@ -988,9 +988,6 @@
         <activity
             android:name=".shopdetails.activity.DirectCouponGetActivity"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".shopdetails.activity.DirectIndentInvoiceActivity"
-            android:screenOrientation="portrait" />
         <!--物流详情-->
         <activity
             android:name=".shopdetails.activity.DirectLogisticsDetailsActivity"
@@ -1291,6 +1288,7 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="InvoiceDetailActivity" />
+                <action android:name="DirectIndentInvoiceActivity" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>

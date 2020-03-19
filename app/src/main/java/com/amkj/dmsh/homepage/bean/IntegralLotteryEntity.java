@@ -78,6 +78,27 @@ public class IntegralLotteryEntity extends BaseTimeEntity {
         private Object timeObject;
         private String productId;
 
+        //新增字段
+        private String isShareNumMax; //是否分享获取次数达上限  1是0否
+        private int score;//参与消耗积分数
+
+
+        public boolean isShareNumMax() {
+            return "1".equals(isShareNumMax);
+        }
+
+        public void setIsShareNumMax(String isShareNumMax) {
+            this.isShareNumMax = isShareNumMax;
+        }
+
+        public int getScore() {
+            return score;
+        }
+
+        public void setScore(int score) {
+            this.score = score;
+        }
+
         public Object getTimeObject() {
             return timeObject;
         }
@@ -206,7 +227,7 @@ public class IntegralLotteryEntity extends BaseTimeEntity {
             this.winList = winList;
         }
 
-        public  static class WinListBean implements Parcelable{
+        public static class WinListBean implements Parcelable {
             /**
              * winningCode : 2018072002101
              * nickName : 穆茨d'god like

@@ -1,9 +1,13 @@
 package com.amkj.dmsh.homepage.adapter;
 
 import android.app.Activity;
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.LifecycleObserver;
+import android.arch.lifecycle.OnLifecycleEvent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -28,6 +32,7 @@ import com.amkj.dmsh.homepage.bean.IntegralLotteryEntity.PreviousInfoBean.WinLis
 import com.amkj.dmsh.homepage.initviews.AttendanceLotteryCodePopWindow;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -71,7 +76,7 @@ import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTimeAddSeconds;
  * version 3.1.5
  * class description:积分夺宝
  */
-public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, IntegralLotteryAdapter.IntegralLotteryViewHolder> {
+public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, IntegralLotteryAdapter.IntegralLotteryViewHolder> implements LifecycleObserver {
     private final Activity context;
     private final List<PreviousInfoBean> integralLotteryList;
     private final LayoutInflater inflater;
@@ -82,6 +87,7 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
     private AttendanceLotteryCode attendanceLotteryCode;
     private LotteryAwardAdapter lotteryAwardAdapter;
     private List<String> lotteryCodeList = new ArrayList<>();
+    private AlertDialogHelper alertDialogIntegral;
 
     public IntegralLotteryAdapter(Activity context, ConstantMethod constantMethod, List<PreviousInfoBean> integralLotteryList) {
         super(R.layout.adapter_integral_lottery, integralLotteryList);
@@ -91,6 +97,8 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
         this.constantMethod = constantMethod;
         getConstant();
         setLotteryCodePopWindows();
+        setIntegralPopWindows();
+        ((AppCompatActivity) context).getLifecycle().addObserver(this);
     }
 
     /**
@@ -105,6 +113,15 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
         attendanceLotteryCode.initViews();
     }
 
+    /**
+     * 设置积分扣除提示弹窗
+     */
+    private void setIntegralPopWindows() {
+        if (alertDialogIntegral == null) {
+            alertDialogIntegral = new AlertDialogHelper(context, R.layout.layout_alert_dialog_integral_tips);
+        }
+    }
+
     @Override
     protected void convert(IntegralLotteryViewHolder helper, PreviousInfoBean previousInfoBean) {
         TextView tv_integral_lottery_status = helper.getView(R.id.tv_integral_lottery_status);
@@ -116,7 +133,8 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
         helper.setText(R.id.tv_integral_lottery_number, getStrings(previousInfoBean.getActivityCode()))
                 .setText(R.id.tv_lottery_product_name, getStrings(previousInfoBean.getPrizeName()))
                 .setText(R.id.tv_integral_lottery_total, context.getResources().getString(R.string.integral_lottery_number
-                        , previousInfoBean.getPrizeNum(), previousInfoBean.getRecordNum()));
+                        , previousInfoBean.getPrizeNum(), previousInfoBean.getRecordNum()))
+                .setText(R.id.tv_join_type, previousInfoBean.getScore() > 0 ? "积分参与" : "免费参与");
 
         if (!isEndOrStartTimeAddSeconds(previousInfoBean.getmCurrentTime()
                 , previousInfoBean.getEndTime(), previousInfoBean.getmSeconds())) {
@@ -168,9 +186,9 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
                             WinListBean winListBean = previousInfoBean.getWinList().get(i);
                             helper.integralLotteryEndLoseHelper.fbl_integral_lottery_avatar.addView(createImageView(winListBean));
                         }
-                        if(previousInfoBean.getWinList().size() > 5){
+                        if (previousInfoBean.getWinList().size() > 5) {
                             helper.integralLotteryEndLoseHelper.tv_integral_lottery_prize_more.setVisibility(View.VISIBLE);
-                        }else{
+                        } else {
                             helper.integralLotteryEndLoseHelper.tv_integral_lottery_prize_more.setVisibility(View.GONE);
                         }
                     } else {
@@ -192,10 +210,10 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
                         WinListBean winListBean = previousInfoBean.getWinList().get(i);
                         helper.integralLotteryEndPrizeHelper.fbl_integral_lottery_avatar.addView(createImageView(winListBean));
                     }
-                    if(previousInfoBean.getWinList().size() > 5){
-                        if(previousInfoBean.getWinList().size() > 5){
+                    if (previousInfoBean.getWinList().size() > 5) {
+                        if (previousInfoBean.getWinList().size() > 5) {
                             helper.integralLotteryEndPrizeHelper.tv_integral_lottery_prize_more.setVisibility(View.VISIBLE);
-                        }else{
+                        } else {
                             helper.integralLotteryEndPrizeHelper.tv_integral_lottery_prize_more.setVisibility(View.GONE);
                         }
                     }
@@ -211,6 +229,8 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
                     helper.rel_integral_lottery_prize.addView(helper.joinIn);
                     helper.integralLotteryJoinInHelper.tv_integral_lottery_join_in.setTag(previousInfoBean);
                 }
+
+                helper.integralLotteryJoiningInHelper.tv_limit.setVisibility(previousInfoBean.isShareNumMax() ? View.VISIBLE : View.GONE);
                 prizeText = "开奖倒计时";
             } else { //未开始
                 prizeText = "开始倒计时";
@@ -297,14 +317,14 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
             }
         } else {
 //            countdownView.setVisibility(View.VISIBLE);
-            try {
-                //格式化开始时间
-                Date dateStart = formatter.parse(previousInfoBean.getStartTime());
-                Date dateCurrent;
-                if (!TextUtils.isEmpty(previousInfoBean.getmCurrentTime())) {
-                    dateCurrent = formatter.parse(previousInfoBean.getmCurrentTime());
-                } else {
-                    dateCurrent = new Date();
+                    try {
+                        //格式化开始时间
+                        Date dateStart = formatter.parse(previousInfoBean.getStartTime());
+                        Date dateCurrent;
+                        if (!TextUtils.isEmpty(previousInfoBean.getmCurrentTime())) {
+                            dateCurrent = formatter.parse(previousInfoBean.getmCurrentTime());
+                        } else {
+                            dateCurrent = new Date();
                     previousInfoBean.setmCurrentTime(formatter.format(dateCurrent));
                     previousInfoBean.setmSeconds(previousInfoBean.getmSeconds() - 1);
                 }
@@ -475,6 +495,7 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
             } else {
                 attendanceLotteryCode.tv_integral_lottery_invite.setVisibility(View.VISIBLE);
             }
+
             attendanceLotteryCodePopWindow.showPopupWindow();
         }
     }
@@ -509,51 +530,25 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
         void lotteryJoinIn(TextView textView) {
             PreviousInfoBean previousInfoBean = (PreviousInfoBean) textView.getTag();
             if (previousInfoBean != null) {
-                textView.setEnabled(false);
-                joinInIntegralLottery(previousInfoBean.getId(), textView);
-            }
-        }
-
-        private void joinInIntegralLottery(int activityId, TextView textView) {
-            if (userId > 0) {
-                String url =  H_ATTENDANCE_JOIN_IN_INTEGRAL_LOTTERY;
-                Map<String, Object> params = new HashMap<>();
-                params.put("uid", userId);
-                params.put("activityId", activityId);
-                NetLoadUtils.getNetInstance().loadNetDataPost(context, url, params, new NetLoadListenerHelper() {
-                    @Override
-                    public void onSuccess(String result) {
-                        textView.setEnabled(true);
-                        Gson gson = new Gson();
-                        IntegralLotteryAwardEntity integralLotteryAwardEntity = gson.fromJson(result, IntegralLotteryAwardEntity.class);
-                        if (integralLotteryAwardEntity != null) {
-                            if (SUCCESS_CODE.equals(integralLotteryAwardEntity.getCode())) {
-                                showToast(context, "夺宝参与成功");
-                                EventBus.getDefault().post(new EventMessage(messageType, "joinInIntegralLottery"));
-                            } else {
-                                showToast(context, integralLotteryAwardEntity.getMsg());
-                            }
+                int score = previousInfoBean.getScore();
+                //积分参与
+                if (score > 0) {
+                    alertDialogIntegral.setMsg(ConstantMethod.getStringsFormat(context, R.string.join_activity_need_integral, String.valueOf(score)));
+                    alertDialogIntegral.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                        @Override
+                        public void confirm() {
+                            joinInIntegralLottery(previousInfoBean.getId(), textView);
                         }
-                    }
 
-                    @Override
-                    public void onNotNetOrException() {
-                        textView.setEnabled(true);
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
-                        showToast(context, R.string.do_failed);
-                    }
-
-                    @Override
-                    public void netClose() {
-                        showToast(context, R.string.unConnectedNetwork);
-                    }
-                });
-            } else {
-                getLoginStatus((Activity) context);
-                textView.setEnabled(true);
+                        @Override
+                        public void cancel() {
+                        }
+                    });
+                    alertDialogIntegral.show();
+                } else {
+                    //免费参与
+                    joinInIntegralLottery(previousInfoBean.getId(), textView);
+                }
             }
         }
     }
@@ -564,6 +559,8 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
         TextView tv_integral_lottery_code;
         @BindView(R.id.ll_integral_lottery_joined)
         LinearLayout ll_integral_lottery_joined;
+        @BindView(R.id.tv_limit)
+        TextView tv_limit;
 
         @OnClick(R.id.ll_integral_lottery_joined)
         void mineLotteryCode(LinearLayout linearLayout) {
@@ -602,5 +599,57 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
             EventBus.getDefault().post(new EventMessage("invitePartner", ""));
             attendanceLotteryCodePopWindow.dismiss();
         }
+    }
+
+
+    private void joinInIntegralLottery(int activityId, TextView textView) {
+        if (userId > 0) {
+            String url = H_ATTENDANCE_JOIN_IN_INTEGRAL_LOTTERY;
+            Map<String, Object> params = new HashMap<>();
+            params.put("uid", userId);
+            params.put("activityId", activityId);
+            NetLoadUtils.getNetInstance().loadNetDataPost(context, url, params, new NetLoadListenerHelper() {
+                @Override
+                public void onSuccess(String result) {
+                    textView.setEnabled(true);
+                    Gson gson = new Gson();
+                    IntegralLotteryAwardEntity integralLotteryAwardEntity = gson.fromJson(result, IntegralLotteryAwardEntity.class);
+                    if (integralLotteryAwardEntity != null) {
+                        if (SUCCESS_CODE.equals(integralLotteryAwardEntity.getCode())) {
+                            showToast(context, "夺宝参与成功");
+                            EventBus.getDefault().post(new EventMessage(messageType, "joinInIntegralLottery"));
+                        } else {
+                            showToast(context, integralLotteryAwardEntity.getMsg());
+                        }
+                    }
+                }
+
+                @Override
+                public void onNotNetOrException() {
+                    textView.setEnabled(true);
+                }
+
+                @Override
+                public void onError(Throwable throwable) {
+                    showToast(context, R.string.do_failed);
+                }
+
+                @Override
+                public void netClose() {
+                    showToast(context, R.string.unConnectedNetwork);
+                }
+            });
+        } else {
+            getLoginStatus((Activity) context);
+            textView.setEnabled(true);
+        }
+    }
+
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    private void onDestroy() {
+        alertDialogIntegral.dismiss();
+        attendanceLotteryCodePopWindow.dismiss();
+        ((AppCompatActivity) context).getLifecycle().removeObserver(this);
     }
 }

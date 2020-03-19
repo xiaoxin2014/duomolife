@@ -2,6 +2,7 @@ package com.amkj.dmsh.homepage.fragment;
 
 import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,11 +14,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseFragment;
+import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.IntegrationProEntity;
 import com.amkj.dmsh.bean.IntegrationProEntity.IntegrationBean;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.constant.UMShareAction;
+import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dao.AddClickDao;
 import com.amkj.dmsh.dominant.activity.QualityCustomTopicActivity;
 import com.amkj.dmsh.homepage.AttendanceMarqueeView;
@@ -908,7 +913,7 @@ public class AttendanceFragment extends BaseFragment {
             homeImgActivityAdapter.setOnItemClickListener((adapter, view, position) -> {
                 CommunalADActivityBean communalADActivityBean = (CommunalADActivityBean) view.getTag();
                 if (communalADActivityBean != null) {
-                    AddClickDao.adClickTotal(getActivity(),communalADActivityBean.getAndroidLink(),communalADActivityBean.getId(),false);
+                    AddClickDao.adClickTotal(getActivity(), communalADActivityBean.getAndroidLink(), communalADActivityBean.getId(), false);
                 }
             });
         }
@@ -955,6 +960,31 @@ public class AttendanceFragment extends BaseFragment {
                     }
                 }
             });
+        }
+    }
+
+    private void attendanceInvitePartner() {
+        if (userId > 0) {
+            new UMShareAction((BaseActivity) getActivity()
+                    , "http://image.domolife.cn/lottery_share.png"
+                    , "送你100元多么生活现金券，领取了我也有奖励哈哈~"
+                    , "多么生活精选全球好物，买对就是省钱~新人特价专享1折起！"
+                    , Url.BASE_SHARE_PAGE_TWO + "m/template/home/inviteNewbie.html?shareid=" + userId, 1);
+        }
+    }
+
+    @Override
+    protected void postEventResult(@NonNull EventMessage message) {
+        if (integralLotteryAdapter.messageType.equals(getStrings(message.type))) {
+            String refreshType = (String) message.result;
+            switch (refreshType) {
+                case "joinInIntegralLottery":
+                case "integralLotteryEnd":
+                    getIntegralLottery();
+                    break;
+            }
+        } else if ("invitePartner".equals(message.type)) {
+            attendanceInvitePartner();
         }
     }
 

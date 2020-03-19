@@ -1,6 +1,7 @@
 package com.amkj.dmsh.shopdetails.activity;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -8,7 +9,9 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
+import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.adapter.LogisticsPagerAdapter;
@@ -17,7 +20,6 @@ import com.amkj.dmsh.shopdetails.bean.DirectLogisticsEntity;
 import com.amkj.dmsh.shopdetails.bean.DirectLogisticsEntity.DirectLogisticsBean.LogisticsProductPacketBean;
 import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
 import com.google.gson.Gson;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -52,8 +54,6 @@ public class DirectLogisticsDetailsActivity extends BaseActivity {
     RelativeLayout rel_direct_logistics_layout;
     @BindView(R.id.vp_direct_logistics_details)
     ViewPager vp_direct_logistics_details;
-    @BindView(R.id.smart_logistic_refresh)
-    SmartRefreshLayout smart_logistic_refresh;
     private String orderNo;
     private List<String> pageTitle = new ArrayList<>();
     private List<DirectLogisticPacketBean> logisticPacketBeans = new ArrayList<>();
@@ -73,7 +73,6 @@ public class DirectLogisticsDetailsActivity extends BaseActivity {
         Intent intent = getIntent();
         orderNo = intent.getStringExtra("orderNo");
         stl_direct_logistics_details.setTextsize(AutoSizeUtils.mm2px(mAppContext, 28));
-        smart_logistic_refresh.setOnRefreshListener(refreshLayout -> loadData());
     }
 
     @Override
@@ -93,7 +92,6 @@ public class DirectLogisticsDetailsActivity extends BaseActivity {
                 params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
-                        smart_logistic_refresh.finishRefresh();
                         Gson gson = new Gson();
                         directLogisticsEntity = gson.fromJson(result, DirectLogisticsEntity.class);
                         if (directLogisticsEntity != null && directLogisticsEntity.getDirectLogisticsBean() != null) {
@@ -140,7 +138,6 @@ public class DirectLogisticsDetailsActivity extends BaseActivity {
 
                     @Override
                     public void onNotNetOrException() {
-                        smart_logistic_refresh.finishRefresh();
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, logisticPacketBeans, directLogisticsEntity);
                     }
                 });
@@ -156,6 +153,7 @@ public class DirectLogisticsDetailsActivity extends BaseActivity {
                 LogisticsProductPacketBean logisticsPacketBean = logisticsPacketBeanList.get(0);
                 directLogisticPacketBean.setExpressCompany(getStrings(logisticsPacketBean.getExpressCompany()));
                 directLogisticPacketBean.setExpressNo(getStrings(logisticsPacketBean.getExpressNo()));
+                directLogisticPacketBean.setAddress(getStrings(directLogisticsEntity.getDirectLogisticsBean().getAddress()));
                 if (logisticsPacketBean.getLogisticsDetailsBean() != null) {
                     directLogisticPacketBean.setLogisticPacketList(logisticsPacketBean.getLogisticsDetailsBean().getLogisticsBean().getLogisticTextBeanList());
                     logisticPacketBeans.add(directLogisticPacketBean);
@@ -168,9 +166,6 @@ public class DirectLogisticsDetailsActivity extends BaseActivity {
             } else {
                 rel_direct_logistics_layout.setVisibility(View.VISIBLE);
             }
-            if (stl_direct_logistics_details.getCurrentTab() != 0) {
-                stl_direct_logistics_details.setCurrentTab(0);
-            }
             LogisticsPagerAdapter logisticsPagerAdapter = new LogisticsPagerAdapter(getSupportFragmentManager(), pageTitle, logisticPacketBeans);
             vp_direct_logistics_details.setAdapter(logisticsPagerAdapter);
             if (tabWidth == 0) {
@@ -179,6 +174,7 @@ public class DirectLogisticsDetailsActivity extends BaseActivity {
             }
             stl_direct_logistics_details.setTabWidth(tabWidth);
             stl_direct_logistics_details.setViewPager(vp_direct_logistics_details);
+            stl_direct_logistics_details.setCurrentTab(stl_direct_logistics_details.getCurrentTab());
         }
     }
 
@@ -203,4 +199,10 @@ public class DirectLogisticsDetailsActivity extends BaseActivity {
         }
     }
 
+    @Override
+    protected void postEventResult(@NonNull EventMessage message) {
+        if (ConstantVariable.UPDATE_EXPRESS_DATA.equals(message.type)) {
+            loadData();
+        }
+    }
 }
