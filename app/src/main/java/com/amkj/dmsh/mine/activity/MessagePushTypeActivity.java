@@ -83,7 +83,7 @@ public class MessagePushTypeActivity extends BaseActivity {
         communal_recycler.setLayoutManager(linearLayoutManager);
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_gray_f_two_px).create());
+                .setDividerId(R.drawable.item_divider_gray_f_one_px).create());
         mesPushTypeSetAdapter = new MesPushTypeSetAdapter(mesPushTypeList);
         mesPushTypeSetAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override

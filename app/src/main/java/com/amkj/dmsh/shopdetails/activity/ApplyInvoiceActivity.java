@@ -18,6 +18,7 @@ import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.utils.LifecycleHandler;
 import com.google.gson.Gson;
 
@@ -29,7 +30,6 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showLoadhud;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
@@ -102,7 +102,7 @@ public class ApplyInvoiceActivity extends BaseActivity {
                 finish();
                 break;
             case R.id.iv_img_service:
-                setSkipPath(this, "app://ManagerServiceChat", false);
+                QyServiceUtils.getQyInstance().openQyServiceChat(getActivity(),"申请发票");
                 break;
             //保存发票
             case R.id.tv_save:

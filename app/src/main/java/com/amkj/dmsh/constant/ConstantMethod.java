@@ -12,6 +12,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -29,6 +30,7 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
+import android.text.style.StyleSpan;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,16 +44,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.amkj.dmsh.MainActivity;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
-import com.amkj.dmsh.bean.CouponEntity;
 import com.amkj.dmsh.bean.HomeQualityFloatAdEntity;
 import com.amkj.dmsh.bean.ImageBean;
-import com.amkj.dmsh.bean.MessageBean;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.dao.AddClickDao;
 import com.amkj.dmsh.dominant.activity.QualityGroupShopDetailActivity;
-import com.amkj.dmsh.dominant.activity.QualityNewUserActivity;
 import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
 import com.amkj.dmsh.find.activity.ImagePagerActivity;
 import com.amkj.dmsh.find.activity.JoinTopicActivity;
@@ -61,28 +59,22 @@ import com.amkj.dmsh.homepage.activity.DoMoLifeCommunalActivity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.ScoreGoodsEntity;
 import com.amkj.dmsh.homepage.bean.ScoreGoodsEntity.ScoreGoodsBean;
-import com.amkj.dmsh.message.bean.MessageTotalEntity;
+import com.amkj.dmsh.message.bean.MessageCenterEntity;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.rxeasyhttp.utils.DeviceUtils;
-import com.amkj.dmsh.shopdetails.activity.DirectMyCouponActivity;
+import com.amkj.dmsh.shopdetails.activity.DirectExchangeDetailsActivity;
+import com.amkj.dmsh.shopdetails.activity.DoMoRefundDetailActivity;
+import com.amkj.dmsh.shopdetails.activity.RefundMoneyActivity;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
-import com.amkj.dmsh.shopdetails.bean.EditGoodsSkuEntity;
-import com.amkj.dmsh.shopdetails.bean.EditGoodsSkuEntity.EditGoodsSkuBean;
-import com.amkj.dmsh.shopdetails.bean.ShopCarGoodsSku;
-import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
 import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.utils.MarketUtils;
-import com.amkj.dmsh.utils.SharedPreUtils;
-import com.amkj.dmsh.utils.TimeUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogImage;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
-import com.amkj.dmsh.views.bottomdialog.SkuDialog;
 import com.google.gson.Gson;
 import com.hjq.toast.ToastUtils;
 import com.kaopiz.kprogresshud.KProgressHUD;
@@ -96,8 +88,6 @@ import com.yanzhenjie.permission.Action;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Permission;
 import com.yanzhenjie.permission.Setting;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -132,11 +122,9 @@ import q.rorbin.badgeview.QBadgeView;
 import static android.content.Context.MODE_PRIVATE;
 import static android.os.Build.VERSION_CODES.KITKAT;
 import static com.ali.auth.third.core.context.KernelContext.getApplicationContext;
-import static com.amkj.dmsh.MainActivity.InvokeTimeFileName;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.base.WeChatPayConstants.APP_ID;
 import static com.amkj.dmsh.constant.ConstantVariable.COMMENT_TYPE;
-import static com.amkj.dmsh.constant.ConstantVariable.COUPON_POPUP;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.MES_ADVISE;
 import static com.amkj.dmsh.constant.ConstantVariable.MES_FEEDBACK;
@@ -150,7 +138,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.TYPE_C_WELFARE;
 import static com.amkj.dmsh.constant.UMShareAction.routineId;
 import static com.amkj.dmsh.constant.Url.H_Q_FLOAT_AD;
 import static com.amkj.dmsh.constant.Url.LOTTERY_URL;
-import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 import static com.amkj.dmsh.dao.BaiChuanDao.isTaoBaoUrl;
 import static com.amkj.dmsh.dao.BaiChuanDao.skipAliBC;
 import static com.yanzhenjie.permission.AndPermission.getFileUri;
@@ -390,6 +377,15 @@ public class ConstantMethod {
      * @return
      */
     public static CharSequence getSpannableString(String text, int start, int end, float proportion, String color) {
+        return getSpannableString(text, start, end, proportion, color, false);
+    }
+
+
+    /**
+     * @param bold 是否粗体
+     * @return
+     */
+    public static CharSequence getSpannableString(String text, int start, int end, float proportion, String color, boolean bold) {
         if (TextUtils.isEmpty(text)) return "";
         SpannableString spannableString = null;
         try {
@@ -403,12 +399,19 @@ public class ConstantMethod {
                 ForegroundColorSpan colorSpan = new ForegroundColorSpan(Color.parseColor(color));
                 spannableString.setSpan(colorSpan, start, end, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             }
+
+            if (bold) {
+                StyleSpan styleSpan = new StyleSpan(Typeface.BOLD);
+                spannableString.setSpan(styleSpan, start, end, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            }
+
         } catch (Exception e) {
             return text;
         }
 
         return spannableString;
     }
+
 
     /**
      * 去掉多余的0
@@ -1235,6 +1238,28 @@ public class ConstantMethod {
         context.startActivity(intent);
     }
 
+    //跳转售后详情
+    public static void skipRefundDetail(Context context, String refundNo) {
+        Intent intent = new Intent(context, DoMoRefundDetailActivity.class);
+        intent.putExtra("refundNo", refundNo);
+        context.startActivity(intent);
+    }
+
+    //跳转钱款去向
+    public static void skipRefundAspect(Context context, int refundCount, String orderNo, String refundNo) {
+        Intent intent = new Intent();
+        if (refundCount > 1) {
+            //跳转订单详情
+            intent.setClass(context, DirectExchangeDetailsActivity.class);
+            intent.putExtra("orderNo", orderNo);
+        } else {
+            //跳转退款去向页面
+            intent.setClass(context, RefundMoneyActivity.class);
+            intent.putExtra("refundNo", refundNo);
+        }
+        context.startActivity(intent);
+    }
+
     //跳转用户中心
     public static void skipUserCenter(Context context, int uid) {
         if (isContextExisted(context)) {
@@ -1284,6 +1309,16 @@ public class ConstantMethod {
             activity.startActivity(intent);
         }
     }
+
+    /**
+     * 跳转客服
+     */
+    public static void skipService(Activity activity) {
+        if (isContextExisted(activity)) {
+            setSkipPath(activity, "app://ManagerServiceChat", false);
+        }
+    }
+
 
     //    获取系统权限
     public void getPermissions(final Context context, final String... permissions) {
@@ -1428,152 +1463,6 @@ public class ConstantMethod {
         NetLoadUtils.getNetInstance().loadNetDataPost(context, url, params, null);
     }
 
-    /**
-     * @param baseAddCarProInfoBean 商品基本信息
-     */
-    public static void addShopCarGetSku(final Activity context, final BaseAddCarProInfoBean baseAddCarProInfoBean, final KProgressHUD loadHud) {
-        if (userId <= 0 || !isContextExisted(context)) {
-            getLoginStatus(context);
-            return;
-        }
-        loadHud.show();
-        //商品详情内容
-        String url = Url.Q_SHOP_DETAILS_GET_SKU_CAR;
-        Map<String, Object> params = new HashMap<>();
-        params.put("productId", baseAddCarProInfoBean.getProductId());
-        params.put("uid", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(context, url, params, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                loadHud.dismiss();
-                Gson gson = new Gson();
-                EditGoodsSkuEntity editGoodsSkuEntity = gson.fromJson(result, EditGoodsSkuEntity.class);
-                if (editGoodsSkuEntity != null) {
-                    if (editGoodsSkuEntity.getCode().equals(SUCCESS_CODE)) {
-                        EditGoodsSkuBean editGoodsSkuBean = editGoodsSkuEntity.getEditGoodsSkuBean();
-                        List<SkuSaleBean> skuSaleBeanList = editGoodsSkuBean.getSkuSale();
-                        if (skuSaleBeanList == null) {
-                            return;
-                        }
-                        if (skuSaleBeanList.size() > 1) {
-                            setSkuValue(context, editGoodsSkuBean, baseAddCarProInfoBean, loadHud);
-                        } else {
-                            SkuSaleBean skuSaleBean = skuSaleBeanList.get(0);
-                            if ((skuSaleBean.getIsNotice() == 1 || skuSaleBean.getIsNotice() == 2) && skuSaleBean.getQuantity() == 0) {
-                                setSkuValue(context, editGoodsSkuBean, baseAddCarProInfoBean, loadHud);
-                            } else {
-                                if (skuSaleBean.getQuantity() > 0) {
-                                    ShopCarGoodsSku shopCarGoodsSkuDif = new ShopCarGoodsSku();
-                                    shopCarGoodsSkuDif.setCount(1);
-                                    shopCarGoodsSkuDif.setSaleSkuId(editGoodsSkuBean.getSkuSale().get(0).getId());
-                                    shopCarGoodsSkuDif.setPrice(Double.parseDouble(editGoodsSkuBean.getSkuSale().get(0).getPrice()));
-                                    shopCarGoodsSkuDif.setProductId(editGoodsSkuBean.getId());
-                                    shopCarGoodsSkuDif.setPicUrl(editGoodsSkuBean.getPicUrl());
-                                    shopCarGoodsSkuDif.setActivityCode(getStrings(baseAddCarProInfoBean.getActivityCode()));
-                                    shopCarGoodsSkuDif.setValuesName(!TextUtils.isEmpty(editGoodsSkuBean.getPropvalues().get(0).getPropValueName())
-                                            ? editGoodsSkuBean.getPropvalues().get(0).getPropValueName() : "默认");
-                                    addShopCar(context, shopCarGoodsSkuDif, loadHud);
-                                } else {
-                                    showToast(context, "商品已售罄，正在努力补货中~~~");
-                                }
-                            }
-                        }
-                    } else {
-                        showToast(context, editGoodsSkuEntity.getMsg());
-                    }
-                }
-            }
-
-            @Override
-            public void onNotNetOrException() {
-                loadHud.dismiss();
-            }
-        });
-    }
-
-    private static void setSkuValue(Activity context, final EditGoodsSkuEntity.EditGoodsSkuBean editGoodsSkuBean, final BaseAddCarProInfoBean baseAddCarProInfoBean, final KProgressHUD loadHud) {
-        //        sku 展示
-        SkuDialog skuDialog = new SkuDialog(context);
-        if (!TextUtils.isEmpty(baseAddCarProInfoBean.getProPic())) {
-            editGoodsSkuBean.setPicUrl(baseAddCarProInfoBean.getProPic());
-        }
-        if (TextUtils.isEmpty(editGoodsSkuBean.getProductName())) {
-            editGoodsSkuBean.setProductName(getStrings(baseAddCarProInfoBean.getProName()));
-        }
-        editGoodsSkuBean.setShowBottom(true);
-        skuDialog.refreshView(editGoodsSkuBean);
-        skuDialog.show();
-        skuDialog.getGoodsSKu(shopCarGoodsSku -> {
-            if (shopCarGoodsSku != null) {
-//                    加入购物车
-                loadHud.show();
-                shopCarGoodsSku.setProductId(baseAddCarProInfoBean.getProductId());
-                shopCarGoodsSku.setActivityCode(getStrings(baseAddCarProInfoBean.getActivityCode()));
-                addShopCar(context, shopCarGoodsSku, loadHud);
-            }
-        });
-    }
-
-    //加入购物车
-    private static void addShopCar(Activity activity, final ShopCarGoodsSku shopCarGoodsSku, final KProgressHUD loadHud) {
-        if (userId != 0) {
-            String url = Url.Q_SHOP_DETAILS_ADD_CAR;
-            Map<String, Object> params = new HashMap<>();
-            params.put("userId", userId);
-            params.put("productId", shopCarGoodsSku.getProductId());
-            params.put("saleSkuId", shopCarGoodsSku.getSaleSkuId());
-            params.put("count", shopCarGoodsSku.getCount());
-            params.put("price", shopCarGoodsSku.getPrice());
-            if (!TextUtils.isEmpty(shopCarGoodsSku.getActivityCode())) {
-                params.put("activityCode", shopCarGoodsSku.getActivityCode());
-            }
-            NetLoadUtils.getNetInstance().loadNetDataPost(activity, url, params, new NetLoadListenerHelper() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    loadHud.dismiss();
-                    RequestStatus status = gson.fromJson(result, RequestStatus.class);
-                    if (status != null) {
-                        if (status.getCode().equals(SUCCESS_CODE)) {
-                            showToast(activity, activity.getString(R.string.AddCarSuccess));
-                            //通知刷新购物车数量
-                            getCarCount(activity);
-                        } else {
-                            showToastRequestMsg(activity, status);
-                        }
-                    }
-                }
-
-                @Override
-                public void onNotNetOrException() {
-                    loadHud.dismiss();
-                }
-            });
-        }
-    }
-
-    //更新购物车商品数量
-    public static void getCarCount(Activity activity) {
-        if (userId > 0) {
-            //购物车数量展示
-            Map<String, Object> params = new HashMap<>();
-            params.put("userId", userId);
-            NetLoadUtils.getNetInstance().loadNetDataPost(activity, Q_QUERY_CAR_COUNT, params, new NetLoadListenerHelper() {
-                @Override
-                public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    MessageBean requestStatus = gson.fromJson(result, MessageBean.class);
-                    if (requestStatus != null) {
-                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                            int cartNumber = requestStatus.getResult();
-                            EventBus.getDefault().post(new EventMessage(ConstantVariable.UPDATE_CAR_NUM, cartNumber));
-                        }
-                    }
-                }
-            });
-        }
-    }
-
 
     //更新消息数量
     public static void getMessageCount(Activity activity, Badge badgeMsg) {
@@ -1583,20 +1472,18 @@ public class ConstantMethod {
             }
             return;
         }
-        String url = Url.H_MES_STATISTICS;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(activity, url, params, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(activity, Url.H_MES_STATISTICS_NEW, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
-                MessageTotalEntity messageTotalEntity = gson.fromJson(result, MessageTotalEntity.class);
-                if (messageTotalEntity != null) {
-                    if (messageTotalEntity.getCode().equals(SUCCESS_CODE)) {
-                        MessageTotalEntity.MessageTotalBean messageTotalBean = messageTotalEntity.getMessageTotalBean();
-                        int totalCount = messageTotalBean.getSmTotal() + messageTotalBean.getLikeTotal()
-                                + messageTotalBean.getCommentTotal() + messageTotalBean.getOrderTotal()
-                                + messageTotalBean.getCommOffifialTotal() + messageTotalBean.getFocusTotal();
+                MessageCenterEntity messageCenterEntity = gson.fromJson(result, MessageCenterEntity.class);
+                if (messageCenterEntity != null) {
+                    if (SUCCESS_CODE.equals(messageCenterEntity.getCode())) {
+                        int totalCount = messageCenterEntity.getActivityTotal() + messageCenterEntity.getCommentTotal()
+                                + messageCenterEntity.getFocusTotal() + messageCenterEntity.getLikeTotal()
+                                + messageCenterEntity.getNoticeTotal() + messageCenterEntity.getOrderTotal();
                         if (badgeMsg != null) {
                             badgeMsg.setBadgeNumber(totalCount);
                         }
@@ -1765,73 +1652,6 @@ public class ConstantMethod {
             default:
                 showToast(context, "验证码校验失败，请退出重试");
                 break;
-        }
-    }
-
-    public void getNewUserCouponDialog(Activity context) {
-        if (NEW_USER_DIALOG && isContextExisted(context)) {
-            NEW_USER_DIALOG = false;
-            String url = Url.H_NEW_USER_COUPON;
-            Map<String, Object> params = new HashMap<>();
-            params.put("user_id", userId);
-            NetLoadUtils.getNetInstance().loadNetDataPost(context, url, params, new NetLoadListenerHelper() {
-                @Override
-                public void onSuccess(String result) {
-                    RequestStatus requestStatus = RequestStatus.objectFromData(result);
-                    if (requestStatus != null) {
-                        if (requestStatus.getCode().equals(SUCCESS_CODE) && !TextUtils.isEmpty(requestStatus.getImgUrl())
-                                && 0 < requestStatus.getUserType() && requestStatus.getUserType() < 4) {
-                            SharedPreUtils.setParam(InvokeTimeFileName, COUPON_POPUP, TimeUtils.getCurrentTime(requestStatus));//记录调用时间
-                            // 弹窗
-                            if (isContextExisted(context)) {
-                                GlideImageLoaderUtil.loadFinishImgDrawable(context, requestStatus.getImgUrl(), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
-                                    @Override
-                                    public void onSuccess(Bitmap bitmap) {
-                                        AlertDialogImage alertDialogImage = new AlertDialogImage(context);
-                                        alertDialogImage.show();
-                                        alertDialogImage.setAlertClickListener(new AlertDialogImage.AlertImageClickListener() {
-                                            @Override
-                                            public void imageClick() {
-                                                Intent intent = new Intent();
-                                                switch (requestStatus.getUserType()) {
-                                                    case 1: //新人用户
-                                                        intent.setClass(context, QualityNewUserActivity.class);
-                                                        context.startActivity(intent);
-                                                        break;
-//                                                    领取优惠券
-                                                    case 2:
-                                                    case 3:
-                                                        CommunalWebDetailUtils.getCommunalWebInstance().getDirectCoupon(context,
-                                                                requestStatus.getCouponId(), null, new CommunalWebDetailUtils.GetCouponListener() {
-                                                                    @Override
-                                                                    public void onSuccess(CouponEntity.CouponListEntity couponListEntity) {
-                                                                        Intent intent = new Intent(context, DirectMyCouponActivity.class);
-                                                                        context.startActivity(intent);
-                                                                    }
-
-                                                                    @Override
-                                                                    public void onFailure(CouponEntity.CouponListEntity couponListEntity) {
-
-                                                                    }
-                                                                });
-                                                        break;
-                                                }
-                                                alertDialogImage.dismiss();
-                                            }
-                                        });
-                                        alertDialogImage.setImage(bitmap);
-                                    }
-
-                                    @Override
-                                    public void onError() {
-
-                                    }
-                                });
-                            }
-                        }
-                    }
-                }
-            });
         }
     }
 
@@ -2206,9 +2026,6 @@ public class ConstantMethod {
 
     /**
      * 解决Toast重复弹出 长时间不消失的问题
-     *
-     * @param context
-     * @param message
      */
     public static void showToast(Context context, String message) {
         if (isContextExisted(context)) {
@@ -2534,6 +2351,4 @@ public class ConstantMethod {
             loadHud.dismiss();
         }
     }
-
-
 }

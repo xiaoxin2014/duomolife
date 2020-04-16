@@ -33,7 +33,6 @@ import java.util.regex.Pattern;
 import cn.jzvd.Jzvd;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.addShopCarGetSku;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
@@ -47,6 +46,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.regexATextUrl;
 import static com.amkj.dmsh.constant.Url.FIND_ARTICLE_COUPON;
 import static com.amkj.dmsh.constant.Url.FIND_COUPON_PACKAGE;
 import static com.amkj.dmsh.dao.BaiChuanDao.skipAliBC;
+import static com.amkj.dmsh.dao.OrderDao.addShopCarGetSku;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_COUPON_PACKAGE;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_GOODS_2X;

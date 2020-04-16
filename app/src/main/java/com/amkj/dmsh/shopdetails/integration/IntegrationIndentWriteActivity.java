@@ -78,7 +78,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.PAY_UNION_PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY_WX_PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.UNION_RESULT_CODE;
 import static com.amkj.dmsh.constant.Url.ADDRESS_LIST;
 
 /**
@@ -448,7 +447,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
                                     break;
                                 case PAY_UNION_PAY:
                                     PayKeyBean payKeyBean = gson.fromJson(payKey, PayKeyBean.class);
-                                    unionPay(payKeyBean.getPaymentUrl());
+                                    unionPay(orderCreateNo, payKeyBean.getPaymentUrl());
                                     break;
                             }
                         }
@@ -544,7 +543,6 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
                         showToast(getApplication(), "支付失败");
                         break;
                 }
-
             }
 
             @Override
@@ -558,12 +556,12 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
     /**
      * 银联支付
      */
-    private void unionPay(@NonNull String paymentUrl) {
+    private void unionPay(String orderNo, @NonNull String paymentUrl) {
         if (!TextUtils.isEmpty(paymentUrl)) {
             if (loadHud != null) {
                 loadHud.show();
             }
-            unionPay = new UnionPay(IntegrationIndentWriteActivity.this,
+            unionPay = new UnionPay(IntegrationIndentWriteActivity.this, orderNo,
                     paymentUrl, new UnionPay.UnionPayResultCallBack() {
                 @Override
                 public void onUnionPaySuccess(String webResultValue) {
@@ -624,13 +622,6 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
             setAddressData(addressInfoBean);
         } else if (requestCode == IS_LOGIN_CODE) {
             loadData();
-        } else if (requestCode == UNION_RESULT_CODE) {
-            if (unionPay != null) {
-                String webManualFinish = data.getStringExtra("webManualFinish");
-                unionPay.unionPayResult(this, orderCreateNo, webManualFinish);
-            } else {
-                cancelIntegralIndent();
-            }
         }
     }
 

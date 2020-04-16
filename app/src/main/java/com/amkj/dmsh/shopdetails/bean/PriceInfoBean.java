@@ -3,10 +3,12 @@ package com.amkj.dmsh.shopdetails.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by xiaoxin on 2019/7/4
  * Version:v4.1.0
- * ClassDescription :
+ * ClassDescription :订单价格明细
  */
 public class PriceInfoBean implements Parcelable {
     /**
@@ -17,8 +19,8 @@ public class PriceInfoBean implements Parcelable {
      */
 
     private String color;
-    private double totalPrice;
     private String name;
+    @SerializedName(value = "totalPriceName", alternate = "priceText")
     private String totalPriceName;
 
     public String getColor() {
@@ -29,13 +31,6 @@ public class PriceInfoBean implements Parcelable {
         this.color = color;
     }
 
-    public double getTotalPrice() {
-        return totalPrice;
-    }
-
-    public void setTotalPrice(double totalPrice) {
-        this.totalPrice = totalPrice;
-    }
 
     public String getName() {
         return name;
@@ -61,7 +56,6 @@ public class PriceInfoBean implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.color);
-        dest.writeDouble(this.totalPrice);
         dest.writeString(this.name);
         dest.writeString(this.totalPriceName);
     }
@@ -71,7 +65,6 @@ public class PriceInfoBean implements Parcelable {
 
     protected PriceInfoBean(Parcel in) {
         this.color = in.readString();
-        this.totalPrice = in.readDouble();
         this.name = in.readString();
         this.totalPriceName = in.readString();
     }

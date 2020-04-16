@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/tv_copy_text"
-    android:layout_width="@dimen/sc_mm_120"
+    android:layout_width="@dimen/sc_mm_98"
     android:layout_height="@dimen/sc_mm_40"
     android:background="@drawable/border_cir_1dp5_gray_white"
     android:gravity="center"

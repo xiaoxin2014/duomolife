@@ -43,7 +43,9 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 
+import static com.amkj.dmsh.constant.ConstantMethod.dismissLoadhud;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.showLoadhud;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.toMD5;
 import static com.amkj.dmsh.constant.ConstantVariable.LOGIN;
@@ -137,21 +139,15 @@ public class MineLoginActivity extends BaseActivity {
                 .addLink(link1)
                 .addLink(link2)
                 .build();
-        link1.setOnClickListener(new Link.OnClickListener() {
-            @Override
-            public void onClick(String clickedText) {
-                Intent intent = new Intent(MineLoginActivity.this, WebRuleCommunalActivity.class);
-                intent.putExtra(WEB_VALUE_TYPE, WEB_TYPE_REG_AGREEMENT);
-                startActivity(intent);
-            }
+        link1.setOnClickListener(clickedText -> {
+            Intent intent = new Intent(MineLoginActivity.this, WebRuleCommunalActivity.class);
+            intent.putExtra(WEB_VALUE_TYPE, WEB_TYPE_REG_AGREEMENT);
+            startActivity(intent);
         });
-        link2.setOnClickListener(new Link.OnClickListener() {
-            @Override
-            public void onClick(String clickedText) {
-                Intent intent = new Intent(MineLoginActivity.this, WebRuleCommunalActivity.class);
-                intent.putExtra(WEB_VALUE_TYPE, WEB_TYPE_PRIVACY_POLICY);
-                startActivity(intent);
-            }
+        link2.setOnClickListener(clickedText -> {
+            Intent intent = new Intent(MineLoginActivity.this, WebRuleCommunalActivity.class);
+            intent.putExtra(WEB_VALUE_TYPE, WEB_TYPE_PRIVACY_POLICY);
+            startActivity(intent);
         });
     }
 
@@ -173,9 +169,7 @@ public class MineLoginActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, LOGIN_ACCOUNT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
+                dismissLoadhud(getActivity());
                 Gson gson = new Gson();
                 LoginDataEntity loginDataEntity = gson.fromJson(result, LoginDataEntity.class);
                 if (loginDataEntity != null) {
@@ -190,16 +184,8 @@ public class MineLoginActivity extends BaseActivity {
 
             @Override
             public void onNotNetOrException() {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
+                dismissLoadhud(getActivity());
             }
-
-            @Override
-            public void netClose() {
-                showToast(MineLoginActivity.this, R.string.unConnectedNetwork);
-            }
-
             @Override
             public void onError(Throwable throwable) {
                 showToast(MineLoginActivity.this, R.string.login_failed);
@@ -225,7 +211,7 @@ public class MineLoginActivity extends BaseActivity {
                 params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
-                        loadHud.dismiss();
+                        dismissLoadhud(getActivity());
                         Gson gson = new Gson();
                         RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                         if (requestStatus != null) {
@@ -252,7 +238,7 @@ public class MineLoginActivity extends BaseActivity {
 
                     @Override
                     public void onNotNetOrException() {
-                        loadHud.dismiss();
+                        dismissLoadhud(getActivity());
                     }
                 });
     }
@@ -269,7 +255,7 @@ public class MineLoginActivity extends BaseActivity {
                 params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
-                        loadHud.dismiss();
+                        dismissLoadhud(getActivity());
                         Gson gson = new Gson();
                         LoginPhoneCodeEntity loginPhoneCodeEntity = gson.fromJson(result, LoginPhoneCodeEntity.class);
                         if (loginPhoneCodeEntity != null) {
@@ -292,12 +278,7 @@ public class MineLoginActivity extends BaseActivity {
 
                     @Override
                     public void onNotNetOrException() {
-                        loadHud.dismiss();
-                    }
-
-                    @Override
-                    public void netClose() {
-                        showToast(MineLoginActivity.this, R.string.unConnectedNetwork);
+                        dismissLoadhud(getActivity());
                     }
 
                     @Override
@@ -339,9 +320,7 @@ public class MineLoginActivity extends BaseActivity {
     UMAuthListener getDataInfoListener = new UMAuthListener() {
         @Override
         public void onStart(SHARE_MEDIA share_media) {
-            if (loadHud != null) {
-                loadHud.show();
-            }
+            showLoadhud(getActivity());
         }
 
         @Override
@@ -369,34 +348,26 @@ public class MineLoginActivity extends BaseActivity {
                         break;
                 }
             } else {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
+                dismissLoadhud(getActivity());
             }
         }
 
         @Override
         public void onError(SHARE_MEDIA platform, int action, Throwable t) {
             showToast(getApplicationContext(), "授权失败");
-            if (loadHud != null) {
-                loadHud.dismiss();
-            }
+            dismissLoadhud(getActivity());
         }
 
         @Override
         public void onCancel(SHARE_MEDIA platform, int action) {
             showToast(getApplicationContext(), "授权取消");
-            if (loadHud != null) {
-                loadHud.dismiss();
-            }
+            dismissLoadhud(getActivity());
         }
     };
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (loadHud != null) {
-            loadHud.dismiss();
-        }
+        dismissLoadhud(getActivity());
         if (resultCode != RESULT_OK) {
             return;
         }
@@ -437,16 +408,12 @@ public class MineLoginActivity extends BaseActivity {
                     }
                 }
 
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
+                dismissLoadhud(getActivity());
             }
 
             @Override
             public void onNotNetOrException() {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
+                dismissLoadhud(getActivity());
             }
         });
     }
@@ -480,9 +447,7 @@ public class MineLoginActivity extends BaseActivity {
                     String smsCode = et_login_get_code.getText().toString().trim();
                     // 账号登录
                     if (phoneNumber.length() == 11 && smsCode.length() > 0) {
-                        if (loadHud != null) {
-                            loadHud.show();
-                        }
+                        showLoadhud(getActivity());
                         checkPhoneCode(phoneNumber, smsCode);
                     } else if (phoneNumber.length() < 11) {
                         showToast(this, R.string.MobileError);
@@ -494,9 +459,7 @@ public class MineLoginActivity extends BaseActivity {
                     String password = edit_login_password.getText().toString().trim();
                     // 密码登录
                     if (phoneNumber.length() == 11 && password.length() > 5) {
-                        if (loadHud != null) {
-                            loadHud.show();
-                        }
+                        showLoadhud(getActivity());
                         getData();
                     } else if (phoneNumber.length() < 11) {
                         showToast(this, R.string.MobileError);
@@ -593,9 +556,7 @@ public class MineLoginActivity extends BaseActivity {
             case R.id.tv_login_send_code:
                 String phoneNumber = et_login_code_mobile.getText().toString().trim();
                 if (phoneNumber.length() == 11) {
-                    if (loadHud != null) {
-                        loadHud.show();
-                    }
+                    showLoadhud(getActivity());
                     reqSMSCode(phoneNumber);
                 } else if (phoneNumber.length() < 11) {
                     showToast(this, "手机号码有错，请重新输入");
@@ -647,9 +608,7 @@ public class MineLoginActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (loadHud != null) {
-            loadHud.dismiss();
-        }
+        dismissLoadhud(getActivity());
         if (countDownHelper == null) {
             countDownHelper = CountDownHelper.getTimerInstance();
         }

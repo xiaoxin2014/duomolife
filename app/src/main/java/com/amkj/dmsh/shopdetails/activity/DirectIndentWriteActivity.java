@@ -17,6 +17,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
@@ -36,8 +37,8 @@ import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean.CartBean.CartInfoBean;
 import com.amkj.dmsh.mine.biz.ShopCarDao;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.shopdetails.adapter.DirectProductListAdapter;
 import com.amkj.dmsh.shopdetails.adapter.IndentDiscountAdapter;
+import com.amkj.dmsh.shopdetails.adapter.WriteProductListAdapter;
 import com.amkj.dmsh.shopdetails.bean.CombineGoodsBean;
 import com.amkj.dmsh.shopdetails.bean.EditGoodsSkuEntity.EditGoodsSkuBean;
 import com.amkj.dmsh.shopdetails.bean.IndentProDiscountBean;
@@ -93,16 +94,20 @@ import static com.amkj.dmsh.constant.ConstantMethod.showImportantToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showLoadhud;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.DIRECT_COUPON_REQ;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.INDENT_GROUP_SHOP;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRODUCT_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PROPRIETOR_PRODUCT;
+import static com.amkj.dmsh.constant.ConstantVariable.INDENT_W_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.JOIN_GROUP;
+import static com.amkj.dmsh.constant.ConstantVariable.NEW_CRE_ADDRESS_REQ;
 import static com.amkj.dmsh.constant.ConstantVariable.OPEN_GROUP;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY_ALI_PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY_UNION_PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY_WX_PAY;
+import static com.amkj.dmsh.constant.ConstantVariable.SEL_ADDRESS_REQ;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.UNION_RESULT_CODE;
 import static com.amkj.dmsh.constant.Url.ADDRESS_LIST;
 import static com.amkj.dmsh.constant.Url.PAY_CANCEL;
 import static com.amkj.dmsh.constant.Url.Q_CREATE_GROUP_NEW_INDENT;
@@ -138,9 +143,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
     private String type = "";
     private PullHeaderView pullHeaderView;
     private PullFootView pullFootView;
-    private final int NEW_CRE_ADDRESS_REQ = 101;
-    private final int SEL_ADDRESS_REQ = 102;
-    private final int DIRECT_COUPON_REQ = 105;
     private QualityCreateWeChatPayIndentBean qualityWeChatIndent;
     private QualityCreateAliPayIndentBean qualityAliPayIndent;
     private String payWay = PAY_ALI_PAY;//默认支付宝付款
@@ -154,8 +156,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
     private final int REQ_INVOICE = 130;
     private String invoiceTitle;
     private GroupShopDetailsBean groupShopDetailsBean;
-    public final static String INDENT_GROUP_SHOP = "group_shop";
-    public final static String INDENT_W_TYPE = "indent";
 
     private String invoiceNum;
     private IndentDiscountAdapter indentDiscountAdapter;
@@ -166,7 +166,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
     private AlertDialogHelper payCancelDialogHelper;
     private QualityCreateUnionPayIndentEntity qualityUnionIndent;
     private UnionPay unionPay;
-    private DirectProductListAdapter directProductAdapter;
+    private WriteProductListAdapter directProductAdapter;
     //    普通订单数据
     private List<CartInfoBean> passGoods = new ArrayList<>();
     //    组合订单数据
@@ -232,16 +232,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
         pullFootView = new PullFootView();
         ButterKnife.bind(pullFootView, footView);
         pullFootView.init();
-        //支付方式
-        ((RadioGroup) footView.findViewById(R.id.radio_group)).setOnCheckedChangeListener((group, checkedId) -> {
-            if (checkedId == R.id.rb_checked_alipay) {
-                payWay = PAY_ALI_PAY;
-            } else if (checkedId == R.id.rb_checked_wechat_pay) {
-                payWay = PAY_WX_PAY;
-            } else if (checkedId == R.id.rb_checked_union_pay) {
-                payWay = PAY_UNION_PAY;
-            }
-        });
+
 
         if ((passGoods != null && passGoods.size() > 0) || (combineGoods != null && combineGoods.size() > 0) || !TextUtils.isEmpty(orderNo)) {
             if (passGoods != null) {
@@ -257,7 +248,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                 }
             }
             type = INDENT_W_TYPE;
-            directProductAdapter = new DirectProductListAdapter(DirectIndentWriteActivity.this, productInfoList, type);
+            directProductAdapter = new WriteProductListAdapter(DirectIndentWriteActivity.this, productInfoList, type);
         } else if (groupShopDetailsBean != null) {
             type = INDENT_GROUP_SHOP;
             IndentProDiscountBean indentProBean = new IndentProDiscountBean();
@@ -265,7 +256,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
             indentProBean.setSaleSkuId(groupShopDetailsBean.getGpSkuId());
             indentProBean.setCount(1);
             discountBeanList.add(indentProBean);
-            directProductAdapter = new DirectProductListAdapter(DirectIndentWriteActivity.this, productInfoList, type);
+            directProductAdapter = new WriteProductListAdapter(DirectIndentWriteActivity.this, productInfoList, type);
         } else {
             showToast(this, "商品信息有误，请重试");
             finish();
@@ -274,7 +265,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
         communal_recycler.setLayoutManager(new LinearLayoutManager(DirectIndentWriteActivity.this));
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_gray_f_two_px).create());
+                .setDividerId(R.drawable.item_divider_gray_f_one_px).create());
         directProductAdapter.addHeaderView(headerView);
         directProductAdapter.addFooterView(footView);
         communal_recycler.setAdapter(directProductAdapter);
@@ -290,16 +281,19 @@ public class DirectIndentWriteActivity extends BaseActivity {
                             startActivity(intent1);
                         }
                         break;
+                    //移除偏远地区无法配送的商品
                     case R.id.rl_cover:
-                        for (IndentProDiscountBean discountBean : discountBeanList) {
-                            if (productInfoBean.getId() == discountBean.getId()) {
-                                discountBeanList.remove(discountBean);
-                                if (discountBeanList.size() > 0 || combineGoods.size() > 0) {
-                                    getIndentDiscounts(false);
-                                } else {
-                                    finish();
+                        if (!TextUtils.isEmpty(productInfoBean.getNotBuyAreaInfo())) {
+                            for (IndentProDiscountBean discountBean : discountBeanList) {
+                                if (productInfoBean.getId() == discountBean.getId()) {
+                                    discountBeanList.remove(discountBean);
+                                    if (discountBeanList.size() > 0 || combineGoods.size() > 0) {
+                                        getIndentDiscounts(false);
+                                    } else {
+                                        finish();
+                                    }
+                                    break;
                                 }
-                                break;
                             }
                         }
                         break;
@@ -415,6 +409,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                                 if (products != null && products.size() > 0) {
                                     setDiscountsInfo(indentWriteBean);
                                 }
+                                showPayType(indentWriteBean);
                             }
                         } else if (identWriteEntity.getCode().equals(EMPTY_CODE)) {
                             showImportantToast(DirectIndentWriteActivity.this, R.string.invalidData);
@@ -565,8 +560,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
         }
 
         //只有一件商品需要结算时，可修改购买数量
-        if (!INDENT_GROUP_SHOP.equals(type)
-                && productInfoList.size() > 0 && productInfoList.size() < 2) {
+        if (!INDENT_GROUP_SHOP.equals(type) && productInfoList.size() == 1) {
             ProductInfoBean productInfoBean = productInfoList.get(0);
             pullFootView.rect_indent_number.setVisibility(VISIBLE);
             pullFootView.rect_indent_number.setNum(productInfoBean.getCount());
@@ -580,6 +574,41 @@ public class DirectIndentWriteActivity extends BaseActivity {
             }
         } else {
             pullFootView.rect_indent_number.setVisibility(View.GONE);
+        }
+    }
+
+
+    //支付方式
+    private void showPayType(IndentWriteBean indentWriteBean) {
+        List<String> showPayTypeList = indentWriteBean.getShowPayTypeList();
+        if (showPayTypeList != null && showPayTypeList.size() > 0) {
+            //微信
+            if (!showPayTypeList.contains("1")) {
+                pullFootView.mRadioGroup.getChildAt(1).setVisibility(GONE);
+                pullFootView.ll_pay_way.getChildAt(1).setVisibility(GONE);
+            }
+            //支付宝
+            if (!showPayTypeList.contains("2")) {
+                pullFootView.mRadioGroup.getChildAt(0).setVisibility(GONE);
+                pullFootView.ll_pay_way.getChildAt(0).setVisibility(GONE);
+            }
+            //银联
+            if (!showPayTypeList.contains("3")) {
+                pullFootView.mRadioGroup.getChildAt(2).setVisibility(GONE);
+                pullFootView.ll_pay_way.getChildAt(2).setVisibility(GONE);
+            }
+
+            String payType = showPayTypeList.get(0);
+            if ("1".equals(payType)) {
+                payWay = PAY_WX_PAY;
+                ((RadioButton) pullFootView.mRadioGroup.getChildAt(1)).setChecked(true);
+            } else if ("2".equals(payType)) {
+                payWay = PAY_ALI_PAY;
+                ((RadioButton) pullFootView.mRadioGroup.getChildAt(0)).setChecked(true);
+            } else if ("3".equals(payType)) {
+                payWay = PAY_UNION_PAY;
+                ((RadioButton) pullFootView.mRadioGroup.getChildAt(2)).setChecked(true);
+            }
         }
     }
 
@@ -1063,7 +1092,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
             if (loadHud != null) {
                 loadHud.show();
             }
-            unionPay = new UnionPay(DirectIndentWriteActivity.this,
+            unionPay = new UnionPay(DirectIndentWriteActivity.this, qualityUnionIndent.getQualityCreateUnionPayIndent().getNo(),
                     qualityUnionIndent.getQualityCreateUnionPayIndent().getPayKeyBean().getPaymentUrl(),
                     new UnionPay.UnionPayResultCallBack() {
                         @Override
@@ -1280,14 +1309,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
                         pullFootView.tv_direct_product_invoice.setText("不开发票");
                     }
                     break;
-                case UNION_RESULT_CODE:
-                    String webManualFinish = data.getStringExtra("webManualFinish");
-                    if (unionPay != null) {
-                        unionPay.unionPayResult(this, !TextUtils.isEmpty(orderCreateNo) ? orderCreateNo : orderNo, webManualFinish);
-                    } else {
-                        skipIndentDetail();
-                    }
-                    break;
             }
         }
     }
@@ -1370,12 +1391,25 @@ public class DirectIndentWriteActivity extends BaseActivity {
         RectAddAndSubWriteView rect_indent_number;
         @BindView(R.id.radio_group)
         RadioGroup mRadioGroup;
+        @BindView(R.id.ll_pay_way)
+        LinearLayout ll_pay_way;
+
 
         void init() {
             ((EditText) rect_indent_number.findViewById(R.id.tv_integration_details_credits_count)).addTextChangedListener(new TextWatchListener() {
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
                     mNum = getStringChangeIntegers(s.toString());
+                }
+            });
+
+            mRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+                if (checkedId == R.id.rb_checked_alipay) {
+                    payWay = PAY_ALI_PAY;
+                } else if (checkedId == R.id.rb_checked_wechat_pay) {
+                    payWay = PAY_WX_PAY;
+                } else if (checkedId == R.id.rb_checked_union_pay) {
+                    payWay = PAY_UNION_PAY;
                 }
             });
         }

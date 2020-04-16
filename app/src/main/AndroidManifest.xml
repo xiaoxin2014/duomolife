@@ -1001,9 +1001,6 @@
         <activity
             android:name=".shopdetails.activity.DirectGoodsSaleAfterActivity"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".shopdetails.activity.DirectRepairLogisticDetailsActivity"
-            android:screenOrientation="portrait" />
         <!--退款 售后申请-->
         <activity
             android:name=".shopdetails.activity.DirectApplyRefundActivity"
@@ -1015,15 +1012,6 @@
             </intent-filter>
         </activity>
         <!--订单搜索-->
-        <activity
-            android:name=".shopdetails.activity.IndentSearchDetailsActivity"
-            android:exported="false"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="IndentSearchDetailsActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
         <activity
             android:name=".shopdetails.activity.IndentDrawUpInvoiceActivity"
             android:screenOrientation="portrait" />
@@ -1244,7 +1232,7 @@
         <activity
             android:name=".mine.activity.SettingPasswordActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/activityTheme"></activity>
+            android:theme="@style/activityTheme" />
 
         <!--优惠券专区-->
         <activity
@@ -1289,6 +1277,7 @@
             <intent-filter>
                 <action android:name="InvoiceDetailActivity" />
                 <action android:name="DirectIndentInvoiceActivity" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -1304,6 +1293,82 @@
             </intent-filter>
         </activity>
 
+        <!--订单搜索帮助-->
+        <activity
+            android:name=".shopdetails.activity.OrderSearchHelpActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="OrderSearchHelpActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!--退款去向-->
+        <activity
+            android:name=".shopdetails.activity.RefundMoneyActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="RefundMoneyActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!--选择售后类型-->
+        <activity
+            android:name=".shopdetails.activity.SelectRefundTypeActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="SelectRefundTypeActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!--选择退款商品-->
+        <activity
+            android:name=".shopdetails.activity.SelectRefundGoodsActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="SelectRefundGoodsActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!--搜索优惠券相关商品-->
+        <activity
+            android:name=".shopdetails.activity.SearchCouponGoodsActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="SearchCouponGoodsActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!--积分订单退款详情-->
+        <activity
+            android:name=".shopdetails.integration.IntegralRefundDetailActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="IntegralRefundDetailActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!--积分订单申请退款-->
+        <activity
+            android:name=".shopdetails.integration.IntegralApplyRefundActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="IntegralApplyRefundActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
 
         <activity
             android:name=".mine.activity.WebRuleCommunalActivity"

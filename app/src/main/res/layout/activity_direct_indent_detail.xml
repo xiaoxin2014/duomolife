@@ -1,24 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:cube_ptr="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
     android:orientation="vertical">
+
+    <include layout="@layout/activity_duomolife_indent_header" />
+
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_weight="1"
-        android:layout_height="wrap_content">
-        <include layout="@layout/layout_communal_refresh_recyacle_header_indent"/>
+        android:layout_height="match_parent">
+
+        <com.scwang.smartrefresh.layout.SmartRefreshLayout
+            android:id="@+id/smart_communal_refresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            cube_ptr:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <include layout="@layout/layout_refresh_header_gif" />
+
+            <android.support.design.widget.CoordinatorLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white">
+
+                <android.support.design.widget.AppBarLayout
+                    android:id="@+id/ab_find_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+                    <android.support.design.widget.CollapsingToolbarLayout
+                        android:id="@+id/home_title_collapsing_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:contentScrim="@android:color/transparent"
+                        app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/white"
+                            android:divider="@drawable/item_divider_ten_dp"
+                            android:orientation="vertical"
+                            android:showDividers="end">
+
+                            <com.amkj.dmsh.views.LogisticsNotifyView
+                                android:background="@color/light_gray_f"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+
+                            <include layout="@layout/layout_direct_details_top_default" />
+
+                            <android.support.v7.widget.RecyclerView
+                                android:id="@+id/communal_recycler"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:scrollbars="none" />
+
+                            <include layout="@layout/layout_direct_details_bottom_default" />
+                        </LinearLayout>
+                    </android.support.design.widget.CollapsingToolbarLayout>
+
+                    <com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout xmlns:tl="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/sliding_tablayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/sc_mm_98"
+                        android:layout_gravity="center_horizontal"
+                        tl:tl_indicator_height="2dp"
+                        tl:tl_indicator_width_equal_title="true"
+                        tl:tl_indicator_color="@color/text_login_blue_z"
+                        tl:tl_tab_space_equal="true"
+                        tl:tl_textBold="SELECT"
+                        tl:tl_textSelectColor="@color/text_login_blue_z"
+                        tl:tl_textUnselectColor="@color/text_black_t"
+                        tl:tl_textsize="15sp" />
+                </android.support.design.widget.AppBarLayout>
+
+                <android.support.v4.view.ViewPager
+                    android:id="@+id/vp_custom"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/sc_mm_98"
+                    android:background="@drawable/border_top_line"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+            </android.support.design.widget.CoordinatorLayout>
+        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
+        <com.amkj.dmsh.views.MainButtonView
+            android:id="@+id/main_button_view"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/sc_mm_100"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/border_top_line" />
     </RelativeLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:divider="@drawable/item_divider_ten_dp"
-        android:showDividers="beginning"
-        android:id="@+id/ll_indent_detail_bottom"
-        android:orientation="vertical"
-        android:visibility="gone"
-        android:layout_marginRight="@dimen/sc_mm_24"
-        android:layout_height="wrap_content">
-        <include layout="@layout/layout_communal_indent_bottom"/>
-    </LinearLayout>
 </LinearLayout>
+
+
+

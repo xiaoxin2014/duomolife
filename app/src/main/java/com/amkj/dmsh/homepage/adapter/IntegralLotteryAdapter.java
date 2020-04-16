@@ -118,7 +118,7 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
      */
     private void setIntegralPopWindows() {
         if (alertDialogIntegral == null) {
-            alertDialogIntegral = new AlertDialogHelper(context, R.layout.layout_alert_dialog_integral_tips);
+            alertDialogIntegral = new AlertDialogHelper(context, R.layout.layout_alert_dialog_new);
         }
     }
 
@@ -229,8 +229,8 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
                     helper.rel_integral_lottery_prize.addView(helper.joinIn);
                     helper.integralLotteryJoinInHelper.tv_integral_lottery_join_in.setTag(previousInfoBean);
                 }
-
                 helper.integralLotteryJoiningInHelper.tv_limit.setVisibility(previousInfoBean.isShareNumMax() ? View.VISIBLE : View.GONE);
+                helper.integralLotteryJoiningInHelper.tv_integral_lottery_invite_rule.setVisibility(previousInfoBean.isShareNumMax() ? View.GONE : View.VISIBLE);
                 prizeText = "开奖倒计时";
             } else { //未开始
                 prizeText = "开始倒计时";
@@ -317,14 +317,14 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
             }
         } else {
 //            countdownView.setVisibility(View.VISIBLE);
-                    try {
-                        //格式化开始时间
-                        Date dateStart = formatter.parse(previousInfoBean.getStartTime());
-                        Date dateCurrent;
-                        if (!TextUtils.isEmpty(previousInfoBean.getmCurrentTime())) {
-                            dateCurrent = formatter.parse(previousInfoBean.getmCurrentTime());
-                        } else {
-                            dateCurrent = new Date();
+            try {
+                //格式化开始时间
+                Date dateStart = formatter.parse(previousInfoBean.getStartTime());
+                Date dateCurrent;
+                if (!TextUtils.isEmpty(previousInfoBean.getmCurrentTime())) {
+                    dateCurrent = formatter.parse(previousInfoBean.getmCurrentTime());
+                } else {
+                    dateCurrent = new Date();
                     previousInfoBean.setmCurrentTime(formatter.format(dateCurrent));
                     previousInfoBean.setmSeconds(previousInfoBean.getmSeconds() - 1);
                 }
@@ -533,17 +533,18 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
                 int score = previousInfoBean.getScore();
                 //积分参与
                 if (score > 0) {
-                    alertDialogIntegral.setMsg(ConstantMethod.getStringsFormat(context, R.string.join_activity_need_integral, String.valueOf(score)));
-                    alertDialogIntegral.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
-                        @Override
-                        public void confirm() {
-                            joinInIntegralLottery(previousInfoBean.getId(), textView);
-                        }
+                    alertDialogIntegral.setMsg(ConstantMethod.getStringsFormat(context, R.string.join_activity_need_integral, String.valueOf(score)))
+                            .setTitleVisibility(View.GONE)
+                            .setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                                @Override
+                                public void confirm() {
+                                    joinInIntegralLottery(previousInfoBean.getId(), textView);
+                                }
 
-                        @Override
-                        public void cancel() {
-                        }
-                    });
+                                @Override
+                                public void cancel() {
+                                }
+                            });
                     alertDialogIntegral.show();
                 } else {
                     //免费参与
@@ -559,6 +560,8 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
         TextView tv_integral_lottery_code;
         @BindView(R.id.ll_integral_lottery_joined)
         LinearLayout ll_integral_lottery_joined;
+        @BindView(R.id.tv_integral_lottery_invite_rule)
+        TextView tv_integral_lottery_invite_rule;
         @BindView(R.id.tv_limit)
         TextView tv_limit;
 

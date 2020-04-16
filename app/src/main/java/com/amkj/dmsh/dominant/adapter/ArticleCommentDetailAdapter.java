@@ -1,11 +1,11 @@
 package com.amkj.dmsh.dominant.adapter;
 
-import android.content.Context;
+import android.app.Activity;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.dominant.bean.PostCommentEntity.PostCommentBean.ReplyCommListBean;
+import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
@@ -22,9 +22,9 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
  * ClassDescription :发现-帖子-评论详情
  */
 public class ArticleCommentDetailAdapter extends BaseQuickAdapter<ReplyCommListBean, BaseViewHolder> {
-    private final Context context;
+    private final Activity context;
 
-    public ArticleCommentDetailAdapter(Context context, List<ReplyCommListBean> replyCommList) {
+    public ArticleCommentDetailAdapter(Activity context, List<ReplyCommListBean> replyCommList) {
         super(R.layout.item_child_comment, replyCommList);
         this.context = context;
     }
@@ -34,6 +34,7 @@ public class ArticleCommentDetailAdapter extends BaseQuickAdapter<ReplyCommListB
         GlideImageLoaderUtil.loadRoundImg(context, helper.getView(R.id.civ_comm_comment_inner_avatar), item.getAvatar(), AutoSizeUtils.mm2px(mAppContext, 50));
         helper.setText(R.id.tv_comm_comment_inner_name, getStrings(item.getNickname() + (item.isReplyMain() ? "" : " 回复 " + item.getNickname1())))
                 .setText(R.id.tv_comm_comment_inner_content, getStrings(item.getContent()));
+        ConstantMethod.setTextLink(context, helper.getView(R.id.tv_comm_comment_inner_content));
         helper.getView(R.id.civ_comm_comment_inner_avatar).setOnClickListener(v -> ConstantMethod.skipUserCenter(context, item.getUid()));
         helper.itemView.setTag(item);
     }

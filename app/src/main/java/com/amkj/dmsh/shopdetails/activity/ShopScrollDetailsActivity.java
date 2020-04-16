@@ -77,6 +77,7 @@ import com.amkj.dmsh.utils.LifecycleHandler;
 import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
+import com.amkj.dmsh.utils.webformatdata.ShareDataBean;
 import com.amkj.dmsh.views.bottomdialog.SkuDialog;
 import com.amkj.dmsh.views.flycoTablayout.CommonTabLayout;
 import com.amkj.dmsh.views.flycoTablayout.listener.CustomTabEntity;
@@ -119,7 +120,6 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
-import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getRmbFormat;
@@ -137,6 +137,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
 import static com.amkj.dmsh.constant.ConstantVariable.isShowTint;
+import static com.amkj.dmsh.dao.OrderDao.getCarCount;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODUCT_TITLE;
 import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTime;
@@ -430,6 +431,17 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         rv_product_details.setLayoutManager(linearLayoutManager);
         rv_product_details.setNestedScrollingEnabled(false);
         communalDetailAdapter = new CommunalDetailAdapter(getActivity(), shopDetailBeanList);
+        communalDetailAdapter.setOnItemChildClickListener((adapter, view, position) -> {
+            ShareDataBean shareDataBean = null;
+            if (view.getId() == R.id.tv_communal_share && shopPropertyBean != null) {
+                shareDataBean = new ShareDataBean(shopPropertyBean.getPicUrl()
+                        , "我在多么生活看中了" + shopPropertyBean.getName()
+                        , getStrings(shopPropertyBean.getSubtitle())
+                        , sharePageUrl + shopPropertyBean.getId());
+            }
+            CommunalWebDetailUtils.getCommunalWebInstance()
+                    .setWebDataClick(getActivity(), shareDataBean, view, loadHud);
+        });
         rv_product_details.setAdapter(communalDetailAdapter);
 
         for (int i = 0; i < detailTabData.length; i++) {

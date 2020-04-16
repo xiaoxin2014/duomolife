@@ -143,6 +143,7 @@
     <string name="sku_discount_price">优惠了%1$s元</string>
     <!--订单商品信息-->
     <string name="price_count">共 %1$d 件   合计:¥%2$s</string>
+    <string name="pay_amount">实付 ¥%1$s (%2$s)</string>
     <string name="appraise_integral">评价赢积分</string>
     <string name="write_score_comment">写点评</string>
     <string name="appraise_integral_score">评价赢%1$s积分</string>
@@ -296,7 +297,12 @@
     <string name="input_email_address">输入邮箱地址</string>
     <string name="type">类型</string>
     <string name="invoice_complete_time">（7个工作日内完成）</string>
-    <string name="receive_express_msg">打开系统消息，随时接受物流动态，前往开启</string>
+    <string name="receive_express_msg">打开系统通知，随时接受物流动态，前往开启</string>
     <string name="join_activity_need_integral">参与本次活动需要扣除%s积分</string>
-
+    <string name="buy_message">买家留言：%s</string>
+    <string name="packag_count">(共%d个包裹)</string>
+    <string name="no_order_found">没找到我的订单？查看帮助</string>
+    <string name="no_order_found_reason">尊敬的顾客，如果您没有找到订单，可能有以下几种原因：\n一、下单账号与登录账号不一样，你可能是通过APP购买的订单，在小程序里面打开没看到，或者是通过小程序购买，在APP没有看到订单，这种情况下请在APP-我的-账户安全里面绑定微信即可，如果已绑定，请在APP点击解绑，再重新绑定即可。主要是因为两个账号没有产生关联。\n\n二、微信号已绑定其它手机号，此时点击小程序我的帐户安全-绑定手机-更换绑定手机号即可。</string>
+    <string name="refund_explain">通常情况下，退款会原路返回您的支付账户，微信支付宝会在2小时 内到账,银行卡会在1～3个工作日到账。</string>
+    <string name="refund_product_tips">请尽快将商品按照给出的退货地址退回，并保存好货运单号，不接受到付件，如需平台承担运费请与客服协商一致后，先行垫付客服在收货后处理时会一并处理</string>
 </resources>

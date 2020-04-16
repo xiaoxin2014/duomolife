@@ -43,12 +43,6 @@ public class Url {
     public static final String FIRST_PUSH_INFO = "api/my/sendAppPushRule";
     //    统计首次安装设备信息
     public static final String FIRST_INSTALL_DEVICE_INFO = "/api/home/firstInstallDeviceInfo";
-    //    统计推送
-    public static final String TOTAL_PUSH_INFO = "api/userbehavioursts/collectMessagePushInfo";
-    //    上传数据容量
-    public static final String TOTAL_UP_SIZE = "api/userbehavioursts/getCollectSize";
-    //    统计数据上传
-    public static final String TOTAL_DATA_UP = "api/userbehavioursts/collectBehaviourData";
     //    统计用户分享行为
     public static final String STATISTICS_SHARE = "/api/shareRecord/myShare";
     //    push信息获取
@@ -157,8 +151,8 @@ public class Url {
     public static final String H_COUPON_CENTER_DATA = "api/reminder/getCouponCore";
     //    限时特惠详情
     public static final String H_TIME_GOODS_DETAILS = "api/goods/flashSale/getGoods";
-    //    消息统计
-    public static final String H_MES_STATISTICS = "api/message/messageTotal";
+    //    新版消息统计
+    public static final String H_MES_STATISTICS_NEW = "api/message/getMessageInfo";
     //     app最后登录时间
     public static final String H_LOGIN_LAST_TIME = "api/my/updateLastLogin";
     //    新人优惠弹窗
@@ -183,8 +177,8 @@ public class Url {
     public static final String TOTAL_JPUSH_COUNT = "api/home/addPushClickNum";
     //    官方详情
     public static final String H_MES_OFFICIAL = "api/message/newOfficialCommentList";
-    //    订单物流信息
-    public static final String H_MES_INDENT = "api/message/orderMessageList";
+    //    订单物流消息列表
+    public static final String H_MES_INDENT = "api/message/getApiNewOrderMsgListPage";
     //    二期通知消息
     public static final String H_MES_NOTIFY = "api/message/newMsgMessageList";
     //      官方通知详情
@@ -215,6 +209,8 @@ public class Url {
     public static final String GET_SHOPPING_REWARD = "api/goods/greate/grantViewReward";
     //    统一弹窗规则接口
     public static final String GET_UNIFIED_POPUP = "api/my/remind/getUnifiedPopup";
+    //   获取未读的客服通知
+    public static final String GET_UNREAD_CUSTOMER_MSG = "api/message/getUnreadCustomerServiceMsg";
 
 
     /**
@@ -413,6 +409,8 @@ public class Url {
     public static final String NEW_PRO_SETTLE_PRICE = "api/goods/cart/changeCartCheckStatusV2";
     //    订单详情
     public static final String Q_INDENT_DETAILS = "api/goods/order/getOrderNew";
+    //    新版订单详情
+    public static final String Q_INDENT_NEW_DETAILS = "api/goods/order/getOrderDetail";
     //    订单删除
     public static final String Q_INDENT_DEL = "api/goods/order/del";
     //    订单取消 3.1.5 积分 商品 订单通用
@@ -421,6 +419,8 @@ public class Url {
     public static final String Q_INDENT_CONFIRM = "api/goods/order/takeDelivery";
     //    发布评价
     public static final String Q_SEND_APPRAISE = "api/goods/order/evaluate";
+    //    新版订单列表
+    public static final String Q_GET_ORDER_LIST = "api/goods/order/getOrderList";
     //    查询良品全部订单
     public static final String Q_INQUIRY_ALL_ORDER = "api/goods/order/getOrders";
     //    查询良品已完成订单
@@ -428,7 +428,11 @@ public class Url {
     //    查询良品待发货订单
     public static final String Q_INQUIRY_WAIT_SEND = "api/goods/order/getWaitDelivery";
     //    待发货 催单
-    public static final String Q_INQUIRY_WAIT_SEND_EXPEDITING = "api/goods/order/urgeOrder";
+    public static final String Q_INQUIRY_WAIT_SEND_EXPEDITING = "api/goods/order/urgeOrderV2";
+    //    获取退款去向
+    public static final String Q_GET_REFUND_GO_INFO = "api/goods/order/getRefundGoInfo";
+    //    延长收货
+    public static final String Q_INQUIRY_DELAY_TAKE_TIME = "api/goods/order/delayTakeTime";
     //    查询良品待付款订单
     public static final String Q_INQUIRY_WAIT_PAY = "api/goods/order/getWaitPay";
     //    查询良品已发货订单
@@ -437,12 +441,20 @@ public class Url {
     public static final String Q_CANCEL_INDENT_REFUND = "api/goods/order/cancelRefund";
     //    查询物流
     public static final String Q_CONFIRM_LOGISTICS = "api/goods/order/viewLogistics";
+    //    新版物流详情
+    public static final String Q_LOGISTICS_DETAIL = "api/goods/order/getOrderLogistics";
+    //    售后物流
+    public static final String Q_REFUND_LOGISTICS_DETAIL = "api/goods/order/getOrderRefundLogistics";
+    //    查询订单包裹信息
+    public static final String Q_ORDER_LOGISTICS_PACKAGE = "api/goods/order/getOrderLogisticsPackage";
     //    查询包裹
     public static final String Q_CONFIRM_PACKET = "api/goods/order/viewPackage";
-    //    退款售后 二期
-    public static final String Q_APPLY_AFTER_SALE_REPLY_RECORD = "api/goods/order/getAfterSale";
+    //    新版售后列表
+    public static final String Q_APPLY_AFTER_SALE_REPLY_RECORD = "api/goods/order/getAfterSaleV2";
     //    退款详情
     public static final String Q_INDENT_REFUND_DETAIL = "api/goods/order/getRefundDetailInfo";
+    //    新版退款详情
+    public static final String Q_INDENT_REFUND_NEW_DETAIL = "api/goods/order/getRefundDetailInfoV2";
     //    整单退，退款去向
     public static final String Q_INDENT_DETAIL_REFUND = "api/goods/order/getOrderRefundDetailInfo";
     //    维修详情
@@ -459,21 +471,32 @@ public class Url {
     public static final String Q_INDENT_REPAIR_LOGISTIC = "api/goods/order/viewRepairLogistics";
     //    撤销申请
     public static final String Q_CANCEL_APPLY = "api/goods/order/undoApplyRefund";
+    //    新版撤销申请
+    public static final String Q_CANCEL_APPLY_NEW = "api/goods/order/undoApplyRefundV2";
     //    获取物流公司
     public static final String Q_INDENT_LOGISTIC_COM = "api/goods/order/getExpressCompanys";
     //    提交物流信息
     public static final String Q_INDENT_LOGISTIC_SUB = "api/goods/order/refundExpressNew";
     //    申请退款
     public static final String Q_INDENT_APPLY_REFUND = "api/goods/order/getApplyRefundInfo";
-    //    申诉信息提交
+    //    新版申请退款
+    public static final String Q_INDENT_APPLY_REFUND_NEW = "api/goods/order/getApplyRefundInfoV2";
+    //    提交退款申请
     public static final String Q_INDENT_APPLY_REFUND_SUB = "api/goods/order/refundOrderProduct";
-    //   修改申请
+    //    新版提交退款申请
+    public static final String Q_INDENT_APPLY_REFUND_SUB_NEW = "api/goods/order/refundOrderProductV2";
+    //    修改退款申请
     public static final String Q_INDENT_CHANGE_REFUND_SUB = "api/goods/order/modifyApplyRefund";
-    //  申诉查询
+    //    新版修改退款申请
+    public static final String Q_INDENT_CHANGE_REFUND_SUB_NEW = "api/goods/order/modifyApplyRefundV2";
+    //    申诉查询
     public static final String Q_INDENT_APPLY_REFUND_CHECK = "api/goods/order/getVerifyRefundResultNew";
+    //    催促退款
+    public static final String Q_INDENT_URGE_REFUND_PRICE = "api/goods/order/urgeRefundPrice";
+    //    获取主订单支持退款的商品
+    public static final String Q_GET_REFUND_REFUND_PRODUCTS = "api/goods/order/getBatchRefundProductList";
 
-    //    商品详情
-    public static final String Q_SHOP_DETAILS = "api/goods/getGoods";
+
     //    商品详情 新版
     public static final String Q_NEW_SHOP_DETAILS = "api/goods/getSelfProduct";
     //    商品评价
@@ -482,14 +505,12 @@ public class Url {
     public static final String Q_SHOP_DETAILS_ADD_CAR = "api/goods/cart/addNew";
     //    组合商品加入购物车
     public static final String Q_COMBINE_PRODUCT_ADD_CAR = "api/goods/cart/addCombineProducts";
-    //    购物车列表
-    public static final String MINE_SHOP_CAR_GOODS = "api/goods/cart/getCartNew";
+    //    订单商品加入购物车
+    public static final String Q_ADD_ORDER_PRODUCT_TOCART = "api/goods/order/addOrderProductToCart";
     //    新版购物车列表
     public static final String NEW_MINE_SHOP_CAR_GOODS = "api/goods/cart/getCartNewV2";
     //    购物车推荐商品
     public static final String MINE_SHOP_CAR_RECOMMEND_GOODS = "api/goods/cart/shopFullCartRecommend";
-    //    购物车无商品推荐
-    public static final String SHOP_CART_RECOMMEND_EMPTY_GOODS = "api/goods/cart/shopEmptyCartRecommend";
     //    查询购物车数量
     public static final String Q_QUERY_CAR_COUNT = "api/goods/cart/getCartTip";
     //    添加取消到货通知
@@ -508,16 +529,12 @@ public class Url {
     public static final String Q_SELF_SHOP_DETAILS_COUPON = "api/my/coupon/choiceSelfCouponV2";
     //    优惠券专区
     public static final String Q_COUPON_ZONE = "api/activity/zone/getApiCouponZoneInfo";
-    //    订单优惠信息 新版
-    public static final String INDENT_DISCOUNTS_INFO = "api/goods/order/getOrderSettleInfoNew";
     //    订单优惠信息 大营销中心新版
     public static final String INDENT_DISCOUNTS_NEW_INFO = "api/goods/order/getOrderSettleInfoNewV2";
     //    更新订单优惠信息 大营销中心新版
     public static final String INDENT_DISCOUNTS_UPDATE_INFO = "api/goods/order/getOrderSettlePriceInfo";
-    //    订单结算价格 新
-    public static final String INDENT_SETTLE_PRICE = "api/goods/order/getTotalPriceByCouponNew";
-    //    订单搜索
-    public static final String INDENT_SEARCH = "api/goods/order/searchOrder";
+    //    获取可支付方式
+    public static final String GET_PAYTYPE_LIST= "api/goods/order/getPayTypeList";
     //    发票提示
     public static final String INDENT_DRAW_UP_INVOICE = "api/reminder/getReminderAsInvoice";
     //    发票详情
@@ -592,6 +609,8 @@ public class Url {
     public static final String Q_SORT_TYPE = "api/goods/category/getCategoryOrderType";
     //    良品分类商品列表
     public static final String Q_PRODUCT_TYPE_LIST = "api/goods/getCategoryGoods/getCategoryProduct";
+    //    优惠券对应的商品列表
+    public static final String Q_COUPON_PRODUCT_TYPE_LIST = "api/goods/getCategoryGoods/getCategoryProductByCoupon";
     //    优惠券类别商品
     public static final String Q_COUPON_PRODUCT_LIST = "api/my/coupon/getCouponAvailableProductList";
     //    良品分类广告
@@ -699,6 +718,10 @@ public class Url {
     public static final String UPDATE_DEFAULT_ADDRESS = "api/user/address/updateDefaultAddress";
     //    删除地址
     public static final String DEL_ADDRESS = "api/user/address/delUserAddress";
+    //    修改订单收货地址
+    public static final String CHANGE_ORDER_ADDRESS = "api/goods/order/editAddress";
+
+
     /**
      * 发现
      */

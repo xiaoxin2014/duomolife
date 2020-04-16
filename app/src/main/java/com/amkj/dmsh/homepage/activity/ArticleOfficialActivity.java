@@ -96,6 +96,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.WEB_TB_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TMALL_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.isDebugTag;
 import static com.amkj.dmsh.dao.BaiChuanDao.skipAliBC;
+import static com.amkj.dmsh.dao.OrderDao.addShopCarGetSku;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 import static com.amkj.dmsh.rxeasyhttp.interceptor.MyInterceptor.getCommonApiParameter;
 
@@ -165,7 +166,7 @@ public class ArticleOfficialActivity extends BaseActivity {
         Intent intent = getIntent();
         artId = intent.getStringExtra("ArtId");
         webUrl = "https://www.domolife.cn/m/app/pages/study_detail_app.html?id=" + artId;
-        if (isDebugTag){
+        if (isDebugTag) {
             SharedPreferences sharedPreferences = mAppContext.getSharedPreferences("selectedServer", MODE_PRIVATE);
             String baseUrl = sharedPreferences.getString("selectServerUrl", Url.getUrl(0));
             if (!"https://app.domolife.cn/".equals(baseUrl)) {
@@ -564,8 +565,7 @@ public class ArticleOfficialActivity extends BaseActivity {
                 baseAddCarProInfoBean.setProductId(productId);
                 baseAddCarProInfoBean.setProName(title);
                 baseAddCarProInfoBean.setProPic(picUrl);
-                ConstantMethod constantMethod = new ConstantMethod();
-                constantMethod.addShopCarGetSku(getActivity(), baseAddCarProInfoBean, loadHud);
+                addShopCarGetSku(getActivity(), baseAddCarProInfoBean, loadHud);
             } else {
                 loadHud.dismiss();
                 getLoginStatus(getActivity());

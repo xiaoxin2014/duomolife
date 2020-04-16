@@ -27,6 +27,7 @@ import com.amkj.dmsh.dominant.dialog.AlertDialogSendInvoice;
 import com.amkj.dmsh.find.activity.ImagePagerActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.adapter.InvoiceListAdapter;
 import com.amkj.dmsh.shopdetails.bean.IndentInvoiceEntity;
 import com.amkj.dmsh.utils.WindowUtils;
@@ -49,7 +50,6 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 import static com.amkj.dmsh.constant.ConstantMethod.dismissLoadhud;
-import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showLoadhud;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.INVOICE_APPLY_SUCCESS;
@@ -214,7 +214,7 @@ public class InvoiceDetailActivity extends BaseActivity {
                 finish();
                 break;
             case R.id.iv_img_service:
-                setSkipPath(this, "app://ManagerServiceChat", false);
+                QyServiceUtils.getQyInstance().openQyServiceChat(getActivity(),"发票详情");
                 break;
             //申请发票
             case R.id.tv_apply_for:

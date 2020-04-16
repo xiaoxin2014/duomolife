@@ -12,7 +12,6 @@ import java.util.List;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 
-;
 
 /**
  * @author LGuiPeng
@@ -33,8 +32,9 @@ public class MessageIndentAdapter extends BaseQuickAdapter<MessageIndentBean, Ba
     protected void convert(BaseViewHolder helper, MessageIndentBean messageIndentBean) {
         GlideImageLoaderUtil.loadCenterCrop(context, helper.getView(R.id.iv_mes_indent_cover), messageIndentBean.getJson() != null ? messageIndentBean.getJson().getProduct_img_url() : "");
         helper.setText(R.id.tv_mes_indent_time, getStrings(messageIndentBean.getCtime()))
-                .setText(R.id.tv_mes_indent_status, getStrings(messageIndentBean.getM_title()))
-                .setText(R.id.tv_mes_indent_content, getStrings(messageIndentBean.getM_content()));
+                .setText(R.id.tv_mes_indent_status, getStrings(messageIndentBean.getTitle()))
+                .setText(R.id.tv_mes_indent_content, getStrings(messageIndentBean.getContent()))
+                .setText(R.id.tv_button, getStrings(messageIndentBean.getButtonName()));
         helper.itemView.setTag(messageIndentBean);
     }
 }

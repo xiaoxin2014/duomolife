@@ -4,9 +4,10 @@
     android:id="@+id/tb_indent_bar"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/border_bottom_line"
     android:minHeight="@dimen/sc_mm_88"
-    android:background="@drawable/sel_bg_border_gray_white"
     app:contentInsetStart="0dp">
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/sc_mm_80"
@@ -24,39 +25,42 @@
             android:textSize="@dimen/sc_mm_32" />
 
         <TextView
-            android:layout_centerInParent="true"
             android:id="@+id/tv_indent_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
             android:layout_weight="1"
             android:gravity="center"
             android:text="多么订单"
             android:textColor="@color/home_text_color"
             android:textSize="@dimen/sc_mm_32" />
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:orientation="horizontal">
+
             <ImageView
                 android:id="@+id/iv_indent_search"
                 android:layout_width="@dimen/sc_mm_82"
                 android:layout_height="match_parent"
-                android:paddingTop="@dimen/sc_mm_18"
-                android:paddingBottom="@dimen/sc_mm_18"
                 android:layout_gravity="center_vertical|right"
-                android:src="@drawable/indent_search_icon"
-                android:scaleType="centerCrop"
                 android:gravity="center_vertical"
                 android:paddingLeft="@dimen/gap_left"
-                android:paddingRight="@dimen/sc_mm_26"/>
+                android:paddingTop="@dimen/sc_mm_18"
+                android:paddingRight="@dimen/sc_mm_26"
+                android:paddingBottom="@dimen/sc_mm_18"
+                android:scaleType="centerCrop"
+                android:src="@drawable/indent_search_icon" />
+
             <FrameLayout
-                android:layout_width="@dimen/sc_mm_90"
-                android:layout_gravity="center_vertical"
-                android:layout_height="@dimen/sc_mm_82"
                 android:id="@+id/fl_service"
-                >
+                android:layout_width="@dimen/sc_mm_90"
+                android:layout_height="@dimen/sc_mm_82"
+                android:layout_gravity="center_vertical">
+
                 <ImageView
                     android:id="@+id/iv_indent_service"
                     android:layout_width="match_parent"
@@ -65,19 +69,20 @@
 
                     android:gravity="center_vertical"
                     android:paddingLeft="@dimen/sc_mm_22"
-                    android:visibility="visible"
                     android:paddingRight="@dimen/sc_mm_22"
                     android:src="@drawable/service_gray"
-                    android:textColor="@color/selector_mine_warm_time" />
+                    android:textColor="@color/selector_mine_warm_time"
+                    android:visibility="visible" />
+
                 <ProgressBar
                     android:id="@+id/pb_down_invoice"
                     android:layout_width="@dimen/sc_mm_50"
                     android:layout_height="@dimen/sc_mm_50"
-                    android:layout_gravity="center"
-                    android:visibility="gone"
                     android:layout_centerVertical="true"
+                    android:layout_gravity="center"
+                    android:indeterminateBehavior="repeat"
                     android:indeterminateDrawable="@drawable/anim_loading_flower_rotate"
-                    android:indeterminateBehavior="repeat" />
+                    android:visibility="gone" />
             </FrameLayout>
         </LinearLayout>
     </RelativeLayout>

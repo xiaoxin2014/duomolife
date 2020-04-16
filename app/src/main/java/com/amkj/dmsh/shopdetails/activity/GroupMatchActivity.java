@@ -50,7 +50,6 @@ import q.rorbin.badgeview.Badge;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
-import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getSpannableString;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeDouble;
@@ -62,6 +61,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.stripTrailingZeros;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.dao.OrderDao.getCarCount;
 
 /**
  * Created by xiaoxin on 2019/5/30
@@ -421,7 +421,7 @@ public class GroupMatchActivity extends BaseActivity {
                 if (status != null && SUCCESS_CODE.equals(status.getCode())) {
                     showToast(getActivity(), getString(R.string.AddCarSuccess));
                     //通知刷新购物车数量
-                    ConstantMethod.getCarCount(getActivity());
+                 getCarCount(getActivity());
                 } else {
                     showToastRequestMsg(getActivity(), status);
                 }

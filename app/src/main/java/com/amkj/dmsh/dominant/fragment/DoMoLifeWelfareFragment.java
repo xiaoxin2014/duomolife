@@ -135,7 +135,7 @@ public class DoMoLifeWelfareFragment extends BaseFragment {
         rv_communal_pro.setLayoutManager(new LinearLayoutManager(getActivity()));
         rv_communal_pro.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_gray_f_two_px)
+                .setDividerId(R.drawable.item_divider_gray_f_one_px)
                 .create());
         qualityPreviousAdapter = new QualityHistoryAdapter(welfarePreviousList);
         qualityPreviousAdapter.setEnableLoadMore(false);

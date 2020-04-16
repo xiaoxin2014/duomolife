@@ -53,7 +53,6 @@ import butterknife.OnClick;
 import q.rorbin.badgeview.Badge;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
-import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getIntegralFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getSpannableString;
@@ -71,7 +70,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
 import static com.amkj.dmsh.constant.Url.GET_SHOPPING_REWARD;
 import static com.amkj.dmsh.constant.Url.Q_CUSTOM_PRO_COVER;
 import static com.amkj.dmsh.constant.Url.Q_CUSTOM_PRO_LIST;
-
+import static com.amkj.dmsh.dao.OrderDao.getCarCount;
 
 
 /**

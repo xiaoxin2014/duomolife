@@ -61,7 +61,7 @@
                 android:id="@+id/ll_draw_up_invoice"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:divider="@drawable/item_divider_gray_f_two_px"
+                android:divider="@drawable/item_divider_gray_f_one_px"
                 android:orientation="vertical"
                 android:showDividers="middle"
                 android:visibility="visible">

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tl="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/tl_quality_type_bar"
     android:layout_width="match_parent"
     android:layout_height="@dimen/sc_mm_88"
-    android:id="@+id/tl_quality_type_bar"
     android:background="@drawable/sel_bg_border_gray_white"
     android:orientation="vertical"
     tl:contentInsetStart="0dp">
@@ -30,16 +30,27 @@
         <com.amkj.dmsh.views.flycoTablayout.CommonTabLayout
             android:id="@+id/ctb_qt_tab_product_type"
             android:layout_width="wrap_content"
-            android:layout_centerInParent="true"
             android:layout_height="match_parent"
+            android:layout_centerInParent="true"
             tl:tl_iconGravity="RIGHT"
-            tl:tl_indicator_height="@dimen/dimen_2dp"
-            tl:tl_indicator_color="@android:color/black"
-            tl:tl_tab_space_equal="false"
             tl:tl_indicator_anim_enable="false"
+            tl:tl_indicator_color="@android:color/black"
+            tl:tl_indicator_height="@dimen/dimen_2dp"
+            tl:tl_tab_space_equal="false"
             tl:tl_textSelectColor="@color/text_black_t"
             tl:tl_textUnselectColor="@color/text_black_t"
             tl:tl_textsize="14sp" />
 
+        <ImageView
+            android:id="@+id/iv_search"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:paddingLeft="@dimen/gap_left"
+            android:paddingTop="@dimen/sc_mm_10"
+            android:paddingRight="@dimen/sc_mm_26"
+            android:paddingBottom="@dimen/sc_mm_10"
+            android:src="@drawable/indent_search_icon" />
     </RelativeLayout>
 </android.support.v7.widget.Toolbar>

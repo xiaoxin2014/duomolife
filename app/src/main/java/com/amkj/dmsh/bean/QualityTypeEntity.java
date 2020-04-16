@@ -41,6 +41,7 @@ public class QualityTypeEntity extends BaseEntity {
         private int id;
         private String picUrl;
         private String name;
+        private String description;
         private int type;
         private int categoryId;
         private int categoryType;
@@ -73,9 +74,19 @@ public class QualityTypeEntity extends BaseEntity {
         private List<ChildCategoryListBean> childCategoryList;
         private List<UserLikedProductEntity.AdBean> ad;
 
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
         /**
          * ad : {"picUrl":"http://image.domolife.cn/platform/mW6GEFis3N1555323545506.jpg","web":"http://www.domolife.cn/m/template/common/proprietary.html?id=14634","android":"app://ShopScrollDetailsActivity?productId=14634","wechat":"/pages/goodsDetails/goodsDetails?id=14634","ios":"app://DMLGoodsProductsInfoViewController?goodsId=14634"}
          */
+
+
 
 
         public int getCategoryId() {

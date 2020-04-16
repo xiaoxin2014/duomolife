@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/tb_indent_bar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/border_bottom_line"
+    android:minHeight="@dimen/sc_mm_88"
+    app:contentInsetStart="0dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sc_mm_80"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_indent_back"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:drawableLeft="@drawable/common_back_btn_nor"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/gap_left"
+            android:paddingRight="@dimen/sc_mm_26"
+            android:textColor="@color/home_text_color"
+            android:textSize="@dimen/sc_mm_32" />
+
+
+        <TextView
+            android:visibility="invisible"
+            android:id="@+id/tv_indent_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="多么订单"
+            android:textColor="@color/home_text_color"
+            android:textSize="@dimen/sc_mm_32" />
+
+        <TextView
+            android:visibility="invisible"
+            android:id="@+id/tv_search"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/sc_mm_60"
+            android:layout_weight="1"
+            android:background="@drawable/border_civ_3dp_light_gray"
+            android:drawableLeft="@drawable/quality_search"
+            android:drawablePadding="@dimen/dimen_8_dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/sc_mm_20"
+            android:text="请输入商品关键词"
+            android:textColor="@color/text_gray_hint_n"
+            android:textSize="@dimen/sc_mm_26" />
+
+        <ImageView
+            android:id="@+id/iv_indent_service"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/sc_mm_22"
+            android:paddingRight="@dimen/sc_mm_22"
+            android:src="@drawable/service_gray"
+            android:textColor="@color/selector_mine_warm_time" />
+    </LinearLayout>
+</android.support.v7.widget.Toolbar>

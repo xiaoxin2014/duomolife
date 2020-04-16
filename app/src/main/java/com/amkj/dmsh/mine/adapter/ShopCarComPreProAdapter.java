@@ -15,11 +15,12 @@ import com.amkj.dmsh.mine.bean.CartProductInfoBean;
 import java.util.List;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantVariable.INDENT_DETAILS_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRO_STATUS;
+import static com.amkj.dmsh.constant.ConstantVariable.INDENT_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
-import static com.amkj.dmsh.shopdetails.activity.DirectExchangeDetailsActivity.INDENT_DETAILS_TYPE;
-import static com.amkj.dmsh.shopdetails.activity.DoMoIndentAllActivity.INDENT_TYPE;
+
 
 ;
 

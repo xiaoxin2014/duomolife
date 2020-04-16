@@ -64,7 +64,7 @@ public abstract class CountDownTimer {
     /**
      * The interval in millis that the user receives callbacks
      */
-    private final long mCountdownInterval;
+    private long mCountdownInterval;
 
     private long mStopTimeInFuture;
 
@@ -127,6 +127,11 @@ public abstract class CountDownTimer {
                 }
             };
         }
+    }
+
+    @SuppressLint("HandlerLeak")
+    public CountDownTimer(LifecycleOwner lifecycleOwner, long countDownInterval) {
+        this(lifecycleOwner, 0, countDownInterval);
     }
 
     /**

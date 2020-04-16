@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/activity_duomolife_indent_header" />
+
+    <LinearLayout
+        android:id="@+id/ll_goods"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/communal_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@color/white"
+            android:scrollbars="none" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/sc_mm_98"
+            android:background="@drawable/border_top_line">
+
+            <CheckBox
+                android:background="@color/transparent"
+                android:id="@+id/cb_all"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:paddingLeft="@dimen/sc_mm_24"
+                android:layout_weight="1"
+                android:button="@null"
+                android:drawableLeft="@drawable/selector_pay_way"
+                android:drawablePadding="@dimen/sc_mm_24"
+                android:text="全选" />
+
+            <TextView
+                android:id="@+id/tv_confirm"
+                android:layout_width="@dimen/sc_mm_248"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:background="@color/text_login_blue_z"
+                android:gravity="center"
+                android:text="确定"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sc_mm_34" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

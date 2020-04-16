@@ -64,6 +64,7 @@ public class AlertDialogHelper {
     public AlertDialogHelper() {
     }
 
+
     public AlertDialogHelper(Context context) {
         this(context, 0);
     }
@@ -104,6 +105,7 @@ public class AlertDialogHelper {
         }
     }
 
+
     public AlertDialog getAlertDialog() {
         return defaultAlertDialog;
     }
@@ -137,7 +139,7 @@ public class AlertDialogHelper {
      * @return
      */
     public AlertDialogHelper setTitleVisibility(int visibility) {
-        tv_alert_title.setVisibility(View.GONE);
+        tv_alert_title.setVisibility(visibility);
         return this;
     }
 
@@ -282,8 +284,7 @@ public class AlertDialogHelper {
      * 关掉dialog
      */
     public void dismiss() {
-        if (defaultAlertDialog != null
-                && isContextExisted(context)) {
+        if (isShowing()) {
             defaultAlertDialog.dismiss();
         }
     }

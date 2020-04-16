@@ -191,7 +191,7 @@ public class DoMoLifeWelfareDetailsFragment extends BaseFragment {
         communal_recycler.setAdapter(adapterTopicComment);
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_gray_f_two_px)
+                .setDividerId(R.drawable.item_divider_gray_f_one_px)
                 .create());
         adapterTopicComment.setOnItemChildClickListener((adapter, view, position) -> {
             DmlSearchCommentBean dmlSearchCommentBean = (DmlSearchCommentBean) view.getTag(R.id.iv_tag);
@@ -251,7 +251,7 @@ public class DoMoLifeWelfareDetailsFragment extends BaseFragment {
         rv_wel_details_pro.setLayoutManager(new LinearLayoutManager(getActivity()));
         rv_wel_details_pro.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_gray_f_two_px)
+                .setDividerId(R.drawable.item_divider_gray_f_one_px)
 
 
                 .create());

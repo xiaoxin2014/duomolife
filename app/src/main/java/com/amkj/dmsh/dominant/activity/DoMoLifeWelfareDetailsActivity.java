@@ -78,7 +78,6 @@ import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.R.id.ll_communal_pro_list;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
-import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 
@@ -97,6 +96,7 @@ import static com.amkj.dmsh.constant.Url.H_DML_THEME_DETAIL;
 import static com.amkj.dmsh.constant.Url.Q_DML_SEARCH_COMMENT;
 import static com.amkj.dmsh.constant.Url.SHARE_COMMUNAL_ARTICLE;
 import static com.amkj.dmsh.dao.AddClickDao.totalWelfareProNum;
+import static com.amkj.dmsh.dao.OrderDao.getCarCount;
 import static com.amkj.dmsh.utils.CommunalCopyTextUtils.showPopWindow;
 
 public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
@@ -199,7 +199,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
         communal_recycler.setAdapter(adapterTopicComment);
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_gray_f_two_px)
+                .setDividerId(R.drawable.item_divider_gray_f_one_px)
                 .create());
         adapterTopicComment.setOnItemChildClickListener((adapter, view, position) -> {
             DmlSearchCommentBean dmlSearchCommentBean = (DmlSearchCommentBean) view.getTag(R.id.iv_tag);
@@ -259,7 +259,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
         rv_wel_details_pro.setLayoutManager(new LinearLayoutManager(DoMoLifeWelfareDetailsActivity.this));
         rv_wel_details_pro.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_gray_f_two_px)
+                .setDividerId(R.drawable.item_divider_gray_f_one_px)
 
 
                 .create());

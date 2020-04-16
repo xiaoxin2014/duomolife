@@ -1,7 +1,6 @@
 package com.amkj.dmsh.message.bean;
 
 import com.amkj.dmsh.base.BaseEntity;
-import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
@@ -12,67 +11,82 @@ import java.util.List;
  * class description:交易订单
  */
 
-public class MessageIndentEntity extends BaseEntity{
+public class MessageIndentEntity extends BaseEntity {
 
     /**
      * result : [{"m_title":"订单已发货","m_uid":34650,"m_obj":"cX34650X2027X1500021714662","ctime":"2017-08-01 10:00:53.314","json":{"orderId":"2777","productId":"5965","product_img_url":"http://image.domolife.cn/platform/20170309/20170309103021763.jpg"},"m_type":15,"m_content":"夕染彩绘全包硅胶防摔苹果手机壳  带支架","m_id":578068},{"m_title":"订单已发货","m_uid":34650,"m_obj":"cX34650X2027X1500022327535","ctime":"2017-07-31 11:58:03.897","json":{"orderId":"2779","productId":"5965","product_img_url":"http://image.domolife.cn/platform/20170309/20170309103021763.jpg"},"m_type":15,"m_content":"夕染彩绘全包硅胶防摔苹果手机壳  带支架","m_id":578064}]
      * msg : 请求成功
      * code : 01
      */
-    @SerializedName("result")
-    private List<MessageIndentBean> messageIndentList;
+    private List<MessageIndentBean> orderMsgInfoList;
 
     public List<MessageIndentBean> getMessageIndentList() {
-        return messageIndentList;
+        return orderMsgInfoList;
     }
 
-    public void setMessageIndentList(List<MessageIndentBean> messageIndentList) {
-        this.messageIndentList = messageIndentList;
+    public void setMessageIndentList(List<MessageIndentBean> orderMsgInfoList) {
+        this.orderMsgInfoList = orderMsgInfoList;
     }
 
     public static class MessageIndentBean {
-        /**
-         * m_title : 订单已发货
-         * m_uid : 34650
-         * m_obj : cX34650X2027X1500021714662
-         * ctime : 2017-08-01 10:00:53.314
-         * json : {"orderId":"2777","productId":"5965","product_img_url":"http://image.domolife.cn/platform/20170309/20170309103021763.jpg"}
-         * m_type : 15
-         * m_content : 夕染彩绘全包硅胶防摔苹果手机壳  带支架
-         * m_id : 578068
-         */
-
-        private String m_title;
-        private int m_uid;
-        private String m_obj;
+        private String id;
+        private String type;
+        private String title;
+        private String obj;
+        private String content;
         private String ctime;
+        private String isRead;
+        private String productImgUrl;
+        private String androidLink;
+        private String buttonName;
         private JsonBean json;
-        private int m_type;
-        private String m_content;
-        private int m_id;
 
-        public String getM_title() {
-            return m_title;
+        public JsonBean getJson() {
+            return json;
         }
 
-        public void setM_title(String m_title) {
-            this.m_title = m_title;
+        public void setJson(JsonBean json) {
+            this.json = json;
         }
 
-        public int getM_uid() {
-            return m_uid;
+        public String getId() {
+            return id;
         }
 
-        public void setM_uid(int m_uid) {
-            this.m_uid = m_uid;
+        public void setId(String id) {
+            this.id = id;
         }
 
-        public String getM_obj() {
-            return m_obj;
+        public String getType() {
+            return type;
         }
 
-        public void setM_obj(String m_obj) {
-            this.m_obj = m_obj;
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public String getObj() {
+            return obj;
+        }
+
+        public void setObj(String obj) {
+            this.obj = obj;
+        }
+
+        public String getContent() {
+            return content;
+        }
+
+        public void setContent(String content) {
+            this.content = content;
         }
 
         public String getCtime() {
@@ -83,36 +97,36 @@ public class MessageIndentEntity extends BaseEntity{
             this.ctime = ctime;
         }
 
-        public JsonBean getJson() {
-            return json;
+        public String getIsRead() {
+            return isRead;
         }
 
-        public void setJson(JsonBean json) {
-            this.json = json;
+        public void setIsRead(String isRead) {
+            this.isRead = isRead;
         }
 
-        public int getM_type() {
-            return m_type;
+        public String getProductImgUrl() {
+            return productImgUrl;
         }
 
-        public void setM_type(int m_type) {
-            this.m_type = m_type;
+        public void setProductImgUrl(String productImgUrl) {
+            this.productImgUrl = productImgUrl;
         }
 
-        public String getM_content() {
-            return m_content;
+        public String getAndroidLink() {
+            return androidLink;
         }
 
-        public void setM_content(String m_content) {
-            this.m_content = m_content;
+        public void setAndroidLink(String androidLink) {
+            this.androidLink = androidLink;
         }
 
-        public int getM_id() {
-            return m_id;
+        public String getButtonName() {
+            return buttonName;
         }
 
-        public void setM_id(int m_id) {
-            this.m_id = m_id;
+        public void setButtonName(String buttonName) {
+            this.buttonName = buttonName;
         }
 
         public static class JsonBean {

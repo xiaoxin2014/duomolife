@@ -1,45 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_height="@dimen/sc_mm_104"
+    android:gravity="center_vertical">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/sc_mm_104"
-        android:gravity="center_vertical">
-
-        <FrameLayout
-            android:id="@+id/fra_home_message_total"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent">
-
-            <ImageView
-                android:id="@+id/iv_mes_total"
-                android:layout_width="@dimen/sc_mm_87"
-                android:layout_height="@dimen/sc_mm_45"
-                android:layout_gravity="center_vertical"
-                android:paddingLeft="@dimen/sc_mm_27"
-                android:paddingRight="@dimen/sc_mm_20"
-                android:src="@drawable/home_mes_icon" />
-        </FrameLayout>
-
-        <TextView
-            android:id="@+id/tv_mes_total_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/sc_mm_105"
-            android:layout_weight="1"
-            android:textColor="@color/text_black_t"
-            android:textSize="@dimen/sc_mm_32" />
+    <FrameLayout
+        android:id="@+id/fra_home_message_total"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:paddingRight="@dimen/sc_mm_30"
-            android:src="@drawable/att_integ_next" />
-    </RelativeLayout>
-</RelativeLayout>
+            android:id="@+id/iv_mes_total"
+            android:layout_width="@dimen/sc_mm_87"
+            android:layout_height="@dimen/sc_mm_45"
+            android:layout_gravity="center_vertical"
+            android:paddingLeft="@dimen/sc_mm_27"
+            android:paddingRight="@dimen/sc_mm_20"
+            android:src="@drawable/home_mes_icon" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tv_mes_total_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/sc_mm_16"
+        android:text="@string/defaul"
+        android:textColor="@color/text_black_t"
+        android:textSize="@dimen/sc_mm_30" />
+
+    <TextView
+        android:id="@+id/tv_msg_description"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/sc_mm_36"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="@string/defaul"
+        android:textColor="#888"
+        android:textSize="@dimen/sc_mm_24" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:paddingRight="@dimen/sc_mm_30"
+        android:src="@drawable/att_integ_next" />
+</LinearLayout>

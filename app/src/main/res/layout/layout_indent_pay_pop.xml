@@ -2,21 +2,22 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_gravity="center_horizontal"
     android:background="@drawable/border_cir_7dp_str_gray_c_bg_white">
 
-    <android.support.constraint.ConstraintLayout
-        android:layout_width="@dimen/sc_mm_540"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:divider="@drawable/divider_ll_0_5_dp"
+        android:gravity="center_vertical"
         android:orientation="vertical"
-        android:showDividers="middle"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+        android:showDividers="middle">
 
         <LinearLayout
+            android:id="@+id/ll_pay_way"
             android:layout_width="match_parent"
             android:layout_height="@dimen/sc_mm_160"
-            android:id="@+id/ll_pay_way"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -37,9 +38,7 @@
 
         <LinearLayout
             android:id="@+id/ll_pay_ali"
-            app:layout_constraintTop_toBottomOf="@id/ll_pay_way"
-            app:layout_constraintLeft_toLeftOf="@id/ll_pay_we_chat"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="@dimen/sc_mm_104"
             android:gravity="center"
             android:orientation="horizontal"
@@ -64,14 +63,11 @@
 
         <LinearLayout
             android:id="@+id/ll_pay_we_chat"
-            android:layout_width="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/ll_pay_ali"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
+            android:layout_width="match_parent"
             android:layout_height="@dimen/sc_mm_104"
+            android:layout_marginLeft="-30mm"
             android:gravity="center"
             android:orientation="horizontal"
-
             android:paddingLeft="@dimen/sc_mm_50"
             android:paddingRight="@dimen/sc_mm_50">
 
@@ -92,10 +88,9 @@
 
         <LinearLayout
             android:id="@+id/ll_pay_union"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="@dimen/sc_mm_104"
-            app:layout_constraintLeft_toLeftOf="@id/ll_pay_we_chat"
-            app:layout_constraintTop_toBottomOf="@id/ll_pay_we_chat"
+            android:layout_marginLeft="-30mm"
             android:gravity="center"
             android:orientation="horizontal"
             android:paddingLeft="@dimen/sc_mm_50"
@@ -118,12 +113,11 @@
 
         <TextView
             android:id="@+id/tv_pay_cancel"
-            app:layout_constraintTop_toBottomOf="@id/ll_pay_union"
             android:layout_width="match_parent"
             android:layout_height="@dimen/sc_mm_104"
             android:gravity="center"
             android:text="取消"
             android:textColor="@color/color_blue_reply_com"
             android:textSize="@dimen/sc_mm_28" />
-    </android.support.constraint.ConstraintLayout>
+    </LinearLayout>
 </RelativeLayout>

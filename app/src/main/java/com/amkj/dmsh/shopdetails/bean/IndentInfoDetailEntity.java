@@ -375,13 +375,8 @@ public class IndentInfoDetailEntity extends BaseEntity {
                     private String activityCode;
                     private String activityTag;
                     private String activityRule;
-                    private int activityType;
                     @SerializedName("activityRuleDetail")
                     private List<CommunalDetailBean> activityRuleDetailList;
-
-                    public void setActivityType(int activityType) {
-                        this.activityType = activityType;
-                    }
 
                     public String getActivityCode() {
                         return activityCode;

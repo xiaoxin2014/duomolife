@@ -21,7 +21,7 @@ public class ConstantVariable {
     //    adzoneid
     public static final String TAOBAO_ADZONEID = "400008826";
     //    淘宝联盟appKey
-    public static final String TAOBAO_APPKEY = "24840848";
+    public static final String TAOBAO_APPKEY = "27852329";
     //   积分详情
     public static final String TAG_DETAILS_INTEG = "Integration_Details";
     //    默认图片名称
@@ -207,11 +207,6 @@ public class ConstantVariable {
      * EventBus type类型
      */
     public static final String TIME_REFRESH = "timeRefresh";
-    /**
-     * 商品 赠品 颜色区别
-     */
-    public static final String PRESENT_BLACK = "blackFont";
-    public static final String PRESENT_RED = "redFont";
 
     /**
      * 访问网络回调
@@ -242,17 +237,7 @@ public class ConstantVariable {
      */
 //    广播接收
     public static final String BROADCAST_NOTIFY = "cn.broadcast.notify.click";
-    /**
-     * 关联商品类型
-     */
-//    关联类型
-    public static final String RELEVANCE_TYPE = "relevanceType";
-    //    已购买
-    public static final String BOUGHT_PRODUCT = "boughtProduct";
-    //    收藏商品
-    public static final String COLLECT_PRODUCT = "collectProduct";
-    //    购物车商品
-    public static final String CART_PRODUCT = "cartProduct";
+
     /**
      * 良品分类参数
      */
@@ -308,17 +293,6 @@ public class ConstantVariable {
     public static String DOUBLE_INTEGRAL_PREFECTURE = "50";
     //    双倍积分 专区类型
     public static String DOUBLE_INTEGRAL_TYPE = "doubleIntegralType";
-
-//    /**
-//     * 活动Code
-//     */
-//    public static String XSG = "XSG";//限时购
-//    public static String LJ = "LJ";//立减
-//    public static String ZC = "ZC";//折扣
-//    public static String BJ = "BJ";//第二件半价
-//    public static String MJ = "MJ";//满减
-//    public static String MM = "MM";//每满
-//    public static String MZ = "MZ";//满赠
 
     /**
      * 分享提示展示
@@ -388,7 +362,8 @@ public class ConstantVariable {
     public static final String INVOICE_APPLY_SUCCESS = "invoiceApplySuccess";    //发票开具成功，刷新发票详情
     public static final String RECEIVED_NEW_QY_MESSAGE = "receivedNewQyMessage";    //收到新的七鱼客服消息
     public static final String UPDATE_EXPRESS_DATA = "updateExpressData";    //刷新物流数据
-
+    public static final String UPDATE_INDENT_LIST = "updateIndentList";    //刷新订单列表
+    public static final String UNION_PAY_CALLBACK = "unionPayCallback";    //h5银联支付回调
 
 
     /**
@@ -471,11 +446,64 @@ public class ConstantVariable {
     public static final int MUST_BUY_TOPIC = 2;//必买清单专题
     public static final int WELFARE_TOPIC = 3;//福利社专题
     public static final int SUPER_GOOD = 4;//定制专题
-    public static final int  REDACTOR_PICKED= 5;//小编精选
+    public static final int REDACTOR_PICKED = 5;//小编精选
     public static final int WEEKLY_ZONE = 6;//每周优选
     public static final int POST = 7;//帖子详情
     public static final int AD = 8;//广告（轮播，启动广告，浮动广告，好物广告）
     public static final int POPUP = 9;//营销弹窗
     public static final int DYNAMIC_AREA = 10;//首页动态专区
 
+    /**
+     * 订单列表按钮类型
+     */
+    public static final int CONFIRM_TAKE = 1;//确认收货
+    public static final int CHECK_LOGISTICS = 2;//查看物流
+    public static final int DELAY_TAKE = 3;//延迟收货
+    public static final int APPLY_REFUND = 4;//申请退款
+    public static final int REFUND_ASPECT = 5;//退款去向
+    public static final int CUSTOMER_SERVICE_DETAIL = 6;//售后详情
+    public static final int WAIT_COMMENT = 7;//待点评
+    public static final int WAITDELIVERY = 8;//催发货
+    public static final int ADD_CART = 9;//加入购物车
+    public static final int DELETE_ORDER = 10;//删除订单
+    public static final int CANCEL_ORDER_NEW = 11;//取消订单
+    public static final int GO_PAY = 12;//去支付
+    public static final int TO_BUY = 13;//再次购买
+    public static final int INVITE_JOIN_GROUP = 14;//邀请参团
+    public static final int VIEW_INVOICE = 15;//查看发票
+    public static final int BATCH_REFUND = 16;//批量退款
+    public static final int URGE_REFUND = 17;//催促退款
+    public static final int EDIT_ADDRESS = 18;//修改地址
+    public static final int CHECK_REFUND_LOGISTICS = 19;//查看退货物流
+
+
+    //Activity跳转请求码
+    public static final int NEW_CRE_ADDRESS_REQ = 101;
+    public static final int SEL_ADDRESS_REQ = 102;
+    public static final int CREATE_ADDRESS_REQ = 103;
+    public static final int EDIT_ADDRESS_REQ = 104;
+    public static final int DIRECT_COUPON_REQ = 105;
+    public static final int CHANGE_ORDER_ADDRESS = 106;
+    public static final int SKIP_INDENT_DETAIL = 107;
+
+
+    /**
+     * 退款类型
+     */
+    public static final String NOGOODS_REFUND = "1";//未收到货仅退款
+    public static final String GOODS_REFUND = "4";//已收到货仅退款
+    public static final String RETURN_GOODS = "2";//退货退款
+
+
+    /**
+     * 订单列表类型
+     */
+    public static final String INDENT_TYPE = "1";//订单列表
+    public static final String INDENT_DETAILS_TYPE = "2";//订单详情
+    public static final String SELECT_REFUND_GOODS = "3";//选择退款商品
+    public static final String SELECT_REFUND_TYPE = "4";//选择退款类型
+    public static final String APPLY_REFUND_TYPE = "5";//申请退款
+    public static final String REFUND_DETAIL_TYPE = "6";//退款详情
+    public static final String INDENT_W_TYPE = "7";//普通订单填写
+    public static final String INDENT_GROUP_SHOP = "8";//拼团订单填写
 }

@@ -66,7 +66,7 @@ public class IntegralLotteryAwardPersonActivity extends BaseActivity {
         lotteryAwardPersonAdapter = new LotteryAwardPersonAdapter(this, winListBeanList);
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_gray_f_two_px).create());
+                .setDividerId(R.drawable.item_divider_gray_f_one_px).create());
         communal_recycler.setAdapter(lotteryAwardPersonAdapter);
         lotteryAwardPersonAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override

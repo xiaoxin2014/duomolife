@@ -183,7 +183,7 @@ public class PointSpikeProductFragment extends BaseFragment {
         pointSpikeHelper = new PointSpikeHelper();
         communalRecycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_gray_f_two_px).create());
+                .setDividerId(R.drawable.item_divider_gray_f_one_px).create());
         ButterKnife.bind(pointSpikeHelper, pointSpikeTimeView);
         pointSpikeProductAdapter.addHeaderView(pointSpikeTimeView);
         communalRecycler.setAdapter(pointSpikeProductAdapter);

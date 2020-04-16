@@ -14,7 +14,7 @@
         android:orientation="horizontal"
         android:background="@drawable/border_top_line"
         android:showDividers="middle"
-        android:divider="@drawable/item_divider_gray_f_two_px"
+        android:divider="@drawable/item_divider_gray_f_one_px"
         android:layout_height="@dimen/sc_mm_110">
         <TextView
             android:layout_width="0dp"

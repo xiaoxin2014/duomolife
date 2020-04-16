@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.dao.SoftApiDao;
 import com.amkj.dmsh.dominant.activity.CommentDetailsActivity;
 import com.amkj.dmsh.dominant.bean.PostCommentEntity.PostCommentBean;
@@ -59,6 +60,7 @@ public class PostCommentAdapter extends BaseQuickAdapter<PostCommentBean, BaseVi
                 .setText(R.id.tv_time, getStrings(item.getCtime()))
                 .setText(R.id.tv_comment_content, getStrings(item.getContent()))
                 .setText(R.id.tv_favor, getStrings(String.valueOf(item.getLike_num() > 0 ? item.getLike_num() : "赞")));
+        ConstantMethod.setTextLink(context, helper.getView(R.id.tv_comment_content));
         View view = helper.getView(R.id.view_divider);
         LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) view.getLayoutParams();
         layoutParams.leftMargin = helper.getAdapterPosition() == mDatas.size() - 1 ? 0 : AutoSizeUtils.mm2px(mAppContext, 120);
@@ -96,6 +98,7 @@ public class PostCommentAdapter extends BaseQuickAdapter<PostCommentBean, BaseVi
                     GlideImageLoaderUtil.loadRoundImg(context, helper.getView(R.id.civ_comm_comment_inner_avatar), item.getAvatar(), AutoSizeUtils.mm2px(mAppContext, 50), R.drawable.default_ava_img);
                     helper.setText(R.id.tv_comm_comment_inner_name, getStrings(item.getNickname() + (item.isReplyMain() ? "" : " 回复 " + item.getNickname1())))
                             .setText(R.id.tv_comm_comment_inner_content, getStrings(item.getContent()));
+                    ConstantMethod.setTextLink(context, helper.getView(R.id.tv_comm_comment_inner_content));
                     helper.getView(R.id.civ_comm_comment_inner_avatar).setOnClickListener(v -> skipUserCenter(context, item.getUid()));
                     helper.itemView.setOnLongClickListener(v -> {
                         mChildPostCommentPw = new PostReplyPw(context, item.getId(), 2) {

@@ -41,6 +41,7 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.H5ShareBean;
 import com.amkj.dmsh.constant.AppUpdateUtils;
 import com.amkj.dmsh.constant.ConstantMethod;
@@ -69,6 +70,7 @@ import com.scwang.smartrefresh.layout.constant.RefreshState;
 import com.umeng.socialize.UMShareAPI;
 import com.yanzhenjie.permission.Permission;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -96,6 +98,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.REQUEST_NOTIFICATION_STATUS;
 import static com.amkj.dmsh.constant.ConstantVariable.TOKEN;
+import static com.amkj.dmsh.constant.ConstantVariable.UNION_PAY_CALLBACK;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_JD_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TAOBAO_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TB_SCHEME;
@@ -1239,15 +1242,11 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
             @Override
             public void run() {
                 WebBackForwardList webBackForwardList = web_communal.copyBackForwardList();
-//        当前页面index
+                //当前页面index
                 int currentIndex = webBackForwardList.getCurrentIndex();
                 if ("1".equals(backResult)) {
-//                    判断是web关闭，还是用户手动触发@是 传递值不回调跳转
-                    Intent intent = new Intent();
-                    if (isWebManualFinish) {
-                        intent.putExtra("webManualFinish", "1");
-                    }
-                    setResult(RESULT_OK, intent);
+                    //判断是web自动关闭，还是用户手动触发，如果是自动关闭表示银联支付成功，回调值
+                    EventBus.getDefault().post(new EventMessage(UNION_PAY_CALLBACK, isWebManualFinish));
                     finish();
                 } else if (web_communal.canGoBack()) {
                     if (currentIndex - finalFinishCount < 0) {

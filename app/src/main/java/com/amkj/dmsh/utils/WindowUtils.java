@@ -19,6 +19,8 @@ import com.amkj.dmsh.constant.ConstantMethod;
 
 import java.util.Objects;
 
+import me.jessyan.autosize.AutoSize;
+
 
 public class WindowUtils {
 
@@ -45,7 +47,22 @@ public class WindowUtils {
         // 创建PopupWindow，参数4 false为不获取焦点
         View pwView = LayoutInflater.from(activity).inflate(layoutId, null, false);
         PopupWindow popupWindow = new PopupWindow(pwView,
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,
+                true);
+        popupWindow.setTouchable(true);
+        // 设置背景颜色
+        popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        //设置弹出动画
+        popupWindow.setAnimationStyle(getAnimaitionStyle(gravity));
+        //  弹出窗监听
+        popupWindow.setOnDismissListener(() -> setWindowAlpha(activity, 1));
+        return popupWindow;
+    }
+
+    // 获取popwindow
+    public static PopupWindow getAlphaPw(final Activity activity, View view, int gravity) {
+        PopupWindow popupWindow = new PopupWindow(view,
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT,
                 true);
         popupWindow.setTouchable(true);
         // 设置背景颜色
@@ -120,6 +137,7 @@ public class WindowUtils {
     //显示弹窗
     public static void showPw(Activity activity, PopupWindow pw, int gravity) {
         if (ConstantMethod.isContextExisted(activity)) {
+            AutoSize.autoConvertDensityOfGlobal(activity);
             WindowUtils.setWindowAlpha(activity, 0.6f);
             pw.showAtLocation(activity.getWindow().getDecorView(), gravity, 0, 0);
         }
@@ -129,6 +147,7 @@ public class WindowUtils {
     //显示在某个控件下方
     public static void showPw(Activity activity, PopupWindow pw, View view, int x, int y) {
         if (ConstantMethod.isContextExisted(activity)) {
+            AutoSize.autoConvertDensityOfGlobal(activity);
             WindowUtils.setWindowAlpha(activity, 0.6f);
             pw.showAsDropDown(view, x, y);
         }
@@ -142,12 +161,11 @@ public class WindowUtils {
 
 
     //设置窗体透明度
-    public static void setWindowAlpha(Activity activity, float alpha) {
+    private static void setWindowAlpha(Activity activity, float alpha) {
         activity.getWindow().clearFlags(
                 WindowManager.LayoutParams.FLAG_DIM_BEHIND);
         WindowManager.LayoutParams params = activity.getWindow().getAttributes();
         params.alpha = alpha;
         activity.getWindow().setAttributes(params);
     }
-
 }

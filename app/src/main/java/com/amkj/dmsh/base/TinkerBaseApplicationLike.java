@@ -95,6 +95,7 @@ import static android.content.Context.MODE_PRIVATE;
 import static com.amkj.dmsh.constant.ConstantMethod.createExecutor;
 import static com.amkj.dmsh.constant.ConstantMethod.getSourceType;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.OSS_BUCKET_NAME;
 import static com.amkj.dmsh.constant.ConstantVariable.OSS_OBJECT;
 import static com.amkj.dmsh.constant.ConstantVariable.OSS_URL;
@@ -331,8 +332,10 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
             QyServiceUtils.getQyInstance().getServiceCount(new UnreadCountChangeListener() {
                 @Override
                 public void onUnreadCountChange(int count) {
-                    UnicornMessage message = Unicorn.queryLastMessage();
-                    EventBus.getDefault().post(new EventMessage(RECEIVED_NEW_QY_MESSAGE, message));
+                    if (userId > 0) {
+                        UnicornMessage message = Unicorn.queryLastMessage();
+                        EventBus.getDefault().post(new EventMessage(RECEIVED_NEW_QY_MESSAGE, message));
+                    }
                 }
             });
             createExecutor().execute(new Runnable() {

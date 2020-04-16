@@ -91,9 +91,9 @@
             </LinearLayout>
 
             <RelativeLayout
-                android:layout_alignParentBottom="true"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/sc_mm_60">
+                android:layout_height="@dimen/sc_mm_60"
+                android:layout_alignParentBottom="true">
 
                 <TextView
                     android:id="@+id/tv_direct_indent_pro_price"
@@ -115,12 +115,12 @@
                     android:layout_centerVertical="true">
 
                     <TextView
-                        android:enabled="false"
-                        android:layout_gravity="center_vertical"
                         android:id="@+id/tv_dir_indent_pro_status"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
                         android:background="@drawable/sel_border_clickable_gray_white"
+                        android:enabled="false"
                         android:gravity="center"
                         android:paddingLeft="@dimen/sc_mm_15"
                         android:paddingTop="@dimen/sc_mm_10"

@@ -68,9 +68,9 @@ public abstract class BaseFragment extends ImmersionFragment {
     protected boolean isViewInitiated; //是否初始化过布局
     protected boolean isVisibleToUser; //当前界面对用户是否可见
     protected boolean isDataInitiated; //是否已经加载过数据（保证数据只会加载一次）
-    protected boolean isLazy = true;          //当前Fragment是否需要使用懒加载方式
+    protected boolean isLazy = true; //当前Fragment是否需要使用懒加载方式
     public LoadService loadService;
-    private int scrollY;
+    protected int scrollY;
 
     public static <T extends BaseFragment> T newInstance(Class<?> subFragmentCls, Map<String, String> params, Map<String, Object> objectParams) {
         try {
@@ -314,9 +314,10 @@ public abstract class BaseFragment extends ImmersionFragment {
                 }
             });
             floatingActionButton.setOnClickListener(v -> {
-                floatingActionButton.hide();
+                scrollY = 0;
                 ((RecyclerView) view).stopScroll();
-                ((RecyclerView) view).smoothScrollToPosition(0);
+                ((RecyclerView) view).scrollToPosition(0);
+                floatingActionButton.hide();
             });
         }
     }

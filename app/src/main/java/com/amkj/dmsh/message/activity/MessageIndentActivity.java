@@ -1,7 +1,6 @@
 package com.amkj.dmsh.message.activity;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -10,21 +9,14 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.message.adapter.MessageIndentAdapter;
 import com.amkj.dmsh.message.bean.MessageIndentEntity;
 import com.amkj.dmsh.message.bean.MessageIndentEntity.MessageIndentBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.shopdetails.activity.DirectExchangeDetailsActivity;
-import com.amkj.dmsh.shopdetails.integration.IntegExchangeDetailActivity;
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
-import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,17 +27,14 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.H_MES_INDENT;
 
-;
-;
 
 /**
  * @author LGuiPeng
@@ -66,11 +55,9 @@ public class MessageIndentActivity extends BaseActivity {
     @BindView(R.id.tv_header_shared)
     TextView tv_header_shared;
     private int page = 1;
-    private int scrollY;
-    private float screenHeight;
     private MessageIndentAdapter messageIndentAdapter;
     //官方通知数据
-    private List<MessageIndentBean> messageArticleList = new ArrayList();
+    private List<MessageIndentBean> messageArticleList = new ArrayList<>();
     private MessageIndentEntity messageOfficialEntity;
 
     @Override
@@ -87,78 +74,20 @@ public class MessageIndentActivity extends BaseActivity {
         communal_recycler.setLayoutManager(linearLayoutManager);
         messageIndentAdapter = new MessageIndentAdapter(MessageIndentActivity.this, messageArticleList);
         communal_recycler.setAdapter(messageIndentAdapter);
-        messageIndentAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                MessageIndentBean messageIndentBean = (MessageIndentBean) view.getTag();
-                if (messageIndentBean != null && !TextUtils.isEmpty(messageIndentBean.getM_obj())
-                        && messageIndentBean.getJson() != null) {
-                    Intent intent = new Intent();
-                    intent.putExtra("orderNo", messageIndentBean.getM_obj());
-                    switch (messageIndentBean.getJson().getOrderType()) {
-                        case 1:
-                            intent.setClass(MessageIndentActivity.this, IntegExchangeDetailActivity.class);
-                            startActivity(intent);
-                            break;
-                        default:
-                            intent.setClass(MessageIndentActivity.this, DirectExchangeDetailsActivity.class);
-                            startActivity(intent);
-                            break;
-                    }
-                }
+        messageIndentAdapter.setOnItemClickListener((adapter, view, position) -> {
+            MessageIndentBean messageIndentBean = (MessageIndentBean) view.getTag();
+            if (messageIndentBean != null && !TextUtils.isEmpty(messageIndentBean.getObj())) {
+                setSkipPath(getActivity(), messageIndentBean.getAndroidLink(), false);
             }
         });
-        messageIndentAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
-            @Override
-            public void onLoadMoreRequested() {
-                page++;
-                getData();
-            }
+        messageIndentAdapter.setOnLoadMoreListener(() -> {
+            page++;
+            getData();
         }, communal_recycler);
 
-        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                loadData();
-            }
-        });
-        TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-        screenHeight = app.getScreenHeight();
-        communal_recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                scrollY += dy;
-                if (!recyclerView.canScrollVertically(-1)) {
-                    scrollY = 0;
-                }
-                if (scrollY > screenHeight * 1.5 && dy < 0) {
-                    if (download_btn_communal.getVisibility() == GONE) {
-                        download_btn_communal.setVisibility(VISIBLE);
-                        download_btn_communal.hide(false);
-                    }
-                    if (!download_btn_communal.isVisible()) {
-                        download_btn_communal.show();
-                    }
-                } else {
-                    if (download_btn_communal.isVisible()) {
-                        download_btn_communal.hide();
-                    }
-                }
-            }
-        });
-        download_btn_communal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) communal_recycler.getLayoutManager();
-                int firstVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition();
-                int mVisibleCount = linearLayoutManager.findLastVisibleItemPosition()
-                        - linearLayoutManager.findFirstVisibleItemPosition() + 1;
-                if (firstVisibleItemPosition > mVisibleCount) {
-                    communal_recycler.scrollToPosition(mVisibleCount);
-                }
-                communal_recycler.smoothScrollToPosition(0);
-            }
-        });
+        smart_communal_refresh.setOnRefreshListener(refreshLayout -> loadData());
+        setFloatingButton(download_btn_communal, communal_recycler);
+
     }
 
     @Override
@@ -195,9 +124,6 @@ public class MessageIndentActivity extends BaseActivity {
     protected void getData() {
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", page);
-        if (userId > 0) {
-            params.put("uid", userId);
-        }
         NetLoadUtils.getNetInstance().loadNetDataPost(this, H_MES_INDENT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
@@ -210,7 +136,10 @@ public class MessageIndentActivity extends BaseActivity {
                 messageOfficialEntity = gson.fromJson(result, MessageIndentEntity.class);
                 if (messageOfficialEntity != null) {
                     if (messageOfficialEntity.getCode().equals(SUCCESS_CODE)) {
-                        messageArticleList.addAll(messageOfficialEntity.getMessageIndentList());
+                        List<MessageIndentBean> messageIndentList = messageOfficialEntity.getMessageIndentList();
+                        if (messageIndentList != null) {
+                            messageArticleList.addAll(messageIndentList);
+                        }
                     } else if (messageOfficialEntity.getCode().equals(EMPTY_CODE)) {
                         messageIndentAdapter.loadMoreEnd();
                     } else {
@@ -225,16 +154,7 @@ public class MessageIndentActivity extends BaseActivity {
             public void onNotNetOrException() {
                 smart_communal_refresh.finishRefresh();
                 messageIndentAdapter.loadMoreEnd(true);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(MessageIndentActivity.this, R.string.unConnectedNetwork);
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                showToast(MessageIndentActivity.this, R.string.invalidData);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, messageArticleList, messageOfficialEntity);
             }
         });
     }

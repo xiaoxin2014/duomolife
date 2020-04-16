@@ -13,10 +13,9 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean;
 import com.amkj.dmsh.message.adapter.MessageListAdapter;
-import com.amkj.dmsh.message.bean.MessageTotalEntity;
-import com.amkj.dmsh.message.bean.MessageTotalEntity.MessageTotalBean;
+import com.amkj.dmsh.message.bean.MessageCenterBean;
+import com.amkj.dmsh.message.bean.MessageCenterEntity;
 import com.amkj.dmsh.mine.activity.ShopTimeMyWarmActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
@@ -41,7 +40,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.REQUEST_NOTIFICATION_STATUS;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.constant.Url.H_MES_STATISTICS;
+import static com.amkj.dmsh.constant.Url.H_MES_STATISTICS_NEW;
 
 
 /**
@@ -62,13 +61,13 @@ public class MessageActivity extends BaseActivity {
     RelativeLayout mRlOpenMsg;
     private MessageListAdapter messageListAdapter;
 
-    private List<QualityTypeBean> messageList = new ArrayList<>();
+    private List<MessageCenterBean> messageList = new ArrayList<>();
 
     private final String[] typeName = {"订单消息", "通知消息", "活动消息", "评论", "赞", "新增粉丝", "秒杀提醒", "联系客服"};
 
     private final String[] typePic = {"mes_logis_icon", "mes_notify_icon", "mes_hot_icon", "mes_comment_icon", "mes_like_icon", "mes_fans_icon", "mes_clock_icon", "mes_service_icon"};
     private boolean isOnPause;
-    private MessageTotalEntity messageTotalEntity;
+    private MessageCenterEntity messageCenterEntity;
 
     @Override
     protected int getContentView() {
@@ -81,28 +80,27 @@ public class MessageActivity extends BaseActivity {
         iv_indent_search.setVisibility(View.GONE);
         mIvIndentService.setVisibility(View.GONE);
         tv_indent_title.setText("消息中心");
-        QualityTypeBean qualityTypeBean;
         for (int i = 0; i < typeName.length; i++) {
-            qualityTypeBean = new QualityTypeBean();
-            qualityTypeBean.setName(typeName[i]);
-            qualityTypeBean.setPicUrl(typePic[i]);
-            qualityTypeBean.setId(i);
-            messageList.add(qualityTypeBean);
+            MessageCenterBean messageCenterBean = new MessageCenterBean();
+            messageCenterBean.setMsgType(typeName[i]);
+            messageCenterBean.setMsgIcon(typePic[i]);
+            messageCenterBean.setId(i);
+            messageList.add(messageCenterBean);
         }
         //获取头部消息列表
         communal_recycler.setLayoutManager(new LinearLayoutManager(this));
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_gray_f_two_px).create());
+                .setDividerId(R.drawable.item_divider_gray_f_one_px).create());
         messageListAdapter = new MessageListAdapter(MessageActivity.this, messageList);
         communal_recycler.setAdapter(messageListAdapter);
         messageListAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                QualityTypeBean qualityTypeBean = (QualityTypeBean) view.getTag();
-                if (qualityTypeBean != null) {
+                MessageCenterBean messageCenterBean = (MessageCenterBean) view.getTag();
+                if (messageCenterBean != null) {
                     Intent intent = new Intent();
-                    switch (qualityTypeBean.getId()) {
+                    switch (messageCenterBean.getId()) {
                         case 0:
                             intent.setClass(MessageActivity.this, MessageIndentActivity.class);
                             startActivity(intent);
@@ -188,17 +186,17 @@ public class MessageActivity extends BaseActivity {
         }
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, H_MES_STATISTICS
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, H_MES_STATISTICS_NEW
                 , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         Gson gson = new Gson();
-                        messageTotalEntity = gson.fromJson(result, MessageTotalEntity.class);
-                        if (messageTotalEntity != null) {
-                            if (messageTotalEntity.getCode().equals(SUCCESS_CODE)) {
-                                setMessageTotalData(messageTotalEntity.getMessageTotalBean());
-                            } else if (!messageTotalEntity.getCode().equals(EMPTY_CODE)) {
-                                showToast(MessageActivity.this, messageTotalEntity.getMsg());
+                        messageCenterEntity = gson.fromJson(result, MessageCenterEntity.class);
+                        if (messageCenterEntity != null) {
+                            if (messageCenterEntity.getCode().equals(SUCCESS_CODE)) {
+                                setMessageTotalData();
+                            } else if (!messageCenterEntity.getCode().equals(EMPTY_CODE)) {
+                                showToast(MessageActivity.this, messageCenterEntity.getMsg());
                             }
                         }
                         NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
@@ -211,34 +209,39 @@ public class MessageActivity extends BaseActivity {
                 });
     }
 
-    private void setMessageTotalData(MessageTotalBean messageTotalBean) {
+    private void setMessageTotalData() {
         for (int i = 0; i < messageList.size(); i++) {
-            QualityTypeBean qualityTypeBean = messageList.get(i);
+            MessageCenterBean messageCenterBean = messageList.get(i);
+            messageList.set(i, messageCenterBean);
             switch (i) {
                 case 0:
-                    qualityTypeBean.setType(messageTotalBean.getOrderTotal());
-                    messageList.set(i, qualityTypeBean);
+                    messageCenterBean.setMsgNum(messageCenterEntity.getOrderTotal());
+                    messageCenterBean.setMsgDescription(messageCenterEntity.getOrderContent());
                     break;
                 case 1:
-                    qualityTypeBean.setType(messageTotalBean.getSmTotal());
-                    messageList.set(i, qualityTypeBean);
+                    messageCenterBean.setMsgNum(messageCenterEntity.getNoticeTotal());
+                    messageCenterBean.setMsgDescription(messageCenterEntity.getNoticeContent());
                     break;
                 case 2:
-                    qualityTypeBean.setType(messageTotalBean.getCommOffifialTotal());
-                    messageList.set(i, qualityTypeBean);
+                    messageCenterBean.setMsgNum(messageCenterEntity.getActivityTotal());
+                    messageCenterBean.setMsgDescription(messageCenterEntity.getActivityContent());
                     break;
                 case 3:
-                    qualityTypeBean.setType(messageTotalBean.getCommentTotal());
-                    messageList.set(i, qualityTypeBean);
+                    messageCenterBean.setMsgNum(messageCenterEntity.getCommentTotal());
+                    messageCenterBean.setMsgDescription(messageCenterEntity.getCommentContent());
                     break;
                 case 4:
-                    qualityTypeBean.setType(messageTotalBean.getLikeTotal());
-                    messageList.set(i, qualityTypeBean);
+                    messageCenterBean.setMsgNum(messageCenterEntity.getLikeTotal());
+                    messageCenterBean.setMsgDescription(messageCenterEntity.getLikeContent());
                     break;
                 case 5:
-                    qualityTypeBean.setType(messageTotalBean.getFocusTotal());
-                    messageList.set(i, qualityTypeBean);
+                    messageCenterBean.setMsgNum(messageCenterEntity.getFocusTotal());
+                    messageCenterBean.setMsgDescription(messageCenterEntity.getFocusContent());
                     break;
+                case 6:
+                    messageCenterBean.setMsgDescription(messageCenterEntity.getMyRemindContent());
+                    break;
+
             }
         }
         messageListAdapter.setNewData(messageList);

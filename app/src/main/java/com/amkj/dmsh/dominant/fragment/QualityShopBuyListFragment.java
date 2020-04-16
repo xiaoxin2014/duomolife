@@ -61,7 +61,6 @@ import q.rorbin.badgeview.Badge;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.addShopCarGetSku;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -71,6 +70,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.QUALITY_SHOP_BUY_DETAIL;
 import static com.amkj.dmsh.constant.Url.QUALITY_SHOP_HISTORY_LIST;
 import static com.amkj.dmsh.constant.Url.QUALITY_SHOP_HISTORY_LIST_PRO;
+import static com.amkj.dmsh.dao.OrderDao.addShopCarGetSku;
 
 
 /**
@@ -177,7 +177,7 @@ public class QualityShopBuyListFragment extends BaseFragment {
         });
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_gray_f_two_px).create());
+                .setDividerId(R.drawable.item_divider_gray_f_one_px).create());
         qualityBuyListAdapter = new QualityBuyListAdapter(getActivity(), qualityBuyListBeanList);
         qualityBuyListAdapter.setHeaderAndEmpty(true);
         View headerView = LayoutInflater.from(getActivity()).inflate(R.layout.layout_communal_detail_scroll_rec_cover_wrap, null);
@@ -199,7 +199,7 @@ public class QualityShopBuyListFragment extends BaseFragment {
         rv_communal_pro.setLayoutManager(new LinearLayoutManager(getActivity()));
         rv_communal_pro.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_gray_f_two_px).create());
+                .setDividerId(R.drawable.item_divider_gray_f_one_px).create());
         qualityHistoryAdapter = new QualityHistoryAdapter(historyListBeanList);
         qualityHistoryAdapter.setEnableLoadMore(false);
         rv_communal_pro.setAdapter(qualityHistoryAdapter);

@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:divider="@drawable/item_divider_gray_f_two_px"
+    android:divider="@drawable/item_divider_gray_f_one_px"
     android:background="@color/white"
     android:showDividers="middle"
     android:focusableInTouchMode="true"

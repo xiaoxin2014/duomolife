@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
@@ -27,16 +28,24 @@ import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_INDENT;
 import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_WAITAPPRAISE_ICON;
 
-
+/**
+ * Created by xiaoxin on 2020/3/20
+ * Version:v4.4.3
+ * ClassDescription :订单列表+订单搜索结果页面合并
+ */
 public class DoMoIndentAllActivity extends BaseActivity {
     @BindView(R.id.communal_stl_tab)
     SlidingTabLayout communal_stl_tab;
     @BindView(R.id.vp_indent_container)
     ViewPager vp_indent_container;
+    @BindView(R.id.tv_indent_title)
+    TextView mTvIndentTitle;
+    @BindView(R.id.tv_search)
+    TextView mTvSearch;
     private String type = "";
     private int waitEvaluateNum;
-    public static final String INDENT_TYPE = "inquiryOrder";
     private IndentPagerAdapter indentPagerAdapter;
+    private String keyWord;
 
     @Override
     protected int getContentView() {
@@ -48,6 +57,7 @@ public class DoMoIndentAllActivity extends BaseActivity {
         getLoginStatus(this);
         Intent intent = getIntent();
         type = intent.getStringExtra("tab");
+        keyWord = intent.getStringExtra("keyWord");
         if (TextUtils.isEmpty(type)) {
             type = "all";
         }
@@ -58,9 +68,13 @@ public class DoMoIndentAllActivity extends BaseActivity {
         if (userId < 1) {
             return;
         }
+
+        mTvSearch.setVisibility(TextUtils.isEmpty(keyWord) ? View.VISIBLE : View.GONE);
+        mTvIndentTitle.setVisibility(!TextUtils.isEmpty(keyWord) ? View.VISIBLE : View.GONE);
+        communal_stl_tab.setVisibility(TextUtils.isEmpty(keyWord) ? View.VISIBLE : View.GONE);
         communal_stl_tab.setTextsize(AutoSizeUtils.mm2px(mAppContext, 28));
         communal_stl_tab.setTextUnselectColor(getResources().getColor(R.color.text_login_gray_s));
-        indentPagerAdapter = new IndentPagerAdapter(getSupportFragmentManager());
+        indentPagerAdapter = new IndentPagerAdapter(getSupportFragmentManager(), keyWord);
         vp_indent_container.setAdapter(indentPagerAdapter);
         vp_indent_container.setOffscreenPageLimit(4);
         communal_stl_tab.setViewPager(vp_indent_container);
@@ -128,7 +142,7 @@ public class DoMoIndentAllActivity extends BaseActivity {
         finish();
     }
 
-    @OnClick(R.id.iv_indent_search)
+    @OnClick(R.id.tv_search)
     void skipSearch(View view) {
         Intent intent = new Intent(DoMoIndentAllActivity.this, IndentSearchActivity.class);
         intent.putExtra(SEARCH_TYPE, SEARCH_INDENT);

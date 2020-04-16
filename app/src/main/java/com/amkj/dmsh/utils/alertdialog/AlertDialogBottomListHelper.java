@@ -72,7 +72,7 @@ public class AlertDialogBottomListHelper {
         communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(context));
         communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_gray_f_two_px)
+                .setDividerId(R.drawable.item_divider_gray_f_one_px)
                 .setLastDraw(false).create());
         bottomListTextAdapter = new BottomListTextAdapter(bottomItemStringList);
         communal_recycler_wrap.setAdapter(bottomListTextAdapter);

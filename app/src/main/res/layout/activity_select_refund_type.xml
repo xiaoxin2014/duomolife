@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_gray_f"
+    android:orientation="vertical">
+
+    <include layout="@layout/activity_duomolife_indent_header" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/communal_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border_bottom_gray_ten_line"
+        android:paddingBottom="10dp"
+        android:scrollbars="none" />
+
+    <RelativeLayout
+        android:id="@+id/rl_only_refund"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border_bottom_line"
+        android:padding="@dimen/sc_mm_30">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="我要退款（未收到货或者无需退货）"
+                android:textColor="@color/text_black_t"
+                android:textSize="@dimen/sc_mm_28" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sc_mm_20"
+                android:text="申请之前请提前与客服联系"
+                android:textColor="@color/color_blue_reply_com"
+                android:textSize="@dimen/sc_mm_24" />
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="@dimen/sc_mm_13"
+            android:layout_height="@dimen/sc_mm_26"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/black_next_icon" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_return_goods"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border_bottom_line"
+        android:padding="@dimen/sc_mm_30">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="我要退货退款（我已收到货）"
+                android:textColor="@color/text_black_t"
+                android:textSize="@dimen/sc_mm_28" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sc_mm_20"
+                android:text="申请通过后请及时将退货物品寄出"
+                android:textColor="@color/color_blue_reply_com"
+                android:textSize="@dimen/sc_mm_24" />
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="@dimen/sc_mm_13"
+            android:layout_height="@dimen/sc_mm_26"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/black_next_icon" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_exchange_goods"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border_bottom_line"
+        android:padding="@dimen/sc_mm_30">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="我要换货（发错货或者商品质量问题）"
+                android:textColor="@color/text_black_t"
+                android:textSize="@dimen/sc_mm_28" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sc_mm_20"
+                android:text="申请之前请提前与客服联系"
+                android:textColor="@color/color_blue_reply_com"
+                android:textSize="@dimen/sc_mm_24" />
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="@dimen/sc_mm_13"
+            android:layout_height="@dimen/sc_mm_26"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/black_next_icon" />
+    </RelativeLayout>
+</LinearLayout>

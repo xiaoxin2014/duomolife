@@ -119,7 +119,7 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
         mProductTypeList.add("211");
         mProductTypeList.add("208");
         mProductTypeList.add("209");
-        qualityCustomAdapter = new QualityCustomAdapter(getSupportFragmentManager(), mProductTypeList,getSimpleName());
+        qualityCustomAdapter = new QualityCustomAdapter(getSupportFragmentManager(), mProductTypeList, getSimpleName());
         mVpCustom.setAdapter(qualityCustomAdapter);
         mVpCustom.setOffscreenPageLimit(titles.length - 1);
         mSlidingTablayout.setViewPager(mVpCustom, titles);
@@ -369,9 +369,10 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
             try {
                 if (mSlidingTablayout != null) {
                     TabNameBean tabNameBean = (TabNameBean) message.result;
-                    if (getSimpleName().equals(tabNameBean.getSimpleName())) {
+                    String simpleName = tabNameBean.getSimpleName();
+                    if (getSimpleName().equals(simpleName) && !TextUtils.isEmpty(simpleName)) {
                         TextView titleView = mSlidingTablayout.getTitleView(tabNameBean.getPosition());
-                        titleView.setText(tabNameBean.getTabName());
+                        titleView.setText(simpleName);
                     }
                 }
             } catch (Exception e) {
@@ -379,5 +380,4 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
             }
         }
     }
-
 }

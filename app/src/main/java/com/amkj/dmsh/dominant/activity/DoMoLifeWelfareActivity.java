@@ -57,8 +57,6 @@ import q.rorbin.badgeview.Badge;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
-
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
@@ -68,6 +66,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
 import static com.amkj.dmsh.constant.Url.H_DML_PREVIOUS_THEME;
 import static com.amkj.dmsh.constant.Url.H_DML_RECOMMEND;
 import static com.amkj.dmsh.constant.Url.H_DML_THEME;
+import static com.amkj.dmsh.dao.OrderDao.getCarCount;
 
 
 /**
@@ -148,7 +147,7 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
         rv_communal_pro.setLayoutManager(new LinearLayoutManager(DoMoLifeWelfareActivity.this));
         rv_communal_pro.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_gray_f_two_px)
+                .setDividerId(R.drawable.item_divider_gray_f_one_px)
                 .create());
         qualityPreviousAdapter = new QualityHistoryAdapter(welfarePreviousList);
         qualityPreviousAdapter.setEnableLoadMore(false);

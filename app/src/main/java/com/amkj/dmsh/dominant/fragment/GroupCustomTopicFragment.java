@@ -85,7 +85,6 @@ public class GroupCustomTopicFragment extends BaseFragment {
         return true;
     }
 
-
     private void getQualityCustomPro() {
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", page);

@@ -27,7 +27,6 @@ import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.find.bean.EventMessageBean;
-import com.amkj.dmsh.find.bean.TopicDetailEntity;
 import com.amkj.dmsh.homepage.bean.ScoreGoodsEntity.ScoreGoodsBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
@@ -70,7 +69,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_ADD_IMG;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.constant.Url.GET_TOPIC_DETAIL;
 import static com.amkj.dmsh.constant.Url.PUBLISH_POST_ANDE_VALUATE;
 import static com.amkj.dmsh.release.tutu.CameraComponentSample.DEFAULT_PATH;
 import static com.amkj.dmsh.utils.ImageFormatUtils.getImageFormatInstance;
@@ -338,25 +336,6 @@ public class JoinTopicActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
-        //订单列表直接跳转到点评界面时，调用此接口获取编辑框提示和奖励提示
-        if (TextUtils.isEmpty(topicId)) {
-            Map<String, Object> params = new HashMap<>();
-            NetLoadUtils.getNetInstance().loadNetDataPost(this, GET_TOPIC_DETAIL, params, new NetLoadListenerHelper() {
-                @Override
-                public void onSuccess(String result) {
-                    TopicDetailEntity topicDetailEntity = new Gson().fromJson(result, TopicDetailEntity.class);
-                    if (topicDetailEntity != null) {
-                        if (topicDetailEntity.getCode().equals(SUCCESS_CODE)) {
-                            //编辑框提示
-                            mEtInput.setHint(getStrings(topicDetailEntity.getReminder()));
-                            //奖励提示
-                            mTvScoreTips.setVisibility(!TextUtils.isEmpty(topicDetailEntity.getRewardTip()) ? View.VISIBLE : View.GONE);
-                            mTvScoreTips.setText(getStrings(topicDetailEntity.getRewardTip()));
-                        }
-                    }
-                }
-            });
-        }
     }
 
 

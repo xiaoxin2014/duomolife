@@ -1,7 +1,6 @@
 package com.amkj.dmsh.shopdetails.adapter;
 
-import android.content.Context;
-import android.graphics.Color;
+import android.app.Activity;
 import android.support.text.emoji.widget.EmojiTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +12,7 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.bean.ImageBean;
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.find.activity.ImagePagerActivity;
 import com.amkj.dmsh.find.adapter.FindImageListAdapter;
@@ -22,8 +22,6 @@ import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.klinker.android.link_builder.Link;
-import com.klinker.android.link_builder.LinkBuilder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,9 +37,9 @@ import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
  * Created by atd48 on 2016/8/15.
  */
 public class DirectEvaluationAdapter extends BaseMultiItemQuickAdapter<GoodsCommentBean, DirectEvaluationAdapter.ProductEvaViewHolder> {
-    private final Context context;
+    private final Activity context;
 
-    public DirectEvaluationAdapter(Context context, List<GoodsCommentBean> goodsCommentBeanList) {
+    public DirectEvaluationAdapter(Activity context, List<GoodsCommentBean> goodsCommentBeanList) {
         super(goodsCommentBeanList);
         this.context = context;
         addItemType(ConstantVariable.TYPE_0, R.layout.adapter_direct_evaluation);
@@ -78,6 +76,7 @@ public class DirectEvaluationAdapter extends BaseMultiItemQuickAdapter<GoodsComm
                 if (!TextUtils.isEmpty(goodsCommentBean.getContent())) {
                     tv_direct_evaluation.setVisibility(View.VISIBLE);
                     tv_direct_evaluation.setText(goodsCommentBean.getContent());
+                    ConstantMethod.setTextLink(context, tv_direct_evaluation);
                 } else {
                     tv_direct_evaluation.setVisibility(View.GONE);
                 }
@@ -87,16 +86,8 @@ public class DirectEvaluationAdapter extends BaseMultiItemQuickAdapter<GoodsComm
                     String replyName = getStrings("多么生活：");
                     reply_content = getStrings(replyName + (TextUtils.isEmpty(reply_content) ?
                             context.getResources().getString(R.string.direct_eva_hint) : reply_content));
-                    Link replyNameLink = new Link(replyName);
-//                    回复颜色
-                    replyNameLink.setTextColor(Color.parseColor("#8e8e8e"));
-                    replyNameLink.setUnderlined(false);
-                    replyNameLink.setHighlightAlpha(0f);
-                    emo_direct_eva_reply.setText(getStrings(reply_content));
-                    LinkBuilder.on(emo_direct_eva_reply)
-                            .setText(reply_content)
-                            .addLink(replyNameLink)
-                            .build();
+                    emo_direct_eva_reply.setText(reply_content);
+                    ConstantMethod.setTextLink(context, emo_direct_eva_reply);
                 } else {
                     ll_eva_comment_reply.setVisibility(View.GONE);
                 }

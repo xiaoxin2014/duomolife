@@ -1,28 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:orientation="vertical"
+    android:layout_height="match_parent"
     android:background="@color/white"
-    android:layout_height="match_parent">
-    <RelativeLayout
+    android:orientation="vertical">
+
+    <include layout="@layout/activity_domolife_indent_new_header" />
+
+    <com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout xmlns:tl="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/communal_stl_tab"
         android:layout_width="match_parent"
-        android:background="@drawable/border_bottom_line"
-        android:paddingBottom="@dimen/sc_mm_2"
-        android:layout_height="wrap_content">
-        <include layout="@layout/activity_duomolife_indent_header"/>
-    </RelativeLayout>
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/sc_mm_88">
-        <include layout="@layout/layout_slid_check_blue_un_black"/>
-    </RelativeLayout>
-    <View
-        android:layout_width="match_parent"
-        android:background="@color/light_gray_f"
-        android:layout_height="@dimen/dimen_5_dp"/>
+        android:layout_height="@dimen/sc_mm_88"
+        android:background="@drawable/border_bottom_gray_ff_five_line"
+        tl:tl_indicator_color="@color/text_login_blue_z"
+        tl:tl_indicator_corner_radius="@dimen/dimen_1dp"
+        tl:tl_indicator_gravity="BOTTOM"
+        tl:tl_indicator_height="@dimen/dimen_2dp"
+        tl:tl_indicator_margin_bottom="@dimen/dimen_5_dp"
+        tl:tl_indicator_style="NORMAL"
+        tl:tl_indicator_width_equal_title="true"
+        tl:tl_tab_space_equal="true"
+        tl:tl_textSelectColor="@color/text_login_blue_z"
+        tl:tl_textUnselectColor="@color/text_black_t"
+        tl:tl_textsize="15sp" />
+
     <android.support.v4.view.ViewPager
+        android:id="@+id/vp_indent_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/vp_indent_container"
-        android:scrollbars="none"/>
+        android:scrollbars="none" />
 </LinearLayout>

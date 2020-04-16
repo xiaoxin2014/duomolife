@@ -9,6 +9,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SimpleItemAnimator;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -62,7 +63,6 @@ import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.google.gson.Gson;
 import com.gyf.barlibrary.ImmersionBar;
-import com.qiyukf.unicorn.api.UnreadCountChangeListener;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.socialize.UMAuthListener;
 import com.umeng.socialize.UMShareAPI;
@@ -84,7 +84,6 @@ import q.rorbin.badgeview.Badge;
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
 import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.MINE_BOTTOM_TYPE;
-import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getMessageCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
@@ -106,6 +105,7 @@ import static com.amkj.dmsh.constant.Url.MINE_BOTTOM_DATA;
 import static com.amkj.dmsh.constant.Url.MINE_PAGE;
 import static com.amkj.dmsh.constant.Url.MINE_PAGE_AD;
 import static com.amkj.dmsh.constant.Url.Q_QUERY_INDENT_COUNT;
+import static com.amkj.dmsh.dao.OrderDao.getCarCount;
 import static com.umeng.socialize.bean.SHARE_MEDIA.WEIXIN;
 
 /**
@@ -256,7 +256,7 @@ public class MineDataFragment extends BaseFragment {
         communal_recycler_wrap.setLayoutManager(manager);
         communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_gray_f_two_px).create());
+                .setDividerId(R.drawable.item_divider_gray_f_one_px).create());
         communal_recycler_wrap.setNestedScrollingEnabled(false);
         mineTypeList = new ArrayList<>();
         MineTypeEntity bottomLocalData = getBottomLocalData();
@@ -273,6 +273,11 @@ public class MineDataFragment extends BaseFragment {
         }
         typeMineAdapter = new MineTypeAdapter(getActivity(), mineTypeList);
         communal_recycler_wrap.setAdapter(typeMineAdapter);
+        //解决调用notifyItemChanged闪烁问题
+        SimpleItemAnimator itemAnimator = (SimpleItemAnimator) communal_recycler_wrap.getItemAnimator();
+        if (itemAnimator != null) {
+            itemAnimator.setSupportsChangeAnimations(false);
+        }
         typeMineAdapter.setOnItemClickListener((adapter, view, position) -> {
             MineTypeBean mineTypeBean = (MineTypeBean) view.getTag();
             if (mineTypeBean != null) {
@@ -301,7 +306,6 @@ public class MineDataFragment extends BaseFragment {
         super.onResume();
         if (userId > 0) {
             getNetDataInfo();
-            getDoMeIndentDataCount();
             getMineAd();
             getMessageCount(getActivity(), badgeMsg);
             getCarCount(getActivity());
@@ -331,6 +335,7 @@ public class MineDataFragment extends BaseFragment {
                             setDeviceInfo(getActivity(), communalUserInfoBean.getApp_version_no()
                                     , communalUserInfoBean.getDevice_model()
                                     , communalUserInfoBean.getDevice_sys_version(), communalUserInfoBean.getSysNotice());
+                            getDoMeIndentDataCount();
                         } else {
                             setErrorUserData();
                             showToast(getActivity(), minePageData.getMsg());
@@ -346,6 +351,8 @@ public class MineDataFragment extends BaseFragment {
 
     //设置用户数据
     private void setData(final CommunalUserInfoBean communalUserInfoBean) {
+        //更新优惠券数量
+        updateBottomNum("DirectMyCouponActivity", communalUserInfoBean.getCouponTotal());
         tv_mine_name.setText(getStrings(communalUserInfoBean.getNickname()));
         tv_mine_att_count.setText(String.valueOf(communalUserInfoBean.getFllow()));
         tv_mine_fans_count.setText(String.valueOf(communalUserInfoBean.getFans()));
@@ -365,7 +372,6 @@ public class MineDataFragment extends BaseFragment {
                 ? ImageConverterUtils.getFormatImg(communalUserInfoBean.getAvatar()) : "");
         GlideImageLoaderUtil.loadImage(getActivity(), iv_mine_page_bg, !TextUtils.isEmpty(communalUserInfoBean.getBgimg_url())
                 ? ImageConverterUtils.getFormatImg(communalUserInfoBean.getBgimg_url()) : BASE_RESOURCE_DRAW + R.drawable.mine_no_login_bg);
-        setBottomTypeCount(communalUserInfoBean);
         CommunalUserInfoBean.NoticeInfoBean noticeInfo = communalUserInfoBean.getNoticeInfo();
         if (noticeInfo != null && !TextUtils.isEmpty(noticeInfo.getContent())) {
             rel_personal_data_sup.setVisibility(View.VISIBLE);
@@ -376,23 +382,13 @@ public class MineDataFragment extends BaseFragment {
     }
 
     //设置十二宫格相关数量
-    private void setBottomTypeCount(CommunalUserInfoBean userData) {
-        for (int i = 0; i < mineTypeList.size(); i++) {
-            MineTypeBean mineTypeBean = mineTypeList.get(i);
-            String androidLink = getStrings(mineTypeBean.getAndroidUrl());
-            if (userData == null) {
-                mineTypeBean.setMesCount(0);
-                //清空所有购物车数量
-                EventBus.getDefault().post(new EventMessage(ConstantVariable.UPDATE_CAR_NUM, 0));
-            } else if (androidLink.contains("DirectMyCouponActivity")) {//优惠券
-                mineTypeBean.setMesCount(userData.getCouponTotal());
-            } else if (androidLink.contains("IntegralProductIndentActivity")) {//积分订单
-                mineTypeBean.setMesCount(userData.getJfTotal());
-            } else if (!androidLink.contains("ShopCarActivity")) {
-                mineTypeBean.setMesCount(0);
-            }
+    private void clearBottomTypeCount() {
+        for (MineTypeBean mineTypeBean : mineTypeList) {
+            mineTypeBean.setMesCount(0);
         }
         typeMineAdapter.notifyDataSetChanged();
+        //清空所有购物车数量
+        EventBus.getDefault().post(new EventMessage(ConstantVariable.UPDATE_CAR_NUM, 0));
     }
 
     /**
@@ -400,34 +396,25 @@ public class MineDataFragment extends BaseFragment {
      */
     private void setQyService() {
         qyInstance = QyServiceUtils.getQyInstance();
-        setServiceUnread(qyInstance.getServiceTotalCount());
-        qyInstance.getServiceCount(new UnreadCountChangeListener() {
-            @Override
-            public void onUnreadCountChange(int count) {
-                setServiceUnread(count);
-            }
-        });
+        updateBottomNum("ManagerServiceChat", qyInstance.getServiceTotalCount());
+        qyInstance.getServiceCount(count -> updateBottomNum("ManagerServiceChat", count));
     }
 
-    /**
-     * 更新客服未读消息
-     *
-     * @param serviceTotalCount 客服未读消息条数
-     */
-    private void setServiceUnread(int serviceTotalCount) {
-        for (int i = 0; i < mineTypeList.size(); i++) {
-            MineTypeBean mineTypeBean = mineTypeList.get(i);
-            String androidLink = getStrings(mineTypeBean.getAndroidUrl());
-            if (androidLink.contains("ManagerServiceChat")) {
-                if (serviceTotalCount != mineTypeBean.getMesCount()) {
-                    mineTypeBean.setMesCount(serviceTotalCount);
-                    typeMineAdapter.notifyDataSetChanged();
+
+    //更新十二宫格数量
+    private void updateBottomNum(String link, int num) {
+        if (mineTypeList != null && mineTypeList.size() > 0 && typeMineAdapter != null) {
+            for (int i = 0; i < mineTypeList.size(); i++) {
+                MineTypeBean mineTypeBean = mineTypeList.get(i);
+                String androidLink = getStrings(mineTypeBean.getAndroidUrl());
+                if (!TextUtils.isEmpty(androidLink) && androidLink.contains(link)) {
+                    mineTypeBean.setMesCount(num);
+                    typeMineAdapter.notifyItemChanged(i);
+                    break;
                 }
-                break;
             }
         }
     }
-
 
     /**
      * 获取订单数量显示
@@ -452,6 +439,8 @@ public class MineDataFragment extends BaseFragment {
     //设置订单数量
     private void setIndentCount(DirectIndentCountBean messageTotalBean) {
         if (messageTotalBean != null) {
+            //积分订单数量
+            updateBottomNum("app://IntegralProductIndentActivity", messageTotalBean.getIntegralTakeDeliveryNum());
             //待付款
             indentTypeList.get(0).setType(messageTotalBean.getWaitPayNum());
             //待发货
@@ -469,21 +458,6 @@ public class MineDataFragment extends BaseFragment {
             }
         }
         indentTypeAdapter.notifyDataSetChanged();
-    }
-
-    //更新购物车数量
-    private void updateShopCartNum(int num) {
-        if (mineTypeList != null && mineTypeList.size() > 0 && typeMineAdapter != null) {
-            for (int i = 0; i < mineTypeList.size(); i++) {
-                MineTypeBean mineTypeBean = mineTypeList.get(i);
-                String androidLink = getStrings(mineTypeBean.getAndroidUrl());
-                if (!TextUtils.isEmpty(androidLink) && androidLink.contains("ShopCarActivity")) {
-                    mineTypeBean.setMesCount(num);
-                    typeMineAdapter.notifyItemChanged(i);
-                    break;
-                }
-            }
-        }
     }
 
     //获取十二宫格数据
@@ -513,7 +487,7 @@ public class MineDataFragment extends BaseFragment {
     private void setErrorUserData() {
         try {
             initLoggedView();
-            setBottomTypeCount(null);
+            clearBottomTypeCount();
             setIndentCount(null);
             badgeMsg.setBadgeNumber(0);//清空消息数
         } catch (Exception e) {
@@ -853,7 +827,7 @@ public class MineDataFragment extends BaseFragment {
         if (TOKEN_EXPIRE_LOG_OUT.equals(message.type)) {
             setErrorUserData();
         } else if (ConstantVariable.UPDATE_CAR_NUM.equals(message.type)) {
-            updateShopCartNum((int) message.result);
+            updateBottomNum("ShopCarActivity", (int) message.result);
         }
     }
 }

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_express_info"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/sc_mm_28"
+    android:background="@color/white"
+    android:orientation="horizontal"
+    android:padding="@dimen/sc_mm_20"
+    android:visibility="gone">
+
+    <ImageView
+        android:id="@+id/iv_icon"
+        android:layout_width="@dimen/sc_mm_27"
+        android:layout_height="@dimen/sc_mm_27"
+        android:layout_marginTop="@dimen/sc_mm_5"
+        android:src="@drawable/express_blue" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/sc_mm_17"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_express_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="6666"
+            android:textColor="@color/text_login_blue_z"
+            android:textSize="@dimen/sc_mm_24" />
+
+        <TextView
+            android:id="@+id/tv_express_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sc_mm_14"
+            android:text="@string/defaul"
+            android:textColor="@color/color_blue_reply_com"
+            android:textSize="@dimen/sc_mm_22" />
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="@dimen/sc_mm_16"
+        android:layout_height="@dimen/sc_mm_32"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="@dimen/sc_mm_30"
+        android:src="@drawable/common_back_btn_nor_right" />
+</LinearLayout>

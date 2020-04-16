@@ -58,6 +58,15 @@ public class IndentWriteEntity extends BaseTimeEntity {
         private List<PriceInfoBean> priceInfos;
         private List<ProductsBean> products;
         private PrerogativeActivityInfo prerogativeActivityInfo;
+        private List<String> showPayTypeList;
+
+        public List<String> getShowPayTypeList() {
+            return showPayTypeList;
+        }
+
+        public void setShowPayTypeList(List<String> showPayTypeList) {
+            this.showPayTypeList = showPayTypeList;
+        }
 
         public PrerogativeActivityInfo getPurchaseBean() {
             return prerogativeActivityInfo;
@@ -300,7 +309,7 @@ public class IndentWriteEntity extends BaseTimeEntity {
                 private int isPrerogative;
 
                 public boolean isPrerogative() {
-                    return isPrerogative==1;
+                    return isPrerogative == 1;
                 }
 
                 public void setIsPrerogative(int isPrerogative) {

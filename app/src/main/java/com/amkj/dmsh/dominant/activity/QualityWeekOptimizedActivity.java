@@ -55,9 +55,7 @@ import q.rorbin.badgeview.Badge;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static com.amkj.dmsh.constant.ConstantMethod.addShopCarGetSku;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
-import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -67,6 +65,8 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.QUALITY_WEEK_OPTIMIZED_DETAIL;
 import static com.amkj.dmsh.constant.Url.QUALITY_WEEK_OPTIMIZED_PRO;
+import static com.amkj.dmsh.dao.OrderDao.addShopCarGetSku;
+import static com.amkj.dmsh.dao.OrderDao.getCarCount;
 
 
 /**
@@ -157,7 +157,7 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
         });
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_gray_f_two_px)
+                .setDividerId(R.drawable.item_divider_gray_f_one_px)
                 .create());
         qualityBuyListAdapter = new QualityBuyListAdapter(QualityWeekOptimizedActivity.this, qualityBuyListBeanList);
         qualityBuyListAdapter.setHeaderAndEmpty(true);

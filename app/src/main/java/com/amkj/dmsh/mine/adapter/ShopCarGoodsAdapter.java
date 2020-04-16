@@ -3,6 +3,7 @@ package com.amkj.dmsh.mine.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -82,18 +83,20 @@ public class ShopCarGoodsAdapter extends BaseMultiItemQuickAdapter<MultiItemEnti
                         .addOnClickListener(R.id.img_integration_details_credits_minus).setTag(R.id.img_integration_details_credits_minus, cartInfoBean);
 
                 //设置间距
-                TextView dividerView = helper.getView(R.id.tv_line_ten);
+                View dividerView = helper.getView(R.id.tv_line_ten);
                 ViewGroup.LayoutParams dividerLayoutParams = dividerView.getLayoutParams();
                 int parentPosition = getParentPosition(multiItemEntity);
                 if (parentPosition != -1) {
                     ActivityInfoBean activityInfoBean = (ActivityInfoBean) getData().get(parentPosition);
                     List<CartInfoBean> subItems = activityInfoBean.getSubItems();
                     if (!TextUtils.isEmpty(activityInfoBean.getActivityCode()) && subItems != null && subItems.size() > 0 && subItems.get(subItems.size() - 1) == cartInfoBean) {
-                        dividerLayoutParams.height = AutoSizeUtils.dp2px(context, 10);
+                        dividerLayoutParams.height = AutoSizeUtils.mm2px(context, 20);
                         dividerLayoutParams.width = MATCH_PARENT;
+                        dividerView.setBackgroundColor(context.getResources().getColor(R.color.light_gray_f));
                     } else {
-                        dividerLayoutParams.height = AutoSizeUtils.dp2px(context, 0.5f);
+                        dividerLayoutParams.height = AutoSizeUtils.mm2px(context, 1);
                         dividerLayoutParams.width = MATCH_PARENT;
+                        dividerView.setBackgroundColor(context.getResources().getColor(R.color.text_color_e_s));
                     }
                     dividerView.setLayoutParams(dividerLayoutParams);
                 }

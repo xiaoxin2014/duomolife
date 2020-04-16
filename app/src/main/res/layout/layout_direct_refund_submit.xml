@@ -3,9 +3,9 @@
     android:id="@+id/tv_submit_apply_refund"
     android:layout_width="match_parent"
     android:layout_height="@dimen/sc_mm_80"
-    android:visibility="gone"
     android:background="@drawable/border_cir_4dp_z_blue_solid"
     android:gravity="center"
+    android:visibility="gone"
     android:text="提交"
     android:textColor="@color/white"
     android:textSize="@dimen/sc_mm_32" />

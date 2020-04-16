@@ -5,7 +5,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.amkj.dmsh.base.BaseFragment;
-import com.amkj.dmsh.shopdetails.bean.DirectLogisticPacketBean;
+import com.amkj.dmsh.shopdetails.bean.LogisticsNewEntity.PackageInfoBean;
 import com.amkj.dmsh.shopdetails.fragment.DirectLogisticsFragment;
 
 import java.util.HashMap;
@@ -21,21 +21,25 @@ import java.util.Map;
  */
 
 public class LogisticsPagerAdapter extends FragmentPagerAdapter {
-    private Map<String, Object> objectParams;
     private final List<String> pageTitle;
-    private List<DirectLogisticPacketBean> directLogisticsBeans;
+    private List<PackageInfoBean> packageList;
 
-    public LogisticsPagerAdapter(FragmentManager fm, List<String> pageTitle, List<DirectLogisticPacketBean> directLogisticsBeans) {
+    public LogisticsPagerAdapter(FragmentManager fm, List<String> pageTitle, List<PackageInfoBean> packageList) {
         super(fm);
         this.pageTitle = pageTitle;
-        this.directLogisticsBeans = directLogisticsBeans;
+        this.packageList = packageList;
     }
 
     @Override
     public Fragment getItem(int position) {
-        objectParams = new HashMap<>();
-        objectParams.put("DirectLogisticPacketBean", directLogisticsBeans.get(position));
-        return BaseFragment.newInstance(DirectLogisticsFragment.class, null, objectParams);
+        Map<String, String> params = new HashMap<>();
+        PackageInfoBean packageInfoBean = packageList.get(position);
+        if (packageInfoBean != null) {
+            params.put("orderNo", packageInfoBean.getOrderNo());
+            params.put("expressNo", packageInfoBean.getExpressNo());
+            params.put("refundNo", packageInfoBean.getRefundNo());
+        }
+        return BaseFragment.newInstance(DirectLogisticsFragment.class, params, null);
     }
 
     @Override

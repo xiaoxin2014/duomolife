@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.activity.CommentDetailsActivity;
@@ -67,6 +68,7 @@ public class ArticleCommentAdapter extends BaseQuickAdapter<DmlSearchCommentBean
                 .addOnClickListener(R.id.tv_comm_comment_receive).setTag(R.id.tv_comm_comment_receive, dmlSearchCommentBean)
                 .addOnClickListener(R.id.civ_comm_comment_avatar).setTag(R.id.civ_comm_comment_avatar, R.id.iv_tag, dmlSearchCommentBean)
                 .addOnLongClickListener(R.id.tv_comm_comment_content).setTag(R.id.tv_comm_comment_content, dmlSearchCommentBean);
+        ConstantMethod.setTextLink(context, helper.getView(R.id.tv_comm_comment_content));
         tv_comm_comment_like.setText(dmlSearchCommentBean.getLike_num() > 0
                 ? String.valueOf(dmlSearchCommentBean.getLike_num()) : "赞");
         tv_comm_comment_like.setSelected(dmlSearchCommentBean.isFavor());

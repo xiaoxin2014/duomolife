@@ -21,8 +21,8 @@ import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.amkj.dmsh.constant.ConstantMethod.addShopCarGetSku;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.dao.OrderDao.addShopCarGetSku;
 
 /**
  * Created by xiaoxin on 2019/3/18 0018

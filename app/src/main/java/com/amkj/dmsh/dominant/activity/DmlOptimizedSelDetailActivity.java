@@ -140,7 +140,7 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
         rv_communal_pro.setLayoutManager(new LinearLayoutManager(DmlOptimizedSelDetailActivity.this));
         rv_communal_pro.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_gray_f_two_px).create());
+                .setDividerId(R.drawable.item_divider_gray_f_one_px).create());
         optimizedSlideProAdapter = new WelfareSlideProAdapter(DmlOptimizedSelDetailActivity.this, welfareProductList);
         optimizedSlideProAdapter.setEnableLoadMore(false);
         rv_communal_pro.setAdapter(optimizedSlideProAdapter);

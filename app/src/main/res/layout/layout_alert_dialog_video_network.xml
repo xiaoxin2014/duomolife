@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/border_rect_15dp_bg_white"
-    android:divider="@drawable/item_divider_gray_f_two_px"
+    android:divider="@drawable/item_divider_gray_f_one_px"
     android:orientation="vertical"
     android:showDividers="middle">
     <TextView
@@ -43,7 +43,7 @@
         android:layout_height="@dimen/sc_mm_60"
         android:layout_below="@id/tv_alert_message"
         android:layout_marginTop="@dimen/sc_mm_10"
-        android:divider="@drawable/item_divider_gray_f_two_px"
+        android:divider="@drawable/item_divider_gray_f_one_px"
         android:gravity="center"
         android:orientation="horizontal"
         android:paddingLeft="@dimen/sc_mm_40"

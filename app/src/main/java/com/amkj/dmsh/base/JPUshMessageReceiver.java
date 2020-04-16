@@ -6,15 +6,18 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 
+import com.alibaba.fastjson.JSON;
 import com.amkj.dmsh.MainActivity;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.utils.Log;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.util.Map;
 
 import cn.jpush.android.api.JPushInterface;
 
@@ -22,9 +25,9 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.installApps;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantVariable.BROADCAST_NOTIFY;
+import static com.amkj.dmsh.constant.ConstantVariable.REFRESH_MESSAGE_TOTAL;
 import static com.amkj.dmsh.dao.AddClickDao.clickTotalPush;
 
-;
 
 /**
  * 自定义接收器
@@ -49,15 +52,13 @@ public class JPUshMessageReceiver extends BroadcastReceiver {
         } else if (JPushInterface.ACTION_NOTIFICATION_RECEIVED.equals(intent.getAction())) {
 //            接收到的通知消息
             try {
-                JSONObject json = new JSONObject(bundle.getString(JPushInterface.EXTRA_EXTRA));
-                String pushType = json.getString("pushType");
+                Map map = (Map) JSON.parse(bundle.getString(JPushInterface.EXTRA_EXTRA));
+                String pushType = map.get("pushType") + "";
 //                if (0 < Integer.parseInt(pushType) && Integer.parseInt(pushType) <= 35) {//暂时先注释
-//                    消息
-                Intent sendMessage = new Intent(MainActivity.MESSAGE_RECEIVED_ACTION);
-                sendMessage.putExtra("isShow", true);
-                context.sendBroadcast(sendMessage);
+                //通知消息角标更新
+                EventBus.getDefault().post(new EventMessage(REFRESH_MESSAGE_TOTAL, REFRESH_MESSAGE_TOTAL));
 //                }
-            } catch (JSONException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
@@ -86,7 +87,7 @@ public class JPUshMessageReceiver extends BroadcastReceiver {
                     e.printStackTrace();
                 }
                 if (!TextUtils.isEmpty(pushType)) {
-                   clickTotalPush(pushType, objId);
+                    clickTotalPush(pushType, objId);
                 }
                 if (!TextUtils.isEmpty(pushType) && "999".equals(pushType)) { //跳转客服
                     QyServiceUtils qyServiceUtils = QyServiceUtils.getQyInstance();
@@ -123,7 +124,7 @@ public class JPUshMessageReceiver extends BroadcastReceiver {
      */
     private void newTaskActivity(Context context) {
         TinkerBaseApplicationLike tinkerBaseApplicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-        if(!tinkerBaseApplicationLike.existActivity(MainActivity.class.getName())){
+        if (!tinkerBaseApplicationLike.existActivity(MainActivity.class.getName())) {
             Intent data = new Intent(context, MainActivity.class);
             // 说明系统中不存在这个activity
             data.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

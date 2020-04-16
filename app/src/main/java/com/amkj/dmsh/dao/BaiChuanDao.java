@@ -91,10 +91,6 @@ public class BaiChuanDao {
         //淘宝客参数
         AlibcTaokeParams taokeParams = new AlibcTaokeParams("", "", "");
         taokeParams.setPid(TAOBAO_PID);
-        taokeParams.setAdzoneid(TAOBAO_ADZONEID);
-        taokeParams.setSubPid(TAOBAO_PID);
-        taokeParams.extraParams = new HashMap<>();
-        taokeParams.extraParams.put("taokeAppkey", TAOBAO_APPKEY);
         if (!TextUtils.isEmpty(tbUrl)) {
             if (isTaoBaoUrl(tbUrl) || isTbUrl) {
                 try {

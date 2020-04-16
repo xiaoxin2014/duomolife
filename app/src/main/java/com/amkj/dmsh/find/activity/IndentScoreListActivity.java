@@ -1,5 +1,6 @@
 package com.amkj.dmsh.find.activity;
 
+import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -54,6 +55,7 @@ public class IndentScoreListActivity extends BaseActivity {
     private IndentScoreGoodsAdapter mScoreGoodsAdapter;
     private ScoreGoodsEntity mScoreGoodsEntity;
     private String orderNo;
+    private boolean isFirst=true;
 
     @Override
     protected int getContentView() {
@@ -69,7 +71,6 @@ public class IndentScoreListActivity extends BaseActivity {
                 return;
             }
         }
-        mTvHeaderTitle.setText("写点评");
         mTlNormalBar.setSelected(true);
         mTvHeaderShared.setVisibility(View.GONE);
         mTvHeaderShared.setCompoundDrawables(null, null, null, null);
@@ -104,6 +105,7 @@ public class IndentScoreListActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.GET_SCORE_PRODUCT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
+                mSmartLayout.finishRefresh();
                 mGoodsList.clear();
                 mScoreGoodsEntity = new Gson().fromJson(result, ScoreGoodsEntity.class);
                 if (mScoreGoodsEntity != null) {
@@ -116,12 +118,25 @@ public class IndentScoreListActivity extends BaseActivity {
                     }
                 }
 
-                mScoreGoodsAdapter.notifyDataSetChanged();
-                NetLoadUtils.getNetInstance().showLoadSir(loadService, mGoodsList, mScoreGoodsEntity);
+                if (mGoodsList.size() == 1) {
+                    ScoreGoodsBean scoreGoodsBean = mGoodsList.get(0);
+                    Intent intent = new Intent(getActivity(), JoinTopicActivity.class);
+                    intent.putExtra("reminder", mScoreGoodsEntity.getContentReminder());
+                    intent.putExtra("rewardtip", mScoreGoodsEntity.getRewardTip());
+                    intent.putExtra("maxRewardTip", mScoreGoodsEntity.getMaxRewardTip());
+                    intent.putExtra("scoreGoods", scoreGoodsBean);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    mTvHeaderTitle.setText("写点评");
+                    mScoreGoodsAdapter.notifyDataSetChanged();
+                    NetLoadUtils.getNetInstance().showLoadSir(loadService, mGoodsList, mScoreGoodsEntity);
+                }
             }
 
             @Override
             public void onNotNetOrException() {
+                mSmartLayout.finishRefresh();
                 NetLoadUtils.getNetInstance().showLoadSir(loadService, mGoodsList, mScoreGoodsEntity);
             }
         });
@@ -150,7 +165,9 @@ public class IndentScoreListActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        getGoods();
+        if (!isFirst) {
+            getGoods();
+        }
+        isFirst = false;
     }
-
 }

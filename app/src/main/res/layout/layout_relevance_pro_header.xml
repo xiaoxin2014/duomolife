@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/sc_mm_88"
     android:background="@color/white"
-    android:divider="@drawable/item_divider_gray_f_two_px"
+    android:divider="@drawable/item_divider_gray_f_one_px"
     android:showDividers="end"
     android:orientation="vertical">
     <TextView

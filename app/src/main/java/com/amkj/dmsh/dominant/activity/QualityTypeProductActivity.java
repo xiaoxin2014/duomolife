@@ -10,7 +10,9 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 
+import com.alibaba.fastjson.JSON;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
@@ -27,6 +29,7 @@ import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.shopdetails.activity.SearchCouponGoodsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.RemoveExistUtils;
@@ -71,12 +74,10 @@ import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.QUALITY_CATEGORY_TYPE;
+import static com.amkj.dmsh.constant.Url.Q_COUPON_PRODUCT_TYPE_LIST;
 import static com.amkj.dmsh.constant.Url.Q_PRODUCT_TYPE;
-import static com.amkj.dmsh.constant.Url.Q_PRODUCT_TYPE_LIST;
 import static com.amkj.dmsh.constant.Url.Q_QUALITY_TYPE_AD;
 import static com.amkj.dmsh.constant.Url.Q_SORT_TYPE;
-
-;
 
 
 /**
@@ -97,11 +98,13 @@ public class QualityTypeProductActivity extends BaseActivity {
     Toolbar tl_quality_type_bar;
     @BindView(R.id.ctb_qt_tab_product_type)
     CommonTabLayout ctb_qt_tab_product_type;
+    @BindView(R.id.iv_search)
+    ImageView iv_search;
     private int page = 1;
     private int scrollY;
     private float screenHeight;
     //    商品列表
-    private List<LikedProductBean> typeDetails = new ArrayList();
+    private List<LikedProductBean> typeDetails = new ArrayList<>();
     //    类别广告
     private List<CommunalADActivityBean> adBeanList = new ArrayList<>();
     //    父级分类
@@ -134,6 +137,7 @@ public class QualityTypeProductActivity extends BaseActivity {
     private int categoryChildId;
     private int sortType;
     private String sortTypeName = "";
+    private Map<String, Object> mParams = new HashMap<>();
 
     @Override
     protected int getContentView() {
@@ -576,22 +580,23 @@ public class QualityTypeProductActivity extends BaseActivity {
     }
 
     private void getQualityTypePro() {
-        Map<String, Object> params = new HashMap<>();
-        params.put("currentPage", page);
-        params.put("showCount", TOTAL_COUNT_TWENTY);
+        iv_search.setVisibility(VISIBLE);
+        mParams = new HashMap<>();
+        mParams.put("currentPage", page);
+        mParams.put("showCount", TOTAL_COUNT_TWENTY);
         if (categoryChildId > -1) {
-            params.put("id", categoryChildId);
-            params.put("pid", categoryId);
+            mParams.put("id", categoryChildId);
+            mParams.put("pid", categoryId);
         } else {
-            params.put("id", categoryId);
-            params.put("pid", 0);
+            mParams.put("id", categoryId);
+            mParams.put("pid", 0);
         }
-        params.put("orderTypeId", sortType);
+        mParams.put("orderTypeId", sortType);
         if (!TextUtils.isEmpty(couponId)) {
-            params.put("couponId", couponId);
+            mParams.put("couponId", couponId);
         }
-        NetLoadUtils.getNetInstance().loadNetDataPost(QualityTypeProductActivity.this, Q_PRODUCT_TYPE_LIST
-                , params, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(QualityTypeProductActivity.this, Q_COUPON_PRODUCT_TYPE_LIST
+                , mParams, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
                         if (loadHud != null) {
@@ -812,5 +817,12 @@ public class QualityTypeProductActivity extends BaseActivity {
     @OnClick(R.id.tv_ql_type_back)
     void goBack(View view) {
         finish();
+    }
+
+    @OnClick(R.id.iv_search)
+    void search(View view) {
+        Intent intent = new Intent(this, SearchCouponGoodsActivity.class);
+        intent.putExtra("params", JSON.toJSONString(mParams));
+        startActivity(intent);
     }
 }

@@ -67,8 +67,39 @@ public class RequestStatus extends BaseTimeEntity {
     private String type;//0特价团，1抽奖团
     private String range;//0特价团，1邀新团
 
+    //未读的平台客服通知
+    private String time;
+    private String content;
+    private String link;
+
     public static RequestStatus objectFromData(String str) {
         return new Gson().fromJson(str, RequestStatus.class);
+    }
+
+
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
     }
 
     public int getId() {
@@ -340,9 +371,16 @@ public class RequestStatus extends BaseTimeEntity {
         private int cartNumber;
         private int remindtime;
         private boolean hadRemind;
-
         private int collectSize;
         private String imgUrl;
+
+        /**
+         * 退款去向字段
+         */
+        private String examineTime;
+        private String receiveRefundTime;
+        private String refundAccount;
+        private String refundPrice;
 
 
         public String getImgUrl() {
@@ -441,6 +479,37 @@ public class RequestStatus extends BaseTimeEntity {
             this.username = username;
         }
 
+        public String getExamineTime() {
+            return examineTime;
+        }
+
+        public void setExamineTime(String examineTime) {
+            this.examineTime = examineTime;
+        }
+
+        public String getReceiveRefundTime() {
+            return receiveRefundTime;
+        }
+
+        public void setReceiveRefundTime(String receiveRefundTime) {
+            this.receiveRefundTime = receiveRefundTime;
+        }
+
+        public String getRefundAccount() {
+            return refundAccount;
+        }
+
+        public void setRefundAccount(String refundAccount) {
+            this.refundAccount = refundAccount;
+        }
+
+        public String getRefundPrice() {
+            return refundPrice;
+        }
+
+        public void setRefundPrice(String refundPrice) {
+            this.refundPrice = refundPrice;
+        }
     }
 
     public boolean isSign() {

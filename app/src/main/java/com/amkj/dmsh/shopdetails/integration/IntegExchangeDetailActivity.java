@@ -23,11 +23,9 @@ import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.shopdetails.activity.DirectApplyRefundActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectLogisticsDetailsActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectMyCouponActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectPublishAppraiseActivity;
-import com.amkj.dmsh.shopdetails.activity.DoMoRefundDetailActivity;
 import com.amkj.dmsh.shopdetails.adapter.IndentDiscountAdapter;
 import com.amkj.dmsh.shopdetails.bean.ApplyRefundCheckEntity;
 import com.amkj.dmsh.shopdetails.bean.ApplyRefundCheckEntity.ApplyRefundCheckBean;
@@ -500,7 +498,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
                         final Intent intent = new Intent();
                         switch (applyRefundCheckBean.getNoticeFlagType()) {
                             case 0:
-                                intent.setClass(IntegExchangeDetailActivity.this, DirectApplyRefundActivity.class);
+                                intent.setClass(IntegExchangeDetailActivity.this, IntegralApplyRefundActivity.class);
                                 Bundle bundle = new Bundle();
                                 bundle.putParcelable("refundPro", refundBean);
                                 intent.putExtras(bundle);
@@ -521,7 +519,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
                                     refundOrderDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
                                         @Override
                                         public void confirm() {
-                                            intent.setClass(IntegExchangeDetailActivity.this, DirectApplyRefundActivity.class);
+                                            intent.setClass(IntegExchangeDetailActivity.this, IntegralApplyRefundActivity.class);
                                             Bundle bundle = new Bundle();
                                             bundle.putParcelable("refundPro", refundBean);
                                             intent.putExtra(REFUND_TYPE, REFUND_TYPE);
@@ -681,7 +679,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
                 List<DirectRefundProBean> directProList = new ArrayList<>();
                 directProList.add(directRefundProBean);
                 refundBean.setDirectRefundProList(directProList);
-                intent.setClass(IntegExchangeDetailActivity.this, DirectApplyRefundActivity.class);
+                intent.setClass(IntegExchangeDetailActivity.this, IntegralApplyRefundActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putParcelable("refundPro", refundBean);
                 intent.putExtras(bundle);
@@ -691,21 +689,13 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
             case REFUND_FEEDBACK:
                 //                 退款处理中 被驳回 退货申请通过
                 if (goodsBean != null && goodsBean.getOrderRefundProductId() > 0) {
-                    intent.setClass(IntegExchangeDetailActivity.this, DoMoRefundDetailActivity.class);
-                    intent.putExtra("no", orderListBean.getNo());
+                    intent.setClass(IntegExchangeDetailActivity.this, IntegralRefundDetailActivity.class);
+                    intent.putExtra("orderNo", orderListBean.getNo());
                     intent.putExtra("orderProductId", String.valueOf(goodsBean.getOrderProductId()));
                     intent.putExtra("orderRefundProductId", String.valueOf(goodsBean.getOrderRefundProductId()));
                     intent.putExtra(REFUND_TYPE, REFUND_TYPE);
                     startActivity(intent);
                 }
-                break;
-            case REFUND_REPAIR:
-                intent.setClass(IntegExchangeDetailActivity.this, DoMoRefundDetailActivity.class);
-                intent.putExtra("orderProductId", String.valueOf(goodsBean.getOrderProductId()));
-                intent.putExtra("no", orderListBean.getNo());
-                intent.putExtra("orderRefundProductId", String.valueOf(goodsBean.getOrderRefundProductId()));
-                intent.putExtra(REFUND_TYPE, REFUND_REPAIR);
-                startActivity(intent);
                 break;
         }
     }

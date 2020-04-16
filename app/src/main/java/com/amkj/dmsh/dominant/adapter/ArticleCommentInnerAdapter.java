@@ -1,9 +1,10 @@
 package com.amkj.dmsh.dominant.adapter;
 
-import android.content.Context;
+import android.app.Activity;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.dominant.bean.DmlSearchCommentEntity.DmlSearchCommentBean.ReplyCommListBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
@@ -24,9 +25,9 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
  */
 
 public class ArticleCommentInnerAdapter extends BaseMultiItemQuickAdapter<ReplyCommListBean, BaseViewHolder> {
-    private final Context context;
+    private final Activity context;
 
-    public ArticleCommentInnerAdapter(Context context, List<ReplyCommListBean> replyCommList) {
+    public ArticleCommentInnerAdapter(Activity context, List<ReplyCommListBean> replyCommList) {
         super(replyCommList);
         addItemType(ConstantVariable.TYPE_0, R.layout.adapter_article_comment_inner);
         addItemType(ConstantVariable.TYPE_1, R.layout.adapter_article_comment_inner_more);
@@ -47,6 +48,7 @@ public class ArticleCommentInnerAdapter extends BaseMultiItemQuickAdapter<ReplyC
                         .addOnClickListener(R.id.tv_comm_comment_receive).setTag(R.id.tv_comm_comment_receive, replyCommListBean)
                         .addOnClickListener(R.id.civ_comm_comment_inner_avatar).setTag(R.id.civ_comm_comment_inner_avatar, R.id.iv_tag, replyCommListBean)
                         .addOnLongClickListener(R.id.tv_comm_comment_inner_content).setTag(R.id.tv_comm_comment_inner_content, replyCommListBean);
+                ConstantMethod.setTextLink(context, helper.getView(R.id.tv_comm_comment_inner_content));
                 tv_comm_comment_like.setSelected(replyCommListBean.isIsFavor());
                 tv_comm_comment_like.setText(replyCommListBean.getLike_num() > 0
                         ? String.valueOf(replyCommListBean.getLike_num()) : "赞");

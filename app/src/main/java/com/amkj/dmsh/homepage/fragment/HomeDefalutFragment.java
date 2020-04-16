@@ -237,7 +237,7 @@ public class HomeDefalutFragment extends BaseFragment {
         });
         mRvSpecialZone.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_half_gray)
+                .setDividerId(R.drawable.item_divider_gray_f_one_px)
                 .create());
         mRvSpecialZone.setNestedScrollingEnabled(false);
         mRvSpecialZone.setAdapter(mHomeZoneAdapter);

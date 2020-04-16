@@ -20,7 +20,7 @@
         <View
             android:layout_width="@dimen/sc_mm_230"
             android:layout_height="1px"
-            android:background="@color/text_gray_c"/>
+            android:background="@color/text_color_e_s"/>
 
         <TextView
             android:id="@+id/tv_lottery_list"
@@ -36,7 +36,7 @@
         <View
             android:layout_width="@dimen/sc_mm_230"
             android:layout_height="1px"
-            android:background="@color/text_gray_c"/>
+            android:background="@color/text_color_e_s"/>
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView

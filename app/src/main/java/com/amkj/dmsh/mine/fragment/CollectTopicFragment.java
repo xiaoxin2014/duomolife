@@ -74,7 +74,7 @@ public class CollectTopicFragment extends BaseFragment {
         communal_recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_gray_f_two_px).create());
+                .setDividerId(R.drawable.item_divider_gray_f_one_px).create());
 
         smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
             @Override

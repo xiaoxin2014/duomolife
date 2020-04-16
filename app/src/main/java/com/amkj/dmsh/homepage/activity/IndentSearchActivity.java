@@ -19,7 +19,7 @@ import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.HotSearchTagEntity;
 import com.amkj.dmsh.homepage.ListHistoryDataSave;
 import com.amkj.dmsh.homepage.adapter.HotSearchAdapter;
-import com.amkj.dmsh.shopdetails.activity.IndentSearchDetailsActivity;
+import com.amkj.dmsh.shopdetails.activity.DoMoIndentAllActivity;
 import com.amkj.dmsh.utils.KeyboardUtils;
 import com.google.android.flexbox.FlexWrap;
 import com.google.android.flexbox.FlexboxLayoutManager;
@@ -34,7 +34,6 @@ import butterknife.OnClick;
 
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_DATA;
 
 
 /**
@@ -105,8 +104,8 @@ public class IndentSearchActivity extends BaseActivity {
     private void getTagResult(String cate) {
         if (!TextUtils.isEmpty(cate)) {
             Intent intent = new Intent();
-            intent.setClass(IndentSearchActivity.this, IndentSearchDetailsActivity.class);
-            intent.putExtra(SEARCH_DATA, cate);
+            intent.setClass(IndentSearchActivity.this, DoMoIndentAllActivity.class);
+            intent.putExtra("keyWord", cate);
             startActivity(intent);
             finish();
             overridePendingTransition(0, 0);

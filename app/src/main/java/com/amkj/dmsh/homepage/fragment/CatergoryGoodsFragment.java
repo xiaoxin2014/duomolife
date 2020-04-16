@@ -29,10 +29,10 @@ import java.util.Map;
 
 import butterknife.BindView;
 
-import static com.amkj.dmsh.constant.ConstantMethod.addShopCarGetSku;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
 import static com.amkj.dmsh.constant.Url.Q_PRODUCT_TYPE_LIST;
+import static com.amkj.dmsh.dao.OrderDao.addShopCarGetSku;
 
 /**
  * Created by xiaoxin on 2019/4/20 0020

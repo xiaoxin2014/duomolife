@@ -1,49 +1,50 @@
 package com.amkj.dmsh.shopdetails.adapter;
 
 import android.content.Context;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.ConstantVariable;
-import com.amkj.dmsh.shopdetails.bean.DirectReturnRecordEntity.DirectReturnRecordBean.OrderListBean;
-import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.shopdetails.bean.MainOrderListEntity.MainOrderBean;
+import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
-import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.skipRefundDetail;
 
-;
 
 /**
- * Created by atd48 on 2016/11/1.
+ * Created by xiaoxin on 2020/4/9
+ * Version:v4.4.3
+ * ClassDescription :售后列表适配器
  */
-public class DirectSalesReturnRecordAdapter extends BaseQuickAdapter<OrderListBean, BaseViewHolder> {
+public class DirectSalesReturnRecordAdapter extends BaseQuickAdapter<MainOrderBean, BaseViewHolder> {
     private final Context context;
 
-    public DirectSalesReturnRecordAdapter(Context context, List<OrderListBean> orderListBeanList) {
+    public DirectSalesReturnRecordAdapter(Context context, List<MainOrderBean> orderListBeanList) {
         super(R.layout.adapter_direct_sales_return_record_item, orderListBeanList);
         this.context = context;
     }
 
     @Override
-    protected void convert(BaseViewHolder helper, OrderListBean orderListBean) {
-        TextView tv_tag_record_state = helper.getView(R.id.tv_tag_record_state);
-        tv_tag_record_state.setText(ConstantVariable.INDENT_PRO_STATUS.get(String.valueOf(orderListBean.getStatus())));
-        GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.iv_direct_indent_pro), orderListBean.getPicUrl());
-        helper.setText(R.id.tv_direct_indent_pro_name, getStrings(orderListBean.getName()))
-                .setText(R.id.tv_direct_indent_pro_sku, getStrings(orderListBean.getSaleSkuValue()))
-                .setText(R.id.tv_direct_indent_pro_price, "¥" + orderListBean.getPrice())
-                .setGone(R.id.tv_direct_indent_pro_price,getFloatNumber(orderListBean.getPrice())>0)
-                .setText(R.id.tv_direct_pro_count, "x" + orderListBean.getCount())
-                .setGone(R.id.tv_dir_indent_pro_status,false)
-                .setGone(R.id.tv_indent_pro_refund_price, getFloatNumber(orderListBean.getRefundPrice())>0)
-                .setText(R.id.tv_indent_pro_refund_price, "退款金额：¥" + orderListBean.getRefundPrice())
-                .setText(R.id.tv_goods_indent_code, "申请时间 " + getStrings(orderListBean.getRefundTime()))
-                .addOnClickListener(R.id.tv_indent_reply_border_first_gray).setTag(R.id.tv_indent_reply_border_first_gray, orderListBean);
-        helper.itemView.setTag(orderListBean);
+    protected void convert(BaseViewHolder helper, MainOrderBean mainOrderBean) {
+        if (mainOrderBean == null) return;
+        helper.setText(R.id.tv_tag_record_state, mainOrderBean.getStatusText())
+                .setText(R.id.tv_goods_indent_code, "申请时间 " + getStrings(mainOrderBean.getCreateTime()));
+
+        //初始化退款商品列表
+        RecyclerView communal_recycler = helper.getView(R.id.communal_recycler);
+        communal_recycler.setNestedScrollingEnabled(false);
+        communal_recycler.setLayoutManager(new LinearLayoutManager(context));
+        communal_recycler.addItemDecoration(new ItemDecoration.Builder()
+                .setDividerId(R.drawable.item_divider_gray_f_one_px).create());
+        RefundProductListAdapter refundProductListAdapter = new RefundProductListAdapter(context, mainOrderBean.getOrderProductList());
+        refundProductListAdapter.setOnItemClickListener((adapter, view, position) -> skipRefundDetail(context, mainOrderBean.getRefundNo()));
+        communal_recycler.setAdapter(refundProductListAdapter);
+        helper.itemView.setOnClickListener(v -> skipRefundDetail(context, mainOrderBean.getRefundNo()));
+        helper.itemView.setTag(mainOrderBean);
     }
 }

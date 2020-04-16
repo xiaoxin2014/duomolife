@@ -5,7 +5,7 @@
     android:background="@color/light_gray_f"
     android:focusableInTouchMode="true"
     android:focusable="true"
-    android:divider="@drawable/item_divider_gray_f_two_px"
+    android:divider="@drawable/item_divider_gray_f_one_px"
     android:showDividers="middle"
     android:orientation="vertical">
     <include layout="@layout/activity_domolife_header"/>

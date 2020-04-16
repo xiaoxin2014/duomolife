@@ -1,22 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:gravity="center_vertical"
-    android:layout_height="@dimen/sc_mm_75">
+    android:orientation="horizontal"
+    android:paddingLeft="@dimen/sc_mm_30"
+    android:paddingTop="@dimen/sc_mm_11"
+    android:paddingRight="@dimen/sc_mm_30"
+    android:paddingBottom="@dimen/sc_mm_11">
+
     <TextView
-        android:layout_marginLeft="@dimen/sc_mm_26"
-        android:layout_width="wrap_content"
         android:id="@+id/tv_indent_discount_name"
-        android:textSize="@dimen/sc_mm_28"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/defaul"
         android:textColor="@color/text_black_t"
-        android:layout_height="wrap_content" />
+        android:textSize="@dimen/sc_mm_28" />
+
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_marginRight="@dimen/sc_mm_24"
         android:id="@+id/tv_indent_discount_price"
-        android:textSize="@dimen/sc_mm_28"
-        android:gravity="center_vertical|right"
-        android:layout_alignParentRight="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/defaul"
         android:textColor="@color/text_black_t"
-        android:layout_height="wrap_content" />
-</RelativeLayout>
+        android:textSize="@dimen/sc_mm_28" />
+</LinearLayout>

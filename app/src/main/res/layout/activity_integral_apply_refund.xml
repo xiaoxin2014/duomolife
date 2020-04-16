@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical">
+
+    <include layout="@layout/activity_domolife_header"/>
+
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/sv_layout_refund"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@drawable/item_divider_five_gray_f"
+            android:orientation="vertical"
+            android:showDividers="beginning|middle">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/gap_left"
+                android:paddingRight="@dimen/gap_right">
+
+                <include layout="@layout/layout_communal_recycler_wrap"/>
+
+                <TextView
+                    android:id="@+id/tv_dir_indent_apply_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sc_mm_30"
+                    android:text="服务类型"
+                    android:textColor="@color/text_black_t"
+                    android:textSize="@dimen/sc_mm_28"/>
+
+                <TextView
+                    android:id="@+id/tv_dir_indent_apply_type_sel"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/sc_mm_80"
+                    android:layout_marginTop="@dimen/sc_mm_20"
+                    android:background="@drawable/border_cir_4dp_gray_bg"
+                    android:drawableRight="@drawable/arrow_down_b_icon"
+                    android:gravity="center_vertical"
+                    android:hint="请选择服务类型"
+                    android:paddingLeft="@dimen/gap_left"
+                    android:paddingRight="@dimen/gap_right"
+                    android:textColor="@color/text_black_t"
+                    android:textColorHint="@color/text_gray_c"
+                    android:textSize="@dimen/sc_mm_28"/>
+
+                <LinearLayout
+                    android:id="@+id/ll_refund_price"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="visible">
+
+                    <TextView
+                        android:id="@+id/tv_dir_indent_apply_price"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginTop="@dimen/sc_mm_30"
+                        android:text="退款金额"
+                        android:textColor="@color/text_black_t"
+                        android:textSize="@dimen/sc_mm_28"/>
+
+                    <TextView
+                        android:id="@+id/tv_dir_indent_apply_msg"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/gap_left"
+                        android:layout_marginTop="@dimen/sc_mm_16"
+                        android:lineSpacingExtra="@dimen/dimen_6_dp"
+                        android:textColor="@color/text_gray_hint_n"
+                        android:textSize="@dimen/sc_mm_24"/>
+
+                    <TextView
+                        android:id="@+id/tv_dir_indent_apply_reason"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/sc_mm_30"
+                        android:text="退款理由"
+                        android:textColor="@color/text_black_t"
+                        android:textSize="@dimen/sc_mm_28"/>
+
+                    <TextView
+                        android:id="@+id/tv_dir_indent_apply_reason_sel"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/sc_mm_80"
+                        android:layout_marginTop="@dimen/sc_mm_20"
+                        android:background="@drawable/border_cir_4dp_gray_bg"
+                        android:drawableRight="@drawable/sel_bt_top_bot_icon"
+                        android:gravity="center_vertical"
+                        android:hint="请选择退款原因"
+                        android:paddingLeft="@dimen/sc_mm_30"
+                        android:paddingRight="@dimen/sc_mm_28"
+                        android:textColor="@color/text_black_t"
+                        android:textColorHint="@color/text_gray_c"
+                        android:textSize="@dimen/sc_mm_28"/>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tv_indent_reply_reason_tint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sc_mm_30"
+                    android:text="退款说明"
+                    android:textColor="@color/text_black_t"
+                    android:textSize="@dimen/sc_mm_28"/>
+
+                <EditText
+                    android:id="@+id/et_dir_indent_apply_explain"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/sc_mm_160"
+                    android:layout_marginTop="@dimen/sc_mm_20"
+                    android:background="@drawable/border_cir_4dp_gray_bg"
+                    android:gravity="top"
+                    android:hint="请描述详细问题"
+                    android:paddingLeft="@dimen/sc_mm_30"
+                    android:paddingTop="@dimen/sc_mm_27"
+                    android:paddingRight="@dimen/sc_mm_28"
+                    android:textColor="@color/text_black_t"
+                    android:textColorHint="@color/text_gray_c"
+                    android:textSize="@dimen/sc_mm_28"/>
+
+                <RelativeLayout
+                    android:id="@+id/rel_up_evidence"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/tv_up_evidence"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/sc_mm_30"
+                        android:layout_marginBottom="@dimen/sc_mm_20"
+                        android:text="上传凭证"
+                        android:textColor="@color/text_black_t"
+                        android:textSize="@dimen/sc_mm_28"/>
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rv_apply_refund_img"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/tv_up_evidence"
+                        android:nestedScrollingEnabled="false"
+                        android:scrollbars="none"/>
+                </RelativeLayout>
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/rel_repair_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/sc_mm_20"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/tv_repair_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/gap_left"
+                    android:paddingRight="@dimen/gap_right"
+                    android:text="@string/refund_repair_address"
+                    android:textColor="@color/text_login_gray_s"
+                    android:textSize="@dimen/sc_mm_30"/>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_repair_address">
+
+                    <include layout="@layout/layout_address_top_null"/>
+
+                    <include layout="@layout/layout_recycler_top_address_default"/>
+                </FrameLayout>
+            </RelativeLayout>
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+
+    <include layout="@layout/layout_direct_refund_submit"/>
+
+    <include layout="@layout/layout_wheel_one"/>
+</LinearLayout>

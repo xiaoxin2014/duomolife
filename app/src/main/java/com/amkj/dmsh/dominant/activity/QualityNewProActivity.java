@@ -61,7 +61,6 @@ import q.rorbin.badgeview.Badge;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -73,6 +72,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.Q_NEW_PRO_AD;
 import static com.amkj.dmsh.constant.Url.Q_NEW_PRO_LIST;
 import static com.amkj.dmsh.constant.Url.Q_NEW_PRO_TIME_SHAFT;
+import static com.amkj.dmsh.dao.OrderDao.getCarCount;
 
 ;
 

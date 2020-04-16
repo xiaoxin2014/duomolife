@@ -13,6 +13,7 @@
     <color name="translucence_black">#7f000000</color>
     <color name="white">#fff</color>
     <color name="text_gray_c">#ccc</color>
+    <color name="text_gray_fe">#fefefe</color>
     <color name="text_black_t">#333</color>
     <color name="text_black_t2">#4d4d4d</color>
     <color name="text_black_t3">#444</color>
@@ -91,6 +92,7 @@
     <color name="blue_six_f">#6fbbff</color>
     <color name="dialog_text_blue_color">#408ed6</color>
     <color name="text_login_blue_z">#0a88fa</color>
+    <color name="intent_foot_button">#61AFFF</color>
     <color name="light_gray_f">#f5f5f5</color>
     <color name="light_green">#f5f8fa</color>
     <color name="gray_d">#dddddd</color>
@@ -101,11 +103,10 @@
     <color name="color_blue_sev">#77befe</color>
     <color name="topic_name_color">#777</color>
     <color name="text_blue_sev">#74bdff</color>
-    <color name="text_gray_es">#e6e6e6</color>
     <color name="text_gray_dn">#d9d9d9</color>
     <color name="blue_ff_light">#f5f8fa</color>
     <color name="text_blue_e_thre">#e3f0ff</color>
-    <color name="bg_light_blue_e">#e3f0ff</color>
+    <color name="bg_light_blue_e">#e5effd</color>
     <color name="bg_blue_dz">#d0e6fe</color>
     <color name="light_blue_da">#daeeff</color>
     <color name="bg_light_green_f_four">#f4f9fa</color>

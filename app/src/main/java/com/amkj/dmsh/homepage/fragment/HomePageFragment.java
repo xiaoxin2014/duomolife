@@ -48,16 +48,17 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 import q.rorbin.badgeview.Badge;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.getCarCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getFloatAd;
 import static com.amkj.dmsh.constant.ConstantMethod.getMessageCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getTopBadge;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.REFRESH_MESSAGE_TOTAL;
 import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_ALL;
 import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.GTE_HOME_NAVBAR;
 import static com.amkj.dmsh.constant.Url.H_Q_MARQUEE_AD;
+import static com.amkj.dmsh.dao.OrderDao.getCarCount;
 
 /**
  * Created by xiaoxin on 2019/4/12 0012
@@ -302,6 +303,8 @@ public class HomePageFragment extends BaseFragment {
             if (badgeCart != null) {
                 badgeCart.setBadgeNumber((int) message.result);
             }
+        }else if (message.type.equals(REFRESH_MESSAGE_TOTAL)) {
+            getMessageCount(getActivity(), badgeMsg);
         }
     }
 

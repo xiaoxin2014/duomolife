@@ -1,33 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:background="@color/white"
-              android:divider="@drawable/item_divider_gray_f_two_px"
-              android:orientation="vertical"
-              android:showDividers="middle">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:divider="@drawable/item_divider_gray_f_one_px"
+    android:orientation="vertical"
+    android:showDividers="middle">
 
-    <include layout="@layout/adapter_sales_return_header"/>
+    <include layout="@layout/adapter_sales_return_header" />
 
-    <include layout="@layout/layout_direct_indent_product_item"/>
-
-    <RelativeLayout
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/communal_recycler"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/sc_mm_98"
-        android:paddingRight="@dimen/gap_right">
+        android:layout_height="wrap_content"
+        android:scrollbars="none" />
 
-        <TextView
-            android:id="@+id/tv_indent_reply_border_first_gray"
-            android:layout_width="@dimen/sc_mm_160"
-            android:layout_height="@dimen/sc_mm_58"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_gravity="center_vertical"
-            android:background="@drawable/selector_border_circle_three_gray_white"
-            android:gravity="center"
-
-            android:text="查看详情"
-            android:textColor="@color/text_login_gray_s"
-            android:textSize="@dimen/sc_mm_26"/>
-    </RelativeLayout>
+    <TextView
+        android:id="@+id/tv_refund_detail"
+        android:layout_width="@dimen/sc_mm_160"
+        android:layout_height="@dimen/sc_mm_58"
+        android:layout_gravity="center_vertical|right"
+        android:layout_marginTop="@dimen/sc_mm_15"
+        android:layout_marginRight="@dimen/sc_mm_24"
+        android:layout_marginBottom="@dimen/sc_mm_15"
+        android:background="@drawable/selector_border_circle_three_gray_white"
+        android:gravity="center"
+        android:text="查看详情"
+        android:textColor="@color/text_login_gray_s"
+        android:textSize="@dimen/sc_mm_26" />
 </LinearLayout>

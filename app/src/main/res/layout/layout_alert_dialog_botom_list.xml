@@ -13,7 +13,7 @@
         android:layout_marginRight="@dimen/sc_mm_60"
         android:layout_marginStart="@dimen/sc_mm_60"
         android:layout_marginEnd="@dimen/sc_mm_60"
-        android:divider="@drawable/item_divider_gray_f_two_px"
+        android:divider="@drawable/item_divider_gray_f_one_px"
         android:showDividers="middle"
         android:layout_height="wrap_content">
         <TextView

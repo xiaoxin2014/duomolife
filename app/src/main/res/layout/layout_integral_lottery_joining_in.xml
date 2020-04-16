@@ -31,7 +31,6 @@
 
         <TextView
             android:id="@+id/tv_limit"
-            android:visibility="gone"
             android:layout_marginTop="@dimen/sc_mm_24"
             android:layout_below="@id/tv_integral_lottery_code"
             android:layout_width="@dimen/sc_mm_410"

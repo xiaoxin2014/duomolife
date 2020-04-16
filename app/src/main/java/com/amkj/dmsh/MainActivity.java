@@ -1,9 +1,8 @@
 package com.amkj.dmsh;
 
-import android.content.BroadcastReceiver;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -40,6 +39,7 @@ import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
+import com.amkj.dmsh.bean.CouponEntity;
 import com.amkj.dmsh.bean.MainIconBean;
 import com.amkj.dmsh.bean.MainNavEntity;
 import com.amkj.dmsh.bean.MainNavEntity.MainNavBean;
@@ -54,6 +54,7 @@ import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dao.AddClickDao;
+import com.amkj.dmsh.dominant.activity.QualityNewUserActivity;
 import com.amkj.dmsh.dominant.dialog.AlertDialogGroup;
 import com.amkj.dmsh.find.fragment.FindFragment;
 import com.amkj.dmsh.homepage.activity.MainPageTabBarActivity;
@@ -69,6 +70,7 @@ import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
 import com.amkj.dmsh.release.dialogutils.AlertView;
+import com.amkj.dmsh.shopdetails.activity.DirectMyCouponActivity;
 import com.amkj.dmsh.utils.FileStreamUtils;
 import com.amkj.dmsh.utils.SaveUpdateImportDateUtils;
 import com.amkj.dmsh.utils.SelectorUtil;
@@ -78,17 +80,17 @@ import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogImage;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.restartapputils.RestartAPPTool;
+import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+import com.qiyukf.unicorn.api.msg.MsgTypeEnum;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.umeng.socialize.UMShareAPI;
 
-import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -126,7 +128,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.MARKING_POPUP;
 import static com.amkj.dmsh.constant.ConstantVariable.NOT_FORCE_UPDATE;
 import static com.amkj.dmsh.constant.ConstantVariable.OTHER_WECHAT;
 import static com.amkj.dmsh.constant.ConstantVariable.PUSH_OPEN_REMIND;
-import static com.amkj.dmsh.constant.ConstantVariable.REFRESH_MESSAGE_TOTAL;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_TEXT;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOKEN_EXPIRE_TIME;
@@ -140,8 +141,8 @@ import static com.amkj.dmsh.constant.Url.GROUP_GET_GP_POPUP;
 import static com.amkj.dmsh.constant.Url.H_AD_DIALOG;
 import static com.amkj.dmsh.dao.UserDao.getPersonalInfo;
 import static com.amkj.dmsh.dao.UserDao.savePersonalInfoCache;
-import static com.amkj.dmsh.utils.ServiceDownUtils.INSTALL_APP_PROGRESS;
 import static com.amkj.dmsh.utils.TimeUtils.getDateFormat;
+import static com.amkj.dmsh.utils.TimeUtils.getTimeDifference;
 import static com.amkj.dmsh.utils.TimeUtils.isSameTimeDay;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.fileIsExist;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getImageFilePath;
@@ -183,6 +184,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private float iconHeight = 32f;
     private AlertDialogGroup mAlertDialogGroup;
     private AlertDialogHelper mAlertDialogNotify;
+    private AlertDialogImage mAlertDialogUserImage;
 
 
     @Override
@@ -203,26 +205,26 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         constantMethod = new ConstantMethod();
         boolean isFirstTime = setIntentBottomIconData();
         if (isFirstTime) {
-//            七鱼客服登录 获取用户信息 登进登出……
+            // 七鱼客服登录 获取用户信息 登进登出……
             getNetDataInfo();
-//            刷新token
+            // 刷新token
             flushToken();
-//            启动广告
+            // 启动广告
             SaveUpdateImportDateUtils.getUpdateDataUtilsInstance().getLaunchBanner(this);
             if (isDebugTag) {
                 getSelectedDialog();
             }
-//            加载OSS配置  (备注：做统计使用，保留该接口调用)
+            // 加载OSS配置  (备注：做统计使用，保留该接口调用)
             getOSSConfig();
-//            获取地址版本
+            // 获取地址版本
             getAddressVersion();
-//            获取图标更新
+            // 获取图标更新
             SaveUpdateImportDateUtils.getUpdateDataUtilsInstance().getMainIconData(this, 3);
-//            获取push信息
+            // 获取push信息
             getFirstPushInfo();
-//            设置分享提示
+            // 设置分享提示
             setShareTint();
-//            统计首次安装设备信息
+            // 统计首次安装设备信息
             getFirstInstallInfo();
             //获取要显示的弹窗
             getUnifiedPopup();
@@ -244,7 +246,22 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }
             }
         });
+    }
 
+    //获取未读的平台客服通知
+    private void getUnreadCustomerMsg() {
+        if (userId > 0) {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.GET_UNREAD_CUSTOMER_MSG, new NetLoadListenerHelper() {
+                @Override
+                public void onSuccess(String result) {
+                    RequestStatus requestStatus = RequestStatus.objectFromData(result);
+                    if (requestStatus != null && SUCCESS_CODE.equals(requestStatus.getCode()) && !TextUtils.isEmpty(requestStatus.getContent())) {
+                        newQyMessageComming(MsgTypeEnum.text, getTimeDifference(requestStatus.getCurrentTime(),
+                                requestStatus.getTime()), requestStatus.getContent(), requestStatus.getLink());
+                    }
+                }
+            });
+        }
     }
 
     //统一弹窗规则接口
@@ -270,7 +287,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                             break;
                         //新人优惠券弹窗
                         case COUPON_POPUP:
-                            constantMethod.getNewUserCouponDialog(getActivity());
+                            getNewUserCouponDialog(getActivity());
                             break;
                         //拼团未完成
                         case GP_REMIND:
@@ -289,7 +306,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         case MARKING_POPUP:
                             getMarkingPopup(requestStatus.getTargetId());
                             break;
+                        default:
+                            getUnreadCustomerMsg();
+                            break;
                     }
+                } else {
+                    //获取未读的平台客服通知
+                    getUnreadCustomerMsg();
                 }
             }
         });
@@ -317,6 +340,64 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         }
                     });
 
+                }
+            }
+        });
+    }
+
+    public void getNewUserCouponDialog(Activity context) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("user_id", userId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(context, Url.H_NEW_USER_COUPON, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                RequestStatus requestStatus = RequestStatus.objectFromData(result);
+                if (requestStatus != null && requestStatus.getCode().equals(SUCCESS_CODE) && !TextUtils.isEmpty(requestStatus.getImgUrl())
+                        && 0 < requestStatus.getUserType() && requestStatus.getUserType() < 4) {
+                    SharedPreUtils.setParam(InvokeTimeFileName, COUPON_POPUP, TimeUtils.getCurrentTime(requestStatus));//记录调用时间
+                    if (isContextExisted(context)) {
+                        GlideImageLoaderUtil.loadFinishImgDrawable(context, requestStatus.getImgUrl(), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
+                            @Override
+                            public void onSuccess(Bitmap bitmap) {
+                                mAlertDialogUserImage = new AlertDialogImage(context);
+                                mAlertDialogUserImage.show();
+                                mAlertDialogUserImage.setAlertClickListener(() -> {
+                                    Intent intent = new Intent();
+                                    switch (requestStatus.getUserType()) {
+                                        //新人用户
+                                        case 1:
+                                            intent.setClass(context, QualityNewUserActivity.class);
+                                            context.startActivity(intent);
+                                            break;
+                                        //领取优惠券
+                                        case 2:
+                                        case 3:
+                                            CommunalWebDetailUtils.getCommunalWebInstance().getDirectCoupon(context,
+                                                    requestStatus.getCouponId(), null, new CommunalWebDetailUtils.GetCouponListener() {
+                                                        @Override
+                                                        public void onSuccess(CouponEntity.CouponListEntity couponListEntity) {
+                                                            Intent intent = new Intent(context, DirectMyCouponActivity.class);
+                                                            context.startActivity(intent);
+                                                        }
+
+                                                        @Override
+                                                        public void onFailure(CouponEntity.CouponListEntity couponListEntity) {
+
+                                                        }
+                                                    });
+                                            break;
+                                    }
+                                    mAlertDialogUserImage.dismiss();
+                                });
+                                mAlertDialogUserImage.setImage(bitmap);
+                            }
+
+                            @Override
+                            public void onError() {
+
+                            }
+                        });
+                    }
                 }
             }
         });
@@ -1288,28 +1369,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             onHomeIntent = null;
         }
         super.onResume();
-        registerMessageReceiver();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if (mMessageReceiver != null) {
-            unregisterReceiver(mMessageReceiver);
-        }
     }
 
-    private MessageReceiver mMessageReceiver;
-    public static final String MESSAGE_RECEIVED_ACTION = "JPUSH_MESSAGE_RECEIVED_ACTION";
-
-    public void registerMessageReceiver() {
-        mMessageReceiver = new MessageReceiver();
-        IntentFilter filter = new IntentFilter();
-        filter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
-        filter.addAction(MESSAGE_RECEIVED_ACTION);
-        filter.addAction(INSTALL_APP_PROGRESS);
-        registerReceiver(mMessageReceiver, filter);
-    }
 
     @Override
     public void onClick(View v) {
@@ -1318,23 +1384,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             changePage(mainIconBean);
         }
         isChecked = false;
-    }
-
-    private File createFiles(File file) {
-        if (!file.exists()) {
-            file.mkdir();
-        }
-        return file;
-    }
-
-    public class MessageReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (MESSAGE_RECEIVED_ACTION.equals(intent.getAction())) {
-//                收到消息
-                EventBus.getDefault().post(new EventMessage(REFRESH_MESSAGE_TOTAL, REFRESH_MESSAGE_TOTAL));
-            }
-        }
     }
 
     @Override
@@ -1354,6 +1403,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
         if (mAlertDialogGroup != null && mAlertDialogGroup.isShowing()) {
             mAlertDialogGroup.dismiss();
+        }
+        if (mAlertDialogUserImage != null && mAlertDialogUserImage.isShowing()) {
+            mAlertDialogUserImage.dismiss();
         }
     }
 

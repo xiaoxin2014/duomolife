@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include layout="@layout/activity_domolife_header" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/sc_mm_30"
+        android:text="没有找到订单原因"
+        android:textColor="@color/text_black_t"
+        android:textSize="@dimen/sc_mm_28"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_marginLeft="@dimen/sc_mm_30"
+        android:layout_marginRight="@dimen/sc_mm_30"
+        android:lineSpacingExtra="@dimen/sc_mm_10"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="@string/no_order_found_reason"
+        android:textColor="@color/text_black_t"
+        android:textSize="@dimen/sc_mm_28" />
+
+    <LinearLayout
+        android:id="@+id/ll_service"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sc_mm_88"
+        android:layout_marginLeft="@dimen/sc_mm_30"
+        android:layout_marginRight="@dimen/sc_mm_30"
+        android:layout_marginBottom="@dimen/sc_mm_40"
+        android:background="@drawable/border_cir_5dp_z_blue_solid"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="@dimen/sc_mm_33"
+            android:layout_height="@dimen/sc_mm_33"
+            android:src="@drawable/service_white" />
+
+        <TextView
+            android:id="@+id/tv_service"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/sc_mm_30"
+            android:text="人工客服"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sc_mm_34" />
+    </LinearLayout>
+</LinearLayout>

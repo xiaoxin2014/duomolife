@@ -56,7 +56,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.isDebugTag;
-import static com.amkj.dmsh.constant.Url.BASE_SHARE_PAGE_TWO;
 import static com.amkj.dmsh.constant.Url.SHARE_SAVE_IMAGE_URL;
 import static com.amkj.dmsh.dao.AddClickDao.addArticleShareCount;
 import static com.amkj.dmsh.dao.SoftApiDao.reportIllegal;
@@ -80,6 +79,7 @@ public class UMShareAction {
     private boolean isSharing = false;
     private String routineUrl;
     public static String routineId = "gh_cdbcf7765273";
+    private String logoUrl = "http://domolifes.oss-cn-beijing.aliyuncs.com/wechatIcon/domolife_logo.png";
     private ConstantMethod constantMethod;
     private Bitmap mBitmap;
 
@@ -146,7 +146,23 @@ public class UMShareAction {
 
         //只分享到微信时不用弹窗直接调起微信分享
         if (!TextUtils.isEmpty(h5Platform) && "1".equals(h5Platform)) {
-            setLoadImageShare(SHARE_MEDIA.WEIXIN, new UMImage(context, imgUrl), context, urlLink, title, description);
+            if (!TextUtils.isEmpty(imgUrl)) {
+                //        加载图片
+                GlideImageLoaderUtil.loadFinishImgDrawable(context, getThumbImgUrl(imgUrl, 300), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
+                    @Override
+                    public void onSuccess(Bitmap bitmap) {
+                        mBitmap = bitmap;
+                        setLoadImageShare(SHARE_MEDIA.WEIXIN, new UMImage(context, bitmap), context, urlLink, title, description);
+                    }
+
+                    @Override
+                    public void onError() {
+                        setLoadImageShare(SHARE_MEDIA.WEIXIN, new UMImage(context, R.drawable.domolife_logo), context, urlLink, title, description);
+                    }
+                });
+            } else {
+                setLoadImageShare(SHARE_MEDIA.WEIXIN, new UMImage(context, getDefaultCover(context)), context, urlLink, title, description);
+            }
             return;
         }
 
@@ -292,7 +308,7 @@ public class UMShareAction {
                 break;
             case WEIXIN:
                 if (!TextUtils.isEmpty(routineUrl)) {
-                    UMMin umMin = new UMMin(BASE_SHARE_PAGE_TWO);//设置一个默认值，避免报错码2000
+                    UMMin umMin = new UMMin(!TextUtils.isEmpty(umImage.toUrl()) ? umImage.toUrl() : logoUrl);//设置一个默认值，避免报错码2000
                     //兼容低版本的网页链接
                     umMin.setThumb(umImage);
                     // 小程序消息封面图片

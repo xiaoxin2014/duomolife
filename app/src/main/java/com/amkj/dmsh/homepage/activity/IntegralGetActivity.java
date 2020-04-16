@@ -75,7 +75,7 @@ public class IntegralGetActivity extends BaseActivity {
         communal_recycler.setAdapter(integralGetAdapter);
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_gray_f_two_px).create());
+                .setDividerId(R.drawable.item_divider_gray_f_one_px).create());
         integralGetAdapter.setOnItemClickListener((adapter, view, position) -> {
             IntegralGetBean integralGetBean = (IntegralGetBean) view.getTag();
             if (integralGetBean != null && integralGetBean.getButtonFlag() == 0) {

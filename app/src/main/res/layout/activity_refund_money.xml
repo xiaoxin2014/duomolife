@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_ql_cart_share_header" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/sc_mm_40"
+        android:gravity="center"
+        android:text="退款金额"
+        android:textColor="@color/text_black_t"
+        android:textSize="@dimen/sc_mm_30" />
+
+    <TextView
+        android:id="@+id/tv_amount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/sc_mm_40"
+        android:background="@drawable/border_bottom_line"
+        android:gravity="center"
+        android:paddingBottom="@dimen/sc_mm_40"
+        android:text="@string/defaul"
+        android:textColor="@color/text_black_t"
+        android:textSize="@dimen/sc_mm_40"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/sc_mm_30"
+        android:layout_marginTop="@dimen/sc_mm_60"
+        android:layout_marginRight="@dimen/sc_mm_30"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="@dimen/sc_mm_228"
+            android:layout_height="wrap_content"
+            android:text="退回账号"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_30" />
+
+        <TextView
+            android:id="@+id/tv_back_account"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="@string/defaul"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_30" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/sc_mm_30"
+        android:layout_marginTop="@dimen/sc_mm_30"
+        android:layout_marginRight="@dimen/sc_mm_30"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="@dimen/sc_mm_228"
+            android:layout_height="wrap_content"
+            android:text="通过审核时间"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_30" />
+
+        <TextView
+            android:id="@+id/tv_auditing_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@string/defaul"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_30" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/sc_mm_30"
+        android:layout_marginTop="@dimen/sc_mm_30"
+        android:layout_marginRight="@dimen/sc_mm_30"
+        android:layout_marginBottom="@dimen/sc_mm_60"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="@dimen/sc_mm_228"
+            android:layout_height="wrap_content"
+            android:text="到账时间"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_30" />
+
+        <TextView
+            android:id="@+id/tv_arrive_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="@string/defaul"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_30" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border_top_divider_10dp"
+        android:paddingLeft="@dimen/sc_mm_30"
+        android:paddingTop="@dimen/sc_mm_50"
+        android:paddingRight="@dimen/sc_mm_30"
+        android:text="@string/refund_explain"
+        android:textColor="@color/text_login_gray_s"
+        android:textSize="@dimen/sc_mm_24" />
+</LinearLayout>
