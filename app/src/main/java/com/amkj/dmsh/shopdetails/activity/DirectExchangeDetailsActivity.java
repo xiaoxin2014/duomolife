@@ -22,6 +22,7 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.ActivityInfoListBean;
 import com.amkj.dmsh.bean.OrderProductNewBean;
+import com.amkj.dmsh.bean.TabNameBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
@@ -558,6 +559,18 @@ public class DirectExchangeDetailsActivity extends BaseActivity {
         if (UPDATE_INDENT_LIST.equals(message.type)) {
             if (getSimpleName().equals(message.result)) {
                 loadData();
+            }
+        } else if (message.type.equals(ConstantVariable.UPDATE_CUSTOM_NAME)) {
+            try {
+                if (mSlidingTablayout != null) {
+                    TabNameBean tabNameBean = (TabNameBean) message.result;
+                    if (getSimpleName().equals(tabNameBean.getSimpleName())) {
+                        TextView titleView = mSlidingTablayout.getTitleView(tabNameBean.getPosition());
+                        titleView.setText(tabNameBean.getTabName());
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }

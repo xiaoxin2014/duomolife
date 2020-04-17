@@ -22,6 +22,8 @@ import com.amkj.dmsh.shopdetails.adapter.DirectIndentListAdapter;
 import com.amkj.dmsh.shopdetails.bean.MainOrderListEntity;
 import com.amkj.dmsh.shopdetails.bean.MainOrderListEntity.MainOrderBean;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
+import com.amkj.dmsh.views.OrderLoadMoreView;
+import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -81,6 +83,7 @@ public class DoMoIndentNewFragment extends BaseFragment {
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_ten_dp).create());
         doMoIndentListAdapter = new DirectIndentListAdapter(this, getActivity(), orderListBeanList);
+        doMoIndentListAdapter.setLoadMoreView(new OrderLoadMoreView());
         communal_recycler.setAdapter(doMoIndentListAdapter);
         //解决调用notifyItemChanged闪烁问题
         SimpleItemAnimator itemAnimator = (SimpleItemAnimator) communal_recycler.getItemAnimator();
@@ -91,9 +94,12 @@ public class DoMoIndentNewFragment extends BaseFragment {
         smart_communal_refresh.setOnRefreshListener(refreshLayout -> {
             loadData();
         });
-        doMoIndentListAdapter.setOnLoadMoreListener(() -> {
-            page++;
-            getIndentList();
+        doMoIndentListAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
+            @Override
+            public void onLoadMoreRequested() {
+                page++;
+                getIndentList();
+            }
         }, communal_recycler);
 
         //未搜索到订单时

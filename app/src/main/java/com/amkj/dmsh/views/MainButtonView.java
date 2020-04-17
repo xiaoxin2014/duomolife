@@ -100,7 +100,7 @@ public class MainButtonView extends LinearLayout {
     private AlertDialogHelper delOrderDialogHelper;
     private PopupWindow mPwMoreButton;
     private PopupWindow mPwScore;
-    private int buttonLimit = 4;
+    private int buttonLimit = 4;//超出这个数量时会显示更多按钮
     private AppCompatActivity context;
     private AlertDialogGoPay mAlertDialogGoPay;
 

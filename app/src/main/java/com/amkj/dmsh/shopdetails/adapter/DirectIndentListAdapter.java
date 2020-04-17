@@ -52,15 +52,15 @@ import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTimeAddSeconds;
  * Version:v4.4.3
  * ClassDescription :订单列表适配器重构
  */
-public class DirectIndentListAdapter extends BaseQuickAdapter<MainOrderBean, BaseViewHolder> implements View.OnClickListener, LifecycleObserver {
+public class DirectIndentListAdapter extends BaseQuickAdapter<MainOrderBean, BaseViewHolder> implements LifecycleObserver {
     private AppCompatActivity context;
     private DoMoIndentNewFragment fragment;
     private LayoutInflater layoutInflater;
     private List<MainOrderBean> orderList;
-    private OnClickViewListener listener;
     private SparseArray<Object> sparseArray = new SparseArray<>();
     private Map<Integer, MainOrderBean> beanMap = new HashMap<>();
     private ConstantMethod constantMethod;
+
 
     public DirectIndentListAdapter(DoMoIndentNewFragment fragment, Activity activity, List<MainOrderBean> orderList) {
         super(R.layout.layout_communal_recycler_wrap, orderList);
@@ -242,21 +242,6 @@ public class DirectIndentListAdapter extends BaseQuickAdapter<MainOrderBean, Bas
             holder.cv_countdownTime_direct.setVisibility(View.GONE);
             holder.tv_indent_type_show.setText("已关闭");
         }
-    }
-
-    public void setOnClickViewListener(OnClickViewListener listener) {
-        this.listener = listener;
-    }
-
-    @Override
-    public void onClick(View v) {
-        if (listener != null) {
-            listener.click((String) v.getTag(R.id.tag_first), (MainOrderBean) v.getTag(R.id.tag_second));
-        }
-    }
-
-    public interface OnClickViewListener {
-        void click(String type, MainOrderBean OrderListNewBean);
     }
 
     @Override

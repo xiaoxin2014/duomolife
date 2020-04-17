@@ -3,6 +3,7 @@ package com.amkj.dmsh.dominant.fragment;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
@@ -112,7 +113,9 @@ public class GroupCustomTopicFragment extends BaseFragment {
                                 showToast(getActivity(), userLikedProductEntity.getMsg());
                             }
 
-                            EventBus.getDefault().post(new EventMessage(UPDATE_CUSTOM_NAME, new TabNameBean(userLikedProductEntity.getZoneName(), ConstantMethod.getStringChangeIntegers(position),simpleName)));
+                            if (!TextUtils.isEmpty(userLikedProductEntity.getZoneName())) {
+                                EventBus.getDefault().post(new EventMessage(UPDATE_CUSTOM_NAME, new TabNameBean(userLikedProductEntity.getZoneName(), ConstantMethod.getStringChangeIntegers(position), simpleName)));
+                            }
                         }
                         qualityCustomTopicAdapter.notifyDataSetChanged();
 

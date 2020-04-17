@@ -113,7 +113,6 @@ public class DirectLogisticsFragment extends BaseFragment {
     @Override
     protected void initViews() {
         mSmartScrollCommunalRefresh.setOnRefreshListener(refreshLayout -> {
-            expand = false;
             getExressInfo();
         });
     }
@@ -231,6 +230,9 @@ public class DirectLogisticsFragment extends BaseFragment {
                     .startTurning(1000);
 
             //初始化物流
+            expand = false;
+            mTvChange.setSelected(false);
+            mTvChange.setText("展开");
             List<LogisticTextBean> logistis = mLogisticsDetailBean.getList();
             mLlExpressInfo.setVisibility(!TextUtils.isEmpty(mLogisticsDetailBean.getNumber()) ? View.VISIBLE : View.GONE);
             mTvExpressName.setText(getStrings(mLogisticsDetailBean.getCompanyName()));

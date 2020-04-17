@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_find_no_order"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:padding="@dimen/sc_mm_15"
+    android:orientation="horizontal">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="没找到我的订单？"
+        android:textColor="@color/color_blue_reply_com"
+        android:textSize="@dimen/sc_mm_32" />
+
+    <TextView
+        android:id="@+id/tv_help"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="查看帮助"
+        android:textColor="@color/text_login_blue_z"
+        android:textSize="@dimen/sc_mm_32" />
+</LinearLayout>
