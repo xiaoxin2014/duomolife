@@ -4,7 +4,7 @@ import com.amkj.dmsh.base.BaseTimeEntity;
 
 /**
  * Created by xiaoxin on 2020/3/31
- * Version:v4.4.3
+ * Version:v4.5.0
  * ClassDescription :退款信息
  */
 public class RefundInfoEntity extends BaseTimeEntity {

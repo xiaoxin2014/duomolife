@@ -209,24 +209,17 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
                         }
                     }
                 } else if (code.equals(EMPTY_CODE)) {
-                    showToast(IntegExchangeDetailActivity.this, R.string.shopOverdue);
+                    showToast( R.string.shopOverdue);
                 } else {
-                    showToast(IntegExchangeDetailActivity.this, msg);
+                    showToast(msg);
                 }
                 NetLoadUtils.getNetInstance().showLoadSir(loadService, code);
             }
 
             @Override
-            public void netClose() {
+            public void onNotNetOrException() {
                 smart_communal_refresh.finishRefresh();
-                showToast(IntegExchangeDetailActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getNetInstance().showLoadSir(loadService, integralOrderDetailEntity);
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                smart_communal_refresh.finishRefresh();
-                showToast(IntegExchangeDetailActivity.this, R.string.connectedFaile);
+                showToast(R.string.connectedFaile);
                 NetLoadUtils.getNetInstance().showLoadSir(loadService, integralOrderDetailEntity);
             }
         });
@@ -404,22 +397,17 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        showToast(IntegExchangeDetailActivity.this, "取消订单成功");
+                        showToast("取消订单成功");
                         finish();
                     } else {
-                        showToastRequestMsg(IntegExchangeDetailActivity.this, requestStatus);
+                        showToastRequestMsg(requestStatus);
                     }
                 }
             }
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(IntegExchangeDetailActivity.this, R.string.do_failed);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(IntegExchangeDetailActivity.this, R.string.unConnectedNetwork);
+                showToast(R.string.do_failed);
             }
         });
     }
@@ -437,10 +425,10 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        showToastRequestMsg(IntegExchangeDetailActivity.this, requestStatus);
+                        showToastRequestMsg( requestStatus);
                         finish();
                     } else {
-                        showToastRequestMsg(IntegExchangeDetailActivity.this, requestStatus);
+                        showToastRequestMsg( requestStatus);
                     }
                 }
             }
@@ -468,7 +456,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
                 e.printStackTrace();
             }
         } else {
-            showToast(IntegExchangeDetailActivity.this, "数据异常，请刷新重试");
+            showToast("数据异常，请刷新重试");
             return;
         }
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
@@ -505,7 +493,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
                                 startActivity(intent);
                                 break;
                             case 1:
-                                showToast(IntegExchangeDetailActivity.this, refundCheckEntity.getApplyRefundCheckBean() == null
+                                showToast( refundCheckEntity.getApplyRefundCheckBean() == null
                                         ? refundCheckEntity.getMsg() : refundCheckEntity.getApplyRefundCheckBean().getMsg()
                                 );
                                 break;
@@ -538,7 +526,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
                                 break;
                         }
                     } else {
-                        showToast(IntegExchangeDetailActivity.this, refundCheckEntity.getApplyRefundCheckBean() == null
+                        showToast( refundCheckEntity.getApplyRefundCheckBean() == null
                                 ? refundCheckEntity.getMsg() : refundCheckEntity.getApplyRefundCheckBean().getMsg()
                         );
                     }
@@ -547,12 +535,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(IntegExchangeDetailActivity.this, R.string.invalidData);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(IntegExchangeDetailActivity.this, R.string.unConnectedNetwork);
+                showToast(R.string.invalidData);
             }
         });
     }
@@ -566,7 +549,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
         if (goods != null && goods.size() > 0) {
             goodsBean = goods.get(0);
         } else {
-            showToast(this, "商品数据异常，请刷新重试");
+            showToast("商品数据异常，请刷新重试");
             return;
         }
         Intent intent = new Intent();
@@ -742,7 +725,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
             ClipboardManager cmb = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData mClipData = ClipData.newPlainText("Label", getStrings(content));
             cmb.setPrimaryClip(mClipData);
-            showToast(IntegExchangeDetailActivity.this, "已复制");
+            showToast("已复制");
         }
     }
 
@@ -795,7 +778,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
                             //返回成功，调起微信支付接口
                             doWXPay(qualityWeChatIndent.getResult());
                         } else {
-                            showToast(IntegExchangeDetailActivity.this, qualityWeChatIndent.getResult() == null
+                            showToast( qualityWeChatIndent.getResult() == null
                                     ? qualityWeChatIndent.getMsg() : qualityWeChatIndent.getResult().getMsg());
                         }
                     }
@@ -806,7 +789,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
                             //返回成功，调起支付宝支付接口
                             doAliPay(qualityAliPayIndent.getResult());
                         } else {
-                            showToast(IntegExchangeDetailActivity.this, qualityAliPayIndent.getResult() == null
+                            showToast(qualityAliPayIndent.getResult() == null
                                     ? qualityAliPayIndent.getMsg() : qualityAliPayIndent.getResult().getMsg());
                         }
                     }
@@ -815,12 +798,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(IntegExchangeDetailActivity.this, R.string.do_failed);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(IntegExchangeDetailActivity.this, R.string.unConnectedNetwork);
+                showToast( R.string.do_failed);
             }
         });
     }
@@ -831,7 +809,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
             @Override
             public void onSuccess() {
 //                recordPaySuc();
-                showToast(getApplication(), "支付成功");
+                showToast("支付成功");
                 loadData();
             }
 
@@ -839,20 +817,20 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
             public void onError(int error_code) {
                 switch (error_code) {
                     case WXPay.NO_OR_LOW_WX:
-                        showToast(getApplication(), "未安装微信或微信版本过低");
+                        showToast("未安装微信或微信版本过低");
                         break;
                     case WXPay.ERROR_PAY_PARAM:
-                        showToast(getApplication(), "参数错误");
+                        showToast("参数错误");
                         break;
                     case WXPay.ERROR_PAY:
-                        showToast(getApplication(), "支付失败");
+                        showToast("支付失败");
                         break;
                 }
             }
 
             @Override
             public void onCancel() {
-                showToast(getApplication(), "支付取消");
+                showToast("支付取消");
             }
         });
     }
@@ -861,33 +839,33 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
         new AliPay(this, resultBean.getNo(), resultBean.getPayKey(), new AliPay.AliPayResultCallBack() {
             @Override
             public void onSuccess() {
-                showToast(getApplication(), "支付成功");
+                showToast("支付成功");
 //                recordPaySuc();
                 loadData();
             }
 
             @Override
             public void onDealing() {
-                showToast(getApplication(), "支付处理中...");
+                showToast("支付处理中...");
             }
 
             @Override
             public void onError(int error_code) {
                 switch (error_code) {
                     case AliPay.ERROR_RESULT:
-                        showToast(getApplication(), "支付失败:支付结果解析错误");
+                        showToast("支付失败:支付结果解析错误");
                         break;
 
                     case AliPay.ERROR_NETWORK:
-                        showToast(getApplication(), "支付失败:网络连接错误");
+                        showToast("支付失败:网络连接错误");
                         break;
 
                     case AliPay.ERROR_PAY:
-                        showToast(getApplication(), "支付错误:支付码支付失败");
+                        showToast("支付错误:支付码支付失败");
                         break;
 
                     default:
-                        showToast(getApplication(), "支付错误");
+                        showToast("支付错误");
                         break;
                 }
 
@@ -895,7 +873,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
 
             @Override
             public void onCancel() {
-                showToast(getApplication(), "支付取消");
+                showToast("支付取消");
             }
         }).doPay();
     }

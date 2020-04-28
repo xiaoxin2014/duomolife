@@ -143,7 +143,7 @@ public class MessageIndentActivity extends BaseActivity {
                     } else if (messageOfficialEntity.getCode().equals(EMPTY_CODE)) {
                         messageIndentAdapter.loadMoreEnd();
                     } else {
-                        showToast(MessageIndentActivity.this, messageOfficialEntity.getMsg());
+                        showToast(messageOfficialEntity.getMsg());
                     }
                 }
                 messageIndentAdapter.notifyDataSetChanged();

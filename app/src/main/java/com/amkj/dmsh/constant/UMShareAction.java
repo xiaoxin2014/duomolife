@@ -180,7 +180,7 @@ public class UMShareAction {
                         ClipboardManager cmb = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
                         ClipData mClipData = ClipData.newPlainText("Label", !TextUtils.isEmpty(urlLink) ? urlLink : "多么生活");
                         cmb.setPrimaryClip(mClipData);
-                        showToast(context, R.string.copy_url_success);
+                        showToast(R.string.copy_url_success);
                         if (alertDialogShareHelper != null) {
                             alertDialogShareHelper.dismiss();
                         }
@@ -409,7 +409,7 @@ public class UMShareAction {
                                         File pathFile = new File(finalTopicSavePath);
                                         try {
                                             if (FileStreamUtils.forChannel(file, pathFile)) {
-                                                showToast(context, R.string.saveSuccess);
+                                                showToast( R.string.saveSuccess);
                                             }
                                             // 其次把文件插入到系统图库
                                             insertImageToSyatemImage(context, pathFile);
@@ -423,14 +423,14 @@ public class UMShareAction {
                                     }
                                 });
                             } else {
-                                showToast(context, "相片已保存在相册，赶紧去分享吧~");
+                                showToast("相片已保存在相册，赶紧去分享吧~");
                             }
                             if (alertDialogShareHelper != null) {
                                 alertDialogShareHelper.dismiss();
                             }
                         }
                     } else {
-                        showToast(context, getStrings(requestStatus.getMsg()));
+                        showToast(getStrings(requestStatus.getMsg()));
                     }
                 }
                 if (alertDialogShareHelper != null) {
@@ -459,7 +459,7 @@ public class UMShareAction {
         @Override
         public void onResult(SHARE_MEDIA platform) {
             if (platform != SHARE_MEDIA.WEIXIN && platform != SHARE_MEDIA.WEIXIN_CIRCLE) {
-                showToast(context, getPlatFormText(platform) + " 分享成功啦");
+                showToast(getPlatFormText(platform) + " 分享成功啦");
             }
             if (onShareSuccessListener != null) {
                 onShareSuccessListener.onShareSuccess();
@@ -488,14 +488,14 @@ public class UMShareAction {
                 alertDialogShareHelper.setLoading(1);
             }
 
-            showToast(context, getPlatFormText(platform) + " 分享失败,请检查是否安装该应用");
+            showToast(getPlatFormText(platform) + " 分享失败,请检查是否安装该应用");
             ConstantMethod.recycleBitmap(mBitmap);
         }
 
         @Override
         public void onCancel(SHARE_MEDIA platform) {
             isSharing = false;
-            showToast(context, getPlatFormText(platform) + " 分享取消了");
+            showToast(getPlatFormText(platform) + " 分享取消了");
             if (alertDialogShareHelper != null) {
                 alertDialogShareHelper.dismiss();
             }

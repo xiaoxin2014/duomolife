@@ -127,15 +127,15 @@ public class ChangeMobileActivity extends BaseActivity {
                 if (NetWorkUtils.isConnectedByState(ChangeMobileActivity.this)) {
                     SMSSDK.submitVerificationCode("86", phoneNumber, smsCode);
                 } else {
-                    showToast(this, R.string.unConnectedNetwork);
+                    showToast( R.string.unConnectedNetwork);
                 }
             } else {
-                showToast(this, R.string.MobileError);
+                showToast( R.string.MobileError);
             }
         } else if (TextUtils.isEmpty(phoneNumber)) {
-            showToast(this, R.string.MobileError);
+            showToast( R.string.MobileError);
         } else {
-            showToast(this, R.string.SmsCodeNull);
+            showToast(R.string.SmsCodeNull);
         }
 
     }
@@ -153,10 +153,10 @@ public class ChangeMobileActivity extends BaseActivity {
             } else {
                 tv_change_send_code.setVisibility(View.VISIBLE);
                 reg_change_code_gif_view.setVisibility(View.GONE);
-                showToast(this, R.string.unConnectedNetwork);
+                showToast( R.string.unConnectedNetwork);
             }
         } else {
-            showToast(this, R.string.MobileError);
+            showToast( R.string.MobileError);
         }
     }
 
@@ -178,7 +178,7 @@ public class ChangeMobileActivity extends BaseActivity {
                     //请求验证码成功，进入倒计时
                     tv_change_send_code.setVisibility(View.VISIBLE);
                     reg_change_code_gif_view.setVisibility(View.GONE);
-                    showToast(ChangeMobileActivity.this, R.string.GetSmsCodeSuccess);
+                    showToast( R.string.GetSmsCodeSuccess);
                     if (countDownHelper == null) {
                         countDownHelper = CountDownHelper.getTimerInstance();
                     }
@@ -196,12 +196,12 @@ public class ChangeMobileActivity extends BaseActivity {
                     throwable.printStackTrace();
                     JSONObject object = new JSONObject(throwable.getMessage());
                     int status = object.optInt("status");//错误代码
-                    disposeMessageCode(ChangeMobileActivity.this, status);
+                    disposeMessageCode( status);
                 } catch (Exception e) {
-                    showToast(ChangeMobileActivity.this, R.string.unConnectedNetwork);
+                    showToast(R.string.unConnectedNetwork);
                 }
             } else {
-                showToast(ChangeMobileActivity.this, R.string.do_failed);
+                showToast(R.string.do_failed);
             }
             return false;
         }
@@ -223,7 +223,7 @@ public class ChangeMobileActivity extends BaseActivity {
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        showToast(ChangeMobileActivity.this, "更换手机成功");
+                        showToast("更换手机成功");
                         finish();
                     } else {
                         showException(requestStatus.getResult() != null ? requestStatus.getResult().getResultMsg() : requestStatus.getMsg());
@@ -241,11 +241,6 @@ public class ChangeMobileActivity extends BaseActivity {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-            }
-
-            @Override
-            public void netClose() {
-                showToast(ChangeMobileActivity.this, R.string.unConnectedNetwork);
             }
         });
     }

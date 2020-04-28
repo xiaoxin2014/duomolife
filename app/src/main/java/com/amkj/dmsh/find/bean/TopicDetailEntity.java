@@ -1,6 +1,7 @@
 package com.amkj.dmsh.find.bean;
 
 import com.amkj.dmsh.base.BaseEntity;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by xiaoxin on 2019/7/25
@@ -25,6 +26,7 @@ public class TopicDetailEntity extends BaseEntity {
     private int id;
     private String title;
     private String content;
+    @SerializedName(value = "reminder", alternate = "contentReminder")
     private String reminder;//编辑框导语
     private String videoUrl;
     private String firstImgUrl;
@@ -35,7 +37,15 @@ public class TopicDetailEntity extends BaseEntity {
     private int score;
     private String rewardTip;//奖励提示
     private String isProductTopic;//是否是商品晒单话题
+    private String maxRewardTip;
 
+    public String getMaxRewardTip() {
+        return maxRewardTip;
+    }
+
+    public void setMaxRewardTip(String maxRewardTip) {
+        this.maxRewardTip = maxRewardTip;
+    }
 
     public String getImgUrl() {
         return imgUrl;

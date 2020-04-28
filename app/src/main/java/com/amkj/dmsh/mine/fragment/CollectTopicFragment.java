@@ -173,7 +173,7 @@ public class CollectTopicFragment extends BaseFragment {
                     if (findHotTopicEntity.getCode().equals(SUCCESS_CODE)) {
                         findTopicBeanList.addAll(findHotTopicEntity.getHotTopicList());
                     } else if (!findHotTopicEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(getActivity(), findHotTopicEntity.getMsg());
+                        showToast( findHotTopicEntity.getMsg());
                     }else{
                         findTopicListAdapter.loadMoreEnd();
                     }
@@ -190,13 +190,8 @@ public class CollectTopicFragment extends BaseFragment {
             }
 
             @Override
-            public void netClose() {
-                showToast(mAppContext, R.string.unConnectedNetwork);
-            }
-
-            @Override
             public void onError(Throwable throwable) {
-                showToast(mAppContext, R.string.invalidData);
+                showToast(R.string.invalidData);
             }
         });
     }

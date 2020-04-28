@@ -140,7 +140,7 @@ public class EditorHeadView extends LinearLayout {
                     mTvSubscriber.setSelected(selected);
                     mTvSubscriber.setText(selected ? R.string.already_subscribe : R.string.subscriber);
                     mTvFirstSubscribe.setVisibility(View.GONE);
-                    ConstantMethod.showToast(mContext, selected ? R.string.subscriber_sucess : R.string.subscriber_cancle);
+                    ConstantMethod.showToast(selected ? R.string.subscriber_sucess : R.string.subscriber_cancle);
                 }
 
                 @Override
@@ -149,13 +149,8 @@ public class EditorHeadView extends LinearLayout {
                 }
 
                 @Override
-                public void netClose() {
-                    showToast(mContext, R.string.unConnectedNetwork);
-                }
-
-                @Override
                 public void onError(Throwable throwable) {
-                    showToast(mContext, selected ? R.string.subscriber_failed : R.string.unsubscriber_failed);
+                    showToast(selected ? R.string.subscriber_failed : R.string.unsubscriber_failed);
                 }
             });
         } else {

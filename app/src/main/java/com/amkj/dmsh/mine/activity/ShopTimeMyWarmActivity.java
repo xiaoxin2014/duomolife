@@ -121,7 +121,7 @@ public class ShopTimeMyWarmActivity extends BaseActivity {
                     intent.putExtra("productId", String.valueOf(mineWarmBean.getId()));
                     startActivity(intent);
                 } else {
-                    showToast(ShopTimeMyWarmActivity.this, "商品已失效");
+                    showToast("商品已失效");
                 }
             }
         });
@@ -190,7 +190,7 @@ public class ShopTimeMyWarmActivity extends BaseActivity {
                     if (status.getCode().equals(SUCCESS_CODE)) {
                         loadData();
                     } else {
-                        showToastRequestMsg(ShopTimeMyWarmActivity.this, status);
+                        showToastRequestMsg(status);
                     }
                 }
             }
@@ -241,7 +241,7 @@ public class ShopTimeMyWarmActivity extends BaseActivity {
                         }
                         tv_header_titleAll.setText("秒杀提醒(" + mineWarmEntity.getCount() + ")");
                     } else if (!mineWarmEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(ShopTimeMyWarmActivity.this, mineWarmEntity.getMsg());
+                        showToast( mineWarmEntity.getMsg());
                     }else{
                         shopTimeMyWarmAdapter.loadMoreEnd();
                     }
@@ -255,11 +255,6 @@ public class ShopTimeMyWarmActivity extends BaseActivity {
                 smart_communal_refresh.finishRefresh();
                 shopTimeMyWarmAdapter.loadMoreEnd(true);
                 NetLoadUtils.getNetInstance().showLoadSir(loadService, mineWarmBeanList, mineWarmEntity);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(ShopTimeMyWarmActivity.this,R.string.unConnectedNetwork);
             }
         });
     }

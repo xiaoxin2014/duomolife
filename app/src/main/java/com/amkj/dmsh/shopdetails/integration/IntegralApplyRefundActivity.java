@@ -26,8 +26,6 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.address.activity.SelectedAddressActivity;
 import com.amkj.dmsh.address.bean.AddressInfoEntity;
-import com.amkj.dmsh.address.widget.WheelView;
-import com.amkj.dmsh.address.widget.adapters.ArrayWheelAdapter;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.ImageBean;
@@ -55,6 +53,8 @@ import com.amkj.dmsh.utils.KeyboardUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
+import com.bigkoo.pickerview.adapter.ArrayWheelAdapter;
+import com.contrarywind.view.WheelView;
 import com.google.gson.Gson;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
@@ -104,7 +104,7 @@ import static com.amkj.dmsh.utils.ImageFormatUtils.getImageFormatInstance;
 
 /**
  * Created by xiaoxin on 2020/4/8
- * Version:v4.4.3
+ * Version:v4.5.0
  * ClassDescription :积分订单申请退款
  */
 public class IntegralApplyRefundActivity extends BaseActivity {
@@ -396,9 +396,9 @@ public class IntegralApplyRefundActivity extends BaseActivity {
                         refundApplyBean = refundApplyEntity.getRefundApplyBean();
                         setRefundApplyData(refundApplyBean);
                     } else if (refundApplyEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(getActivity(), R.string.invalidData);
+                        showToast(R.string.invalidData);
                     } else {
-                        showToast(getActivity(), refundApplyEntity.getMsg());
+                        showToast(refundApplyEntity.getMsg());
                     }
                 }
                 NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
@@ -411,14 +411,9 @@ public class IntegralApplyRefundActivity extends BaseActivity {
             }
 
             @Override
-            public void netClose() {
-                showToast(getActivity(), R.string.unConnectedNetwork);
-            }
-
-            @Override
             public void onError(Throwable throwable) {
                 sv_layout_refund.setVisibility(View.GONE);
-                showToast(getActivity(), R.string.invalidData);
+                showToast(R.string.invalidData);
                 NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
             }
         });
@@ -514,7 +509,7 @@ public class IntegralApplyRefundActivity extends BaseActivity {
             addressId = data.getIntExtra("addressId", 0);
             getAddressDetails();
         } else if (requestCode == REQUEST_PERMISSIONS) {
-            showToast(this, "请到应用管理授予权限");
+            showToast("请到应用管理授予权限");
         }
     }
 
@@ -565,7 +560,7 @@ public class IntegralApplyRefundActivity extends BaseActivity {
                     } else if (addressInfoEntity.getCode().equals(EMPTY_CODE)) {
                         setAddressData(null);
                     } else {
-                        showToast(getActivity(), addressInfoEntity.getMsg());
+                        showToast(addressInfoEntity.getMsg());
                     }
                 }
             }
@@ -589,7 +584,7 @@ public class IntegralApplyRefundActivity extends BaseActivity {
                     } else if (addressInfoEntity.getCode().equals(EMPTY_CODE)) {
                         setAddressData(null);
                     } else {
-                        showToast(getActivity(), addressInfoEntity.getMsg());
+                        showToast(addressInfoEntity.getMsg());
                     }
                 }
             }
@@ -653,7 +648,7 @@ public class IntegralApplyRefundActivity extends BaseActivity {
                     refundBean.setRefundReasonId(refundReasonMap.get(reason));
                     submit(refundBean);
                 } else if (TextUtils.isEmpty(reason)) {
-                    showToast(this, R.string.refund_reason);
+                    showToast( R.string.refund_reason);
                 }
             } else if (refundBean.getType() == 2) {
                 if (!TextUtils.isEmpty(refundType)) {
@@ -665,9 +660,9 @@ public class IntegralApplyRefundActivity extends BaseActivity {
                                 refundBean.setContent(getStrings(content));
                                 submit(refundBean);
                             } else if (addressId < 1) {
-                                showToast(this, R.string.refund_address_sel);
+                                showToast( R.string.refund_address_sel);
                             } else {
-                                showToast(this, R.string.refund_repair_content);
+                                showToast( R.string.refund_repair_content);
                             }
                         } else {
                             if (!TextUtils.isEmpty(reason)) {
@@ -677,14 +672,14 @@ public class IntegralApplyRefundActivity extends BaseActivity {
                                 refundBean.setReason(reason);
                                 submit(refundBean);
                             } else {
-                                showToast(this, R.string.refund_reason);
+                                showToast(R.string.refund_reason);
                             }
                         }
                     } else {
-                        showToast(this, R.string.refund_type_sel_errror);
+                        showToast( R.string.refund_type_sel_errror);
                     }
                 } else {
-                    showToast(this, R.string.refund_type);
+                    showToast( R.string.refund_type);
                 }
             }
         }
@@ -725,7 +720,7 @@ public class IntegralApplyRefundActivity extends BaseActivity {
                         if (loadHud != null) {
                             loadHud.dismiss();
                         }
-                        showToast(getActivity(), "网络异常");
+                        showToast("网络异常");
                     }
 
                     @Override
@@ -806,7 +801,7 @@ public class IntegralApplyRefundActivity extends BaseActivity {
                 RequestStatus requestInfo = gson.fromJson(result, RequestStatus.class);
                 if (requestInfo != null) {
                     if (requestInfo.getCode().equals(SUCCESS_CODE)) {
-                        showToast(getActivity(), "提交完成");
+                        showToast("提交完成");
                         Intent intent = new Intent(getActivity(), DoMoRefundDetailActivity.class);
                         intent.putExtra("orderProductId", String.valueOf(directRefundProBean.getOrderProductId()));
                         intent.putExtra("no", String.valueOf(refundBean.getOrderNo()));
@@ -815,7 +810,7 @@ public class IntegralApplyRefundActivity extends BaseActivity {
                         startActivity(intent);
                         finish();
                     } else {
-                        showToastRequestMsg(getActivity(), requestInfo);
+                        showToastRequestMsg(requestInfo);
                     }
                 }
             }
@@ -829,12 +824,7 @@ public class IntegralApplyRefundActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(getActivity(), R.string.do_failed);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(getActivity(), R.string.unConnectedNetwork);
+                showToast(R.string.do_failed);
             }
         });
     }
@@ -902,7 +892,7 @@ public class IntegralApplyRefundActivity extends BaseActivity {
                     if (requestInfo.getCode().equals(SUCCESS_CODE)) {
                         finish();
                     } else {
-                        showToastRequestMsg(getActivity(), requestInfo);
+                        showToastRequestMsg(requestInfo);
                     }
                 }
             }
@@ -915,13 +905,8 @@ public class IntegralApplyRefundActivity extends BaseActivity {
             }
 
             @Override
-            public void netClose() {
-                showToast(getActivity(), R.string.unConnectedNetwork);
-            }
-
-            @Override
             public void onError(Throwable throwable) {
-                showToast(getActivity(), R.string.do_failed);
+                showToast( R.string.do_failed);
             }
         });
     }
@@ -968,7 +953,7 @@ public class IntegralApplyRefundActivity extends BaseActivity {
                         }
                         commitDialogHelper.show();
                     } else {
-                        showToastRequestMsg(getActivity(), requestStatus);
+                        showToastRequestMsg(requestStatus);
                     }
                 }
             }
@@ -982,12 +967,7 @@ public class IntegralApplyRefundActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(getActivity(), R.string.Submit_Failed);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(getActivity(), R.string.unConnectedNetwork);
+                showToast( R.string.Submit_Failed);
             }
         });
     }
@@ -1018,14 +998,14 @@ public class IntegralApplyRefundActivity extends BaseActivity {
                                 refundReasonMap.put(moneyAndGoodsBean.getReason(), moneyAndGoodsBean.getId());
                             }
                         }
-                        wv_communal_one.setViewAdapter(new ArrayWheelAdapter<>(getActivity(), refundReasonList.toArray()));
-                        wv_communal_one.setVisibleItems(5);
+                        wv_communal_one.setAdapter(new ArrayWheelAdapter<>(refundReasonList));
+                        wv_communal_one.setCyclic(false);
                         wv_communal_one.setCurrentItem(0);
                         tv_dir_indent_apply_reason_sel.setSelected(true);
                         ll_communal_sel_wheel.setVisibility(View.VISIBLE);
                         tv_submit_apply_refund.setVisibility(View.GONE);
                     } else {
-                        showToast(this, R.string.refund_type);
+                        showToast( R.string.refund_type);
                     }
                 } else {
                     refundReasonList.clear();
@@ -1035,8 +1015,8 @@ public class IntegralApplyRefundActivity extends BaseActivity {
                         refundReasonList.add(waitDeliveryBean.getReason());
                         refundReasonMap.put(waitDeliveryBean.getReason(), waitDeliveryBean.getId());
                     }
-                    wv_communal_one.setViewAdapter(new ArrayWheelAdapter<>(getActivity(), refundReasonList.toArray()));
-                    wv_communal_one.setVisibleItems(5);
+                    wv_communal_one.setAdapter(new ArrayWheelAdapter<>(refundReasonList));
+                    wv_communal_one.setCyclic(false);
                     wv_communal_one.setCurrentItem(0);
                     tv_dir_indent_apply_reason_sel.setSelected(true);
                     ll_communal_sel_wheel.setVisibility(View.VISIBLE);
@@ -1048,7 +1028,7 @@ public class IntegralApplyRefundActivity extends BaseActivity {
                 tv_submit_apply_refund.setVisibility(View.VISIBLE);
             }
         } else {
-            showToast(this, R.string.refund_type);
+            showToast(R.string.refund_type);
         }
     }
 
@@ -1057,8 +1037,8 @@ public class IntegralApplyRefundActivity extends BaseActivity {
     void selRefundType(View view) {
         if (ll_communal_sel_wheel.getVisibility() == View.GONE) {
             isSelType = true;
-            wv_communal_one.setViewAdapter(new ArrayWheelAdapter<>(getActivity(), refundTypeList.toArray()));
-            wv_communal_one.setVisibleItems(5);
+            wv_communal_one.setAdapter(new ArrayWheelAdapter<>(refundTypeList));
+            wv_communal_one.setCyclic(false);
             wv_communal_one.setCurrentItem(0);
             tv_dir_indent_apply_reason_sel.setSelected(true);
             ll_communal_sel_wheel.setVisibility(View.VISIBLE);
@@ -1104,7 +1084,7 @@ public class IntegralApplyRefundActivity extends BaseActivity {
                     }
                     tv_dir_indent_apply_type_sel.setText(refundTypeText);
                 } else {
-                    showToast(getActivity(), R.string.refund_type_sel_errror);
+                    showToast(R.string.refund_type_sel_errror);
                 }
             } else {
                 tv_dir_indent_apply_reason_sel.setText(getStrings(refundReasonList.get(wv_communal_one.getCurrentItem())));

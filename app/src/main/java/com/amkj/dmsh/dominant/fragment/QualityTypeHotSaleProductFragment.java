@@ -124,7 +124,7 @@ public class QualityTypeHotSaleProductFragment extends BaseFragment {
                                 qualityTypeProductAdapter.loadMoreEnd();
                             } else {
                                 qualityTypeProductAdapter.loadMoreEnd();
-                                showToast(getActivity(), typeProductBean.getMsg());
+                                showToast( typeProductBean.getMsg());
                             }
                             qualityTypeProductAdapter.notifyDataSetChanged();
                         }
@@ -138,13 +138,8 @@ public class QualityTypeHotSaleProductFragment extends BaseFragment {
                     }
 
                     @Override
-                    public void netClose() {
-                        showToast(getActivity(), R.string.unConnectedNetwork);
-                    }
-
-                    @Override
                     public void onError(Throwable throwable) {
-                        showToast(getActivity(), R.string.invalidData);
+                        showToast(R.string.invalidData);
                     }
                 });
     }

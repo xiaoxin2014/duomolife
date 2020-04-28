@@ -18,7 +18,6 @@ import com.tencent.bugly.crashreport.CrashReport;
 
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,7 +44,7 @@ public class MyInterceptor implements Interceptor {
 
     @NonNull
     @Override
-    public Response intercept(@NonNull Chain chain) throws IOException {
+    public Response intercept(@NonNull Chain chain) {
         Request request = chain.request();
         Request.Builder builder = request.newBuilder();
         Map<String, Object> newMap = new HashMap<>(mDomoCommon);
@@ -88,7 +87,6 @@ public class MyInterceptor implements Interceptor {
             //上报异常
             CrashReport.postCatchedException(new Exception(
                     e.getMessage(), e.getCause()));
-            throw e;
         }
 
 
@@ -101,7 +99,6 @@ public class MyInterceptor implements Interceptor {
 
     private void httpLog(Request request, String domoJson, String responseInfo) {
         if (BuildConfig.DEBUG) {
-
             Log.d("retrofit", "----------Start-----------");
             //打印请求Ulr
             Log.d("retrofitRequest", String.format("Sending request %s",
@@ -110,16 +107,20 @@ public class MyInterceptor implements Interceptor {
             Log.d("retrofitHeaderJson", domoJson);
             //打印请求参数
             String method = request.method();
-            if ("POST".equals(method)) {
-                StringBuilder sb = new StringBuilder();
-                if (request.body() instanceof FormBody) {
-                    FormBody formBody = (FormBody) request.body();
-                    for (int i = 0; i < formBody.size(); i++) {
-                        sb.append(formBody.encodedName(i) + "=" + EncodeUtils.urlDecode(formBody.encodedValue(i)).replace("<", "<").replace(">", ">").replace("%24", "$") + ",");
+            try {
+                if ("POST".equals(method)) {
+                    StringBuilder sb = new StringBuilder();
+                    if (request.body() instanceof FormBody) {
+                        FormBody formBody = (FormBody) request.body();
+                        for (int i = 0; i < formBody.size(); i++) {
+                            sb.append(formBody.encodedName(i) + "=" + EncodeUtils.urlDecode(formBody.encodedValue(i)).replace("<", "<").replace(">", ">").replace("%24", "$") + ",");
+                        }
+                        sb.delete(sb.length() - 1, sb.length());
+                        Log.d("retrofitRequestBody", "{" + sb.toString() + "}");
                     }
-                    sb.delete(sb.length() - 1, sb.length());
-                    Log.d("retrofitRequestBody", "{" + sb.toString() + "}");
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
             Log.d("retrofitResponse", responseInfo);

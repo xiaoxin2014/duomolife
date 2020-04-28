@@ -12,7 +12,7 @@ import java.util.Map;
 
 /**
  * Created by xiaoxin on 2020/3/19
- * Version:v4.4.3
+ * Version:v4.5.0
  * ClassDescription :新版订单列表实体类
  */
 public class MainOrderListEntity extends BaseTimeEntity {
@@ -86,11 +86,16 @@ public class MainOrderListEntity extends BaseTimeEntity {
         private String refundType;
         private String orderRefundProductId;
         private String refuseReason;
+        private String isAfter;//1跳转选择退款类型,否则是待发货状态直接跳转申请退款界面
 
         //申请退款
         private Map<String, Map<String, String>> refundReasonMap;
         private Map<String, String> refundTypeMap;
 
+
+        public boolean isAfter() {
+            return "1".equals(isAfter);
+        }
 
         public Map<String, Map<String, String>> getRefundReasonMap() {
             return refundReasonMap;

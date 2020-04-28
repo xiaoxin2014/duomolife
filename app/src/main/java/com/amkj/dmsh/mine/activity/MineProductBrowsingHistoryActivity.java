@@ -432,7 +432,7 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
      */
     private void getMineBrowsingHistory() {
         if (TextUtils.isEmpty(currentDay)) {
-            showToast(MineProductBrowsingHistoryActivity.this, "数据时间格式错误！");
+            showToast("数据时间格式错误！");
             return;
         }
         Map<String, Object> params = new HashMap<>();
@@ -527,7 +527,7 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
                             parentBrowsHistoryBeanList.addAll(mineBrowsHistoryEntity.getMineBrowsHistoryList());
                         }
                     } else if (!mineBrowsHistoryEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(MineProductBrowsingHistoryActivity.this, mineBrowsHistoryEntity.getMsg());
+                        showToast(mineBrowsHistoryEntity.getMsg());
                     }
                     mineBrowsingHistoryAdapter.expandAll();
                     mineBrowsingHistoryAdapter.notifyDataSetChanged();
@@ -545,12 +545,7 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(MineProductBrowsingHistoryActivity.this, R.string.invalidData);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(MineProductBrowsingHistoryActivity.this, R.string.unConnectedNetwork);
+                showToast( R.string.invalidData);
             }
         });
     }
@@ -675,7 +670,7 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
                         params.put("keepIds", retainIds);
                     }
                 } else {
-                    showToast(MineProductBrowsingHistoryActivity.this, "请选择需要删除的记录");
+                    showToast("请选择需要删除的记录");
                     return;
                 }
 
@@ -735,7 +730,7 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
                     params.put("keepIds", retainIds);
                 }
             } else {
-                showToast(MineProductBrowsingHistoryActivity.this, "请选择需要删除的记录");
+                showToast("请选择需要删除的记录");
                 return;
             }
         }

@@ -330,7 +330,7 @@ public class DoMoLifeWelfareDetailsFragment extends BaseFragment {
                                 qualityWefBean = qualityWefEntity.getQualityWefBean();
                                 setData(qualityWefBean);
                             } else if (!qualityWefEntity.getCode().equals(EMPTY_CODE)) {
-                                showToast(getActivity(), qualityWefEntity.getMsg());
+                                showToast( qualityWefEntity.getMsg());
                             }
                         }
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, qualityWefBean, qualityWefEntity);
@@ -343,13 +343,8 @@ public class DoMoLifeWelfareDetailsFragment extends BaseFragment {
                     }
 
                     @Override
-                    public void netClose() {
-                        showToast(getActivity(), R.string.unConnectedNetwork);
-                    }
-
-                    @Override
                     public void onError(Throwable throwable) {
-                        showToast(getActivity(), R.string.invalidData);
+                        showToast(R.string.invalidData);
                     }
                 });
     }
@@ -450,7 +445,7 @@ public class DoMoLifeWelfareDetailsFragment extends BaseFragment {
                     } else if (dmlSearchCommentEntity.getCode().equals(EMPTY_CODE)) {
                         adapterTopicComment.loadMoreEnd();
                     } else {
-                        showToast(getActivity(), dmlSearchCommentEntity.getMsg());
+                        showToast( dmlSearchCommentEntity.getMsg());
                     }
                     adapterTopicComment.removeHeaderView(commentHeaderView);
                     if (articleCommentList.size() > 0) {
@@ -490,7 +485,7 @@ public class DoMoLifeWelfareDetailsFragment extends BaseFragment {
                 loadHud.dismiss();
                 tv_send_comment.setText("发送");
                 tv_send_comment.setEnabled(true);
-                showToast(getActivity(), R.string.comment_article_send_success);
+                showToast(R.string.comment_article_send_success);
                 commentViewVisible(GONE, null);
                 page = 1;
                 getTopicComment();
@@ -546,7 +541,7 @@ public class DoMoLifeWelfareDetailsFragment extends BaseFragment {
                     communalComment.setUserId(userId);
                     sendComment(communalComment);
                 } else {
-                    showToast(getActivity(), "请正确输入内容");
+                    showToast("请正确输入内容");
                 }
             });
         } else if (GONE == visibility) {

@@ -18,7 +18,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.skipRefundDetail;
 
 /**
  * Created by xiaoxin on 2020/4/9
- * Version:v4.4.3
+ * Version:v4.5.0
  * ClassDescription :售后列表适配器
  */
 public class DirectSalesReturnRecordAdapter extends BaseQuickAdapter<MainOrderBean, BaseViewHolder> {

@@ -11,7 +11,7 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 
 /**
  * Created by xiaoxin on 2020/4/17
- * Version:v4.4.3
+ * Version:v4.5.0
  * ClassDescription :订单列表自定义loadMoreView
  */
 public class OrderLoadMoreView extends LoadMoreView {

@@ -308,7 +308,7 @@ public class QualityShopBuyListActivity extends BaseActivity {
                             } else if (qualityBuyListEntity.getCode().equals(EMPTY_CODE)) {
                                 qualityBuyListAdapter.loadMoreEnd();
                             } else {
-                                showToast(QualityShopBuyListActivity.this, qualityBuyListEntity.getMsg());
+                                showToast(qualityBuyListEntity.getMsg());
                             }
                             qualityBuyListAdapter.notifyDataSetChanged();
                         }
@@ -323,13 +323,8 @@ public class QualityShopBuyListActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void netClose() {
-                        showToast(QualityShopBuyListActivity.this, R.string.unConnectedNetwork);
-                    }
-
-                    @Override
                     public void onError(Throwable throwable) {
-                        showToast(QualityShopBuyListActivity.this, R.string.invalidData);
+                        showToast( R.string.invalidData);
                     }
                 });
     }
@@ -361,7 +356,7 @@ public class QualityShopBuyListActivity extends BaseActivity {
                         }
                         getBuyListRecommend(shopBuyDetailBean.getId());
                     } else if (!shopDetailsEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(QualityShopBuyListActivity.this, shopDetailsEntity.getMsg());
+                        showToast(shopDetailsEntity.getMsg());
                     }
                     communalDetailAdapter.setNewData(itemDescriptionList);
                 }

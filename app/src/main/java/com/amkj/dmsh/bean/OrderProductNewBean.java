@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by xiaoxin on 2020/3/25
- * Version:v4.4.3
+ * Version:v4.5.0
  * ClassDescription :订单相关商品条目
  **/
 public class OrderProductNewBean {
@@ -40,6 +40,7 @@ public class OrderProductNewBean {
     private String saleSkuValue;
     private String statusText;
     private String status;
+    private String orderNo;
     private String remindText;//提示语
     private PresentProductOrder presentProductOrder;//赠品信息
 
@@ -58,6 +59,15 @@ public class OrderProductNewBean {
 
     //售后列表专用字段
     private String refundPrice;
+
+
+    public String getOrderNo() {
+        return orderNo;
+    }
+
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo;
+    }
 
     public String getRefundPrice() {
         return refundPrice;

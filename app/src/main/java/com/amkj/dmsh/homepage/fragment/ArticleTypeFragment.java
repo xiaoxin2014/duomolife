@@ -72,7 +72,7 @@ public class ArticleTypeFragment extends BaseFragment {
                         mViewpagerContainer.setOffscreenPageLimit(mCategoryTypeList.size() - 1);
                         setCurrentTab();
                     } else {
-                        showToast(getActivity(), mCategoryTypeEntity.getMsg());
+                        showToast( mCategoryTypeEntity.getMsg());
                     }
                 }
 

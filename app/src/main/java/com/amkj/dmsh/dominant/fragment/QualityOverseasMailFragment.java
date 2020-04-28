@@ -174,7 +174,7 @@ public class QualityOverseasMailFragment extends BaseFragment {
                         qualityTypeProductAdapter.loadMoreEnd();
                     } else {
                         qualityTypeProductAdapter.loadMoreEnd();
-                        showToast(getActivity(), likedProductEntity.getMsg());
+                        showToast(likedProductEntity.getMsg());
                     }
                 }
             }
@@ -231,7 +231,7 @@ public class QualityOverseasMailFragment extends BaseFragment {
                                     overseasHeaderView.communal_recycler_wrap.setVisibility(View.VISIBLE);
                                 }
                             } else {
-                                showToast(getActivity(), dmlThemeEntity.getMsg());
+                                showToast(dmlThemeEntity.getMsg());
                             }
                             addRemoveHeaderView(themeList);
                         }
@@ -246,14 +246,9 @@ public class QualityOverseasMailFragment extends BaseFragment {
                     }
 
                     @Override
-                    public void netClose() {
-                        showToast(getActivity(), R.string.unConnectedNetwork);
-                    }
-
-                    @Override
                     public void onError(Throwable throwable) {
                         addRemoveHeaderView(themeList);
-                        showToast(getActivity(), R.string.invalidData);
+                        showToast( R.string.invalidData);
                     }
                 });
     }

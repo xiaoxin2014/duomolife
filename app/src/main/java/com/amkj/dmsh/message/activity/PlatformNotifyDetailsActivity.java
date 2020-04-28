@@ -160,7 +160,7 @@ public class PlatformNotifyDetailsActivity extends BaseActivity {
                                     platformNotifyList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(contentBeanList));
                                 }
                             } else if (!platformDataEntity.getCode().equals(EMPTY_CODE)) {
-                                showToast(PlatformNotifyDetailsActivity.this, platformDataEntity.getMsg());
+                                showToast( platformDataEntity.getMsg());
                             }
                             contentPlatformAdapter.notifyDataSetChanged();
                         }
@@ -174,13 +174,8 @@ public class PlatformNotifyDetailsActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void netClose() {
-                        showToast(PlatformNotifyDetailsActivity.this, R.string.unConnectedNetwork);
-                    }
-
-                    @Override
                     public void onError(Throwable throwable) {
-                        showToast(PlatformNotifyDetailsActivity.this, R.string.invalidData);
+                        showToast(R.string.invalidData);
                     }
                 });
     }

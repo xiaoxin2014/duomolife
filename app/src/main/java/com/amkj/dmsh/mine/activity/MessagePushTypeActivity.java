@@ -139,9 +139,9 @@ public class MessagePushTypeActivity extends BaseActivity {
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         loadData();
-                        showToast(MessagePushTypeActivity.this, String.format(getResources().getString(R.string.doSuccess), "修改"));
+                        showToast(String.format(getResources().getString(R.string.doSuccess), "修改"));
                     } else {
-                        showToastRequestMsg(MessagePushTypeActivity.this, requestStatus);
+                        showToastRequestMsg(requestStatus);
                     }
                 }
             }
@@ -153,12 +153,7 @@ public class MessagePushTypeActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(MessagePushTypeActivity.this, R.string.do_failed);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(MessagePushTypeActivity.this, R.string.unConnectedNetwork);
+                showToast( R.string.do_failed);
             }
         });
     }
@@ -187,7 +182,7 @@ public class MessagePushTypeActivity extends BaseActivity {
                                 }
                                 mesPushTypeSetAdapter.setNewData(mesPushTypeList);
                             } else if (!mesPushTypeEntity.getCode().equals(EMPTY_CODE)) {
-                                showToast(MessagePushTypeActivity.this, mesPushTypeEntity.getMsg());
+                                showToast( mesPushTypeEntity.getMsg());
                             }
                         }
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, mesPushTypeList, mesPushTypeEntity);
@@ -200,13 +195,8 @@ public class MessagePushTypeActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void netClose() {
-                        showToast(MessagePushTypeActivity.this, R.string.unConnectedNetwork);
-                    }
-
-                    @Override
                     public void onError(Throwable throwable) {
-                        showToast(MessagePushTypeActivity.this, R.string.invalidData);
+                        showToast( R.string.invalidData);
                     }
                 });
     }

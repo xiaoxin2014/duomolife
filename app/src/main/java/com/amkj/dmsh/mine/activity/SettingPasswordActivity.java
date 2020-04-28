@@ -78,16 +78,16 @@ public class SettingPasswordActivity extends BaseActivity {
             case R.id.tv_confirm:
                 password = mEtPassword.getText().toString().trim();
                 if (TextUtils.isEmpty(password)) {
-                    showToast(this, "请输入密码");
+                    showToast("请输入密码");
                     return;
                 }
                 if (password.length() < 6) {
-                    showToast(this, R.string.PasswordLessSix);
+                    showToast(R.string.PasswordLessSix);
                     return;
                 }
 
                 if (!PasswordEncrypt.isPwEligibility(password)) {
-                    showToast(this, R.string.PasswordInconformity);
+                    showToast( R.string.PasswordInconformity);
                     return;
                 }
                 settingPwd();
@@ -114,14 +114,15 @@ public class SettingPasswordActivity extends BaseActivity {
                         showToast("密码设置成功");
                         finish();
                     } else {
-                        showToast(getActivity(), msg);
+                        showToast( msg);
                     }
                 }
             }
 
             @Override
-            public void netClose() {
+            public void onNotNetOrException() {
                 dismissLoadhud(getActivity());
+
             }
         });
     }

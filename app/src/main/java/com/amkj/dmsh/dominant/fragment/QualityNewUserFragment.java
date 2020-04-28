@@ -184,7 +184,7 @@ public class QualityNewUserFragment extends BaseFragment {
                                 qualityNewUserShopList.addAll(goodsList);
                                 qualityNewUserShopAdapter.notifyDataSetChanged();
                             } else if (EMPTY_CODE.equals(qualityNewUserShopEntity.getCode())) {
-                                showToast(getActivity(), qualityNewUserShopEntity.getMsg());
+                                showToast( qualityNewUserShopEntity.getMsg());
                             }
                         }
                         getNewUserCouponProduct();
@@ -264,7 +264,7 @@ public class QualityNewUserFragment extends BaseFragment {
                     if (newUserCouponEntity.getCode().equals(SUCCESS_CODE)) {
                         qNewUserCoverHelper.tv_new_user_get_coupon.setText("已领取");
                     } else if (!newUserCouponEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(getActivity(), newUserCouponEntity.getMsg());
+                        showToast(newUserCouponEntity.getMsg());
                         qNewUserCoverHelper.tv_new_user_get_coupon.setText("已领取");
                     }
                 }

@@ -14,15 +14,15 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.address.AddressUtils;
+import com.amkj.dmsh.utils.AddressUtils;
 import com.amkj.dmsh.address.bean.AddressInfoEntity;
 import com.amkj.dmsh.address.bean.AddressInfoEntity.AddressInfoBean;
 import com.amkj.dmsh.address.bean.CityModel;
 import com.amkj.dmsh.address.bean.DistrictModel;
 import com.amkj.dmsh.address.bean.ProvinceModel;
-import com.amkj.dmsh.address.widget.OnWheelChangedListener;
-import com.amkj.dmsh.address.widget.WheelView;
-import com.amkj.dmsh.address.widget.adapters.ArrayWheelAdapter;
+import com.contrarywind.listener.OnItemSelectedListener;
+import com.contrarywind.view.WheelView;
+import com.bigkoo.pickerview.adapter.ArrayWheelAdapter;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
@@ -30,6 +30,7 @@ import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.KeyboardUtils;
 import com.google.gson.Gson;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,12 +48,11 @@ import static com.amkj.dmsh.constant.Url.ADDRESS_DETAILS;
 import static com.amkj.dmsh.constant.Url.ADD_ADDRESS;
 import static com.amkj.dmsh.constant.Url.EDIT_ADDRESS;
 
-;
 
 /**
  * Created by atd48 on 2016/7/15.
  */
-public class AddressNewCreatedActivity extends BaseActivity implements OnWheelChangedListener, View.OnClickListener {
+public class AddressNewCreatedActivity extends BaseActivity implements View.OnClickListener {
     @BindView(R.id.tv_header_shared)
     TextView tv_header_shared;
     @BindView(R.id.tv_header_title)
@@ -170,7 +170,7 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
                         addressInfoBean = addressInfoEntity.getAddressInfoBean();
                         setData(addressInfoBean);
                     } else {
-                        showToast(AddressNewCreatedActivity.this, addressInfoEntity.getMsg());
+                        showToast(addressInfoEntity.getMsg());
                     }
                 }
             }
@@ -216,7 +216,7 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
         }
         if (myAddress.getAddress_com().length() < 1 || myAddress.getAddress().length() < 1
                 || myAddress.getConsignee().length() < 1 || myAddress.getMobile().length() < 1) {
-            showToast(this, "请完整填写收货人资料");
+            showToast("请完整填写收货人资料");
         } else {
             String mobilePhone = myAddress.getMobile();
             if (mobilePhone.startsWith("1")) {            //手机号
@@ -224,7 +224,7 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
             } else if (!mobilePhone.startsWith("-")) {                //固话
                 editAddress(myAddress);
             } else {
-                showToast(this, "联系方式有误，请重新输入");
+                showToast("联系方式有误，请重新输入");
             }
         }
     }
@@ -265,25 +265,20 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
                 AddressInfoEntity addressInfoEntity = gson.fromJson(result, AddressInfoEntity.class);
                 if (addressInfoEntity != null) {
                     if (addressInfoEntity.getCode().equals(SUCCESS_CODE)) {
-                        showToast(AddressNewCreatedActivity.this, "添加成功");
+                        showToast("添加成功");
                         Intent data = new Intent();
                         data.putExtra("addressInfoBean", addressInfoEntity.getAddressInfoBean());
                         setResult(RESULT_OK, data);
                         finish();
                     } else {
-                        showToast(AddressNewCreatedActivity.this, addressInfoEntity.getMsg());
+                        showToast(addressInfoEntity.getMsg());
                     }
                 }
             }
 
             @Override
-            public void netClose() {
-                showToast(AddressNewCreatedActivity.this, R.string.unConnectedNetwork);
-            }
-
-            @Override
             public void onError(Throwable throwable) {
-                showToast(AddressNewCreatedActivity.this, R.string.do_failed);
+                showToast(R.string.do_failed);
             }
         });
     }
@@ -319,25 +314,30 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
                         setResult(RESULT_OK, data);
                         finish();
                     } else {
-                        showToast(AddressNewCreatedActivity.this, addressInfoEntity.getMsg());
+                        showToast(addressInfoEntity.getMsg());
                     }
                 }
-            }
-
-            @Override
-            public void netClose() {
-                showToast(AddressNewCreatedActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
 
     private void setUpListener() {
         // 添加change事件
-        id_province.addChangingListener(this);
+        id_province.setOnItemSelectedListener(index -> updateCities());
         // 添加change事件
-        id_city.addChangingListener(this);
+        id_city.setOnItemSelectedListener(index -> updateAreas());
         // 添加change事件
-        id_district.addChangingListener(this);
+        id_district.setOnItemSelectedListener(new OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(int index) {
+                DistrictModel[] districtModels = mDistrictDataMap.get(mCurrentCityId);
+                if (districtModels != null && districtModels.length > 0 && districtModels.length > index) {
+                    mCurrentDistrictId = districtModels[index].getId();
+                } else {
+                    mCurrentDistrictId = 0;
+                }
+            }
+        });
         // 添加onclick事件
         tv_time_click_cancel.setOnClickListener(this);
         tv_time_click_confirmed.setOnClickListener(this);
@@ -354,28 +354,11 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
                     }
                 }
             }
-            id_province.setViewAdapter(new ArrayWheelAdapter<>(AddressNewCreatedActivity.this, provinceName));
-            // 设置可见条目数量
-            id_province.setVisibleItems(7);
-            id_city.setVisibleItems(7);
-            id_district.setVisibleItems(7);
+            id_province.setAdapter(new ArrayWheelAdapter<>(Arrays.asList(provinceName)));
+            id_province.setCyclic(false);
+            id_province.setCurrentItem(0);
             updateCities();
             updateAreas();
-        }
-    }
-
-    @Override
-    public void onChanged(WheelView wheel, int oldValue, int newValue) {
-        if (wheel == id_province) {
-            updateCities();
-        } else if (wheel == id_city) {
-            updateAreas();
-        } else if (wheel == id_district) {
-            if (mDistrictDataMap.get(mCurrentCityId).length > 0 && mDistrictDataMap.get(mCurrentCityId).length > newValue) {
-                mCurrentDistrictId = mDistrictDataMap.get(mCurrentCityId)[newValue].getId();
-            } else {
-                mCurrentDistrictId = 0;
-            }
         }
     }
 
@@ -390,7 +373,8 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
         for (int i = 0; i < districtModels.length; i++) {
             districtName[i] = districtModels[i].getName();
         }
-        id_district.setViewAdapter(new ArrayWheelAdapter<>(this, districtName));
+        id_district.setAdapter(new ArrayWheelAdapter<>(Arrays.asList(districtName)));
+        id_district.setCyclic(false);
         id_district.setCurrentItem(0);
         if (districtModels.length > 0) {
             DistrictModel districtModel = districtModels[id_district.getCurrentItem()];
@@ -411,7 +395,8 @@ public class AddressNewCreatedActivity extends BaseActivity implements OnWheelCh
         for (int i = 0; i < cityModels.length; i++) {
             cityName[i] = cityModels[i].getName();
         }
-        id_city.setViewAdapter(new ArrayWheelAdapter<>(this, cityName));
+        id_city.setAdapter(new ArrayWheelAdapter<>(Arrays.asList(cityName)));
+        id_city.setCyclic(false);
         id_city.setCurrentItem(0);
         updateAreas();
     }

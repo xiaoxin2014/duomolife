@@ -30,7 +30,7 @@ import static com.amkj.dmsh.utils.TimeUtils.getCoutDownTime;
 
 /**
  * Created by xiaoxin on 2020/4/2
- * Version:v4.4.3
+ * Version:v4.5.0
  * ClassDescription :结算台商品列表
  */
 public class WriteProductListAdapter extends BaseQuickAdapter<ProductInfoBean, BaseViewHolder> {

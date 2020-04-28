@@ -142,7 +142,7 @@ public class IntegralDetailActivity extends BaseActivity {
                                 setIntegralDetailData(integrationDetailsEntity);
                             } else {
                                 if (!integrationDetailsEntity.getCode().equals(EMPTY_CODE)) {
-                                    showToast(IntegralDetailActivity.this, integrationDetailsEntity.getMsg());
+                                    showToast( integrationDetailsEntity.getMsg());
                                 }
                                 integralDetailAdapter.loadMoreEnd();
                             }
@@ -160,13 +160,8 @@ public class IntegralDetailActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void netClose() {
-                        showToast(IntegralDetailActivity.this, R.string.unConnectedNetwork);
-                    }
-
-                    @Override
                     public void onError(Throwable throwable) {
-                        showToast(IntegralDetailActivity.this, R.string.invalidData);
+                        showToast( R.string.invalidData);
                     }
                 });
     }

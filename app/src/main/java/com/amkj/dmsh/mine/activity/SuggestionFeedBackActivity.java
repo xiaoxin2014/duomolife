@@ -293,7 +293,7 @@ public class SuggestionFeedBackActivity extends BaseActivity {
     @OnClick(R.id.tv_suggestion_commit)
     void submitSuggestion(View view) {
         if (feedBackTypeBean == null) {
-            showToast(this, getStrings(tv_suggestion_type.getHint().toString().trim()));
+            showToast(getStrings(tv_suggestion_type.getHint().toString().trim()));
             return;
         }
         if (!TextUtils.isEmpty(emoji_mine_suggestion_feed_back.getText().toString().trim())) {
@@ -329,7 +329,7 @@ public class SuggestionFeedBackActivity extends BaseActivity {
                             }
                             tv_suggestion_commit.setText("提交");
                             tv_suggestion_commit.setEnabled(true);
-                            showToast(SuggestionFeedBackActivity.this, "网络异常");
+                            showToast("网络异常");
                         }
 
                         @Override
@@ -339,7 +339,7 @@ public class SuggestionFeedBackActivity extends BaseActivity {
                 }
             }
         } else {
-            showToast(this, "请输入反馈内容");
+            showToast("请输入反馈内容");
         }
     }
 
@@ -371,10 +371,10 @@ public class SuggestionFeedBackActivity extends BaseActivity {
                 RequestStatus requestInfo = gson.fromJson(result, RequestStatus.class);
                 if (requestInfo != null) {
                     if (requestInfo.getCode().equals(SUCCESS_CODE)) {
-                        showToast(SuggestionFeedBackActivity.this, "提交完成");
+                        showToast("提交完成");
                         finish();
                     } else {
-                        showToastRequestMsg(SuggestionFeedBackActivity.this, requestInfo);
+                        showToastRequestMsg( requestInfo);
                     }
                 }
                 tv_suggestion_commit.setText("提交");
@@ -391,13 +391,8 @@ public class SuggestionFeedBackActivity extends BaseActivity {
             }
 
             @Override
-            public void netClose() {
-                showToast(SuggestionFeedBackActivity.this, R.string.unConnectedNetwork);
-            }
-
-            @Override
             public void onError(Throwable throwable) {
-                showToast(SuggestionFeedBackActivity.this, R.string.do_failed);
+                showToast(R.string.do_failed);
             }
         });
     }
@@ -429,7 +424,7 @@ public class SuggestionFeedBackActivity extends BaseActivity {
                 imgGridRecyclerAdapter.notifyDataSetChanged();
             }
         } else if (requestCode == REQUEST_PERMISSIONS) {
-            showToast(this, "请到应用管理授予权限");
+            showToast("请到应用管理授予权限");
         } else if (requestCode == IS_LOGIN_CODE) {
             loadData();
         }
@@ -454,7 +449,7 @@ public class SuggestionFeedBackActivity extends BaseActivity {
                             suggestionFeedBackAdapter.notifyDataSetChanged();
                         }
                     } else {
-                        showToast(SuggestionFeedBackActivity.this, getStrings(suggestionTypeEntity.getMsg()));
+                        showToast(getStrings(suggestionTypeEntity.getMsg()));
                     }
                 }
                 NetLoadUtils.getNetInstance().showLoadSir(loadService,suggestionTypeEntity);
@@ -466,13 +461,8 @@ public class SuggestionFeedBackActivity extends BaseActivity {
             }
 
             @Override
-            public void netClose() {
-                showToast(SuggestionFeedBackActivity.this, R.string.unConnectedNetwork);
-            }
-
-            @Override
             public void onError(Throwable throwable) {
-                showToast(SuggestionFeedBackActivity.this, R.string.invalidData);
+                showToast(R.string.invalidData);
             }
         });
     }

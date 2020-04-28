@@ -1,6 +1,7 @@
 package com.amkj.dmsh.find.activity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
@@ -33,6 +35,7 @@ import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.LifecycleHandler;
 import com.amkj.dmsh.utils.SharedPreUtils;
 import com.amkj.dmsh.utils.WindowUtils;
+import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.views.guideview.Component;
 import com.amkj.dmsh.views.guideview.FindComponent4;
 import com.amkj.dmsh.views.guideview.Guide;
@@ -111,7 +114,7 @@ public class GoodsScoreListActivity extends BaseActivity {
     private ScoreGoodsAdapter mScoreGoodsAdapter;
     private ScoreGoodsEntity mScoreGoodsEntity;
     private String orderNo;
-    private PopupWindow mPw;
+    private PopupWindow mPwScore;
 
     @Override
     protected int getContentView() {
@@ -137,26 +140,13 @@ public class GoodsScoreListActivity extends BaseActivity {
         mRvGoods.setAdapter(mScoreGoodsAdapter);
         mScoreGoodsAdapter.setOnItemChildClickListener((adapter, view, position) -> {
             ScoreGoodsBean scoreGoodsBean = (ScoreGoodsBean) view.getTag();
-            int joinCount = (int) SharedPreUtils.getParam(DEMO_LIFE_FILE, "JoinCount", 0);
-            if (joinCount < 2) {
-                mPw = WindowUtils.getFullPw(this, R.layout.pw_join_tips, Gravity.CENTER);
-                mPw.getContentView().setOnClickListener(v -> {
-                    mPw.dismiss();
-                    //写点评
-                    skipJoinTopic(getActivity(), scoreGoodsBean, mScoreGoodsEntity);
-                });
-                WindowUtils.showPw(this, mPw, Gravity.CENTER);
-                SharedPreUtils.setParam(DEMO_LIFE_FILE, "JoinCount", joinCount + 1);
-            } else {
-                //写点评
-                skipJoinTopic(this, scoreGoodsBean, mScoreGoodsEntity);
-            }
+            getScorePop(scoreGoodsBean);
         });
 
 
         //初始化热门专题
         mCommunalRecyclerWrap.setLayoutManager(new LinearLayoutManager(this));
-        findHotTopicAdapter = new HotTopicAdapter(this, hotTopicList,true);
+        findHotTopicAdapter = new HotTopicAdapter(this, hotTopicList, true);
         mCommunalRecyclerWrap.setAdapter(findHotTopicAdapter);
     }
 
@@ -264,7 +254,7 @@ public class GoodsScoreListActivity extends BaseActivity {
                     if (hotTopicEntity.getCode().equals(SUCCESS_CODE)) {
                         hotTopicList.addAll(hotTopicEntity.getHotTopicList());
                     } else if (!hotTopicEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(getActivity(), hotTopicEntity.getMsg());
+                        showToast(hotTopicEntity.getMsg());
                     }
                 }
                 mLlFindHotTopic.setVisibility(hotTopicList.size() == 0 ? View.GONE : View.VISIBLE);
@@ -279,6 +269,50 @@ public class GoodsScoreListActivity extends BaseActivity {
                 mLlFindHotTopic.setVisibility(hotTopicList.size() == 0 ? View.GONE : View.VISIBLE);
                 NetLoadUtils.getNetInstance().showLoadSir(loadService, hotTopicList.size() > 0 || mGoodsList.size() > 0, mScoreGoodsEntity);
 
+            }
+        });
+    }
+
+    //获取点评弹窗
+    private void getScorePop(ScoreGoodsBean scoreGoodsBean) {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.Q_GET_TAKE_DELIVERY_POPUP, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                RequestStatus requestStatus = new Gson().fromJson(result, RequestStatus.class);
+                boolean isOpen = requestStatus.isOpen();
+                String imgUrl = requestStatus.getImgUrl();
+                if (isOpen && !TextUtils.isEmpty(imgUrl)) {
+                    GlideImageLoaderUtil.loadFinishImgDrawable(getActivity(), imgUrl, new GlideImageLoaderUtil.ImageLoaderFinishListener() {
+                        @Override
+                        public void onSuccess(Bitmap bitmap) {
+                            int joinCount = (int) SharedPreUtils.getParam(DEMO_LIFE_FILE, "IndentJoinCount", 0);
+                            if (joinCount < 2) {
+                                if (mPwScore == null) {
+                                    mPwScore = WindowUtils.getAlphaPw(getActivity(), R.layout.pw_join_tips, Gravity.CENTER);
+                                }
+
+                                GlideImageLoaderUtil.loadCenterCrop(getActivity(), mPwScore.getContentView().findViewById(R.id.iv_cover), imgUrl);
+                                mPwScore.getContentView().setOnClickListener((View v1) -> {
+                                    mPwScore.dismiss();
+                                    //写点评
+                                    skipJoinTopic(getActivity(), scoreGoodsBean, null);
+
+                                });
+                                WindowUtils.showPw(getActivity(), mPwScore, Gravity.CENTER);
+                                SharedPreUtils.setParam(DEMO_LIFE_FILE, "IndentJoinCount", joinCount + 1);
+                            } else {
+                                //写点评
+                                skipJoinTopic(getActivity(), scoreGoodsBean, null);
+                            }
+                        }
+
+                        @Override
+                        public void onError() {
+
+                        }
+                    });
+
+                }
             }
         });
     }
@@ -362,6 +396,6 @@ public class GoodsScoreListActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        WindowUtils.closePw(mPw);
+        WindowUtils.closePw(mPwScore);
     }
 }

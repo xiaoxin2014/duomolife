@@ -115,7 +115,7 @@ public class QualityShopHistoryListActivity extends BaseActivity {
         //记录埋点参数sourceId
         ConstantMethod.saveSourceId(getClass().getSimpleName(), String.valueOf(listId));
         if (TextUtils.isEmpty(listId)) {
-            showToast(this, R.string.list_date_due);
+            showToast( R.string.list_date_due);
             finish();
             overridePendingTransition(0, 0);
         }
@@ -263,7 +263,7 @@ public class QualityShopHistoryListActivity extends BaseActivity {
                             } else if (qualityBuyListEntity.getCode().equals(EMPTY_CODE)) {
                                 qualityBuyListAdapter.loadMoreEnd();
                             } else {
-                                showToast(QualityShopHistoryListActivity.this, qualityBuyListEntity.getMsg());
+                                showToast( qualityBuyListEntity.getMsg());
                             }
                             qualityBuyListAdapter.notifyDataSetChanged();
                         }
@@ -278,13 +278,8 @@ public class QualityShopHistoryListActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void netClose() {
-                        showToast(QualityShopHistoryListActivity.this, R.string.unConnectedNetwork);
-                    }
-
-                    @Override
                     public void onError(Throwable throwable) {
-                        showToast(QualityShopHistoryListActivity.this, R.string.invalidData);
+                        showToast( R.string.invalidData);
                     }
                 });
     }
@@ -318,7 +313,7 @@ public class QualityShopHistoryListActivity extends BaseActivity {
                                     itemDescriptionList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(descriptionBeanList));
                                 }
                             } else if (!shopDetailsEntity.getCode().equals(EMPTY_CODE)) {
-                                showToast(QualityShopHistoryListActivity.this, shopDetailsEntity.getMsg());
+                                showToast( shopDetailsEntity.getMsg());
                             }
                             communalDetailAdapter.notifyDataSetChanged();
                         }

@@ -52,7 +52,7 @@ import static com.amkj.dmsh.constant.Url.Q_PAYMENT_INDENT;
 
 /**
  * Created by xiaoxin on 2020/4/3
- * Version:v4.4.3
+ * Version:v4.5.0
  * ClassDescription :去支付弹窗
  */
 public class AlertDialogGoPay {
@@ -135,7 +135,7 @@ public class AlertDialogGoPay {
                             //返回成功，调起微信支付接口
                             doWXPay(qualityWeChatIndent.getResult());
                         } else {
-                            showToast(context, qualityWeChatIndent.getResult() == null
+                            showToast( qualityWeChatIndent.getResult() == null
                                     ? qualityWeChatIndent.getMsg() : qualityWeChatIndent.getResult().getMsg());
                         }
                     }
@@ -146,7 +146,7 @@ public class AlertDialogGoPay {
                             //返回成功，调起支付宝支付接口
                             doAliPay(qualityAliPayIndent.getResult());
                         } else {
-                            showToast(context, qualityAliPayIndent.getResult() == null
+                            showToast( qualityAliPayIndent.getResult() == null
                                     ? qualityAliPayIndent.getMsg() : qualityAliPayIndent.getResult().getMsg());
                         }
                     }
@@ -157,7 +157,7 @@ public class AlertDialogGoPay {
                             //返回成功，调起银联支付接口
                             unionPay(qualityUnionIndent);
                         } else {
-                            showToast(context, qualityUnionIndent.getQualityCreateUnionPayIndent() != null &&
+                            showToast( qualityUnionIndent.getQualityCreateUnionPayIndent() != null &&
                                     qualityUnionIndent.getQualityCreateUnionPayIndent() != null &&
                                     !TextUtils.isEmpty(qualityUnionIndent.getQualityCreateUnionPayIndent().getMsg()) ?
                                     getStrings(qualityUnionIndent.getQualityCreateUnionPayIndent().getMsg()) :
@@ -170,7 +170,7 @@ public class AlertDialogGoPay {
             @Override
             public void onError(Throwable throwable) {
                 dismissLoadhud(context);
-                showToast(context, R.string.do_failed);
+                showToast(R.string.do_failed);
             }
         });
     }
@@ -180,7 +180,7 @@ public class AlertDialogGoPay {
         WXPay.getInstance().doPayDateObject(pay_param.getNo(), pay_param.getPayKey(), new WXPay.WXPayResultCallBack() {
             @Override
             public void onSuccess() {
-                showToast(context, "支付成功");
+                showToast("支付成功");
                 skipPaySuccess();
             }
 
@@ -188,20 +188,20 @@ public class AlertDialogGoPay {
             public void onError(int error_code) {
                 switch (error_code) {
                     case WXPay.NO_OR_LOW_WX:
-                        showToast(context, "未安装微信或微信版本过低");
+                        showToast("未安装微信或微信版本过低");
                         break;
                     case WXPay.ERROR_PAY_PARAM:
-                        showToast(context, "参数错误");
+                        showToast("参数错误");
                         break;
                     case WXPay.ERROR_PAY:
-                        showToast(context, "支付失败");
+                        showToast("支付失败");
                         break;
                 }
             }
 
             @Override
             public void onCancel() {
-                showToast(context, "支付取消");
+                showToast("支付取消");
             }
         });
     }
@@ -219,36 +219,36 @@ public class AlertDialogGoPay {
         new AliPay(context, resultBean.getNo(), resultBean.getPayKey(), new AliPay.AliPayResultCallBack() {
             @Override
             public void onSuccess() {
-                showToast(context, "支付成功");
+                showToast("支付成功");
                 skipPaySuccess();
             }
 
             @Override
             public void onDealing() {
-                showToast(context, "支付处理中...");
+                showToast("支付处理中...");
             }
 
             @Override
             public void onError(int error_code) {
                 switch (error_code) {
                     case AliPay.ERROR_RESULT:
-                        showToast(context, "支付失败:支付结果解析错误");
+                        showToast("支付失败:支付结果解析错误");
                         break;
                     case AliPay.ERROR_NETWORK:
-                        showToast(context, "支付失败:网络连接错误");
+                        showToast("支付失败:网络连接错误");
                         break;
                     case AliPay.ERROR_PAY:
-                        showToast(context, "支付错误:支付码支付失败");
+                        showToast("支付错误:支付码支付失败");
                         break;
                     default:
-                        showToast(context, "支付错误");
+                        showToast("支付错误");
                         break;
                 }
             }
 
             @Override
             public void onCancel() {
-                showToast(context, "支付取消");
+                showToast("支付取消");
             }
         }).doPay();
     }
@@ -266,17 +266,17 @@ public class AlertDialogGoPay {
                     new UnionPay.UnionPayResultCallBack() {
                         @Override
                         public void onUnionPaySuccess(String webResultValue) {
-                            showToast(context, "支付成功");
+                            showToast("支付成功");
                             skipPaySuccess();
                         }
 
                         @Override
                         public void onUnionPayError(String errorMes) {
-                            showToast(context, "支付取消");
+                            showToast("支付取消");
                         }
                     });
         } else {
-            showToast(context, "缺少重要参数，请选择其它支付渠道！");
+            showToast("缺少重要参数，请选择其它支付渠道！");
         }
     }
 

@@ -130,7 +130,7 @@ public class QualityCustomTopicActivity extends BaseActivity {
         productType = intent.getStringExtra("productType");
         showType = intent.getStringExtra("showType");
         if (TextUtils.isEmpty(productType)) {
-            showToast(this, R.string.invalidData);
+            showToast(R.string.invalidData);
             finish();
         }
         tv_header_titleAll.setText("");
@@ -297,7 +297,7 @@ public class QualityCustomTopicActivity extends BaseActivity {
                             } else if (userLikedProductEntity.getCode().equals(EMPTY_CODE)) {
                                 qualityCustomTopicAdapter.loadMoreEnd();
                             } else {
-                                showToast(QualityCustomTopicActivity.this, userLikedProductEntity.getMsg());
+                                showToast(userLikedProductEntity.getMsg());
                             }
 
                             //判断是否有积分奖励(该专区有奖励并且当天没有领取奖励)

@@ -130,7 +130,7 @@ public class DirectMyCouponFragment extends BaseFragment {
                         couponList.addAll(directCouponEntity.getDirectCouponBeanList());
                         directMyCouponAdapter.loadMoreComplete();
                     } else if (!directCouponEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(getActivity(), directCouponEntity.getMsg());
+                        showToast(directCouponEntity.getMsg());
                         directMyCouponAdapter.loadMoreFail();
                     } else {
                         directMyCouponAdapter.loadMoreEnd();

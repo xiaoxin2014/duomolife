@@ -30,12 +30,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
  */
 public class AlertDialogHelper {
     private Context context;
-    private String title;
     private String msg;
-    private String cancelText;
-    private int cancelTextColor;
-    private String confirmText;
-    private int confirmTextColor;
     private boolean isFirstSet = true;
     private AlertConfirmCancelListener alertConfirmCancelListener;
     private AlertDialog defaultAlertDialog;
@@ -127,7 +122,6 @@ public class AlertDialogHelper {
      * @return
      */
     public AlertDialogHelper setTitle(String title) {
-        this.title = title;
         tv_alert_title.setText(getStrings(title));
         return this;
     }
@@ -205,7 +199,6 @@ public class AlertDialogHelper {
      * @return
      */
     public AlertDialogHelper setCancelText(String cancelText) {
-        this.cancelText = cancelText;
         tv_alert_cancel.setText(getStringFilter(cancelText));
         return this;
     }
@@ -217,7 +210,6 @@ public class AlertDialogHelper {
      * @return
      */
     public AlertDialogHelper setCancelTextColor(int cancelTextColor) {
-        this.cancelTextColor = cancelTextColor;
         tv_alert_cancel.setTextColor(cancelTextColor);
         return this;
     }
@@ -229,7 +221,6 @@ public class AlertDialogHelper {
      * @return
      */
     public AlertDialogHelper setConfirmText(String confirmText) {
-        this.confirmText = confirmText;
         tv_alert_confirm.setText(getStringFilter(confirmText));
         return this;
     }
@@ -241,7 +232,6 @@ public class AlertDialogHelper {
      * @return
      */
     public AlertDialogHelper setConfirmTextColor(int confirmTextColor) {
-        this.confirmTextColor = confirmTextColor;
         tv_alert_confirm.setTextColor(confirmTextColor);
         return this;
     }

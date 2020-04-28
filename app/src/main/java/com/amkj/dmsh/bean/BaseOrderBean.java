@@ -6,7 +6,7 @@ import java.util.List;
 
 /**
  * Created by xiaoxin on 2020/3/25
- * Version:v4.4.3
+ * Version:v4.5.0
  */
 public class BaseOrderBean {
     private String orderNo;

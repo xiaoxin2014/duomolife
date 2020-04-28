@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.text.TextUtils;
 
 import com.amkj.dmsh.AppUpdateDialogActivity;
-import com.amkj.dmsh.R;
 import com.amkj.dmsh.bean.AppVersionEntity;
 import com.amkj.dmsh.bean.AppVersionEntity.AppVersionBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
@@ -35,7 +34,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.getAppendNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getMarketApp;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getVersionName;
-import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTimeAddSeconds;
 
@@ -133,14 +131,6 @@ public class AppUpdateUtils {
                         }
                     }
                 }
-            }
-
-            @Override
-            public void netClose() {
-                if (context == null) {
-                    return;
-                }
-                showToast(context, R.string.unConnectedNetwork);
             }
         });
     }

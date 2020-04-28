@@ -20,6 +20,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
 import static com.amkj.dmsh.utils.TimeUtils.getCurrentTime;
+import static com.amkj.dmsh.utils.TimeUtils.getTimeDifference;
 import static com.amkj.dmsh.utils.TimeUtils.getTimeDifferenceText;
 import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTime;
 
@@ -71,7 +72,7 @@ public class AlertDialogGroup {
         //未结束
         if (!isEndOrStartTime(currentTime, requestStatus.getGpEndTime())) {
             timeStatus = "距结束:";
-            timeDifferent = getTimeDifferenceText(requestStatus.getGpEndTime(), currentTime);
+            timeDifferent = getTimeDifferenceText(getTimeDifference(requestStatus.getGpEndTime(), currentTime));
         } else {
             timeStatus = "已结束";
         }

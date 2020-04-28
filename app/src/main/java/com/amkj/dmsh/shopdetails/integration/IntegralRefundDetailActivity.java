@@ -23,8 +23,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.address.widget.WheelView;
-import com.amkj.dmsh.address.widget.adapters.ArrayWheelAdapter;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
@@ -50,6 +48,8 @@ import com.amkj.dmsh.shopdetails.bean.RefundTypeBean;
 import com.amkj.dmsh.utils.KeyboardUtils;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
+import com.bigkoo.pickerview.adapter.ArrayWheelAdapter;
+import com.contrarywind.view.WheelView;
 import com.google.gson.Gson;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
@@ -92,7 +92,7 @@ import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTimeAddSeconds;
 
 /**
  * Created by xiaoxin on 2020/4/8
- * Version:v4.4.3
+ * Version:v4.5.0
  * ClassDescription :积分订单退款详情
  */
 public class IntegralRefundDetailActivity extends BaseActivity {
@@ -324,9 +324,9 @@ public class IntegralRefundDetailActivity extends BaseActivity {
                         }
                         setRefundDetailData(refundDetailBean);
                     } else if (refundDetailEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(getActivity(), R.string.invalidData);
+                        showToast(R.string.invalidData);
                     } else {
-                        showToast(getActivity(), refundDetailEntity.getMsg());
+                        showToast(refundDetailEntity.getMsg());
                     }
                 }
                 NetLoadUtils.getNetInstance().showLoadSir(loadService, refundDetailEntity);
@@ -338,13 +338,8 @@ public class IntegralRefundDetailActivity extends BaseActivity {
             }
 
             @Override
-            public void netClose() {
-                showToast(getActivity(), R.string.unConnectedNetwork);
-            }
-
-            @Override
             public void onError(Throwable throwable) {
-                showToast(getActivity(), R.string.invalidData);
+                showToast(R.string.invalidData);
             }
         });
     }
@@ -370,9 +365,9 @@ public class IntegralRefundDetailActivity extends BaseActivity {
                         refundDetailBean.setCurrentTime(refundDetailEntity.getCurrentTime());
                         setRefundDetailData(refundDetailBean);
                     } else if (refundDetailEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(getActivity(), R.string.invalidData);
+                        showToast( R.string.invalidData);
                     } else {
-                        showToast(getActivity(), refundDetailEntity.getMsg());
+                        showToast(refundDetailEntity.getMsg());
                     }
                 }
                 NetLoadUtils.getNetInstance().showLoadSir(loadService, refundDetailEntity);
@@ -384,13 +379,8 @@ public class IntegralRefundDetailActivity extends BaseActivity {
             }
 
             @Override
-            public void netClose() {
-                showToast(getActivity(), R.string.unConnectedNetwork);
-            }
-
-            @Override
             public void onError(Throwable throwable) {
-                showToast(getActivity(), R.string.invalidData);
+                showToast(R.string.invalidData);
             }
         });
     }
@@ -402,11 +392,11 @@ public class IntegralRefundDetailActivity extends BaseActivity {
             Map<String, Object> params = new HashMap<>();
             if (refundType.equals(REFUND_REPAIR)) {
 //                维修撤销
-                url =  Url.Q_INDENT_REFUND_REPAIR_CANCEL;
+                url = Url.Q_INDENT_REFUND_REPAIR_CANCEL;
                 cancelRefund(url, params);
             } else if (REFUND_TYPE.equals(refundType)) {
 //                退货退款撤销
-                url =  Url.Q_CANCEL_APPLY;
+                url = Url.Q_CANCEL_APPLY;
                 cancelRefund(url, params);
             } else {
                 Toast.makeText(this, R.string.refund_type_error, Toast.LENGTH_SHORT).show();
@@ -430,24 +420,19 @@ public class IntegralRefundDetailActivity extends BaseActivity {
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        showToast(getActivity(), String.format(getResources().getString(R.string.doSuccess), "撤销"));
+                        showToast(String.format(getResources().getString(R.string.doSuccess), "撤销"));
                         finish();
                     } else if (requestStatus.getCode().equals(EMPTY_CODE)) {
-                        showToast(getActivity(), R.string.invalidData);
+                        showToast( R.string.invalidData);
                     } else {
-                        showToastRequestMsg(getActivity(), requestStatus);
+                        showToastRequestMsg(requestStatus);
                     }
                 }
             }
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(getActivity(), R.string.invalidData);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(getActivity(), R.string.unConnectedNetwork);
+                showToast( R.string.invalidData);
             }
         });
     }
@@ -463,29 +448,24 @@ public class IntegralRefundDetailActivity extends BaseActivity {
                         expressCompanies = refundLogisticEntity.getExpressCompanys();
                         setRefundLogisticData(expressCompanies);
                     } else if (refundLogisticEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(getActivity(), R.string.invalidData);
+                        showToast(R.string.invalidData);
                     } else {
-                        showToast(getActivity(), refundLogisticEntity.getMsg());
+                        showToast(refundLogisticEntity.getMsg());
                     }
                 }
             }
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(getActivity(), R.string.invalidData);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(getActivity(), R.string.unConnectedNetwork);
+                showToast( R.string.invalidData);
             }
         });
     }
 
     private void setRefundLogisticData(final List<String> expressCompanys) {
         if (expressCompanys.size() > 0) {
-            wv_communal_one.setViewAdapter(new ArrayWheelAdapter<>(getActivity(), expressCompanys.toArray()));
-            wv_communal_one.setVisibleItems(7);
+            wv_communal_one.setAdapter(new ArrayWheelAdapter<>(expressCompanys));
+            wv_communal_one.setCyclic(false);
             wv_communal_one.setCurrentItem(0);
         }
     }
@@ -833,9 +813,9 @@ public class IntegralRefundDetailActivity extends BaseActivity {
             if (!TextUtils.isEmpty(logistic) && !TextUtils.isEmpty(logisticNo)) {
                 submitLogisticInfo(logistic, logisticNo);
             } else if (TextUtils.isEmpty(logistic)) {
-                showToast(this, "请选择物流公司");
+                showToast("请选择物流公司");
             } else if (TextUtils.isEmpty(logisticNo)) {
-                showToast(this, "请输入物流单号");
+                showToast("请输入物流单号");
             }
         } else if (REFUND_REPAIR.equals(refundType)) {
             String logisticFee = et_refund_logistic_fee.getText().toString().trim();
@@ -843,9 +823,9 @@ public class IntegralRefundDetailActivity extends BaseActivity {
                     && !TextUtils.isEmpty(logisticNo)) {
                 submitRepairLogisticInfo(logistic, logisticNo, logisticFee);
             } else if (TextUtils.isEmpty(logistic)) {
-                showToast(this, "请选择物流公司");
+                showToast("请选择物流公司");
             } else if (TextUtils.isEmpty(logisticNo)) {
-                showToast(this, "请输入物流单号");
+                showToast("请输入物流单号");
             }
         } else {
             Toast.makeText(this, "服务类型异常，请更新app最新版本", Toast.LENGTH_SHORT).show();
@@ -875,24 +855,19 @@ public class IntegralRefundDetailActivity extends BaseActivity {
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        showToast(getActivity(), String.format(getResources().getString(R.string.doSuccess), "提交"));
+                        showToast(String.format(getResources().getString(R.string.doSuccess), "提交"));
                         loadData();
                     } else if (requestStatus.getCode().equals(EMPTY_CODE)) {
-                        showToast(getActivity(), R.string.invalidData);
+                        showToast( R.string.invalidData);
                     } else {
-                        showToastRequestMsg(getActivity(), requestStatus);
+                        showToastRequestMsg(requestStatus);
                     }
                 }
             }
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(getActivity(), R.string.invalidData);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(getActivity(), R.string.unConnectedNetwork);
+                showToast(R.string.invalidData);
             }
         });
     }
@@ -918,24 +893,19 @@ public class IntegralRefundDetailActivity extends BaseActivity {
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        showToast(getActivity(), String.format(getResources().getString(R.string.doSuccess), "提交"));
+                        showToast(String.format(getResources().getString(R.string.doSuccess), "提交"));
                         loadData();
                     } else if (requestStatus.getCode().equals(EMPTY_CODE)) {
-                        showToast(getActivity(), R.string.invalidData);
+                        showToast(R.string.invalidData);
                     } else {
-                        showToastRequestMsg(getActivity(), requestStatus);
+                        showToastRequestMsg(requestStatus);
                     }
                 }
             }
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(getActivity(), R.string.invalidData);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(getActivity(), R.string.unConnectedNetwork);
+                showToast(R.string.invalidData);
             }
         });
     }
@@ -957,21 +927,16 @@ public class IntegralRefundDetailActivity extends BaseActivity {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         loadData();
                     } else if (requestStatus.getCode().equals(EMPTY_CODE)) {
-                        showToast(getActivity(), R.string.invalidData);
+                        showToast( R.string.invalidData);
                     } else {
-                        showToastRequestMsg(getActivity(), requestStatus);
+                        showToastRequestMsg(requestStatus);
                     }
                 }
             }
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(getActivity(), R.string.invalidData);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(getActivity(), R.string.unConnectedNetwork);
+                showToast(R.string.invalidData);
             }
         });
     }
@@ -999,7 +964,7 @@ public class IntegralRefundDetailActivity extends BaseActivity {
             ClipboardManager cmb = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData mClipData = ClipData.newPlainText("Label", repairAddress);
             cmb.setPrimaryClip(mClipData);
-            showToast(getActivity(), "已复制");
+            showToast("已复制");
         }
     }
 

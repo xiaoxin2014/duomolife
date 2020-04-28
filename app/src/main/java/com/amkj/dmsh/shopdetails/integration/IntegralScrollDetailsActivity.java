@@ -96,7 +96,6 @@ import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODUCT_TITLE;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getWaterMarkImgUrl;
 
-;
 
 public class IntegralScrollDetailsActivity extends BaseActivity {
     @BindView(R.id.smart_integral_details)
@@ -277,7 +276,7 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
      * 商品详情内容
      */
     private void getIntegrationData() {
-        String url =  Url.H_INTEGRAL_DETAILS_GOODS;
+        String url = Url.H_INTEGRAL_DETAILS_GOODS;
         Map<String, Object> params = new HashMap<>();
         params.put("id", productId);
         if (userId > 0) {
@@ -294,32 +293,25 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
                         productInfoBean = productInfoEntity.getIntegralProductInfoBean();
                         setIntegralProductData(productInfoBean);
                     } else if (productInfoEntity.getCode().equals(SUCCESS_CODE)) {
-                        showToast(IntegralScrollDetailsActivity.this, R.string.shopOverdue);
+                        showToast(R.string.shopOverdue);
                     } else {
-                        showToast(IntegralScrollDetailsActivity.this, productInfoEntity.getMsg());
+                        showToast(productInfoEntity.getMsg());
                     }
                 }
                 NetLoadUtils.getNetInstance().showLoadSir(loadService, productInfoEntity);
             }
 
             @Override
-            public void netClose() {
+            public void onNotNetOrException() {
                 smart_integral_details.finishRefresh();
-                showToast(IntegralScrollDetailsActivity.this, R.string.unConnectedNetwork);
-                NetLoadUtils.getNetInstance().showLoadSir(loadService, productInfoEntity);
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                smart_integral_details.finishRefresh();
-                showToast(IntegralScrollDetailsActivity.this, R.string.connectedFaile);
+                showToast(R.string.connectedFaile);
                 NetLoadUtils.getNetInstance().showLoadSir(loadService, productInfoEntity);
             }
         });
     }
 
     private void getIntegralComment() {
-        String url =  Url.Q_SHOP_DETAILS_COMMENT;
+        String url = Url.Q_SHOP_DETAILS_COMMENT;
         Map<String, Object> params = new HashMap<>();
         params.put("showCount", 1);
         params.put("currentPage", 1);
@@ -327,7 +319,7 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
         if (userId > 0) {
             params.put("uid", userId);
         }
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 ll_product_comment.setVisibility(View.GONE);
@@ -584,8 +576,8 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
      * 积分商品服务承诺
      */
     private void getIntegralProductRule() {
-        String url =  Url.INTEGRAL_PRODUCT_SERVICE;
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,url, new NetLoadListenerHelper(){
+        String url = Url.INTEGRAL_PRODUCT_SERVICE;
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -609,7 +601,7 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
     }
 
     private void getIntegration() {
-        String url =  Url.MINE_PAGE;
+        String url = Url.MINE_PAGE;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url
@@ -623,7 +615,7 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
                                 personalScore = pagerInfoBean.getUserInfo().getScore();
                                 getExchangeScore(personalScore);
                             } else if (!pagerInfoBean.getCode().equals(EMPTY_CODE)) {
-                                showToast(IntegralScrollDetailsActivity.this, pagerInfoBean.getMsg());
+                                showToast(pagerInfoBean.getMsg());
                             }
                         }
                     }
@@ -786,7 +778,7 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
                     , productInfoBean.getPicUrl()
                     , "我在多么生活看中了" + productInfoBean.getName()
                     , "积分商品"
-                    , Url.BASE_SHARE_PAGE_TWO + "m/template/common/integralGoods.html?id=" + productInfoBean.getId(),productInfoBean.getId());
+                    , Url.BASE_SHARE_PAGE_TWO + "m/template/common/integralGoods.html?id=" + productInfoBean.getId(), productInfoBean.getId());
         }
     }
 
@@ -805,11 +797,11 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
     private void setProductEvaLike(View view) {
         GoodsCommentBean goodsCommentBean = (GoodsCommentBean) view.getTag();
         TextView tv_eva_like = (TextView) view;
-        String url =  Url.SHOP_EVA_LIKE;
+        String url = Url.SHOP_EVA_LIKE;
         Map<String, Object> params = new HashMap<>();
         params.put("id", goodsCommentBean.getId());
         params.put("uid", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,url,params,null);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, null);
         goodsCommentBean.setFavor(!goodsCommentBean.isFavor());
         tv_eva_like.setSelected(!tv_eva_like.isSelected());
         tv_eva_like.setText(getNumCount(tv_eva_like.isSelected(), goodsCommentBean.isFavor(), goodsCommentBean.getLikeNum(), "赞"));

@@ -201,7 +201,7 @@ public class QualityGroupShopActivity extends BaseActivity {
                             } else if (qualityGroupEntity.getCode().equals(EMPTY_CODE)) {
                                 qualityGroupShopAdapter.loadMoreEnd();
                             } else {
-                                showToast(QualityGroupShopActivity.this, qualityGroupEntity.getMsg());
+                                showToast( qualityGroupEntity.getMsg());
                             }
                         }
 

@@ -260,7 +260,13 @@ public abstract class BaseActivity extends AppCompatActivity {
             if (getSimpleName().equals(last.getClass().getSimpleName())) {
                 //检测是否获取悬浮窗权限
                 if (!PermissionUtils.checkPermission(this)) {
-                    mAlertDialogQyMsg = new AlertDialogHelper(getActivity());
+                    if (mAlertDialogQyMsg == null) {
+                        mAlertDialogQyMsg = new AlertDialogHelper(getActivity());
+                        mAlertDialogQyMsg.setTitle("通知提示")
+                                .setMsg("您有新的客服消息，打开“多么生活”悬浮窗功能可实时接收")
+                                .setSingleButton(true)
+                                .setConfirmText("去设置");
+                    }
                     mAlertDialogQyMsg.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
                         @Override
                         public void confirm() {
@@ -274,13 +280,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                         @Override
                         public void cancel() {
-                            mAlertDialogQyMsg.dismiss();
                         }
                     });
-                    mAlertDialogQyMsg.setTitle("通知提示")
-                            .setMsg("您有新的客服消息，打开“多么生活”悬浮窗功能可实时接收")
-                            .setSingleButton(true)
-                            .setConfirmText("去设置");
+
                     mAlertDialogQyMsg.show();
                 } else {
                     showQYMessage(msgType, msgTime, content, link);
@@ -404,8 +406,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
         // 必须调用该方法，防止内存泄漏
         ImmersionBar.with(this).destroy();
-        if (mAlertDialogQyMsg != null && mAlertDialogQyMsg.isShowing()) {
+        if (mAlertDialogQyMsg != null) {
             mAlertDialogQyMsg.dismiss();
+        }
+        if (loadHud != null) {
+            loadHud.dismiss();
         }
     }
 

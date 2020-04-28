@@ -43,7 +43,6 @@ import static com.amkj.dmsh.constant.Url.QUALITY_HOT_SALE_AD;
 import static com.amkj.dmsh.constant.Url.QUALITY_HOT_SALE_SHAFT;
 
 
-
 /**
  * @author LGuiPeng
  * @email liuguipeng163@163.com
@@ -148,23 +147,17 @@ public class QualityTypeHotSaleProFragment extends BaseFragment {
                             if (qualityHotSaleShaftEntity.getCode().equals(SUCCESS_CODE)) {
                                 setHotSaleShaftData(qualityHotSaleShaftEntity.getHotSaleShaft());
                             } else if (!qualityHotSaleShaftEntity.getCode().equals(EMPTY_CODE)) {
-                                showToast(getActivity(), qualityHotSaleShaftEntity.getMsg());
+                                showToast(qualityHotSaleShaftEntity.getMsg());
                             }
                         }
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, qualityHotSaleShaftEntity);
                     }
 
-                    @Override
-                    public void netClose() {
-                        smart_refresh_hot_sale.finishRefresh();
-                        showToast(getActivity(), R.string.unConnectedNetwork);
-                        NetLoadUtils.getNetInstance().showLoadSir(loadService, qualityHotSaleShaftEntity);
-                    }
 
                     @Override
-                    public void onError(Throwable throwable) {
+                    public void onNotNetOrException() {
                         smart_refresh_hot_sale.finishRefresh();
-                        showToast(getActivity(), R.string.invalidData);
+                        showToast(R.string.invalidData);
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, qualityHotSaleShaftEntity);
                     }
                 });

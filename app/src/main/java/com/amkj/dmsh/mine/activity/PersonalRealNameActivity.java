@@ -104,7 +104,7 @@ public class PersonalRealNameActivity extends BaseActivity {
                                 CommunalUserInfoBean communalUserInfoBean = communalUserInfoEntity.getCommunalUserInfoBean();
                                 setPersonalData(communalUserInfoBean);
                             } else if (!communalUserInfoEntity.getCode().equals(EMPTY_CODE)) {
-                                showToast(PersonalRealNameActivity.this, communalUserInfoEntity.getMsg());
+                                showToast( communalUserInfoEntity.getMsg());
                             }
                         }
                     }
@@ -138,10 +138,10 @@ public class PersonalRealNameActivity extends BaseActivity {
                     RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                     if (requestStatus != null) {
                         if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                            showToast(PersonalRealNameActivity.this, String.format(getResources().getString(R.string.doSuccess), "修改"));
+                            showToast(String.format(getResources().getString(R.string.doSuccess), "修改"));
                             finish();
                         } else {
-                            showToastRequestMsg(PersonalRealNameActivity.this, requestStatus);
+                            showToastRequestMsg(requestStatus);
                         }
                     }
                 }
@@ -155,18 +155,13 @@ public class PersonalRealNameActivity extends BaseActivity {
 
                 @Override
                 public void onError(Throwable throwable) {
-                    showToast(PersonalRealNameActivity.this, R.string.do_failed);
-                }
-
-                @Override
-                public void netClose() {
-                    showToast(PersonalRealNameActivity.this, R.string.unConnectedNetwork);
+                    showToast( R.string.do_failed);
                 }
             });
         } else if (TextUtils.isEmpty(realName)) {
-            showToast(PersonalRealNameActivity.this, "请输入收货人姓名");
+            showToast("请输入收货人姓名");
         } else {
-            showToast(PersonalRealNameActivity.this, "请输入收货人身份证号码");
+            showToast("请输入收货人身份证号码");
         }
 
     }

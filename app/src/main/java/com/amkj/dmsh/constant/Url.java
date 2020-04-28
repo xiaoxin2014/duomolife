@@ -77,32 +77,20 @@ public class Url {
     public static final String CATE_DOC_LIST = "api/home/getDocumentHomeList";
     //    首页广告轮播图
     public static final String H_AD_LIST = "api/home/getHomeAdList";
-    //是否有新消息提醒
-    public static final String H_MESSAGE_WARM = "api/message/remind";
     //    弹窗广告
     public static final String H_AD_DIALOG = "api/home/getAdByPopup";
-    //    统计字段
-    public static final String APP_TOTAL_ACTION = "api/userbehavioursts/getActList";
     //    启动广告
     public static final String H_LAUNCH_AD_DIALOG = "api/home/getAdByStart";
     //    OSS配置
     public static final String H_OSS_CONFIG = "api/oss/getDetail";
     //    地址配置版本
     public static final String H_ADDRESS_VERSION = "api/area/getVersion";
-    //    七鱼客服获取
-    public static final String XN_SERVICE = "api/xiaoneng/getReceptionGroups";
     //    底栏导航
     public static final String H_BOTTOM_ICON = "api/appindex/getAppIndexConfig";
     //    地址配置数据
     public static final String H_ADDRESS_DATA = "api/area/getArea";
-    //    添加抽奖次数
-    public static final String H_HOT_ACTIVITY_ADD_LOTTERY = "api/turn/addTurnCount";
-    //    获取搜索热门标签
-    public static final String H_HOT_SEARCH_LIST = "api/search/getHotSearchLinkList";
     //    新版搜索热门标签
     public static final String H_HOT_NEW_SEARCH_LIST = "api/search/getSearchHotWord";
-    //    搜索产品
-    public static final String H_HOT_SEARCH_PRODUCT = "api/search/searchGoodslist";
     //    全局搜索
     public static final String H_HOT_SEARCH_ALL = "api/search/searchContent";
     //    搜索产品类目推荐
@@ -115,8 +103,6 @@ public class Url {
     public static final String BASE_SHARE_PAGE_TWO = "https://www.domolife.cn/";
     //    文章详情公共分享
     public static final String SHARE_COMMUNAL_ARTICLE = "api/reminder/getSharePrompt";
-    //签到详情
-    public static final String H_ATTENDANCE_D = "api/activity/selectSignPageDetail";
     //签到提醒
     public static final String H_ATTENDANCE_WARM = "api/activity/setUpSign";
     //新版签到
@@ -189,8 +175,6 @@ public class Url {
     public static final String H_MES_COMMENT = "api/message/commentMessageList";
     //     消息赞
     public static final String H_MES_LIKED = "api/message/favorMessageList";
-    //    积分规则
-    public static final String H_ATT_INTEG = "api/reminder/getSnigInfo";
     //    发现广告图
     public static final String FIND_AD = "api/website/getAdByFind";
     //    小编精选列表
@@ -256,14 +240,6 @@ public class Url {
     public static final String DEL_MINE_BROWSING_HISTORY = "api/my/deleteMyFootmark";
     //修改信息
     public static final String MINE_CHANGE_DATA = "api/my/updatePersonalData";
-    //会员宝宝
-    public static final String MINE_GET_BABY_DATA = "api/my/getMemberBabyList";
-    //修改会员宝宝
-    public static final String MINE_UPDATE_BABY_DATA = "api/my/updateMemberBaby";
-    //修改会员宝宝
-    public static final String MINE_ADD_BABY_DATA = "api/my/addMemberBaby";
-    //删除宝宝信息
-    public static final String MINE_DEL_BABY_DATA = "api/my/deleteMemberBaby";
     //    二期新增 修改会员宝宝
     public static final String MINE_BABY_INFO = "api/my/updateMemberBabyTwo";
     //    选择兴趣类别
@@ -305,8 +281,6 @@ public class Url {
     public static final String MINE_FEEDBACK_TYPE = "api/my/getFeedBackType";
     //    检查该号码是否已注册
     public static final String CHECK_PHONE_IS_REG = "api/my/checkRegMobile";
-    //    是否是第一次登录App
-    public static final String FIRST_LOGIN_APP = "api/my/coupon/firstAppLoginCouponConfig";
     //    更新清除数据
     public static final String CHECK_CLEAR_USER_DATA = "api/my/checkUserCleanLogin";
     //    请求验证码
@@ -330,8 +304,6 @@ public class Url {
      */
     //     文章删除
     public static final String MINE_INVITATION_DEL = "api/my/deleteDocument";
-    //     用户首页信息
-    public static final String USER_PAGE_INFO = "api/my/getPersonalData";
     //    收藏帖子
     public static final String COLLECT_INVITATION = "api/my/getMyCollectPostListV2";
     //  收藏专题(文章)
@@ -340,8 +312,6 @@ public class Url {
     public static final String COLLECT_TOPIC = "api/my/getMyCollectFindTopiclist";
     //    我的帖子列表
     public static final String MINE_INVITATION_LIST = "api/my/getMyPostListV2";
-    //    用户帖子列表
-    public static final String USER_INVITATION_LIST = "api/my/getUserPostListV2";
     /**
      * 限时特惠
      */
@@ -383,32 +353,22 @@ public class Url {
     /**
      * 良品
      */
-    //首页轮播图
-    public static final String Q_HOME_AD_LOOP = "api/goods/getAd";
     //    获取第三方支付结果
     public static final String Q_UPDATE_PAY_RESULT = "api/goods/order/updatePayResult";
     //大营销中心订单创建
     public static final String Q_CREATE_INDENT = "api/goods/order/addOrderPayInfoNewV2";
     //    积分订单创建
     public static final String INTEGRAL_CREATE_INDENT = "api/integralorder/addIntegralOrder";
-    //    再次购买
-    public static final String Q_RE_BUY_INDENT = "api/goods/order/againBuy";
     //    新版再次购买
     public static final String Q_NEW_RE_BUY_INDENT = "api/goods/order/againBuyNewV2";
     //    订单付款
     public static final String Q_PAYMENT_INDENT = "api/goods/order/buy";
     //    银联支付手动回调
     public static final String Q_UNIONPAY_PAYMENT_INDENT = "api/goods/order/abcOrderQuery";
-    //    订单支付失败提示
-    public static final String PAY_ERROR = "api/reminder/getPayErorr";
     //    订单支付取消提示
     public static final String PAY_CANCEL = "api/reminder/getLeaveConfirm";
-    //    购物车结算金额
-    public static final String PRO_SETTLE_PRICE = "api/goods/cart/changeCartCheckStatus";
     //    新版购物车结算金额
     public static final String NEW_PRO_SETTLE_PRICE = "api/goods/cart/changeCartCheckStatusV2";
-    //    订单详情
-    public static final String Q_INDENT_DETAILS = "api/goods/order/getOrderNew";
     //    新版订单详情
     public static final String Q_INDENT_NEW_DETAILS = "api/goods/order/getOrderDetail";
     //    订单删除
@@ -423,40 +383,28 @@ public class Url {
     public static final String Q_GET_ORDER_LIST = "api/goods/order/getOrderList";
     //    查询良品全部订单
     public static final String Q_INQUIRY_ALL_ORDER = "api/goods/order/getOrders";
-    //    查询良品已完成订单
-    public static final String Q_INQUIRY_FINISH = "api/goods/order/getWaitEvaluate";
-    //    查询良品待发货订单
-    public static final String Q_INQUIRY_WAIT_SEND = "api/goods/order/getWaitDelivery";
+    //    获取七鱼客服快捷入口
+    public static final String GET_CUSTOMER_SERVICE_BAR = "api/home/getCustomerServiceBar";
     //    待发货 催单
     public static final String Q_INQUIRY_WAIT_SEND_EXPEDITING = "api/goods/order/urgeOrderV2";
     //    获取退款去向
     public static final String Q_GET_REFUND_GO_INFO = "api/goods/order/getRefundGoInfo";
     //    延长收货
     public static final String Q_INQUIRY_DELAY_TAKE_TIME = "api/goods/order/delayTakeTime";
-    //    查询良品待付款订单
-    public static final String Q_INQUIRY_WAIT_PAY = "api/goods/order/getWaitPay";
-    //    查询良品已发货订单
-    public static final String Q_INQUIRY_DEL_IVERED = "api/goods/order/getWaitTakeDelivery";
     //    申请取消订单 待发货
     public static final String Q_CANCEL_INDENT_REFUND = "api/goods/order/cancelRefund";
-    //    查询物流
-    public static final String Q_CONFIRM_LOGISTICS = "api/goods/order/viewLogistics";
     //    新版物流详情
     public static final String Q_LOGISTICS_DETAIL = "api/goods/order/getOrderLogistics";
     //    售后物流
     public static final String Q_REFUND_LOGISTICS_DETAIL = "api/goods/order/getOrderRefundLogistics";
     //    查询订单包裹信息
     public static final String Q_ORDER_LOGISTICS_PACKAGE = "api/goods/order/getOrderLogisticsPackage";
-    //    查询包裹
-    public static final String Q_CONFIRM_PACKET = "api/goods/order/viewPackage";
     //    新版售后列表
     public static final String Q_APPLY_AFTER_SALE_REPLY_RECORD = "api/goods/order/getAfterSaleV2";
     //    退款详情
     public static final String Q_INDENT_REFUND_DETAIL = "api/goods/order/getRefundDetailInfo";
     //    新版退款详情
     public static final String Q_INDENT_REFUND_NEW_DETAIL = "api/goods/order/getRefundDetailInfoV2";
-    //    整单退，退款去向
-    public static final String Q_INDENT_DETAIL_REFUND = "api/goods/order/getOrderRefundDetailInfo";
     //    维修详情
     public static final String Q_INDENT_REPAIR_DETAIL = "api/goods/order/getRepairDetailInfo";
     //    售后维修
@@ -467,8 +415,6 @@ public class Url {
     public static final String Q_INDENT_REPAIR_LOGISTIC_SUB = "api/goods/order/sendRepaiOrderProduct";
     //    确认维修商品收货
     public static final String Q_INDENT_REPAIR_RECEIVE = "api/goods/order/takeRepairDelivery";
-    //    维修物流查询
-    public static final String Q_INDENT_REPAIR_LOGISTIC = "api/goods/order/viewRepairLogistics";
     //    撤销申请
     public static final String Q_CANCEL_APPLY = "api/goods/order/undoApplyRefund";
     //    新版撤销申请
@@ -495,6 +441,8 @@ public class Url {
     public static final String Q_INDENT_URGE_REFUND_PRICE = "api/goods/order/urgeRefundPrice";
     //    获取主订单支持退款的商品
     public static final String Q_GET_REFUND_REFUND_PRODUCTS = "api/goods/order/getBatchRefundProductList";
+    //    获取点评弹窗信息
+    public static final String Q_GET_TAKE_DELIVERY_POPUP = "api/goods/order/getTakeDeliveryPopUp";
 
 
     //    商品详情 新版
@@ -531,10 +479,14 @@ public class Url {
     public static final String Q_COUPON_ZONE = "api/activity/zone/getApiCouponZoneInfo";
     //    订单优惠信息 大营销中心新版
     public static final String INDENT_DISCOUNTS_NEW_INFO = "api/goods/order/getOrderSettleInfoNewV2";
+    //    跳转订单结算前校验
+    public static final String CHECK_ORDER_SETTLE_INFOV2 = "api/goods/order/checkSelfProductOrderSettleInfoV2";
+    //    再次购买跳转订单结算前校验
+    public static final String CHECK_BUY_AGAIN_NEWV2 = "api/goods/order/checkAgainBuyNewV2";
     //    更新订单优惠信息 大营销中心新版
     public static final String INDENT_DISCOUNTS_UPDATE_INFO = "api/goods/order/getOrderSettlePriceInfo";
     //    获取可支付方式
-    public static final String GET_PAYTYPE_LIST= "api/goods/order/getPayTypeList";
+    public static final String GET_PAYTYPE_LIST = "api/goods/order/getPayTypeList";
     //    发票提示
     public static final String INDENT_DRAW_UP_INVOICE = "api/reminder/getReminderAsInvoice";
     //    发票详情
@@ -543,34 +495,18 @@ public class Url {
     public static final String SEND_INVOICE = "api/home/sendInvoiceMail";
     //    开发票
     public static final String INVOICE_DRAW_UP = "api/goods/order/addInvoice";
-    //    全部团购
-    public static final String GROUP_SHOP_JOIN_ALL = "api/gp/getAllDomoGpInfo";
-    //    拼团首页
-    public static final String GROUP_SHOP_JOIN_INDEX = "api/gp/getDomoGpIndexInfo";
     //    新版拼团首页
     public static final String GROUP_SHOP_JOIN_NEW_INDEX = "api/gp/getGpListV2";
     //    拼团首页轮播图
     public static final String GROUP_SHOP_LOOP_INDEX = "api/gp/getGpIndexAd";
-    //    拼团商品详细信息
-    public static final String GROUP_SHOP_COMMUNAL = "api/gp/getDomoGpExtraInfo";
     //    新人团判断
     public static final String GROUP_SHOP_JOIN_NRE_USER = "api/gp/getQualifications";
-    //    拼团通用信息
-    public static final String GROUP_SHOP_DETAILS = "api/gp/getGpInfoDetailInfo";
     //    拼团通用信息改版
     public static final String GROUP_SHOP_NEW_DETAILS = "api/gp/getGpInfoDetailInfoV2";
-    //    拼团列表
-    public static final String GROUP_SHOP_OPEN_PERSON = "api/gp/getDomoCreateGpInfp";
-    //    创建拼团订单
-    public static final String Q_CREATE_GROUP_INDENT = "api/goods/order/addGpOrder";
     //    新版创建拼团订单
     public static final String Q_CREATE_GROUP_NEW_INDENT = "api/goods/order/addGpOrderV2";
-    //    我的拼团订单
-    public static final String GROUP_MINE_INDENT = "api/gp/getMyGpInfo";
     //    新版我的拼团订单
     public static final String GROUP_MINE_NEW_INDENT = "api/gp/getMyGpInfoV2";
-    //    分享参团信息
-    public static final String GROUP_MINE_SHARE = "api/gp/inviteToGp";
     //    获取拼团弹窗
     public static final String GROUP_GET_GP_POPUP = "api/gp/getGpPopup";
     //    商品评论点赞
@@ -588,19 +524,12 @@ public class Url {
     public static final String QUALITY_WEEK_OPTIMIZED_DETAIL = "api/goods/weeklypreferred/getZone";
     //    每周精选列表
     public static final String QUALITY_WEEK_OPTIMIZED_PRO = "api/goods/weeklypreferred/getGoods";
-
-    //    良品横向
-    public static final String QUALITY_SHOP_HOR_TYPE = "api/goods/navbarconfg/getNavbarConfig";
     //    良品侧栏分类
     public static final String QUALITY_SHOP_TYPE = "api/goods/category/getCategoryListV2";
     //    新版首页分类
     public static final String HOME_CATERGORY_ONE_LIST = "api/goods/category/getCategoryLevelOneList";
     //    良品好物
     public static final String QUALITY_SHOP_GOODS_PRO = "api/goods/greate/getGreateGoodList";
-    //    良品首栏分类入口
-    public static final String Q_HOME_CLASS_TYPE = "api/goods/index/getProductUpIndex";
-    //    良品中间栏分类入口
-    public static final String Q_HOME_CENTER_TYPE = "api/goods/index/getProductMiddleIndex";
     //    良品根据父类获取分类栏目
     public static final String Q_PRODUCT_TYPE = "api/goods/category/getCategoryByParent";
     //    良品分类 一级分类
@@ -644,8 +573,6 @@ public class Url {
     public static final String QUALITY_NEW_USER_LIST = "api/goods/newuser/getGoods";
     //    新人用券专区
     public static final String QUALITY_NEW_USER_COUPON_LIST = "api/goods/coupon/getCouponGoodsList";
-    //    新人专区封面图
-    public static final String QUALITY_NEW_USER_COVER = "api/goods/newuser/getNewUserImg";
     //    新人领取优惠券礼包
     public static final String QUALITY_NEW_USER_GET_COUPON = "api/goods/newuser/getCouponByNewUser";
     //    热销单品广告位
@@ -722,22 +649,6 @@ public class Url {
     public static final String CHANGE_ORDER_ADDRESS = "api/goods/order/editAddress";
 
 
-    /**
-     * 发现
-     */
-//  获取标签
-    public static final String F_TAGS_LIST = "api/find/recommendTagList";
-    //    获取话题
-    public static final String F_REL_TOPIC_LIST = "api/find/getTopicListAsDoc";
-    //    订单 晒单赢积分
-    public static final String F_REL_INDENT_PRO_LIST = "api/goods/order/getBaskOrderInfo";
-    //    发布 关联商品
-    public static final String RELEASE_RELEVANCE_PRODUCT = "api/find/getGoodsList";
-    //  发布图文
-//  相册文章
-    public static final String F_SEND_INVITATION = "api/find/savePost";
-    //  发布文章
-    public static final String F_SEND_ARTICLE = "api/find/saveDocumentDoc";
     //  文章 产品详情点赞取消
     public static final String F_ARTICLE_DETAILS_FAVOR = "api/find/addDocumentFavor";
     //    文章收藏
@@ -748,28 +659,14 @@ public class Url {
     public static final String FIND_ARTICLE_COUPON = "api/my/coupon/receiveCoupon";
     //    优惠券礼包领取
     public static final String FIND_COUPON_PACKAGE = "api/my/coupon/sendCouponPackage";
-    //  文章评论列表
-    public static final String FIND_INVI_COMMENT_LIST = "api/find/getFindCommentList";
-    //  发现-推荐
-    public static final String FIND_RECOMMEND = "api/find/getPostRemendList";
     //  点赞
     public static final String FIND_AND_COMMENT_FAV = "api/find/addCommentFavor";
     //      帖子标签关联列表
     public static final String FIND_RELEVANCE_TAG = "api/find/getPostByTag";
     //      帖子标签关联信息
     public static final String FIND_RELEVANCE_TAG_INFO = "api/find/getDocumentOtherInfoByTag";
-    //    发现-活动
-    public static final String F_ACTIVITY_AD = "api/home/getAdByFindActivity";
-    //    发现-热门话题
-    public static final String F_HOT_TOPIC_LIST = "api/find/getHotTopic";
-    //    发现-热门话题
-    public static final String F_TOPIC_LIST = "api/find/getTopicList";
-    //    话题详情
-    public static final String F_TOPIC_DES = "api/find/getTopicById";
     //    话题收藏
     public static final String F_TOPIC_COLLECT = "api/home/addFindTopic";
-    //    话题推荐
-    public static final String F_TOPIC_RECOMMEND = "api/find/getDocumentTopicListV3";
     //添加文章评论帖子
     public static final String FIND_COMMENT = "api/find/newAddComment";
     //    添加限时特惠产品评论
@@ -794,8 +691,12 @@ public class Url {
     public static final String GET_CATERGORY_TOPIC = "api/find/post/getAllTopic";
     //   获取话题详情
     public static final String GET_TOPIC_DETAIL = "api/find/post/getTopicInfo";
+    //   获取评价相关字段
+    public static final String GET_EVALUATE_TIP = "api/find/post/getEvaluateTip";
     //   获取可评价商品列表
     public static final String GET_SCORE_PRODUCT = "api/find/post/getNeedCommentProductList";
+    //   待评价商品订单列表
+    public static final String GET_WAIT_EVALUATE_PRODUCTS = "api/goods/order/getWaitEvaluateOrderProductList";
     //   商品晒单（发布帖子并评价）
     public static final String PUBLISH_POST_ANDE_VALUATE = "api/find/post/publishPostAndEvaluate";
     //   参与话题
@@ -812,23 +713,6 @@ public class Url {
     public static final String GET_PRODUCT_POST = "api/find/post/getProductPost";
     //    抽奖页面
     public static final String LOTTERY_URL = "https://www.domolife.cn/m/template/home/lottery.html";
-
-
-    /**
-     * 关联商品
-     */
-    //    多么订单商品
-    public static final String REL_INDENT_PRO = "api/find/getOrderGoodsList";
     //    分享保存图片
     public static final String SHARE_SAVE_IMAGE_URL = "api/miniprogram/createMiniProductSharePic";
-    //    购物车商品
-    public static final String REL_SHOP_CAR_PRO = "api/find/getCartGoodsList";
-    //    收藏商品
-    public static final String REL_COLLECT_PRO = "api/find/getCollectGoodsList";
-    //  OSS 缩略图300
-    public static final String IMAGE_RESIZE = "?x-oss-process=image";
-    //  OSS 缩略图方向
-    public static final String IMAGE_RESIZE_ORI = "/auto-orient,1";
-    //    oss图片格式转换
-    public static final String OSS_IMG_FORMAT = "?x-oss-process=image/format,jpg";
 }

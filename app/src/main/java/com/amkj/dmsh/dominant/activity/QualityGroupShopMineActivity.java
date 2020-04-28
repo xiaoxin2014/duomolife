@@ -230,7 +230,7 @@ public class QualityGroupShopMineActivity extends BaseActivity {
                             } else if (qualityGroupMineEntity.getCode().equals(EMPTY_CODE)) {
                                 qualityGroupMineAdapter.loadMoreEnd();
                             } else {
-                                showToast(QualityGroupShopMineActivity.this, qualityGroupMineEntity.getMsg());
+                                showToast(qualityGroupMineEntity.getMsg());
                             }
                             qualityGroupMineAdapter.notifyDataSetChanged();
                         }

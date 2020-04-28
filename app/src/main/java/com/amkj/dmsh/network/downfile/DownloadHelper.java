@@ -23,7 +23,6 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.downFileMap;
 import static com.amkj.dmsh.constant.ConstantVariable.isDebugTag;
@@ -89,7 +88,7 @@ public class DownloadHelper {
             downFileMap = new HashMap<>();
         }
         if (downFileMap.get(url) != null) {
-            showToast(mAppContext, "正在下载……");
+            showToast("正在下载……");
             return;
         } else {
             downFileMap.put(url, url);

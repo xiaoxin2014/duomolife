@@ -3,7 +3,6 @@ package com.amkj.dmsh.dominant.activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -18,8 +17,6 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.base.TinkerBaseApplicationLike;
-import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.dominant.adapter.GoodProductAdapter;
@@ -30,11 +27,9 @@ import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.CountDownTimer;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -58,13 +53,14 @@ import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.BASE_SHARE_PAGE_TWO;
 import static com.amkj.dmsh.constant.Url.Q_ACT_PRO_LIST;
 import static com.amkj.dmsh.dao.OrderDao.getCarCount;
+import static com.amkj.dmsh.utils.TimeUtils.getTimeDifferenceText;
 import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTime;
 
 
@@ -93,16 +89,14 @@ public class QualityProductActActivity extends BaseActivity {
     @BindView(R.id.tl_quality_bar)
     Toolbar tl_quality_bar;
     private int page = 1;
-    private int scrollY;
-    private float screenHeight;
     private Badge badge;
     private String activityCode;
     private List<LikedProductBean> actProActivityList = new ArrayList<>();
     private GoodProductAdapter qualityTypeProductAdapter;
     private QActivityProView qActivityProView;
     private UserLikedProductEntity likedProductEntity;
-    private ConstantMethod constantMethod;
-    private long addSecond;
+    private CountDownTimer mCountDownStartTimer;
+    private CountDownTimer mCountDownEndTimer;
 
     @Override
     protected int getContentView() {
@@ -114,11 +108,11 @@ public class QualityProductActActivity extends BaseActivity {
         Intent intent = getIntent();
         activityCode = intent.getStringExtra("activityCode");
         if (TextUtils.isEmpty(activityCode)) {
-            showToast(this, R.string.invalidData);
+            showToast(R.string.invalidData);
             finish();
         }
 
-        iv_img_share.setVisibility(View.VISIBLE);
+        iv_img_share.setVisibility(VISIBLE);
         tv_header_titleAll.setText("");
         tl_quality_bar.setSelected(true);
         iv_img_service.setImageResource(R.drawable.shop_car_gray_icon);
@@ -136,50 +130,11 @@ public class QualityProductActActivity extends BaseActivity {
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_dp)
                 .create());
-        qualityTypeProductAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
-            @Override
-            public void onLoadMoreRequested() {
-                page++;
-                getActProActivityData();
-            }
+        qualityTypeProductAdapter.setOnLoadMoreListener(() -> {
+            page++;
+            getActProActivityData();
         }, communal_recycler);
-        TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-        screenHeight = app.getScreenHeight();
-        communal_recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                scrollY += dy;
-                if (!recyclerView.canScrollVertically(-1)) {
-                    scrollY = 0;
-                }
-                if (scrollY > screenHeight * 1.5 && dy < 0) {
-                    if (download_btn_communal.getVisibility() == GONE) {
-                        download_btn_communal.setVisibility(VISIBLE);
-                        download_btn_communal.hide(false);
-                    }
-                    if (!download_btn_communal.isVisible()) {
-                        download_btn_communal.show();
-                    }
-                } else {
-                    if (download_btn_communal.isVisible()) {
-                        download_btn_communal.hide();
-                    }
-                }
-            }
-        });
-        download_btn_communal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) communal_recycler.getLayoutManager();
-                int firstVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition();
-                int mVisibleCount = linearLayoutManager.findLastVisibleItemPosition()
-                        - linearLayoutManager.findFirstVisibleItemPosition() + 1;
-                if (firstVisibleItemPosition > mVisibleCount) {
-                    communal_recycler.scrollToPosition(mVisibleCount);
-                }
-                communal_recycler.smoothScrollToPosition(0);
-            }
-        });
+        setFloatingButton(download_btn_communal, communal_recycler);
         badge = getBadge(QualityProductActActivity.this, fl_header_service);
     }
 
@@ -224,33 +179,35 @@ public class QualityProductActActivity extends BaseActivity {
                     @Override
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
+                        likedProductEntity = new Gson().fromJson(result, UserLikedProductEntity.class);
+                        String code = likedProductEntity.getCode();
                         if (page == 1) {
                             actProActivityList.clear();
                         }
-                        Gson gson = new Gson();
-                        likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
-                        if (likedProductEntity != null) {
+                        if (SUCCESS_CODE.equals(code)) {
                             List<LikedProductBean> goodsList = likedProductEntity.getGoodsList();
-                            if (likedProductEntity.getCode().equals(SUCCESS_CODE) && goodsList != null && goodsList.size() > 0) {
-                                setActProInfo(likedProductEntity);
+                            if (goodsList != null) {
                                 actProActivityList.addAll(goodsList);
-                                qualityTypeProductAdapter.loadMoreComplete();
-                            } else if (likedProductEntity.getCode().equals(ERROR_CODE)) {
-                                showToast(QualityProductActActivity.this, likedProductEntity.getMsg());
-                            } else {
-                                qualityTypeProductAdapter.loadMoreEnd();
+                                qualityTypeProductAdapter.notifyDataSetChanged();
+                                if (goodsList.size() >= TOTAL_COUNT_TWENTY) {
+                                    qualityTypeProductAdapter.loadMoreComplete();
+                                } else {
+                                    qualityTypeProductAdapter.loadMoreEnd();
+                                }
                             }
+                            setActProInfo(likedProductEntity);
                         } else {
+                            qualityTypeProductAdapter.notifyDataSetChanged();
                             qualityTypeProductAdapter.loadMoreEnd();
+                            if (!EMPTY_CODE.equals(code)) showToast(likedProductEntity.getMsg());
                         }
-                        qualityTypeProductAdapter.notifyDataSetChanged();
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, actProActivityList, likedProductEntity);
                     }
 
                     @Override
                     public void onNotNetOrException() {
                         smart_communal_refresh.finishRefresh();
-                        qualityTypeProductAdapter.loadMoreEnd(true);
+                        qualityTypeProductAdapter.loadMoreFail();
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, actProActivityList, likedProductEntity);
                     }
                 });
@@ -258,66 +215,74 @@ public class QualityProductActActivity extends BaseActivity {
 
     private void setActProInfo(UserLikedProductEntity likedProductEntity) {
         qActivityProView.mIvNextIcon.setVisibility(GONE);
-        qActivityProView.mTvProductActivityDescription.setText(likedProductEntity.getActivityRule());
-        startCountDownTime(qActivityProView.mTvCountTimeBeforeWhite, qActivityProView.mCvCountdownTimeWhiteHours, likedProductEntity);
+        qActivityProView.mTvProductActivityDescription.setText(getStrings(likedProductEntity.getActivityRule()));
+        startActivityDownTime(likedProductEntity);
         tv_header_titleAll.setText(getStrings(likedProductEntity.getTitle()));
     }
 
-    //开启倒计时
-    private void startCountDownTime(TextView tipView, CountdownView countDownTimeView, UserLikedProductEntity likedProductEntity) {
+
+    //开启活动倒计时
+    private void startActivityDownTime(UserLikedProductEntity shopPropertyBean) {
         try {
-            String activityStartTime = likedProductEntity.getActivityStartTime();
-            String activityEndTime = likedProductEntity.getActivityEndTime();
-            String currentTime = likedProductEntity.getCurrentTime();
+            qActivityProView.mLlProductActivityDetail.setVisibility(VISIBLE);
+            String activityStartTime = shopPropertyBean.getActivityStartTime();
+            String activityEndTime = shopPropertyBean.getActivityEndTime();
+            String currentTime = shopPropertyBean.getCurrentTime();
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
             long dateStart = formatter.parse(activityStartTime).getTime();
             long dateEnd = formatter.parse(activityEndTime).getTime();
             long dateCurret = !TextUtils.isEmpty(currentTime) ? formatter.parse(currentTime).getTime() : System.currentTimeMillis();
             //活动未开始
-            if (!isEndOrStartTime(likedProductEntity.getCurrentTime(), likedProductEntity.getActivityStartTime())) {
-                tipView.setText(tipView.getId() == R.id.tv_count_time_before_white ? "距开始还有" : "距开始");
-                CountDownTimer countDownTimer = new CountDownTimer(this, dateStart + 1 - dateCurret, 1000) {
-                    @Override
-                    public void onTick(long millisUntilFinished) {
-                        countDownTimeView.updateShow(millisUntilFinished);
-                    }
+            if (!isEndOrStartTime(shopPropertyBean.getCurrentTime(), shopPropertyBean.getActivityStartTime())) {
+                qActivityProView.mLlTopEndTime.setVisibility(GONE);
+                qActivityProView.mLlTopStartTime.setVisibility(VISIBLE);
+                long millisInFuture = dateStart + 1 - dateCurret;
+                if (mCountDownStartTimer == null) {
+                    mCountDownStartTimer = new CountDownTimer(this, 1000) {
+                        @Override
+                        public void onTick(long millisUntilFinished) {
+                            qActivityProView.mTvStartTime.setText(String.format("距开始%s", getTimeDifferenceText(millisUntilFinished)));
+                        }
 
-                    @Override
-                    public void onFinish() {
-                        cancel();
-                        //活动已开始
-                        countDownTimeView.updateShow(0);
-                        loadData();
-                    }
-                };
+                        @Override
+                        public void onFinish() {
+                            //活动已开始
+                            qActivityProView.mTvStartTime.setText(String.format("距开始%s", getTimeDifferenceText(0)));
+                            loadData();
+                        }
+                    };
+                }
 
-                countDownTimer.start();
+                mCountDownStartTimer.setMillisInFuture(millisInFuture);
+                mCountDownStartTimer.start();
             } else if (!isEndOrStartTime(currentTime, activityEndTime)) {
+                qActivityProView.mLlTopEndTime.setVisibility(VISIBLE);
+                qActivityProView.mLlTopStartTime.setVisibility(GONE);
                 //活动已开始未结束
-                tipView.setText(tipView.getId() == R.id.tv_count_time_before_white ? "距结束还有" : "距结束");
-                CountDownTimer countDownTimer = new CountDownTimer(this, dateEnd + 1 - dateCurret, 1000) {
-                    @Override
-                    public void onTick(long millisUntilFinished) {
-                        countDownTimeView.updateShow(millisUntilFinished);
-                    }
+                long millisInFuture = dateEnd + 1 - dateCurret;
+                if (mCountDownEndTimer == null) {
+                    mCountDownEndTimer = new CountDownTimer(this, 1000) {
+                        @Override
+                        public void onTick(long millisUntilFinished) {
+                            qActivityProView.mCvCountdownTimeWhiteHours.updateShow(millisUntilFinished);
+                        }
 
-                    @Override
-                    public void onFinish() {
-                        cancel();
-                        //活动已结束
-                        countDownTimeView.updateShow(0);
-                        loadData();
-                    }
-                };
-
-                countDownTimer.start();
+                        @Override
+                        public void onFinish() {
+                            //活动已结束
+                            qActivityProView.mCvCountdownTimeWhiteHours.updateShow(0);
+                            loadData();
+                        }
+                    };
+                }
+                mCountDownEndTimer.setMillisInFuture(millisInFuture);
+                mCountDownEndTimer.start();
             } else {
                 //活动已结束
-                qActivityProView.mRlProductActivityDetail.setVisibility(GONE);
+                qActivityProView.mLlProductActivityDetail.setVisibility(GONE);
             }
         } catch (Exception e) {
-            //活动已结束
-            qActivityProView.mRlProductActivityDetail.setVisibility(GONE);
+            qActivityProView.mLlProductActivityDetail.setVisibility(GONE);
         }
     }
 
@@ -329,15 +294,18 @@ public class QualityProductActActivity extends BaseActivity {
         ImageView mIvNextIcon;
         @BindView(R.id.rl_product_activity_detail)
         LinearLayout mRlProductActivityDetail;
-        @BindView(R.id.tv_count_time_before_white)
-        TextView mTvCountTimeBeforeWhite;
         @BindView(R.id.cv_countdownTime_white_hours)
         CountdownView mCvCountdownTimeWhiteHours;
-        @BindView(R.id.ll_communal_time_hours)
-        LinearLayout mLlCommunalTimeHours;
+        @BindView(R.id.ll_top_end_time)
+        LinearLayout mLlTopEndTime;
+        @BindView(R.id.tv_start_time)
+        TextView mTvStartTime;
+        @BindView(R.id.ll_top_start_time)
+        LinearLayout mLlTopStartTime;
+        @BindView(R.id.ll_product_activity_detail)
+        LinearLayout mLlProductActivityDetail;
 
         void init() {
-            //设置上面活动倒计时
             DynamicConfig.Builder dynamic = new DynamicConfig.Builder();
             dynamic.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext, 26));
             dynamic.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext, 26));
@@ -385,15 +353,5 @@ public class QualityProductActActivity extends BaseActivity {
                 badge.setBadgeNumber((int) message.result);
             }
         }
-    }
-
-
-    @Override
-    protected void onDestroy() {
-        if (constantMethod != null) {
-            constantMethod.stopSchedule();
-            constantMethod.releaseHandlers();
-        }
-        super.onDestroy();
     }
 }

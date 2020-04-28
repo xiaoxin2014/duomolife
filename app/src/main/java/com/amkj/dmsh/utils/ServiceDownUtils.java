@@ -78,7 +78,7 @@ public class ServiceDownUtils extends Service {
 
             @Override
             public void onFail(Throwable ex) {
-                showToast(ServiceDownUtils.this, "下载失败");
+                showToast("下载失败");
                 stopSelf();
             }
         });
@@ -91,7 +91,7 @@ public class ServiceDownUtils extends Service {
             installApps(context, file);
         } else {
             EventBus.getDefault().post(new EventMessage("finishUpdateDialog", "updateVersion"));
-            showToast(context, R.string.app_version_tint);
+            showToast(R.string.app_version_tint);
         }
     }
 

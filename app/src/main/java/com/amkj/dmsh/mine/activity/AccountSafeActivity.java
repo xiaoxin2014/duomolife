@@ -139,7 +139,7 @@ public class AccountSafeActivity extends BaseActivity {
                                 minaData = minePageData.getCommunalUserInfoBean();
                                 setMobileData(minaData);
                             } else {
-                                showToast(AccountSafeActivity.this, minePageData.getMsg());
+                                showToast( minePageData.getMsg());
                             }
                         }
                     }
@@ -181,7 +181,7 @@ public class AccountSafeActivity extends BaseActivity {
                             } else if (otherAccountBindEntity.getCode().equals(EMPTY_CODE)) {
                                 setAccountData(null);
                             } else {
-                                showToast(AccountSafeActivity.this, otherAccountBindEntity.getMsg());
+                                showToast( otherAccountBindEntity.getMsg());
                             }
                         }
                         NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
@@ -193,13 +193,8 @@ public class AccountSafeActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void netClose() {
-                        showToast(mAppContext, R.string.unConnectedNetwork);
-                    }
-
-                    @Override
                     public void onError(Throwable throwable) {
-                        showToast(mAppContext, R.string.invalidData);
+                        showToast(R.string.invalidData);
                     }
                 });
     }
@@ -284,14 +279,14 @@ public class AccountSafeActivity extends BaseActivity {
                 break;
         }
         if (TextUtils.isEmpty(accountClickType) || bindAccountType.get(accountClickType) == null) {
-            showToast(AccountSafeActivity.this, "账号类型错误，请重新选择！");
+            showToast("账号类型错误，请重新选择！");
             return;
         }
 
         if (minaData != null) {
             //没有绑定手机号
             if (TextUtils.isEmpty(minaData.getMobile())) {
-                showToast(this, "请先绑定手机号");
+                showToast("请先绑定手机号");
                 return;
             }
         }
@@ -367,7 +362,7 @@ public class AccountSafeActivity extends BaseActivity {
                         WEIXIN : OTHER_QQ.equals(authType) ? QQ : SINA, getDataInfoListener);
             }
         } else {
-            showToast(AccountSafeActivity.this, "暂不支持该授权！");
+            showToast("暂不支持该授权！");
         }
     }
 
@@ -412,12 +407,12 @@ public class AccountSafeActivity extends BaseActivity {
 
         @Override
         public void onError(SHARE_MEDIA platform, int action, Throwable t) {
-            showToast(getApplicationContext(), "授权失败");
+            showToast("授权失败");
         }
 
         @Override
         public void onCancel(SHARE_MEDIA platform, int action) {
-            showToast(getApplicationContext(), "授权取消");
+            showToast("授权取消");
         }
     };
 
@@ -463,7 +458,7 @@ public class AccountSafeActivity extends BaseActivity {
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         //第三方账号登录统计
-                        showToast(AccountSafeActivity.this, requestStatus.getMsg());
+                        showToast( requestStatus.getMsg());
                         bindAccountType.put(otherAccountBindInfo.getType(), 1);
                         //更新本地Token信息
                         if (!TextUtils.isEmpty(requestStatus.getToken())) {
@@ -476,7 +471,7 @@ public class AccountSafeActivity extends BaseActivity {
                         MobclickAgent.onProfileSignIn(getStrings(otherAccountBindInfo.getType()), String.valueOf(userId));
                         loadData();
                     } else {
-                        showToast(AccountSafeActivity.this, requestStatus.getMsg());
+                        showToast( requestStatus.getMsg());
                     }
                 }
             }
@@ -495,11 +490,11 @@ public class AccountSafeActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null && SUCCESS_CODE.equals(requestStatus.getCode())) {
-                    showToast(AccountSafeActivity.this, String.format(getResources().getString(R.string.doSuccess), "解绑"));
+                    showToast( String.format(getResources().getString(R.string.doSuccess), "解绑"));
 //                    设置三方账号状态
                     setUnbindAccount();
                 } else {
-                    showToastRequestMsg(AccountSafeActivity.this, requestStatus);
+                    showToastRequestMsg( requestStatus);
                 }
             }
 
@@ -510,12 +505,7 @@ public class AccountSafeActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(AccountSafeActivity.this, R.string.invalidData);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(AccountSafeActivity.this, R.string.unConnectedNetwork);
+                showToast(R.string.invalidData);
             }
         };
         Map<String, Object> params = new HashMap<>();

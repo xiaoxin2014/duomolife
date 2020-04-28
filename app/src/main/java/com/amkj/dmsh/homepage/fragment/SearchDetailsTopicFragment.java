@@ -122,7 +122,7 @@ public class SearchDetailsTopicFragment extends BaseSearchDetailFragment {
                                 mPostList.addAll(removeExistUtils.removeExistList(postList));
                                 postAdapter.loadMoreComplete();
                             } else if (ERROR_CODE.equals(code)) {
-                                showToast(getActivity(), allSearchEntity.getMsg());
+                                showToast(allSearchEntity.getMsg());
                                 postAdapter.loadMoreFail();
                             } else {
                                 postAdapter.loadMoreEnd();

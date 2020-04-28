@@ -376,7 +376,7 @@ public class PostDetailActivity extends BaseActivity {
                     communalComment.setToUid(mPostDetailBean.getUid());
                     sendComment(communalComment);
                 } else {
-                    showToast(getActivity(), "请正确输入内容");
+                    showToast("请正确输入内容");
                 }
             });
         } else if (GONE == visibility) {
@@ -398,7 +398,7 @@ public class PostDetailActivity extends BaseActivity {
                 loadHud.dismiss();
                 mTvSendComment.setText("发送");
                 mTvSendComment.setEnabled(true);
-                showToast(getActivity(), R.string.comment_send_success);
+                showToast(R.string.comment_send_success);
                 commentViewVisible(GONE, null);
                 getComment();
                 mEmojiEditComment.setText("");
@@ -801,10 +801,10 @@ public class PostDetailActivity extends BaseActivity {
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         EventBus.getDefault().post(new EventMessage(ConstantVariable.DELETE_POST, mArtId));
-                        showToast(getActivity(), "删除帖子完成");
+                        showToast("删除帖子完成");
                         finish();
                     } else {
-                        showToastRequestMsg(getActivity(), requestStatus);
+                        showToastRequestMsg( requestStatus);
                     }
                 }
             }

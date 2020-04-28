@@ -137,7 +137,7 @@ public class PersonalHabitActivity extends BaseActivity {
                                 mineHabitTypeAdapter.setNewData(habitTypeBeanList);
                             } else if (!habitTypeEntity.getCode().equals(EMPTY_CODE)) {
                                 rel_habit_type.setVisibility(GONE);
-                                showToast(PersonalHabitActivity.this, habitTypeEntity.getMsg());
+                                showToast(habitTypeEntity.getMsg());
                             }
                         }
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, habitTypeEntity);
@@ -152,13 +152,8 @@ public class PersonalHabitActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void netClose() {
-                        showToast(PersonalHabitActivity.this, R.string.unConnectedNetwork);
-                    }
-
-                    @Override
                     public void onError(Throwable throwable) {
-                        showToast(PersonalHabitActivity.this, R.string.invalidData);
+                        showToast(R.string.invalidData);
                     }
                 });
     }
@@ -204,7 +199,7 @@ public class PersonalHabitActivity extends BaseActivity {
                 setUserHabitTag(habitTag);
             } else {
                 loadHud.dismiss();
-                showToast(this, R.string.sel_habit_tag);
+                showToast(R.string.sel_habit_tag);
             }
         }
     }
@@ -224,7 +219,7 @@ public class PersonalHabitActivity extends BaseActivity {
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         loadData();
-                        showToast(PersonalHabitActivity.this, String.format(getResources().getString(R.string.doSuccess), "修改"));
+                        showToast( String.format(getResources().getString(R.string.doSuccess), "修改"));
                         finish();
                     }
                 }
@@ -237,12 +232,7 @@ public class PersonalHabitActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(PersonalHabitActivity.this, R.string.do_failed);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(PersonalHabitActivity.this, R.string.unConnectedNetwork);
+                showToast(R.string.do_failed);
             }
         });
     }

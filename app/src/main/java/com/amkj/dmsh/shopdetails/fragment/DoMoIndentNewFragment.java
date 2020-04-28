@@ -17,18 +17,16 @@ import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.netloadpage.NetEmptyCallback;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.shopdetails.activity.DoMoIndentAllActivity;
 import com.amkj.dmsh.shopdetails.activity.OrderSearchHelpActivity;
 import com.amkj.dmsh.shopdetails.adapter.DirectIndentListAdapter;
 import com.amkj.dmsh.shopdetails.bean.MainOrderListEntity;
 import com.amkj.dmsh.shopdetails.bean.MainOrderListEntity.MainOrderBean;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.OrderLoadMoreView;
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,8 +36,10 @@ import java.util.Map;
 import butterknife.BindView;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_DATA;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
 import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_INDENT_LIST;
@@ -47,7 +47,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_INDENT_LIST;
 
 /**
  * Created by xiaoxin on 2020/3/14
- * Version:v4.4.3
+ * Version:v4.5.0
  * ClassDescription :订单列表重构
  */
 public class DoMoIndentNewFragment extends BaseFragment {
@@ -65,7 +65,6 @@ public class DoMoIndentNewFragment extends BaseFragment {
     //0.全部订单  1.待付款  2.待发货  3.待收货  4.待评价
     private String[] types = new String[]{"all", "waitPay", "waitDelivery", "waitTakeDelivery", "waitEvaluate"};
     private int mType;
-    private String keyWord;
 
     private String CurrentOrderNo;
     private int CurrentPosition;
@@ -94,18 +93,17 @@ public class DoMoIndentNewFragment extends BaseFragment {
         smart_communal_refresh.setOnRefreshListener(refreshLayout -> {
             loadData();
         });
-        doMoIndentListAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
-            @Override
-            public void onLoadMoreRequested() {
-                page++;
-                getIndentList();
-            }
+        doMoIndentListAdapter.setOnLoadMoreListener(() -> {
+            page++;
+            getIndentList();
         }, communal_recycler);
+    }
 
-        //未搜索到订单时
+    //未搜索到订单时
+    private void setEmptyCallback() {
         loadService.setCallBack(NetEmptyCallback.class, (context, view) -> {
             TextView tv_communal_net_tint = view.findViewById(R.id.tv_communal_net_tint);
-            if (!TextUtils.isEmpty(keyWord)) {
+            if (!TextUtils.isEmpty(getKeywords())) {
                 String tips = getResources().getString(R.string.no_order_found);
                 tv_communal_net_tint.setText(ConstantMethod.getSpannableString(tips, 8, tips.length(), -1, "#0a88fa"));
                 tv_communal_net_tint.setOnClickListener(v -> {
@@ -133,47 +131,42 @@ public class DoMoIndentNewFragment extends BaseFragment {
         params.put("currentPage", page);
         params.put("showCount", TOTAL_COUNT_TEN);
         params.put("orderStatusText", types[mType]);
-        if (!TextUtils.isEmpty(keyWord)) {
-            params.put("keyWord", keyWord);
+        if (!TextUtils.isEmpty(getKeywords())) {
+            params.put("keyWord", getKeywords());
         }
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.Q_GET_ORDER_LIST, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
+                mOrderListNewEntity = new Gson().fromJson(result, MainOrderListEntity.class);
                 if (page == 1) {
                     orderListBeanList.clear();
                 }
-                Gson gson = new Gson();
-                String code = "";
-                String msg = "";
-                try {
-                    JSONObject jsonObject = new JSONObject(result);
-                    code = (String) jsonObject.get("code");
-                    msg = (String) jsonObject.get("msg");
-                    mOrderListNewEntity = gson.fromJson(result, MainOrderListEntity.class);
-                    if (mOrderListNewEntity != null) {
-                        List<MainOrderBean> orderList = mOrderListNewEntity.getResult();
-                        if (orderList != null && orderList.size() > 0) {
-                            if (!TextUtils.isEmpty(mOrderListNewEntity.getCurrentTime())) {
-                                for (int i = 0; i < orderList.size(); i++) {
-                                    MainOrderBean orderListNewBean = orderList.get(i);
-                                    orderListNewBean.setCurrentTime(mOrderListNewEntity.getCurrentTime());
-                                }
+                String code = mOrderListNewEntity.getCode();
+                if (SUCCESS_CODE.equals(code)) {
+                    List<MainOrderBean> orderList = mOrderListNewEntity.getResult();
+                    if (orderList != null) {
+                        if (!TextUtils.isEmpty(mOrderListNewEntity.getCurrentTime())) {
+                            for (int i = 0; i < orderList.size(); i++) {
+                                MainOrderBean orderListNewBean = orderList.get(i);
+                                orderListNewBean.setCurrentTime(mOrderListNewEntity.getCurrentTime());
                             }
-                            orderListBeanList.addAll(orderList);
+                        }
+                        orderListBeanList.addAll(orderList);
+                        doMoIndentListAdapter.notifyDataSetChanged();
+                        if (orderList.size() >= TOTAL_COUNT_TEN) {
                             doMoIndentListAdapter.loadMoreComplete();
-                        } else if (!SUCCESS_CODE.equals(code) && !EMPTY_CODE.equals(code)) {
-                            showToast(getActivity(), msg);
-                            doMoIndentListAdapter.loadMoreFail();
                         } else {
                             doMoIndentListAdapter.loadMoreEnd();
                         }
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } else {
+                    doMoIndentListAdapter.notifyDataSetChanged();
+                    doMoIndentListAdapter.loadMoreEnd();
+                    if (!EMPTY_CODE.equals(code)) showToast(mOrderListNewEntity.getMsg());
                 }
-                doMoIndentListAdapter.notifyDataSetChanged();
-                NetLoadUtils.getNetInstance().showLoadSirString(loadService, orderListBeanList, code);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, orderListBeanList, mOrderListNewEntity);
+                setEmptyCallback();
             }
 
             @Override
@@ -181,6 +174,7 @@ public class DoMoIndentNewFragment extends BaseFragment {
                 smart_communal_refresh.finishRefresh();
                 doMoIndentListAdapter.loadMoreFail();
                 NetLoadUtils.getNetInstance().showLoadSir(loadService, orderListBeanList, mOrderListNewEntity);
+                setEmptyCallback();
             }
         });
     }
@@ -204,7 +198,6 @@ public class DoMoIndentNewFragment extends BaseFragment {
     protected void getReqParams(Bundle bundle) {
         if (bundle != null) {
             mType = (int) bundle.get("type");
-            keyWord = (String) bundle.get("keyWord");
         }
     }
 
@@ -254,10 +247,26 @@ public class DoMoIndentNewFragment extends BaseFragment {
 
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
-        if (UPDATE_INDENT_LIST.equals(message.type)) {
-            if (getSimpleName().equals(message.result) && isVisibleToUser) {
-                updateIndentItem(CurrentOrderNo, CurrentPosition);
+        if (isVisibleToUser) {
+            if (UPDATE_INDENT_LIST.equals(message.type)) {
+                if (getSimpleName().equals(message.result)) {
+                    updateIndentItem(CurrentOrderNo, CurrentPosition);
+                }
+            } else if (SEARCH_DATA.equals(message.type)) {
+                page = 1;
+                NetLoadUtils.getNetInstance().showLoadSirLoading(loadService);
+                getIndentList();
             }
         }
     }
+
+
+    //获取关键字
+    protected String getKeywords() {
+        if (isContextExisted(getActivity())) {
+            return ((DoMoIndentAllActivity) getActivity()).getKewords();
+        }
+        return "";
+    }
+
 }

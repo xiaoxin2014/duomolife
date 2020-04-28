@@ -212,7 +212,7 @@ public class HomeCouponGetActivity extends BaseActivity {
                         }
                         getCouponProData(communalDescriptionBean.getId());
                     } else if (!shopDetailsEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(HomeCouponGetActivity.this, shopDetailsEntity.getMsg());
+                        showToast( shopDetailsEntity.getMsg());
                     }
                     communalDetailAdapter.setNewData(couponDescriptionList);
                 }
@@ -259,11 +259,6 @@ public class HomeCouponGetActivity extends BaseActivity {
                     public void onNotNetOrException() {
                         smart_communal_refresh.finishRefresh();
                         couponProTitleAdapter.loadMoreEnd(true);
-                    }
-
-                    @Override
-                    public void netClose() {
-                        showToast(HomeCouponGetActivity.this, R.string.unConnectedNetwork);
                     }
                 });
     }

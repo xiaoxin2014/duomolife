@@ -15,11 +15,6 @@ public interface NetLoadListener {
     void onSuccess(String result);
 
     /**
-     * 无网络
-     */
-    void netClose();
-
-    /**
      * 请求异常
      * @param throwable
      */

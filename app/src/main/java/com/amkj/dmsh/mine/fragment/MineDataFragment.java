@@ -1,5 +1,6 @@
 package com.amkj.dmsh.mine.fragment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Paint;
@@ -29,6 +30,7 @@ import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantVariable;
+import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dao.AddClickDao;
 import com.amkj.dmsh.dao.UserDao;
 import com.amkj.dmsh.homepage.activity.AttendanceActivity;
@@ -43,6 +45,7 @@ import com.amkj.dmsh.mine.adapter.MineTypeAdapter;
 import com.amkj.dmsh.mine.bean.MineTypeEntity;
 import com.amkj.dmsh.mine.bean.MineTypeEntity.MineTypeBean;
 import com.amkj.dmsh.mine.bean.OtherAccountBindEntity.OtherAccountBindInfo;
+import com.amkj.dmsh.mine.bean.QuickEntryEntity;
 import com.amkj.dmsh.network.NetCacheLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
@@ -63,6 +66,7 @@ import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.google.gson.Gson;
 import com.gyf.barlibrary.ImmersionBar;
+import com.qiyukf.unicorn.api.ConsultSource;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.socialize.UMAuthListener;
 import com.umeng.socialize.UMShareAPI;
@@ -309,9 +313,34 @@ public class MineDataFragment extends BaseFragment {
             getMineAd();
             getMessageCount(getActivity(), badgeMsg);
             getCarCount(getActivity());
+            getCustomerServiceBar(getActivity(), null);
         } else {
             setErrorUserData();
         }
+    }
+
+    //获取快捷入口
+    private void getCustomerServiceBar(Context context, ConsultSource pageSource) {
+        NetLoadUtils.getNetInstance().loadNetDataPost(context, Url.GET_CUSTOMER_SERVICE_BAR, null, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                QuickEntryEntity quickEntryEntity = new Gson().fromJson(result, QuickEntryEntity.class);
+//                if (quickEntryEntity != null) {
+//                    List<QuickEntryBean> list = quickEntryEntity.getList();
+//                    if (list != null) {
+//                        for (int i = 0; i < list.size(); i++) {
+//                            QuickEntryBean quickEntryBean = list.get(i);
+//                            pageSource.quickEntryList.add(new QuickEntry(i + 2, quickEntryBean.getTitle(), quickEntryBean.getLink()));
+//                        }
+//                    }
+//                }
+            }
+
+            @Override
+            public void onNotNetOrException() {
+
+            }
+        });
     }
 
     //获取用户信息
@@ -338,7 +367,7 @@ public class MineDataFragment extends BaseFragment {
                             getDoMeIndentDataCount();
                         } else {
                             setErrorUserData();
-                            showToast(getActivity(), minePageData.getMsg());
+                            showToast(minePageData.getMsg());
                         }
                     }
 
@@ -684,7 +713,7 @@ public class MineDataFragment extends BaseFragment {
 
         @Override
         public void onError(SHARE_MEDIA platform, int action, Throwable t) {
-            showToast(getActivity(), "授权失败");
+            showToast("授权失败");
             if (loadHud != null) {
                 loadHud.dismiss();
             }
@@ -692,7 +721,7 @@ public class MineDataFragment extends BaseFragment {
 
         @Override
         public void onCancel(SHARE_MEDIA platform, int action) {
-            showToast(getActivity(), "授权取消");
+            showToast("授权取消");
             if (loadHud != null) {
                 loadHud.dismiss();
             }
@@ -721,7 +750,7 @@ public class MineDataFragment extends BaseFragment {
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        showToast(getActivity(), requestStatus.getMsg());
+                        showToast(requestStatus.getMsg());
                         //更新本地Token信息
                         if (!TextUtils.isEmpty(requestStatus.getToken())) {
                             SharedPreUtils.setParam(TOKEN, getStrings(requestStatus.getToken()));
@@ -734,7 +763,7 @@ public class MineDataFragment extends BaseFragment {
                         MobclickAgent.onProfileSignIn(getStrings(otherAccountBindInfo.getType()), String.valueOf(userId));
                         mTvBindPhone.setVisibility(View.GONE);
                     } else {
-                        showToast(getActivity(), requestStatus.getMsg());
+                        showToast(requestStatus.getMsg());
                     }
                 }
             }

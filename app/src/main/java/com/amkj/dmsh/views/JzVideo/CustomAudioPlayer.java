@@ -146,13 +146,13 @@ public class CustomAudioPlayer extends JzVideoPlayerStatusDialog {
     @Override
     public void onError(int what, int extra) {
         ib_audio_player.setSelected(false);
-        showToast(getContext(),"播放异常，请重新刷新重试");
+        showToast("播放异常，请重新刷新重试");
     }
 
     @Override
     public void onStateError() {
         super.onStateError();
         ib_audio_player.setSelected(false);
-        showToast(getContext(),"播放异常，请重新刷新重试");
+        showToast("播放异常，请重新刷新重试");
     }
 }

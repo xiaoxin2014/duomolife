@@ -363,6 +363,7 @@ public class ConstantVariable {
     public static final String RECEIVED_NEW_QY_MESSAGE = "receivedNewQyMessage";    //收到新的七鱼客服消息
     public static final String UPDATE_EXPRESS_DATA = "updateExpressData";    //刷新物流数据
     public static final String UPDATE_INDENT_LIST = "updateIndentList";    //刷新订单列表
+    public static final String UPDATE_WAIT_EVALUATE_INDENT_LIST = "updateWaitEvaluateIndentList";    //刷新订单列表
     public static final String UNION_PAY_CALLBACK = "unionPayCallback";    //h5银联支付回调
 
 

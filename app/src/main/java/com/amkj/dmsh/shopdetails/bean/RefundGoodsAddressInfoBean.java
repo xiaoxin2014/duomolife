@@ -1,8 +1,10 @@
 package com.amkj.dmsh.shopdetails.bean;
 
+import android.text.TextUtils;
+
 /**
  * Created by xiaoxin on 2020/3/28
- * Version:v4.4.3
+ * Version:v4.5.0
  * ClassDescription :退款物流
  */
 public class RefundGoodsAddressInfoBean {
@@ -29,7 +31,7 @@ public class RefundGoodsAddressInfoBean {
     }
 
     public String getConsignee() {
-        return consignee;
+        return !TextUtils.isEmpty(consignee) ? consignee + "  " : "";
     }
 
     public void setConsignee(String consignee) {
@@ -53,7 +55,7 @@ public class RefundGoodsAddressInfoBean {
     }
 
     public String getMobile() {
-        return mobile;
+        return !TextUtils.isEmpty(mobile) ? "  " + mobile : "";
     }
 
     public void setMobile(String mobile) {

@@ -307,22 +307,17 @@ public class IntegralIndentFragment extends BaseFragment {
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        showToast(getActivity(), "取消订单成功");
+                        showToast("取消订单成功");
                         loadData();
                     } else {
-                        showToastRequestMsg(getActivity(), requestStatus);
+                        showToastRequestMsg( requestStatus);
                     }
                 }
             }
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(getActivity(), R.string.do_failed);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(getActivity(), R.string.unConnectedNetwork);
+                showToast( R.string.do_failed);
             }
         });
     }
@@ -380,7 +375,7 @@ public class IntegralIndentFragment extends BaseFragment {
                         INDENT_PRO_STATUS = indentOrderEntity.getIntegralIndentOrderBean().getStatus();
                         orderListBeanList.addAll(indentOrderEntity.getIntegralIndentOrderBean().getOrderList());
                     } else if (!code.equals(EMPTY_CODE)) {
-                        showToast(getActivity(), msg);
+                        showToast( msg);
                     }else{
                         integralIndentListAdapter.loadMoreEnd();
                     }
@@ -396,13 +391,8 @@ public class IntegralIndentFragment extends BaseFragment {
                 }
 
                 @Override
-                public void netClose() {
-                    showToast(getActivity(), R.string.unConnectedNetwork);
-                }
-
-                @Override
                 public void onError(Throwable throwable) {
-                    showToast(getActivity(), R.string.invalidData);
+                    showToast( R.string.invalidData);
                 }
             });
         } else {
@@ -441,21 +431,16 @@ public class IntegralIndentFragment extends BaseFragment {
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         loadData();
-                        showToastRequestMsg(getActivity(), requestStatus);
+                        showToastRequestMsg( requestStatus);
                     } else {
-                        showToastRequestMsg(getActivity(), requestStatus);
+                        showToastRequestMsg(requestStatus);
                     }
                 }
             }
 
             @Override
-            public void netClose() {
-                showToast(getActivity(),R.string.unConnectedNetwork);
-            }
-
-            @Override
             public void onError(Throwable throwable) {
-                showToast(getActivity(),R.string.do_failed);
+                showToast(R.string.do_failed);
             }
         });
     }

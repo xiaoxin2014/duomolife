@@ -130,7 +130,7 @@ public class AppDataActivity extends BaseActivity {
                         tv_mine_setting_address.setText("");
                     } else {
                         tv_mine_setting_address.setText("");
-                        showToast(AppDataActivity.this, addressInfoEntity.getMsg());
+                        showToast(addressInfoEntity.getMsg());
                     }
                 }
             }

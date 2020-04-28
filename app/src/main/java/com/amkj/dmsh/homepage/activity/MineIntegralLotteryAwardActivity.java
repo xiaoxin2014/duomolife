@@ -141,7 +141,7 @@ public class MineIntegralLotteryAwardActivity extends BaseActivity {
                                 integralLotteryAwardAdapter.notifyDataSetChanged();
                             } else {
                                 smart_communal_refresh.finishRefresh();
-                                showToast(MineIntegralLotteryAwardActivity.this, integralLotteryAwardEntity.getMsg());
+                                showToast( integralLotteryAwardEntity.getMsg());
                             }
                         }
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, integralLotteryAwardEntity);
@@ -151,11 +151,6 @@ public class MineIntegralLotteryAwardActivity extends BaseActivity {
                     public void onNotNetOrException() {
                         smart_communal_refresh.finishRefresh();
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, integralLotteryAwardEntity);
-                    }
-
-                    @Override
-                    public void netClose() {
-                        showToast(MineIntegralLotteryAwardActivity.this, R.string.unConnectedNetwork);
                     }
                 });
     }

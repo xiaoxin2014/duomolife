@@ -3,8 +3,8 @@ package com.amkj.dmsh.qyservice;
 import android.content.Context;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.OrderListBean;
-import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.OrderListBean.GoodsBean;
+import com.amkj.dmsh.bean.OrderProductNewBean;
+import com.amkj.dmsh.shopdetails.bean.MainOrderListEntity.MainOrderBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -12,7 +12,6 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import java.util.List;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRO_STATUS;
 
 
 /**
@@ -22,25 +21,25 @@ import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRO_STATUS;
  * version 3.1.6
  * class description:客服订单弹窗
  */
-public class ProductIndentAdapter extends BaseQuickAdapter<OrderListBean, BaseViewHolder> {
+public class ProductIndentAdapter extends BaseQuickAdapter<MainOrderBean, BaseViewHolder> {
     private final Context context;
 
-    public ProductIndentAdapter(Context context, List<OrderListBean> orderListBeans) {
+    public ProductIndentAdapter(Context context, List<MainOrderBean> orderListBeans) {
         super(R.layout.adapter_service_product_indent, orderListBeans);
         this.context = context;
     }
 
     @Override
-    protected void convert(BaseViewHolder helper, OrderListBean orderListBean) {
-        String name = "";
-        if (orderListBean.getGoods() != null && orderListBean.getGoods().size() > 0) {
-            GoodsBean goodsBean = orderListBean.getGoods().get(0);
-            GlideImageLoaderUtil.loadCenterCrop(context, helper.getView(R.id.iv_service_product_indent_image), getStrings(goodsBean.getPicUrl()));
-            name = goodsBean.getName();
+    protected void convert(BaseViewHolder helper, MainOrderBean mainOrderBean) {
+        if (mainOrderBean == null) return;
+        List<OrderProductNewBean> orderProductList = mainOrderBean.getOrderProductList();
+        if (orderProductList != null && orderProductList.size() > 0) {
+            OrderProductNewBean orderProductNewBean = orderProductList.get(0);
+            GlideImageLoaderUtil.loadCenterCrop(context, helper.getView(R.id.iv_service_product_indent_image), orderProductNewBean.getPicUrl());
+            helper.setText(R.id.tv_service_product_indent_name, orderProductNewBean.getProductName())
+                    .setText(R.id.tv_service_product_indent_price, "订单金额 ¥" + mainOrderBean.getPayAmount())
+                    .setText(R.id.tv_service_product_indent_status, mainOrderBean.getStatusText());
         }
-        helper.setText(R.id.tv_service_product_indent_name, name)
-                .setText(R.id.tv_service_product_indent_price,"订单金额 ¥" + orderListBean.getAmount())
-                .setText(R.id.tv_service_product_indent_status, INDENT_PRO_STATUS.get(String.valueOf(orderListBean.getStatus())))
-                .itemView.setTag(orderListBean);
+        helper.itemView.setTag(mainOrderBean);
     }
 }

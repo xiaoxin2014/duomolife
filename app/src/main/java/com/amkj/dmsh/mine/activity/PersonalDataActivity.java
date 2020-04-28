@@ -148,7 +148,7 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
                                 communalUserInfoBean = communalUserInfoEntity.getCommunalUserInfoBean();
                                 setPersonalData(communalUserInfoBean);
                             } else if (!communalUserInfoEntity.getCode().equals(EMPTY_CODE)) {
-                                showToast(PersonalDataActivity.this, communalUserInfoEntity.getMsg());
+                                showToast(communalUserInfoEntity.getMsg());
                             }
                         }
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, communalUserInfoEntity);
@@ -190,19 +190,19 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
                         switch (type) {
                             case "SexSelector":
                                 tv_per_data_sex.setText(SEX[communalUserInfoEntity.getCommunalUserInfoBean().getSex() == (0) ? 1 : 0]);
-                                showToast(PersonalDataActivity.this, "修改完成");
+                                showToast("修改完成");
                                 break;
                             case "headerImg":
                                 GlideImageLoaderUtil.loadHeaderImg(PersonalDataActivity.this, rImg_personal_header, communalUserInfoBean.getAvatar());
-                                showToast(PersonalDataActivity.this, "修改完成");
+                                showToast("修改完成");
                                 break;
                             case "birthday":
                                 tv_per_data_birth.setText(getStrings(TextUtils.isEmpty(communalUserInfoBean.getBirthday()) ? communalUserInfoBean.getBirthday() : date));
-                                showToast(PersonalDataActivity.this, "修改完成");
+                                showToast("修改完成");
                                 break;
                         }
                     } else {
-                        showToast(PersonalDataActivity.this, communalUserInfoEntity.getMsg());
+                        showToast( communalUserInfoEntity.getMsg());
                     }
                 }
             }
@@ -265,7 +265,7 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
                 return;
             } else {
                 tv_per_data_name.setText(newName);
-                showToast(this, "修改完成");
+                showToast("修改完成");
             }
         }
     }
@@ -290,7 +290,7 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
 
                     @Override
                     public void finishError(String error) {
-                        showToast(PersonalDataActivity.this, "网络异常");
+                        showToast("网络异常");
                         if (loadHud != null) {
                             loadHud.dismiss();
                         }
@@ -420,7 +420,7 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
                 nowBabyTime.show(tv_per_data_birth);
             }
         } else {
-            showToast(this, R.string.birthday_set);
+            showToast(R.string.birthday_set);
         }
     }
 

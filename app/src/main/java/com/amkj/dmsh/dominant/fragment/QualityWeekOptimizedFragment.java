@@ -232,7 +232,7 @@ public class QualityWeekOptimizedFragment extends BaseFragment {
                             itemDescriptionList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(descriptionBeanList));
                         }
                     } else if (!shopDetailsEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(getActivity(), shopDetailsEntity.getMsg());
+                        showToast(shopDetailsEntity.getMsg());
                     }
                     communalDetailAdapter.setNewData(itemDescriptionList);
                     getBuyListRecommend();
@@ -270,7 +270,7 @@ public class QualityWeekOptimizedFragment extends BaseFragment {
                             } else if (qualityBuyListEntity.getCode().equals(EMPTY_CODE)) {
                                 qualityBuyListAdapter.loadMoreEnd();
                             } else {
-                                showToast(getActivity(), qualityBuyListEntity.getMsg());
+                                showToast( qualityBuyListEntity.getMsg());
                             }
                             qualityBuyListAdapter.notifyDataSetChanged();
                         }

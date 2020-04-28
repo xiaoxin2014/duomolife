@@ -148,7 +148,7 @@ public class EditorSelectFragment extends BaseFragment {
                             mEditorAdapter.loadMoreComplete();
                         }
                     } else {
-                        showToast(getActivity(), mEditorEntity.getMsg());
+                        showToast(mEditorEntity.getMsg());
                         mEditorAdapter.loadMoreFail();
                     }
                 }

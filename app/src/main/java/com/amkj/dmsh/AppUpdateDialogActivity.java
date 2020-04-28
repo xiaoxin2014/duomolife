@@ -129,7 +129,7 @@ public class AppUpdateDialogActivity extends BaseActivity {
                         intent.putExtra("isInstallApp", true);
                         intent.putExtra("isShowProgress", true);
                     } else {
-                        showToast(AppUpdateDialogActivity.this, "正在下载……");
+                        showToast("正在下载……");
                         intent.putExtra("isInstallApp", true);
                     }
                     AppUpdateDialogActivity.this.startService(intent);

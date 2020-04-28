@@ -302,6 +302,8 @@
     <string name="buy_message">买家留言：%s</string>
     <string name="packag_count">(共%d个包裹)</string>
     <string name="no_order_found">没找到我的订单？查看帮助</string>
+    <string name="product_lock">该商品已被发货方锁定，可能正在发货尚未上传物流单号，建议您再耐心等待，如仍需退款，请联系人工客服解锁。</string>
+    <string name="out_of_change">已超过自主修改时间，如需修改收货信息请联系人工客服</string>
     <string name="no_order_found_reason">尊敬的顾客，如果您没有找到订单，可能有以下几种原因：\n一、下单账号与登录账号不一样，你可能是通过APP购买的订单，在小程序里面打开没看到，或者是通过小程序购买，在APP没有看到订单，这种情况下请在APP-我的-账户安全里面绑定微信即可，如果已绑定，请在APP点击解绑，再重新绑定即可。主要是因为两个账号没有产生关联。\n\n二、微信号已绑定其它手机号，此时点击小程序我的帐户安全-绑定手机-更换绑定手机号即可。</string>
     <string name="refund_explain">通常情况下，退款会原路返回您的支付账户，微信支付宝会在2小时 内到账,银行卡会在1～3个工作日到账。</string>
     <string name="refund_product_tips">请尽快将商品按照给出的退货地址退回，并保存好货运单号，不接受到付件，如需平台承担运费请与客服协商一致后，先行垫付客服在收货后处理时会一并处理</string>

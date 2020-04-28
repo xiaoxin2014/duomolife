@@ -203,31 +203,31 @@ public class QualityOverseasDetailsActivity extends BaseActivity {
 
 
     private void getOverseasThemeDetailsData() {
-        String url =  Url.QUALITY_OVERSEAS_THEME_DETAIL;
+        String url = Url.QUALITY_OVERSEAS_THEME_DETAIL;
         Map<String, Object> params = new HashMap<>();
         params.put("id", overseasId);
         if (userId > 0) {
             params.put("uid", userId);
         }
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,url, params, new NetLoadListenerHelper() {
-                @Override
-                public void onSuccess(String result) {
-                    smart_communal_refresh.finishRefresh();
-                    qualityTypeProductAdapter.loadMoreComplete();
-                    Gson gson = new Gson();
-                    qualityShopDescripEntity = gson.fromJson(result, QualityShopDescripEntity.class);
-                    if (qualityShopDescripEntity != null) {
-                        if (qualityShopDescripEntity.getCode().equals(SUCCESS_CODE)) {
-                            setData(qualityShopDescripEntity.getQualityShopDescBean());
-                        } else if (qualityShopDescripEntity.getCode().equals(EMPTY_CODE)) {
-                            if (page == 1) {
-                                showToast(QualityOverseasDetailsActivity.this, R.string.invalidData);
-                            }
-                        } else {
-                            showToast(QualityOverseasDetailsActivity.this, qualityShopDescripEntity.getMsg());
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                smart_communal_refresh.finishRefresh();
+                qualityTypeProductAdapter.loadMoreComplete();
+                Gson gson = new Gson();
+                qualityShopDescripEntity = gson.fromJson(result, QualityShopDescripEntity.class);
+                if (qualityShopDescripEntity != null) {
+                    if (qualityShopDescripEntity.getCode().equals(SUCCESS_CODE)) {
+                        setData(qualityShopDescripEntity.getQualityShopDescBean());
+                    } else if (qualityShopDescripEntity.getCode().equals(EMPTY_CODE)) {
+                        if (page == 1) {
+                            showToast(R.string.invalidData);
                         }
+                    } else {
+                        showToast(qualityShopDescripEntity.getMsg());
                     }
                 }
+            }
 
             @Override
             public void onNotNetOrException() {
@@ -236,15 +236,10 @@ public class QualityOverseasDetailsActivity extends BaseActivity {
             }
 
             @Override
-                public void onError(Throwable ex) {
-                    smart_communal_refresh.finishRefresh();
-                    qualityTypeProductAdapter.loadMoreComplete();
-                    showToast(QualityOverseasDetailsActivity.this, R.string.invalidData);
-                }
-
-            @Override
-            public void netClose() {
-                showToast(QualityOverseasDetailsActivity.this, R.string.unConnectedNetwork);
+            public void onError(Throwable ex) {
+                smart_communal_refresh.finishRefresh();
+                qualityTypeProductAdapter.loadMoreComplete();
+                showToast(R.string.invalidData);
             }
         });
     }
@@ -275,7 +270,7 @@ public class QualityOverseasDetailsActivity extends BaseActivity {
                             } else if (userLikedProductEntity.getCode().equals(EMPTY_CODE)) {
                                 qualityTypeProductAdapter.loadMoreEnd();
                             } else {
-                                showToast(QualityOverseasDetailsActivity.this, userLikedProductEntity.getMsg());
+                                showToast(userLikedProductEntity.getMsg());
                             }
                             qualityTypeProductAdapter.notifyDataSetChanged();
                         }
@@ -290,13 +285,8 @@ public class QualityOverseasDetailsActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void netClose() {
-                        showToast(QualityOverseasDetailsActivity.this, R.string.unConnectedNetwork);
-                    }
-
-                    @Override
                     public void onError(Throwable throwable) {
-                        showToast(QualityOverseasDetailsActivity.this, R.string.invalidData);
+                        showToast( R.string.invalidData);
                     }
                 });
     }
@@ -339,7 +329,7 @@ public class QualityOverseasDetailsActivity extends BaseActivity {
                     , qualityShopDescripEntity.getQualityShopDescBean().getPicUrl()
                     , qualityShopDescripEntity.getQualityShopDescBean().getTitle()
                     , getStrings(qualityShopDescripEntity.getQualityShopDescBean().getSubtitle())
-                    , Url.BASE_SHARE_PAGE_TWO + "m/template/goods/Project_details.html?id=" + qualityShopDescripEntity.getQualityShopDescBean().getId(),qualityShopDescripEntity.getQualityShopDescBean().getId());
+                    , Url.BASE_SHARE_PAGE_TWO + "m/template/goods/Project_details.html?id=" + qualityShopDescripEntity.getQualityShopDescBean().getId(), qualityShopDescripEntity.getQualityShopDescBean().getId());
         }
     }
 
@@ -369,7 +359,7 @@ public class QualityOverseasDetailsActivity extends BaseActivity {
                 public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
                     ShareDataBean shareDataBean = null;
                     if (view.getId() == R.id.tv_communal_share
-                            && qualityShopDescripEntity != null && qualityShopDescripEntity.getQualityShopDescBean()!=null) {
+                            && qualityShopDescripEntity != null && qualityShopDescripEntity.getQualityShopDescBean() != null) {
                         QualityShopDescBean qualityShopDescBean = qualityShopDescripEntity.getQualityShopDescBean();
                         shareDataBean = new ShareDataBean(qualityShopDescBean.getPicUrl()
                                 , qualityShopDescBean.getTitle()
@@ -388,7 +378,7 @@ public class QualityOverseasDetailsActivity extends BaseActivity {
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
         if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
-            if (badge!=null){
+            if (badge != null) {
                 badge.setBadgeNumber((int) message.result);
             }
         }

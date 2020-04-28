@@ -174,7 +174,7 @@ public class CollectSpecialFragment extends BaseFragment {
                             if (topicDetailEntity.getCode().equals(SUCCESS_CODE)) {
                                 topicBeanList.addAll(topicDetailEntity.getTopicSpecialBeanList());
                             } else if (!topicDetailEntity.getCode().equals(EMPTY_CODE)) {
-                                showToast(getActivity(), topicDetailEntity.getMsg());
+                                showToast( topicDetailEntity.getMsg());
                             } else {
                                 topicListAdapter.loadMoreEnd();
                             }

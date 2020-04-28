@@ -216,7 +216,7 @@ public class CommentDetailsActivity extends BaseActivity {
                             if (replyCommList != null && replyCommList.size() > 0 ) {
                                 setCommentData(commentDetailBean);
                             } else if (ERROR_CODE.equals(commentDetailEntity.getCode())) {
-                                showToast(CommentDetailsActivity.this, commentDetailEntity.getMsg());
+                                showToast( commentDetailEntity.getMsg());
                                 articleCommentAdapter.loadMoreFail();
                             } else {
                                 articleCommentAdapter.loadMoreEnd();
@@ -289,7 +289,7 @@ public class CommentDetailsActivity extends BaseActivity {
                         communalComment.setToUid(replyCommBean.getTo_uid());
                         sendComment(communalComment);
                     } else {
-                        showToast(CommentDetailsActivity.this, "请正确输入内容");
+                        showToast("请正确输入内容");
                     }
                 }
             });
@@ -332,7 +332,7 @@ public class CommentDetailsActivity extends BaseActivity {
                 tv_send_comment.setText("发送");
                 tv_send_comment.setEnabled(true);
                 commentViewVisible(View.GONE, null);
-                showToast(CommentDetailsActivity.this, R.string.comment_article_send_success);
+                showToast( R.string.comment_article_send_success);
                 page = 1;
                 getCommentData();
                 emoji_edit_comment.setText("");

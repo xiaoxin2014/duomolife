@@ -164,14 +164,14 @@ public class RegisterSelSexActivity extends BaseActivity {
                     LoginDataEntity loginDataEntity = gson.fromJson(result, LoginDataEntity.class);
                     if (loginDataEntity != null) {
                         if (loginDataEntity.getCode().equals(SUCCESS_CODE)) {
-                            showToast(RegisterSelSexActivity.this, R.string.saveSuccess);
+                            showToast( R.string.saveSuccess);
                             if (userId < 1) {
                                 UserDao.loginSuccessSetData(getActivity(), loginDataEntity, null);
                             } else {
                                 finish();
                             }
                         } else {
-                            showToast(RegisterSelSexActivity.this, loginDataEntity.getMsg());
+                            showToast( loginDataEntity.getMsg());
                         }
                     }
                 }
@@ -185,16 +185,11 @@ public class RegisterSelSexActivity extends BaseActivity {
 
                 @Override
                 public void onError(Throwable throwable) {
-                    showToast(RegisterSelSexActivity.this, R.string.do_failed);
-                }
-
-                @Override
-                public void netClose() {
-                    showToast(RegisterSelSexActivity.this, R.string.unConnectedNetwork);
+                    showToast(R.string.do_failed);
                 }
             });
         } else {
-            showToast(RegisterSelSexActivity.this, R.string.personal_nick_name);
+            showToast( R.string.personal_nick_name);
         }
     }
 

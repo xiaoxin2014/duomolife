@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * Created by xiaoxin on 2020/3/31
- * Version:v4.4.3
+ * Version:v4.5.0
  * ClassDescription :获取退款商品列表
  */
 public class RefundProductsEntity extends BaseTimeEntity {

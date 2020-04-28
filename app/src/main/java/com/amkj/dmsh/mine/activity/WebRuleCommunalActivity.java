@@ -114,7 +114,7 @@ public class WebRuleCommunalActivity extends BaseActivity{
             url = WEB_TYPE_REG_AGREEMENT.equals(webRuleType)?USER_REGISTER_AGREEMENT:USER_PRIVACY_POLICY;
         }else{
             NetLoadUtils.getNetInstance().showLoadSirEmpty(loadService);
-            showToast(this,"数据类型错误，请重试！");
+            showToast("数据类型错误，请重试！");
             return;
         }
         NetLoadUtils.getNetInstance().loadNetDataPost(this,url,new NetLoadListenerHelper(){

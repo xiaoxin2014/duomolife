@@ -49,7 +49,7 @@ import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTimeAddSeconds;
 
 /**
  * Created by xiaoxin on 2020/3/19
- * Version:v4.4.3
+ * Version:v4.5.0
  * ClassDescription :订单列表适配器重构
  */
 public class DirectIndentListAdapter extends BaseQuickAdapter<MainOrderBean, BaseViewHolder> implements LifecycleObserver {

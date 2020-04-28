@@ -254,7 +254,7 @@ public class MineInvitationListActivity extends BaseActivity {
                             } else if (invitationDetailEntity.getCode().equals(EMPTY_CODE)) {
                                 adapterInvitationAdapter.loadMoreEnd();
                             } else {
-                                showToast(MineInvitationListActivity.this, invitationDetailEntity.getMsg());
+                                showToast( invitationDetailEntity.getMsg());
                             }
                             adapterInvitationAdapter.notifyDataSetChanged();
                         }
@@ -300,12 +300,7 @@ public class MineInvitationListActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(MineInvitationListActivity.this, String.format(getResources().getString(R.string.collect_failed), "文章"));
-            }
-
-            @Override
-            public void netClose() {
-                showToast(MineInvitationListActivity.this, R.string.unConnectedNetwork);
+                showToast( String.format(getResources().getString(R.string.collect_failed), "文章"));
             }
         });
     }
@@ -334,11 +329,11 @@ public class MineInvitationListActivity extends BaseActivity {
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        showToast(MineInvitationListActivity.this, "删除帖子完成");
+                        showToast("删除帖子完成");
                         page = 1;
                         loadData();
                     } else {
-                        showToastRequestMsg(MineInvitationListActivity.this, requestStatus);
+                        showToastRequestMsg(requestStatus);
                     }
                 }
             }

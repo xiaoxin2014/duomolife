@@ -101,7 +101,7 @@ public class SearchDetailsProductNewFragment extends BaseSearchDetailFragment {
                             if (allSearchEntity.getCode().equals(SUCCESS_CODE)) {
                                 productSearList.addAll(removeExistUtils.removeExistList(searchBean.getGoodsList()));
                             } else if (!allSearchEntity.getCode().equals(EMPTY_CODE)) {
-                                showToast(getActivity(), allSearchEntity.getMsg());
+                                showToast(allSearchEntity.getMsg());
                             }
                         }
                         adapterProduct.notifyDataSetChanged();
@@ -153,7 +153,7 @@ public class SearchDetailsProductNewFragment extends BaseSearchDetailFragment {
                             proRecommendList.addAll(likedProductEntity.getGoodsList());
                             productSearList.addAll(removeExistUtils.removeExistList(proRecommendList));
                         } else if (!likedProductEntity.getCode().equals(EMPTY_CODE)) {
-                            showToast(getActivity(), likedProductEntity.getMsg());
+                            showToast(likedProductEntity.getMsg());
                         }
                         adapterProduct.notifyDataSetChanged();
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, productSearList, allSearchEntity);

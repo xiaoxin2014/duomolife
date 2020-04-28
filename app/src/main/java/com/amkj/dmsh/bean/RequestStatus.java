@@ -72,6 +72,28 @@ public class RequestStatus extends BaseTimeEntity {
     private String content;
     private String link;
 
+    //申请退款成功
+    private String refundNo;
+
+    //评分弹窗
+    private String isOpen;
+
+    public boolean isOpen() {
+        return "1".equals(isOpen);
+    }
+
+    public void setIsOpen(String isOpen) {
+        this.isOpen = isOpen;
+    }
+
+    public String getRefundNo() {
+        return refundNo;
+    }
+
+    public void setRefundNo(String refundNo) {
+        this.refundNo = refundNo;
+    }
+
     public static RequestStatus objectFromData(String str) {
         return new Gson().fromJson(str, RequestStatus.class);
     }

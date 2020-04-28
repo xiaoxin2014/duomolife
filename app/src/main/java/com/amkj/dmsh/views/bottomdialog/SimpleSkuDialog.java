@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.support.v4.widget.NestedScrollView;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -252,7 +251,7 @@ public class SimpleSkuDialog implements KeywordContainer.OnClickKeywordListener 
 
             @Override
             public void onMaxQuantity(View view, int num) {
-                showToast(baseAct, R.string.product_sell_out);
+                showToast(R.string.product_sell_out);
             }
         });
         skuDialogView.layout_parameter_slp.addView(numCountView);
@@ -485,11 +484,11 @@ public class SimpleSkuDialog implements KeywordContainer.OnClickKeywordListener 
                     shopCarGoodsSku.setPicUrl(getStrings(picUrl));
                     shopCarGoodsSku.setMoneyPrice(skuSaleBean.getMoneyPrice());
                     if (numQuantity > skuSaleBean.getQuantity()) {
-                        showToast(baseAct, "库存不足，请更改数量后再购买");
+                        showToast("库存不足，请更改数量后再购买");
                         return;
                     }
                     if (editGoodsSkuBean.getUserScore() < getFloatNumber(skuSaleBean.getPrice())) {
-                        showToast(baseAct, "积分不足，请更改数量");
+                        showToast("积分不足，请更改数量");
                         return;
                     }
                     shopCarGoodsSku.setCount(numQuantity);
@@ -499,7 +498,7 @@ public class SimpleSkuDialog implements KeywordContainer.OnClickKeywordListener 
                     dialog.cancel();
                     break;
                 } else if (i == skuSaleList.size() - 1) {
-                    showToast(baseAct, "没有该商品属性");
+                    showToast("没有该商品属性");
                 }
             }
         } else if (selectedSkuValueId.size() > 0) {
@@ -508,13 +507,13 @@ public class SimpleSkuDialog implements KeywordContainer.OnClickKeywordListener 
                     if (propsList.get(j).getPropId() == selectedSkuValueId.get(i).getParentId()) {
                         break;
                     } else if (i == selectedSkuValueId.size() - 1) {
-                        showToast(baseAct, "请选择" + propsList.get(j).getPropName());
+                        showToast("请选择" + propsList.get(j).getPropName());
                         return;
                     }
                 }
             }
         } else {
-            showToast(baseAct, "请选择商品属性");
+            showToast("请选择商品属性");
         }
     }
 

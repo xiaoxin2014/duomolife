@@ -183,7 +183,7 @@ public class InvoiceDetailActivity extends BaseActivity {
                             }
                         }
                     } else {
-                        showToast(getActivity(), mIndentInvoiceEntity.getMsg());
+                        showToast( mIndentInvoiceEntity.getMsg());
                     }
                 }
 
@@ -254,7 +254,7 @@ public class InvoiceDetailActivity extends BaseActivity {
 
                     mAlertDialogSendInvoice.show();
                 } catch (Exception e) {
-                    showToast(this, "请刷新页面后重试");
+                    showToast("请刷新页面后重试");
                 }
                 break;
         }
@@ -296,26 +296,26 @@ public class InvoiceDetailActivity extends BaseActivity {
             fos.flush();
             fos.close();
         } catch (Exception e) {
-            showToast(this, "保存失败");
+            showToast("保存失败");
             return;
         }
 
         // 最后通知图库更新
         sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + filePath)));
-        showToast(this, "已保存至" + dirPath);
+        showToast("已保存至" + dirPath);
     }
 
     private void sendEmail(EditText etEmail) {
         String mEmail = etEmail.getText().toString();
         if (TextUtils.isEmpty(mEmail)) {
-            showToast(this, "邮箱地址不能为空");
+            showToast("邮箱地址不能为空");
             return;
         } else {
             String rule = "[\\w!#$%&'*+/=?^_`{|}~-]+(?:\\.[\\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\\w](?:[\\w-]*[\\w])?\\.)+[\\w](?:[\\w-]*[\\w])?";
             Pattern pattern = Pattern.compile(rule);
             Matcher matcher = pattern.matcher(mEmail);
             if (!matcher.matches()) {
-                showToast(this, "请输入正确的邮箱地址");
+                showToast("请输入正确的邮箱地址");
                 return;
             }
         }
@@ -328,13 +328,13 @@ public class InvoiceDetailActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 dismissLoadhud(getActivity());
-                showToast(getActivity(), "发送成功");
+                showToast("发送成功");
             }
 
             @Override
             public void onNotNetOrException() {
                 dismissLoadhud(getActivity());
-                showToast(getActivity(), "发送失败");
+                showToast( "发送失败");
             }
         });
     }

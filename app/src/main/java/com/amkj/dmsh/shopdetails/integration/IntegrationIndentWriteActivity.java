@@ -174,7 +174,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
             shopCarGoodsSku = bundle.getParcelable("integralProduct");
         }
         if (shopCarGoodsSku == null) {
-            showToast(this, "数据缺失，请刷新重试");
+            showToast("数据缺失，请刷新重试");
             finish();
             return;
         }
@@ -278,12 +278,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(IntegrationIndentWriteActivity.this, R.string.connectedFaile);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(IntegrationIndentWriteActivity.this, R.string.unConnectedNetwork);
+                showToast( R.string.connectedFaile);
             }
         });
     }
@@ -359,7 +354,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
                 if (addressId != 0) {
                     createSettlementIndent();
                 } else {
-                    showToast(this, "地址未填写,请重新填写地址");
+                    showToast("地址未填写,请重新填写地址");
                 }
             }
         }
@@ -413,7 +408,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
                 }
                 params.put("buyType", payType);
             } else {
-                showToast(this, "请选择支付方式");
+                showToast("请选择支付方式");
                 return;
             }
         }
@@ -452,11 +447,11 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
                             }
                         }
                     } else {
-                        showToast(IntegrationIndentWriteActivity.this, indentBean == null ?
+                        showToast( indentBean == null ?
                                 indentEntity.getMsg() : indentBean.getMsg());
                     }
                 } else {
-                    showToast(IntegrationIndentWriteActivity.this, "创建订单失败，请重新提交订单");
+                    showToast("创建订单失败，请重新提交订单");
                 }
             }
 
@@ -467,12 +462,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(IntegrationIndentWriteActivity.this, R.string.do_failed);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(IntegrationIndentWriteActivity.this, R.string.unConnectedNetwork);
+                showToast( R.string.do_failed);
             }
         });
     }
@@ -481,32 +471,32 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
         new AliPay(this, orderNo, pay_param, new AliPay.AliPayResultCallBack() {
             @Override
             public void onSuccess() {
-                showToast(getApplication(), "支付成功");
+                showToast("支付成功");
                 skipDirectIndent();
             }
 
             @Override
             public void onDealing() {
-                showToast(getApplication(), "支付处理中...");
+                showToast("支付处理中...");
             }
 
             @Override
             public void onError(int error_code) {
                 switch (error_code) {
                     case AliPay.ERROR_RESULT:
-                        showToast(getApplication(), "支付失败:支付结果解析错误");
+                        showToast("支付失败:支付结果解析错误");
                         break;
 
                     case AliPay.ERROR_NETWORK:
-                        showToast(getApplication(), "支付失败:网络连接错误");
+                        showToast("支付失败:网络连接错误");
                         break;
 
                     case AliPay.ERROR_PAY:
-                        showToast(getApplication(), "支付错误:支付码支付失败");
+                        showToast("支付错误:支付码支付失败");
                         break;
 
                     default:
-                        showToast(getApplication(), "支付错误");
+                        showToast("支付错误");
                         break;
                 }
                 cancelIntegralIndent();
@@ -515,7 +505,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
             @Override
             public void onCancel() {
                 cancelIntegralIndent();
-                showToast(getApplication(), "支付取消");
+                showToast( "支付取消");
             }
         }).doPay();
     }
@@ -525,7 +515,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
         WXPay.getInstance().doPayDateObject(orderNo, pay_param, new WXPay.WXPayResultCallBack() {
             @Override
             public void onSuccess() {
-                showToast(getApplication(), "支付成功");
+                showToast("支付成功");
                 skipDirectIndent();
             }
 
@@ -534,13 +524,13 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
                 cancelIntegralIndent();
                 switch (error_code) {
                     case WXPay.NO_OR_LOW_WX:
-                        showToast(getApplication(), "未安装微信或微信版本过低");
+                        showToast("未安装微信或微信版本过低");
                         break;
                     case WXPay.ERROR_PAY_PARAM:
-                        showToast(getApplication(), "参数错误");
+                        showToast("参数错误");
                         break;
                     case WXPay.ERROR_PAY:
-                        showToast(getApplication(), "支付失败");
+                        showToast("支付失败");
                         break;
                 }
             }
@@ -548,7 +538,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
             @Override
             public void onCancel() {
                 cancelIntegralIndent();
-                showToast(getApplication(), "支付取消");
+                showToast("支付取消");
             }
         });
     }
@@ -568,7 +558,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
                     if (loadHud != null) {
                         loadHud.dismiss();
                     }
-                    showToast(getApplication(), "支付成功");
+                    showToast( "支付成功");
                     skipDirectIndent();
                 }
 
@@ -581,7 +571,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
                 }
             });
         } else {
-            showToast(IntegrationIndentWriteActivity.this, "缺少重要参数，请选择其它支付渠道！");
+            showToast("缺少重要参数，请选择其它支付渠道！");
         }
     }
 

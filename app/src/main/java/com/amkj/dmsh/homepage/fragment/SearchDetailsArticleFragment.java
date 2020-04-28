@@ -101,7 +101,7 @@ public class SearchDetailsArticleFragment extends BaseSearchDetailFragment {
                                 specialSearList.addAll(removeExistUtils.removeExistList(searchBean.getDocumentList()));
                                 specialTopicAdapter.loadMoreComplete();
                             } else if (allSearchEntity.getCode().equals(ERROR_CODE)) {
-                                showToast(getActivity(), allSearchEntity.getMsg());
+                                showToast( allSearchEntity.getMsg());
                                 specialTopicAdapter.loadMoreFail();
                             } else {
                                 specialTopicAdapter.loadMoreEnd();

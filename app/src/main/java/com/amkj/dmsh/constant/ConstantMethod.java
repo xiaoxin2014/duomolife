@@ -15,7 +15,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -51,6 +51,7 @@ import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.dao.AddClickDao;
 import com.amkj.dmsh.dominant.activity.QualityGroupShopDetailActivity;
 import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
+import com.amkj.dmsh.dominant.bean.GroupShopDetailsEntity.GroupShopDetailsBean;
 import com.amkj.dmsh.find.activity.ImagePagerActivity;
 import com.amkj.dmsh.find.activity.JoinTopicActivity;
 import com.amkj.dmsh.find.activity.PostDetailActivity;
@@ -61,14 +62,17 @@ import com.amkj.dmsh.homepage.bean.ScoreGoodsEntity;
 import com.amkj.dmsh.homepage.bean.ScoreGoodsEntity.ScoreGoodsBean;
 import com.amkj.dmsh.message.bean.MessageCenterEntity;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
+import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean.CartBean.CartInfoBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.rxeasyhttp.utils.DeviceUtils;
 import com.amkj.dmsh.shopdetails.activity.DirectExchangeDetailsActivity;
+import com.amkj.dmsh.shopdetails.activity.DirectIndentWriteActivity;
 import com.amkj.dmsh.shopdetails.activity.DoMoRefundDetailActivity;
 import com.amkj.dmsh.shopdetails.activity.RefundMoneyActivity;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
+import com.amkj.dmsh.shopdetails.bean.IndentProDiscountBean;
 import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.utils.MarketUtils;
@@ -76,6 +80,8 @@ import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogImage;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 import com.hjq.toast.ToastUtils;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.klinker.android.link_builder.Link;
@@ -120,11 +126,12 @@ import q.rorbin.badgeview.Badge;
 import q.rorbin.badgeview.QBadgeView;
 
 import static android.content.Context.MODE_PRIVATE;
-import static android.os.Build.VERSION_CODES.KITKAT;
 import static com.ali.auth.third.core.context.KernelContext.getApplicationContext;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.base.WeChatPayConstants.APP_ID;
+import static com.amkj.dmsh.constant.ConstantVariable.BUY_AGAIN;
 import static com.amkj.dmsh.constant.ConstantVariable.COMMENT_TYPE;
+import static com.amkj.dmsh.constant.ConstantVariable.INDENT_GROUP_SHOP;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.MES_ADVISE;
 import static com.amkj.dmsh.constant.ConstantVariable.MES_FEEDBACK;
@@ -136,6 +143,8 @@ import static com.amkj.dmsh.constant.ConstantVariable.REGEX_URL;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_C_WELFARE;
 import static com.amkj.dmsh.constant.UMShareAction.routineId;
+import static com.amkj.dmsh.constant.Url.CHECK_BUY_AGAIN_NEWV2;
+import static com.amkj.dmsh.constant.Url.CHECK_ORDER_SETTLE_INFOV2;
 import static com.amkj.dmsh.constant.Url.H_Q_FLOAT_AD;
 import static com.amkj.dmsh.constant.Url.LOTTERY_URL;
 import static com.amkj.dmsh.dao.BaiChuanDao.isTaoBaoUrl;
@@ -631,7 +640,7 @@ public class ConstantMethod {
                             }
                         }
                     } catch (Exception e) {
-                        showToast(context, R.string.skip_empty_page_hint);
+                        showToast(R.string.skip_empty_page_hint);
                         e.printStackTrace();
                     }
                 }
@@ -841,7 +850,7 @@ public class ConstantMethod {
                 if (onSendCommentFinish != null) {
                     onSendCommentFinish.onError();
                 }
-                showToast(context, R.string.comment_send_failed);
+                showToast(R.string.comment_send_failed);
                 break;
         }
 
@@ -876,12 +885,12 @@ public class ConstantMethod {
                         if (onSendCommentFinish != null) {
                             onSendCommentFinish.onSuccess();
                         }
-                        showToast(context.getApplicationContext(), R.string.comment_send_success);
+                        showToast(R.string.comment_send_success);
                     } else {
                         if (onSendCommentFinish != null) {
                             onSendCommentFinish.onError();
                         }
-                        showToastRequestMsg(context.getApplicationContext(), requestStatus);
+                        showToastRequestMsg(requestStatus);
                     }
                 }
             }
@@ -895,12 +904,7 @@ public class ConstantMethod {
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(context.getApplicationContext(), R.string.comment_send_failed);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(context.getApplicationContext(), R.string.unConnectedNetwork);
+                showToast(R.string.comment_send_failed);
             }
         });
     }
@@ -935,7 +939,7 @@ public class ConstantMethod {
                         if (onSendCommentFinish != null) {
                             onSendCommentFinish.onError();
                         }
-                        showToastRequestMsg(context.getApplicationContext(), requestStatus);
+                        showToastRequestMsg(requestStatus);
                     }
                 }
             }
@@ -949,12 +953,7 @@ public class ConstantMethod {
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(context.getApplicationContext(), R.string.comment_send_failed);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(context.getApplicationContext(), R.string.unConnectedNetwork);
+                showToast(R.string.comment_send_failed);
             }
         });
     }
@@ -983,12 +982,12 @@ public class ConstantMethod {
                         if (onSendCommentFinish != null) {
                             onSendCommentFinish.onSuccess();
                         }
-                        showToast(context, R.string.Submit_Success);
+                        showToast(R.string.Submit_Success);
                     } else {
                         if (onSendCommentFinish != null) {
                             onSendCommentFinish.onError();
                         }
-                        showToast(context, requestStatus.getMsg() + ",请重新提交");
+                        showToast(requestStatus.getMsg() + ",请重新提交");
                     }
                 }
             }
@@ -1005,12 +1004,7 @@ public class ConstantMethod {
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(context, R.string.commit_failed);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(context, R.string.unConnectedNetwork);
+                showToast(R.string.commit_failed);
             }
         });
     }
@@ -1039,12 +1033,12 @@ public class ConstantMethod {
                         if (onSendCommentFinish != null) {
                             onSendCommentFinish.onSuccess();
                         }
-                        showToast(context, R.string.Submit_Success);
+                        showToast(R.string.Submit_Success);
                     } else {
                         if (onSendCommentFinish != null) {
                             onSendCommentFinish.onError();
                         }
-                        showToastRequestMsg(context, requestInfo);
+                        showToastRequestMsg(requestInfo);
                     }
                 }
             }
@@ -1061,12 +1055,7 @@ public class ConstantMethod {
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(context, R.string.commit_failed);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(context, R.string.unConnectedNetwork);
+                showToast(R.string.commit_failed);
             }
         });
     }
@@ -1143,7 +1132,7 @@ public class ConstantMethod {
      */
     public static void showImageActivity(Context context, String imageType, int firstShowPosition, List<String> imagePathList) {
         if (imagePathList == null || imagePathList.size() < 1) {
-            showToast(context, "图片地址错误~");
+            showToast("图片地址错误~");
             return;
         }
         ImageBean imageBean = null;
@@ -1231,6 +1220,83 @@ public class ConstantMethod {
         }
     }
 
+
+    //跳转结算台(和订单结算接口参数一致)
+    public static void skipIndentWrite(Activity context, String type, Bundle bundle) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("userId", userId);
+        try {
+            if (BUY_AGAIN.equals(type)) {
+                params.put("orderNo", bundle.getString("orderNo"));
+                } else {
+                    String goodsJson = bundle.getString("goods");
+                    String combineGoodsJson = bundle.getString("combineGoods");
+                    String gpShopInfo = bundle.getString("gpShopInfo");
+
+                    Gson gson = new Gson();
+                    if (INDENT_GROUP_SHOP.equals(type) && !TextUtils.isEmpty(gpShopInfo)) {
+                        GroupShopDetailsBean groupShopDetailsBean = gson.fromJson(gpShopInfo, GroupShopDetailsBean.class);
+                        params.put("gpInfoId", groupShopDetailsBean.getGpInfoId());
+                        params.put("gpRecordId", groupShopDetailsBean.getGpRecordId());
+                    IndentProDiscountBean indentProBean = new IndentProDiscountBean();
+                    indentProBean.setId(groupShopDetailsBean.getProductId());
+                    indentProBean.setSaleSkuId(groupShopDetailsBean.getGpSkuId());
+                    indentProBean.setCount(1);
+                    List<IndentProDiscountBean> discountBeanList = new ArrayList<>();
+                    discountBeanList.add(indentProBean);
+                    params.put("goods", gson.toJson(discountBeanList));
+                }
+
+                if (!TextUtils.isEmpty(goodsJson)) {
+                    List<CartInfoBean> passGoods = gson.fromJson(goodsJson, new TypeToken<List<CartInfoBean>>() {
+                    }.getType());
+                    if (passGoods != null) {
+                        List<IndentProDiscountBean> discountBeanList = new ArrayList<>();
+                        for (int i = 0; i < passGoods.size(); i++) {
+                            CartInfoBean cartInfoBean = passGoods.get(i);
+                            IndentProDiscountBean indentProBean = new IndentProDiscountBean();
+                            indentProBean.setId(cartInfoBean.getProductId());
+                            indentProBean.setSaleSkuId(cartInfoBean.getSaleSku().getId());
+                            indentProBean.setCount(cartInfoBean.getCount());
+                            indentProBean.setCartId(cartInfoBean.getId());
+                            discountBeanList.add(indentProBean);
+                        }
+                        params.put("goods", gson.toJson(discountBeanList));
+                    }
+                }
+
+                if (!TextUtils.isEmpty(combineGoodsJson)) {
+                    params.put("combineGoods", combineGoodsJson);
+                }
+            }
+        } catch (JsonSyntaxException e) {
+            showToast("数据有误，请重试");
+            return;
+        }
+        showLoadhud(context);
+        NetLoadUtils.getNetInstance().loadNetDataPost(context, BUY_AGAIN.equals(type) ? CHECK_BUY_AGAIN_NEWV2 : CHECK_ORDER_SETTLE_INFOV2, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                dismissLoadhud(context);
+                RequestStatus requestStatus = new Gson().fromJson(result, RequestStatus.class);
+                if (requestStatus != null) {
+                    if (SUCCESS_CODE.equals(requestStatus.getCode())) {
+                        Intent intent = new Intent(context, DirectIndentWriteActivity.class);
+                        intent.putExtras(bundle);
+                        context.startActivity(intent);
+                    } else {
+                        showToast(requestStatus.getMsg());
+                    }
+                }
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                dismissLoadhud(context);
+            }
+        });
+    }
+
     //跳转拼团详情
     public static void skipGroupDetail(Context context, String gpInfoId) {
         Intent intent = new Intent(context, QualityGroupShopDetailActivity.class);
@@ -1300,12 +1366,14 @@ public class ConstantMethod {
      * 跳转参与话题
      */
     public static void skipJoinTopic(Activity activity, ScoreGoodsBean scoreGoodsBean, ScoreGoodsEntity mScoreGoodsEntity) {
-        if (isContextExisted(activity) && scoreGoodsBean != null && mScoreGoodsEntity != null) {
+        if (isContextExisted(activity) && scoreGoodsBean != null) {
             Intent intent = new Intent(activity, JoinTopicActivity.class);
             intent.putExtra("scoreGoods", scoreGoodsBean);
-            intent.putExtra("maxRewardTip", mScoreGoodsEntity.getMaxRewardTip());
-            intent.putExtra("rewardtip", mScoreGoodsEntity.getRewardTip());
-            intent.putExtra("reminder", mScoreGoodsEntity.getContentReminder());
+            if (mScoreGoodsEntity != null) {
+                intent.putExtra("maxRewardTip", mScoreGoodsEntity.getMaxRewardTip());
+                intent.putExtra("rewardtip", mScoreGoodsEntity.getRewardTip());
+                intent.putExtra("reminder", mScoreGoodsEntity.getContentReminder());
+            }
             activity.startActivity(intent);
         }
     }
@@ -1618,39 +1686,39 @@ public class ConstantMethod {
      *
      * @param status
      */
-    public static void disposeMessageCode(Context context, int status) {
+    public static void disposeMessageCode(int status) {
         switch (status) {
             case 458:
-                showToast(context, "手机号码在黑名单中,请联系该地运营商解除短信限制");
+                showToast("手机号码在黑名单中,请联系该地运营商解除短信限制");
                 break;
             case 461:
             case 602:
-                showToast(context, "不支持该地区发送短信，请选择国内运营商号码");
+                showToast("不支持该地区发送短信，请选择国内运营商号码");
                 break;
             case 462:
-                showToast(context, "每分钟发送短信的数量超过限制，请稍后重试");
+                showToast("每分钟发送短信的数量超过限制，请稍后重试");
                 break;
             case 463:
             case 464:
             case 465:
             case 477:
             case 478:
-                showToast(context, "手机号码每天发送次数超限，请明天再试");
+                showToast("手机号码每天发送次数超限，请明天再试");
                 break;
             case 467:
-                showToast(context, "5分钟内校验错误超过3次，验证码失效，请重新获取验证码");
+                showToast("5分钟内校验错误超过3次，验证码失效，请重新获取验证码");
                 break;
             case 468:
-                showToast(context, "验证码错误，请重新输入验证码");
+                showToast("验证码错误，请重新输入验证码");
                 break;
             case 472:
-                showToast(context, "发送短信验证过于频繁，请稍后再试");
+                showToast("发送短信验证过于频繁，请稍后再试");
                 break;
             case 601:
-                showToast(context, "短信发送受限");
+                showToast("短信发送受限");
                 break;
             default:
-                showToast(context, "验证码校验失败，请退出重试");
+                showToast("验证码校验失败，请退出重试");
                 break;
         }
     }
@@ -1740,12 +1808,8 @@ public class ConstantMethod {
                     "application/vnd.android.package-archive");
             context.startActivity(intent);
         } else {
-            showToast(context, "该文件已删除，请重新下载");
+            showToast("该文件已删除，请重新下载");
         }
-    }
-
-    public interface OnAddCarListener {
-        void onAddCarSuccess();
     }
 
     //    发送评论回调
@@ -1903,13 +1967,13 @@ public class ConstantMethod {
                 try {
                     MarketUtils.launchAppDetail(getApplicationContext(), context.getPackageName(), appMarketStore);
                 } catch (Exception e) {
-                    showToast(context, hintText);
+                    showToast(hintText);
                 }
             } else {
-                showToast(context, hintText);
+                showToast(hintText);
             }
         } catch (Exception e) {
-            showToast(context, hintText);
+            showToast(hintText);
         }
     }
 
@@ -2027,49 +2091,21 @@ public class ConstantMethod {
     /**
      * 解决Toast重复弹出 长时间不消失的问题
      */
-    public static void showToast(Context context, String message) {
-        if (isContextExisted(context)) {
-            Context applicationContext = context.getApplicationContext();
-            if (ToastUtils.getToast() == null ||
-                    (!NotificationManagerCompat.from(applicationContext).areNotificationsEnabled() &&
-                            !"SupportToast".equals(ToastUtils.getToast().getClass().getSimpleName()))) {
-                // 因为吐司只有初始化的时候才会判断通知权限有没有开启，根据这个通知开关来显示原生的吐司还是兼容的吐司
-                ToastUtils.init(TinkerManager.getApplication());
-            }
-            ToastUtils.show(message);
-        }
-    }
-
     public static void showToast(String message) {
         ToastUtils.show(message);
     }
 
-    /**
-     * 资源文件文本
-     *
-     * @param context
-     * @param resId
-     */
-    public static void showToast(Context context, int resId) {
-        if (context == null || !isContextExisted(context)) {
-            return;
-        }
-        Context applicationContext = context.getApplicationContext();
-        if (context.getResources() == null) {
-            showToast(applicationContext, "数据异常，请稍后再试");
-        } else {
-            showToast(applicationContext, applicationContext.getResources().getString(resId));
-        }
+    public static void showToast(int resId) {
+        showToast(mAppContext.getResources().getString(resId));
     }
 
     /**
      * 请求返回状态码提示
      *
-     * @param context
      * @param requestStatus
      */
-    public static void showToastRequestMsg(Context context, RequestStatus requestStatus) {
-        showToast(context, requestStatus == null ? "操作失败！" :
+    public static void showToastRequestMsg(RequestStatus requestStatus) {
+        showToast(requestStatus == null ? "操作失败！" :
                 requestStatus.getResult() != null ? getStrings(requestStatus.getResult().getResultMsg()) : getStrings(requestStatus.getMsg()));
     }
 
@@ -2084,26 +2120,17 @@ public class ConstantMethod {
     }
 
     public static void showImportantToast(Activity context, String hintText) {
-        int notificationEnabledValue = 1;
-        if (Build.VERSION.SDK_INT >= KITKAT) {
-            notificationEnabledValue = NotificationManagerCompat.from(context).areNotificationsEnabled() ? 1 : 0;
-        }
-        // 允许通知权限则尽量用系统toast
-        // 没有通知权限或者是可点击的toast则使用自定义toast
-        if (notificationEnabledValue > 0) {
-            showToast(context, hintText);
-        } else {
-            AlertDialogHelper alertImportDialogHelper = new AlertDialogHelper(context)
-                    .setSingleButton(true)
-                    .setConfirmText("确认")
-                    .setConfirmTextColor(context.getResources().getColor(R.color.text_login_gray_s))
-                    .setTitle("提示")
-                    .setTitleGravity(Gravity.CENTER)
-                    .setConfirmTextColor(context.getResources().getColor(R.color.text_login_blue_z));
-            alertImportDialogHelper.setMsg(hintText);
-            if (!context.isFinishing()) {
-                alertImportDialogHelper.show();
-            }
+        AlertDialogHelper alertImportDialogHelper = new AlertDialogHelper(context)
+                .setSingleButton(true)
+                .setConfirmText("确认")
+                .setConfirmTextColor(context.getResources().getColor(R.color.text_login_gray_s))
+                .setTitle("提示")
+                .setTitleGravity(Gravity.CENTER)
+                .setConfirmTextColor(context.getResources().getColor(R.color.text_login_blue_z))
+                .setMsg(hintText)
+                .setMsgTextGravity(Gravity.CENTER);
+        if (!context.isFinishing()) {
+            alertImportDialogHelper.show();
         }
     }
 
@@ -2119,55 +2146,6 @@ public class ConstantMethod {
             dest = m.replaceAll("");
         }
         return dest;
-    }
-
-    /**
-     * 判断当前存储卡是否可用
-     **/
-    public static boolean checkSDCardAvailable() {
-        return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
-    }
-
-
-    /**
-     * 获取时分秒
-     *
-     * @param time
-     * @return
-     */
-    public static String getHMSFormatString(int time) {
-        String timeStr = null;
-        int hour = 0;
-        int minute = 0;
-        int second = 0;
-        if (time <= 0) {
-            return "00:00";
-        } else {
-            minute = time / 60;
-            if (minute < 60) {
-                second = time % 60;
-                timeStr = getZeroString(minute) + ":" + getZeroString(second);
-            } else {
-                hour = minute / 60;
-                if (hour > 99)
-                    return "99:59:59";
-                minute = minute % 60;
-                second = time - hour * 3600 - minute * 60;
-                if (hour > 0) {
-                    timeStr = getZeroString(hour) + ":" + getZeroString(minute) + ":" + getZeroString(second);
-                } else {
-                    timeStr = getZeroString(minute) + ":" + getZeroString(second);
-                }
-            }
-        }
-        return timeStr;
-    }
-
-    private static String getZeroString(int i) {
-        if (i >= 0 && i < 10)
-            return "0" + Integer.toString(i);
-        else
-            return "" + i;
     }
 
     /**
@@ -2328,7 +2306,7 @@ public class ConstantMethod {
             if (!TextUtils.isEmpty(clickedText)) {
                 setSkipPath(activity, clickedText, false);
             } else {
-                showToast(activity, "网址有误，请重试");
+                showToast("网址有误，请重试");
             }
         });
         LinkBuilder.on(textView)

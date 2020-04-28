@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AlertDialog;
@@ -132,6 +133,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.INDENT_W_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
@@ -140,6 +142,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.isShowTint;
 import static com.amkj.dmsh.dao.OrderDao.getCarCount;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODUCT_TITLE;
+import static com.amkj.dmsh.utils.TimeUtils.getTimeDifferenceText;
 import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTime;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getSquareImgUrl;
 
@@ -228,11 +231,14 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     LinearLayout ll_product_activity_detail;
     @BindView(R.id.tv_product_activity_description)
     TextView tv_product_activity_description;
-    //        结束时间
-    @BindView(R.id.ll_communal_time_hours)
-    LinearLayout ll_communal_time_hours;
-    @BindView(R.id.tv_count_time_before_white)
-    TextView tv_count_time_before_white;
+    // 结束时间
+    @BindView(R.id.ll_top_end_time)
+    LinearLayout ll_top_end_time;
+    //开始时间
+    @BindView(R.id.ll_top_start_time)
+    LinearLayout ll_top_start_time;
+    @BindView(R.id.tv_start_time)
+    TextView tv_start_time;
     @BindView(R.id.cv_countdownTime_white_hours)
     CountdownView cv_countdownTime_white_hours;
     //    优惠券列表
@@ -359,6 +365,8 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     private AlertDialog alertDialog;
     private DirectGoodsServerEntity mDirectGoodsServerEntity;
     private GroupGoodsEntity mGroupGoodsEntity;
+    private CountDownTimer mCountDownEndTimer;
+    private CountDownTimer mCountDownStartTimer;
 
 
     @Override
@@ -409,7 +417,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         screenHeight = app.getScreenHeight();
         screenWith = app.getScreenWidth();
         if (TextUtils.isEmpty(productId)) {
-            showToast(getActivity(), "商品信息有误，请重试");
+            showToast("商品信息有误，请重试");
             finish();
         }
         smart_ql_sp_pro_details.setOnRefreshListener(refreshLayout -> loadData());
@@ -672,7 +680,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                         getArticalRecommend(shopPropertyBean.getId());
                         getGoodsRecommend(shopPropertyBean.getId());
                     } else if (!shopDetailsEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(getActivity(), shopDetailsEntity.getMsg());
+                        showToast(shopDetailsEntity.getMsg());
                         if ("32".equals(shopDetailsEntity.getCode())) {
                             new LifecycleHandler(getActivity()).postDelayed(() -> {
                                 //商品已下架，关闭页面
@@ -791,7 +799,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     if (goodsCommentEntity.getCode().equals(SUCCESS_CODE)) {
                         goodsComments.addAll(goodsCommentEntity.getGoodsComments());
                     } else if (!goodsCommentEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(getActivity(), goodsCommentEntity.getMsg());
+                        showToast(goodsCommentEntity.getMsg());
                     }
                     tv_shop_comment_count.setText(("Ta们在说(" + goodsCommentEntity.getEvaluateCount() + ")"));
                 }
@@ -932,11 +940,12 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             end = skuSaleList.get(0).getPrice().equals(skuSaleList.get(skuSaleList.size() - 1).getPrice()) ? "" : "起";
         }
 
+
         //优先显示新人专享信息
         if (!TextUtils.isEmpty(shopProperty.getNewUserTag())) {
             ll_product_activity_detail.setVisibility(VISIBLE);
             mLlScroolDetailPrice.setVisibility(GONE);
-            ll_communal_time_hours.setVisibility(GONE);//上面的倒计时
+            ll_top_end_time.setVisibility(GONE);//上面的倒计时
             rl_product_activity_detail.setVisibility(GONE);
             mRlActivityPrice.setVisibility(VISIBLE);
             mLlTimeHoursBottom.setVisibility(GONE); //下面的倒计时
@@ -956,12 +965,12 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     , shopPropertyBean.getActivityEndTime())) {
                 ll_product_activity_detail.setVisibility(VISIBLE);
                 if (activityCode.contains("XSG")) {
+                    setTopTimeVisible(false);
                     mRlActivityPrice.setVisibility(VISIBLE);       //限时购价格
                     rl_product_activity_detail.setVisibility(GONE);
                     mLlScroolDetailPrice.setVisibility(GONE); //非限时购价格
                     mLlTimeHoursBottom.setVisibility(GONE); //下面的倒计时
-                    ll_communal_time_hours.setVisibility(VISIBLE);//上面的倒计时
-                    startActivityDownTime(tv_count_time_before_white, cv_countdownTime_white_hours);//开启倒计时
+                    startActivityDownTime(cv_countdownTime_white_hours, false);//开启倒计时
                     //限时购活动价(未开始时：activityPrice表示活动价；已开始时：price表示活动价)
                     String price = getRmbFormat(this, isEndOrStartTime(shopDetailsEntity.getCurrentTime(), shopDetailsEntity.getShopPropertyBean().getActivityStartTime()) ? shopProperty.getPrice() : shopProperty.getActivityPrice()) + end;
                     mTvProductMinPrice.setText(getSpannableString(price, 1, price.length() - end.length(), 1.6f, null));
@@ -978,21 +987,21 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                         mTvProductMartketPrice.setPaintFlags(mTvProductMartketPrice.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
                     }
                 } else if (activityCode.contains("LJ") || activityCode.contains("ZK") || activityCode.contains("TH")) {
+                    setTopTimeVisible(false);
                     mRlActivityPrice.setVisibility(GONE);
                     mIvNextIcon.setVisibility(GONE);
                     tv_product_activity_description.setVisibility(VISIBLE);
                     mLlScroolDetailPrice.setVisibility(VISIBLE);
                     mLlTimeHoursBottom.setVisibility(GONE);
-                    ll_communal_time_hours.setVisibility(VISIBLE);
-                    startActivityDownTime(tv_count_time_before_white, cv_countdownTime_white_hours);
+                    startActivityDownTime(cv_countdownTime_white_hours, false);
                 } else if (activityCode.contains("MJ") || activityCode.contains("MM") || activityCode.contains("MZ")) {
-                    ll_communal_time_hours.setVisibility(GONE);
+                    setTopTimeVisible(true);
                     mRlActivityPrice.setVisibility(GONE);
                     mIvNextIcon.setVisibility(VISIBLE);
                     tv_product_activity_description.setVisibility(VISIBLE);
                     mLlScroolDetailPrice.setVisibility(VISIBLE);
                     mLlTimeHoursBottom.setVisibility(VISIBLE);
-                    startActivityDownTime(mTvTipsBottom, mCtCountDownBottom);
+                    startActivityDownTime(mCtCountDownBottom, true);
                 } else {
                     ll_product_activity_detail.setVisibility(GONE);
                     mLlScroolDetailPrice.setVisibility(VISIBLE);
@@ -1014,6 +1023,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 mLlTimeHoursBottom.setVisibility(GONE);
             }
         }
+
 
         //设置参考价
         if (!TextUtils.isEmpty(shopPropertyBean.getActivityPrice())
@@ -1118,6 +1128,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             fbl_details_market_label.setVisibility(View.INVISIBLE);
         }
 
+
         //发货地以及发货时间
         mLlShippingProvince.setVisibility(!TextUtils.isEmpty(shopProperty.getShippingProvince()) ? VISIBLE : GONE);
         mTvShippingProvince.setText(getStrings(shopProperty.getShippingProvince()));
@@ -1190,6 +1201,24 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         scroll_pro.scrollTo(0, 0);
     }
 
+    private void setTopTimeVisible(boolean isMJ) {
+        if (isMJ) {
+            ll_top_end_time.setVisibility(GONE);//上面的结束倒计时
+            ll_top_start_time.setVisibility(GONE);//上面的开始倒计时
+        } else {
+            //活动已开始显示结束时间
+            if (isEndOrStartTime(shopDetailsEntity.getCurrentTime(), shopDetailsEntity.getShopPropertyBean().getActivityStartTime())) {
+                ll_top_end_time.setVisibility(VISIBLE);
+                ll_top_start_time.setVisibility(GONE);
+            } else {
+                //活动未开始显示开始时间
+                ll_top_end_time.setVisibility(GONE);
+                ll_top_start_time.setVisibility(VISIBLE);
+            }
+        }
+
+    }
+
     //商品服务标签
     private void setSeviceTag(ShopPropertyBean shopProperty, ViewGroup viewGroup, FlexboxLayout flexboxLayout) {
         try {
@@ -1224,7 +1253,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     }
 
     //开启活动倒计时
-    private void startActivityDownTime(TextView tipView, CountdownView countDownTimeView) {
+    private void startActivityDownTime(CountdownView countDownTimeView, boolean isMJ) {
         try {
             String activityStartTime = shopPropertyBean.getActivityStartTime();
             String activityEndTime = shopPropertyBean.getActivityEndTime();
@@ -1235,42 +1264,51 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             long dateCurret = !TextUtils.isEmpty(currentTime) ? formatter.parse(currentTime).getTime() : System.currentTimeMillis();
             //活动未开始
             if (!isEndOrStartTime(shopDetailsEntity.getCurrentTime(), shopPropertyBean.getActivityStartTime())) {
-                tipView.setText(tipView.getId() == R.id.tv_count_time_before_white ? "距开始还有" : "距开始");
-                CountDownTimer countDownTimer = new CountDownTimer(this, dateStart + 1 - dateCurret, 1000) {
-                    @Override
-                    public void onTick(long millisUntilFinished) {
-                        countDownTimeView.updateShow(millisUntilFinished);
-                    }
+                long millisInFuture = dateStart + 1 - dateCurret;
+                mTvTipsBottom.setText("距开始");
+                if (mCountDownStartTimer == null) {
+                    mCountDownStartTimer = new CountDownTimer(this, 1000) {
+                        @Override
+                        public void onTick(long millisUntilFinished) {
+                            if (isMJ) {
+                                countDownTimeView.updateShow(millisUntilFinished);
+                            } else {
+                                tv_start_time.setText(String.format("距开始%s", getTimeDifferenceText(millisUntilFinished)));
+                            }
+                        }
 
-                    @Override
-                    public void onFinish() {
-                        cancel();
-                        //活动已开始
-                        countDownTimeView.updateShow(0);
-                        loadData();
-                    }
-                };
+                        @Override
+                        public void onFinish() {
+                            //活动已开始
+                            countDownTimeView.updateShow(0);
+                            loadData();
+                        }
+                    };
+                }
 
-                countDownTimer.start();
+                mCountDownStartTimer.setMillisInFuture(millisInFuture);
+                mCountDownStartTimer.start();
             } else if (!isEndOrStartTime(currentTime, activityEndTime)) {
                 //活动已开始未结束
-                tipView.setText(tipView.getId() == R.id.tv_count_time_before_white ? "距结束还有" : "距结束");
-                CountDownTimer countDownTimer = new CountDownTimer(this, dateEnd + 1 - dateCurret, 1000) {
-                    @Override
-                    public void onTick(long millisUntilFinished) {
-                        countDownTimeView.updateShow(millisUntilFinished);
-                    }
+                long millisInFuture = dateEnd + 1 - dateCurret;
+                mTvTipsBottom.setText("距结束");
+                if (mCountDownEndTimer == null) {
+                    mCountDownEndTimer = new CountDownTimer(this, 1000) {
+                        @Override
+                        public void onTick(long millisUntilFinished) {
+                            countDownTimeView.updateShow(millisUntilFinished);
+                        }
 
-                    @Override
-                    public void onFinish() {
-                        cancel();
-                        //活动已结束
-                        countDownTimeView.updateShow(0);
-                        loadData();
-                    }
-                };
-
-                countDownTimer.start();
+                        @Override
+                        public void onFinish() {
+                            //活动已结束
+                            countDownTimeView.updateShow(0);
+                            loadData();
+                        }
+                    };
+                }
+                mCountDownEndTimer.setMillisInFuture(millisInFuture);
+                mCountDownEndTimer.start();
             } else {
                 //活动已结束
                 ll_product_activity_detail.setVisibility(GONE);
@@ -1433,7 +1471,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             mTvMaxPrice.setVisibility(!minPrice.equals(maxPrice) ? VISIBLE : GONE);
             mTvMaxPrice.setText(getRmbFormat(this, "~" + "¥" + maxPrice, false));
         } else {
-            showToast(this, "商品数据错误");
+            showToast("商品数据错误");
         }
     }
 
@@ -1480,14 +1518,14 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     RequestStatus status = gson.fromJson(result, RequestStatus.class);
                     if (status != null) {
                         if (status.getCode().equals(SUCCESS_CODE)) {
-                            showToast(getActivity(), getString(R.string.AddCarSuccess));
+                            showToast(getString(R.string.AddCarSuccess));
                             //通知刷新购物车数量
                             getCarCount(getActivity());
                             if (skuDialog != null) {
                                 shopCarGoodsSkuDif = null;
                             }
                         } else {
-                            showToastRequestMsg(getActivity(), status);
+                            showToastRequestMsg(status);
                         }
                     }
                     tv_sp_details_add_car.setEnabled(true);
@@ -1534,10 +1572,9 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             prop.setProperty("proSalSku", getStrings(shopCarGoodsSkuDif.getValuesName()));
             StatService.trackCustomKVEvent(getActivity(), "qlProBuy", prop);
 //            结算商品 跳转订单填写
-            Intent intent = new Intent(getActivity(), DirectIndentWriteActivity.class);
-            intent.putExtra("uid", userId);
-            intent.putExtra("goods", new Gson().toJson(settlementGoods));
-            startActivity(intent);
+            Bundle bundle = new Bundle();
+            bundle.putString("goods", new Gson().toJson(settlementGoods));
+            ConstantMethod.skipIndentWrite(getActivity(), INDENT_W_TYPE, bundle);
         } else {
             if (skuDialog != null) {
                 skuDialog.show(true, "确定");
@@ -1572,7 +1609,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         tv_sp_details_collect.setSelected(requestStatus.isCollect());
-                        showToast(getActivity(),
+                        showToast(
                                 String.format(getResources().getString(
                                         tv_sp_details_collect.isSelected() ? R.string.collect_success : R.string.cancel_done), "商品", "收藏"));
                     }
@@ -1586,12 +1623,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(getActivity(), String.format(getResources().getString(R.string.collect_failed), "商品"));
-            }
-
-            @Override
-            public void netClose() {
-                showToast(getActivity(), R.string.unConnectedNetwork);
+                showToast(String.format(getResources().getString(R.string.collect_failed), "商品"));
             }
         });
     }
@@ -1733,7 +1765,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 }
                 break;
             case R.id.iv_ql_shop_pro_cp_tag:
-                showToast(getActivity(), "该商品不支持使用优惠券！");
+                showToast("该商品不支持使用优惠券！");
                 break;
             //sku属性选择
             case R.id.tv_ql_sp_pro_sku:
@@ -1830,9 +1862,9 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         tv_sp_details_add_car.setText(requestStatus.getIsNotice() == 1 ? "到货提醒" : "取消提醒");
-                        showToast(getActivity(), requestStatus.getIsNotice() == 1 ? "已取消通知" : "已设置通知");
+                        showToast( requestStatus.getIsNotice() == 1 ? "已取消通知" : "已设置通知");
                     } else {
-                        showToastRequestMsg(getActivity(), requestStatus);
+                        showToastRequestMsg( requestStatus);
                     }
                 }
             }

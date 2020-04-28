@@ -109,13 +109,13 @@ public class MessageWarmActivity extends BaseActivity {
                 CommunalUserInfoEntity communalUserInfoEntity = gson.fromJson(result, CommunalUserInfoEntity.class);
                 if (communalUserInfoEntity != null) {
                     if (communalUserInfoEntity.getCode().equals(SUCCESS_CODE)) {
-                        showToast(MessageWarmActivity.this, R.string.saveSuccess);
+                        showToast(R.string.saveSuccess);
                         Intent intent = new Intent();
                         intent.putExtra(TIME_WARM, getNumber(communalUserInfoEntity.getCommunalUserInfoBean().getRemindtime() + ""));
                         setResult(RESULT_OK, intent);
                         finish();
                     } else {
-                        showToast(MessageWarmActivity.this, communalUserInfoEntity.getMsg());
+                        showToast(communalUserInfoEntity.getMsg());
                     }
                 }
             }

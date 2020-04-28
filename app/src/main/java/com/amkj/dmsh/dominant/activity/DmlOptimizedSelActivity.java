@@ -203,7 +203,7 @@ public class DmlOptimizedSelActivity extends BaseActivity {
                             } else if (optimizedSelEntity.getCode().equals(EMPTY_CODE)) {
                                 dmlOptimizedSelAdapter.loadMoreEnd();
                             } else {
-                                showToast(DmlOptimizedSelActivity.this, optimizedSelEntity.getMsg());
+                                showToast( optimizedSelEntity.getMsg());
                             }
                             dmlOptimizedSelAdapter.notifyDataSetChanged();
                         }
@@ -218,13 +218,8 @@ public class DmlOptimizedSelActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void netClose() {
-                        showToast(DmlOptimizedSelActivity.this, R.string.unConnectedNetwork);
-                    }
-
-                    @Override
                     public void onError(Throwable throwable) {
-                        showToast(DmlOptimizedSelActivity.this, R.string.invalidData);
+                        showToast( R.string.invalidData);
                     }
                 });
     }

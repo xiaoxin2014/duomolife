@@ -371,7 +371,7 @@ public class ArticleOfficialActivity extends BaseActivity {
 
     //js交互数据异常
     private void jsInteractiveException() {
-        showToast(getActivity(), "数据异常呦，攻城狮正在加急处理呢~");
+        showToast("数据异常呦，攻城狮正在加急处理呢~");
     }
 
 
@@ -431,7 +431,7 @@ public class ArticleOfficialActivity extends BaseActivity {
                             , shareBean.getDescription()
                             , shareBean.getUrl(), shareBean.getRoutineUrl(), shareBean.getObjId(), shareBean.getShareType(), shareBean.getPlatform());
                 } else {
-                    showToast(getActivity(), "数据为空");
+                    showToast("数据为空");
                 }
             });
         }
@@ -660,7 +660,7 @@ public class ArticleOfficialActivity extends BaseActivity {
                 loadHud.dismiss();
                 mTvSendComment.setText("发送");
                 mTvSendComment.setEnabled(true);
-                showToast(ArticleOfficialActivity.this, R.string.comment_article_send_success);
+                showToast( R.string.comment_article_send_success);
                 commentViewVisible(GONE, null);
                 mEmojiEditComment.setText("");
                 webViewJs(getStringsFormat(getActivity(), R.string.web_comment_success_method, SUCCESS_CODE, communalComment.getContent()));
@@ -710,7 +710,7 @@ public class ArticleOfficialActivity extends BaseActivity {
 //                    communalComment.setToUid(dmlSearchDetailBean.getUid());
                     sendComment(communalComment);
                 } else {
-                    showToast(ArticleOfficialActivity.this, "请正确输入内容");
+                    showToast("请正确输入内容");
                 }
             });
         } else if (GONE == visibility) {

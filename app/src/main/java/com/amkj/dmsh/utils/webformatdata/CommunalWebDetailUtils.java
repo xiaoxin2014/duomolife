@@ -386,7 +386,7 @@ public class CommunalWebDetailUtils {
                             if (couponBean != null) {
                                 skipAliBC(mActivity, couponBean.getCouponUrl(), "");
                             } else {
-                                showToast(mContext, "数据异常，请刷新重试~");
+                                showToast("数据异常，请刷新重试~");
                             }
                             break;
                         //加入购物车
@@ -446,7 +446,7 @@ public class CommunalWebDetailUtils {
                 CouponEntity couponEntity = new Gson().fromJson(result, CouponEntity.class);
 
                 if (getCouponListener == null) {
-                    showToast(mContext, couponEntity == null ? "操作失败！" :
+                    showToast( couponEntity == null ? "操作失败！" :
                             couponEntity.getResult() != null ? getStrings(couponEntity.getResult().getMsg()) : getStrings(couponEntity.getMsg()));
                 } else if (couponEntity != null && couponEntity.getResult() != null) {
                     if (SUCCESS_CODE.equals(couponEntity.getMsg()) && SUCCESS_CODE.equals(couponEntity.getResult().getMsg())) {
@@ -466,7 +466,7 @@ public class CommunalWebDetailUtils {
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(mContext, R.string.Get_Coupon_Fail);
+                showToast( R.string.Get_Coupon_Fail);
             }
         });
     }
@@ -494,7 +494,7 @@ public class CommunalWebDetailUtils {
                 Gson gson = new Gson();
                 CouponListEntity couponListEntity = gson.fromJson(result, CouponListEntity.class);
                 if (getCouponListener == null) {
-                    showToast(mContext, couponListEntity.getMsg());
+                    showToast(couponListEntity.getMsg());
                 } else if (couponListEntity != null) {
                     String code = couponListEntity.getCode();
                     if (SUCCESS_CODE.equals(code)) {
@@ -514,7 +514,7 @@ public class CommunalWebDetailUtils {
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(mContext, R.string.Get_Coupon_Fail);
+                showToast( R.string.Get_Coupon_Fail);
             }
         });
     }

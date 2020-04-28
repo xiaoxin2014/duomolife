@@ -177,7 +177,7 @@ public class MineLoginActivity extends BaseActivity {
                     if (SUCCESS_CODE.equals(code)) {
                         loginSuccessSetData(getActivity(), loginDataEntity, null);
                     } else {
-                        showToast(MineLoginActivity.this, loginDataEntity.getMsg());
+                        showToast(loginDataEntity.getMsg());
                     }
                 }
             }
@@ -186,9 +186,10 @@ public class MineLoginActivity extends BaseActivity {
             public void onNotNetOrException() {
                 dismissLoadhud(getActivity());
             }
+
             @Override
             public void onError(Throwable throwable) {
-                showToast(MineLoginActivity.this, R.string.login_failed);
+                showToast(R.string.login_failed);
             }
         });
     }
@@ -219,7 +220,7 @@ public class MineLoginActivity extends BaseActivity {
                                 RequestStatus.Result resultData = requestStatus.getResult();
                                 if (resultData != null) {
                                     if (resultData.getResultCode().equals(SUCCESS_CODE)) {
-                                        showToast(MineLoginActivity.this, R.string.GetSmsCodeSuccess);
+                                        showToast(R.string.GetSmsCodeSuccess);
                                         tv_login_send_code.setVisibility(View.VISIBLE);
                                         reg_login_code_gif_view.setVisibility(View.GONE);
                                         if (countDownHelper == null) {
@@ -311,7 +312,7 @@ public class MineLoginActivity extends BaseActivity {
                 UMShareAPI.get(this).getPlatformInfo(MineLoginActivity.this, platform, getDataInfoListener);
                 break;
             default:
-                showToast(MineLoginActivity.this, "暂不支持该授权！");
+                showToast("暂不支持该授权！");
                 break;
         }
     }
@@ -354,13 +355,13 @@ public class MineLoginActivity extends BaseActivity {
 
         @Override
         public void onError(SHARE_MEDIA platform, int action, Throwable t) {
-            showToast(getApplicationContext(), "授权失败");
+            showToast("授权失败");
             dismissLoadhud(getActivity());
         }
 
         @Override
         public void onCancel(SHARE_MEDIA platform, int action) {
-            showToast(getApplicationContext(), "授权取消");
+            showToast("授权取消");
             dismissLoadhud(getActivity());
         }
     };
@@ -404,7 +405,7 @@ public class MineLoginActivity extends BaseActivity {
                         startActivity(intent);
                         finish();
                     } else {
-                        showToast(MineLoginActivity.this, loginDataEntity.getMsg());
+                        showToast(loginDataEntity.getMsg());
                     }
                 }
 
@@ -450,9 +451,9 @@ public class MineLoginActivity extends BaseActivity {
                         showLoadhud(getActivity());
                         checkPhoneCode(phoneNumber, smsCode);
                     } else if (phoneNumber.length() < 11) {
-                        showToast(this, R.string.MobileError);
+                        showToast(R.string.MobileError);
                     } else if (smsCode.length() < 1) {
-                        showToast(this, R.string.SmsCodeNull);
+                        showToast(R.string.SmsCodeNull);
                     }
                 } else {
                     String phoneNumber = edit_login_mobile.getText().toString().trim();
@@ -462,9 +463,9 @@ public class MineLoginActivity extends BaseActivity {
                         showLoadhud(getActivity());
                         getData();
                     } else if (phoneNumber.length() < 11) {
-                        showToast(this, R.string.MobileError);
+                        showToast(R.string.MobileError);
                     } else if (password.length() < 6) {
-                        showToast(this, R.string.PasswordLessSix);
+                        showToast(R.string.PasswordLessSix);
                     }
                 }
                 break;
@@ -559,7 +560,7 @@ public class MineLoginActivity extends BaseActivity {
                     showLoadhud(getActivity());
                     reqSMSCode(phoneNumber);
                 } else if (phoneNumber.length() < 11) {
-                    showToast(this, "手机号码有错，请重新输入");
+                    showToast("手机号码有错，请重新输入");
                 }
                 break;
             case R.id.iv_blue_close:

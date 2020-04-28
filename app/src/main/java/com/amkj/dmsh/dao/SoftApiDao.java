@@ -82,7 +82,7 @@ public class SoftApiDao {
 
                             showToast(!isFollow ? "已关注" : "已取消关注");
                         } else {
-                            showToastRequestMsg(activity, requestStatus);
+                            showToastRequestMsg(requestStatus);
                         }
                     }
                 }
@@ -117,7 +117,7 @@ public class SoftApiDao {
                             tvFollow.setSelected(!tvFollow.isSelected());
                             ConstantMethod.showToast(tvFollow.isSelected() ? "已关注" : "已取消关注");
                         } else {
-                            showToastRequestMsg(activity, requestStatus);
+                            showToastRequestMsg(requestStatus);
                         }
                     }
                 }
@@ -150,7 +150,7 @@ public class SoftApiDao {
                         if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                             tvCollect.setSelected(!tvCollect.isSelected());
                         } else {
-                            showToast(activity, String.format(activity.getResources().getString(R.string.collect_failed), "文章"));
+                            showToast(String.format(activity.getResources().getString(R.string.collect_failed), "文章"));
                         }
                     }
                 }
@@ -203,7 +203,7 @@ public class SoftApiDao {
                         if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                             tvCollect.setSelected(!tvCollect.isSelected());
                         } else {
-                            showToast(activity, getStringsFormat(activity, R.string.collect_failed, "文章"));
+                            showToast( getStringsFormat(activity, R.string.collect_failed, "文章"));
                         }
                     }
                 }

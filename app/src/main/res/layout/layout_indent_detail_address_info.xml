@@ -17,23 +17,26 @@
         android:orientation="horizontal">
 
         <TextView
+            android:textStyle="bold"
             android:id="@+id/tv_consignee_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/defaul"
             android:textColor="@color/text_black_t"
-            android:textSize="@dimen/sc_mm_32" />
+            android:textSize="@dimen/sc_mm_28" />
 
         <TextView
+            android:textStyle="bold"
             android:id="@+id/tv_consignee_mobile_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/sc_mm_48"
             android:text="@string/defaul"
             android:textColor="@color/text_black_t"
-            android:textSize="@dimen/sc_mm_32" />
+            android:textSize="@dimen/sc_mm_28" />
 
         <TextView
+            android:visibility="gone"
             android:id="@+id/tv_change_address"
             android:layout_width="@dimen/sc_mm_98"
             android:layout_height="@dimen/sc_mm_40"
@@ -41,7 +44,7 @@
             android:background="@drawable/border_circle_three_gray_white"
             android:gravity="center"
             android:text="修改"
-            android:textColor="@color/text_black_t"
+            android:textColor="@color/sel_font_gray_b_gray"
             android:textSize="@dimen/sc_mm_24" />
     </LinearLayout>
 

@@ -59,6 +59,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.GROUP_SHOP_NEW_DETAILS;
+import static com.amkj.dmsh.utils.TimeUtils.getTimeDifference;
 import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTime;
 
 
@@ -159,7 +160,7 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
                                     setGroupShopDetailsData();
                                 }
                             } else {
-                                showToast(getActivity(), mGroupShopDetailsEntity.getMsg());
+                                showToast( mGroupShopDetailsEntity.getMsg());
                             }
                         }
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, mGroupShopDetailsBean, mGroupShopDetailsEntity);
@@ -251,7 +252,7 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
                 backgroundInfo.setColor(getResources().getColor(R.color.text_normal_red));
                 dynamic.setBackgroundInfo(backgroundInfo);
                 countdownView.dynamicShow(dynamic.build());
-                String timeformat = TimeUtils.getTimeDifferenceText(gpEndTime, formatter.format(startTime));
+                String timeformat = TimeUtils.getTimeDifferenceText(getTimeDifference(gpEndTime, formatter.format(startTime)));
                 //倒计时样式格式化
                 countdownView.customTimeShow(timeformat.contains("天"), timeformat.contains("时"), timeformat.contains("分"), !timeformat.contains("天"), false);
                 countdownView.updateShow(endTime.getTime() - startTime.getTime() - mGroupShopDetailsEntity.getSecond() * 1000);

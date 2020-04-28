@@ -159,7 +159,7 @@ public class QualityTypeProductActivity extends BaseActivity {
             couponId = intent.getStringExtra("couponId");
         }
         if (categoryId < 1) {
-            showToast(this, R.string.miss_parameters_hint);
+            showToast(R.string.miss_parameters_hint);
             return;
         }
         ctb_qt_tab_product_type.setIndicatorWidth((int) (AutoSizeUtils.mm2px(mAppContext, 32) * 4.5));
@@ -479,7 +479,9 @@ public class QualityTypeProductActivity extends BaseActivity {
      */
     private void getSortType() {
         if (sortTypeList.size() < 1) {
-            NetLoadUtils.getNetInstance().loadNetDataPost(QualityTypeProductActivity.this, Q_SORT_TYPE,
+            Map<String, String> map = new HashMap<>();
+            map.put("version", "1");
+            NetLoadUtils.getNetInstance().loadNetDataPost(QualityTypeProductActivity.this, Q_SORT_TYPE, map,
                     new NetLoadListenerHelper() {
                         @Override
                         public void onSuccess(String result) {
@@ -504,7 +506,7 @@ public class QualityTypeProductActivity extends BaseActivity {
                                             sortTypeList.set(0, qualityType);
                                             sortType = getStringChangeIntegers(sortTypeList.get(0).getSortType());
                                             sortTypeName = getStrings(sortTypeList.get(0).getSortName());
-//                                    获取子类
+                                            //获取子类
                                             getChildrenType();
                                         }
                                     }
@@ -517,14 +519,10 @@ public class QualityTypeProductActivity extends BaseActivity {
                             setEmptyErrorException();
                         }
 
-                        @Override
-                        public void netClose() {
-                            showToast(QualityTypeProductActivity.this, R.string.unConnectedNetwork);
-                        }
 
                         @Override
                         public void onError(Throwable throwable) {
-                            showToast(QualityTypeProductActivity.this, R.string.request_json_data_error);
+                            showToast(R.string.request_json_data_error);
                         }
                     });
         } else {
@@ -568,13 +566,8 @@ public class QualityTypeProductActivity extends BaseActivity {
             }
 
             @Override
-            public void netClose() {
-                showToast(QualityTypeProductActivity.this, R.string.unConnectedNetwork);
-            }
-
-            @Override
             public void onError(Throwable throwable) {
-                showToast(QualityTypeProductActivity.this, R.string.request_json_data_error);
+                showToast(R.string.request_json_data_error);
             }
         });
     }
@@ -615,7 +608,7 @@ public class QualityTypeProductActivity extends BaseActivity {
                             } else {
                                 qualityTypeProductAdapter.loadMoreEnd();
                                 if (!EMPTY_CODE.equals(likedProductEntity.getCode())) {
-                                    showToast(QualityTypeProductActivity.this, likedProductEntity.getMsg());
+                                    showToast(likedProductEntity.getMsg());
                                 }
                             }
                             if (page == 1) {
@@ -632,11 +625,6 @@ public class QualityTypeProductActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void netClose() {
-                        showToast(QualityTypeProductActivity.this, R.string.unConnectedNetwork);
-                    }
-
-                    @Override
                     public void onNotNetOrException() {
                         if (loadHud != null) {
                             loadHud.dismiss();
@@ -647,7 +635,7 @@ public class QualityTypeProductActivity extends BaseActivity {
 
                     @Override
                     public void onError(Throwable throwable) {
-                        showToast(QualityTypeProductActivity.this, R.string.invalidData);
+                        showToast(R.string.invalidData);
                     }
                 });
     }
@@ -752,13 +740,8 @@ public class QualityTypeProductActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void netClose() {
-                        showToast(QualityTypeProductActivity.this, R.string.unConnectedNetwork);
-                    }
-
-                    @Override
                     public void onError(Throwable throwable) {
-                        showToast(QualityTypeProductActivity.this, R.string.request_json_data_error);
+                        showToast(R.string.request_json_data_error);
                     }
                 });
     }

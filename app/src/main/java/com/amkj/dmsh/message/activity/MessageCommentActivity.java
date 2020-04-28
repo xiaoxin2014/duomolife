@@ -154,7 +154,7 @@ public class MessageCommentActivity extends BaseActivity {
                     break;
             }
         } else {
-            showToast(MessageCommentActivity.this, "已删除");
+            showToast("已删除");
         }
     }
 
@@ -219,7 +219,7 @@ public class MessageCommentActivity extends BaseActivity {
                             } else if (articleCommentEntity.getCode().equals(EMPTY_CODE)) {
                                 messageCommunalAdapter.loadMoreEnd();
                             } else {
-                                showToast(MessageCommentActivity.this, articleCommentEntity.getMsg());
+                                showToast( articleCommentEntity.getMsg());
                             }
                         }
                         messageCommunalAdapter.notifyDataSetChanged();
@@ -234,13 +234,8 @@ public class MessageCommentActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void netClose() {
-                        showToast(MessageCommentActivity.this, R.string.unConnectedNetwork);
-                    }
-
-                    @Override
                     public void onError(Throwable throwable) {
-                        showToast(MessageCommentActivity.this, R.string.invalidData);
+                        showToast( R.string.invalidData);
                     }
                 });
     }
@@ -285,7 +280,7 @@ public class MessageCommentActivity extends BaseActivity {
                         communalComment.setContent(comment);
                         sendComment(communalComment, messageCommentBean);
                     } else {
-                        showToast(MessageCommentActivity.this, "请正确输入内容");
+                        showToast("请正确输入内容");
                     }
                 }
             });
@@ -315,7 +310,7 @@ public class MessageCommentActivity extends BaseActivity {
             public void onSuccess() {
                 loadHud.dismiss();
                 //请求成功
-                showToast(MessageCommentActivity.this, R.string.comment_send_success);
+                showToast( R.string.comment_send_success);
                 showCommentVisible(GONE, null);
                 skipActivity(messageCommentBean);
                 tv_sendComment.setText("发送");

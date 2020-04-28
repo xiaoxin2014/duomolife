@@ -330,7 +330,7 @@ public class AttendanceFragment extends BaseFragment {
                         integrationBeanList.addAll(integrationProEntity.getIntegrationList().size() > 9
                                 ? integrationProEntity.getIntegrationList().subList(0, 9) : integrationProEntity.getIntegrationList());
                     } else if (!integrationProEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(getActivity(), integrationProEntity.getMsg());
+                        showToast(integrationProEntity.getMsg());
                     }
                 }
                 integrationRecyclerAdapter.notifyDataSetChanged();
@@ -343,12 +343,7 @@ public class AttendanceFragment extends BaseFragment {
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(getActivity(), R.string.invalidData);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(getActivity(), R.string.unConnectedNetwork);
+                showToast(R.string.invalidData);
             }
         });
     }
@@ -377,11 +372,6 @@ public class AttendanceFragment extends BaseFragment {
                     public void onNotNetOrException() {
                         smart_communal_refresh.finishRefresh();
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, attendanceDetailEntity);
-                    }
-
-                    @Override
-                    public void netClose() {
-                        showToast(getActivity(), R.string.unConnectedNetwork);
                     }
                 });
     }
@@ -559,7 +549,7 @@ public class AttendanceFragment extends BaseFragment {
                                 .build();
                         alertDialogHelper.show();
                     } else {
-                        showToast(getActivity(), attendanceDetailEntity.getMsg());
+                        showToast(attendanceDetailEntity.getMsg());
                     }
                 }
             }
@@ -569,11 +559,6 @@ public class AttendanceFragment extends BaseFragment {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-            }
-
-            @Override
-            public void netClose() {
-                showToast(getActivity(), R.string.unConnectedNetwork);
             }
         });
     }
@@ -695,12 +680,12 @@ public class AttendanceFragment extends BaseFragment {
                                 if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                                     textView.setSelected(requestStatus.isSign());
                                     if (requestStatus.isSign()) {
-                                        showToast(getActivity(), "设置提醒成功");
+                                        showToast("设置提醒成功");
                                     } else {
-                                        showToast(getActivity(), "已关闭签到提醒");
+                                        showToast("已关闭签到提醒");
                                     }
                                 } else {
-                                    showToastRequestMsg(getActivity(), requestStatus);
+                                    showToastRequestMsg(requestStatus);
                                 }
                                 textView.setEnabled(true);
                             }
@@ -805,7 +790,7 @@ public class AttendanceFragment extends BaseFragment {
                     Gson gson = new Gson();
                     RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                     if (requestStatus != null) {
-                        showToastRequestMsg(getActivity(), requestStatus);
+                        showToastRequestMsg(requestStatus);
                     }
                 }
 
@@ -969,7 +954,8 @@ public class AttendanceFragment extends BaseFragment {
                     , "http://image.domolife.cn/lottery_share.png"
                     , "送你100元多么生活现金券，领取了我也有奖励哈哈~"
                     , "多么生活精选全球好物，买对就是省钱~新人特价专享1折起！"
-                    , Url.BASE_SHARE_PAGE_TWO + "m/template/home/inviteNewbie.html?shareid=" + userId, 1);
+                    , Url.BASE_SHARE_PAGE_TWO + "m/template/home/inviteNewbie.html?shareid=" + userId,
+                    "pages/new_exclusive/new_exclusive?isShare=1&shareId=" + userId, 1, -1, "1");
         }
     }
 

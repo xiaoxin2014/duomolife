@@ -1,4 +1,4 @@
-package com.amkj.dmsh.address;
+package com.amkj.dmsh.utils;
 
 import android.content.res.AssetManager;
 import android.text.TextUtils;
@@ -7,7 +7,6 @@ import com.amkj.dmsh.address.bean.AddressInfo;
 import com.amkj.dmsh.address.bean.CityModel;
 import com.amkj.dmsh.address.bean.DistrictModel;
 import com.amkj.dmsh.address.bean.ProvinceModel;
-import com.amkj.dmsh.utils.FileStreamUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;

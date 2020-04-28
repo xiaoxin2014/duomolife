@@ -114,7 +114,7 @@ public class MessageLikedActivity extends BaseActivity {
                                     break;
                             }
                         } else {
-                            showToast(MessageLikedActivity.this, "已删除");
+                            showToast("已删除");
                         }
                         break;
                     case R.id.tv_follow:
@@ -181,7 +181,7 @@ public class MessageLikedActivity extends BaseActivity {
                             } else if (articleCommentEntity.getCode().equals(EMPTY_CODE)) {
                                 messageCommunalAdapter.loadMoreEnd();
                             } else {
-                                showToast(MessageLikedActivity.this, articleCommentEntity.getMsg());
+                                showToast( articleCommentEntity.getMsg());
                             }
                         }
                         messageCommunalAdapter.notifyDataSetChanged();
@@ -196,13 +196,8 @@ public class MessageLikedActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void netClose() {
-                        showToast(MessageLikedActivity.this, R.string.unConnectedNetwork);
-                    }
-
-                    @Override
                     public void onError(Throwable throwable) {
-                        showToast(MessageLikedActivity.this, R.string.invalidData);
+                        showToast( R.string.invalidData);
                     }
                 });
     }

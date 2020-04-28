@@ -14,6 +14,7 @@ import java.util.List;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.utils.TimeUtils.getCurrentTime;
+import static com.amkj.dmsh.utils.TimeUtils.getTimeDifference;
 import static com.amkj.dmsh.utils.TimeUtils.getTimeDifferenceText;
 import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTime;
 
@@ -55,7 +56,7 @@ public class QualityGroupShopAdapter extends BaseMultiItemQuickAdapter<QualityGr
         //未结束
         if (!isEndOrStartTime(currentTime, qualityGroupBean.getEndTime())) {
             timeStatus = "距结束:";
-            timeDifferent = getTimeDifferenceText(qualityGroupBean.getEndTime(), currentTime);
+            timeDifferent = getTimeDifferenceText(getTimeDifference(qualityGroupBean.getEndTime(), currentTime));
         } else {
             timeStatus = "已结束";
         }

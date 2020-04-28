@@ -204,7 +204,7 @@ public class QualityGroupShopFragment extends BaseFragment {
                             } else if (qualityGroupEntity.getCode().equals(EMPTY_CODE)) {
                                 qualityGroupShopAdapter.loadMoreEnd();
                             } else {
-                                showToast(getActivity(), qualityGroupEntity.getMsg());
+                                showToast(qualityGroupEntity.getMsg());
                             }
                         }
 

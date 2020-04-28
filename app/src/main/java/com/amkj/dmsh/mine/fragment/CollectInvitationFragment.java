@@ -197,12 +197,7 @@ public class CollectInvitationFragment extends BaseFragment {
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(getActivity(), String.format(getResources().getString(R.string.collect_failed), "文章"));
-            }
-
-            @Override
-            public void netClose() {
-                showToast(getActivity(), R.string.unConnectedNetwork);
+                showToast( String.format(getResources().getString(R.string.collect_failed), "文章"));
             }
         });
     }
@@ -255,7 +250,7 @@ public class CollectInvitationFragment extends BaseFragment {
                     if (invitationDetailEntity.getCode().equals(SUCCESS_CODE)) {
                         invitationDetailList.addAll(invitationDetailEntity.getInvitationSearchList());
                     } else if (!invitationDetailEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(getActivity(), invitationDetailEntity.getMsg());
+                        showToast( invitationDetailEntity.getMsg());
                     } else {
                         adapterInvitationAdapter.loadMoreEnd();
                     }
@@ -272,13 +267,8 @@ public class CollectInvitationFragment extends BaseFragment {
             }
 
             @Override
-            public void netClose() {
-                showToast(mAppContext, R.string.unConnectedNetwork);
-            }
-
-            @Override
             public void onError(Throwable throwable) {
-                showToast(mAppContext, R.string.invalidData);
+                showToast( R.string.invalidData);
             }
         });
     }

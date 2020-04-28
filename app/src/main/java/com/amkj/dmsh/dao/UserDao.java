@@ -58,7 +58,7 @@ public class UserDao {
      * @param otherAccountBindInfo 不为空时表示是三方登录
      */
     public static void loginSuccessSetData(Activity context, LoginDataEntity loginDataEntity, OtherAccountBindInfo otherAccountBindInfo) {
-        showToast(context, R.string.login_success);
+        showToast(R.string.login_success);
         //保存个人信息到本地
         LoginDataBean loginDataBean = loginDataEntity.getLoginDataBean();
         SavePersonalInfoBean savePersonalInfo = new SavePersonalInfoBean();
@@ -178,7 +178,7 @@ public class UserDao {
                 //清除本地登录信息
                 savePersonalInfoCache(activity, null);
                 if (isHandOperation) {
-                    showToast(activity, "退出登录成功");
+                    showToast("退出登录成功");
                     dismissLoadhud(activity);
                     activity.finish();
                 }
@@ -187,7 +187,7 @@ public class UserDao {
             @Override
             public void onNotNetOrException() {
                 if (isHandOperation) {
-                    showToast(activity, "退出登录失败 ");
+                    showToast("退出登录失败 ");
                     dismissLoadhud(activity);
                 }
             }

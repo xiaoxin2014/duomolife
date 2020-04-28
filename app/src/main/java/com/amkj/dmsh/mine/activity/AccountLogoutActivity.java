@@ -229,7 +229,7 @@ public class AccountLogoutActivity extends BaseActivity {
                 if (logoutAccountResultEntity != null) {
                     setLogoutResult(logoutAccountResultEntity);
                 } else {
-                    showToast(AccountLogoutActivity.this, "注销失败,请重试！");
+                    showToast("注销失败,请重试！");
                 }
             }
 
@@ -238,7 +238,7 @@ public class AccountLogoutActivity extends BaseActivity {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                showToast(AccountLogoutActivity.this, "注销失败,请重试！");
+                showToast("注销失败,请重试！");
             }
         });
     }
@@ -337,13 +337,13 @@ public class AccountLogoutActivity extends BaseActivity {
         @OnClick(R.id.tv_account_logout_selected)
         void confirmLogoutAccount() {
             if (rpAccountLogout.getChildCount() < 1 || rpAccountLogout.getCheckedRadioButtonId() == -1) {
-                showToast(AccountLogoutActivity.this, "请选择注销原因");
+                showToast("请选择注销原因");
                 return;
             }
             RadioButton radioButton = rpAccountLogout.findViewById(rpAccountLogout.getCheckedRadioButtonId());
             AccountLogoutReasonBean accountLogoutReasonBean = (AccountLogoutReasonBean) radioButton.getTag();
             if (accountLogoutReasonBean == null) {
-                showToast(AccountLogoutActivity.this, "数据异常，请退出重试!");
+                showToast("数据异常，请退出重试!");
                 return;
             }
             if (logoutReasonList != null &&
@@ -351,7 +351,7 @@ public class AccountLogoutActivity extends BaseActivity {
                     logoutReasonList.indexOf(accountLogoutReasonBean) == logoutReasonList.size() - 1) {
                 String otherReason = selectionReasonHelper.evAccountLogoutReason.getText().toString().trim();
                 if (TextUtils.isEmpty(otherReason)) {
-                    showToast(AccountLogoutActivity.this, "请输入注销原因，方便以后更好的为你服务!");
+                    showToast("请输入注销原因，方便以后更好的为你服务!");
                     return;
                 }
                 accountLogoutReasonBean.setContent(otherReason);

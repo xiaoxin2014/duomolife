@@ -362,7 +362,7 @@ public class SpringSaleFragment extends BaseFragment {
                                     }
                                 } else {
                                     springSaleRecyclerAdapter.loadMoreEnd();
-                                    showToast(getActivity(), timeForeShowEntity.getMsg());
+                                    showToast(timeForeShowEntity.getMsg());
                                 }
                             }
                             springSaleRecyclerAdapter.notifyDataSetChanged();
@@ -378,13 +378,8 @@ public class SpringSaleFragment extends BaseFragment {
                     }
 
                     @Override
-                    public void netClose() {
-                        showToast(getActivity(), R.string.unConnectedNetwork);
-                    }
-
-                    @Override
                     public void onError(Throwable throwable) {
-                        showToast(getActivity(), R.string.unConnectedNetwork);
+                        showToast( R.string.unConnectedNetwork);
                     }
                 });
     }

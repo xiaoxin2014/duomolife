@@ -14,11 +14,6 @@ public class NetLoadListenerHelper implements NetLoadListener {
     }
 
     @Override
-    public void netClose() {
-
-    }
-
-    @Override
     public void onError(Throwable throwable) {
 
     }

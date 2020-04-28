@@ -197,7 +197,7 @@ public class MineCollectProductActivity extends BaseActivity {
     }
 
     private void getCollectPro() {
-        if(userId<1){
+        if (userId < 1) {
             return;
         }
         Map<String, Object> params = new HashMap<>();
@@ -220,8 +220,8 @@ public class MineCollectProductActivity extends BaseActivity {
                         tv_header_titleAll.setText("收藏商品(" + collectProEntity.getCount() + ")");
                     } else if (collectProEntity.getCode().equals(EMPTY_CODE)) {
                         mineCollectProAdapter.loadMoreEnd();
-                    }else{
-                        showToast(MineCollectProductActivity.this, collectProEntity.getMsg());
+                    } else {
+                        showToast(collectProEntity.getMsg());
                     }
                     mineCollectProAdapter.notifyDataSetChanged();
                 }
@@ -328,7 +328,7 @@ public class MineCollectProductActivity extends BaseActivity {
             }
             delGoodsDialogHelper.show();
         } else {
-            showToast(this, "请选择你要删除的商品");
+            showToast("请选择你要删除的商品");
         }
     }
 
@@ -344,7 +344,7 @@ public class MineCollectProductActivity extends BaseActivity {
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
         params.put("ids", getCancelProId(collectProList));
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,CANCEL_MULTI_COLLECT_PRO,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, CANCEL_MULTI_COLLECT_PRO, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -354,11 +354,11 @@ public class MineCollectProductActivity extends BaseActivity {
                 RequestStatus status = gson.fromJson(result, RequestStatus.class);
                 if (status != null) {
                     if (status.getCode().equals(SUCCESS_CODE)) {
-                        showToast(MineCollectProductActivity.this, "已取消收藏");
+                        showToast("已取消收藏");
                         page = 1;
                         loadData();
                     } else {
-                        showToastRequestMsg(MineCollectProductActivity.this, status);
+                        showToastRequestMsg(status);
                     }
                 }
             }
@@ -372,12 +372,7 @@ public class MineCollectProductActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(MineCollectProductActivity.this, R.string.do_failed);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(MineCollectProductActivity.this, R.string.unConnectedNetwork);
+                showToast(R.string.do_failed);
             }
         });
     }

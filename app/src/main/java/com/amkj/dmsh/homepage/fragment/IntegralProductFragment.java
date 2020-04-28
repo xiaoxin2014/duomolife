@@ -109,7 +109,7 @@ public class IntegralProductFragment extends BaseFragment {
                             if (integrationProEntity.getCode().equals(SUCCESS_CODE)) {
                                 integrationBeanList.addAll(integrationProEntity.getIntegrationList());
                             } else if (!integrationProEntity.getCode().equals(EMPTY_CODE)) {
-                                showToast(getActivity(), integrationProEntity.getMsg());
+                                showToast(integrationProEntity.getMsg());
                             } else {
                                 integralProductAdapter.loadMoreEnd();
                             }
@@ -126,13 +126,8 @@ public class IntegralProductFragment extends BaseFragment {
                     }
 
                     @Override
-                    public void netClose() {
-                        showToast(getActivity(), R.string.unConnectedNetwork);
-                    }
-
-                    @Override
                     public void onError(Throwable throwable) {
-                        showToast(getActivity(), R.string.invalidData);
+                        showToast( R.string.invalidData);
                     }
                 });
     }

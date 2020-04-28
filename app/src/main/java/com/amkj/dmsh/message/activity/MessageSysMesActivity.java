@@ -214,7 +214,7 @@ public class MessageSysMesActivity extends BaseActivity {
                             } else if (messageOfficialEntity.getCode().equals(EMPTY_CODE)) {
                                 messageNotifyAdapter.loadMoreEnd();
                             } else {
-                                showToast(MessageSysMesActivity.this, messageOfficialEntity.getMsg());
+                                showToast( messageOfficialEntity.getMsg());
                             }
                         }
                         messageNotifyAdapter.notifyDataSetChanged();
@@ -229,13 +229,8 @@ public class MessageSysMesActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void netClose() {
-                        showToast(MessageSysMesActivity.this, R.string.unConnectedNetwork);
-                    }
-
-                    @Override
                     public void onError(Throwable throwable) {
-                        showToast(MessageSysMesActivity.this, R.string.invalidData);
+                        showToast( R.string.invalidData);
                     }
                 });
     }

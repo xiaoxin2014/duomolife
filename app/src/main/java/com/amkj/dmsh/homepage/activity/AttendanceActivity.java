@@ -260,7 +260,7 @@ public class AttendanceActivity extends BaseActivity {
      * 夺宝规则
      */
     private void getLotteryRule() {
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,H_ATTENDANCE_INTEGRAL_LOTTERY_RULE,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, H_ATTENDANCE_INTEGRAL_LOTTERY_RULE, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -286,7 +286,7 @@ public class AttendanceActivity extends BaseActivity {
      * 积分规则
      */
     private void getIntegralRule() {
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,H_ATTENDANCE_RULE,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, H_ATTENDANCE_RULE, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -314,7 +314,7 @@ public class AttendanceActivity extends BaseActivity {
         params.put("currentPage", 1);
 //            积分类型.-1为全部,0为纯积分,1为积分+金钱
         params.put("integralType", -1);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,H_INTEGRAL_PRODUCT_FILTRATE,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, H_INTEGRAL_PRODUCT_FILTRATE, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -328,7 +328,7 @@ public class AttendanceActivity extends BaseActivity {
                         integrationBeanList.addAll(integrationProEntity.getIntegrationList().size() > 9
                                 ? integrationProEntity.getIntegrationList().subList(0, 9) : integrationProEntity.getIntegrationList());
                     } else if (!integrationProEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(AttendanceActivity.this, integrationProEntity.getMsg());
+                        showToast(integrationProEntity.getMsg());
                     }
                 }
                 integrationRecyclerAdapter.notifyDataSetChanged();
@@ -341,12 +341,7 @@ public class AttendanceActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(AttendanceActivity.this, R.string.invalidData);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(AttendanceActivity.this, R.string.unConnectedNetwork);
+                showToast(R.string.invalidData);
             }
         });
     }
@@ -376,11 +371,6 @@ public class AttendanceActivity extends BaseActivity {
                     public void onNotNetOrException() {
                         smart_communal_refresh.finishRefresh();
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, attendanceDetailEntity);
-                    }
-
-                    @Override
-                    public void netClose() {
-                        showToast(AttendanceActivity.this, R.string.unConnectedNetwork);
                     }
                 });
     }
@@ -461,7 +451,7 @@ public class AttendanceActivity extends BaseActivity {
     private void getIntegralLottery() {
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,H_ATTENDANCE_INTEGRAL_LOTTERY,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, H_ATTENDANCE_INTEGRAL_LOTTERY, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -511,7 +501,7 @@ public class AttendanceActivity extends BaseActivity {
         }
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,H_ATTENDANCE,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, H_ATTENDANCE, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -558,7 +548,7 @@ public class AttendanceActivity extends BaseActivity {
                                 .build();
                         alertDialogHelper.show();
                     } else {
-                        showToast(AttendanceActivity.this, attendanceDetailEntity.getMsg());
+                        showToast(attendanceDetailEntity.getMsg());
                     }
                 }
             }
@@ -569,11 +559,6 @@ public class AttendanceActivity extends BaseActivity {
                     loadHud.dismiss();
                 }
             }
-
-            @Override
-            public void netClose() {
-                showToast(AttendanceActivity.this, R.string.unConnectedNetwork);
-            }
         });
     }
 
@@ -581,7 +566,7 @@ public class AttendanceActivity extends BaseActivity {
      * 更多积分
      */
     private void getRegionActivity() {
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,H_ATTENDANCE_MORE_ACTIVITY,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, H_ATTENDANCE_MORE_ACTIVITY, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Gson gson = new Gson();
@@ -625,7 +610,7 @@ public class AttendanceActivity extends BaseActivity {
         if (userId > 0) {
             params.put("uid", userId);
         }
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,Q_CUSTOM_PRO_LIST,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_CUSTOM_PRO_LIST, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 doubleIntegrationList.clear();
@@ -681,38 +666,38 @@ public class AttendanceActivity extends BaseActivity {
             textView.setEnabled(false);
             Map<String, Object> params = new HashMap<>();
             params.put("uid", userId);
-            NetLoadUtils.getNetInstance().loadNetDataPost(AttendanceActivity.this,H_ATTENDANCE_WARM,
-                    params,new NetLoadListenerHelper(){
-                @Override
-                public void onSuccess(String result) {
-                    if (loadHud != null) {
-                        loadHud.dismiss();
-                    }
-                    Gson gson = new Gson();
-                    RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
-                    if (requestStatus != null) {
-                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                            textView.setSelected(requestStatus.isSign());
-                            if (requestStatus.isSign()) {
-                                showToast(AttendanceActivity.this, "设置提醒成功");
-                            } else {
-                                showToast(AttendanceActivity.this, "已关闭签到提醒");
+            NetLoadUtils.getNetInstance().loadNetDataPost(AttendanceActivity.this, H_ATTENDANCE_WARM,
+                    params, new NetLoadListenerHelper() {
+                        @Override
+                        public void onSuccess(String result) {
+                            if (loadHud != null) {
+                                loadHud.dismiss();
                             }
-                        } else {
-                            showToastRequestMsg(AttendanceActivity.this, requestStatus);
+                            Gson gson = new Gson();
+                            RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+                            if (requestStatus != null) {
+                                if (requestStatus.getCode().equals(SUCCESS_CODE)) {
+                                    textView.setSelected(requestStatus.isSign());
+                                    if (requestStatus.isSign()) {
+                                        showToast("设置提醒成功");
+                                    } else {
+                                        showToast("已关闭签到提醒");
+                                    }
+                                } else {
+                                    showToastRequestMsg(requestStatus);
+                                }
+                                textView.setEnabled(true);
+                            }
                         }
-                        textView.setEnabled(true);
-                    }
-                }
 
-                @Override
-                public void onNotNetOrException() {
-                    if (loadHud != null) {
-                        loadHud.dismiss();
-                    }
-                    textView.setEnabled(true);
-                }
-            });
+                        @Override
+                        public void onNotNetOrException() {
+                            if (loadHud != null) {
+                                loadHud.dismiss();
+                            }
+                            textView.setEnabled(true);
+                        }
+                    });
         }
 
         /**
@@ -795,7 +780,7 @@ public class AttendanceActivity extends BaseActivity {
             }
             Map<String, Object> params = new HashMap<>();
             params.put("uid", userId);
-            NetLoadUtils.getNetInstance().loadNetDataPost(AttendanceActivity.this,H_ATTENDANCE_AWARD,params,new NetLoadListenerHelper(){
+            NetLoadUtils.getNetInstance().loadNetDataPost(AttendanceActivity.this, H_ATTENDANCE_AWARD, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     if (loadHud != null) {
@@ -804,7 +789,7 @@ public class AttendanceActivity extends BaseActivity {
                     Gson gson = new Gson();
                     RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                     if (requestStatus != null) {
-                        showToastRequestMsg(AttendanceActivity.this, requestStatus);
+                        showToastRequestMsg(requestStatus);
                     }
                 }
 
@@ -828,16 +813,16 @@ public class AttendanceActivity extends BaseActivity {
         public void initViews() {
             rvp_integral_lottery.setLayoutManager(new LinearLayoutManager(AttendanceActivity.this, LinearLayoutManager.HORIZONTAL, false));
             constantMethod = new ConstantMethod();
-            integralLotteryAdapter = new IntegralLotteryAdapter(AttendanceActivity.this,constantMethod, integralLotteryList);
+            integralLotteryAdapter = new IntegralLotteryAdapter(AttendanceActivity.this, constantMethod, integralLotteryList);
             rvp_integral_lottery.setAdapter(integralLotteryAdapter);
             integralLotteryAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
                 @Override
                 public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                    if(view.getId() == R.id.rel_integral_lottery_product){
+                    if (view.getId() == R.id.rel_integral_lottery_product) {
                         PreviousInfoBean previousInfoBean = (PreviousInfoBean) view.getTag();
-                        if(previousInfoBean!=null&& !isEmptyStrings(previousInfoBean.getProductId())){
-                            Intent intent = new Intent(AttendanceActivity.this,ShopScrollDetailsActivity.class);
-                            intent.putExtra("productId",previousInfoBean.getProductId());
+                        if (previousInfoBean != null && !isEmptyStrings(previousInfoBean.getProductId())) {
+                            Intent intent = new Intent(AttendanceActivity.this, ShopScrollDetailsActivity.class);
+                            intent.putExtra("productId", previousInfoBean.getProductId());
                             startActivity(intent);
                         }
                     }
@@ -924,7 +909,8 @@ public class AttendanceActivity extends BaseActivity {
                     , "http://image.domolife.cn/lottery_share.png"
                     , "送你100元多么生活现金券，领取了我也有奖励哈哈~"
                     , "多么生活精选全球好物，买对就是省钱~新人特价专享1折起！"
-                    , Url.BASE_SHARE_PAGE_TWO + "m/template/home/inviteNewbie.html?shareid=" + userId,1);
+                    , Url.BASE_SHARE_PAGE_TWO + "m/template/home/inviteNewbie.html?shareid=" + userId,
+                    "pages/new_exclusive/new_exclusive?isShare=1&shareId=" + userId, 1, -1, "1");
         }
     }
 
@@ -961,7 +947,7 @@ public class AttendanceActivity extends BaseActivity {
             homeImgActivityAdapter.setOnItemClickListener((adapter, view, position) -> {
                 CommunalADActivityBean communalADActivityBean = (CommunalADActivityBean) view.getTag();
                 if (communalADActivityBean != null) {
-                    AddClickDao.adClickTotal(getActivity(), communalADActivityBean.getAndroidLink(),communalADActivityBean.getId(),false);
+                    AddClickDao.adClickTotal(getActivity(), communalADActivityBean.getAndroidLink(), communalADActivityBean.getId(), false);
                 }
             });
         }
@@ -1016,7 +1002,7 @@ public class AttendanceActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(constantMethod!=null){
+        if (constantMethod != null) {
             constantMethod.stopSchedule();
             constantMethod.releaseHandlers();
         }

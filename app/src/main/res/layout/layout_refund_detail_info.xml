@@ -8,16 +8,16 @@
     android:showDividers="beginning">
 
     <LinearLayout
-        android:showDividers="middle"
-        android:divider="@drawable/shap_middle_divider_20px"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/border_bottom_gray_ten_line"
+        android:divider="@drawable/shap_middle_divider_20px"
         android:orientation="vertical"
         android:paddingLeft="@dimen/sc_mm_28"
         android:paddingTop="@dimen/sc_mm_35"
         android:paddingRight="@dimen/sc_mm_28"
         android:paddingBottom="@dimen/sc_mm_60"
+        android:showDividers="middle"
         tools:ignore="UselessParent">
 
         <LinearLayout
@@ -153,6 +153,44 @@
                 android:text="@string/defaul"
                 android:textColor="@color/text_login_gray_s"
                 android:textSize="@dimen/sc_mm_28" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_indent_order_no"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="订单编号"
+                android:textColor="@color/text_login_gray_s"
+                android:textSize="@dimen/sc_mm_28" />
+
+            <TextView
+                android:id="@+id/tv_indent_order_no"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/sc_mm_37"
+                android:layout_marginRight="@dimen/sc_mm_24"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:lines="1"
+                android:longClickable="true"
+                android:text="@string/defaul"
+                android:textColor="@color/text_login_gray_s"
+                android:textSize="@dimen/sc_mm_28" />
+
+            <TextView
+                android:id="@+id/tv_copy_order_no"
+                android:layout_width="@dimen/sc_mm_98"
+                android:layout_height="@dimen/sc_mm_40"
+                android:background="@drawable/border_cir_1dp5_gray_white"
+                android:gravity="center"
+                android:text="复制"
+                android:textColor="@color/text_login_gray_s"
+                android:textSize="@dimen/sc_mm_26" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

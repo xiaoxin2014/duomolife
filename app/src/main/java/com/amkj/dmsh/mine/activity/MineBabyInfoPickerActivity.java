@@ -216,22 +216,17 @@ public class MineBabyInfoPickerActivity extends BaseActivity implements View.OnC
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        showToast(MineBabyInfoPickerActivity.this, String.format(getResources().getString(R.string.doSuccess), "修改"));
+                        showToast( String.format(getResources().getString(R.string.doSuccess), "修改"));
                         finish();
                     } else {
-                        showToast(MineBabyInfoPickerActivity.this, R.string.do_failed);
+                        showToast( R.string.do_failed);
                     }
                 }
             }
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(MineBabyInfoPickerActivity.this, R.string.do_failed);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(MineBabyInfoPickerActivity.this, R.string.unConnectedNetwork);
+                showToast( R.string.do_failed);
             }
         });
     }
@@ -478,15 +473,15 @@ public class MineBabyInfoPickerActivity extends BaseActivity implements View.OnC
             if (!TextUtils.isEmpty(babySex) && !TextUtils.isEmpty(babyDate)) {
                 setBabyInfo(babyDate, babySex);
             } else if (TextUtils.isEmpty(babySex)) {
-                showToast(this, String.format(getResources().getString(R.string.sel_no_not), "宝宝性别"));
+                showToast( String.format(getResources().getString(R.string.sel_no_not), "宝宝性别"));
             } else if (TextUtils.isEmpty(babyDate)) {
-                showToast(this, String.format(getResources().getString(R.string.sel_no_not), "宝宝生日"));
+                showToast(String.format(getResources().getString(R.string.sel_no_not), "宝宝生日"));
             }
         } else if (babyStatus > 1) {
             if (!TextUtils.isEmpty(babyDate)) {
                 setBabyInfo(babyDate, "");
             } else if (TextUtils.isEmpty(babyDate)) {
-                showToast(this, String.format(getResources().getString(R.string.sel_no_not), "宝宝预产期"));
+                showToast(String.format(getResources().getString(R.string.sel_no_not), "宝宝预产期"));
             }
         } else {
             setBabyInfo("", "");

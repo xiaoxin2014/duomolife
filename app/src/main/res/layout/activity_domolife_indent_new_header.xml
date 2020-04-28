@@ -24,32 +24,25 @@
             android:textColor="@color/home_text_color"
             android:textSize="@dimen/sc_mm_32" />
 
-
-        <TextView
-            android:visibility="invisible"
-            android:id="@+id/tv_indent_title"
+        <com.amkj.dmsh.views.EditTextWithClear
+            android:layout_gravity="center_vertical"
+            android:id="@+id/et_search"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="多么订单"
-            android:textColor="@color/home_text_color"
-            android:textSize="@dimen/sc_mm_32" />
-
-        <TextView
-            android:visibility="invisible"
-            android:id="@+id/tv_search"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/sc_mm_60"
+            android:layout_height="@dimen/sc_mm_66"
+            android:layout_marginLeft="@dimen/gap_left"
             android:layout_weight="1"
             android:background="@drawable/border_civ_3dp_light_gray"
-            android:drawableLeft="@drawable/quality_search"
-            android:drawablePadding="@dimen/dimen_8_dp"
-            android:gravity="center_vertical"
-            android:paddingLeft="@dimen/sc_mm_20"
-            android:text="请输入商品关键词"
-            android:textColor="@color/text_gray_hint_n"
-            android:textSize="@dimen/sc_mm_26" />
+            android:drawableLeft="@drawable/search_light_gray_icon"
+            android:drawablePadding="@dimen/dimen_5_dp"
+            android:hint="请输入商品关键词"
+            android:imeOptions="actionSearch"
+            android:singleLine="true"
+            android:textCursorDrawable="@color/text_black_t"
+            android:paddingLeft="@dimen/sc_mm_14"
+            android:paddingRight="@dimen/sc_mm_14"
+            android:textColor="@color/home_text_color"
+            android:textColorHint="@color/text_hint_gray_ae"
+            android:textSize="@dimen/sc_mm_28" />
 
         <ImageView
             android:id="@+id/iv_indent_service"

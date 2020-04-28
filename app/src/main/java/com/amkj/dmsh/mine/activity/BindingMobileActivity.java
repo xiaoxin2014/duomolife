@@ -164,7 +164,7 @@ public class BindingMobileActivity extends BaseActivity {
             reg_bind_code_gif_view.setVisibility(View.VISIBLE);
             reqSMSCode(phoneNumber);
         } else {
-            showToast(this, R.string.MobileError);
+            showToast( R.string.MobileError);
         }
     }
 
@@ -182,11 +182,11 @@ public class BindingMobileActivity extends BaseActivity {
         final String smsCode = edit_get_code.getText().toString().trim();
         phoneNumber = edit_binding_mobile.getText().toString().trim();
         if (TextUtils.isEmpty(phoneNumber) || phoneNumber.length() != 11) {
-            showToast(this, R.string.MobileError);
+            showToast( R.string.MobileError);
             return;
         }
         if (TextUtils.isEmpty(smsCode)) {
-            showToast(this, R.string.SmsCodeNull);
+            showToast(R.string.SmsCodeNull);
             return;
         }
         showLoadhud(this);
@@ -203,7 +203,7 @@ public class BindingMobileActivity extends BaseActivity {
                         setBindWxMobile();
                     } else {
                         dismissLoadhud(getActivity());
-                        showToast(getActivity(), msg);
+                        showToast( msg);
                     }
                 } else {
                     dismissLoadhud(getActivity());
@@ -241,7 +241,7 @@ public class BindingMobileActivity extends BaseActivity {
                                 RequestStatus.Result resultData = requestStatus.getResult();
                                 if (resultData != null) {
                                     if (resultData.getResultCode().equals(SUCCESS_CODE)) {
-                                        showToast(getActivity(), R.string.GetSmsCodeSuccess);
+                                        showToast( R.string.GetSmsCodeSuccess);
                                         tv_bind_send_code.setVisibility(View.VISIBLE);
                                         reg_bind_code_gif_view.setVisibility(View.GONE);
                                         if (countDownHelper == null) {
@@ -287,7 +287,7 @@ public class BindingMobileActivity extends BaseActivity {
                     String code = loginDataEntity.getCode();
                     LoginDataEntity.LoginDataBean loginDataBean = loginDataEntity.getLoginDataBean();
                     if (SUCCESS_CODE.equals(code)) {
-                        showToast(BindingMobileActivity.this, "绑定成功");
+                        showToast("绑定成功");
                         //绑定未注册手机设置密码
                         if (loginDataBean.isResetPassword()) {
                             Intent intent = new Intent(getActivity(), SettingPasswordActivity.class);

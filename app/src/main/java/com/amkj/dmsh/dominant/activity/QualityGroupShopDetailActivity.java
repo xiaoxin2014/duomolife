@@ -2,6 +2,7 @@ package com.amkj.dmsh.dominant.activity;
 
 import android.content.Intent;
 import android.graphics.Paint;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AlertDialog;
@@ -47,7 +48,6 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyProductIndentInfo;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
-import com.amkj.dmsh.shopdetails.activity.DirectIndentWriteActivity;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.adapter.DirectEvaluationAdapter;
 import com.amkj.dmsh.shopdetails.adapter.GoodsRecommendAdapter;
@@ -104,6 +104,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.INDENT_GROUP_SHOP;
 import static com.amkj.dmsh.constant.ConstantVariable.JOIN_GROUP;
 import static com.amkj.dmsh.constant.ConstantVariable.OPEN_GROUP;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
@@ -331,7 +332,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                     if (mGroupShopDetailsBean.getGpQuantity() > 0) {
                         isCanJoinGroup(groupShopJoinBean);
                     } else {
-                        showToast(getActivity(), "库存不足,请选择其他商品");
+                        showToast("库存不足,请选择其他商品");
                     }
                 }
             }
@@ -540,7 +541,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                                     getGoodsRecommend();
                                 }
                             } else {
-                                showToast(QualityGroupShopDetailActivity.this, mGroupShopDetailsEntity.getMsg());
+                                showToast(mGroupShopDetailsEntity.getMsg());
                             }
                         }
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, mGroupShopDetailsBean, mGroupShopDetailsEntity);
@@ -573,7 +574,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                     if (goodsCommentEntity.getCode().equals(SUCCESS_CODE)) {
                         goodsComments.addAll(goodsCommentEntity.getGoodsComments());
                     } else if (!goodsCommentEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(getActivity(), goodsCommentEntity.getMsg());
+                        showToast(goodsCommentEntity.getMsg());
                     }
                     tv_shop_comment_count.setText(("Ta们在说(" + goodsCommentEntity.getEvaluateCount() + ")"));
                 }
@@ -1082,9 +1083,9 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
     //跳转订单填写
     private void skipIndentWrite() {
         if (userId > 0) {
-            Intent intent = new Intent(QualityGroupShopDetailActivity.this, DirectIndentWriteActivity.class);
-            intent.putExtra("gpShopInfo", new Gson().toJson(mGroupShopDetailsBean));
-            startActivity(intent);
+            Bundle bundle = new Bundle();
+            bundle.putString("gpShopInfo", new Gson().toJson(mGroupShopDetailsBean));
+            ConstantMethod.skipIndentWrite(getActivity(), INDENT_GROUP_SHOP, bundle);
         } else {
             getLoginStatus(getActivity());
         }
@@ -1125,13 +1126,13 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                         mGroupShopDetailsBean.setGpRecordId(groupShopjoinBean.getGpRecordId());
                         buyGoItCheckStatus();
                     } else {
-                        showToastRequestMsg(QualityGroupShopDetailActivity.this, requestStatus);
+                        showToastRequestMsg(requestStatus);
                     }
                 }
 
                 @Override
                 public void onError(Throwable throwable) {
-                    showToast(QualityGroupShopDetailActivity.this, R.string.invalidData);
+                    showToast(R.string.invalidData);
                 }
             });
         } else {

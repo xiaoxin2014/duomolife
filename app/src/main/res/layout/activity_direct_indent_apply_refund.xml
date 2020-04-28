@@ -41,8 +41,7 @@
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
                         android:paddingLeft="@dimen/sc_mm_32"
-                        android:paddingRight="@dimen/sc_mm_32"
-                        android:visibility="gone">
+                        android:paddingRight="@dimen/sc_mm_32">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -132,15 +131,16 @@
                         </LinearLayout>
 
                         <TextView
+                            android:visibility="gone"
                             android:id="@+id/tv_refund_tips"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="若因您自身原因退货，已产生的运费需有您承担，若是平台原因,则会全额退回跟您，如对退回金额不明确请咨询人工客服"
                             android:textColor="@color/color_blue_reply_com"
                             android:textSize="@dimen/sc_mm_24" />
                     </LinearLayout>
 
                     <LinearLayout
+                        android:visibility="gone"
                         android:id="@+id/ll_apply_explain"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

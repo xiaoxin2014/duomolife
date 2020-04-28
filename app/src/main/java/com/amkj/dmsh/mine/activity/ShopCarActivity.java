@@ -2,6 +2,7 @@ package com.amkj.dmsh.mine.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.RequestStatus;
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.dominant.activity.QualityProductActActivity;
 import com.amkj.dmsh.dominant.adapter.GoodProductAdapter;
@@ -33,7 +35,6 @@ import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean.CartBean.CartInfoBean;
 import com.amkj.dmsh.mine.biz.ShopCarDao;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.shopdetails.activity.DirectIndentWriteActivity;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CombineGoodsBean;
 import com.amkj.dmsh.shopdetails.bean.EditGoodsSkuEntity;
@@ -79,6 +80,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.ADD_NUM;
 import static com.amkj.dmsh.constant.ConstantVariable.CHANGE_SKU;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.INDENT_W_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.REDUCE_NUM;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_EIGHTY;
@@ -232,12 +234,12 @@ public class ShopCarActivity extends BaseActivity {
                         int quantity = cartInfoBean.getSaleSku().getQuantity();
                         if (newNum <= quantity) {
                             if (cartInfoBean.isMainProduct() || cartInfoBean.isCombineProduct()) {
-                                showToast(this, "组合商品无法修改数量");
+                                showToast("组合商品无法修改数量");
                             } else {
                                 changeGoods(null, newNum, ADD_NUM, cartInfoBean);
                             }
                         } else {
-                            showToast(this, R.string.product_sell_out);
+                            showToast( R.string.product_sell_out);
                         }
                     }
                     break;
@@ -248,12 +250,12 @@ public class ShopCarActivity extends BaseActivity {
                     if (cartInfoBean.isValid()) {
                         if (newNum > 0) {
                             if (cartInfoBean.isMainProduct() || cartInfoBean.isCombineProduct()) {
-                                showToast(this, "组合商品无法修改数量");
+                                showToast("组合商品无法修改数量");
                             } else {
                                 changeGoods(null, newNum, REDUCE_NUM, cartInfoBean);
                             }
                         } else {
-                            showToast(this, R.string.product_small_count);
+                            showToast(R.string.product_small_count);
                         }
                     }
                     break;
@@ -404,7 +406,7 @@ public class ShopCarActivity extends BaseActivity {
                             } else {
                                 shopCarGoodsAdapter.loadMoreFail();
                                 getCartRecommend();
-                                showToast(ShopCarActivity.this, mShopCarNewInfoEntity.getMsg());
+                                showToast(mShopCarNewInfoEntity.getMsg());
                             }
                         } else {
                             shopCarGoodsAdapter.loadMoreFail();
@@ -516,7 +518,7 @@ public class ShopCarActivity extends BaseActivity {
 
     //本地计算结算金额
     private void updateLocalPrice() {
-        showToast(ShopCarActivity.this, R.string.refrence_only);
+        showToast(R.string.refrence_only);
         String[] shoppingInfo = ShopCarDao.getShoppingCount(shopGoodsList);
         tv_settlement_dis_car_price.setVisibility(View.GONE);
         tv_cart_buy_orCount.setText(("去结算(" + shoppingInfo[0] + ")")); //结算商品件数
@@ -545,17 +547,18 @@ public class ShopCarActivity extends BaseActivity {
                 List<CartInfoBean> settlementGoods = ShopCarDao.getSettlementGoods(shopGoodsList);
                 List<CombineGoodsBean> combineGoods = ShopCarDao.getCombineGoods(shopGoodsList);
                 //结算商品 跳转订单填写
-                Intent intent = new Intent(ShopCarActivity.this, DirectIndentWriteActivity.class);
                 if (settlementGoods.size() > 0 || combineGoods.size() > 0) {
+                    Bundle bundle = new Bundle();
                     if (settlementGoods.size() > 0) {
-                        intent.putExtra("goods", new Gson().toJson(settlementGoods));
+                        bundle.putString("goods", new Gson().toJson(settlementGoods));
                     }
+
                     if (combineGoods.size() > 0) {
-                        intent.putExtra("combineGoods", new Gson().toJson(combineGoods));
+                        bundle.putString("combineGoods", new Gson().toJson(combineGoods));
                     }
-                    startActivity(intent);
+                    ConstantMethod.skipIndentWrite(getActivity(), INDENT_W_TYPE, bundle);
                 } else {
-                    showToast(this, "请先选择商品");
+                    showToast("请先选择商品");
                 }
                 break;
             //点击编辑或者完成
@@ -619,7 +622,7 @@ public class ShopCarActivity extends BaseActivity {
             }
             alertDialogHelper.show();
         } else {
-            showToast(this, "请选择你要删除的商品");
+            showToast("请选择你要删除的商品");
         }
     }
 
@@ -643,7 +646,7 @@ public class ShopCarActivity extends BaseActivity {
                             getSettlePrice(null, activityList, true);
                         } else {
                             loadHud.dismiss();
-                            showToastRequestMsg(ShopCarActivity.this, status);
+                            showToastRequestMsg(status);
                         }
                     }
 
@@ -672,7 +675,7 @@ public class ShopCarActivity extends BaseActivity {
                             textView.setSelected(false);
                         }
                     } else {
-                        showToast(ShopCarActivity.this, editGoodsSkuEmpty.getMsg());
+                        showToast(editGoodsSkuEmpty.getMsg());
                     }
                 }
             }
@@ -754,7 +757,7 @@ public class ShopCarActivity extends BaseActivity {
 
                 } else {
                     loadHud.dismiss();
-                    showToastRequestMsg(ShopCarActivity.this, status);
+                    showToastRequestMsg(status);
                 }
             }
 

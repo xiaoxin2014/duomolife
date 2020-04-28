@@ -78,7 +78,7 @@ public class IntegralLotteryAwardPersonActivity extends BaseActivity {
                         intent.putExtra("userId", String.valueOf(winListBean.getUid()));
                         startActivity(intent);
                     }else{
-                        showToast(IntegralLotteryAwardPersonActivity.this,"恭喜你，已中奖");
+                        showToast("恭喜你，已中奖");
                     }
                 }
             }

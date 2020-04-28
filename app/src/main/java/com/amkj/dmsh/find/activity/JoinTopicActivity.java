@@ -27,6 +27,7 @@ import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.find.bean.EventMessageBean;
+import com.amkj.dmsh.find.bean.TopicDetailEntity;
 import com.amkj.dmsh.homepage.bean.ScoreGoodsEntity.ScoreGoodsBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
@@ -69,6 +70,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_ADD_IMG;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.GET_EVALUATE_TIP;
 import static com.amkj.dmsh.constant.Url.PUBLISH_POST_ANDE_VALUATE;
 import static com.amkj.dmsh.release.tutu.CameraComponentSample.DEFAULT_PATH;
 import static com.amkj.dmsh.utils.ImageFormatUtils.getImageFormatInstance;
@@ -150,13 +152,9 @@ public class JoinTopicActivity extends BaseActivity {
                     mTvTopicName.setVisibility(View.VISIBLE);
                 }
             } else if (scoreGoodsBean != null) {//商品晒单
-                String maxRewardTip = intent.getStringExtra("maxRewardTip");
                 //商品晒单（发布帖子并评价）
                 GlideImageLoaderUtil.loadImage(this, mIvCover, scoreGoodsBean.getCover());
                 mTvGoodsName.setText(getStrings(scoreGoodsBean.getProductName()));
-                //最高奖励
-                mTvMaxReward.setVisibility(!TextUtils.isEmpty(maxRewardTip) ? View.VISIBLE : View.GONE);
-                mTvMaxReward.setText(getStrings(maxRewardTip));
                 mRlScoreGoods.setVisibility(View.VISIBLE);
                 mLlRatingbar.setVisibility(View.VISIBLE);
             } else {
@@ -336,6 +334,27 @@ public class JoinTopicActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
+        //订单列表直接跳转到点评界面时，调用此接口获取编辑框提示和奖励提示
+        if (TextUtils.isEmpty(topicId)) {
+            Map<String, Object> params = new HashMap<>();
+            NetLoadUtils.getNetInstance().loadNetDataPost(this, GET_EVALUATE_TIP, params, new NetLoadListenerHelper() {
+                @Override
+                public void onSuccess(String result) {
+                    TopicDetailEntity topicDetailEntity = new Gson().fromJson(result, TopicDetailEntity.class);
+                    if (topicDetailEntity != null) {
+                        if (topicDetailEntity.getCode().equals(SUCCESS_CODE)) {
+                            //编辑框提示
+                            mEtInput.setHint(getStrings(topicDetailEntity.getReminder()));
+                            //奖励提示
+                            mTvScoreTips.setVisibility(!TextUtils.isEmpty(topicDetailEntity.getRewardTip()) ? View.VISIBLE : View.GONE);
+                            mTvScoreTips.setText(getStrings(topicDetailEntity.getRewardTip()));
+                            mTvMaxReward.setText(getStrings(topicDetailEntity.getMaxRewardTip()));
+                            mTvMaxReward.setVisibility(!TextUtils.isEmpty(topicDetailEntity.getMaxRewardTip()) ? View.VISIBLE : View.GONE);
+                        }
+                    }
+                }
+            });
+        }
     }
 
 
@@ -389,11 +408,15 @@ public class JoinTopicActivity extends BaseActivity {
                             //通知话题详情帖子列表刷新
                             String type = getIntent().getStringExtra("type");
                             EventBus.getDefault().post(new EventMessage(ConstantVariable.UPDATE_POST_CONTENT, new EventMessageBean(TopicDetailActivity.class.getSimpleName(), type)));
-                            showToast(getActivity(), "发布成功!" + (requestStatus.getScore() > 0 ? getIntegralFormat(getActivity(), R.string.post_pass_get_score, requestStatus.getScore()) : ""));
+                            showToast("发布成功!" + (requestStatus.getScore() > 0 ? getIntegralFormat(getActivity(), R.string.post_pass_get_score, requestStatus.getScore()) : ""));
                             finish();
                         } else {
                             //通知积分列表刷新
                             EventBus.getDefault().post(new EventMessage(ConstantVariable.UPDATE_SCORE_LIST, 0));
+                            //通知待评价订单列表更新
+                            if (scoreGoodsBean.getPosition() != -2) {
+                                EventBus.getDefault().post(new EventMessage(ConstantVariable.UPDATE_WAIT_EVALUATE_INDENT_LIST, scoreGoodsBean.getPosition()));
+                            }
                             //跳转晒单成功页面
                             Intent intent = new Intent(getActivity(), JoinSuccessActivity.class);
                             intent.putExtra("score", requestStatus.getScore());
@@ -406,7 +429,7 @@ public class JoinTopicActivity extends BaseActivity {
                             finish();
                         }
                     } else {
-                        showToastRequestMsg(getActivity(), requestStatus);
+                        showToastRequestMsg(requestStatus);
                     }
                 }
             }
@@ -444,7 +467,7 @@ public class JoinTopicActivity extends BaseActivity {
             case R.id.tv_find_release_topic:
                 boolean noSelectPic = (imagePathBeans.size() < 1) || (imagePathBeans.size() < 2 && DEFAULT_ADD_IMG.equals(imagePathBeans.get(0).getPath()));
                 if (content.length() < 1 && noSelectPic) {
-                    showToast(this, "请输入发送内容");
+                    showToast("请输入发送内容");
                 } else if (noSelectPic) {//纯文字
                     if (loadHud != null) {
                         loadHud.show();
@@ -476,7 +499,7 @@ public class JoinTopicActivity extends BaseActivity {
                                 if (loadHud != null) {
                                     loadHud.dismiss();
                                 }
-                                showToast(getActivity(), "网络异常");
+                                showToast("网络异常");
                             }
 
                             @Override

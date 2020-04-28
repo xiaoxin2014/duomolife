@@ -344,7 +344,7 @@ public class QualityNewProActivity extends BaseActivity {
                             } else if (likedProductEntity.getCode().equals(EMPTY_CODE)) {
                                 qualityTypeProductAdapter.loadMoreEnd();
                             } else {
-                                showToast(QualityNewProActivity.this, likedProductEntity.getMsg());
+                                showToast( likedProductEntity.getMsg());
                             }
                             qualityTypeProductAdapter.notifyDataSetChanged();
                         }
@@ -359,14 +359,9 @@ public class QualityNewProActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void netClose() {
-                        showToast(QualityNewProActivity.this, R.string.unConnectedNetwork);
-                    }
-
-                    @Override
                     public void onError(Throwable throwable) {
 
-                        showToast(QualityNewProActivity.this, R.string.invalidData);
+                        showToast( R.string.invalidData);
                     }
                 });
     }

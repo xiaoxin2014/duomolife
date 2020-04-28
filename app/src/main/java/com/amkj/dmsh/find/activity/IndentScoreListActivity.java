@@ -1,6 +1,5 @@
 package com.amkj.dmsh.find.activity;
 
-import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -55,7 +54,7 @@ public class IndentScoreListActivity extends BaseActivity {
     private IndentScoreGoodsAdapter mScoreGoodsAdapter;
     private ScoreGoodsEntity mScoreGoodsEntity;
     private String orderNo;
-    private boolean isFirst=true;
+    private boolean isFirst = true;
 
     @Override
     protected int getContentView() {
@@ -119,13 +118,7 @@ public class IndentScoreListActivity extends BaseActivity {
                 }
 
                 if (mGoodsList.size() == 1) {
-                    ScoreGoodsBean scoreGoodsBean = mGoodsList.get(0);
-                    Intent intent = new Intent(getActivity(), JoinTopicActivity.class);
-                    intent.putExtra("reminder", mScoreGoodsEntity.getContentReminder());
-                    intent.putExtra("rewardtip", mScoreGoodsEntity.getRewardTip());
-                    intent.putExtra("maxRewardTip", mScoreGoodsEntity.getMaxRewardTip());
-                    intent.putExtra("scoreGoods", scoreGoodsBean);
-                    startActivity(intent);
+                    skipJoinTopic(getActivity(), mGoodsList.get(0), null);
                     finish();
                 } else {
                     mTvHeaderTitle.setText("写点评");

@@ -66,10 +66,10 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
+import static com.amkj.dmsh.constant.ConstantMethod.skipRefundDetail;
 import static com.amkj.dmsh.constant.ConstantVariable.APPLY_REFUND_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_ADD_IMG;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.NOGOODS_REFUND;
 import static com.amkj.dmsh.constant.ConstantVariable.RETURN_GOODS;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.Q_INDENT_APPLY_REFUND_NEW;
@@ -115,8 +115,6 @@ public class DirectApplyRefundActivity extends BaseActivity {
     EditText mTvMobile;
     @BindView(R.id.ll_mobile)
     LinearLayout ll_mobile;
-    @BindView(R.id.ll_select_apply_type)
-    LinearLayout ll_select_apply_type;
     @BindView(R.id.tv_refund_tips)
     TextView mTvRefundTips;
     @BindView(R.id.ll_apply_explain)
@@ -157,11 +155,6 @@ public class DirectApplyRefundActivity extends BaseActivity {
         refundNo = getIntent().getStringExtra("refundNo");
         refundType = getIntent().getStringExtra("refundType");
         goods = getIntent().getStringExtra("goods");
-        if (NOGOODS_REFUND.equals(refundType)) {
-            mTvRefundTips.setVisibility(View.GONE);
-            mLlApplyExplain.setVisibility(View.GONE);
-        }
-        ll_select_apply_type.setVisibility(!NOGOODS_REFUND.equals(refundType) && !RETURN_GOODS.equals(refundType) ? VISIBLE : View.GONE);
         if (!TextUtils.isEmpty(goods)) {
             List<OrderProductNewBean> goodsBeanList = new Gson().fromJson(goods, new TypeToken<List<OrderProductNewBean>>() {
             }.getType());
@@ -253,7 +246,7 @@ public class DirectApplyRefundActivity extends BaseActivity {
                             setRefundApplyData();
                         }
                     } else {
-                        showToast(DirectApplyRefundActivity.this, mRefundInfoEntity.getMsg());
+                        showToast(mRefundInfoEntity.getMsg());
                     }
                 }
                 NetLoadUtils.getNetInstance().showLoadSir(loadService, mRefundInfoEntity);
@@ -261,17 +254,30 @@ public class DirectApplyRefundActivity extends BaseActivity {
 
             @Override
             public void onNotNetOrException() {
-                showToast(DirectApplyRefundActivity.this, R.string.invalidData);
+                showToast(R.string.invalidData);
                 NetLoadUtils.getNetInstance().showLoadSir(loadService, mRefundInfoEntity);
             }
         });
     }
 
     private void setRefundApplyData() {
-        //退款金额说明
+        //退款金额
         tv_dir_indent_apply_price.setText(getStringsChNPrice(this, mReFundInfoBean.getRefundPrice()));
+        //退款说明
+        mTvRefundTips.setText(getStrings(mReFundInfoBean.getMsg()));
+        mTvRefundTips.setVisibility(!TextUtils.isEmpty(mReFundInfoBean.getMsg()) ? VISIBLE : View.GONE);
+        mLlApplyExplain.setVisibility(!TextUtils.isEmpty(mReFundInfoBean.getMsg()) ? VISIBLE : View.GONE);
         //退款类型
         refundTypeMap = mReFundInfoBean.getRefundTypeMap();
+        //只有一种退款类型时默认选中
+        if (refundTypeMap != null && refundTypeMap.size() == 1) {
+            for (Map.Entry<String, String> entry : refundTypeMap.entrySet()) {
+                refundType = entry.getKey();
+                tv_dir_indent_apply_type_sel.setText(entry.getValue());
+                tv_dir_indent_apply_type_sel.setSelected(true);
+                break;
+            }
+        }
         //退款原因
         refundReasonMap = mReFundInfoBean.getRefundReasonMap();
         //联系电话
@@ -340,7 +346,7 @@ public class DirectApplyRefundActivity extends BaseActivity {
                         if (loadHud != null) {
                             loadHud.dismiss();
                         }
-                        showToast(DirectApplyRefundActivity.this, "网络异常");
+                        showToast("网络异常");
                     }
 
                     @Override
@@ -392,17 +398,20 @@ public class DirectApplyRefundActivity extends BaseActivity {
                         RequestStatus requestInfo = gson.fromJson(result, RequestStatus.class);
                         if (requestInfo != null) {
                             if (requestInfo.getCode().equals(SUCCESS_CODE)) {
-                                showToast(getActivity(), "退款申请已提交");
+                                //申请退款成功跳转退款详情
+                                if (TextUtils.isEmpty(refundNo)) {
+                                    skipRefundDetail(getActivity(), requestInfo.getRefundNo());
+                                }
                                 finish();
                             } else {
-                                showToastRequestMsg(DirectApplyRefundActivity.this, requestInfo);
+                                showToastRequestMsg(requestInfo);
                             }
                         }
                     }
 
                     @Override
                     public void onNotNetOrException() {
-                        showToast(DirectApplyRefundActivity.this, R.string.do_failed);
+                        showToast(R.string.do_failed);
                         dismissLoadhud(getActivity());
                     }
                 });
@@ -421,18 +430,18 @@ public class DirectApplyRefundActivity extends BaseActivity {
             //提交退款申请
             case R.id.tv_submit_apply_refund:
                 if (TextUtils.isEmpty(refundType)) {
-                    showToast(this, "请选择申请类型");
+                    showToast("请选择申请类型");
                     return;
                 }
 
                 if (TextUtils.isEmpty(refundReasonId)) {
-                    showToast(this, "请选择申请原因");
+                    showToast("请选择申请原因");
                     return;
                 }
 
                 String mobile = mTvMobile.getText().toString().trim();
                 if (TextUtils.isEmpty(mobile)) {
-                    showToast(this, "请输入联系电话");
+                    showToast("请输入联系电话");
                     return;
                 }
 
@@ -454,7 +463,7 @@ public class DirectApplyRefundActivity extends BaseActivity {
             //选择退款原因
             case R.id.ll_select_apply_reason:
                 if (TextUtils.isEmpty(refundType)) {
-                    showToast(this, "请先选择申请类型");
+                    showToast("请先选择申请类型");
                     return;
                 }
                 if (mAlertDialogWheelReason == null) {
@@ -499,7 +508,7 @@ public class DirectApplyRefundActivity extends BaseActivity {
                 imgGridRecyclerAdapter.notifyDataSetChanged();
             }
         } else if (requestCode == REQUEST_PERMISSIONS) {
-            showToast(this, "请到应用管理授予权限");
+            showToast("请到应用管理授予权限");
         }
     }
 

@@ -392,7 +392,7 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
                     } else if (dmlSearchCommentEntity.getCode().equals(EMPTY_CODE)) {
                         adapterArticleComment.loadMoreEnd();
                     } else {
-                        showToast(DmlLifeSearchDetailActivity.this, dmlSearchCommentEntity.getMsg());
+                        showToast(dmlSearchCommentEntity.getMsg());
                     }
                     adapterArticleComment.removeHeaderView(commentHeaderView);
                     if (articleCommentList.size() > 0) {
@@ -435,7 +435,7 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
                                 dmlSearchDetailBean = dmlSearchDetailEntity.getDmlSearchDetailBean();
                                 setSearchData(dmlSearchDetailBean);
                             } else if (!dmlSearchDetailEntity.getCode().equals(EMPTY_CODE)) {
-                                showToast(DmlLifeSearchDetailActivity.this, dmlSearchDetailEntity.getMsg());
+                                showToast( dmlSearchDetailEntity.getMsg());
                             }
                         }
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, descripDetailList, dmlSearchDetailEntity);
@@ -448,13 +448,8 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void netClose() {
-                        showToast(DmlLifeSearchDetailActivity.this, R.string.unConnectedNetwork);
-                    }
-
-                    @Override
                     public void onError(Throwable throwable) {
-                        showToast(DmlLifeSearchDetailActivity.this, R.string.invalidData);
+                        showToast(R.string.invalidData);
                     }
                 });
     }
@@ -598,12 +593,7 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(DmlLifeSearchDetailActivity.this, String.format(getResources().getString(R.string.collect_failed), "文章"));
-            }
-
-            @Override
-            public void netClose() {
-                showToast(DmlLifeSearchDetailActivity.this, R.string.unConnectedNetwork);
+                showToast(String.format(getResources().getString(R.string.collect_failed), "文章"));
             }
         });
     }
@@ -622,7 +612,7 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
                 tv_send_comment.setText("发送");
                 tv_send_comment.setEnabled(true);
                 commentViewVisible(View.GONE, null);
-                showToast(DmlLifeSearchDetailActivity.this, R.string.comment_article_send_success);
+                showToast( R.string.comment_article_send_success);
                 page = 1;
                 getSearchComment();
                 emoji_edit_comment.setText("");
@@ -680,7 +670,7 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
                         communalComment.setToUid(dmlSearchDetailBean.getUid());
                         sendComment(communalComment);
                     } else {
-                        showToast(DmlLifeSearchDetailActivity.this, "请正确输入内容");
+                        showToast("请正确输入内容");
                     }
                 }
             });

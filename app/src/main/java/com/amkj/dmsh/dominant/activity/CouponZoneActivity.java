@@ -74,7 +74,7 @@ public class CouponZoneActivity extends BaseActivity {
     @Override
     protected void initViews() {
         if (getIntent() == null || TextUtils.isEmpty(getIntent().getStringExtra("zoneId"))) {
-            showToast(getActivity(), "数据有误，请重试");
+            showToast("数据有误，请重试");
             finish();
         }
         mTvHeaderTitle.setText("优惠券专场");
@@ -101,7 +101,7 @@ public class CouponZoneActivity extends BaseActivity {
                 if (userId > 0) {
                     //已达到领取次数上限
                     if (couponZoneBean.isOverLimit()) {
-                        ConstantMethod.showToast(getActivity(), "已达到领取次数上限");
+                        ConstantMethod.showToast("已达到领取次数上限");
                     } else {
                         CommunalWebDetailUtils.getCommunalWebInstance().getDirectCoupon(getActivity(), couponZoneBean.getCouponId(), loadHud);
                     }
@@ -144,7 +144,7 @@ public class CouponZoneActivity extends BaseActivity {
                                 }
                                 mCouponList.addAll(couponList);
                             } else if (ERROR_CODE.equals(mCouponZoneEntity.getCode())) {
-                                showToast(getActivity(), mCouponZoneEntity.getMsg());
+                                showToast( mCouponZoneEntity.getMsg());
                             }
                             mGridLayoutManager.setSpanCount(3);
                             mCouponZoneAdapter.setStart(isEndOrStartTime(mCouponZoneEntity.getCurrentTime(), startTime));

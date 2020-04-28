@@ -95,10 +95,10 @@ public class SettingPersonalNameActivity extends BaseActivity {
         String name = edit_personal_name.getText().toString().trim();
         if (!TextUtils.isEmpty(name)) {
             if (name.length()< 2) {
-                showToast(this, R.string.personal_name_hint);
+                showToast(R.string.personal_name_hint);
             } else {
                 if (name.length()> 10) {
-                    showToast(this, R.string.personal_name_more_hint);
+                    showToast(R.string.personal_name_more_hint);
                 } else {
                     if (loadHud != null) {
                         loadHud.show();
@@ -107,7 +107,7 @@ public class SettingPersonalNameActivity extends BaseActivity {
                 }
             }
         } else {
-            showToast(this, R.string.text_fonts_empty);
+            showToast(R.string.text_fonts_empty);
         }
     }
 
@@ -130,7 +130,7 @@ public class SettingPersonalNameActivity extends BaseActivity {
                         setResult(RESULT_OK, intent);
                         finish();
                     } else {
-                        showToast(SettingPersonalNameActivity.this, communalUserInfoEntity.getMsg());
+                        showToast(communalUserInfoEntity.getMsg());
                     }
                 }
             }

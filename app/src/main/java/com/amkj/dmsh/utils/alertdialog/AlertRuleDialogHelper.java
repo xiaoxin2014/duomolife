@@ -43,7 +43,7 @@ public class AlertRuleDialogHelper implements View.OnClickListener {
     private List<CommunalDetailObjectBean> ruleList = new ArrayList<>();
     private boolean isFirstSet = true;
 
-    public AlertRuleDialogHelper (Activity context) {
+    public AlertRuleDialogHelper(Activity context) {
         this.context = context;
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         dialogView = LayoutInflater.from(context).inflate(R.layout.attendance_integral_rule, null, false);
@@ -58,27 +58,27 @@ public class AlertRuleDialogHelper implements View.OnClickListener {
         ruleAlertView = builder.create();
     }
 
-    public void setRuleData(String title, List<CommunalDetailObjectBean> ruleDataList){
+    public void setRuleData(String title, List<CommunalDetailObjectBean> ruleDataList) {
         tv_integral_rule_title.setText(getStrings(title));
-        if(ruleDataList!=null&&ruleDataList.size()>0){
+        if (ruleDataList != null && ruleDataList.size() > 0) {
             ruleList.clear();
             ruleList.addAll(ruleDataList);
             integralRuleAdapter.notifyDataSetChanged();
         }
     }
 
-    public void show(){
+    public void show() {
         if (!ruleAlertView.isShowing()
                 && isContextExisted(context)) {
             AutoSize.autoConvertDensityOfGlobal((Activity) context);
             ruleAlertView.show();
         }
-        if(isFirstSet){
+        if (isFirstSet) {
             Window window = ruleAlertView.getWindow();
-            if(window!=null){
+            if (window != null) {
                 window.setBackgroundDrawableResource(android.R.color.transparent);
                 WindowManager.LayoutParams params = window.getAttributes();
-                params.width = AutoSizeUtils.mm2px(mAppContext,500);
+                params.width = AutoSizeUtils.mm2px(mAppContext, 500);
                 window.setAttributes(params);
                 window.setContentView(dialogView);
             }
@@ -88,7 +88,7 @@ public class AlertRuleDialogHelper implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        if(ruleAlertView!=null&& isContextExisted(context)){
+        if (ruleAlertView != null && isContextExisted(context)) {
             ruleAlertView.dismiss();
         }
     }

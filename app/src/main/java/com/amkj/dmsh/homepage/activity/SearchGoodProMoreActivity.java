@@ -96,7 +96,7 @@ public class SearchGoodProMoreActivity extends BaseActivity {
                             if (likedProduct.getCode().equals(SUCCESS_CODE)) {
                                 productSearList.addAll(likedProduct.getGoodsList());
                             } else if (!likedProduct.getCode().equals(EMPTY_CODE)) {
-                                showToast(SearchGoodProMoreActivity.this, likedProduct.getMsg());
+                                showToast( likedProduct.getMsg());
                             }
                         }
                         adapterProduct.notifyDataSetChanged();

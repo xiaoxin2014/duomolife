@@ -55,7 +55,7 @@ public class CommunalCopyTextUtils {
                     ClipboardManager cmb = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
                     ClipData mClipData = ClipData.newPlainText("Label", !TextUtils.isEmpty(contents[0]) ? contents[0] : "");
                     cmb.setPrimaryClip(mClipData);
-                    showToast(context, "已复制");
+                    showToast("已复制");
                 }
             });
         } else {

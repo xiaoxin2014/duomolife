@@ -12,7 +12,7 @@ import java.util.List;
 
 /**
  * Created by xiaoxin on 2020/3/17
- * Version:v4.4.3
+ * Version:v4.5.0
  * ClassDescription :物流记录适配器
  */
 public class ExpressAdapter extends BaseQuickAdapter<LogisticTextBean, BaseViewHolder> {

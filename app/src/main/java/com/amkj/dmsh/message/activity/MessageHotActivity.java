@@ -209,7 +209,7 @@ public class MessageHotActivity extends BaseActivity {
                             } else if (messageOfficialEntity.getCode().equals(EMPTY_CODE)) {
                                 messageOfficialAdapter.loadMoreEnd();
                             } else {
-                                showToast(MessageHotActivity.this, messageOfficialEntity.getMsg());
+                                showToast(messageOfficialEntity.getMsg());
                             }
                         }
                         messageOfficialAdapter.notifyDataSetChanged();
@@ -224,13 +224,8 @@ public class MessageHotActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void netClose() {
-                        showToast(MessageHotActivity.this, R.string.unConnectedNetwork);
-                    }
-
-                    @Override
                     public void onError(Throwable throwable) {
-                        showToast(MessageHotActivity.this, R.string.invalidData);
+                        showToast( R.string.invalidData);
                     }
                 });
     }

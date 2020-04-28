@@ -32,7 +32,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.SELECT_REFUND_GOODS;
 
 /**
  * Created by xiaoxin on 2020/4/1
- * Version:v4.4.3
+ * Version:v4.5.0
  * ClassDescription :多件商品退款-选择退款商品
  */
 public class SelectRefundGoodsActivity extends BaseActivity {
@@ -135,7 +135,7 @@ public class SelectRefundGoodsActivity extends BaseActivity {
                     startActivity(getIntent());
                     finish();
                 } else {
-                    ConstantMethod.showToast(getActivity(), "请选择退款商品");
+                    ConstantMethod.showToast("请选择退款商品");
                 }
 
                 break;

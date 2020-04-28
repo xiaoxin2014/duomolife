@@ -5,9 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.address.widget.WheelView;
-import com.amkj.dmsh.address.widget.adapters.ArrayWheelAdapter;
+import com.bigkoo.pickerview.adapter.ArrayWheelAdapter;
 import com.amkj.dmsh.utils.alertdialog.BaseAlertDialog;
+import com.contrarywind.view.WheelView;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -19,7 +19,7 @@ import butterknife.OnClick;
 
 /**
  * Created by xiaoxin on 2020/4/9
- * Version:v4.4.3
+ * Version:v4.5.0
  * ClassDescription :滚轮弹窗
  */
 public class AlertDialogWheel extends BaseAlertDialog {
@@ -53,15 +53,15 @@ public class AlertDialogWheel extends BaseAlertDialog {
                 datas.add(entry.getValue());
             }
         }
-        mWvCommunalOne.setViewAdapter(new ArrayWheelAdapter<>(context, datas.toArray()));
-        mWvCommunalOne.setVisibleItems(5);
+        mWvCommunalOne.setAdapter(new ArrayWheelAdapter<>(datas));
+        mWvCommunalOne.setCyclic(false);
         mWvCommunalOne.setCurrentItem(0);
     }
 
     public void updateView(List<String> datas) {
         mMap = null;
-        mWvCommunalOne.setViewAdapter(new ArrayWheelAdapter<>(context, datas.toArray()));
-        mWvCommunalOne.setVisibleItems(7);
+        mWvCommunalOne.setAdapter(new ArrayWheelAdapter<>(datas));
+        mWvCommunalOne.setCyclic(false);
         mWvCommunalOne.setCurrentItem(0);
     }
 
@@ -78,7 +78,7 @@ public class AlertDialogWheel extends BaseAlertDialog {
         dismiss();
         if (view.getId() == R.id.tv_one_click_confirmed) {
             try {
-                int itemsCount = mWvCommunalOne.getViewAdapter().getItemsCount();
+                int itemsCount = mWvCommunalOne.getItemsCount();
                 if (itemsCount > 0) {
                     int currentItem = mWvCommunalOne.getCurrentItem();
                     if (mClickConfirmListener != null) {
@@ -92,7 +92,7 @@ public class AlertDialogWheel extends BaseAlertDialog {
                                 i++;
                             }
                         } else {
-                            mClickConfirmListener.confirm("", (String) ((ArrayWheelAdapter) mWvCommunalOne.getViewAdapter()).getItemText(currentItem));
+                            mClickConfirmListener.confirm("", (String) (mWvCommunalOne.getAdapter()).getItem(currentItem));
                         }
 
                     }

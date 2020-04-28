@@ -87,7 +87,7 @@ public class AllSearchDetailsNewActivity extends BaseActivity {
                         EventBus.getDefault().post(new EventMessage(SEARCH_DATA, new EventMessageBean(getCurrentFragment(), searchDate)));
                         insertHistoryData(searchDate);
                     } else {
-                        showToast(AllSearchDetailsNewActivity.this, "请输入搜索内容");
+                        showToast("请输入搜索内容");
                     }
                 }
                 return false;
@@ -128,7 +128,7 @@ public class AllSearchDetailsNewActivity extends BaseActivity {
             }
             listHistoryDataSave.setDataList(getSearchType(), dataHistoryList);
         } else {
-            showToast(this, "请输入搜索内容");
+            showToast("请输入搜索内容");
         }
     }
 

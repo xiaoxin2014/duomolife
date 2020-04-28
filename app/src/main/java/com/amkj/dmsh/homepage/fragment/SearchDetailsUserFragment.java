@@ -95,7 +95,7 @@ public class SearchDetailsUserFragment extends BaseSearchDetailFragment {
                                 }
                                 userRecyclerAdapter.loadMoreComplete();
                             } else if (allSearchEntity.getCode().equals(ERROR_CODE)) {
-                                showToast(getActivity(), allSearchEntity.getMsg());
+                                showToast(allSearchEntity.getMsg());
                                 userRecyclerAdapter.loadMoreFail();
                             } else {
                                 userRecyclerAdapter.loadMoreEnd();

@@ -327,9 +327,9 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                             if (productDetailEntity.getCode().equals(SUCCESS_CODE)) {
                                 setTimeProductData(productDetailEntity);
                             } else if (productDetailEntity.getCode().equals(EMPTY_CODE)) {
-                                showToast(ShopTimeScrollDetailsActivity.this, R.string.shopOverdue);
+                                showToast(R.string.shopOverdue);
                             } else {
-                                showToast(ShopTimeScrollDetailsActivity.this, productDetailEntity.getMsg());
+                                showToast( productDetailEntity.getMsg());
                             }
                         }
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, productDetailEntity, productDetailEntity);
@@ -342,13 +342,8 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void netClose() {
-                        showToast(ShopTimeScrollDetailsActivity.this, R.string.unConnectedNetwork);
-                    }
-
-                    @Override
                     public void onError(Throwable throwable) {
-                        showToast(ShopTimeScrollDetailsActivity.this, R.string.connectedFaile);
+                        showToast(R.string.connectedFaile);
                     }
                 });
     }
@@ -367,9 +362,9 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                     if (status.getCode().equals(SUCCESS_CODE)) {
                         tvTimeProductDetailsWarm.setText("设置提醒");
                         productDetailBean.setRemind(false);
-                        showToast(mAppContext, "已取消提醒");
+                        showToast("已取消提醒");
                     } else {
-                        showToastRequestMsg(ShopTimeScrollDetailsActivity.this, status);
+                        showToastRequestMsg( status);
                     }
                     tvTimeProductDetailsWarm.setEnabled(true);
                 }
@@ -396,10 +391,10 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                 if (status != null) {
                     if (status.getCode().equals(SUCCESS_CODE)) {
                         tvTimeProductDetailsWarm.setText("取消提醒");
-                        showToast(mAppContext, "已设置提醒");
+                        showToast("已设置提醒");
                         productDetailBean.setRemind(true);
                     } else {
-                        showToastRequestMsg(ShopTimeScrollDetailsActivity.this, status);
+                        showToastRequestMsg( status);
                     }
                     tvTimeProductDetailsWarm.setEnabled(true);
                 }
@@ -682,19 +677,14 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                             setDefaultWarm();
                         }
                     } else if (!foreShowBean.getCode().equals(EMPTY_CODE)) {
-                        showToastRequestMsg(ShopTimeScrollDetailsActivity.this, foreShowBean);
+                        showToastRequestMsg(foreShowBean);
                     }
                 }
             }
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(ShopTimeScrollDetailsActivity.this, R.string.do_failed);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(ShopTimeScrollDetailsActivity.this, R.string.unConnectedNetwork);
+                showToast(R.string.do_failed);
             }
         });
     }
@@ -744,7 +734,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                 Gson gson = new Gson();
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null && requestStatus.getCode().equals(SUCCESS_CODE)) {
-                    showToast(ShopTimeScrollDetailsActivity.this, "已设置产品提醒时间，提前" + requestStatus.getLongtime() + "分钟");
+                    showToast("已设置产品提醒时间，提前" + requestStatus.getLongtime() + "分钟");
                 }
             }
         });

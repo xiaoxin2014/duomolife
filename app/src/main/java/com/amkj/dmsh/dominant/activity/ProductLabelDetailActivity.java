@@ -103,7 +103,7 @@ public class ProductLabelDetailActivity extends BaseActivity {
         Intent intent = getIntent();
         productLabelId = intent.getStringExtra("productLabelId");
         if (TextUtils.isEmpty(productLabelId)) {
-            showToast(this, R.string.do_failed);
+            showToast( R.string.do_failed);
             finish();
             return;
         }
@@ -210,7 +210,7 @@ public class ProductLabelDetailActivity extends BaseActivity {
                             } else if (likedProductEntity.getCode().equals(EMPTY_CODE)) {
                                 qualityTypeProductAdapter.loadMoreEnd();
                             } else if (!likedProductEntity.getCode().equals(EMPTY_CODE)) {
-                                showToast(ProductLabelDetailActivity.this, likedProductEntity.getMsg());
+                                showToast(likedProductEntity.getMsg());
                             }
                             qualityTypeProductAdapter.notifyDataSetChanged();
                         }
@@ -225,13 +225,8 @@ public class ProductLabelDetailActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void netClose() {
-                        showToast(ProductLabelDetailActivity.this, R.string.unConnectedNetwork);
-                    }
-
-                    @Override
                     public void onError(Throwable throwable) {
-                        showToast(ProductLabelDetailActivity.this, R.string.invalidData);
+                        showToast( R.string.invalidData);
                     }
                 });
     }

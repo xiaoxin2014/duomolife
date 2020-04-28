@@ -2,10 +2,13 @@ package com.amkj.dmsh.views;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -16,7 +19,9 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.address.activity.SelectedAddressActivity;
+import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.OrderProductNewBean;
+import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
@@ -26,9 +31,9 @@ import com.amkj.dmsh.dominant.bean.GroupShopDetailsEntity.GroupShopDetailsBean;
 import com.amkj.dmsh.find.activity.IndentScoreListActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.activity.DirectApplyRefundActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectExchangeDetailsActivity;
-import com.amkj.dmsh.shopdetails.activity.DirectIndentWriteActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectLogisticsDetailsActivity;
 import com.amkj.dmsh.shopdetails.activity.InvoiceDetailActivity;
 import com.amkj.dmsh.shopdetails.activity.SelectRefundGoodsActivity;
@@ -39,12 +44,16 @@ import com.amkj.dmsh.shopdetails.bean.MainOrderListEntity.MainOrderBean;
 import com.amkj.dmsh.shopdetails.bean.RefundProductsEntity;
 import com.amkj.dmsh.shopdetails.dialog.AlertDialogGoPay;
 import com.amkj.dmsh.shopdetails.dialog.AlertDialogWheel;
+import com.amkj.dmsh.utils.LifecycleHandler;
 import com.amkj.dmsh.utils.SharedPreUtils;
 import com.amkj.dmsh.utils.WindowUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
+import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -53,18 +62,20 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.dismissLoadhud;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
 import static com.amkj.dmsh.constant.ConstantMethod.showLoadhud;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.skipRefundAspect;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.ADD_CART;
 import static com.amkj.dmsh.constant.ConstantVariable.APPLY_REFUND;
 import static com.amkj.dmsh.constant.ConstantVariable.BATCH_REFUND;
+import static com.amkj.dmsh.constant.ConstantVariable.BUY_AGAIN;
 import static com.amkj.dmsh.constant.ConstantVariable.CANCEL_ORDER_NEW;
 import static com.amkj.dmsh.constant.ConstantVariable.CHANGE_ORDER_ADDRESS;
 import static com.amkj.dmsh.constant.ConstantVariable.CHECK_LOGISTICS;
@@ -87,7 +98,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.WAIT_COMMENT;
 
 /**
  * Created by xiaoxin on 2020/3/25
- * Version:v4.4.3
+ * Version:v4.5.0
  * ClassDescription :主订单按钮组合控件
  */
 public class MainButtonView extends LinearLayout {
@@ -103,6 +114,7 @@ public class MainButtonView extends LinearLayout {
     private int buttonLimit = 4;//超出这个数量时会显示更多按钮
     private AppCompatActivity context;
     private AlertDialogGoPay mAlertDialogGoPay;
+    private AlertDialogHelper mAlertDialogService;
 
     public MainButtonView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -125,7 +137,7 @@ public class MainButtonView extends LinearLayout {
         String orderNo = mainOrderBean.getOrderNo();
         List<OrderProductNewBean> orderProductList = mainOrderBean.getOrderProductList();
         //订单详情不用展示更多按钮
-        tv_more_button.setVisibility(buttonList != null && buttonList.size() > buttonLimit && !isExchangeDetail ? View.VISIBLE : View.GONE);
+        tv_more_button.setVisibility(buttonList != null && buttonList.size() > buttonLimit ? View.VISIBLE : View.GONE);
         if (buttonList != null && buttonList.size() > 0) {
             setVisibility(View.VISIBLE);
             if (rv_button.getItemDecorationCount() == 0) {
@@ -133,7 +145,7 @@ public class MainButtonView extends LinearLayout {
             }
             rv_button.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
             rv_button.setNestedScrollingEnabled(false);
-            MainOrderButtonAdapter buttonAdapter = new MainOrderButtonAdapter(context, buttonList.subList(buttonList.size() <= buttonLimit || isExchangeDetail ? 0 : buttonList.size() - buttonLimit, buttonList.size()));
+            MainOrderButtonAdapter buttonAdapter = new MainOrderButtonAdapter(context, buttonList.subList(buttonList.size() <= buttonLimit ? 0 : buttonList.size() - buttonLimit, buttonList.size()));
             rv_button.setAdapter(buttonAdapter);
             BaseQuickAdapter.OnItemClickListener onItemClickListener = (adapter, view, position) -> {
                 if (userId <= 0 || !isContextExisted(context)) {
@@ -163,7 +175,7 @@ public class MainButtonView extends LinearLayout {
                             confirmOrderDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
                                 @Override
                                 public void confirm() {
-                                    OrderDao.confirmOrder(context, orderNo, simpleName);
+                                    confirmOrder(orderNo, simpleName);
                                 }
 
                                 @Override
@@ -215,22 +227,7 @@ public class MainButtonView extends LinearLayout {
                             break;
                         //待点评
                         case WAIT_COMMENT:
-                            int joinCount = (int) SharedPreUtils.getParam(DEMO_LIFE_FILE, "IndentJoinCount", 0);
-                            if (joinCount < 2) {
-                                if (mPwScore == null) {
-                                    mPwScore = WindowUtils.getFullPw(context, R.layout.pw_join_tips, Gravity.CENTER);
-                                }
-                                mPwScore.getContentView().setOnClickListener((View v1) -> {
-                                    mPwScore.dismiss();
-                                    //写点评
-                                    skipIndentScoreList(orderNo);
-                                });
-                                WindowUtils.showPw(context, mPwScore, Gravity.CENTER);
-                                SharedPreUtils.setParam(DEMO_LIFE_FILE, "IndentJoinCount", joinCount + 1);
-                            } else {
-                                //写点评
-                                skipIndentScoreList(orderNo);
-                            }
+                            getScorePop(mainOrderBean.getOrderNo(), false);
                             break;
                         //提醒发货
                         case WAITDELIVERY:
@@ -286,9 +283,9 @@ public class MainButtonView extends LinearLayout {
                             break;
                         //再次购买
                         case TO_BUY:
-                            intent.setClass(context, DirectIndentWriteActivity.class);
-                            intent.putExtra("orderNo", orderNo);
-                            context.startActivity(intent);
+                            Bundle bundle = new Bundle();
+                            bundle.putString("orderNo", orderNo);
+                            ConstantMethod.skipIndentWrite(context, BUY_AGAIN, bundle);
                             break;
                         //邀请参团
                         case INVITE_JOIN_GROUP:
@@ -313,9 +310,14 @@ public class MainButtonView extends LinearLayout {
                             break;
                         //修改地址
                         case EDIT_ADDRESS:
-                            intent = new Intent(context, SelectedAddressActivity.class);
-                            intent.putExtra("orderNo", mainOrderBean.getOrderNo());
-                            context.startActivityForResult(intent, CHANGE_ORDER_ADDRESS);
+                            if (buttonListBean.isClickable()) {
+                                intent = new Intent(context, SelectedAddressActivity.class);
+                                intent.putExtra("orderNo", mainOrderBean.getOrderNo());
+                                context.startActivityForResult(intent, CHANGE_ORDER_ADDRESS);
+                            } else {
+                                showServiceDialog(R.string.out_of_change, "不改了");
+                            }
+
                             break;
                     }
                 }
@@ -332,11 +334,102 @@ public class MainButtonView extends LinearLayout {
                 MainOrderButtonAdapter buttonAdapter1 = new MainOrderButtonAdapter(context, buttonList.subList(0, buttonList.size() - buttonLimit), true);
                 rvMore.setAdapter(buttonAdapter1);
                 buttonAdapter1.setOnItemClickListener(onItemClickListener);
-                mPwMoreButton.showAsDropDown(tv_more_button, 0, 0);
+                mPwMoreButton.showAsDropDown(tv_more_button, 0, isExchangeDetail ? -AutoSizeUtils.mm2px(context, 140) : 0);
             });
         } else {
             setVisibility(View.GONE);
         }
+    }
+
+    //确认收货
+    public void confirmOrder(String orderNo, String simpleName) {
+        showLoadhud(context);
+        String url = Url.Q_INDENT_CONFIRM;
+        Map<String, Object> params = new HashMap<>();
+        params.put("no", orderNo);
+        params.put("userId", userId);
+        params.put("orderProductId",/*orderBean.getId()*/0);
+        NetLoadUtils.getNetInstance().loadNetDataPost(context, url, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                dismissLoadhud(context);
+                RequestStatus requestStatus = new Gson().fromJson(result, RequestStatus.class);
+                if (requestStatus.getCode().equals(SUCCESS_CODE)) {
+                    showToastRequestMsg(requestStatus);
+                    EventBus.getDefault().post(new EventMessage(ConstantVariable.UPDATE_INDENT_LIST, simpleName));
+                    getScorePop(orderNo, true);
+                } else {
+                    showToastRequestMsg(requestStatus);
+                }
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                dismissLoadhud(context);
+                showToast(R.string.do_failed);
+            }
+        });
+    }
+
+    /**
+     * 获取点评弹窗
+     *
+     * @param isConfirm 是否是确认收货
+     */
+    private void getScorePop(String orderNo, boolean isConfirm) {
+        showLoadhud(context);
+        NetLoadUtils.getNetInstance().loadNetDataPost(context, Url.Q_GET_TAKE_DELIVERY_POPUP, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                dismissLoadhud(context);
+                RequestStatus requestStatus = new Gson().fromJson(result, RequestStatus.class);
+                boolean isOpen = requestStatus.isOpen();
+                String imgUrl = requestStatus.getImgUrl();
+                if (isOpen && !TextUtils.isEmpty(imgUrl)) {
+                    GlideImageLoaderUtil.loadFinishImgDrawable(context, imgUrl, new GlideImageLoaderUtil.ImageLoaderFinishListener() {
+                        @Override
+                        public void onSuccess(Bitmap bitmap) {
+                            int joinCount = (int) SharedPreUtils.getParam(DEMO_LIFE_FILE, "IndentJoinCount", 0);
+                            if (joinCount < 2) {
+                                if (mPwScore == null) {
+                                    mPwScore = WindowUtils.getAlphaPw(context, R.layout.pw_join_tips, Gravity.CENTER);
+                                }
+
+                                GlideImageLoaderUtil.loadCenterCrop(context, mPwScore.getContentView().findViewById(R.id.iv_cover), imgUrl);
+                                mPwScore.getContentView().setOnClickListener((View v1) -> {
+                                    mPwScore.dismiss();
+                                    //写点评
+                                    skipIndentScoreList(orderNo);
+                                });
+
+                                //确认收货刷新列表会自动关闭弹窗，所以延时处理
+                                new LifecycleHandler(context).postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        WindowUtils.showPw(context, mPwScore, Gravity.CENTER);
+                                    }
+                                }, isConfirm ? 1000 : 0);
+                                SharedPreUtils.setParam(DEMO_LIFE_FILE, "IndentJoinCount", joinCount + 1);
+                            } else {
+                                //写点评
+                                skipIndentScoreList(orderNo);
+                            }
+                        }
+
+                        @Override
+                        public void onError() {
+
+                        }
+                    });
+
+                }
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                dismissLoadhud(context);
+            }
+        });
     }
 
     private void goPay(String orderNo) {
@@ -379,8 +472,10 @@ public class MainButtonView extends LinearLayout {
                             //单件商品申请退款
                             if (refundProducts.size() == 1) {
                                 int status = refundProducts.get(0).getStatus();
-                                //待发货直接跳转申请退款界面,否则跳转选择售后类型界面
-                                if (status == 10) {
+                                if (status == 13) {
+                                    showServiceDialog(R.string.product_lock, "再等等");
+                                    return;
+                                } else if (status == 10) {     //待发货直接跳转申请退款界面,否则跳转选择售后类型界面
                                     intent1.setClass(context, DirectApplyRefundActivity.class);
                                     intent1.putExtra("refundType", ConstantVariable.NOGOODS_REFUND);
                                 } else {
@@ -389,7 +484,6 @@ public class MainButtonView extends LinearLayout {
                             } else {
                                 //多件商品申请退款
                                 intent1.setClass(context, SelectRefundGoodsActivity.class);
-                                intent1.putExtra("refundType", ConstantVariable.NOGOODS_REFUND);
                             }
 
                             intent1.putExtra("orderNo", mainOrderBean.getOrderNo());
@@ -398,7 +492,7 @@ public class MainButtonView extends LinearLayout {
                         }
                     } else {
                         if (isExchangeDetail) {
-                            showToast(context, msg);
+                            showToast(msg);
                         } else {
                             //跳转订单详情
                             intent1 = new Intent(context, DirectExchangeDetailsActivity.class);
@@ -412,16 +506,38 @@ public class MainButtonView extends LinearLayout {
             @Override
             public void onNotNetOrException() {
                 dismissLoadhud(context);
-                showToast(mAppContext, R.string.do_failed);
+                showToast(R.string.do_failed);
             }
         });
     }
 
+    //跳转订单内待评价商品列表
     private void skipIndentScoreList(String orderNo) {
-        //跳转评分列表
         Intent intent = new Intent(context, IndentScoreListActivity.class);
         intent.putExtra("orderNo", orderNo);
         context.startActivity(intent);
+    }
+
+    //显示联系客服弹窗
+    private void showServiceDialog(int msg, String confirmText) {
+        if (mAlertDialogService == null) {
+            mAlertDialogService = new AlertDialogHelper(context, R.layout.layout_alert_dialog_new);
+            mAlertDialogService.setTitleVisibility(GONE)
+                    .setCancelText("联系客服")
+
+                    .setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                        @Override
+                        public void confirm() {
+
+                        }
+
+                        @Override
+                        public void cancel() {
+                            QyServiceUtils.getQyInstance().openQyServiceChat(context);
+                        }
+                    });
+        }
+        mAlertDialogService.setMsg(msg).setConfirmText(confirmText).show();
     }
 
     @Override
@@ -440,6 +556,9 @@ public class MainButtonView extends LinearLayout {
         }
         if (mAlertDialogGoPay != null) {
             mAlertDialogGoPay.dismiss();
+        }
+        if (mAlertDialogService != null) {
+            mAlertDialogService.dismiss();
         }
     }
 }

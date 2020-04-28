@@ -341,7 +341,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                                 qualityWefBean = qualityWefEntity.getQualityWefBean();
                                 setData(qualityWefBean);
                             } else if (!qualityWefEntity.getCode().equals(EMPTY_CODE)) {
-                                showToast(DoMoLifeWelfareDetailsActivity.this, qualityWefEntity.getMsg());
+                                showToast(qualityWefEntity.getMsg());
                             }
                         }
                         rel_topic_bottom.setVisibility(VISIBLE);
@@ -357,7 +357,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
 
                     @Override
                     public void onError(Throwable throwable) {
-                        showToast(DoMoLifeWelfareDetailsActivity.this, R.string.invalidData);
+                        showToast( R.string.invalidData);
                     }
                 });
     }
@@ -457,7 +457,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                     } else if (dmlSearchCommentEntity.getCode().equals(EMPTY_CODE)) {
                         adapterTopicComment.loadMoreEnd();
                     } else {
-                        showToast(DoMoLifeWelfareDetailsActivity.this, dmlSearchCommentEntity.getMsg());
+                        showToast(dmlSearchCommentEntity.getMsg());
                     }
                     adapterTopicComment.removeHeaderView(commentHeaderView);
                     if (articleCommentList.size() > 0) {
@@ -537,7 +537,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                 loadHud.dismiss();
                 tv_send_comment.setText("发送");
                 tv_send_comment.setEnabled(true);
-                showToast(DoMoLifeWelfareDetailsActivity.this, R.string.comment_article_send_success);
+                showToast( R.string.comment_article_send_success);
                 commentViewVisible(GONE, null);
                 page = 1;
                 getTopicComment();
@@ -593,7 +593,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                     communalComment.setUserId(userId);
                     sendComment(communalComment);
                 } else {
-                    showToast(DoMoLifeWelfareDetailsActivity.this, "请正确输入内容");
+                    showToast("请正确输入内容");
                 }
             });
         } else if (GONE == visibility) {

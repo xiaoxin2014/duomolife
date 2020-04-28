@@ -7,9 +7,12 @@
     android:gravity="center"
     android:orientation="horizontal">
 
-    <RelativeLayout
+    <LinearLayout
+        android:id="@+id/ll_limit"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/tv_integral_lottery_code"
@@ -22,29 +25,22 @@
         <TextView
             android:id="@+id/tv_integral_lottery_invite_rule"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tv_integral_lottery_code"
-            android:layout_marginTop="@dimen/sc_mm_24"
-            android:text="邀请好友可额外获得1个夺宝码"
-            android:textColor="@color/text_login_gray_s"
-            android:textSize="@dimen/sc_mm_26" />
-
-        <TextView
-            android:id="@+id/tv_limit"
-            android:layout_marginTop="@dimen/sc_mm_24"
-            android:layout_below="@id/tv_integral_lottery_code"
-            android:layout_width="@dimen/sc_mm_410"
             android:layout_height="@dimen/sc_mm_44"
-            android:background="@drawable/shape_join_limit"
+            android:layout_marginTop="@dimen/sc_mm_28"
+            android:background="@drawable/sel_join_limit"
             android:gravity="center"
-            android:text="本场活动你已达活动上限制"
+            android:paddingLeft="@dimen/sc_mm_16"
+            android:paddingRight="@dimen/sc_mm_16"
+            android:text="每邀请一位好友可额外获得一个抽奖码"
             android:textColor="@color/white"
-            android:textSize="@dimen/sc_mm_22" />
-    </RelativeLayout>
+            android:textSize="@dimen/sc_mm_26" />
+    </LinearLayout>
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/sc_mm_80"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/sc_mm_24"
+        android:layout_toRightOf="@+id/ll_limit"
         android:src="@drawable/att_integ_next" />
 </LinearLayout>

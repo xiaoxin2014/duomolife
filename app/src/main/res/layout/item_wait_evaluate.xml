@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:showDividers="middle"
+    android:divider="@drawable/item_divider_gray_f_one_px"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include layout="@layout/item_new_indent_product" />
+
+    <TextView
+        android:id="@+id/tv_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_margin="@dimen/sc_mm_20"
+        android:background="@drawable/border_circle_three_blue_white"
+        android:gravity="center"
+        android:paddingLeft="@dimen/sc_mm_18"
+        android:paddingTop="@dimen/sc_mm_14"
+        android:paddingRight="@dimen/sc_mm_18"
+        android:paddingBottom="@dimen/sc_mm_14"
+        android:text="写点评"
+        android:textColor="@color/intent_foot_button"
+        android:textSize="@dimen/sc_mm_26" />
+</LinearLayout>

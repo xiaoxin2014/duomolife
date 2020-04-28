@@ -2,7 +2,6 @@ package com.amkj.dmsh.dao;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 
 import com.amkj.dmsh.R;
@@ -12,7 +11,6 @@ import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.find.activity.IndentScoreListActivity;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
@@ -20,7 +18,6 @@ import com.amkj.dmsh.shopdetails.activity.DirectExchangeDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.EditGoodsSkuEntity;
 import com.amkj.dmsh.shopdetails.bean.ShopCarGoodsSku;
 import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
-import com.amkj.dmsh.utils.LifecycleHandler;
 import com.amkj.dmsh.views.bottomdialog.SkuDialog;
 import com.google.gson.Gson;
 import com.kaopiz.kprogresshud.KProgressHUD;
@@ -31,7 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.dismissLoadhud;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -47,7 +43,7 @@ import static com.amkj.dmsh.constant.Url.Q_QUERY_CAR_COUNT;
 
 /**
  * Created by xiaoxin on 2020/3/19
- * Version:v4.4.3
+ * Version:v4.5.0
  * ClassDescription :订单相关操作Dao类
  */
 public class OrderDao {
@@ -65,14 +61,14 @@ public class OrderDao {
                 RequestStatus requestStatus = new Gson().fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        showToast(activity, "删除订单成功");
+                        showToast("删除订单成功");
                         if (DirectExchangeDetailsActivity.class.getSimpleName().equals(simpleName)) {
                             activity.finish();
                         } else {
                             EventBus.getDefault().post(new EventMessage(ConstantVariable.UPDATE_INDENT_LIST, simpleName));
                         }
                     } else {
-                        showToastRequestMsg(activity, requestStatus);
+                        showToastRequestMsg(requestStatus);
                     }
                 }
             }
@@ -80,43 +76,7 @@ public class OrderDao {
             @Override
             public void onNotNetOrException() {
                 dismissLoadhud(activity);
-                showToast(mAppContext, R.string.do_failed);
-            }
-        });
-    }
-
-    //确认收货
-    public static void confirmOrder(AppCompatActivity activity, String orderNo, String simpleName) {
-        showLoadhud(activity);
-        String url = Url.Q_INDENT_CONFIRM;
-        Map<String, Object> params = new HashMap<>();
-        params.put("no", orderNo);
-        params.put("userId", userId);
-        params.put("orderProductId",/*orderBean.getId()*/0);
-        NetLoadUtils.getNetInstance().loadNetDataPost(activity, url, params, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                dismissLoadhud(activity);
-                RequestStatus requestStatus = new Gson().fromJson(result, RequestStatus.class);
-                if (requestStatus != null) {
-                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        showToastRequestMsg(activity, requestStatus);
-                        EventBus.getDefault().post(new EventMessage(ConstantVariable.UPDATE_INDENT_LIST, simpleName));
-                        new LifecycleHandler(activity).postDelayed(() -> {
-                            Intent intent = new Intent(activity, IndentScoreListActivity.class);
-                            intent.putExtra("orderNo", orderNo);
-                            activity.startActivity(intent);
-                        }, 1000);
-                    } else {
-                        showToastRequestMsg(activity, requestStatus);
-                    }
-                }
-            }
-
-            @Override
-            public void onNotNetOrException() {
-                dismissLoadhud(activity);
-                showToast(mAppContext, R.string.do_failed);
+                showToast(R.string.do_failed);
             }
         });
     }
@@ -135,10 +95,10 @@ public class OrderDao {
                 RequestStatus requestStatus = new Gson().fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        showToastRequestMsg(activity, requestStatus);
+                        showToastRequestMsg(requestStatus);
                         EventBus.getDefault().post(new EventMessage(ConstantVariable.UPDATE_INDENT_LIST, simpleName));
                     } else {
-                        showToastRequestMsg(activity, requestStatus);
+                        showToastRequestMsg(requestStatus);
                     }
                 }
             }
@@ -146,7 +106,7 @@ public class OrderDao {
             @Override
             public void onNotNetOrException() {
                 dismissLoadhud(activity);
-                showToast(mAppContext, R.string.do_failed);
+                showToast(R.string.do_failed);
             }
         });
     }
@@ -161,13 +121,13 @@ public class OrderDao {
             public void onSuccess(String result) {
                 dismissLoadhud(activity);
                 RequestStatus requestStatus = new Gson().fromJson(result, RequestStatus.class);
-                showToastRequestMsg(mAppContext, requestStatus);
+                showToast(requestStatus.getMsg());
             }
 
             @Override
             public void onNotNetOrException() {
                 dismissLoadhud(activity);
-                showToast(mAppContext, R.string.do_failed);
+                showToast(R.string.do_failed);
             }
         });
     }
@@ -183,13 +143,13 @@ public class OrderDao {
             public void onSuccess(String result) {
                 dismissLoadhud(activity);
                 RequestStatus requestStatus = new Gson().fromJson(result, RequestStatus.class);
-                showToastRequestMsg(mAppContext, requestStatus);
+                showToast(requestStatus.getMsg());
             }
 
             @Override
             public void onNotNetOrException() {
                 dismissLoadhud(activity);
-                showToast(mAppContext, R.string.do_failed);
+                showToast(R.string.do_failed);
             }
         });
     }
@@ -205,13 +165,13 @@ public class OrderDao {
             public void onSuccess(String result) {
                 dismissLoadhud(activity);
                 RequestStatus requestStatus = new Gson().fromJson(result, RequestStatus.class);
-                showToastRequestMsg(mAppContext, requestStatus);
+                showToast(requestStatus.getMsg());
             }
 
             @Override
             public void onNotNetOrException() {
                 dismissLoadhud(activity);
-                showToast(mAppContext, R.string.do_failed);
+                showToast(R.string.do_failed);
             }
         });
     }
@@ -228,12 +188,12 @@ public class OrderDao {
                 RequestStatus requestStatus = new Gson().fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (SUCCESS_CODE.equals(requestStatus.getCode())) {
-                        showToast(activity, "成功加入购物车~");
+                        showToast("成功加入购物车~");
                         Intent intent = new Intent(activity, ShopCarActivity.class);
                         activity.startActivity(intent);
                         getCarCount(activity);
                     } else {
-                        showToast(activity, requestStatus.getMsg());
+                        showToast(requestStatus.getMsg());
                     }
                 }
             }
@@ -241,7 +201,7 @@ public class OrderDao {
             @Override
             public void onNotNetOrException() {
                 dismissLoadhud(activity);
-                showToast(mAppContext, R.string.do_failed);
+                showToast(R.string.do_failed);
             }
         });
     }
@@ -293,12 +253,12 @@ public class OrderDao {
                                             ? editGoodsSkuBean.getPropvalues().get(0).getPropValueName() : "默认");
                                     addShopCar(context, shopCarGoodsSkuDif, loadHud);
                                 } else {
-                                    showToast(context, "商品已售罄，正在努力补货中~~~");
+                                    showToast("商品已售罄，正在努力补货中~~~");
                                 }
                             }
                         }
                     } else {
-                        showToast(context, editGoodsSkuEntity.getMsg());
+                        showToast(editGoodsSkuEntity.getMsg());
                     }
                 }
             }
@@ -354,11 +314,11 @@ public class OrderDao {
                     RequestStatus status = gson.fromJson(result, RequestStatus.class);
                     if (status != null) {
                         if (status.getCode().equals(SUCCESS_CODE)) {
-                            showToast(activity, "成功加入购物车~");
+                            showToast("成功加入购物车~");
                             //通知刷新购物车数量
                             getCarCount(activity);
                         } else {
-                            showToastRequestMsg(activity, status);
+                            showToastRequestMsg(status);
                         }
                     }
                 }

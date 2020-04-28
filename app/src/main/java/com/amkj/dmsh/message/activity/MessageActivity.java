@@ -196,7 +196,7 @@ public class MessageActivity extends BaseActivity {
                             if (messageCenterEntity.getCode().equals(SUCCESS_CODE)) {
                                 setMessageTotalData();
                             } else if (!messageCenterEntity.getCode().equals(EMPTY_CODE)) {
-                                showToast(MessageActivity.this, messageCenterEntity.getMsg());
+                                showToast(messageCenterEntity.getMsg());
                             }
                         }
                         NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);

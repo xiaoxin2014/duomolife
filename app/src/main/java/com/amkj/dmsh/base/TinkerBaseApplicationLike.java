@@ -44,6 +44,7 @@ import com.amkj.dmsh.rxeasyhttp.EasyHttp;
 import com.amkj.dmsh.utils.FileCacheUtils;
 import com.amkj.dmsh.utils.FileStreamUtils;
 import com.amkj.dmsh.utils.SaveUpdateImportDateUtils;
+import com.hjq.toast.ToastUtils;
 import com.kingja.loadsir.core.LoadSir;
 import com.lzf.easyfloat.EasyFloat;
 import com.microquation.linkedme.android.LinkedME;
@@ -213,6 +214,8 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
         EasyHttp.setContext(mAppContext);
         //设置SmartLayout全局默认配置
         setDefaultRefresh();
+        //初始化Toast工具类
+        ToastUtils.init(getApplication());
         //bugly统计
         setTotalChanel();
         activityLinkedList = new LinkedList<>();
@@ -262,12 +265,12 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
             Beta.betaPatchListener = new BetaPatchListener() {
                 @Override
                 public void onPatchReceived(String patchFile) {
-                    showToast(mAppContext, "补丁下载地址" + patchFile);
+                    showToast("补丁下载地址" + patchFile);
                 }
 
                 @Override
                 public void onDownloadReceived(long savedLength, long totalLength) {
-                    showToast(mAppContext,
+                    showToast(
                             String.format(Locale.getDefault(), "%s %d%%",
                                     Beta.strNotificationDownloading,
                                     (int) (totalLength == 0 ? 0 : savedLength * 100 / totalLength)));
@@ -275,23 +278,23 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
 
                 @Override
                 public void onDownloadSuccess(String msg) {
-                    showToast(mAppContext, "补丁下载成功");
+                    showToast("补丁下载成功");
                 }
 
                 @Override
                 public void onDownloadFailure(String msg) {
-                    showToast(mAppContext, "补丁下载失败");
+                    showToast("补丁下载失败");
 
                 }
 
                 @Override
                 public void onApplySuccess(String msg) {
-                    showToast(mAppContext, "补丁应用成功");
+                    showToast( "补丁应用成功");
                 }
 
                 @Override
                 public void onApplyFailure(String msg) {
-                    showToast(mAppContext, "补丁应用失败");
+                    showToast("补丁应用失败");
                 }
 
                 @Override
@@ -303,7 +306,6 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
             Bugly.setIsDevelopmentDevice(mAppContext, true);
         }
         super.onCreate();
-//        initBaiCHotFix();
 //        if (LeakCanary.isInAnalyzerProcess(getApplication())) {
 //            // This process is dedicated to LeakCanary for heap analysis.
 //            // You should not setContext your app in this process.

@@ -252,7 +252,7 @@ public class QualityDMLLifeSearchActivity extends BaseActivity {
                             } else if (communalArticleEntity.getCode().equals(EMPTY_CODE)) {
                                 recyclerArticleAdapter.loadMoreEnd();
                             } else {
-                                showToast(QualityDMLLifeSearchActivity.this, communalArticleEntity.getMsg());
+                                showToast(communalArticleEntity.getMsg());
                             }
                             recyclerArticleAdapter.notifyDataSetChanged();
                         }
@@ -267,13 +267,8 @@ public class QualityDMLLifeSearchActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void netClose() {
-                        showToast(QualityDMLLifeSearchActivity.this, R.string.unConnectedNetwork);
-                    }
-
-                    @Override
                     public void onError(Throwable throwable) {
-                        showToast(QualityDMLLifeSearchActivity.this, R.string.invalidData);
+                        showToast( R.string.invalidData);
                     }
                 });
     }
@@ -300,7 +295,7 @@ public class QualityDMLLifeSearchActivity extends BaseActivity {
             @Override
             public void onNotNetOrException() {
                 loadHud.dismiss();
-                showToast(QualityDMLLifeSearchActivity.this, String.format(getResources().getString(R.string.collect_failed), "文章"));
+                showToast( String.format(getResources().getString(R.string.collect_failed), "文章"));
             }
         });
     }

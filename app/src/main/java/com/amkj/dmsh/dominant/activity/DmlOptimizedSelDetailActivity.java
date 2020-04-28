@@ -219,7 +219,7 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
                                 dmlOptimizedSelDetailBean = optimizedSelDetailEntity.getDmlOptimizedSelDetailBean();
                                 setOptData(dmlOptimizedSelDetailBean);
                             } else if (!optimizedSelDetailEntity.getCode().equals(EMPTY_CODE)) {
-                                showToast(DmlOptimizedSelDetailActivity.this, optimizedSelDetailEntity.getMsg());
+                                showToast(optimizedSelDetailEntity.getMsg());
                             }
                         }
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, optDetailsList, optimizedSelDetailEntity);
@@ -233,13 +233,8 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void netClose() {
-                        showToast(DmlOptimizedSelDetailActivity.this, R.string.unConnectedNetwork);
-                    }
-
-                    @Override
                     public void onError(Throwable throwable) {
-                        showToast(DmlOptimizedSelDetailActivity.this, R.string.invalidData);
+                        showToast( R.string.invalidData);
                     }
                 });
     }

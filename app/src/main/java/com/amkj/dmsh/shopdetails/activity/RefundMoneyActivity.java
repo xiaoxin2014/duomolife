@@ -27,7 +27,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 /**
  * Created by xiaoxin on 2020/3/27
- * Version:v4.4.3
+ * Version:v4.5.0
  * ClassDescription :退款去向
  */
 public class RefundMoneyActivity extends BaseActivity {
@@ -88,7 +88,7 @@ public class RefundMoneyActivity extends BaseActivity {
                             mTvArriveTime.setText(getStrings(result.getReceiveRefundTime()));
                         }
                     } else {
-                        ConstantMethod.showToast(getActivity(), mRequestStatus.getMsg());
+                        ConstantMethod.showToast( mRequestStatus.getMsg());
                     }
                 }
 

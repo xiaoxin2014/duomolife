@@ -20,14 +20,16 @@ import android.provider.MediaStore;
 import android.provider.MediaStore.MediaColumns;
 import android.util.DisplayMetrics;
 
-import static com.amkj.dmsh.constant.ConstantMethod.showToast;;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+
+import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+
+;
 
 /***
  * 修改版
@@ -110,7 +112,7 @@ public class PhotoUtilChange {
                     zoomCode, aspectX, aspectY);
 
         } catch (Exception e) {
-            showToast(context, "图片加载失败");
+            showToast("图片加载失败");
         }
 
         return temppath;
@@ -150,7 +152,7 @@ public class PhotoUtilChange {
             PhotoUtilChange.photoZoom(context, Uri.fromFile(new File(temppath + "temp.jpg")),
                     Uri.fromFile(new File(temppath)), zoomCode, aspectX, aspectY);
         } catch (Exception e) {
-            showToast(context, "图片加载失败");
+            showToast("图片加载失败");
         }
     }
 

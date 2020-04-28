@@ -197,7 +197,7 @@ public class HomeCouponGetFragment extends BaseFragment {
                         }
                         getCouponProData(communalDescriptionBean.getId());
                     } else if (!shopDetailsEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(getActivity(), shopDetailsEntity.getMsg());
+                        showToast(shopDetailsEntity.getMsg());
                     }
                     communalDetailAdapter.setNewData(couponDescriptionList);
                 }
@@ -244,11 +244,6 @@ public class HomeCouponGetFragment extends BaseFragment {
                     public void onNotNetOrException() {
                         smart_communal_refresh.finishRefresh();
                         couponProTitleAdapter.loadMoreEnd(true);
-                    }
-
-                    @Override
-                    public void netClose() {
-                        showToast(getActivity(), R.string.unConnectedNetwork);
                     }
                 });
     }

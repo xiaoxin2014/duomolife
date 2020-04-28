@@ -222,7 +222,7 @@ public class ImgUrlHelp {
         TinkerBaseApplicationLike application = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
         Map<String, Object> ossDataMap = application.getOSSDataMap();
         if (ossDataMap.get(OSS_OBJECT) == null || ossDataMap.get(OSS_URL) == null || ossDataMap.get(OSS_BUCKET_NAME) == null) {
-            showToast(context, "图片上传失败……");
+            showToast("图片上传失败……");
             if (listener != null) {
                 listener.finishError("图片上传失败……");
             }

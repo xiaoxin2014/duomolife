@@ -94,7 +94,7 @@ public class CouponZoneFragment extends BaseFragment {
                 if (userId > 0) {
                     //已达到领取次数上限
                     if (couponZoneBean.isOverLimit()) {
-                        ConstantMethod.showToast(getActivity(), "已达到领取次数上限");
+                        ConstantMethod.showToast("已达到领取次数上限");
                     } else {
                         CommunalWebDetailUtils.getCommunalWebInstance().getDirectCoupon(getActivity(), couponZoneBean.getCouponId(), loadHud);
                     }
@@ -137,7 +137,7 @@ public class CouponZoneFragment extends BaseFragment {
                                 }
                                 mCouponList.addAll(couponList);
                             } else if (ERROR_CODE.equals(mCouponZoneEntity.getCode())) {
-                                showToast(getActivity(), mCouponZoneEntity.getMsg());
+                                showToast( mCouponZoneEntity.getMsg());
                             }
                             mGridLayoutManager.setSpanCount(3);
                             mCouponZoneAdapter.setStart(isEndOrStartTime(mCouponZoneEntity.getCurrentTime(), startTime));

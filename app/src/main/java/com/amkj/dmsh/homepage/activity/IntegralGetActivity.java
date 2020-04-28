@@ -138,7 +138,7 @@ public class IntegralGetActivity extends BaseActivity {
                             } else {
                                 smart_communal_refresh.finishRefresh();
                                 fl_integral_get_hint.setVisibility(View.GONE);
-                                showToast(IntegralGetActivity.this, attendanceDetailEntity.getMsg());
+                                showToast(attendanceDetailEntity.getMsg());
                             }
                         }
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, integralGetBeanList, attendanceDetailEntity);
@@ -149,12 +149,6 @@ public class IntegralGetActivity extends BaseActivity {
                         smart_communal_refresh.finishRefresh();
                         fl_integral_get_hint.setVisibility(View.GONE);
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, integralGetBeanList, attendanceDetailEntity);
-
-                    }
-
-                    @Override
-                    public void netClose() {
-                        showToast(IntegralGetActivity.this, R.string.unConnectedNetwork);
                     }
                 });
     }

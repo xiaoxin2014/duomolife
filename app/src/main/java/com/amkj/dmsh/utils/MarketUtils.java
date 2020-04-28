@@ -205,7 +205,7 @@ public class MarketUtils {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
         } catch (Exception e) {
-            showToast(context, R.string.no_install_app_store);
+            showToast( R.string.no_install_app_store);
             e.printStackTrace();
         }
     }

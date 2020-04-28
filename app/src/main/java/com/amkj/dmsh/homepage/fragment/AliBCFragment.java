@@ -50,7 +50,6 @@ import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.homepage.bean.JsInteractiveBean;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
-import com.amkj.dmsh.shopdetails.activity.DirectIndentWriteActivity;
 import com.amkj.dmsh.utils.CalendarReminderUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
 import com.amkj.dmsh.utils.Log;
@@ -96,6 +95,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showImportantToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.INDENT_W_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.REQUEST_NOTIFICATION_STATUS;
 import static com.amkj.dmsh.constant.ConstantVariable.TOKEN;
@@ -597,7 +597,7 @@ public class AliBCFragment extends BaseFragment {
                 String thirdId = urlParams.get("thirdId");
                 skipAliBC(getActivity(), url, thirdId);
             } else {
-                showToast(context, R.string.unConnectedNetwork);
+                showToast(R.string.unConnectedNetwork);
             }
         }
 
@@ -768,9 +768,9 @@ public class AliBCFragment extends BaseFragment {
         if (data != null) {
             String goods = (String) data.get("goods");
             if (!TextUtils.isEmpty(goods)) {
-                Intent intent = new Intent(getActivity(), DirectIndentWriteActivity.class);
-                intent.putExtra("goods", goods);
-                startActivity(intent);
+                Bundle bundle = new Bundle();
+                bundle.putString("goods", goods);
+                ConstantMethod.skipIndentWrite(getActivity(), INDENT_W_TYPE, bundle);
             }
         }
     }
@@ -1137,7 +1137,7 @@ public class AliBCFragment extends BaseFragment {
      * js交互数据异常
      */
     private void jsInteractiveException(String errorType) {
-        showToast(getActivity(), "数据异常呦，"
+        showToast("数据异常呦，"
                 + (!TextUtils.isEmpty(errorType) && errorType.contains("web") ? "w" : "a") + "攻城狮正在加急处理呢~");
     }
 

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/ll_communal_multi_time"
     android:layout_width="match_parent"
     android:layout_height="@dimen/sc_mm_415"
@@ -46,25 +47,40 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingLeft="@dimen/sc_mm_40"
-        android:paddingRight="@dimen/sc_mm_40">
+        android:paddingLeft="@dimen/sc_mm_26"
+        android:paddingRight="@dimen/sc_mm_26">
 
-        <com.amkj.dmsh.address.widget.WheelView
+        <com.contrarywind.view.WheelView
             android:id="@+id/id_one_wheel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            app:itemVisibleNum="6"
+            app:textColorCenter="@color/text_black_t"
+            app:textColorOuter="@color/text_login_gray_s"
+            app:textSizeCenter="@dimen/sc_mm_28"
+            app:textSizeOuter="@dimen/sc_mm_26" />
 
-        <com.amkj.dmsh.address.widget.WheelView
+        <com.contrarywind.view.WheelView
             android:id="@+id/id_two_wheel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            app:itemVisibleNum="6"
+            app:textColorCenter="@color/text_black_t"
+            app:textColorOuter="@color/text_login_gray_s"
+            app:textSizeCenter="@dimen/sc_mm_28"
+            app:textSizeOuter="@dimen/sc_mm_26" />
 
-        <com.amkj.dmsh.address.widget.WheelView
+        <com.contrarywind.view.WheelView
             android:id="@+id/id_three_wheel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            app:itemVisibleNum="6"
+            app:textColorCenter="@color/text_black_t"
+            app:textColorOuter="@color/text_login_gray_s"
+            app:textSizeCenter="@dimen/sc_mm_28"
+            app:textSizeOuter="@dimen/sc_mm_26" />
     </LinearLayout>
 </LinearLayout>

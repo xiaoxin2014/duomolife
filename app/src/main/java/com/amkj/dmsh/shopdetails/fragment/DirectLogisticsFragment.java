@@ -173,7 +173,7 @@ public class DirectLogisticsFragment extends BaseFragment {
                                     setExpressData();
                                 }
                             } else {
-                                showToast(getActivity(), mLogisticsNewEntity.getMsg());
+                                showToast(mLogisticsNewEntity.getMsg());
                             }
                         }
 
@@ -227,7 +227,7 @@ public class DirectLogisticsFragment extends BaseFragment {
             }
             mCbBanner.setPages(getActivity(), cbViewHolderCreator, adList).setCanLoop(true)
                     .setPointViewVisible(false)
-                    .startTurning(1000);
+                    .startTurning(3000);
 
             //初始化物流
             expand = false;
@@ -279,7 +279,7 @@ public class DirectLogisticsFragment extends BaseFragment {
                     ClipboardManager cm = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
                     ClipData mClipData = ClipData.newPlainText("Label", mLogisticsDetailBean.getNumber());
                     cm.setPrimaryClip(mClipData);
-                    showToast(getActivity(), "物流单号复制成功");
+                    showToast("物流单号复制成功");
                 }
                 break;
             case R.id.ll_qy_service:

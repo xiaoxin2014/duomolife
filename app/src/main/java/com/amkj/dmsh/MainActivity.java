@@ -32,7 +32,7 @@ import android.widget.RadioGroup;
 
 import com.ali.auth.third.ui.context.CallbackContext;
 import com.alibaba.fastjson.JSON;
-import com.amkj.dmsh.address.AddressUtils;
+import com.amkj.dmsh.utils.AddressUtils;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;

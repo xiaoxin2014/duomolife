@@ -102,7 +102,6 @@ public class NetLoadUtils<T, E extends BaseEntity> {
             loadNetDataPost(context, url, null, netLoadListener);
         } else {
             netLoadListener.onNotNetOrException();
-            netLoadListener.netClose();
         }
     }
 
@@ -175,7 +174,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
             });
         } else {
             try {
-                showToast(context, R.string.unConnectedNetwork);
+                showToast(R.string.unConnectedNetwork);
                 if (netLoadListener != null) {
                     netLoadListener.onNotNetOrException();
                 }
@@ -230,10 +229,9 @@ public class NetLoadUtils<T, E extends BaseEntity> {
             });
         } else {
             try {
-                showToast(context, R.string.unConnectedNetwork);
+                showToast(R.string.unConnectedNetwork);
                 if (netLoadListener != null) {
                     netLoadListener.onNotNetOrException();
-                    netLoadListener.netClose();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -432,7 +430,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
                 int lastCode = url.lastIndexOf("/");
 //                baseUrl 必须填写
                 if (lastCode == -1 || lastCode + 1 >= url.length()) {
-                    showToast(mAppContext, "地址错误！");
+                    showToast("地址错误！");
                     return;
                 }
                 String baseUrl = url.substring(0, lastCode + 1);
@@ -463,7 +461,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
             if (resultClass != null) {
                 if (list != null && list.size() > 0) {
                     loadService.showWithConvertor(SUCCESS_CODE);
-                } else if (ERROR_CODE.equals(resultClass.getCode())) {
+                } else if (!EMPTY_CODE.equals(resultClass.getCode()) && !SUCCESS_CODE.equals(resultClass.getCode())) {
                     loadService.showWithConvertor(ERROR_CODE);
                 } else {
                     loadService.showWithConvertor(EMPTY_CODE);

@@ -18,7 +18,6 @@ import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.integration.bean.AddressListEntity;
-import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
@@ -32,7 +31,6 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.dismissLoadhud;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeBoolean;
@@ -73,7 +71,7 @@ public class SelectedAddressActivity extends BaseActivity {
     private String orderNo;//不为空表示修改订单收货地址
     private AlertDialog dialog;
     private AddressListEntity addressListEntity;
-    private AlertDialogHelper mAlertDialogService;
+    private boolean isFirst = true;
 
     @Override
     protected int getContentView() {
@@ -83,17 +81,17 @@ public class SelectedAddressActivity extends BaseActivity {
     @Override
     protected void initViews() {
         getLoginStatus(this);
-        tvHeaderTitle.setText("选择地址");
         header_shared.setCompoundDrawables(null, null, null, null);
         header_shared.setText("新增");
         Intent intent = getIntent();
         isMineSkip = getStringChangeBoolean(intent.getStringExtra("isMineSkip"));
+        tvHeaderTitle.setText(isMineSkip ? "我的地址" : "选择地址");
         addressId = getStringChangeIntegers(intent.getStringExtra("addressId"));
         orderNo = intent.getStringExtra("orderNo");
         if (!isMineSkip || addressId > 0) {
             isShowDel = false;
         }
-        selectedAddressAdapter = new SelectedAddressAdapter(addressAllBeanList, isShowDel);
+        selectedAddressAdapter = new SelectedAddressAdapter(addressAllBeanList, isShowDel, isMineSkip);
         //        获取头部消息列表
         communal_recycler.setLayoutManager(new LinearLayoutManager(this));
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
@@ -142,7 +140,7 @@ public class SelectedAddressActivity extends BaseActivity {
                         //删除地址
                         case R.id.tv_address_item_del:
                             if (addressInfoBean.getStatus() == 1) {
-                                showToast(SelectedAddressActivity.this, "不能删除默认地址,请先设置其它地址为默认地址");
+                                showToast("不能删除默认地址,请先设置其它地址为默认地址");
                             } else {
                                 // 创建
                                 dialog = new AlertDialog.Builder(SelectedAddressActivity.this)
@@ -184,7 +182,7 @@ public class SelectedAddressActivity extends BaseActivity {
                         addressAllBeanList.addAll(addressListEntity.getAddressAllBeanList());
                         selectedAddressAdapter.notifyDataSetChanged();
                     } else if (!addressListEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(SelectedAddressActivity.this, addressListEntity.getMsg());
+                        showToast( addressListEntity.getMsg());
                     }
                 }
                 NetLoadUtils.getNetInstance().showLoadSir(loadService, addressAllBeanList, addressListEntity);
@@ -198,13 +196,8 @@ public class SelectedAddressActivity extends BaseActivity {
             }
 
             @Override
-            public void netClose() {
-                showToast(SelectedAddressActivity.this, R.string.unConnectedNetwork);
-            }
-
-            @Override
             public void onError(Throwable throwable) {
-                showToast(SelectedAddressActivity.this, R.string.invalidData);
+                showToast( R.string.invalidData);
             }
         });
     }
@@ -222,8 +215,6 @@ public class SelectedAddressActivity extends BaseActivity {
             AddressInfoBean addressInfoBean = data.getParcelableExtra("addressInfoBean");
             if (!isMineSkip && addressInfoBean != null) {
                 goBackAddress(addressInfoBean);
-            } else {
-                loadData();
             }
         }
     }
@@ -257,7 +248,7 @@ public class SelectedAddressActivity extends BaseActivity {
                         setResult(RESULT_OK, dataIntent);
                         finish();
                     } else {
-                        showToast(getActivity(), status.getMsg());
+                        showToast( status.getMsg());
                     }
                 }
             }
@@ -265,7 +256,7 @@ public class SelectedAddressActivity extends BaseActivity {
             @Override
             public void onNotNetOrException() {
                 dismissLoadhud(getActivity());
-                showToast(mAppContext, R.string.do_failed);
+                showToast( R.string.do_failed);
             }
         });
     }
@@ -282,10 +273,10 @@ public class SelectedAddressActivity extends BaseActivity {
                 RequestStatus status = gson.fromJson(result, RequestStatus.class);
                 if (status != null) {
                     if (status.getCode().equals(SUCCESS_CODE)) {
-                        showToast(SelectedAddressActivity.this, "删除地址完成");
+                        showToast( "删除地址完成");
                         loadData();
                     } else if (!status.getCode().equals(EMPTY_CODE)) {
-                        showToastRequestMsg(SelectedAddressActivity.this, status);
+                        showToastRequestMsg( status);
                     }
                 }
             }
@@ -303,21 +294,16 @@ public class SelectedAddressActivity extends BaseActivity {
                 RequestStatus status = gson.fromJson(result, RequestStatus.class);
                 if (status != null) {
                     if (status.getCode().equals(SUCCESS_CODE)) {
-                        showToast(SelectedAddressActivity.this, "修改默认地址完成");
+                        showToast("修改默认地址完成");
                         if (!isMineSkip) {
                             goBackAddress(addressInfoBean);
                         } else {
                             loadData();
                         }
                     } else if (!status.getCode().equals(EMPTY_CODE)) {
-                        showToastRequestMsg(SelectedAddressActivity.this, status);
+                        showToastRequestMsg( status);
                     }
                 }
-            }
-
-            @Override
-            public void netClose() {
-                showToast(SelectedAddressActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
@@ -346,11 +332,11 @@ public class SelectedAddressActivity extends BaseActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mAlertDialogService != null
-                && mAlertDialogService.getAlertDialog() != null && mAlertDialogService.getAlertDialog().isShowing()) {
-            mAlertDialogService.dismiss();
+    protected void onResume() {
+        super.onResume();
+        if (!isFirst) {
+            loadData();
         }
+        isFirst = false;
     }
 }

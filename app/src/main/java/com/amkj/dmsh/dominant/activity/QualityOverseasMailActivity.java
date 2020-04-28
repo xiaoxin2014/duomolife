@@ -247,7 +247,7 @@ public class QualityOverseasMailActivity extends BaseActivity {
                     } else {
                         isLoadProData = false;
                         qualityTypeProductAdapter.loadMoreEnd();
-                        showToast(QualityOverseasMailActivity.this, likedProductEntity.getMsg());
+                        showToast( likedProductEntity.getMsg());
                     }
                 }
             }
@@ -305,7 +305,7 @@ public class QualityOverseasMailActivity extends BaseActivity {
                                     overseasHeaderView.communal_recycler_wrap.setVisibility(View.VISIBLE);
                                 }
                             } else {
-                                showToast(QualityOverseasMailActivity.this, dmlTheme.getMsg());
+                                showToast( dmlTheme.getMsg());
                             }
                         }
                     }
@@ -318,13 +318,8 @@ public class QualityOverseasMailActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void netClose() {
-                        showToast(QualityOverseasMailActivity.this, R.string.unConnectedNetwork);
-                    }
-
-                    @Override
                     public void onError(Throwable throwable) {
-                        showToast(QualityOverseasMailActivity.this, R.string.invalidData);
+                        showToast( R.string.invalidData);
                     }
                 });
     }

@@ -78,7 +78,7 @@ public class ProRecommendActivity extends BaseActivity {
         id = intent.getStringExtra("id");
         recommendType = intent.getStringExtra("recommendType");
         if (TextUtils.isEmpty(id) || TextUtils.isEmpty(recommendType)) {
-            showToast(this, R.string.unConnectedNetwork);
+            showToast( R.string.unConnectedNetwork);
             finish();
             return;
         }
@@ -165,7 +165,7 @@ public class ProRecommendActivity extends BaseActivity {
                     if (recommendHotTopicEntity.getCode().equals(SUCCESS_CODE)) {
                         proRecommendBeans.addAll(recommendHotTopicEntity.getShopRecommendHotTopicList());
                     } else if (!recommendHotTopicEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(ProRecommendActivity.this, recommendHotTopicEntity.getMsg());
+                        showToast( recommendHotTopicEntity.getMsg());
                     }
                 }
                 shopRecommendHotTopicAdapter.notifyDataSetChanged();
@@ -179,13 +179,8 @@ public class ProRecommendActivity extends BaseActivity {
             }
 
             @Override
-            public void netClose() {
-                showToast(ProRecommendActivity.this, R.string.unConnectedNetwork);
-            }
-
-            @Override
             public void onError(Throwable throwable) {
-                showToast(ProRecommendActivity.this, R.string.invalidData);
+                showToast( R.string.invalidData);
             }
         });
     }
@@ -210,7 +205,7 @@ public class ProRecommendActivity extends BaseActivity {
                             proRecommendBeans.add(shopRecommendHotTopicBean);
                         }
                     } else if (!recommendHotTopicEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(ProRecommendActivity.this, recommendHotTopicEntity.getMsg());
+                        showToast( recommendHotTopicEntity.getMsg());
                     }
                 }
                 shopRecommendHotTopicAdapter.notifyDataSetChanged();
@@ -224,13 +219,8 @@ public class ProRecommendActivity extends BaseActivity {
             }
 
             @Override
-            public void netClose() {
-                showToast(ProRecommendActivity.this, R.string.unConnectedNetwork);
-            }
-
-            @Override
             public void onError(Throwable throwable) {
-                showToast(ProRecommendActivity.this, R.string.invalidData);
+                showToast(R.string.invalidData);
             }
         });
     }

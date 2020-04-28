@@ -175,7 +175,7 @@ public class UserFansAttentionActivity extends BaseActivity {
                     if (userAttentionFansEntity.getCode().equals(SUCCESS_CODE)) {
                         attentionFansList.addAll(userAttentionFansEntity.getUserAttentionFansList());
                     } else if (!userAttentionFansEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(UserFansAttentionActivity.this, userAttentionFansEntity.getMsg());
+                        showToast( userAttentionFansEntity.getMsg());
                     } else {
                         detailsUserAdapter.loadMoreEnd();
                     }

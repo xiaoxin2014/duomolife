@@ -189,15 +189,10 @@ public class TimeUtils {
      * 当大于1小时小于24小时时显示：小时+分
      * 当小于1小时时显示：分+秒
      */
-    public static String getTimeDifferenceText(String t1, String t2) {
+    public static String getTimeDifferenceText(long abs) {
         String timeDifference = "";
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
         try {
-            long time1 = formatter.parse(t1).getTime();
-            long time2 = formatter.parse(t2).getTime();
-            long abs = Math.abs(time1 - time2);
             int[] time = getDayHourMinuteSecond(abs);
-
             if (time[0] != 0) {
                 timeDifference = time[0] + "天" + time[1] + "时";
             } else if (time[1] != 0) {

@@ -187,7 +187,7 @@ public class PullUserInvitationAdapter extends BaseQuickAdapter<InvitationDetail
                         if (!TextUtils.isEmpty(clickedText)) {
                             setSkipPath(context, clickedText, false);
                         } else {
-                            showToast(context, "网址有误，请重试");
+                            showToast("网址有误，请重试");
                         }
                     });
                     links.add(discernUrl);

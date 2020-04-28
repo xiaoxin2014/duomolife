@@ -116,11 +116,11 @@ public class ApplyInvoiceActivity extends BaseActivity {
         String title = mEtTitle.getText().toString();
         String taxpayerOn = mEtTaxpayerOn.getText().toString();
         if (TextUtils.isEmpty(title)) {
-            showToast(this, "请输入发票抬头");
+            showToast("请输入发票抬头");
             return;
         }
         if (mRbCompany.isChecked() && TextUtils.isEmpty(taxpayerOn)) {
-            showToast(this, "请输入纳税人识别号");
+            showToast("请输入纳税人识别号");
             return;
         }
 
@@ -140,11 +140,11 @@ public class ApplyInvoiceActivity extends BaseActivity {
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        showToast(getActivity(), "发票开具成功");
+                        showToast("发票开具成功");
                         EventBus.getDefault().post(new EventMessage(INVOICE_APPLY_SUCCESS, 0));
                         new LifecycleHandler(getActivity()).postDelayed(() -> finish(), 500);
                     } else {
-                        showToastRequestMsg(getActivity(), requestStatus);
+                        showToastRequestMsg( requestStatus);
                     }
                 }
             }
@@ -152,7 +152,7 @@ public class ApplyInvoiceActivity extends BaseActivity {
             @Override
             public void onNotNetOrException() {
                 loadHud.dismiss();
-                showToast(getActivity(), "发票开具失败");
+                showToast("发票开具失败");
             }
         });
     }

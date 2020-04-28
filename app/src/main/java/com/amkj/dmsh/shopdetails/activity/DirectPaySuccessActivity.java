@@ -230,7 +230,7 @@ public class DirectPaySuccessActivity extends BaseActivity {
                     if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
                         typeDetails.addAll(likedProductEntity.getGoodsList());
                     } else {
-                        showToast(DirectPaySuccessActivity.this, likedProductEntity.getMsg());
+                        showToast( likedProductEntity.getMsg());
                     }
                 }
                 qualityTypeProductAdapter.notifyDataSetChanged();
@@ -245,13 +245,8 @@ public class DirectPaySuccessActivity extends BaseActivity {
             }
 
             @Override
-            public void netClose() {
-                showToast(DirectPaySuccessActivity.this, R.string.unConnectedNetwork);
-            }
-
-            @Override
             public void onError(Throwable throwable) {
-                showToast(DirectPaySuccessActivity.this, R.string.invalidData);
+                showToast( R.string.invalidData);
             }
         });
     }

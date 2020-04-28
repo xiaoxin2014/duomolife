@@ -769,15 +769,6 @@
         </activity>
         <!--首页 - 搜索 -->
         <activity
-            android:name=".homepage.activity.IndentSearchActivity"
-            android:exported="false"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="HomePageSearchActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name=".dominant.activity.DoMoGroupJoinShareActivity"
             android:exported="false"
             android:screenOrientation="portrait">
@@ -1022,6 +1013,7 @@
         <activity
             android:name=".shopdetails.activity.DoMoRefundDetailActivity"
             android:exported="false"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="DoMoRefundDetailActivity" />

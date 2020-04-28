@@ -2,7 +2,7 @@ package com.amkj.dmsh.bean;
 
 /**
  * Created by xiaoxin on 2020/4/3
- * Version:v4.4.3
+ * Version:v4.5.0
  */
 public class LogisticTextBean {
     /**

@@ -1,43 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <attr name="radius" format="dimension"/>
+    <attr name="radius" format="dimension" />
     <attr name="type">
-        <enum name="circle" value="0"/>
-        <enum name="round" value="1"/>
+        <enum name="circle" value="0" />
+        <enum name="round" value="1" />
     </attr>
     <declare-styleable name="FlowLayout_LayoutParams">
-        <attr name="layout_newLine" format="boolean"/>
-        <attr name="layout_horizontalSpacing" format="dimension"/>
-        <attr name="layout_verticalSpacing" format="dimension"/>
+        <attr name="layout_newLine" format="boolean" />
+        <attr name="layout_horizontalSpacing" format="dimension" />
+        <attr name="layout_verticalSpacing" format="dimension" />
     </declare-styleable>
     <declare-styleable name="RoundImageView1">
-        <attr name="radius"/>
-        <attr name="type"/>
+        <attr name="radius" />
+        <attr name="type" />
     </declare-styleable>
     <declare-styleable name="BadgedImageView">
-        <attr name="badgeColor" format="color|reference"/>
-        <attr name="badgeText" format="string|reference"/>
-        <attr name="badgeTextSize" format="dimension|reference"/>
-        <attr name="badgeTextColor" format="color|reference"/>
-        <attr name="badgePadding" format="dimension|reference"/>
-        <attr name="badgeWidthRatio" format="integer"/>
-        <attr name="badgeHeightRatio" format="integer"/>
-        <attr name="badgeCornerRadius" format="dimension|reference"/>
+        <attr name="badgeColor" format="color|reference" />
+        <attr name="badgeText" format="string|reference" />
+        <attr name="badgeTextSize" format="dimension|reference" />
+        <attr name="badgeTextColor" format="color|reference" />
+        <attr name="badgePadding" format="dimension|reference" />
+        <attr name="badgeWidthRatio" format="integer" />
+        <attr name="badgeHeightRatio" format="integer" />
+        <attr name="badgeCornerRadius" format="dimension|reference" />
     </declare-styleable>
     <declare-styleable name="CircleBadgedView">
         <attr name="circleBadgeGravity">
             <!-- Push object to the top of its container, not changing its size. -->
-            <flag name="top" value="0x30"/>
+            <flag name="top" value="0x30" />
             <!-- Push object to the bottom of its container, not changing its size. -->
-            <flag name="bottom" value="0x50"/>
+            <flag name="bottom" value="0x50" />
             <!-- Push object to the left of its container, not changing its size. -->
-            <flag name="left" value="0x03"/>
+            <flag name="left" value="0x03" />
             <!-- Push object to the right of its container, not changing its size. -->
-            <flag name="right" value="0x05"/>
+            <flag name="right" value="0x05" />
             <!-- Push object to the beginning of its container, not changing its size. -->
-            <flag name="start" value="0x00800003"/>
+            <flag name="start" value="0x00800003" />
             <!-- Push object to the end of its container, not changing its size. -->
-            <flag name="end" value="0x00800005"/>
+            <flag name="end" value="0x00800005" />
         </attr>
     </declare-styleable>
     <declare-styleable name="lbBaseGridView">
@@ -46,415 +46,431 @@
              Allow DPAD key to navigate out at the front of the View (where position = 0),
              default is false
         -->
-        <attr name="focusOutFront" format="boolean"/>
+        <attr name="focusOutFront" format="boolean" />
         <!-- Allow DPAD key to navigate out at the end of the view, default is false -->
-        <attr name="focusOutEnd" format="boolean"/>
+        <attr name="focusOutEnd" format="boolean" />
         <!-- Defining margin between two items horizontally -->
-        <attr name="horizontalMargin" format="dimension"/>
+        <attr name="horizontalMargin" format="dimension" />
         <!-- Defining margin between two items vertically -->
-        <attr name="verticalMargin" format="dimension"/>
+        <attr name="verticalMargin" format="dimension" />
         <!-- Defining gravity of child view -->
-        <attr name="android:gravity"/>
+        <attr name="android:gravity" />
     </declare-styleable>
 
     <declare-styleable name="lbHorizontalGridView">
         <!-- Defining height of each row of HorizontalGridView -->
         <attr name="rowHeight" format="dimension">
-            <enum name="wrap_content" value="-2"/>
+            <enum name="wrap_content" value="-2" />
         </attr>
         <!-- Defining number of rows -->
-        <attr name="numberOfRows" format="integer"/>
+        <attr name="numberOfRows" format="integer" />
     </declare-styleable>
     <declare-styleable name="EmojiconStyle">
-        <attr name="emojiconGridViewStyle" format="reference"/>
+        <attr name="emojiconGridViewStyle" format="reference" />
     </declare-styleable>
     <declare-styleable name="Emojicon">
-        <attr name="emojiconSize" format="dimension"/>
+        <attr name="emojiconSize" format="dimension" />
         <attr name="emojiconAlignment" format="enum">
-            <enum name="bottom" value="0"/>
-            <enum name="baseline" value="1"/>
+            <enum name="bottom" value="0" />
+            <enum name="baseline" value="1" />
         </attr>
-        <attr name="emojiconTextStart" format="integer"/>
-        <attr name="emojiconTextLength" format="integer"/>
-        <attr name="emojiconUseSystemDefault" format="boolean"/>
+        <attr name="emojiconTextStart" format="integer" />
+        <attr name="emojiconTextLength" format="integer" />
+        <attr name="emojiconUseSystemDefault" format="boolean" />
     </declare-styleable>
     <!--星星评分-->
     <declare-styleable name="ProperRatingBar">
         <!-- Total number of ticks to show. Default is '5' -->
-        <attr name="prb_totalTicks" format="integer"/>
+        <attr name="prb_totalTicks" format="integer" />
         <!-- Use this to set rating from xml. Default is '3' -->
-        <attr name="prb_defaultRating" format="integer"/>
+        <attr name="prb_defaultRating" format="integer" />
         <!-- If set to 'true' - use will be able to change rating by clicking. Default is 'false' -->
-        <attr name="prb_clickable" format="boolean"/>
+        <attr name="prb_clickable" format="boolean" />
         <!-- Symbol to be used as a tick. Default is '$' -->
-        <attr name="prb_symbolicTick" format="string"/>
+        <attr name="prb_symbolicTick" format="string" />
         <!-- Text size of symbolic tick. Default is '15sp' -->
-        <attr name="android:textSize"/>
+        <attr name="android:textSize" />
         <!-- Text style of symbolic tick. Possible: 'bold', 'italic', 'normal'. Default is 'normal'. -->
-        <attr name="android:textStyle"/>
+        <attr name="android:textStyle" />
         <!-- Color of symbolic tick that is not select (not rated). Default is '#FF000000' (black). -->
-        <attr name="prb_symbolicTickNormalColor" format="reference|color"/>
+        <attr name="prb_symbolicTickNormalColor" format="reference|color" />
         <!-- Color of symbolic tick that is select (rated). Default is '#FF888888' (gray). -->
-        <attr name="prb_symbolicTickSelectedColor" format="reference|color"/>
+        <attr name="prb_symbolicTickSelectedColor" format="reference|color" />
         <!-- Drawable resource to use as a tick that is not select (not rated). No default value. -->
-        <attr name="prb_tickNormalDrawable" format="reference"/>
+        <attr name="prb_tickNormalDrawable" format="reference" />
         <!-- Drawable resource to use as a tick that is select (rated). No default value. -->
-        <attr name="prb_tickSelectedDrawable" format="reference"/>
+        <attr name="prb_tickSelectedDrawable" format="reference" />
         <!-- Margin to be applied to tick drawables. Only applies to drawable-type ticks. Default is '1dp' (gray). -->
-        <attr name="prb_tickSpacing" format="dimension"/>
+        <attr name="prb_tickSpacing" format="dimension" />
     </declare-styleable>
-    <item name="prb_tick_tag_id" type="id"/>
+    <item name="prb_tick_tag_id" type="id" />
     <!--刷新控件-->
     <declare-styleable name="SwipeRefreshLayout">
         <attr name="srl_direction">
-            <enum name="top" value="0"/>
-            <enum name="bottom" value="1"/>
-            <enum name="both" value="2"/>
+            <enum name="top" value="0" />
+            <enum name="bottom" value="1" />
+            <enum name="both" value="2" />
         </attr>
     </declare-styleable>
     <declare-styleable name="ProgressLayout">
-        <attr name="progressLoadingStateBackgroundColor" format="color"/>
-        <attr name="progressEmptyStateBackgroundColor" format="color"/>
-        <attr name="progressErrorStateBackgroundColor" format="color"/>
+        <attr name="progressLoadingStateBackgroundColor" format="color" />
+        <attr name="progressEmptyStateBackgroundColor" format="color" />
+        <attr name="progressErrorStateBackgroundColor" format="color" />
     </declare-styleable>
     <declare-styleable name="CircleTextView">
-        <attr name="ct_backgroundColor" format="color"/>
-        <attr name="ct_border_width" format="dimension"/>
-        <attr name="ct_border_color" format="color"/>
-        <attr name="ct_border_alpha" format="float"/>
+        <attr name="ct_backgroundColor" format="color" />
+        <attr name="ct_border_width" format="dimension" />
+        <attr name="ct_border_color" format="color" />
+        <attr name="ct_border_alpha" format="float" />
         <attr name="ct_type" format="enum">
-            <enum name="shadow_gradual" value="1"/>
-            <enum name="shadow_alpha" value="2"/>
+            <enum name="shadow_gradual" value="1" />
+            <enum name="shadow_alpha" value="2" />
         </attr>
     </declare-styleable>
     <declare-styleable name="LineCircleView">
-        <attr name="lt_border_width" format="dimension"/>
-        <attr name="lt_line_sel_color" format="color"/>
-        <attr name="lt_line_un_color" format="color"/>
+        <attr name="lt_border_width" format="dimension" />
+        <attr name="lt_line_sel_color" format="color" />
+        <attr name="lt_line_un_color" format="color" />
     </declare-styleable>
     <!--发现左上角标签 推荐 被推荐-->
     <declare-styleable name="LabelView">
         <!-- 设置文字内容 -->
-        <attr name="lv_text" format="string"/>
+        <attr name="lv_text" format="string" />
         <!-- 设置文字颜色,默认#ffffff -->
-        <attr name="lv_text_color" format="color"/>
+        <attr name="lv_text_color" format="color" />
         <!-- 设置文字大小,默认11sp -->
-        <attr name="lv_text_size" format="dimension"/>
+        <attr name="lv_text_size" format="dimension" />
         <!-- 设置文字是否支持加粗,默认true -->
-        <attr name="lv_text_bold" format="boolean"/>
+        <attr name="lv_text_bold" format="boolean" />
         <!-- 设置文字是否支持全部大写,默认true-->
-        <attr name="lv_text_all_caps" format="boolean"/>
+        <attr name="lv_text_all_caps" format="boolean" />
         <!-- 设置背景颜色,默认"#FF4081"-->
-        <attr name="lv_background_color" format="color"/>
+        <attr name="lv_background_color" format="color" />
         <!-- 设置LabelView所在矩形最小宽高,默认mFillTriangle?35dp:50dp-->
-        <attr name="lv_min_size" format="dimension"/>
+        <attr name="lv_min_size" format="dimension" />
         <!-- 设置文字上下padding,默认3.5dp,mFillTriangle为true时无效-->
-        <attr name="lv_padding" format="dimension"/>
+        <attr name="lv_padding" format="dimension" />
         <!-- 设置LabelView方向 -->
         <attr name="lv_gravity" format="enum">
-            <enum name="TOP_LEFT" value="51"/>
-            <enum name="TOP_RIGHT" value="53"/>
-            <enum name="BOTTOM_LEFT" value="83"/>
-            <enum name="BOTTOM_RIGHT" value="85"/>
+            <enum name="TOP_LEFT" value="51" />
+            <enum name="TOP_RIGHT" value="53" />
+            <enum name="BOTTOM_LEFT" value="83" />
+            <enum name="BOTTOM_RIGHT" value="85" />
         </attr>
         <!-- 设置是否填充三角区域,默认false -->
-        <attr name="lv_fill_triangle" format="boolean"/>
+        <attr name="lv_fill_triangle" format="boolean" />
 
     </declare-styleable>
     <declare-styleable name="AlignTextView">
         <attr name="align" format="enum">
-            <enum name="left" value="0"/>
-            <enum name="center" value="1"/>
-            <enum name="right" value="2"/>
+            <enum name="left" value="0" />
+            <enum name="center" value="1" />
+            <enum name="right" value="2" />
         </attr>
     </declare-styleable>
 
     <!-- 标点转换 -->
     <declare-styleable name="CBAlignTextView">
-        <attr name="punctuationConvert" format="boolean"/>
+        <attr name="punctuationConvert" format="boolean" />
     </declare-styleable>
 
 
     <!--- SlidingTablayout \-->
     <!-- indicator -->
     <!-- 设置显示器颜色 -->
-    <attr name="tl_indicator_color" format="color"/>
+    <attr name="tl_indicator_color" format="color" />
     <!-- 设置显示器高度 -->
-    <attr name="tl_indicator_height" format="dimension"/>
+    <attr name="tl_indicator_height" format="dimension" />
     <!-- 设置显示器固定宽度 -->
-    <attr name="tl_indicator_width" format="dimension"/>
+    <attr name="tl_indicator_width" format="dimension" />
     <!-- 设置显示器margin,当indicator_width大于0,无效 -->
-    <attr name="tl_indicator_margin_left" format="dimension"/>
-    <attr name="tl_indicator_margin_top" format="dimension"/>
-    <attr name="tl_indicator_margin_right" format="dimension"/>
-    <attr name="tl_indicator_margin_bottom" format="dimension"/>
+    <attr name="tl_indicator_margin_left" format="dimension" />
+    <attr name="tl_indicator_margin_top" format="dimension" />
+    <attr name="tl_indicator_margin_right" format="dimension" />
+    <attr name="tl_indicator_margin_bottom" format="dimension" />
     <!-- 设置显示器圆角弧度-->
-    <attr name="tl_indicator_corner_radius" format="dimension"/>
+    <attr name="tl_indicator_corner_radius" format="dimension" />
     <!-- 设置显示器上方还是下方,只对圆角矩形有用-->
     <attr name="tl_indicator_gravity" format="enum">
-        <enum name="TOP" value="48"/>
-        <enum name="BOTTOM" value="80"/>
+        <enum name="TOP" value="48" />
+        <enum name="BOTTOM" value="80" />
     </attr>
     <!-- 设置显示器为常规|三角形|背景色块|-->
     <attr name="tl_indicator_style" format="enum">
-        <enum name="NORMAL" value="0"/>
-        <enum name="TRIANGLE" value="1"/>
-        <enum name="BLOCK" value="2"/>
+        <enum name="NORMAL" value="0" />
+        <enum name="TRIANGLE" value="1" />
+        <enum name="BLOCK" value="2" />
     </attr>
     <!-- 设置显示器长度与title一样长,只有在STYLE_NORMAL并且indicatorWidth小于零有效-->
-    <attr name="tl_indicator_width_equal_title" format="boolean"/>
+    <attr name="tl_indicator_width_equal_title" format="boolean" />
     <!-- 设置显示器支持动画-->
-    <attr name="tl_indicator_anim_enable" format="boolean"/>
+    <attr name="tl_indicator_anim_enable" format="boolean" />
     <!-- 设置显示器动画时间-->
-    <attr name="tl_indicator_anim_duration" format="integer"/>
+    <attr name="tl_indicator_anim_duration" format="integer" />
     <!-- 设置显示器支持动画回弹效果-->
-    <attr name="tl_indicator_bounce_enable" format="boolean"/>
+    <attr name="tl_indicator_bounce_enable" format="boolean" />
 
     <!-- underline -->
     <!-- 设置下划线颜色 -->
-    <attr name="tl_underline_color" format="color"/>
+    <attr name="tl_underline_color" format="color" />
     <!-- 设置下划线高度 -->
-    <attr name="tl_underline_height" format="dimension"/>
+    <attr name="tl_underline_height" format="dimension" />
     <!-- 设置下划线上方还是下方-->
     <attr name="tl_underline_gravity" format="enum">
-        <enum name="TOP" value="48"/>
-        <enum name="BOTTOM" value="80"/>
+        <enum name="TOP" value="48" />
+        <enum name="BOTTOM" value="80" />
     </attr>
 
     <!-- divider -->
     <!-- 设置分割线颜色 -->
-    <attr name="tl_divider_color" format="color"/>
+    <attr name="tl_divider_color" format="color" />
     <!-- 设置分割线宽度 -->
-    <attr name="tl_divider_width" format="dimension"/>
+    <attr name="tl_divider_width" format="dimension" />
     <!-- 设置分割线的paddingTop和paddingBottom -->
-    <attr name="tl_divider_padding" format="dimension"/>
+    <attr name="tl_divider_padding" format="dimension" />
 
     <!-- tab -->
     <!-- 设置tab的paddingLeft和paddingRight -->
-    <attr name="tl_tab_padding" format="dimension"/>
+    <attr name="tl_tab_padding" format="dimension" />
     <!-- 设置tab大小等分 -->
-    <attr name="tl_tab_space_equal" format="boolean"/>
+    <attr name="tl_tab_space_equal" format="boolean" />
     <!-- 设置tab固定大小 -->
-    <attr name="tl_tab_width" format="dimension"/>
+    <attr name="tl_tab_width" format="dimension" />
 
     <!-- name -->
     <!-- 设置字体大小 -->
-    <attr name="tl_textsize" format="dimension"/>
+    <attr name="tl_textsize" format="dimension" />
     <!--  设置副标题字体大小-->
-    <attr name="tl_sub_textsize" format="dimension"/>
+    <attr name="tl_sub_textsize" format="dimension" />
     <!-- 设置字体选中颜色 -->
-    <attr name="tl_textSelectColor" format="color"/>
+    <attr name="tl_textSelectColor" format="color" />
     <!-- 设置字体未选中颜色 -->
-    <attr name="tl_textUnselectColor" format="color"/>
+    <attr name="tl_textUnselectColor" format="color" />
     <!-- 设置字体加粗 -->
     <attr name="tl_textBold" format="enum">
-        <enum name="NONE" value="0"/>
-        <enum name="SELECT" value="1"/>
-        <enum name="BOTH" value="2"/>
+        <enum name="NONE" value="0" />
+        <enum name="SELECT" value="1" />
+        <enum name="BOTH" value="2" />
     </attr>
     <!-- 设置字体全大写 -->
-    <attr name="tl_textAllCaps" format="boolean"/>
+    <attr name="tl_textAllCaps" format="boolean" />
 
     <declare-styleable name="SlidingTabLayout">
         <!-- indicator -->
-        <attr name="tl_indicator_color"/>
-        <attr name="tl_indicator_height"/>
-        <attr name="tl_indicator_width"/>
-        <attr name="tl_indicator_margin_left"/>
-        <attr name="tl_indicator_margin_top"/>
-        <attr name="tl_indicator_margin_right"/>
-        <attr name="tl_indicator_margin_bottom"/>
-        <attr name="tl_indicator_corner_radius"/>
-        <attr name="tl_indicator_gravity"/>
-        <attr name="tl_indicator_style"/>
-        <attr name="tl_indicator_width_equal_title"/>
+        <attr name="tl_indicator_color" />
+        <attr name="tl_indicator_height" />
+        <attr name="tl_indicator_width" />
+        <attr name="tl_indicator_margin_left" />
+        <attr name="tl_indicator_margin_top" />
+        <attr name="tl_indicator_margin_right" />
+        <attr name="tl_indicator_margin_bottom" />
+        <attr name="tl_indicator_corner_radius" />
+        <attr name="tl_indicator_gravity" />
+        <attr name="tl_indicator_style" />
+        <attr name="tl_indicator_width_equal_title" />
 
         <!-- underline -->
-        <attr name="tl_underline_color"/>
-        <attr name="tl_underline_height"/>
-        <attr name="tl_underline_gravity"/>
+        <attr name="tl_underline_color" />
+        <attr name="tl_underline_height" />
+        <attr name="tl_underline_gravity" />
 
         <!-- divider -->
-        <attr name="tl_divider_color"/>
-        <attr name="tl_divider_width"/>
-        <attr name="tl_divider_padding"/>
+        <attr name="tl_divider_color" />
+        <attr name="tl_divider_width" />
+        <attr name="tl_divider_padding" />
 
         <!-- tab -->
-        <attr name="tl_tab_padding"/>
-        <attr name="tl_tab_space_equal"/>
-        <attr name="tl_tab_width"/>
+        <attr name="tl_tab_padding" />
+        <attr name="tl_tab_space_equal" />
+        <attr name="tl_tab_width" />
 
         <!-- name -->
-        <attr name="tl_textsize"/>
-        <attr name="tl_textSelectColor"/>
-        <attr name="tl_textUnselectColor"/>
-        <attr name="tl_textBold"/>
-        <attr name="tl_textAllCaps"/>
+        <attr name="tl_textsize" />
+        <attr name="tl_textSelectColor" />
+        <attr name="tl_textUnselectColor" />
+        <attr name="tl_textBold" />
+        <attr name="tl_textAllCaps" />
 
     </declare-styleable>
 
     <declare-styleable name="SlidingTabLayoutDouble">
         <!-- indicator -->
-        <attr name="tl_indicator_color"/>
-        <attr name="tl_indicator_height"/>
-        <attr name="tl_indicator_width"/>
-        <attr name="tl_indicator_margin_left"/>
-        <attr name="tl_indicator_margin_top"/>
-        <attr name="tl_indicator_margin_right"/>
-        <attr name="tl_indicator_margin_bottom"/>
-        <attr name="tl_indicator_corner_radius"/>
-        <attr name="tl_indicator_gravity"/>
-        <attr name="tl_indicator_style"/>
-        <attr name="tl_indicator_width_equal_title"/>
+        <attr name="tl_indicator_color" />
+        <attr name="tl_indicator_height" />
+        <attr name="tl_indicator_width" />
+        <attr name="tl_indicator_margin_left" />
+        <attr name="tl_indicator_margin_top" />
+        <attr name="tl_indicator_margin_right" />
+        <attr name="tl_indicator_margin_bottom" />
+        <attr name="tl_indicator_corner_radius" />
+        <attr name="tl_indicator_gravity" />
+        <attr name="tl_indicator_style" />
+        <attr name="tl_indicator_width_equal_title" />
 
         <!-- underline -->
-        <attr name="tl_underline_color"/>
-        <attr name="tl_underline_height"/>
-        <attr name="tl_underline_gravity"/>
+        <attr name="tl_underline_color" />
+        <attr name="tl_underline_height" />
+        <attr name="tl_underline_gravity" />
 
         <!-- divider -->
-        <attr name="tl_divider_color"/>
-        <attr name="tl_divider_width"/>
-        <attr name="tl_divider_padding"/>
+        <attr name="tl_divider_color" />
+        <attr name="tl_divider_width" />
+        <attr name="tl_divider_padding" />
 
         <!-- tab -->
-        <attr name="tl_tab_padding"/>
-        <attr name="tl_tab_space_equal"/>
-        <attr name="tl_tab_width"/>
+        <attr name="tl_tab_padding" />
+        <attr name="tl_tab_space_equal" />
+        <attr name="tl_tab_width" />
 
         <!-- name -->
-        <attr name="tl_textsize"/>
-        <attr name="tl_textSelectColor"/>
-        <attr name="tl_textUnselectColor"/>
-        <attr name="tl_sub_textsize"/>
-        <attr name="tl_sub_textSelectColor"/>
-        <attr name="tl_sub_textUnselectColor"/>
-        <attr name="tl_textBold"/>
-        <attr name="tl_sub_textBold"/>
-        <attr name="tl_textAllCaps"/>
+        <attr name="tl_textsize" />
+        <attr name="tl_textSelectColor" />
+        <attr name="tl_textUnselectColor" />
+        <attr name="tl_sub_textsize" />
+        <attr name="tl_sub_textSelectColor" />
+        <attr name="tl_sub_textUnselectColor" />
+        <attr name="tl_textBold" />
+        <attr name="tl_sub_textBold" />
+        <attr name="tl_textAllCaps" />
 
     </declare-styleable>
 
     <declare-styleable name="CommonTabLayout">
         <!-- indicator -->
-        <attr name="tl_indicator_color"/>
-        <attr name="tl_indicator_height"/>
-        <attr name="tl_indicator_width"/>
-        <attr name="tl_indicator_margin_left"/>
-        <attr name="tl_indicator_margin_top"/>
-        <attr name="tl_indicator_margin_right"/>
-        <attr name="tl_indicator_margin_bottom"/>
-        <attr name="tl_indicator_corner_radius"/>
-        <attr name="tl_indicator_gravity"/>
-        <attr name="tl_indicator_style"/>
-        <attr name="tl_indicator_anim_enable"/>
-        <attr name="tl_indicator_anim_duration"/>
-        <attr name="tl_indicator_bounce_enable"/>
+        <attr name="tl_indicator_color" />
+        <attr name="tl_indicator_height" />
+        <attr name="tl_indicator_width" />
+        <attr name="tl_indicator_margin_left" />
+        <attr name="tl_indicator_margin_top" />
+        <attr name="tl_indicator_margin_right" />
+        <attr name="tl_indicator_margin_bottom" />
+        <attr name="tl_indicator_corner_radius" />
+        <attr name="tl_indicator_gravity" />
+        <attr name="tl_indicator_style" />
+        <attr name="tl_indicator_anim_enable" />
+        <attr name="tl_indicator_anim_duration" />
+        <attr name="tl_indicator_bounce_enable" />
         <!-- underline -->
-        <attr name="tl_underline_color"/>
-        <attr name="tl_underline_height"/>
-        <attr name="tl_underline_gravity"/>
+        <attr name="tl_underline_color" />
+        <attr name="tl_underline_height" />
+        <attr name="tl_underline_gravity" />
 
         <!-- divider -->
-        <attr name="tl_divider_color"/>
-        <attr name="tl_divider_width"/>
-        <attr name="tl_divider_padding"/>
+        <attr name="tl_divider_color" />
+        <attr name="tl_divider_width" />
+        <attr name="tl_divider_padding" />
 
         <!-- tab -->
-        <attr name="tl_tab_padding"/>
-        <attr name="tl_tab_space_equal"/>
-        <attr name="tl_tab_width"/>
+        <attr name="tl_tab_padding" />
+        <attr name="tl_tab_space_equal" />
+        <attr name="tl_tab_width" />
 
         <!-- name -->
-        <attr name="tl_textsize"/>
-        <attr name="tl_textSelectColor"/>
-        <attr name="tl_textUnselectColor"/>
-        <attr name="tl_textBold"/>
-        <attr name="tl_textAllCaps"/>
+        <attr name="tl_textsize" />
+        <attr name="tl_textSelectColor" />
+        <attr name="tl_textUnselectColor" />
+        <attr name="tl_textBold" />
+        <attr name="tl_textAllCaps" />
 
         <!-- icon -->
         <!-- 设置icon宽度 -->
-        <attr name="tl_iconWidth" format="dimension"/>
+        <attr name="tl_iconWidth" format="dimension" />
         <!-- 设置icon高度 -->
-        <attr name="tl_iconHeight" format="dimension"/>
+        <attr name="tl_iconHeight" format="dimension" />
         <!-- 设置icon是否可见 -->
-        <attr name="tl_iconVisible" format="boolean"/>
+        <attr name="tl_iconVisible" format="boolean" />
         <!-- 设置icon显示位置,对应Gravity中常量值 -->
         <attr name="tl_iconGravity" format="enum">
-            <enum name="LEFT" value="3"/>
-            <enum name="TOP" value="48"/>
-            <enum name="RIGHT" value="5"/>
-            <enum name="BOTTOM" value="80"/>
+            <enum name="LEFT" value="3" />
+            <enum name="TOP" value="48" />
+            <enum name="RIGHT" value="5" />
+            <enum name="BOTTOM" value="80" />
         </attr>
         <!-- 设置icon与文字间距 -->
-        <attr name="tl_iconMargin" format="dimension"/>
+        <attr name="tl_iconMargin" format="dimension" />
 
     </declare-styleable>
 
     <declare-styleable name="SegmentTabLayout">
         <!-- indicator -->
-        <attr name="tl_indicator_color"/>
-        <attr name="tl_indicator_height"/>
-        <attr name="tl_indicator_margin_left"/>
-        <attr name="tl_indicator_margin_top"/>
-        <attr name="tl_indicator_margin_right"/>
-        <attr name="tl_indicator_margin_bottom"/>
-        <attr name="tl_indicator_corner_radius"/>
-        <attr name="tl_indicator_anim_enable"/>
-        <attr name="tl_indicator_anim_duration"/>
-        <attr name="tl_indicator_bounce_enable"/>
+        <attr name="tl_indicator_color" />
+        <attr name="tl_indicator_height" />
+        <attr name="tl_indicator_margin_left" />
+        <attr name="tl_indicator_margin_top" />
+        <attr name="tl_indicator_margin_right" />
+        <attr name="tl_indicator_margin_bottom" />
+        <attr name="tl_indicator_corner_radius" />
+        <attr name="tl_indicator_anim_enable" />
+        <attr name="tl_indicator_anim_duration" />
+        <attr name="tl_indicator_bounce_enable" />
 
         <!-- divider -->
-        <attr name="tl_divider_color"/>
-        <attr name="tl_divider_width"/>
-        <attr name="tl_divider_padding"/>
+        <attr name="tl_divider_color" />
+        <attr name="tl_divider_width" />
+        <attr name="tl_divider_padding" />
 
         <!-- tab -->
-        <attr name="tl_tab_padding"/>
-        <attr name="tl_tab_space_equal"/>
-        <attr name="tl_tab_width"/>
+        <attr name="tl_tab_padding" />
+        <attr name="tl_tab_space_equal" />
+        <attr name="tl_tab_width" />
 
         <!-- name -->
-        <attr name="tl_textsize"/>
-        <attr name="tl_textSelectColor"/>
-        <attr name="tl_textUnselectColor"/>
-        <attr name="tl_textBold"/>
-        <attr name="tl_textAllCaps"/>
+        <attr name="tl_textsize" />
+        <attr name="tl_textSelectColor" />
+        <attr name="tl_textUnselectColor" />
+        <attr name="tl_textBold" />
+        <attr name="tl_textAllCaps" />
 
-        <attr name="tl_bar_color" format="color"/>
-        <attr name="tl_bar_stroke_color" format="color"/>
-        <attr name="tl_bar_stroke_width" format="dimension"/>
+        <attr name="tl_bar_color" format="color" />
+        <attr name="tl_bar_stroke_color" format="color" />
+        <attr name="tl_bar_stroke_width" format="dimension" />
 
     </declare-styleable>
 
     <declare-styleable name="MsgView">
         <!-- 圆角矩形背景色 -->
-        <attr name="mv_backgroundColor" format="color"/>
+        <attr name="mv_backgroundColor" format="color" />
         <!-- 圆角弧度,单位dp-->
-        <attr name="mv_cornerRadius" format="dimension"/>
+        <attr name="mv_cornerRadius" format="dimension" />
         <!-- 圆角弧度,单位dp-->
-        <attr name="mv_strokeWidth" format="dimension"/>
+        <attr name="mv_strokeWidth" format="dimension" />
         <!-- 圆角边框颜色-->
-        <attr name="mv_strokeColor" format="color"/>
+        <attr name="mv_strokeColor" format="color" />
         <!-- 圆角弧度是高度一半-->
-        <attr name="mv_isRadiusHalfHeight" format="boolean"/>
+        <attr name="mv_isRadiusHalfHeight" format="boolean" />
         <!-- 圆角矩形宽高相等,取较宽高中大值-->
-        <attr name="mv_isWidthHeightEqual" format="boolean"/>
+        <attr name="mv_isWidthHeightEqual" format="boolean" />
     </declare-styleable>
 
 
     <!-- 弧形布局相关 -->
     <declare-styleable name="ArcLayout">
-        <attr name="arc_height" format="dimension"/>
+        <attr name="arc_height" format="dimension" />
         <attr name="arc_position">
-            <enum name="bottom" value="1"/>
-            <enum name="top" value="2"/>
-            <enum name="left" value="3"/>
-            <enum name="right" value="4"/>
+            <enum name="bottom" value="1" />
+            <enum name="top" value="2" />
+            <enum name="left" value="3" />
+            <enum name="right" value="4" />
         </attr>
         <attr name="arc_cropDirection" format="enum">
-            <enum name="cropInside" value="1"/>
-            <enum name="cropOutside" value="2"/>
+            <enum name="cropInside" value="1" />
+            <enum name="cropOutside" value="2" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="WheelView">
+        <attr name="itemVisibleNum" format="integer" />
+        <attr name="textColorOuter" format="color" />
+        <attr name="textSizeOuter" format="dimension" />
+        <attr name="textColorCenter" format="color" />
+        <attr name="textSizeCenter" format="dimension" />
+        <attr name="lineColor" format="color" />
+        <attr name="isLoop" format="boolean" />
+        <attr name="lineSpaceingDimens" format="dimension" />
+        <attr name="wheelGravity" format="enum">
+            <enum name="left" value="234" />
+            <enum name="center" value="354" />
+            <enum name="right" value="894" />
         </attr>
     </declare-styleable>
 </resources>

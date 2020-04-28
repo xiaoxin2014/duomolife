@@ -153,7 +153,7 @@ public class EditorSelectActivity extends BaseActivity {
                             mEditorAdapter.loadMoreComplete();
                         }
                     } else {
-                        showToast(EditorSelectActivity.this, mEditorEntity.getMsg());
+                        showToast( mEditorEntity.getMsg());
                         mEditorAdapter.loadMoreFail();
                     }
                 }

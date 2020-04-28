@@ -112,7 +112,7 @@ public class FoundPasswordActivity extends BaseActivity {
                     resetPassword(password);
                 } else if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE) { //获取验证码成功
                     //请求验证码成功，进入倒计时
-                    showToast(FoundPasswordActivity.this, R.string.GetSmsCodeSuccess);
+                    showToast( R.string.GetSmsCodeSuccess);
                     tv_bind_send_code.setVisibility(View.VISIBLE);
                     reg_bind_code_gif_view.setVisibility(View.GONE);
                     if (countDownHelper == null) {
@@ -129,9 +129,9 @@ public class FoundPasswordActivity extends BaseActivity {
                     throwable.printStackTrace();
                     JSONObject object = new JSONObject(throwable.getMessage());
                     int status = object.optInt("status");//错误代码
-                    disposeMessageCode(FoundPasswordActivity.this, status);
+                    disposeMessageCode( status);
                 } catch (Exception e) {
-                    showToast(FoundPasswordActivity.this, R.string.unConnectedNetwork);
+                    showToast( R.string.unConnectedNetwork);
                 }
             }
             return false;
@@ -142,7 +142,7 @@ public class FoundPasswordActivity extends BaseActivity {
     void sendSmsCode(View view) {
         String phoneNumber = edit_binding_mobile.getText().toString().trim();
         if (phoneNumber.length() != 11) {
-            showToast(this, R.string.MobileError);
+            showToast(R.string.MobileError);
             return;
         }
 //            判断手机号是否注册
@@ -171,24 +171,20 @@ public class FoundPasswordActivity extends BaseActivity {
                                     reg_bind_code_gif_view.setVisibility(View.VISIBLE);
                                     SMSSDK.getVerificationCode("86", phoneNumber);
                                 } else {
-                                    showToast(FoundPasswordActivity.this, R.string.unConnectedNetwork);
+                                    showToast(R.string.unConnectedNetwork);
                                 }
                             } else if (status != null && status.getRegisterFlag() != 1) {
-                                showToast(FoundPasswordActivity.this, status.getResult());
+                                showToast(status.getResult());
                             }
                         } else {
-                            showToast(FoundPasswordActivity.this, R.string.unConnectedNetwork);
+                            showToast(R.string.unConnectedNetwork);
                         }
                     }
 
-                    @Override
-                    public void netClose() {
-                        showToast(FoundPasswordActivity.this, R.string.unConnectedNetwork);
-                    }
 
                     @Override
                     public void onError(Throwable throwable) {
-                        showToast(FoundPasswordActivity.this, R.string.do_failed);
+                        showToast( R.string.do_failed);
                     }
                 });
     }
@@ -199,15 +195,15 @@ public class FoundPasswordActivity extends BaseActivity {
         password = edit_bind_set_password_new.getText().toString().trim();
         String msgCode = edit_get_code.getText().toString().trim();
         if (phoneNumber.length() < 11) {
-            showToast(this, R.string.MobileError);
+            showToast(R.string.MobileError);
             return;
         }
         if (TextUtils.isEmpty(msgCode)) {
-            showToast(this, R.string.SmsCodeNull);
+            showToast( R.string.SmsCodeNull);
             return;
         }
         if (!isConnectedByState(FoundPasswordActivity.this)) {
-            showToast(this, R.string.unConnectedNetwork);
+            showToast(R.string.unConnectedNetwork);
             return;
         }
 
@@ -239,7 +235,7 @@ public class FoundPasswordActivity extends BaseActivity {
                 MinePassword minePassword = gson.fromJson(result, MinePassword.class);
                 if (minePassword != null) {
                     if (minePassword.getCode().equals(SUCCESS_CODE)) {
-                        showToast(FoundPasswordActivity.this, "密码重置成功");
+                        showToast("密码重置成功");
                         finish();
                     } else {
                         showException(minePassword.getMsg());
@@ -258,25 +254,20 @@ public class FoundPasswordActivity extends BaseActivity {
             public void onError(Throwable throwable) {
                 showException(getResources().getString(R.string.do_failed));
             }
-
-            @Override
-            public void netClose() {
-                showToast(FoundPasswordActivity.this, R.string.unConnectedNetwork);
-            }
         });
     }
 
     private boolean setPasswordRule(String newPassword) {
         if (TextUtils.isEmpty(newPassword)) {
-            showToast(this, "请输入新密码");
+            showToast("请输入新密码");
             return true;
         }
         if (newPassword.length() < 5) {
-            showToast(this, R.string.PasswordLessSix);
+            showToast( R.string.PasswordLessSix);
             return true;
         }
         if (!PasswordEncrypt.isPwEligibility(newPassword)) {
-            showToast(this, R.string.PasswordInconformity);
+            showToast( R.string.PasswordInconformity);
             return true;
         }
         return false;

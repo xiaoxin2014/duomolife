@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ll_product_activity_detail"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/sc_mm_106"
+    android:layout_height="wrap_content"
     android:background="@color/text_normal_red"
     android:orientation="horizontal">
 
     <LinearLayout
         android:id="@+id/rl_product_activity_detail"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="@dimen/sc_mm_106"
         android:layout_weight="1"
         android:orientation="horizontal">
 
@@ -26,7 +25,7 @@
             android:paddingRight="@dimen/sc_mm_10"
             android:text="@string/defaul"
             android:textColor="@color/white"
-            android:textSize="@dimen/sc_mm_30"/>
+            android:textSize="@dimen/sc_mm_30" />
 
         <ImageView
             android:id="@+id/iv_next_icon"
@@ -34,14 +33,14 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginRight="@dimen/sc_mm_28"
-            android:src="@drawable/light_next_icon"/>
+            android:src="@drawable/light_next_icon" />
     </LinearLayout>
 
 
     <RelativeLayout
         android:id="@+id/rl_activity_price"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="@dimen/sc_mm_106"
         android:layout_weight="1"
         android:background="@color/text_normal_red"
         android:gravity="center_vertical"
@@ -56,7 +55,7 @@
             android:layout_marginRight="@dimen/sc_mm_30"
             android:background="@color/text_normal_red"
             android:textColor="@color/white"
-            android:textSize="@dimen/sc_mm_30"/>
+            android:textSize="@dimen/sc_mm_30" />
 
         <TextView
             android:id="@+id/tv_product_martket_price"
@@ -67,9 +66,10 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:textColor="@color/white"
-            android:textSize="@dimen/sc_mm_22"/>
+            android:textSize="@dimen/sc_mm_22" />
     </RelativeLayout>
 
-    <include
-        layout="@layout/layout_new_countdown_time_hours"/>
+    <include layout="@layout/layout_shopdetails_endtime" />
+
+    <include layout="@layout/layout_shopdetails_starttime" />
 </LinearLayout>

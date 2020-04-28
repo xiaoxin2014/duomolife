@@ -255,7 +255,7 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
                             itemDescriptionList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(descriptionBeanList));
                         }
                     } else if (!shopDetailsEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(QualityWeekOptimizedActivity.this, shopDetailsEntity.getMsg());
+                        showToast(shopDetailsEntity.getMsg());
                     }
                     communalDetailAdapter.setNewData(itemDescriptionList);
                     getBuyListRecommend();
@@ -293,7 +293,7 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
                             } else if (qualityBuyListEntity.getCode().equals(EMPTY_CODE)) {
                                 qualityBuyListAdapter.loadMoreEnd();
                             } else {
-                                showToast(QualityWeekOptimizedActivity.this, qualityBuyListEntity.getMsg());
+                                showToast(qualityBuyListEntity.getMsg());
                             }
                             qualityBuyListAdapter.notifyDataSetChanged();
                         }

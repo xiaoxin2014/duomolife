@@ -104,7 +104,7 @@ public class RefundGoodsListFragment extends BaseFragment {
                         orderList.addAll(returnRecordEntity.getResult());
                         directSalesReturnListAdapter.loadMoreComplete();
                     } else if (!SUCCESS_CODE.equals(code) && !EMPTY_CODE.equals(code)) {
-                        showToast(getActivity(), returnRecordEntity.getMsg());
+                        showToast( returnRecordEntity.getMsg());
                         directSalesReturnListAdapter.loadMoreFail();
                     } else {
                         directSalesReturnListAdapter.loadMoreEnd();

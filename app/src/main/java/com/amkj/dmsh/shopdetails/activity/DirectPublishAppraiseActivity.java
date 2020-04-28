@@ -149,7 +149,7 @@ public class DirectPublishAppraiseActivity extends BaseActivity{
                 directPublishAppraiseAdapter.notifyItemRangeChanged(productPosition, 1);
             }
         } else if (requestCode == REQUEST_PERMISSIONS) {
-            showToast(this, "请到应用管理授予权限");
+            showToast("请到应用管理授予权限");
         }
     }
 
@@ -177,7 +177,7 @@ public class DirectPublishAppraiseActivity extends BaseActivity{
                 }
             }
             if (indexSuccess < 1) {
-                showToast(this, "请填写商品评论");
+                showToast("请填写商品评论");
             } else {
                 if (loadHud != null) {
                     loadHud.show();
@@ -252,7 +252,7 @@ public class DirectPublishAppraiseActivity extends BaseActivity{
                             }
                             tv_header_shared.setText("发表评价");
                             tv_header_shared.setEnabled(true);
-                            showToast(DirectPublishAppraiseActivity.this, "网络异常");
+                            showToast("网络异常");
                         }
 
                         @Override
@@ -301,10 +301,10 @@ public class DirectPublishAppraiseActivity extends BaseActivity{
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        showToast(DirectPublishAppraiseActivity.this, R.string.appraise_public_success);
+                        showToast(R.string.appraise_public_success);
                         finish();
                     } else {
-                        showToastRequestMsg(DirectPublishAppraiseActivity.this, requestStatus);
+                        showToastRequestMsg( requestStatus);
                     }
                     tv_header_shared.setText("发表评价");
                     tv_header_shared.setEnabled(true);
@@ -322,12 +322,7 @@ public class DirectPublishAppraiseActivity extends BaseActivity{
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(DirectPublishAppraiseActivity.this, R.string.commit_failed);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(DirectPublishAppraiseActivity.this, R.string.unConnectedNetwork);
+                showToast( R.string.commit_failed);
             }
         });
     }

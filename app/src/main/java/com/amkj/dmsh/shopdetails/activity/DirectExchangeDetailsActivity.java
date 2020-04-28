@@ -34,6 +34,7 @@ import com.amkj.dmsh.qyservice.QyProductIndentInfo;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.adapter.DirectProductListAdapter;
 import com.amkj.dmsh.shopdetails.adapter.IndentDiscountAdapter;
+import com.amkj.dmsh.shopdetails.bean.ButtonListBean;
 import com.amkj.dmsh.shopdetails.bean.IndentDetailEntity;
 import com.amkj.dmsh.shopdetails.bean.MainOrderListEntity;
 import com.amkj.dmsh.shopdetails.bean.PriceInfoBean;
@@ -67,7 +68,9 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.CHANGE_ORDER_ADDRESS;
+import static com.amkj.dmsh.constant.ConstantVariable.EDIT_ADDRESS;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_DETAILS_TYPE;
+import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_INDENT_LIST;
 import static com.amkj.dmsh.utils.TimeUtils.getCoutDownTime;
@@ -184,12 +187,12 @@ public class DirectExchangeDetailsActivity extends BaseActivity {
         tv_indent_title.setText("订单详情");
         Intent intent = getIntent();
         orderNo = intent.getStringExtra("orderNo");
-        communal_recycler.setLayoutManager(new LinearLayoutManager(DirectExchangeDetailsActivity.this));
+        communal_recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
         communal_recycler.setNestedScrollingEnabled(false);
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_gray_f_one_px).create());
-        directProductListAdapter = new DirectProductListAdapter(DirectExchangeDetailsActivity.this, goodsBeanList, INDENT_DETAILS_TYPE);
+        directProductListAdapter = new DirectProductListAdapter(getActivity(), goodsBeanList, INDENT_DETAILS_TYPE);
         communal_recycler.setAdapter(directProductListAdapter);
         smart_communal_refresh.setOnRefreshListener(refreshLayout -> {
             //                滚动距离置0
@@ -205,7 +208,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity {
                     //单件商品申请退款
                     case R.id.tv_refund:
                         if (status == 13) {
-                            showServiceDialog("该商品已被发货方锁定，可能正在发货尚未上传物流单号，建议您再耐心等待，如仍需退款，请联系人工客服解锁。");
+                            showServiceDialog("该商品已被发货方锁定，可能正在发货尚未上传物流单号，建议您再耐心等待，如仍需退款，请联系人工客服解锁。", "再等等");
                             return;
                         } else if (status == 10) {
                             dataIndent.setClass(getActivity(), DirectApplyRefundActivity.class);
@@ -256,11 +259,16 @@ public class DirectExchangeDetailsActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
+            if (requestCode == IS_LOGIN_CODE) {
+                finish();
+            }
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CHANGE_ORDER_ADDRESS) {
-            showToast(this, "地址修改成功");
+            showToast("地址修改成功");
+        } else if (requestCode == IS_LOGIN_CODE) {
+            loadData();
         }
     }
 
@@ -288,7 +296,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity {
                                     setIndentData(infoDetailEntity.getResult());
                                 }
                             } else {
-                                showToast(DirectExchangeDetailsActivity.this, msg);
+                                showToast(msg);
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -342,7 +350,20 @@ public class DirectExchangeDetailsActivity extends BaseActivity {
         tv_indent_user_lea_mes.setVisibility(!TextUtils.isEmpty(mainOrderBean.getUserRemark()) ? View.VISIBLE : GONE);//买家留言
         tv_indent_user_lea_mes.setText(!TextUtils.isEmpty(mainOrderBean.getUserRemark()) ? getStringsFormat(this, R.string.buy_message, mainOrderBean.getUserRemark()) : "");
         //修改收货地址
-        tv_change_address.setVisibility(mainOrderBean.isEditAddress() ? View.VISIBLE : GONE);
+        boolean isChangeAddress = false;
+        List<ButtonListBean> buttonList = mainOrderBean.getButtonList();
+        if (buttonList != null && buttonList.size() > 0) {
+            for (int i = 0; i < buttonList.size(); i++) {
+                ButtonListBean buttonListBean = buttonList.get(i);
+                if (buttonListBean.getId() == EDIT_ADDRESS) {
+                    isChangeAddress = true;
+                    tv_change_address.setSelected(!buttonListBean.isClickable());
+                    break;
+                }
+            }
+        }
+        tv_change_address.setVisibility(isChangeAddress ? View.VISIBLE : GONE);
+
         //待支付倒计时
         mStatus = mainOrderBean.getStatus();
         if (mStatus >= 0 && mStatus < 10) {
@@ -436,7 +457,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity {
                         public void onTick(long millisUntilFinished) {
                             String coutDownTime = getCoutDownTime(millisUntilFinished, false);
                             String coutDownText = "剩 " + coutDownTime + " 自动关闭";
-                            tv_countdownTime.setText(ConstantMethod.getSpannableString(coutDownText, 2, 2 + coutDownTime.length() + 1, -1, "#0a88fa", true));
+                            tv_countdownTime.setText(ConstantMethod.getSpannableString(coutDownText, 2, 2 + coutDownTime.length() + 1, -1, "#3274d9", true));
                         }
 
                         @Override
@@ -482,13 +503,18 @@ public class DirectExchangeDetailsActivity extends BaseActivity {
                 ClipboardManager cmb = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData mClipData = ClipData.newPlainText("Label", getStrings(content));
                 cmb.setPrimaryClip(mClipData);
-                showToast(DirectExchangeDetailsActivity.this, "已复制");
+                showToast("已复制");
                 break;
             //修改收货地址
             case R.id.tv_change_address:
-                intent = new Intent(this, SelectedAddressActivity.class);
-                intent.putExtra("orderNo", orderNo);
-                startActivityForResult(intent, CHANGE_ORDER_ADDRESS);
+                if (!tv_change_address.isSelected()) {
+                    intent = new Intent(this, SelectedAddressActivity.class);
+                    intent.putExtra("orderNo", orderNo);
+                    startActivityForResult(intent, CHANGE_ORDER_ADDRESS);
+                } else {
+                    showServiceDialog("已超过自主修改时间，如需修改收货信息请联系人工客服", "不改了");
+                }
+
                 break;
         }
     }
@@ -516,12 +542,10 @@ public class DirectExchangeDetailsActivity extends BaseActivity {
 
 
     //显示联系客服弹窗
-    private void showServiceDialog(String msg) {
+    private void showServiceDialog(String msg, String confirmText) {
         if (mAlertDialogService == null) {
             mAlertDialogService = new AlertDialogHelper(this, R.layout.layout_alert_dialog_new);
-            mAlertDialogService.setTitleVisibility(GONE)
-                    .setConfirmText("再等等")
-                    .setCancelText("联系客服")
+            mAlertDialogService.setCancelText("联系客服")
                     .setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
                         @Override
                         public void confirm() {
@@ -530,11 +554,11 @@ public class DirectExchangeDetailsActivity extends BaseActivity {
 
                         @Override
                         public void cancel() {
-                            QyServiceUtils.getQyInstance().openQyServiceChat(getActivity(), "申请退款");
+                            QyServiceUtils.getQyInstance().openQyServiceChat(getActivity());
                         }
                     });
         }
-        mAlertDialogService.setMsg(msg).show();
+        mAlertDialogService.setMsg(msg).setConfirmText(confirmText).show();
     }
 
     @Override

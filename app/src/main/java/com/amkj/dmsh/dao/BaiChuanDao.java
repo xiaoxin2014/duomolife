@@ -32,8 +32,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showLoadhud;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.TAOBAO_ADZONEID;
-import static com.amkj.dmsh.constant.ConstantVariable.TAOBAO_APPKEY;
 import static com.amkj.dmsh.constant.ConstantVariable.TAOBAO_PID;
 
 /**
@@ -73,7 +71,7 @@ public class BaiChuanDao {
                     @Override
                     public void onFailure(int code, String msg) {
                         dismissLoadhud(context);
-                        showToast(context, "登录失败 ");
+                        showToast("登录失败 ");
                     }
                 });
             }
@@ -83,17 +81,18 @@ public class BaiChuanDao {
 
     //跳转淘宝链接
     private static void skipNewShopDetails(BaseActivity context, String tbUrl, String thirdId, boolean isTbUrl) {
-        //提供给三方传递配置参数
-        Map<String, String> trackParams = new HashMap<>();
-        trackParams.put(AlibcConstants.ISV_CODE, "appisvcode");
-        //设置页面打开方式
-        AlibcShowParams showParams = new AlibcShowParams(OpenType.Native);
-        //淘宝客参数
-        AlibcTaokeParams taokeParams = new AlibcTaokeParams("", "", "");
-        taokeParams.setPid(TAOBAO_PID);
-        if (!TextUtils.isEmpty(tbUrl)) {
-            if (isTaoBaoUrl(tbUrl) || isTbUrl) {
-                try {
+        try {
+            //提供给三方传递配置参数
+            Map<String, String> trackParams = new HashMap<>();
+            trackParams.put(AlibcConstants.ISV_CODE, "appisvcode");
+            //设置页面打开方式
+            AlibcShowParams showParams = new AlibcShowParams(OpenType.Native);
+            //淘宝客参数
+            AlibcTaokeParams taokeParams = new AlibcTaokeParams("", "", "");
+            taokeParams.setPid(TAOBAO_PID);
+            if (!TextUtils.isEmpty(tbUrl)) {
+                if (isTaoBaoUrl(tbUrl) || isTbUrl) {
+
                     // 以显示传入url的方式打开页面（第二个参数是套件名称）
                     AlibcTrade.openByUrl(context, "", tbUrl, null,
                             new WebViewClient(), new WebChromeClient(), showParams,
@@ -104,37 +103,37 @@ public class BaiChuanDao {
 
                                 @Override
                                 public void onFailure(int code, String msg) {
-                                    showToast(context, msg);
+                                    showToast( msg);
                                 }
                             });
-                } catch (Exception e) {
-                    showToast(context, "跟团失败");
+                } else {
+                    //                     网页地址
+                    Intent intent = new Intent();
+                    intent.setClass(context, DoMoLifeCommunalActivity.class);
+                    intent.putExtra("loadUrl", tbUrl);
+                    context.startActivity(intent);
                 }
-            } else {
-                //                     网页地址
-                Intent intent = new Intent();
-                intent.setClass(context, DoMoLifeCommunalActivity.class);
-                intent.putExtra("loadUrl", tbUrl);
-                context.startActivity(intent);
-            }
-        } else if (!TextUtils.isEmpty(thirdId)) {
-            //实例化商品详情 itemID打开page
-            AlibcBasePage alibcBasePage = new AlibcDetailPage(thirdId.trim());
-            AlibcTrade.openByBizCode(context, alibcBasePage, null, new WebViewClient(),
-                    new WebChromeClient(), "detail", showParams, taokeParams,
-                    trackParams, new AlibcTradeCallback() {
-                        @Override
-                        public void onTradeSuccess(AlibcTradeResult tradeResult) {
-                        }
+            } else if (!TextUtils.isEmpty(thirdId)) {
+                //实例化商品详情 itemID打开page
+                AlibcBasePage alibcBasePage = new AlibcDetailPage(thirdId.trim());
+                AlibcTrade.openByBizCode(context, alibcBasePage, null, new WebViewClient(),
+                        new WebChromeClient(), "detail", showParams, taokeParams,
+                        trackParams, new AlibcTradeCallback() {
+                            @Override
+                            public void onTradeSuccess(AlibcTradeResult tradeResult) {
+                            }
 
-                        @Override
-                        public void onFailure(int code, String msg) {
-                            // 失败回调信息
-                            showToast(context, msg);
-                        }
-                    });
-        } else {
-            showToast(context, "地址缺失");
+                            @Override
+                            public void onFailure(int code, String msg) {
+                                // 失败回调信息
+                                showToast( msg);
+                            }
+                        });
+            } else {
+                showToast("地址缺失");
+            }
+        } catch (Exception e) {
+            showToast("跟团失败");
         }
     }
 
@@ -167,7 +166,7 @@ public class BaiChuanDao {
                             @Override
                             public void onFailure(int code, String msg) {
                                 // 失败回调信息
-                                showToast(context, msg);
+                                showToast( msg);
                             }
                         });
             }
@@ -175,7 +174,7 @@ public class BaiChuanDao {
             @Override
             public void onFailure(int code, String msg) {
                 dismissLoadhud(context);
-                showToast(context, "登录失败 ");
+                showToast("登录失败 ");
             }
         });
     }

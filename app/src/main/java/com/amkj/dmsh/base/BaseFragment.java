@@ -336,6 +336,9 @@ public abstract class BaseFragment extends ImmersionFragment {
         if (getView() != null) {
             unbindDrawables(getView());
         }
+        if (loadHud != null) {
+            loadHud.dismiss();
+        }
         ImmersionBar.with(this).destroy();
     }
 

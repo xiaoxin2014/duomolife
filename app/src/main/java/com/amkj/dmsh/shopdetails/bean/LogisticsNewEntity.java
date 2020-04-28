@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * Created by xiaoxin on 2020/3/23
- * Version:v4.4.3
+ * Version:v4.5.0
  * ClassDescription :新版物流详情实体类
  */
 public class LogisticsNewEntity extends BaseEntity {

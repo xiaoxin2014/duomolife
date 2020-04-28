@@ -181,13 +181,13 @@ public class PersonalBgImgSelActivity extends BaseActivity {
                     if (communalUserInfoEntity != null) {
                         if (communalUserInfoEntity.getCode().equals(SUCCESS_CODE)) {
                             PictureFileUtils.deleteCacheDirFile(PersonalBgImgSelActivity.this);
-                            showToast(PersonalBgImgSelActivity.this, "修改完成");
+                            showToast("修改完成");
                             Intent intent = new Intent();
                             intent.putExtra("imgUrl", imgUrl);
                             setResult(RESULT_OK, intent);
                             finish();
                         } else {
-                            showToast(PersonalBgImgSelActivity.this, communalUserInfoEntity.getMsg());
+                            showToast( communalUserInfoEntity.getMsg());
                         }
                     }
                 }
@@ -200,7 +200,7 @@ public class PersonalBgImgSelActivity extends BaseActivity {
                 }
             });
         } else {
-            showToast(this, R.string.img_url_error);
+            showToast(R.string.img_url_error);
         }
     }
 
@@ -220,7 +220,7 @@ public class PersonalBgImgSelActivity extends BaseActivity {
                         mineBgImgBean.setBgimg_url(ConstantVariable.BASE_RESOURCE_DRAW + R.drawable.plus_icon_nor);
                         mineBgImgBeanList.add(mineBgImgBean);
                     } else if (!mineBgImgEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(PersonalBgImgSelActivity.this, mineBgImgEntity.getMsg());
+                        showToast(mineBgImgEntity.getMsg());
                     }
                     setBgImg();
                     personalBgImgSelAdapter.setNewData(mineBgImgBeanList);
@@ -236,13 +236,8 @@ public class PersonalBgImgSelActivity extends BaseActivity {
             }
 
             @Override
-            public void netClose() {
-                showToast(PersonalBgImgSelActivity.this, R.string.unConnectedNetwork);
-            }
-
-            @Override
             public void onError(Throwable throwable) {
-                showToast(PersonalBgImgSelActivity.this, R.string.do_failed);
+                showToast( R.string.do_failed);
             }
         });
     }
@@ -312,7 +307,7 @@ public class PersonalBgImgSelActivity extends BaseActivity {
 
                 @Override
                 public void finishError(String error) {
-                    showToast(PersonalBgImgSelActivity.this, "网络异常");
+                    showToast("网络异常");
                     if (loadHud != null) {
                         loadHud.dismiss();
                     }

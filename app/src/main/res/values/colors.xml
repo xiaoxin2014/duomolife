@@ -103,6 +103,7 @@
     <color name="color_blue_sev">#77befe</color>
     <color name="topic_name_color">#777</color>
     <color name="text_blue_sev">#74bdff</color>
+    <color name="text_blue_indent">#3274d9</color>
     <color name="text_gray_dn">#d9d9d9</color>
     <color name="blue_ff_light">#f5f8fa</color>
     <color name="text_blue_e_thre">#e3f0ff</color>

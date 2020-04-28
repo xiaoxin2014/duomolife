@@ -182,7 +182,7 @@ public class EditorCommentActivity extends BaseActivity {
                         mCommentAdapter.notifyDataSetChanged();
                         mCommentAdapter.loadMoreComplete();
                     } else {
-                        showToast(EditorCommentActivity.this, mEditorCommentEntity.getMsg());
+                        showToast(mEditorCommentEntity.getMsg());
                         mCommentAdapter.loadMoreFail();
                     }
 
@@ -259,7 +259,7 @@ public class EditorCommentActivity extends BaseActivity {
                         sendComment(comment);
                     }
                 } else {
-                    showToast(this, "请正确输入内容");
+                    showToast("请正确输入内容");
                 }
             });
         } else if (GONE == visibility) {
@@ -308,7 +308,7 @@ public class EditorCommentActivity extends BaseActivity {
                     loadHud.dismiss();
                     commentViewVisible(GONE);
                     mEmojiEditComment.setText("");
-                    ConstantMethod.showToast(EditorCommentActivity.this, R.string.comment_article_send_success);
+                    ConstantMethod.showToast( R.string.comment_article_send_success);
                 }
 
                 @Override
@@ -317,13 +317,8 @@ public class EditorCommentActivity extends BaseActivity {
                 }
 
                 @Override
-                public void netClose() {
-                    showToast(EditorCommentActivity.this, R.string.unConnectedNetwork);
-                }
-
-                @Override
                 public void onError(Throwable throwable) {
-                    showToast(EditorCommentActivity.this, R.string.comment_send_failed);
+                    showToast(R.string.comment_send_failed);
                 }
             });
         } else {

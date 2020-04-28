@@ -229,8 +229,10 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
                     helper.rel_integral_lottery_prize.addView(helper.joinIn);
                     helper.integralLotteryJoinInHelper.tv_integral_lottery_join_in.setTag(previousInfoBean);
                 }
-                helper.integralLotteryJoiningInHelper.tv_limit.setVisibility(previousInfoBean.isShareNumMax() ? View.VISIBLE : View.GONE);
-                helper.integralLotteryJoiningInHelper.tv_integral_lottery_invite_rule.setVisibility(previousInfoBean.isShareNumMax() ? View.GONE : View.VISIBLE);
+
+                helper.integralLotteryJoiningInHelper.tv_integral_lottery_invite_rule.setSelected(previousInfoBean.isShareNumMax());
+                helper.integralLotteryJoiningInHelper.tv_integral_lottery_invite_rule.setText(
+                        previousInfoBean.isShareNumMax() ? "本场活动你已达活动上限制" : "每邀请一位好友可额外获得一个抽奖码");
                 prizeText = "开奖倒计时";
             } else { //未开始
                 prizeText = "开始倒计时";
@@ -562,8 +564,6 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
         LinearLayout ll_integral_lottery_joined;
         @BindView(R.id.tv_integral_lottery_invite_rule)
         TextView tv_integral_lottery_invite_rule;
-        @BindView(R.id.tv_limit)
-        TextView tv_limit;
 
         @OnClick(R.id.ll_integral_lottery_joined)
         void mineLotteryCode(LinearLayout linearLayout) {
@@ -619,10 +619,10 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
                     IntegralLotteryAwardEntity integralLotteryAwardEntity = gson.fromJson(result, IntegralLotteryAwardEntity.class);
                     if (integralLotteryAwardEntity != null) {
                         if (SUCCESS_CODE.equals(integralLotteryAwardEntity.getCode())) {
-                            showToast(context, "夺宝参与成功");
+                            showToast("夺宝参与成功");
                             EventBus.getDefault().post(new EventMessage(messageType, "joinInIntegralLottery"));
                         } else {
-                            showToast(context, integralLotteryAwardEntity.getMsg());
+                            showToast(integralLotteryAwardEntity.getMsg());
                         }
                     }
                 }
@@ -634,16 +634,11 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
 
                 @Override
                 public void onError(Throwable throwable) {
-                    showToast(context, R.string.do_failed);
-                }
-
-                @Override
-                public void netClose() {
-                    showToast(context, R.string.unConnectedNetwork);
+                    showToast( R.string.do_failed);
                 }
             });
         } else {
-            getLoginStatus((Activity) context);
+            getLoginStatus(context);
             textView.setEnabled(true);
         }
     }

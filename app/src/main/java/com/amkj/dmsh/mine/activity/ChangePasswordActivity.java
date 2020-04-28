@@ -136,11 +136,11 @@ public class ChangePasswordActivity extends BaseActivity{
                         edit.putBoolean("isLogin", true);
                         edit.putInt("uid", minePassword.getPasswordBackList().get(0).getId());
                         edit.apply();
-                        showToast(ChangePasswordActivity.this, "密码修改成功");
+                        showToast("密码修改成功");
                         //修改密码成功
                         finish();
                     } else {
-                        showToast(ChangePasswordActivity.this, minePassword.getMsg());
+                        showToast( minePassword.getMsg());
                     }
                     header_shared.setEnabled(true);
                 }
@@ -187,17 +187,17 @@ public class ChangePasswordActivity extends BaseActivity{
         String oldPassword = edit_change_password_old.getText().toString().trim();
 //        密码小于6位
         if (oldPassword.length() < 6 || newPassword.length() < 6) {
-            showToast(this, R.string.PasswordLessSix);
+            showToast( R.string.PasswordLessSix);
             return;
         }
 //        新旧密码一致
         if (oldPassword.equals(newPassword)) {
-            showToast(this, R.string.PasswordSame);
+            showToast( R.string.PasswordSame);
             return;
         }
 //        6-20 数字与字母
         if (!PasswordEncrypt.isPwEligibility(newPassword)) {
-            showToast(this, R.string.PasswordInconformity);
+            showToast(R.string.PasswordInconformity);
             return;
         }
         if (loadHud != null) {

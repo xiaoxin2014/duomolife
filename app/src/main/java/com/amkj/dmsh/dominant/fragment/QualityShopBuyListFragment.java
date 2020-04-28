@@ -279,7 +279,7 @@ public class QualityShopBuyListFragment extends BaseFragment {
                             } else if (qualityBuyListEntity.getCode().equals(EMPTY_CODE)) {
                                 qualityBuyListAdapter.loadMoreEnd();
                             } else {
-                                showToast(getActivity(), qualityBuyListEntity.getMsg());
+                                showToast(qualityBuyListEntity.getMsg());
                             }
                             qualityBuyListAdapter.notifyDataSetChanged();
                         }
@@ -294,13 +294,8 @@ public class QualityShopBuyListFragment extends BaseFragment {
                     }
 
                     @Override
-                    public void netClose() {
-                        showToast(getActivity(), R.string.unConnectedNetwork);
-                    }
-
-                    @Override
                     public void onError(Throwable throwable) {
-                        showToast(getActivity(), R.string.invalidData);
+                        showToast( R.string.invalidData);
                     }
                 });
     }
@@ -332,7 +327,7 @@ public class QualityShopBuyListFragment extends BaseFragment {
                         }
                         getBuyListRecommend(shopBuyDetailBean.getId());
                     } else if (!shopDetailsEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(getActivity(), shopDetailsEntity.getMsg());
+                        showToast(shopDetailsEntity.getMsg());
                     }
                     communalDetailAdapter.setNewData(itemDescriptionList);
                 }

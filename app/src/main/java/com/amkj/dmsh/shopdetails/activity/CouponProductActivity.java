@@ -68,7 +68,7 @@ public class CouponProductActivity extends BaseActivity {
         Intent intent = getIntent();
         userCouponId = intent.getStringExtra("userCouponId");
         if (TextUtils.isEmpty(userCouponId)) {
-            showToast(this, R.string.unConnectedNetwork);
+            showToast(R.string.unConnectedNetwork);
             finish();
             return;
         }
@@ -104,49 +104,36 @@ public class CouponProductActivity extends BaseActivity {
                 params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
-                        if (loadHud != null) {
-                            loadHud.dismiss();
-                        }
                         smart_communal_refresh.finishRefresh();
-                        mGoodProductAdapter.loadMoreComplete();
+                        likedProductEntity = new Gson().fromJson(result, UserLikedProductEntity.class);
                         if (page == 1) {
                             couponProductList.clear();
                         }
-                        Gson gson = new Gson();
-                        likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
-                        if (likedProductEntity != null) {
-                            if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
+                        String code = likedProductEntity.getCode();
+                        if (SUCCESS_CODE.equals(code)) {
+                            List<LikedProductBean> goodsList = likedProductEntity.getGoodsList();
+                            if (goodsList != null) {
                                 couponProductList.addAll(likedProductEntity.getGoodsList());
-                            } else if (likedProductEntity.getCode().equals(EMPTY_CODE)) {
-                                mGoodProductAdapter.loadMoreEnd();
-                            } else {
-                                mGoodProductAdapter.loadMoreEnd();
-                                showToast(CouponProductActivity.this, likedProductEntity.getMsg());
+                                mGoodProductAdapter.notifyDataSetChanged();
+                                if (goodsList.size() >= TOTAL_COUNT_TWENTY) {
+                                    mGoodProductAdapter.loadMoreComplete();
+                                } else {
+                                    mGoodProductAdapter.loadMoreEnd();
+                                }
                             }
-                            mGoodProductAdapter.disableLoadMoreIfNotFullPage();
+                        } else {
                             mGoodProductAdapter.notifyDataSetChanged();
+                            mGoodProductAdapter.loadMoreEnd();
+                            if (!EMPTY_CODE.equals(code)) showToast(likedProductEntity.getMsg());
                         }
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, couponProductList, likedProductEntity);
                     }
 
                     @Override
                     public void onNotNetOrException() {
-                        if (loadHud != null) {
-                            loadHud.dismiss();
-                        }
                         smart_communal_refresh.finishRefresh();
-                        mGoodProductAdapter.loadMoreEnd(true);
+                        mGoodProductAdapter.loadMoreFail();
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, couponProductList, likedProductEntity);
-                    }
-
-                    @Override
-                    public void netClose() {
-                        showToast(CouponProductActivity.this, R.string.unConnectedNetwork);
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
-                        showToast(CouponProductActivity.this, R.string.invalidData);
                     }
                 });
     }

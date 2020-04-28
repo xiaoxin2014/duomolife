@@ -41,7 +41,7 @@ import static com.amkj.dmsh.constant.Url.Q_COUPON_PRODUCT_TYPE_LIST;
 
 /**
  * Created by xiaoxin on 2020/4/7
- * Version:v4.4.3
+ * Version:v4.5.0
  * ClassDescription :搜索优惠券相关商品
  */
 public class SearchCouponGoodsActivity extends BaseActivity {
@@ -71,7 +71,7 @@ public class SearchCouponGoodsActivity extends BaseActivity {
     @Override
     protected void initViews() {
         if (getIntent() == null || TextUtils.isEmpty(getIntent().getStringExtra("params"))) {
-            showToast(this, "数据错误");
+            showToast("数据错误");
             return;
         }
 
@@ -149,7 +149,7 @@ public class SearchCouponGoodsActivity extends BaseActivity {
                                     mGoodProductAdapter.loadMoreComplete();
                                 }
                             } else if (!EMPTY_CODE.equals(code)) {
-                                showToast(getActivity(), msg);
+                                showToast (msg);
                                 mGoodProductAdapter.loadMoreFail();
                             } else {
                                 mGoodProductAdapter.loadMoreEnd();

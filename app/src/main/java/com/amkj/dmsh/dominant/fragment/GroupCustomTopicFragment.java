@@ -110,7 +110,7 @@ public class GroupCustomTopicFragment extends BaseFragment {
                             } else if (userLikedProductEntity.getCode().equals(EMPTY_CODE)) {
                                 qualityCustomTopicAdapter.loadMoreEnd();
                             } else {
-                                showToast(getActivity(), userLikedProductEntity.getMsg());
+                                showToast( userLikedProductEntity.getMsg());
                             }
 
                             if (!TextUtils.isEmpty(userLikedProductEntity.getZoneName())) {

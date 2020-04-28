@@ -193,23 +193,16 @@ public class QualityTypeHotSaleProActivity extends BaseActivity {
                             if (qualityHotSaleShaftEntity.getCode().equals(SUCCESS_CODE)) {
                                 setHotSaleShaftData(qualityHotSaleShaftEntity.getHotSaleShaft());
                             } else if (!qualityHotSaleShaftEntity.getCode().equals(EMPTY_CODE)) {
-                                showToast(QualityTypeHotSaleProActivity.this, qualityHotSaleShaftEntity.getMsg());
+                                showToast(qualityHotSaleShaftEntity.getMsg());
                             }
                         }
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, qualityHotSaleShaftEntity);
                     }
 
                     @Override
-                    public void netClose() {
+                    public void onNotNetOrException() {
                         smart_refresh_hot_sale.finishRefresh();
-                        showToast(QualityTypeHotSaleProActivity.this, R.string.unConnectedNetwork);
-                        NetLoadUtils.getNetInstance().showLoadSir(loadService, qualityHotSaleShaftEntity);
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
-                        smart_refresh_hot_sale.finishRefresh();
-                        showToast(QualityTypeHotSaleProActivity.this, R.string.invalidData);
+                        showToast(R.string.invalidData);
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, qualityHotSaleShaftEntity);
                     }
                 });

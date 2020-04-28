@@ -233,7 +233,7 @@ public class IndentDrawUpInvoiceActivity extends BaseActivity {
                 setResult(RESULT_OK, data);
                 finish();
             } else {
-                showToast(this, R.string.invoice_title);
+                showToast(R.string.invoice_title);
             }
         } else {
             Intent data = new Intent();
@@ -252,9 +252,9 @@ public class IndentDrawUpInvoiceActivity extends BaseActivity {
             setInvoice(invoiceTitle, invoiceNum);
         } else {
             if (TextUtils.isEmpty(indentNo)) {
-                showToast(this, "订单号为空，请联系客服");
+                showToast("订单号为空，请联系客服");
             } else if (TextUtils.isEmpty(invoiceTitle)) {
-                showToast(this, "请输入发票抬头");
+                showToast("请输入发票抬头");
             }
         }
     }
@@ -276,7 +276,7 @@ public class IndentDrawUpInvoiceActivity extends BaseActivity {
             Matcher phoneMatcher = phone.matcher(companyPhone);
             if (!phoneMatcher.matches()) {
                 loadHud.dismiss();
-                showToast(this,"电话包含特殊字符，请重新更改提交");
+                showToast("电话包含特殊字符，请重新更改提交");
                 return;
             }
             params.put("mobile", companyPhone);
@@ -297,10 +297,10 @@ public class IndentDrawUpInvoiceActivity extends BaseActivity {
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        showToast(IndentDrawUpInvoiceActivity.this, "发票开具成功");
+                        showToast("发票开具成功");
                         finish();
                     } else {
-                        showToastRequestMsg(IndentDrawUpInvoiceActivity.this, requestStatus);
+                        showToastRequestMsg( requestStatus);
                     }
                 }
             }
@@ -311,13 +311,8 @@ public class IndentDrawUpInvoiceActivity extends BaseActivity {
             }
 
             @Override
-            public void netClose() {
-                showToast(IndentDrawUpInvoiceActivity.this, R.string.unConnectedNetwork);
-            }
-
-            @Override
             public void onError(Throwable throwable) {
-                showToast(IndentDrawUpInvoiceActivity.this, R.string.do_failed);
+                showToast( R.string.do_failed);
             }
         });
     }

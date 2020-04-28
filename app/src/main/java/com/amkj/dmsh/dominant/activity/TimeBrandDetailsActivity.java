@@ -239,7 +239,7 @@ public class TimeBrandDetailsActivity extends BaseActivity {
                     } else if (dmlTimeDetailEntity.getCode().equals(EMPTY_CODE)) {
                         duoMoLifeTimeBrandAdapter.loadMoreEnd();
                     } else {
-                        showToast(TimeBrandDetailsActivity.this, dmlTimeDetailEntity.getMsg());
+                        showToast(dmlTimeDetailEntity.getMsg());
                     }
                 }
                 duoMoLifeTimeBrandAdapter.notifyDataSetChanged();
@@ -249,11 +249,6 @@ public class TimeBrandDetailsActivity extends BaseActivity {
             public void onNotNetOrException() {
                 smart_communal_refresh.finishRefresh();
                 duoMoLifeTimeBrandAdapter.loadMoreEnd(true);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(TimeBrandDetailsActivity.this, R.string.unConnectedNetwork);
             }
         });
     }
@@ -273,7 +268,7 @@ public class TimeBrandDetailsActivity extends BaseActivity {
                             if (dmlThemeDetail.getCode().equals(SUCCESS_CODE)) {
                                 setData(dmlThemeDetail);
                             } else if (!dmlThemeDetail.getCode().equals(EMPTY_CODE)) {
-                                showToast(TimeBrandDetailsActivity.this, dmlThemeDetail.getMsg());
+                                showToast( dmlThemeDetail.getMsg());
                             }
                         }
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, themeBean, dmlThemeDetail);
@@ -287,13 +282,8 @@ public class TimeBrandDetailsActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void netClose() {
-                        showToast(TimeBrandDetailsActivity.this, R.string.unConnectedNetwork);
-                    }
-
-                    @Override
                     public void onError(Throwable throwable) {
-                        showToast(TimeBrandDetailsActivity.this, R.string.invalidData);
+                        showToast(R.string.invalidData);
                     }
                 });
     }

@@ -77,7 +77,7 @@ public class DirectCouponGetActivity extends BaseActivity {
         if (intent != null && !TextUtils.isEmpty(intent.getStringExtra("couponGoods"))) {
             couponGoodsJson = intent.getStringExtra("couponGoods");
         } else {
-            showToast(getActivity(), "商品信息有误，请重试");
+            showToast("商品信息有误，请重试");
             finish();
         }
         communal_recycler.setLayoutManager(new LinearLayoutManager(DirectCouponGetActivity.this));
@@ -187,7 +187,7 @@ public class DirectCouponGetActivity extends BaseActivity {
                             couponList.add(directCouponBean);
                             couponList.addAll(directCouponEntity.getDirectCouponBeanList());
                         } else if (!directCouponEntity.getCode().equals(EMPTY_CODE)) {
-                            showToast(DirectCouponGetActivity.this, directCouponEntity.getMsg());
+                            showToast( directCouponEntity.getMsg());
                         } else {
                             directMyCouponAdapter.loadMoreEnd();
                         }

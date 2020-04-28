@@ -1,6 +1,7 @@
 package com.amkj.dmsh.shopdetails.activity;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -60,6 +61,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.stripTrailingZeros;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.INDENT_W_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.dao.OrderDao.getCarCount;
 
@@ -400,9 +402,9 @@ public class GroupMatchActivity extends BaseActivity {
         }
 
         combineGoods.add(combineGoodsBean);
-        Intent intent = new Intent(this, DirectIndentWriteActivity.class);
-        intent.putExtra("combineGoods", new Gson().toJson(combineGoods));
-        startActivity(intent);
+        Bundle bundle = new Bundle();
+        bundle.putString("combineGoods", new Gson().toJson(combineGoods));
+        ConstantMethod.skipIndentWrite(getActivity(), INDENT_W_TYPE, bundle);
     }
 
     private void addCombineCart() {
@@ -419,11 +421,11 @@ public class GroupMatchActivity extends BaseActivity {
                 mTvAddCar.setEnabled(true);
                 RequestStatus status = new Gson().fromJson(result, RequestStatus.class);
                 if (status != null && SUCCESS_CODE.equals(status.getCode())) {
-                    showToast(getActivity(), getString(R.string.AddCarSuccess));
+                    showToast(getString(R.string.AddCarSuccess));
                     //通知刷新购物车数量
-                 getCarCount(getActivity());
+                    getCarCount(getActivity());
                 } else {
-                    showToastRequestMsg(getActivity(), status);
+                    showToastRequestMsg(status);
                 }
             }
 

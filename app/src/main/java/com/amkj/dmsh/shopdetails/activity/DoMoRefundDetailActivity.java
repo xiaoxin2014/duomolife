@@ -11,7 +11,6 @@ import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -55,7 +54,7 @@ import butterknife.OnClick;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static android.view.View.GONE;
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
+import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.dismissLoadhud;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -65,9 +64,9 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.skipRefundAspect;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.NOGOODS_REFUND;
 import static com.amkj.dmsh.constant.ConstantVariable.REFUND_ASPECT;
 import static com.amkj.dmsh.constant.ConstantVariable.REFUND_DETAIL_TYPE;
-import static com.amkj.dmsh.constant.ConstantVariable.RETURN_GOODS;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.Q_CANCEL_APPLY_NEW;
 import static com.amkj.dmsh.constant.Url.Q_INDENT_LOGISTIC_COM;
@@ -101,11 +100,11 @@ public class DoMoRefundDetailActivity extends BaseActivity {
     //    退货地址
     @BindView(R.id.tv_repair_address)
     TextView tv_refund_address;
-    @BindView(R.id.tv_repair_consignee_phone)
-    TextView tv_repair_consignee_phone;
     //    物流单号加*
     @BindView(R.id.tv_refund_logistic_no)
     TextView tv_refund_logistic_no;
+    @BindView(R.id.tv_indent_order_no)
+    TextView tv_indent_order_no;
     //    填写物流单号
     @BindView(R.id.et_refund_logistic_no)
     EditText et_refund_logistic_no;
@@ -157,11 +156,13 @@ public class DoMoRefundDetailActivity extends BaseActivity {
     SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.tv_refund_aspect)
     TextView tv_refund_aspect;
+    @BindView(R.id.ll_refund_status)
+    LinearLayout ll_refund_status;
+
 
     private String orderNo;
     private String refundNo;
     private String orderProductId;
-    private String express;
     private List<String> mExpressCompanies = new ArrayList<>();
     private MainOrderBean mainOrderBean;
     private RefundNewDetailEntity refundDetailEntity;
@@ -185,11 +186,6 @@ public class DoMoRefundDetailActivity extends BaseActivity {
         tv_indent_title.setText("退款详情");
         Intent intent = getIntent();
         refundNo = intent.getStringExtra("refundNo");
-        KeyboardUtils.registerSoftInputChangedListener(this, height -> {
-            if (height == 0) {
-                ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0).requestFocus();
-            }
-        });
 
         smart_communal_refresh.setOnRefreshListener(refreshLayout -> loadData());
         //初始化退款商品列表
@@ -209,6 +205,17 @@ public class DoMoRefundDetailActivity extends BaseActivity {
                     startActivity(intent1);
                 }
             }
+        });
+
+        //解决软键盘弹起时提交申请按钮会上移
+        KeyboardUtils.registerSoftInputChangedListener(getActivity(), height -> {
+            if (mainOrderBean != null) {
+                mTvCommitApply.setVisibility(height == 0 && mainOrderBean.getStatus() == 5 ? VISIBLE : GONE);
+                FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) sv_layout_refund_detail.getLayoutParams();
+                layoutParams.setMargins(0, 0, 0, AutoSizeUtils.mm2px(this, height != 0 ? 0 : 113));
+                sv_layout_refund_detail.setLayoutParams(layoutParams);
+            }
+
         });
     }
 
@@ -258,7 +265,7 @@ public class DoMoRefundDetailActivity extends BaseActivity {
                             setRefundDetailData(mainOrderBean);
                         }
                     } else {
-                        showToast(getActivity(), refundDetailEntity.getMsg());
+                        showToast(refundDetailEntity.getMsg());
                     }
                 }
                 NetLoadUtils.getNetInstance().showLoadSir(loadService, refundDetailEntity);
@@ -315,7 +322,7 @@ public class DoMoRefundDetailActivity extends BaseActivity {
             });
         }
 
-        tv_refund_detail_status.setVisibility(!TextUtils.isEmpty(statusText) ? View.VISIBLE : GONE);
+        ll_refund_status.setVisibility(!TextUtils.isEmpty(statusText) ? View.VISIBLE : GONE);
         mTvRefundDetailMsg.setVisibility(!TextUtils.isEmpty(msg) ? View.VISIBLE : GONE);
         mTvRefuseReason.setVisibility(!TextUtils.isEmpty(refuseReason) ? View.VISIBLE : GONE);
 
@@ -347,8 +354,7 @@ public class DoMoRefundDetailActivity extends BaseActivity {
             String mobile = getStrings(refundGoodsAddressInfo.getMobile());
             refundAddress = address + " " + consignee + " " + mobile;
             tv_refund_address.setText(address);
-            mTvName.setText(consignee);
-            tv_repair_consignee_phone.setText(mobile);
+            mTvName.setText((consignee + mobile));
 
             //同意退货申请,填写退货物流信息
             if (mainOrderBean.getStatus() == 5) {
@@ -358,6 +364,8 @@ public class DoMoRefundDetailActivity extends BaseActivity {
                 tv_refund_logistic_sel.setVisibility(View.VISIBLE);
                 et_refund_logistic_no.setVisibility(View.VISIBLE);
                 mTvCommitApply.setVisibility(View.VISIBLE);
+                layoutParams.setMargins(0, 0, 0, AutoSizeUtils.mm2px(this, 113));
+                sv_layout_refund_detail.setLayoutParams(layoutParams);
             } else {
                 //买家提交的退货物流
                 String expressCompany = refundGoodsAddressInfo.getExpressCompany();
@@ -387,6 +395,7 @@ public class DoMoRefundDetailActivity extends BaseActivity {
         mTvRefundAmount.setText(getStrings(mainOrderBean.getRefundPrice()));
         mTvApplyTime.setText(getStrings(mainOrderBean.getRefundTime()));
         mTvRefundNo.setText(getStrings(mainOrderBean.getRefundNo()));
+        tv_indent_order_no.setText(getStrings(mainOrderBean.getOrderNo()));
 
         //修改以及撤销申请按钮
         mTvChangeApply.setVisibility(mainOrderBean.isShowUpdate() ? View.VISIBLE : GONE);
@@ -410,7 +419,7 @@ public class DoMoRefundDetailActivity extends BaseActivity {
                         public void onTick(long millisUntilFinished) {
                             String coutDownTime = getCoutDownTime(millisUntilFinished, false);
                             String coutDownText = "距离自动关闭售后申请还剩" + coutDownTime;
-                            mTvCloseTime.setText(ConstantMethod.getSpannableString(coutDownText, 12, coutDownText.length(), -1, "#0a88fa", true));
+                            mTvCloseTime.setText(ConstantMethod.getSpannableString(coutDownText, 12, coutDownText.length(), -1, "#3274d9", true));
                         }
 
                         @Override
@@ -432,7 +441,8 @@ public class DoMoRefundDetailActivity extends BaseActivity {
     }
 
 
-    @OnClick({R.id.tv_indent_back, R.id.iv_indent_service, R.id.ll_qy_service, R.id.tv_cancle_apply, R.id.tv_change_apply, R.id.tv_copy_text, R.id.tv_copy_logistic_no, R.id.tv_refund_logistic_sel, R.id.tv_commit_apply, R.id.tv_refund_aspect})
+    @OnClick({R.id.tv_indent_back, R.id.iv_indent_service, R.id.ll_qy_service, R.id.tv_cancle_apply, R.id.tv_change_apply, R.id.tv_copy_text,
+            R.id.tv_copy_logistic_no, R.id.tv_refund_logistic_sel, R.id.tv_commit_apply, R.id.tv_refund_aspect, R.id.tv_copy_order_no})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_indent_back:
@@ -448,7 +458,7 @@ public class DoMoRefundDetailActivity extends BaseActivity {
                     ClipboardManager cmb = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                     ClipData mClipData = ClipData.newPlainText("Label", refundAddress);
                     cmb.setPrimaryClip(mClipData);
-                    showToast(getActivity(), "已复制");
+                    showToast("已复制");
                 }
                 break;
             //复制物流单号
@@ -458,7 +468,16 @@ public class DoMoRefundDetailActivity extends BaseActivity {
                     ClipboardManager cmb = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                     ClipData mClipData = ClipData.newPlainText("Label", expressNo);
                     cmb.setPrimaryClip(mClipData);
-                    showToast(getActivity(), "已复制");
+                    showToast("已复制");
+                }
+                break;
+            //复制订单编号
+            case R.id.tv_copy_order_no:
+                if (!TextUtils.isEmpty(orderNo)) {
+                    ClipboardManager cmb = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                    ClipData mClipData = ClipData.newPlainText("Label", orderNo);
+                    cmb.setPrimaryClip(mClipData);
+                    showToast("已复制");
                 }
                 break;
             //选择物流公司
@@ -499,13 +518,17 @@ public class DoMoRefundDetailActivity extends BaseActivity {
                 break;
             //修改申请
             case R.id.tv_change_apply:
-                Intent intent = new Intent(getActivity(), DirectApplyRefundActivity.class);
+                Intent intent = new Intent();
+                //售后状态
+                if (mainOrderBean.isAfter()) {
+                    intent.setClass(getActivity(), SelectRefundTypeActivity.class);
+                } else {//待发货状态
+                    intent.setClass(getActivity(), DirectApplyRefundActivity.class);
+                    intent.putExtra("refundType", NOGOODS_REFUND);
+                }
                 intent.putExtra("orderNo", mainOrderBean.getOrderNo());
                 intent.putExtra("refundNo", mainOrderBean.getRefundNo());
                 intent.putExtra("goods", new Gson().toJson(goodsBeanList));
-                if (RETURN_GOODS.equals(mainOrderBean.getType())) {
-                    intent.putExtra("refundType", RETURN_GOODS);
-                }
                 startActivity(intent);
                 break;
             //提交物流信息
@@ -513,9 +536,9 @@ public class DoMoRefundDetailActivity extends BaseActivity {
                 String logistic = tv_refund_logistic_sel.getText().toString().trim();
                 String logisticNo = et_refund_logistic_no.getText().toString().trim();
                 if (TextUtils.isEmpty(logistic)) {
-                    showToast(this, "请选择物流公司");
+                    showToast("请选择物流公司");
                 } else if (TextUtils.isEmpty(logisticNo)) {
-                    showToast(this, "请输入物流单号");
+                    showToast("请输入物流单号");
                 } else {
                     submitLogisticInfo(logistic, logisticNo);
                 }
@@ -547,17 +570,17 @@ public class DoMoRefundDetailActivity extends BaseActivity {
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        showToast(getActivity(), String.format(getResources().getString(R.string.doSuccess), "提交"));
+                        showToast(String.format(getResources().getString(R.string.doSuccess), "提交"));
                         loadData();
                     } else
-                        showToastRequestMsg(getActivity(), requestStatus);
+                        showToastRequestMsg(requestStatus);
                 }
             }
 
             @Override
             public void onNotNetOrException() {
                 dismissLoadhud(getActivity());
-                showToast(mAppContext, R.string.do_failed);
+                showToast(R.string.do_failed);
             }
         });
     }
@@ -578,10 +601,10 @@ public class DoMoRefundDetailActivity extends BaseActivity {
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        showToast(getActivity(), String.format(getResources().getString(R.string.doSuccess), "撤销"));
+                        showToast(String.format(getResources().getString(R.string.doSuccess), "撤销"));
                         finish();
                     } else {
-                        showToastRequestMsg(getActivity(), requestStatus);
+                        showToastRequestMsg(requestStatus);
                     }
                 }
             }
@@ -589,7 +612,7 @@ public class DoMoRefundDetailActivity extends BaseActivity {
             @Override
             public void onNotNetOrException() {
                 dismissLoadhud(getActivity());
-                showToast(mAppContext, R.string.do_failed);
+                showToast(R.string.do_failed);
             }
         });
     }

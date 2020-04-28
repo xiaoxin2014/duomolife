@@ -23,7 +23,7 @@ public class ScoreGoodsEntity extends BaseEntity {
     private int totalResult;
     private String maxRewardTip;
     private String contentReminder;//编辑框导语
-    private String rewardTip ;
+    private String rewardTip;
     @SerializedName("list")
     private List<ScoreGoodsBean> goodsList;
 
@@ -68,6 +68,7 @@ public class ScoreGoodsEntity extends BaseEntity {
     }
 
     public static class ScoreGoodsBean implements Parcelable {
+
         /**
          * orderProductId : 454409
          * cover : http://image.domolife.cn/platform/WnpXE7crx51555346719016.jpg
@@ -83,6 +84,15 @@ public class ScoreGoodsEntity extends BaseEntity {
         private String skuValueText;
         private int count;
         private String price;
+        private int position = -2;
+
+        public int getPosition() {
+            return position;
+        }
+
+        public void setPosition(int position) {
+            this.position = position;
+        }
 
         public String getPrice() {
             return price;
@@ -148,7 +158,6 @@ public class ScoreGoodsEntity extends BaseEntity {
             this.orderNo = orderNo;
         }
 
-
         @Override
         public int describeContents() {
             return 0;
@@ -161,6 +170,10 @@ public class ScoreGoodsEntity extends BaseEntity {
             dest.writeString(this.productId);
             dest.writeString(this.orderNo);
             dest.writeString(this.productName);
+            dest.writeString(this.skuValueText);
+            dest.writeInt(this.count);
+            dest.writeString(this.price);
+            dest.writeInt(this.position);
         }
 
         public ScoreGoodsBean() {
@@ -172,9 +185,13 @@ public class ScoreGoodsEntity extends BaseEntity {
             this.productId = in.readString();
             this.orderNo = in.readString();
             this.productName = in.readString();
+            this.skuValueText = in.readString();
+            this.count = in.readInt();
+            this.price = in.readString();
+            this.position = in.readInt();
         }
 
-        public static final Creator<ScoreGoodsBean> CREATOR = new Creator<ScoreGoodsBean>() {
+        public static final Parcelable.Creator<ScoreGoodsBean> CREATOR = new Parcelable.Creator<ScoreGoodsBean>() {
             @Override
             public ScoreGoodsBean createFromParcel(Parcel source) {
                 return new ScoreGoodsBean(source);

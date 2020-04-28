@@ -150,7 +150,7 @@ public class RegisterAccountActivity extends BaseActivity {
 //                    showToast(RegisterAccountActivity.this, "提交成功");
                     getData(edit_register_mobile.getText().toString().trim(), edit_register_password.getText().toString().trim());
                 } else if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE) { //获取验证码成功
-                    showToast(RegisterAccountActivity.this, R.string.GetSmsCodeSuccess);
+                    showToast( R.string.GetSmsCodeSuccess);
                     tv_sms_code.setVisibility(View.VISIBLE);
                     reg_req_code_gif_view.setVisibility(View.GONE);
                     if (countDownHelper == null) {
@@ -172,12 +172,12 @@ public class RegisterAccountActivity extends BaseActivity {
                     throwable.printStackTrace();
                     JSONObject object = new JSONObject(throwable.getMessage());
                     int status = object.optInt("status");//错误代码
-                    disposeMessageCode(RegisterAccountActivity.this, status);
+                    disposeMessageCode(status);
                 } catch (Exception e) {
-                    showToast(RegisterAccountActivity.this, R.string.unConnectedNetwork);
+                    showToast(R.string.unConnectedNetwork);
                 }
             } else {
-                showToast(RegisterAccountActivity.this, R.string.do_failed);
+                showToast( R.string.do_failed);
             }
             return false;
         }
@@ -235,11 +235,6 @@ public class RegisterAccountActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void netClose() {
-                        showToast(RegisterAccountActivity.this, R.string.unConnectedNetwork);
-                    }
-
-                    @Override
                     public void onError(Throwable throwable) {
                         showException(getResources().getString(R.string.do_failed));
                     }
@@ -284,7 +279,7 @@ public class RegisterAccountActivity extends BaseActivity {
      */
     private void isPhoneReg(final String phoneNumber) {
         if (phoneNumber.length() != 11) {
-            showToast(this, R.string.MobileError);
+            showToast( R.string.MobileError);
             return;
         }
         if (loadHud != null) {
@@ -319,13 +314,13 @@ public class RegisterAccountActivity extends BaseActivity {
                         } else {
                             tv_sms_code.setVisibility(View.VISIBLE);
                             reg_req_code_gif_view.setVisibility(View.GONE);
-                            showToast(RegisterAccountActivity.this, R.string.unConnectedNetwork);
+                            showToast(R.string.unConnectedNetwork);
                         }
                     } else if (status != null && status.getRegisterFlag() == 1) {
-                        showToast(RegisterAccountActivity.this, status.getResult());
+                        showToast(status.getResult());
                     }
                 } else {
-                    showToast(RegisterAccountActivity.this, R.string.unConnectedNetwork);
+                    showToast( R.string.unConnectedNetwork);
                 }
             }
 
@@ -338,12 +333,7 @@ public class RegisterAccountActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(RegisterAccountActivity.this, R.string.do_failed);
-            }
-
-            @Override
-            public void netClose() {
-                showToast(RegisterAccountActivity.this, R.string.unConnectedNetwork);
+                showToast(R.string.do_failed);
             }
         });
     }
@@ -354,23 +344,23 @@ public class RegisterAccountActivity extends BaseActivity {
         final String smsCode = edit_register_sms_code.getText().toString().trim();
         final String password = edit_register_password.getText().toString().trim();
         if (phone.length() != 11) {
-            showToast(this, R.string.MobileError);
+            showToast(R.string.MobileError);
             return;
         }
         if (TextUtils.isEmpty(smsCode)) {
-            showToast(this, R.string.SmsCodeNull);
+            showToast(R.string.SmsCodeNull);
             return;
         }
         if (TextUtils.isEmpty(password) || password.length() < 6) {
-            showToast(this, R.string.PasswordLessSix);
+            showToast( R.string.PasswordLessSix);
             return;
         }
         if (!PasswordEncrypt.isPwEligibility(password)) {
-            showToast(this, R.string.PasswordInconformity);
+            showToast( R.string.PasswordInconformity);
             return;
         }
         if (!NetWorkUtils.isConnectedByState(RegisterAccountActivity.this)) {
-            showToast(this, R.string.unConnectedNetwork);
+            showToast(R.string.unConnectedNetwork);
             return;
         }
         if (loadHud != null) {

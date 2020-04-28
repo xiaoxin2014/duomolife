@@ -83,7 +83,7 @@ public class ArticleTypeActivity extends BaseActivity {
                         mViewpagerContainer.setOffscreenPageLimit(mCategoryTypeList.size() - 1);
                         setCurrentTab();
                     } else {
-                        showToast(getActivity(), mCategoryTypeEntity.getMsg());
+                        showToast(mCategoryTypeEntity.getMsg());
                     }
                 }
 

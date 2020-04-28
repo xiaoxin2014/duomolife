@@ -103,7 +103,7 @@ public class TimeShowNewActivity extends BaseActivity {
                         setTimeShaft(timeShowEntity);
                     }
                 } else if (!code.equals(EMPTY_CODE)) {
-                    showToast(TimeShowNewActivity.this, msg);
+                    showToast( msg);
                 }
             }
         });

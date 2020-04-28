@@ -118,7 +118,7 @@ public class FindTagDetailsActivity extends BaseActivity {
             e.printStackTrace();
         }
         if (TextUtils.isEmpty(tagId)) {
-            showToast(this, R.string.unConnectedNetwork);
+            showToast( R.string.unConnectedNetwork);
             finish();
         }
         smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
@@ -277,7 +277,7 @@ public class FindTagDetailsActivity extends BaseActivity {
                             } else if (invitationDetailEntity.getCode().equals(EMPTY_CODE)) {
                                 adapterInvitationAdapter.loadMoreEnd();
                             } else {
-                                showToast(FindTagDetailsActivity.this, invitationDetailEntity.getMsg());
+                                showToast( invitationDetailEntity.getMsg());
                             }
                             adapterInvitationAdapter.notifyDataSetChanged();
                         }
@@ -292,13 +292,8 @@ public class FindTagDetailsActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void netClose() {
-                        showToast(FindTagDetailsActivity.this, R.string.unConnectedNetwork);
-                    }
-
-                    @Override
                     public void onError(Throwable throwable) {
-                        showToast(FindTagDetailsActivity.this, R.string.invalidData);
+                        showToast( R.string.invalidData);
                     }
                 });
     }
@@ -326,7 +321,7 @@ public class FindTagDetailsActivity extends BaseActivity {
                         }
                         setTagData(relevanceTagInfoBean);
                     } else if (!relevanceTagInfoEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(FindTagDetailsActivity.this, relevanceTagInfoEntity.getMsg());
+                        showToast( relevanceTagInfoEntity.getMsg());
                     }
                     tagRelProAdapter.notifyDataSetChanged();
                 }
@@ -404,12 +399,7 @@ public class FindTagDetailsActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(FindTagDetailsActivity.this, String.format(getResources().getString(R.string.collect_failed), "文章"));
-            }
-
-            @Override
-            public void netClose() {
-                showToast(FindTagDetailsActivity.this, R.string.unConnectedNetwork);
+                showToast(String.format(getResources().getString(R.string.collect_failed), "文章"));
             }
         });
     }

@@ -5,7 +5,7 @@ import com.amkj.dmsh.constant.ConstantMethod;
 
 /**
  * Created by xiaoxin on 2020/4/7
- * Version:v4.4.3
+ * Version:v4.5.0
  * ClassDescription :消息中心
  */
 public class MessageCenterEntity extends BaseTimeEntity {

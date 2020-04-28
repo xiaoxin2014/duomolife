@@ -525,7 +525,7 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
 
             @Override
             public void onMaxQuantity(View view, int num) {
-                showToast(baseAct, R.string.product_sell_out);
+                showToast(R.string.product_sell_out);
             }
         });
 
@@ -796,7 +796,7 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
                             return;
                         }
                         if (numQuantity > skuSaleBean.getQuantity()) {
-                            showToast(baseAct, "库存不足，请更改数量后再购买");
+                            showToast("库存不足，请更改数量后再购买");
                             return;
                         }
                         if (listener != null && shopCarGoodsSku != null) {
@@ -807,7 +807,7 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
                     }
                     break;
                 } else if (i == skuSaleList.size() - 1) {
-                    showToast(baseAct, "没有该商品属性");
+                    showToast("没有该商品属性");
                 }
             }
         } else if (selectedSkuValueId.size() > 0) {
@@ -816,13 +816,13 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
                     if (propsList.get(j).getPropId() == selectedSkuValueId.get(i).getParentId()) {
                         break;
                     } else if (i == selectedSkuValueId.size() - 1) {
-                        showToast(baseAct, "请选择" + propsList.get(j).getPropName());
+                        showToast("请选择" + propsList.get(j).getPropName());
                         return;
                     }
                 }
             }
         } else {
-            showToast(baseAct, "请选择商品属性");
+            showToast( "请选择商品属性");
         }
     }
 
@@ -1424,7 +1424,7 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
                 RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        showToast(baseAct, requestStatus.getIsNotice() == 1 ? "已取消通知" : "已设置通知");
+                        showToast(requestStatus.getIsNotice() == 1 ? "已取消通知" : "已设置通知");
                         if (isShowSingle) {
                             skuDialogView.bt_direct_attribute_buy.setText(requestStatus.getIsNotice() == 1 ? baseAct.getText(R.string.sku_notice) : baseAct.getText(R.string.sku_cancel_notice));
                         } else {
@@ -1432,7 +1432,7 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
                         }
                         skuSaleBean.setIsNotice(requestStatus.getIsNotice());
                     } else {
-                        showToastRequestMsg(baseAct, requestStatus);
+                        showToastRequestMsg( requestStatus);
                     }
                 }
             }

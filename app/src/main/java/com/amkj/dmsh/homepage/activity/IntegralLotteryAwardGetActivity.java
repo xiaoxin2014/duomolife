@@ -104,7 +104,7 @@ public class IntegralLotteryAwardGetActivity extends BaseActivity {
         Intent intent = getIntent();
         activityId = intent.getStringExtra("activityId");
         if (TextUtils.isEmpty(activityId)) {
-            showToast(this, "数据缺失");
+            showToast("数据缺失");
             finish();
             return;
         }
@@ -151,7 +151,7 @@ public class IntegralLotteryAwardGetActivity extends BaseActivity {
                             if (SUCCESS_CODE.equals(integralLotteryAwardEntity.getCode())) {
                                 setLotteryAwardData(integralLotteryAwardEntity);
                             } else {
-                                showToast(IntegralLotteryAwardGetActivity.this, integralLotteryAwardEntity.getMsg());
+                                showToast( integralLotteryAwardEntity.getMsg());
                             }
                         }
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, integralLotteryAwardEntity);
@@ -163,13 +163,8 @@ public class IntegralLotteryAwardGetActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void netClose() {
-                        showToast(IntegralLotteryAwardGetActivity.this, R.string.invalidData);
-                    }
-
-                    @Override
                     public void onError(Throwable throwable) {
-                        showToast(IntegralLotteryAwardGetActivity.this, R.string.unConnectedNetwork);
+                        showToast( R.string.unConnectedNetwork);
                     }
                 });
     }
@@ -233,7 +228,7 @@ public class IntegralLotteryAwardGetActivity extends BaseActivity {
                     } else if (addressInfoEntity.getCode().equals(EMPTY_CODE)) {
                         setAddressData(null);
                     } else {
-                        showToast(IntegralLotteryAwardGetActivity.this, addressInfoEntity.getMsg());
+                        showToast( addressInfoEntity.getMsg());
                     }
                 }
             }
@@ -254,7 +249,7 @@ public class IntegralLotteryAwardGetActivity extends BaseActivity {
                     } else if (addressInfoEntity.getCode().equals(EMPTY_CODE)) {
                         setAddressData(null);
                     } else {
-                        showToast(IntegralLotteryAwardGetActivity.this, addressInfoEntity.getMsg());
+                        showToast(addressInfoEntity.getMsg());
                     }
                 }
             }
@@ -290,10 +285,10 @@ public class IntegralLotteryAwardGetActivity extends BaseActivity {
                         RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
                         if (requestStatus != null) {
                             if (SUCCESS_CODE.equals(requestStatus.getCode())) {
-                                showToast(IntegralLotteryAwardGetActivity.this, "领取成功");
+                                showToast("领取成功");
                                 finish();
                             } else {
-                                showToastRequestMsg(IntegralLotteryAwardGetActivity.this, requestStatus);
+                                showToastRequestMsg( requestStatus);
                             }
                         }
                     }
@@ -305,12 +300,7 @@ public class IntegralLotteryAwardGetActivity extends BaseActivity {
 
                     @Override
                     public void onError(Throwable throwable) {
-                        showToast(IntegralLotteryAwardGetActivity.this, R.string.invalidData);
-                    }
-
-                    @Override
-                    public void netClose() {
-                        showToast(IntegralLotteryAwardGetActivity.this, R.string.unConnectedNetwork);
+                        showToast( R.string.invalidData);
                     }
                 });
     }
@@ -336,7 +326,7 @@ public class IntegralLotteryAwardGetActivity extends BaseActivity {
             loadHud.show();
             setLotteryAward();
         } else {
-            showToast(this, R.string.address_not_null);
+            showToast(R.string.address_not_null);
         }
     }
 

@@ -218,7 +218,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
             }
             orderNo = intent.getStringExtra("orderNo");
         } catch (Exception e) {
-            showToast(this, "商品信息有误，请重试");
+            showToast("商品信息有误，请重试");
             finish();
         }
 //        地址栏
@@ -232,7 +232,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
         pullFootView = new PullFootView();
         ButterKnife.bind(pullFootView, footView);
         pullFootView.init();
-
 
         if ((passGoods != null && passGoods.size() > 0) || (combineGoods != null && combineGoods.size() > 0) || !TextUtils.isEmpty(orderNo)) {
             if (passGoods != null) {
@@ -248,7 +247,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                 }
             }
             type = INDENT_W_TYPE;
-            directProductAdapter = new WriteProductListAdapter(DirectIndentWriteActivity.this, productInfoList, type);
+            directProductAdapter = new WriteProductListAdapter(getActivity(), productInfoList, type);
         } else if (groupShopDetailsBean != null) {
             type = INDENT_GROUP_SHOP;
             IndentProDiscountBean indentProBean = new IndentProDiscountBean();
@@ -256,13 +255,13 @@ public class DirectIndentWriteActivity extends BaseActivity {
             indentProBean.setSaleSkuId(groupShopDetailsBean.getGpSkuId());
             indentProBean.setCount(1);
             discountBeanList.add(indentProBean);
-            directProductAdapter = new WriteProductListAdapter(DirectIndentWriteActivity.this, productInfoList, type);
+            directProductAdapter = new WriteProductListAdapter(getActivity(), productInfoList, type);
         } else {
-            showToast(this, "商品信息有误，请重试");
+            showToast("商品信息有误，请重试");
             finish();
         }
         pullFootView.rect_indent_number.setFontColor(Color.parseColor("#333333"));
-        communal_recycler.setLayoutManager(new LinearLayoutManager(DirectIndentWriteActivity.this));
+        communal_recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_gray_f_one_px).create());
@@ -315,10 +314,10 @@ public class DirectIndentWriteActivity extends BaseActivity {
 
             @Override
             public void onMaxQuantity(View view, int num) {
-                showImportantToast(DirectIndentWriteActivity.this, R.string.product_sell_out);
+                showImportantToast(getActivity(), R.string.product_sell_out);
             }
         });
-        pullFootView.rv_indent_write_info.setLayoutManager(new LinearLayoutManager(DirectIndentWriteActivity.this));
+        pullFootView.rv_indent_write_info.setLayoutManager(new LinearLayoutManager(getActivity()));
         indentDiscountAdapter = new IndentDiscountAdapter(priceInfoList);
         pullFootView.rv_indent_write_info.setAdapter(indentDiscountAdapter);
 
@@ -338,7 +337,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                             } else if (mNum > pullFootView.rect_indent_number.getMaxNum()) {
                                 mNum = pullFootView.rect_indent_number.getMaxNum();
                                 pullFootView.rect_indent_number.setNum(mNum);
-                                showImportantToast(DirectIndentWriteActivity.this, R.string.product_sell_out);
+                                showImportantToast(getActivity(), R.string.product_sell_out);
                             }
                             if (discountBeanList.size() > 0 && discountBeanList.get(0).getCount() != mNum) {
                                 if (loadHud != null) {
@@ -412,9 +411,9 @@ public class DirectIndentWriteActivity extends BaseActivity {
                                 showPayType(indentWriteBean);
                             }
                         } else if (identWriteEntity.getCode().equals(EMPTY_CODE)) {
-                            showImportantToast(DirectIndentWriteActivity.this, R.string.invalidData);
+                            showImportantToast(getActivity(), R.string.invalidData);
                         } else {
-                            showImportantToast(DirectIndentWriteActivity.this, identWriteEntity.getMsg());
+                            showImportantToast(getActivity(), identWriteEntity.getMsg());
                         }
                     }
 
@@ -662,7 +661,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                     } else if (addressListEntity.getCode().equals(EMPTY_CODE)) {
                         setAddressData(null);
                     } else {
-                        showImportantToast(DirectIndentWriteActivity.this, addressListEntity.getMsg());
+                        showImportantToast(getActivity(), addressListEntity.getMsg());
                     }
                 }
             }
@@ -712,9 +711,9 @@ public class DirectIndentWriteActivity extends BaseActivity {
                             setDiscountsInfo(indentWriteBean);
                         }
                     } else if (identWriteEntity.getCode().equals(EMPTY_CODE)) {
-                        showImportantToast(DirectIndentWriteActivity.this, R.string.invalidData);
+                        showImportantToast(getActivity(), R.string.invalidData);
                     } else {
-                        showImportantToast(DirectIndentWriteActivity.this, identWriteEntity.getMsg());
+                        showImportantToast(getActivity(), identWriteEntity.getMsg());
                     }
                 }
 
@@ -829,7 +828,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
             @Override
             public void onNotNetOrException() {
                 dismissLoadhud(getActivity());
-                showImportantToast(DirectIndentWriteActivity.this, R.string.do_failed);
+                showImportantToast(getActivity(), R.string.do_failed);
             }
         });
     }
@@ -898,7 +897,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
             @Override
             public void onNotNetOrException() {
                 dismissLoadhud(getActivity());
-                showImportantToast(DirectIndentWriteActivity.this, R.string.do_failed);
+                showImportantToast(getActivity(), R.string.do_failed);
             }
         });
     }
@@ -924,7 +923,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
 
             @Override
             public void onNotNetOrException() {
-                showImportantToast(DirectIndentWriteActivity.this, R.string.do_failed);
+                showImportantToast(getActivity(), R.string.do_failed);
             }
         });
     }
@@ -945,7 +944,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                     doWXPay(qualityWeChatIndent.getResult());
                     orderCreateNo = qualityWeChatIndent.getResult().getNo();
                 } else {
-                    showImportantToast(DirectIndentWriteActivity.this, qualityWeChatIndent.getResult() != null &&
+                    showImportantToast(getActivity(), qualityWeChatIndent.getResult() != null &&
                             !TextUtils.isEmpty(qualityWeChatIndent.getResult().getMsg()) ?
                             getStrings(qualityWeChatIndent.getResult().getMsg()) :
                             getStrings(qualityWeChatIndent.getMsg()));
@@ -967,7 +966,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                     if (qualityAliPayIndent.getResult() != null) {
                         presentStatusUpdate(qualityAliPayIndent.getResult().getCode());
                     }
-                    showImportantToast(DirectIndentWriteActivity.this, qualityAliPayIndent.getResult() != null &&
+                    showImportantToast(getActivity(), qualityAliPayIndent.getResult() != null &&
                             !TextUtils.isEmpty(qualityAliPayIndent.getResult().getMsg()) ?
                             getStrings(qualityAliPayIndent.getResult().getMsg()) :
                             getStrings(qualityAliPayIndent.getMsg()));
@@ -981,7 +980,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                     orderCreateNo = qualityUnionIndent.getQualityCreateUnionPayIndent().getNo();
                     unionPay(qualityUnionIndent);
                 } else {
-                    showImportantToast(DirectIndentWriteActivity.this, qualityUnionIndent.getQualityCreateUnionPayIndent() != null &&
+                    showImportantToast(getActivity(), qualityUnionIndent.getQualityCreateUnionPayIndent() != null &&
                             !TextUtils.isEmpty(qualityUnionIndent.getQualityCreateUnionPayIndent().getMsg()) ?
                             getStrings(qualityUnionIndent.getQualityCreateUnionPayIndent().getMsg()) :
                             getStrings(qualityUnionIndent.getMsg()));
@@ -1015,30 +1014,30 @@ public class DirectIndentWriteActivity extends BaseActivity {
         new AliPay(this, resultBean.getNo(), resultBean.getPayKey(), new AliPay.AliPayResultCallBack() {
             @Override
             public void onSuccess() {
-                showToast(DirectIndentWriteActivity.this, "支付成功");
+                showToast("支付成功");
 //                跳转订单完成页
                 paySuccess();
             }
 
             @Override
             public void onDealing() {
-                showToast(DirectIndentWriteActivity.this, "支付处理中...");
+                showToast("支付处理中...");
             }
 
             @Override
             public void onError(int error_code) {
                 switch (error_code) {
                     case AliPay.ERROR_RESULT:
-                        showToast(DirectIndentWriteActivity.this, "支付失败:支付结果解析错误");
+                        showToast("支付失败:支付结果解析错误");
                         break;
                     case AliPay.ERROR_NETWORK:
-                        showToast(DirectIndentWriteActivity.this, "支付失败:网络连接错误");
+                        showToast("支付失败:网络连接错误");
                         break;
                     case AliPay.ERROR_PAY:
-                        showToast(DirectIndentWriteActivity.this, "支付错误:支付码支付失败");
+                        showToast("支付错误:支付码支付失败");
                         break;
                     default:
-                        showToast(DirectIndentWriteActivity.this, "支付错误");
+                        showToast("支付错误");
                         break;
                 }
                 skipIndentDetail();
@@ -1047,7 +1046,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
             @Override
             public void onCancel() {
                 skipIndentDetail();
-                showToast(DirectIndentWriteActivity.this, "支付取消");
+                showToast("支付取消");
             }
         }).doPay();
     }
@@ -1057,7 +1056,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
         WXPay.getInstance().doPayDateObject(resultBean.getNo(), resultBean.getPayKey(), new WXPay.WXPayResultCallBack() {
             @Override
             public void onSuccess() {
-                showToast(DirectIndentWriteActivity.this, "支付成功");
+                showToast("支付成功");
                 paySuccess();
             }
 
@@ -1065,13 +1064,13 @@ public class DirectIndentWriteActivity extends BaseActivity {
             public void onError(int error_code) {
                 switch (error_code) {
                     case WXPay.NO_OR_LOW_WX:
-                        showToast(DirectIndentWriteActivity.this, "未安装微信或微信版本过低");
+                        showToast( "未安装微信或微信版本过低");
                         break;
                     case WXPay.ERROR_PAY_PARAM:
-                        showToast(DirectIndentWriteActivity.this, "参数错误");
+                        showToast( "参数错误");
                         break;
                     case WXPay.ERROR_PAY:
-                        showToast(DirectIndentWriteActivity.this, "支付失败");
+                        showToast("支付失败");
                         break;
                 }
 //                payError();
@@ -1081,7 +1080,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
             @Override
             public void onCancel() {
                 skipIndentDetail();
-                showToast(DirectIndentWriteActivity.this, "支付取消");
+                showToast("支付取消");
             }
         });
     }
@@ -1092,7 +1091,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
             if (loadHud != null) {
                 loadHud.show();
             }
-            unionPay = new UnionPay(DirectIndentWriteActivity.this, qualityUnionIndent.getQualityCreateUnionPayIndent().getNo(),
+            unionPay = new UnionPay(getActivity(), qualityUnionIndent.getQualityCreateUnionPayIndent().getNo(),
                     qualityUnionIndent.getQualityCreateUnionPayIndent().getPayKeyBean().getPaymentUrl(),
                     new UnionPay.UnionPayResultCallBack() {
                         @Override
@@ -1113,12 +1112,12 @@ public class DirectIndentWriteActivity extends BaseActivity {
                             if (loadHud != null) {
                                 loadHud.dismiss();
                             }
-                            showToast(DirectIndentWriteActivity.this, errorMes);
+                            showToast( errorMes);
                             skipIndentDetail();
                         }
                     });
         } else {
-            showImportantToast(DirectIndentWriteActivity.this, "缺少重要参数，请选择其它支付渠道！");
+            showImportantToast(getActivity(), "缺少重要参数，请选择其它支付渠道！");
         }
     }
 
@@ -1142,7 +1141,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
 
     //支付成功跳转
     private void skipDirectIndent() {
-        Intent intent = new Intent(DirectIndentWriteActivity.this, DirectPaySuccessActivity.class);
+        Intent intent = new Intent(getActivity(), DirectPaySuccessActivity.class);
         intent.putExtra(INDENT_PRODUCT_TYPE, INDENT_PROPRIETOR_PRODUCT);
         if (payWay.equals(PAY_WX_PAY)) {
             if (qualityWeChatIndent.getResult() != null && !TextUtils.isEmpty(qualityWeChatIndent.getResult().getNo())) {
@@ -1193,7 +1192,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                 public void onSuccess(String result) {
                     RequestStatus requestStatus = RequestStatus.objectFromData(result);
                     if (requestStatus != null && SUCCESS_CODE.equals(requestStatus.getCode())) {
-                        payCancelDialogHelper = new AlertDialogHelper(DirectIndentWriteActivity.this);
+                        payCancelDialogHelper = new AlertDialogHelper(getActivity());
                         payCancelDialogHelper.setMsgTextGravity(Gravity.CENTER).setTitleVisibility(GONE)
                                 .setMsg(!TextUtils.isEmpty(requestStatus.getDescription()) ?
                                         requestStatus.getDescription() : "好货不等人哦，喜欢就入了吧")
@@ -1217,7 +1216,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                 }
 
                 @Override
-                public void netClose() {
+                public void onNotNetOrException() {
                     finish();
                 }
             });
@@ -1229,7 +1228,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
     //跳转我的拼团订单
     private void skipMineGroupIndent() {
         Intent intent = new Intent();
-        intent.setClass(DirectIndentWriteActivity.this, QualityGroupShopMineActivity.class);
+        intent.setClass(getActivity(), QualityGroupShopMineActivity.class);
         new LifecycleHandler(this).postDelayed(() -> {
             startActivity(intent);
             finish();
@@ -1348,7 +1347,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
         //    地址列表为空 跳转新建地址
         @OnClick(R.id.tv_lv_top)
         void skipNewAddress(View view) {
-            Intent intent = new Intent(DirectIndentWriteActivity.this, SelectedAddressActivity.class);
+            Intent intent = new Intent(getActivity(), SelectedAddressActivity.class);
             intent.putExtra("hasDefaultAddress", false);
             startActivityForResult(intent, NEW_CRE_ADDRESS_REQ);
         }
@@ -1358,7 +1357,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
         void skipAddressList(View view) {
             if (TextUtils.isEmpty(orderCreateNo)) {
                 if (type.equals(INDENT_W_TYPE) || type.equals(INDENT_GROUP_SHOP)) {
-                    Intent intent = new Intent(DirectIndentWriteActivity.this, SelectedAddressActivity.class);
+                    Intent intent = new Intent(getActivity(), SelectedAddressActivity.class);
                     intent.putExtra("addressId", String.valueOf(addressId));
                     startActivityForResult(intent, SEL_ADDRESS_REQ);
                 } else {
@@ -1419,7 +1418,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
         void selectFavorable() {
             if (indentWriteBean != null && indentWriteBean.getUserCouponInfo() != null && indentWriteBean.getUserCouponInfo().getAllowCouoon() == 1) {
                 if (TextUtils.isEmpty(orderCreateNo)) {
-                    Intent intent = new Intent(DirectIndentWriteActivity.this, DirectCouponGetActivity.class);
+                    Intent intent = new Intent(getActivity(), DirectCouponGetActivity.class);
                     intent.putExtra("couponGoods", getCouponGoodsInfo(productInfoList));
                     startActivityForResult(intent, DIRECT_COUPON_REQ);
                 }
@@ -1431,7 +1430,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
         void selInvoice(View view) {
             if (TextUtils.isEmpty(orderCreateNo)) {
 //            选择发票
-                Intent intent = new Intent(DirectIndentWriteActivity.this, IndentDrawUpInvoiceActivity.class);
+                Intent intent = new Intent(getActivity(), IndentDrawUpInvoiceActivity.class);
                 intent.putExtra("type", "indentWrite");
                 if (!TextUtils.isEmpty(invoiceTitle)) {
                     intent.putExtra("invoiceTitle", invoiceTitle);

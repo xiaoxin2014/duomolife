@@ -33,6 +33,7 @@
                     android:orientation="vertical">
 
                     <LinearLayout
+                        android:id="@+id/ll_refund_status"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@color/bg_light_blue_e"
@@ -45,8 +46,18 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="申请通过"
+                            android:textColor="@color/text_blue_indent"
+                            android:textSize="@dimen/sc_mm_34" />
+
+                        <TextView
+                            android:id="@+id/tv_close_time"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/sc_mm_16"
+                            android:text="@string/defaul"
                             android:textColor="@color/text_black_t"
-                            android:textSize="@dimen/sc_mm_30" />
+                            android:textSize="@dimen/sc_mm_24"
+                            android:visibility="gone" />
 
                         <TextView
                             android:id="@+id/tv_refund_detail_msg"
@@ -54,16 +65,6 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/sc_mm_16"
                             android:lineSpacingExtra="@dimen/sc_mm_7"
-                            android:text="@string/defaul"
-                            android:textColor="@color/text_black_t"
-                            android:textSize="@dimen/sc_mm_24"
-                            android:visibility="gone" />
-
-                        <TextView
-                            android:id="@+id/tv_close_time"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/sc_mm_16"
                             android:text="@string/defaul"
                             android:textColor="@color/text_black_t"
                             android:textSize="@dimen/sc_mm_24"
@@ -80,7 +81,7 @@
                             android:paddingTop="@dimen/sc_mm_14"
                             android:paddingRight="@dimen/sc_mm_24"
                             android:paddingBottom="@dimen/sc_mm_14"
-                            android:text="@string/refund_product_tips"
+                            android:text="@string/defaul"
                             android:textColor="@color/text_black_t"
                             android:textSize="@dimen/sc_mm_24"
                             android:visibility="gone" />
@@ -97,10 +98,10 @@
                             android:layout_width="@dimen/sc_mm_140"
                             android:layout_height="@dimen/sc_mm_54"
                             android:layout_marginTop="@dimen/sc_mm_45"
+                            android:layout_marginRight="@dimen/sc_mm_40"
                             android:layout_marginBottom="@dimen/sc_mm_45"
                             android:background="@drawable/border_circle_three_gray_white"
                             android:gravity="center"
-                            android:layout_marginRight="@dimen/sc_mm_40"
                             android:text="修改申请"
                             android:textColor="@color/text_black_t"
                             android:textSize="@dimen/sc_mm_26"
@@ -146,21 +147,22 @@
                     <include layout="@layout/layout_refund_detail_info" />
 
                     <include layout="@layout/layout_contact_qy_service" />
-
-                    <TextView
-                        android:id="@+id/tv_commit_apply"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/sc_mm_28"
-                        android:background="@drawable/border_cir_5dp_z_blue_solid"
-                        android:gravity="center"
-                        android:padding="@dimen/sc_mm_25"
-                        android:text="提交申请"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/sc_mm_32"
-                        android:visibility="gone" />
                 </LinearLayout>
             </android.support.v4.widget.NestedScrollView>
+
+            <TextView
+                android:id="@+id/tv_commit_apply"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/sc_mm_88"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="@dimen/sc_mm_28"
+                android:background="@drawable/border_cir_5dp_z_blue_solid"
+                android:gravity="center"
+                android:padding="@dimen/sc_mm_25"
+                android:text="提交申请"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sc_mm_32"
+                android:visibility="gone" />
 
             <com.amkj.dmsh.views.MainButtonView
                 android:id="@+id/main_button_view"

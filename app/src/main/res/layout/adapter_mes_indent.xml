@@ -41,9 +41,8 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/sc_mm_120"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/sc_mm_28"
-            android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <ImageView
@@ -52,32 +51,33 @@
                 android:layout_height="@dimen/sc_mm_120"
                 android:scaleType="centerCrop" />
 
-            <RelativeLayout
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="@dimen/sc_mm_26">
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/sc_mm_26"
+                android:minHeight="@dimen/sc_mm_120">
 
                 <TextView
+                    android:minHeight="@dimen/sc_mm_90"
                     android:id="@+id/tv_mes_indent_content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
-                    android:lineSpacingExtra="@dimen/sc_mm_7"
                     android:maxLines="3"
+                    android:text="@string/defaul"
                     android:textColor="@color/text_login_gray_s"
                     android:textSize="@dimen/sc_mm_28" />
 
                 <TextView
+                    android:layout_gravity="right"
                     android:id="@+id/tv_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginBottom="@dimen/sc_mm_6"
                     android:text="@string/defaul"
                     android:textColor="@color/text_login_blue_z"
                     android:textSize="@dimen/sc_mm_28" />
-            </RelativeLayout>
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

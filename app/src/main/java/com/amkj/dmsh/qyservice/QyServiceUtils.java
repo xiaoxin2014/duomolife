@@ -1,7 +1,6 @@
 package com.amkj.dmsh.qyservice;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,19 +14,18 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.bean.OrderProductNewBean;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.dominant.activity.DoMoLifeWelfareActivity;
-import com.amkj.dmsh.dominant.activity.QualityNewProActivity;
-import com.amkj.dmsh.dominant.activity.QualityTypeHotSaleProActivity;
-import com.amkj.dmsh.homepage.activity.EditorSelectActivity;
+import com.amkj.dmsh.mine.bean.QuickEntryEntity;
+import com.amkj.dmsh.mine.bean.QuickEntryEntity.QuickEntryBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry;
-import com.amkj.dmsh.shopdetails.bean.InquiryOrderEntry.OrderInquiryDateEntry.OrderListBean;
+import com.amkj.dmsh.shopdetails.bean.MainOrderListEntity;
+import com.amkj.dmsh.shopdetails.bean.MainOrderListEntity.MainOrderBean;
+import com.amkj.dmsh.utils.SharedPreUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.qiyukf.unicorn.api.ConsultSource;
 import com.qiyukf.unicorn.api.OnMessageItemClickListener;
 import com.qiyukf.unicorn.api.ProductDetail;
@@ -60,8 +58,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRO_STATUS;
-import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 /**
  * @author LGuiPeng
@@ -75,12 +71,14 @@ public class QyServiceUtils {
     private static volatile QyServiceUtils qyServiceUtils;
     private boolean isQyInit;
     private UnreadCountChangeListener listener;
-    private List<OrderListBean> orderListBeanList = new ArrayList<>();
+    private List<MainOrderBean> orderListBeanList = new ArrayList<>();
+    private Map<String, String> linkMap = new HashMap<>();
     private ProductIndentHelper productIndentHelper;
     private YSFOptions ysfOptions;
     private UICustomization uiCustomization;
     private final String qyAppKey = "ef251a87b903f9fd6938caafbdf0a9de";
     private final String qySerectKey = "1280d1127f99ac5ad360e79561a390b9";
+
 
     private QyServiceUtils() {
     }
@@ -109,17 +107,17 @@ public class QyServiceUtils {
         getYsOptions();
         getUICustomization();
         StatusBarNotificationConfig statusBarNotificationConfig = new StatusBarNotificationConfig();
-//        配置七鱼点击通知栏
+        //配置七鱼点击通知栏
         statusBarNotificationConfig.notificationEntrance = QyServiceNotifyReceiver.class;
         ysfOptions.statusBarNotificationConfig = statusBarNotificationConfig;
-        //        链接点击设置
+        //链接点击设置
         ysfOptions.onMessageItemClickListener = new OnMessageItemClickListener() {
             @Override
             public void onURLClicked(Context context, String url) {
                 setSkipPath(context, url, false);
             }
         };
-//        快捷入口点击
+        //快捷入口点击
         ysfOptions.quickEntryListener = new QuickEntryListener() {
             @Override
             public void onClick(Context context, String shopId, QuickEntry quickEntry) {
@@ -127,22 +125,10 @@ public class QyServiceUtils {
                     if (orderListBeanList.size() > 0) {
                         createProductIndentDialog(context);
                     } else {
-                        showToast(context, "暂无订单数据");
+                        showToast("暂无订单数据");
                     }
-                } else if (quickEntry.getId() == 2) {
-                    Intent intent = new Intent(context, QualityTypeHotSaleProActivity.class);
-                    context.startActivity(intent);
-                } else if (quickEntry.getId() == 3) {
-                    Intent intent = new Intent(context, DoMoLifeWelfareActivity.class);
-                    context.startActivity(intent);
-                } else if (quickEntry.getId() == 4) {
-                    ConstantMethod.setSkipPath(context, "app://QualityCustomTopicActivity?productType=5", false);
-                } else if (quickEntry.getId() == 5) {
-                    Intent intent = new Intent(context, EditorSelectActivity.class);
-                    context.startActivity(intent);
-                } else if (quickEntry.getId() == 6) {
-                    Intent intent = new Intent(context, QualityNewProActivity.class);
-                    context.startActivity(intent);
+                } else {
+                    setSkipPath(context, linkMap.get(String.valueOf(quickEntry.getId())), false);
                 }
             }
         };
@@ -234,17 +220,39 @@ public class QyServiceUtils {
                     .build();
         }
         pageSource.quickEntryList = new ArrayList<>();
+        //默认添加订单查询快捷入口
         if (userId > 0) {
             pageSource.quickEntryList.add(new QuickEntry(1, "订单查询", ""));
         }
-        pageSource.quickEntryList.add(new QuickEntry(2, "热销爆品", ""));
-        pageSource.quickEntryList.add(new QuickEntry(3, "精选专题", ""));
-        pageSource.quickEntryList.add(new QuickEntry(4, "优惠特价", ""));
-        pageSource.quickEntryList.add(new QuickEntry(5, "小编推荐", ""));
-        pageSource.quickEntryList.add(new QuickEntry(6, "新品发布", ""));
-        getIndentProductData(context);
 
-//        排队设置
+        String quickEntry = (String) SharedPreUtils.getParam("QuickEntry", "");
+        if (!TextUtils.isEmpty(quickEntry)) {
+            List<QuickEntryBean> datas = new Gson().fromJson(quickEntry, new TypeToken<List<QuickEntryBean>>() {
+            }.getType());
+
+            if (datas != null && datas.size() > 0) {
+                linkMap.clear();
+                for (int i = 0; i < datas.size(); i++) {
+                    QuickEntryBean quickEntryBean = datas.get(i);
+                    pageSource.quickEntryList.add(new QuickEntry(i + 2, quickEntryBean.getTitle(), ""));
+                    linkMap.put(String.valueOf(i + 2), quickEntryBean.getLink());
+                }
+            }
+        }
+//        } else {
+//            pageSource.quickEntryList.add(new QuickEntry(2, "热销爆品", ""));
+//            pageSource.quickEntryList.add(new QuickEntry(3, "精选专题", ""));
+//            pageSource.quickEntryList.add(new QuickEntry(4, "优惠特价", ""));
+//            pageSource.quickEntryList.add(new QuickEntry(5, "小编推荐", ""));
+//            pageSource.quickEntryList.add(new QuickEntry(6, "新品发布", ""));
+//        }
+
+        //获取快捷入口并保存到本地
+        getCustomerServiceBar(context);
+        //获取订单前5条数据
+        getIndentData(context);
+
+        //排队设置
         SessionLifeCycleOptions lifeCycleOptions = new SessionLifeCycleOptions();
         lifeCycleOptions.setCanCloseSession(true)
                 .setCanQuitQueue(true)
@@ -261,7 +269,7 @@ public class QyServiceUtils {
         if (isQyInit) {
             Unicorn.openServiceActivity(context, getStrings(sourceTitle), pageSource);
         } else {
-            showToast(context, "客服信息错误");
+            showToast("客服信息错误");
         }
         productIndentHelper = null;
     }
@@ -377,42 +385,33 @@ public class QyServiceUtils {
             productIndentAdapter = new ProductIndentAdapter(context, orderListBeanList);
             communal_recycler.setAdapter(productIndentAdapter);
             ImageView iv_close_dialog = indentDialogView.findViewById(R.id.iv_close_dialog);
-            iv_close_dialog.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dismiss();
-                }
-            });
+            iv_close_dialog.setOnClickListener(v -> dismiss());
             communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                     // 设置分隔线资源ID
                     .setDividerId(R.drawable.item_divider_gray_f_one_px)
-
-
                     .create());
-            productIndentAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-                @Override
-                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                    OrderListBean orderListBean = (OrderListBean) view.getTag();
-                    if (orderListBean != null) {
-                        String picUrl = "";
-                        String title = "";
-                        if (orderListBean.getGoods() != null && orderListBean.getGoods().size() > 0) {
-                            OrderListBean.GoodsBean goodsBean = orderListBean.getGoods().get(0);
-                            picUrl = goodsBean.getPicUrl();
-                            title = goodsBean.getName();
-                        }
-                        ProductDetail productDetail = new ProductDetail.Builder()
-                                .setPicture(picUrl)
-                                .setTitle(title)
-                                .setUrl(Url.BASE_SHARE_PAGE_TWO + "m/template/order_template/order.html?noid=" + orderListBean.getNo())
-                                .setDesc(INDENT_PRO_STATUS.get(String.valueOf(orderListBean.getStatus())))
-                                .setNote(String.format(context.getResources().getString(R.string.money_price_chn), orderListBean.getAmount()))
-                                .setShow(1)
-                                .setSendByUser(false)
-                                .build();
-                        MessageService.sendProductMessage(productDetail);
-                        productIndentHelper.dismiss();
+            productIndentAdapter.setOnItemClickListener((adapter, view, position) -> {
+                MainOrderBean mainOrderBean = (MainOrderBean) view.getTag();
+                if (mainOrderBean != null) {
+                    String picUrl = "";
+                    String title = "";
+                    List<OrderProductNewBean> orderProductList = mainOrderBean.getOrderProductList();
+                    if (orderProductList != null && orderProductList.size() > 0) {
+                        OrderProductNewBean orderProductNewBean = orderProductList.get(0);
+                        picUrl = orderProductNewBean.getPicUrl();
+                        title = orderProductNewBean.getProductName();
                     }
+                    ProductDetail productDetail = new ProductDetail.Builder()
+                            .setPicture(picUrl)
+                            .setTitle(title)
+                            .setUrl(Url.BASE_SHARE_PAGE_TWO + "m/template/order_template/order.html?noid=" + mainOrderBean.getOrderNo())
+                            .setDesc(mainOrderBean.getStatusText())
+                            .setNote(String.format(context.getResources().getString(R.string.money_price_chn), mainOrderBean.getPayAmount()))
+                            .setShow(1)
+                            .setSendByUser(false)
+                            .build();
+                    MessageService.sendProductMessage(productDetail);
+                    productIndentHelper.dismiss();
                 }
             });
             builder.setCancelable(true);
@@ -443,38 +442,43 @@ public class QyServiceUtils {
         }
     }
 
-    /**
-     * 获取订单数据
-     */
-    private void getIndentProductData(Context activity) {
-        String url =  Url.Q_INQUIRY_ALL_ORDER;
-        Map<String, Object> params = new HashMap<>();
-        params.put("userId", userId);
-        params.put("showCount", 5);
-        params.put("currentPage", 1);
-        params.put("orderType", "currency");
-//        版本号控制 3 组合商品赠品
-        params.put("version", 3);
-        NetLoadUtils.getNetInstance().loadNetDataPost(activity, url, params, new NetLoadListenerHelper() {
+    //获取快捷入口
+    private void getCustomerServiceBar(Context context) {
+        NetLoadUtils.getNetInstance().loadNetDataPost(context, Url.GET_CUSTOMER_SERVICE_BAR, null, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                orderListBeanList.clear();
-                String code = "";
-                String msg = "";
-                try {
-                    JSONObject jsonObject = new org.json.JSONObject(result);
-                    code = (String) jsonObject.get("code");
-                    msg = (String) jsonObject.get("msg");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                if (code.equals(SUCCESS_CODE)) {
-                    InquiryOrderEntry inquiryOrderEntry = new Gson().fromJson(result, InquiryOrderEntry.class);
-                    INDENT_PRO_STATUS = inquiryOrderEntry.getOrderInquiryDateEntry().getStatus();
-                    orderListBeanList.addAll(inquiryOrderEntry.getOrderInquiryDateEntry().getOrderList());
+                QuickEntryEntity quickEntryEntity = new Gson().fromJson(result, QuickEntryEntity.class);
+                if (quickEntryEntity != null) {
+                    List<QuickEntryBean> list = quickEntryEntity.getList();
+                    if (list != null && list.size() > 0) {
+//                        List<QuickEntry> quickEntryList = new ArrayList<>();
+                        SharedPreUtils.setParam("QuickEntry", new Gson().toJson(list));
+                    }
                 }
             }
         });
     }
 
+    //获取订单列表数据
+    private void getIndentData(Context context) {
+        if (userId == 0) return;
+        Map<String, Object> params = new HashMap<>();
+        params.put("currentPage", 1);
+        params.put("showCount", 5);
+        params.put("orderStatusText", "all");
+        NetLoadUtils.getNetInstance().loadNetDataPost(context, Url.Q_GET_ORDER_LIST, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                orderListBeanList.clear();
+                Gson gson = new Gson();
+                MainOrderListEntity mOrderListNewEntity = gson.fromJson(result, MainOrderListEntity.class);
+                if (mOrderListNewEntity != null) {
+                    List<MainOrderListEntity.MainOrderBean> orderList = mOrderListNewEntity.getResult();
+                    if (orderList != null && orderList.size() > 0) {
+                        orderListBeanList.addAll(orderList);
+                    }
+                }
+            }
+        });
+    }
 }

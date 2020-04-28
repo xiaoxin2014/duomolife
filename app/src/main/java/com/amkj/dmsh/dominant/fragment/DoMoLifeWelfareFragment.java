@@ -241,7 +241,7 @@ public class DoMoLifeWelfareFragment extends BaseFragment {
                     if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
                         typeDetails.addAll(likedProductEntity.getGoodsList());
                     } else if (!likedProductEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(getActivity(), likedProductEntity.getMsg());
+                        showToast( likedProductEntity.getMsg());
                     }
                 }
                 qualityTypeProductAdapter.notifyDataSetChanged();
@@ -277,7 +277,7 @@ public class DoMoLifeWelfareFragment extends BaseFragment {
                                     overseasHeaderView.communal_recycler_wrap.setVisibility(GONE);
                                 }
                             } else {
-                                showToast(getActivity(), dmlTheme.getMsg());
+                                showToast( dmlTheme.getMsg());
                             }
                             qualityWelfareHeaderAdapter.notifyDataSetChanged();
                         }
@@ -291,13 +291,8 @@ public class DoMoLifeWelfareFragment extends BaseFragment {
                     }
 
                     @Override
-                    public void netClose() {
-                        showToast(getActivity(), R.string.unConnectedNetwork);
-                    }
-
-                    @Override
                     public void onError(Throwable throwable) {
-                        showToast(getActivity(), R.string.invalidData);
+                        showToast(R.string.invalidData);
                     }
                 });
     }

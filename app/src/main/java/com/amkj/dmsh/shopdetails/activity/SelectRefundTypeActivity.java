@@ -32,7 +32,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.SELECT_REFUND_TYPE;
 
 /**
  * Created by xiaoxin on 2020/3/31
- * Version:v4.4.3
+ * Version:v4.5.0
  * ClassDescription :选择售后类型
  */
 public class SelectRefundTypeActivity extends BaseActivity {

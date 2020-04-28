@@ -187,7 +187,7 @@ public class DmlOptimizedSelFragment extends BaseFragment {
                             } else if (optimizedSelEntity.getCode().equals(EMPTY_CODE)) {
                                 dmlOptimizedSelAdapter.loadMoreEnd();
                             } else {
-                                showToast(getActivity(), optimizedSelEntity.getMsg());
+                                showToast( optimizedSelEntity.getMsg());
                             }
                             dmlOptimizedSelAdapter.notifyDataSetChanged();
                         }
@@ -202,13 +202,8 @@ public class DmlOptimizedSelFragment extends BaseFragment {
                     }
 
                     @Override
-                    public void netClose() {
-                        showToast(getActivity(), R.string.unConnectedNetwork);
-                    }
-
-                    @Override
                     public void onError(Throwable throwable) {
-                        showToast(getActivity(), R.string.invalidData);
+                        showToast(R.string.invalidData);
                     }
                 });
     }

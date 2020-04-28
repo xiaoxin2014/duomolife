@@ -39,7 +39,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 /**
  * Created by xiaoxin on 2020/3/27
- * Version:v4.4.3
+ * Version:v4.5.0
  * ClassDescription :新版物流详情
  */
 public class DirectLogisticsDetailsActivity extends BaseActivity {
@@ -116,7 +116,7 @@ public class DirectLogisticsDetailsActivity extends BaseActivity {
                                     setData();
                                 }
                             } else if (!mLogisticsNewEntity.getCode().equals(EMPTY_CODE)) {
-                                showToast(DirectLogisticsDetailsActivity.this, mLogisticsNewEntity.getMsg());
+                                showToast( mLogisticsNewEntity.getMsg());
                             }
                         }
 

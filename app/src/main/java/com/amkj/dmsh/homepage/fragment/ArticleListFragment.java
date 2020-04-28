@@ -221,7 +221,7 @@ public class ArticleListFragment extends BaseFragment {
                                 homeArticleAdapter.notifyDataSetChanged();
                                 homeArticleAdapter.loadMoreComplete();
                             } else if (ERROR_CODE.equals(categoryDocBean.getCode())) {
-                                showToast(getActivity(), categoryDocBean.getMsg());
+                                showToast( categoryDocBean.getMsg());
                                 homeArticleAdapter.loadMoreFail();
                             } else {
                                 homeArticleAdapter.loadMoreEnd();

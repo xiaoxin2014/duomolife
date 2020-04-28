@@ -252,7 +252,7 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
                     if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
                         typeDetails.addAll(likedProductEntity.getGoodsList());
                     } else if (!likedProductEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast(DoMoLifeWelfareActivity.this, likedProductEntity.getMsg());
+                        showToast( likedProductEntity.getMsg());
                     }
                 }
                 qualityTypeProductAdapter.notifyDataSetChanged();
@@ -288,7 +288,7 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
                                     overseasHeaderView.communal_recycler_wrap.setVisibility(GONE);
                                 }
                             } else {
-                                showToast(DoMoLifeWelfareActivity.this, dmlTheme.getMsg());
+                                showToast( dmlTheme.getMsg());
                             }
                             qualityWelfareHeaderAdapter.notifyDataSetChanged();
                         }
@@ -302,13 +302,8 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void netClose() {
-                        showToast(DoMoLifeWelfareActivity.this, R.string.unConnectedNetwork);
-                    }
-
-                    @Override
                     public void onError(Throwable throwable) {
-                        showToast(DoMoLifeWelfareActivity.this, R.string.invalidData);
+                        showToast( R.string.invalidData);
                     }
                 });
     }

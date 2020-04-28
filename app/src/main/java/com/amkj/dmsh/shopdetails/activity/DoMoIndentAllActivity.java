@@ -1,20 +1,27 @@
 package com.amkj.dmsh.shopdetails.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
-import android.widget.TextView;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.homepage.activity.IndentSearchActivity;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.adapter.IndentPagerAdapter;
+import com.amkj.dmsh.utils.KeyboardUtils;
 import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
 import com.amkj.dmsh.views.flycoTablayout.listener.OnTabSelectListener;
+
+import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -24,13 +31,12 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_INDENT;
-import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_TYPE;
+import static com.amkj.dmsh.constant.ConstantVariable.SEARCH_DATA;
 import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_WAITAPPRAISE_ICON;
 
 /**
  * Created by xiaoxin on 2020/3/20
- * Version:v4.4.3
+ * Version:v4.5.0
  * ClassDescription :订单列表+订单搜索结果页面合并
  */
 public class DoMoIndentAllActivity extends BaseActivity {
@@ -38,14 +44,11 @@ public class DoMoIndentAllActivity extends BaseActivity {
     SlidingTabLayout communal_stl_tab;
     @BindView(R.id.vp_indent_container)
     ViewPager vp_indent_container;
-    @BindView(R.id.tv_indent_title)
-    TextView mTvIndentTitle;
-    @BindView(R.id.tv_search)
-    TextView mTvSearch;
+    @BindView(R.id.et_search)
+    EditText mEtSearch;
     private String type = "";
     private int waitEvaluateNum;
     private IndentPagerAdapter indentPagerAdapter;
-    private String keyWord;
 
     @Override
     protected int getContentView() {
@@ -57,7 +60,6 @@ public class DoMoIndentAllActivity extends BaseActivity {
         getLoginStatus(this);
         Intent intent = getIntent();
         type = intent.getStringExtra("tab");
-        keyWord = intent.getStringExtra("keyWord");
         if (TextUtils.isEmpty(type)) {
             type = "all";
         }
@@ -69,12 +71,9 @@ public class DoMoIndentAllActivity extends BaseActivity {
             return;
         }
 
-        mTvSearch.setVisibility(TextUtils.isEmpty(keyWord) ? View.VISIBLE : View.GONE);
-        mTvIndentTitle.setVisibility(!TextUtils.isEmpty(keyWord) ? View.VISIBLE : View.GONE);
-        communal_stl_tab.setVisibility(TextUtils.isEmpty(keyWord) ? View.VISIBLE : View.GONE);
         communal_stl_tab.setTextsize(AutoSizeUtils.mm2px(mAppContext, 28));
         communal_stl_tab.setTextUnselectColor(getResources().getColor(R.color.text_login_gray_s));
-        indentPagerAdapter = new IndentPagerAdapter(getSupportFragmentManager(), keyWord);
+        indentPagerAdapter = new IndentPagerAdapter(getSupportFragmentManager());
         vp_indent_container.setAdapter(indentPagerAdapter);
         vp_indent_container.setOffscreenPageLimit(4);
         communal_stl_tab.setViewPager(vp_indent_container);
@@ -117,6 +116,32 @@ public class DoMoIndentAllActivity extends BaseActivity {
         if (waitEvaluateNum > 0) {
             communal_stl_tab.showMsg(4, "有奖励");
         }
+
+        // 搜索框的键盘搜索键点击回调
+        mEtSearch.setFocusableInTouchMode(true);
+        mEtSearch.setOnKeyListener(new View.OnKeyListener() {// 输入完后按键盘上的搜索键
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                EditText view = (EditText) v;
+                String keyWord = view.getText().toString().trim();
+                if (keyCode == KeyEvent.KEYCODE_ENTER
+                        && event.getAction() == KeyEvent.ACTION_DOWN) {// 修改回车键功能
+                    // 先隐藏键盘
+                    KeyboardUtils.hideSoftInput(getActivity());
+                    //待评价商品不支持搜索
+                    if (communal_stl_tab.getCurrentTab() == 4) {
+                        communal_stl_tab.setCurrentTab(0);
+                    }
+                    //跳转页面，模糊搜索
+                    EventBus.getDefault().post(new EventMessage(SEARCH_DATA, keyWord));
+                }
+                return false;
+            }
+        });
+        KeyboardUtils.registerSoftInputChangedListener(this, height -> {
+            if (height == 0) {
+                ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0).requestFocus();
+            }
+        });
     }
 
     @Override
@@ -142,13 +167,6 @@ public class DoMoIndentAllActivity extends BaseActivity {
         finish();
     }
 
-    @OnClick(R.id.tv_search)
-    void skipSearch(View view) {
-        Intent intent = new Intent(DoMoIndentAllActivity.this, IndentSearchActivity.class);
-        intent.putExtra(SEARCH_TYPE, SEARCH_INDENT);
-        startActivity(intent);
-    }
-
     @OnClick(R.id.iv_indent_service)
     void skipService() {
         QyServiceUtils.getQyInstance()
@@ -166,5 +184,52 @@ public class DoMoIndentAllActivity extends BaseActivity {
                 communal_stl_tab.hideMsg(4);
             }
         }
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if (isShouldHideKeyboard(v, ev)) {
+                InputMethodManager imm =
+                        (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(v.getWindowToken(),
+                            InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+            }
+        }
+        try {
+            return super.dispatchTouchEvent(ev);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    // Return whether touch the view.
+    private boolean isShouldHideKeyboard(View v, MotionEvent event) {
+        if (v != null && (v instanceof EditText)) {
+            int[] l = {0, 0};
+            v.getLocationInWindow(l);
+            int left = l[0],
+                    top = l[1],
+                    bottom = top + v.getHeight(),
+                    right = left + v.getWidth();
+            return !(event.getX() > left && event.getX() < right
+                    && event.getY() > top && event.getY() < bottom);
+        }
+        return false;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        KeyboardUtils.unregisterSoftInputChangedListener(this);
+    }
+
+    public String getKewords() {
+        return mEtSearch.getText().toString().trim();
     }
 }

@@ -36,21 +36,10 @@
 
         <TextView
             android:id="@+id/tv_name"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:maxWidth="@dimen/sc_mm_230"
+            android:layout_weight="1"
             android:ellipsize="end"
-            android:text="@string/defaul"
-            android:textColor="@color/text_login_gray_s"
-            android:textSize="@dimen/sc_mm_28" />
-
-        <TextView
-            android:id="@+id/tv_repair_consignee_phone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/sc_mm_64"
-            android:ellipsize="end"
-            android:maxWidth="@dimen/sc_mm_230"
             android:text="@string/defaul"
             android:textColor="@color/text_login_gray_s"
             android:textSize="@dimen/sc_mm_28" />
@@ -76,7 +65,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/sc_mm_60"
         android:background="@drawable/border_civ_3dp_light_gray"
-        android:drawableLeft="@drawable/sel_bt_top_bot_icon"
+        android:drawableRight="@drawable/sel_bt_top_bot_icon"
         android:drawablePadding="@dimen/sc_mm_15"
         android:gravity="center_vertical"
         android:hint="请选择物流公司"

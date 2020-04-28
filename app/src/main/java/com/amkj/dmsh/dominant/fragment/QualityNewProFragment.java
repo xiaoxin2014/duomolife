@@ -301,7 +301,7 @@ public class QualityNewProFragment extends BaseFragment {
                             } else if (likedProductEntity.getCode().equals(EMPTY_CODE)) {
                                 qualityTypeProductAdapter.loadMoreEnd();
                             } else {
-                                showToast(getActivity(), likedProductEntity.getMsg());
+                                showToast( likedProductEntity.getMsg());
                             }
                             qualityTypeProductAdapter.notifyDataSetChanged();
                         }
@@ -316,14 +316,8 @@ public class QualityNewProFragment extends BaseFragment {
                     }
 
                     @Override
-                    public void netClose() {
-                        showToast(getActivity(), R.string.unConnectedNetwork);
-                    }
-
-                    @Override
                     public void onError(Throwable throwable) {
-
-                        showToast(getActivity(), R.string.invalidData);
+                        showToast( R.string.invalidData);
                     }
                 });
     }

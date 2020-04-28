@@ -17,7 +17,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
 
 /**
  * Created by xiaoxin on 2020/4/9
- * Version:v4.4.3
+ * Version:v4.5.0
  */
 public abstract class BaseAlertDialog extends AlertDialog {
 
