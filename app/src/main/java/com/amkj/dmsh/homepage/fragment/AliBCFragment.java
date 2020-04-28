@@ -655,7 +655,7 @@ public class AliBCFragment extends BaseFragment {
                     jsInteractiveException("web");
                 }
                 JsInteractiveBean jsInteractiveBean = JSON.parseObject(resultJson, JsInteractiveBean.class);
-                if (jsInteractiveBean != null && !TextUtils.isEmpty(jsInteractiveBean.getType())) {
+                if (tv_header_title != null && jsInteractiveBean != null && !TextUtils.isEmpty(jsInteractiveBean.getType())) {
                     switch (jsInteractiveBean.getType()) {
 //                        获取用户Id
                         case "userId":

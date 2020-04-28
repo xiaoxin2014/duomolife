@@ -444,7 +444,7 @@ public class ArticleOfficialActivity extends BaseActivity {
                     return;
                 }
                 JsInteractiveBean jsInteractiveBean = JSON.parseObject(resultJson, JsInteractiveBean.class);
-                if (jsInteractiveBean != null && !TextUtils.isEmpty(jsInteractiveBean.getType())) {
+                if (mTvTitle != null && jsInteractiveBean != null && !TextUtils.isEmpty(jsInteractiveBean.getType())) {
                     switch (jsInteractiveBean.getType()) {
                         case "showToast":
                             runOnUiThread(() -> showImportToast(jsInteractiveBean.getOtherData()));
@@ -660,7 +660,7 @@ public class ArticleOfficialActivity extends BaseActivity {
                 loadHud.dismiss();
                 mTvSendComment.setText("发送");
                 mTvSendComment.setEnabled(true);
-                showToast( R.string.comment_article_send_success);
+                showToast(R.string.comment_article_send_success);
                 commentViewVisible(GONE, null);
                 mEmojiEditComment.setText("");
                 webViewJs(getStringsFormat(getActivity(), R.string.web_comment_success_method, SUCCESS_CODE, communalComment.getContent()));

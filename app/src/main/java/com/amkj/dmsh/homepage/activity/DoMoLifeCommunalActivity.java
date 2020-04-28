@@ -642,7 +642,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                     jsInteractiveException();
                 }
                 JsInteractiveBean jsInteractiveBean = JSON.parseObject(resultJson, JsInteractiveBean.class);
-                if (jsInteractiveBean != null && !TextUtils.isEmpty(jsInteractiveBean.getType())) {
+                if (tv_web_title != null && jsInteractiveBean != null && !TextUtils.isEmpty(jsInteractiveBean.getType())) {
                     switch (jsInteractiveBean.getType()) {
 //                        获取用户Id
                         case "userId":
