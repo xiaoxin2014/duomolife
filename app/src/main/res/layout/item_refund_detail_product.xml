@@ -46,7 +46,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/sc_mm_176"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/sc_mm_30">
 
             <TextView
@@ -74,9 +74,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginRight="@dimen/sc_mm_30"
                     android:layout_weight="1"
-                    android:ellipsize="end"
                     android:enabled="true"
-                    android:lines="1"
                     android:text="@string/defaul"
                     android:textColor="@color/home_text_color"
                     android:textSize="@dimen/sc_mm_22" />
@@ -91,9 +89,9 @@
             </LinearLayout>
 
             <RelativeLayout
+                android:layout_below="@+id/ll_sku"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/sc_mm_60"
-                android:layout_alignParentBottom="true">
+                android:layout_height="@dimen/sc_mm_60">
 
                 <TextView
                     android:id="@+id/tv_direct_indent_pro_price"

@@ -176,8 +176,7 @@ public class ShopCarGoodsAdapter extends BaseMultiItemQuickAdapter<MultiItemEnti
                 //是否显示活动信息
                 ActivityInfoBean activityInfoData = (ActivityInfoBean) multiItemEntity;
                 boolean showActivityInfo = !TextUtils.isEmpty(activityInfoData.getActivityCode()) && activityInfoData.getSubItems() != null && activityInfoData.getSubItems().size() > 0;
-                helper.setGone(R.id.ll_communal_activity_topic_tag, true)
-                        .setGone(R.id.blank, true);
+                helper.setGone(R.id.ll_communal_activity_topic_tag, true);
                 ViewGroup.LayoutParams layoutParams = helper.itemView.getLayoutParams();
                 if (showActivityInfo) {
                     layoutParams.height = WRAP_CONTENT;

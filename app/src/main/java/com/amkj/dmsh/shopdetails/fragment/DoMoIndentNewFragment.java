@@ -82,7 +82,7 @@ public class DoMoIndentNewFragment extends BaseFragment {
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_ten_dp).create());
         doMoIndentListAdapter = new DirectIndentListAdapter(this, getActivity(), orderListBeanList);
-        doMoIndentListAdapter.setLoadMoreView(new OrderLoadMoreView());
+        doMoIndentListAdapter.setLoadMoreView(new OrderLoadMoreView(getActivity()));
         communal_recycler.setAdapter(doMoIndentListAdapter);
         //解决调用notifyItemChanged闪烁问题
         SimpleItemAnimator itemAnimator = (SimpleItemAnimator) communal_recycler.getItemAnimator();

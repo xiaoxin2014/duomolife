@@ -1,5 +1,6 @@
 package com.amkj.dmsh.views;
 
+import android.content.Context;
 import android.content.Intent;
 
 import com.amkj.dmsh.R;
@@ -7,14 +8,19 @@ import com.amkj.dmsh.shopdetails.activity.OrderSearchHelpActivity;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.chad.library.adapter.base.loadmore.LoadMoreView;
 
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-
 /**
  * Created by xiaoxin on 2020/4/17
  * Version:v4.5.0
  * ClassDescription :订单列表自定义loadMoreView
  */
 public class OrderLoadMoreView extends LoadMoreView {
+
+    private final Context mContext;
+
+    public OrderLoadMoreView(Context context) {
+        mContext = context;
+    }
+
     @Override
     public int getLayoutId() {
         return R.layout.brvah_quick_view_order_load_more;
@@ -44,8 +50,8 @@ public class OrderLoadMoreView extends LoadMoreView {
     public void convert(BaseViewHolder holder) {
         holder.itemView.setOnClickListener(v -> {
             if (getLoadMoreStatus() != LoadMoreView.STATUS_LOADING) {
-                Intent intent = new Intent(mAppContext, OrderSearchHelpActivity.class);
-                mAppContext.startActivity(intent);
+                Intent intent = new Intent(mContext, OrderSearchHelpActivity.class);
+                mContext.startActivity(intent);
             }
         });
         switch (getLoadMoreStatus()) {

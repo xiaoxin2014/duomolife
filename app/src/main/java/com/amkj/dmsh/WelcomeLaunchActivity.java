@@ -3,7 +3,6 @@ package com.amkj.dmsh;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
@@ -13,8 +12,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.dao.AddClickDao;
+import com.amkj.dmsh.utils.CountDownTimer;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 
 import java.util.regex.Matcher;
@@ -28,7 +27,6 @@ import static com.amkj.dmsh.MainActivity.LauncherAdIdKey;
 import static com.amkj.dmsh.MainActivity.SkipUrlKey;
 import static com.amkj.dmsh.MainActivity.TimeKey;
 
-;
 
 /**
  * @author Liuguipeng
@@ -56,7 +54,6 @@ public class WelcomeLaunchActivity extends BaseActivity {
     private SharedPreferences sharedPreferences;
     private String skipUrlPath;
     private int launcherAdId;
-    private ConstantMethod constantMethod;
 
     @Override
     protected int getContentView() {
@@ -92,35 +89,29 @@ public class WelcomeLaunchActivity extends BaseActivity {
             }
         });
         //隐藏虚拟按键，并且全屏
-        if (Build.VERSION.SDK_INT < 19) { // lower api
-            decorView.setSystemUiVisibility(View.GONE);
-        } else {
-            int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN;
-            decorView.setSystemUiVisibility(uiOptions);
-        }
+        int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
     }
 
     private void setAdDataShow(String showSeconds) {
         fl_skip.setVisibility(View.VISIBLE);
         show_time = Integer.parseInt(getNumber(!TextUtils.isEmpty(showSeconds) ? showSeconds : "3"));
         show_time = (show_time > 4 ? 5 : show_time < 1 ? 5 : show_time);
-        tv_launch_wel_skip_main.setText((show_time + " 跳过"));
-        constantMethod = new ConstantMethod();
-        constantMethod.setRefreshTimeListener(new ConstantMethod.RefreshTimeListener() {
+
+        CountDownTimer countDownTimer = new CountDownTimer(this, (show_time + 1) * 1000, 1000) {
             @Override
-            public void refreshTime() {
-                --show_time;
-                if (show_time >= 0) {
-                    tv_launch_wel_skip_main.setText((show_time + " 跳过"));
-                }
-                if (show_time == 0) {
-                    constantMethod.stopSchedule();
-                    skipMainActivity();
-                }
+            public void onTick(long millisUntilFinished) {
+                tv_launch_wel_skip_main.setText((millisUntilFinished / 1000 + " 跳过"));
             }
-        });
-        constantMethod.createSchedule();
+
+            @Override
+            public void onFinish() {
+                cancel();
+                skipMainActivity();
+            }
+        };
+        countDownTimer.start();
     }
 
     @Override
@@ -154,7 +145,6 @@ public class WelcomeLaunchActivity extends BaseActivity {
     }
 
     private void setSkipLocalPath(String link) {
-        //延迟关闭页面，否则广告接口无法统计到
         getWindow().setFlags(
                 WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
@@ -225,9 +215,6 @@ public class WelcomeLaunchActivity extends BaseActivity {
         tv_launch_wel_skip_main.setVisibility(View.GONE);
         reg_req_code_gif_skip.setVisibility(View.VISIBLE);
         isOnPause = true;
-        if (constantMethod != null) {
-            constantMethod.stopSchedule();
-        }
         if (!TextUtils.isEmpty(path)) {
             setSkipLocalPath(path);
         } else {
@@ -241,14 +228,6 @@ public class WelcomeLaunchActivity extends BaseActivity {
         if (isOnPause) {
             finish();
             overridePendingTransition(0, 0);
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (constantMethod != null) {
-            constantMethod.releaseHandlers();
         }
     }
 }

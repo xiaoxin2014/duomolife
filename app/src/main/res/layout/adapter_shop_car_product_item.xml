@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:background="@color/white"
-              android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingTop="@dimen/sc_mm_12"
         android:paddingRight="@dimen/gap_right">
@@ -15,7 +16,7 @@
         <TextView
             android:id="@+id/cb_shop_car_sel"
             android:layout_width="@dimen/sc_mm_80"
-            android:layout_height="@dimen/sc_mm_160"
+            android:layout_height="@dimen/sc_mm_176"
             android:layout_gravity="center_vertical"
             android:background="@color/transparent"
             android:button="@null"
@@ -24,75 +25,63 @@
             android:focusableInTouchMode="false"
             android:gravity="center"
             android:paddingLeft="@dimen/sc_mm_24"
-            android:paddingRight="@dimen/gap_right"/>
+            android:paddingRight="@dimen/gap_right" />
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-            <LinearLayout
-                android:id="@+id/blank"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:visibility="gone"/>
-
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/ll_car_pro_img"
                 android:layout_width="@dimen/sc_mm_176"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/blank"
-                android:orientation="vertical">
+                android:layout_height="@dimen/sc_mm_176">
 
-                <RelativeLayout
+                <ImageView
+                    android:id="@+id/img_shop_car_product"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/sc_mm_176">
+                    android:layout_height="match_parent"
+                    android:background="@drawable/home_goods_bg"
+                    android:padding="@dimen/sc_mm_1"
+                    android:scaleType="centerCrop" />
 
-                    <ImageView
-                        android:id="@+id/img_shop_car_product"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop"/>
+                <TextView
+                    android:id="@+id/tv_buy_sack_tag"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/sc_mm_42"
+                    android:layout_alignParentBottom="true"
+                    android:background="#7f000000"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sc_mm_24"
+                    android:visibility="gone" />
 
-                    <TextView
-                        android:id="@+id/tv_buy_sack_tag"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/sc_mm_42"
-                        android:layout_alignParentBottom="true"
-                        android:background="#7f000000"
-                        android:gravity="center"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/sc_mm_24"
-                        android:visibility="gone"/>
+                <TextView
+                    android:id="@+id/tv_w_buy_tag"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/sc_mm_42"
+                    android:layout_alignParentBottom="true"
+                    android:background="#7fffae00"
+                    android:gravity="center"
+                    android:text="待售"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/sc_mm_24"
+                    android:visibility="gone" />
 
-                    <TextView
-                        android:id="@+id/tv_w_buy_tag"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/sc_mm_42"
-                        android:layout_alignParentBottom="true"
-                        android:background="#7fffae00"
-                        android:gravity="center"
-                        android:text="待售"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/sc_mm_24"
-                        android:visibility="gone"/>
-
-                    <ImageView
-                        android:id="@+id/iv_com_pro_tag_out"
-                        android:layout_width="@dimen/sc_mm_120"
-                        android:layout_height="@dimen/sc_mm_120"
-                        android:layout_centerInParent="true"
-                        android:src="@drawable/goods_sold_out"
-                        android:visibility="gone"/>
-                </RelativeLayout>
-            </LinearLayout>
+                <ImageView
+                    android:id="@+id/iv_com_pro_tag_out"
+                    android:layout_width="@dimen/sc_mm_120"
+                    android:layout_height="@dimen/sc_mm_120"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/goods_sold_out"
+                    android:visibility="gone" />
+            </RelativeLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/blank"
                 android:layout_marginLeft="@dimen/sc_mm_30"
-                android:layout_toRightOf="@id/ll_car_pro_img"
                 android:orientation="vertical">
 
                 <TextView
@@ -103,21 +92,20 @@
                     android:lineSpacingExtra="@dimen/dimen_2dp"
                     android:lines="1"
                     android:textColor="@color/text_black_t"
-                    android:textSize="@dimen/sc_mm_26"/>
+                    android:textSize="@dimen/sc_mm_26" />
 
                 <TextView
+                    android:text="66666666666666666666666666666666666666666666666666"
                     android:id="@+id/tv_shop_car_product_sku"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawableRight="@drawable/sel_text_sku_drawable_right"
                     android:drawablePadding="@dimen/dimen_15_dp"
-                    android:ellipsize="end"
-                    android:lines="1"
-                    android:paddingTop="@dimen/sc_mm_14"
+                    android:paddingTop="@dimen/sc_mm_10"
                     android:paddingRight="@dimen/sc_mm_20"
-                    android:paddingBottom="@dimen/sc_mm_14"
+                    android:paddingBottom="@dimen/sc_mm_10"
                     android:textColor="@color/text_login_gray_s"
-                    android:textSize="@dimen/sc_mm_22"/>
+                    android:textSize="@dimen/sc_mm_22" />
 
                 <TextView
                     android:id="@+id/tv_shop_car_pro_discount"
@@ -126,12 +114,12 @@
                     android:ellipsize="end"
                     android:lines="1"
                     android:textColor="@color/text_red_color"
-                    android:textSize="@dimen/sc_mm_22"/>
+                    android:textSize="@dimen/sc_mm_22" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/sc_mm_20"
+                    android:layout_marginTop="@dimen/sc_mm_16"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
@@ -139,30 +127,27 @@
                         android:id="@+id/tv_shop_car_product_price"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
                         android:layout_weight="1"
                         android:ellipsize="end"
                         android:gravity="bottom"
                         android:lines="1"
                         android:textColor="@color/sel_red_black_font_color"
-                        android:textSize="@dimen/sc_mm_28"/>
+                        android:textSize="@dimen/sc_mm_28" />
 
                     <RelativeLayout
                         android:layout_width="@dimen/sc_mm_202"
-                        android:layout_height="@dimen/sc_mm_62"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true">
+                        android:layout_height="@dimen/sc_mm_62">
 
-                        <include layout="@layout/layout_communal_rect_add"/>
+                        <include layout="@layout/layout_communal_rect_add" />
                     </RelativeLayout>
                 </LinearLayout>
             </LinearLayout>
-        </RelativeLayout>
+        </LinearLayout>
     </LinearLayout>
 
     <View
         android:id="@+id/tv_line_ten"
         android:layout_width="match_parent"
         android:layout_height="1mm"
-        android:background="@color/text_color_e_s"/>
+        android:background="@color/text_color_e_s" />
 </LinearLayout>

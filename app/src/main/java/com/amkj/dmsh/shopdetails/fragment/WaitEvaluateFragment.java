@@ -77,7 +77,7 @@ public class WaitEvaluateFragment extends BaseFragment {
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_ten_dp).create());
         doMoIndentListAdapter = new WaitEvaluateProductsAdapter(getActivity(), orderProducts);
-        doMoIndentListAdapter.setLoadMoreView(new OrderLoadMoreView());
+        doMoIndentListAdapter.setLoadMoreView(new OrderLoadMoreView(getActivity()));
         communal_recycler.setAdapter(doMoIndentListAdapter);
         doMoIndentListAdapter.setOnItemClickListener((adapter, view, position) -> {
             if (view.getTag() != null) {
