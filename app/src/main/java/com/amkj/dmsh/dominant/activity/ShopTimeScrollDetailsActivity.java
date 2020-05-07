@@ -45,6 +45,7 @@ import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyProductIndentInfo;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.amkj.dmsh.utils.webformatdata.ShareDataBean;
 import com.amkj.dmsh.views.CustomPopWindow;
@@ -56,7 +57,6 @@ import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.bigkoo.convenientbanner.listener.OnItemClickListener;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -321,8 +321,8 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                     @Override
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
-                        Gson gson = new Gson();
-                        productDetailEntity = gson.fromJson(result, PromotionProductDetailEntity.class);
+
+                        productDetailEntity = GsonUtils.fromJson(result, PromotionProductDetailEntity.class);
                         if (productDetailEntity != null) {
                             if (productDetailEntity.getCode().equals(SUCCESS_CODE)) {
                                 setTimeProductData(productDetailEntity);
@@ -356,8 +356,8 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 loadHud.dismiss();
-                Gson gson = new Gson();
-                RequestStatus status = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus status = GsonUtils.fromJson(result, RequestStatus.class);
                 if (status != null) {
                     if (status.getCode().equals(SUCCESS_CODE)) {
                         tvTimeProductDetailsWarm.setText("设置提醒");
@@ -386,8 +386,8 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 loadHud.dismiss();
-                Gson gson = new Gson();
-                RequestStatus status = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus status = GsonUtils.fromJson(result, RequestStatus.class);
                 if (status != null) {
                     if (status.getCode().equals(SUCCESS_CODE)) {
                         tvTimeProductDetailsWarm.setText("取消提醒");
@@ -658,8 +658,8 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, TIME_SHOW_PRO_WARM, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                RequestStatus foreShowBean = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus foreShowBean = GsonUtils.fromJson(result, RequestStatus.class);
                 if (foreShowBean != null) {
                     if (foreShowBean.getCode().equals(SUCCESS_CODE)) {
                         if (foreShowBean.getResult().isHadRemind()) { //已设置过提醒
@@ -731,8 +731,8 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, TIME_WARM_PRO, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null && requestStatus.getCode().equals(SUCCESS_CODE)) {
                     showToast("已设置产品提醒时间，提前" + requestStatus.getLongtime() + "分钟");
                 }

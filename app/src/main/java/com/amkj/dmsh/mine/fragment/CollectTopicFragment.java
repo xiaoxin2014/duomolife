@@ -13,9 +13,9 @@ import com.amkj.dmsh.find.bean.FindHotTopicEntity;
 import com.amkj.dmsh.find.bean.FindHotTopicEntity.FindHotTopicBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -31,7 +31,6 @@ import butterknife.BindView;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.skipTopicDetail;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -167,8 +166,8 @@ public class CollectTopicFragment extends BaseFragment {
                 if (page == 1) {
                     findTopicBeanList.clear();
                 }
-                Gson gson = new Gson();
-                findHotTopicEntity = gson.fromJson(result, FindHotTopicEntity.class);
+
+                findHotTopicEntity = GsonUtils.fromJson(result, FindHotTopicEntity.class);
                 if (findHotTopicEntity != null) {
                     if (findHotTopicEntity.getCode().equals(SUCCESS_CODE)) {
                         findTopicBeanList.addAll(findHotTopicEntity.getHotTopicList());

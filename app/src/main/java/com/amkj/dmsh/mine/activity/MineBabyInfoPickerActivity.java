@@ -18,6 +18,7 @@ import com.amkj.dmsh.mine.bean.MineBabyEntity.BabyBean;
 import com.amkj.dmsh.mine.bean.TimeSexOptionsBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.bigkoo.pickerview.builder.OptionsPickerBuilder;
 import com.bigkoo.pickerview.builder.TimePickerBuilder;
 import com.bigkoo.pickerview.listener.CustomListener;
@@ -26,7 +27,6 @@ import com.bigkoo.pickerview.listener.OnTimeSelectListener;
 import com.bigkoo.pickerview.view.OptionsPickerView;
 import com.bigkoo.pickerview.view.TimePickerView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -212,8 +212,8 @@ public class MineBabyInfoPickerActivity extends BaseActivity implements View.OnC
         NetLoadUtils.getNetInstance().loadNetDataPost(this,MINE_BABY_INFO,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast( String.format(getResources().getString(R.string.doSuccess), "修改"));

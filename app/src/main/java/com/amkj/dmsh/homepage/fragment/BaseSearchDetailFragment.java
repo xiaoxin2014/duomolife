@@ -33,10 +33,10 @@ import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.RemoveExistUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogImage;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.google.android.flexbox.FlexWrap;
 import com.google.android.flexbox.FlexboxLayoutManager;
-import com.google.gson.Gson;
 import com.kingja.loadsir.core.Transport;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -181,8 +181,8 @@ public abstract class BaseSearchDetailFragment extends BaseFragment {
             NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), QUALITY_SHOP_TYPE, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    QualityTypeEntity qualityTypeEntity = gson.fromJson(result, QualityTypeEntity.class);
+
+                    QualityTypeEntity qualityTypeEntity = GsonUtils.fromJson(result, QualityTypeEntity.class);
                     if (qualityTypeEntity != null && qualityTypeEntity.getCode().equals(SUCCESS_CODE)
                             && qualityTypeEntity.getQualityTypeBeanList() != null && qualityTypeEntity.getQualityTypeBeanList().size() > 0) {
                         qualityTypeBean = qualityTypeEntity.getQualityTypeBeanList().get(0);
@@ -241,8 +241,8 @@ public abstract class BaseSearchDetailFragment extends BaseFragment {
             public void onSuccess(String result) {
                 isFirst = false;
                 hotSearchList.clear();
-                Gson gson = new Gson();
-                HotSearchTagEntity hotSearchTagEntity = gson.fromJson(result, HotSearchTagEntity.class);
+
+                HotSearchTagEntity hotSearchTagEntity = GsonUtils.fromJson(result, HotSearchTagEntity.class);
                 if (hotSearchTagEntity != null) {
                     if (hotSearchTagEntity.getCode().equals(SUCCESS_CODE)) {
                         hotSearchList.addAll(hotSearchTagEntity.getHotSearchTagList());

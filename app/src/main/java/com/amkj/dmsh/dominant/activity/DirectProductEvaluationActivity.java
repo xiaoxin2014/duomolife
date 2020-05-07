@@ -18,8 +18,8 @@ import com.amkj.dmsh.find.bean.PostEntity.PostBean;
 import com.amkj.dmsh.find.view.PostGoodsView;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.StaggeredDividerItemDecoration;
-import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
@@ -124,7 +124,7 @@ public class DirectProductEvaluationActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.GET_PRODUCT_POST, map, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                mPostEntity = new Gson().fromJson(result, PostEntity.class);
+                mPostEntity = GsonUtils.fromJson(result, PostEntity.class);
                 if (page == 1) {
                     commentList.clear();
                 }

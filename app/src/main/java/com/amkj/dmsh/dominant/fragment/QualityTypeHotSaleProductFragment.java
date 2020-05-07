@@ -17,8 +17,8 @@ import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.RemoveExistUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -115,8 +115,8 @@ public class QualityTypeHotSaleProductFragment extends BaseFragment {
                         qualityTypeProductAdapter.loadMoreComplete();
                         likedProductBeans.clear();
                         removeExistUtils.clearData();
-                        Gson gson = new Gson();
-                        typeProductBean = gson.fromJson(result, UserLikedProductEntity.class);
+
+                        typeProductBean = GsonUtils.fromJson(result, UserLikedProductEntity.class);
                         if (typeProductBean != null) {
                             if (typeProductBean.getCode().equals(SUCCESS_CODE)) {
                                 likedProductBeans.addAll(removeExistUtils.removeExistList(typeProductBean.getGoodsList()));

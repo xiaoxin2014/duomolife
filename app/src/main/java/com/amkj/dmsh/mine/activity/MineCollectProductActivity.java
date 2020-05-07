@@ -23,8 +23,8 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
@@ -212,8 +212,8 @@ public class MineCollectProductActivity extends BaseActivity {
                 if (page == 1) {
                     collectProList.clear();
                 }
-                Gson gson = new Gson();
-                collectProEntity = gson.fromJson(result, CollectProEntity.class);
+
+                collectProEntity = GsonUtils.fromJson(result, CollectProEntity.class);
                 if (collectProEntity != null) {
                     if (collectProEntity.getCode().equals(SUCCESS_CODE)) {
                         collectProList.addAll(collectProEntity.getCollectProList());
@@ -350,8 +350,8 @@ public class MineCollectProductActivity extends BaseActivity {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                Gson gson = new Gson();
-                RequestStatus status = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus status = GsonUtils.fromJson(result, RequestStatus.class);
                 if (status != null) {
                     if (status.getCode().equals(SUCCESS_CODE)) {
                         showToast("已取消收藏");

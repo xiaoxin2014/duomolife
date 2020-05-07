@@ -17,7 +17,7 @@ import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.KeyboardUtils;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -121,8 +121,8 @@ public class SettingPersonalNameActivity extends BaseActivity {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                Gson gson = new Gson();
-                CommunalUserInfoEntity communalUserInfoEntity = gson.fromJson(result, CommunalUserInfoEntity.class);
+
+                CommunalUserInfoEntity communalUserInfoEntity = GsonUtils.fromJson(result, CommunalUserInfoEntity.class);
                 if (communalUserInfoEntity != null) {
                     if (communalUserInfoEntity.getCode().equals(SUCCESS_CODE)) {
                         Intent intent = new Intent();

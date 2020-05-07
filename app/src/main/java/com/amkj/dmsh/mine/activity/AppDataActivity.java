@@ -22,8 +22,8 @@ import com.amkj.dmsh.rxeasyhttp.EasyHttp;
 import com.amkj.dmsh.utils.FileCacheUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.bumptech.glide.load.engine.cache.InternalCacheDiskCacheFactory;
-import com.google.gson.Gson;
 import com.luck.picture.lib.tools.PictureFileUtils;
 
 import java.io.File;
@@ -120,8 +120,8 @@ public class AppDataActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, DELIVERY_ADDRESS, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                AddressInfoEntity addressInfoEntity = gson.fromJson(result, AddressInfoEntity.class);
+
+                AddressInfoEntity addressInfoEntity = GsonUtils.fromJson(result, AddressInfoEntity.class);
                 if (addressInfoEntity != null) {
                     if (addressInfoEntity.getCode().equals(SUCCESS_CODE)) {
                         addressInfoBean = addressInfoEntity.getAddressInfoBean();

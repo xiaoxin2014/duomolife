@@ -50,8 +50,8 @@ import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.SharedPreUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.views.HtmlWebView;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.constant.RefreshState;
@@ -424,7 +424,7 @@ public class ArticleOfficialActivity extends BaseActivity {
         public void sharePage(String result) {
             runOnUiThread(() -> {
                 if (!TextUtils.isEmpty(result)) {
-                    H5ShareBean shareBean = new Gson().fromJson(result, H5ShareBean.class);
+                    H5ShareBean shareBean = GsonUtils.fromJson(result, H5ShareBean.class);
                     UMShareAction umShareAction = new UMShareAction(getActivity()
                             , ""
                             , shareBean.getTitle()

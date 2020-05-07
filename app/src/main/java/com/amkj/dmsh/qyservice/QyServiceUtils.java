@@ -23,8 +23,8 @@ import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.bean.MainOrderListEntity;
 import com.amkj.dmsh.shopdetails.bean.MainOrderListEntity.MainOrderBean;
 import com.amkj.dmsh.utils.SharedPreUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.qiyukf.unicorn.api.ConsultSource;
 import com.qiyukf.unicorn.api.OnMessageItemClickListener;
@@ -227,7 +227,7 @@ public class QyServiceUtils {
 
         String quickEntry = (String) SharedPreUtils.getParam("QuickEntry", "");
         if (!TextUtils.isEmpty(quickEntry)) {
-            List<QuickEntryBean> datas = new Gson().fromJson(quickEntry, new TypeToken<List<QuickEntryBean>>() {
+            List<QuickEntryBean> datas = GsonUtils.fromJson(quickEntry, new TypeToken<List<QuickEntryBean>>() {
             }.getType());
 
             if (datas != null && datas.size() > 0) {
@@ -447,12 +447,12 @@ public class QyServiceUtils {
         NetLoadUtils.getNetInstance().loadNetDataPost(context, Url.GET_CUSTOMER_SERVICE_BAR, null, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                QuickEntryEntity quickEntryEntity = new Gson().fromJson(result, QuickEntryEntity.class);
+                QuickEntryEntity quickEntryEntity = GsonUtils.fromJson(result, QuickEntryEntity.class);
                 if (quickEntryEntity != null) {
                     List<QuickEntryBean> list = quickEntryEntity.getList();
                     if (list != null && list.size() > 0) {
 //                        List<QuickEntry> quickEntryList = new ArrayList<>();
-                        SharedPreUtils.setParam("QuickEntry", new Gson().toJson(list));
+                        SharedPreUtils.setParam("QuickEntry", GsonUtils.toJson(list));
                     }
                 }
             }
@@ -470,8 +470,8 @@ public class QyServiceUtils {
             @Override
             public void onSuccess(String result) {
                 orderListBeanList.clear();
-                Gson gson = new Gson();
-                MainOrderListEntity mOrderListNewEntity = gson.fromJson(result, MainOrderListEntity.class);
+
+                MainOrderListEntity mOrderListNewEntity = GsonUtils.fromJson(result, MainOrderListEntity.class);
                 if (mOrderListNewEntity != null) {
                     List<MainOrderListEntity.MainOrderBean> orderList = mOrderListNewEntity.getResult();
                     if (orderList != null && orderList.size() > 0) {

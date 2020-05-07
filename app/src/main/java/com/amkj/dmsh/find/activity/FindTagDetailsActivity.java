@@ -33,9 +33,9 @@ import com.amkj.dmsh.release.bean.RelevanceProEntity.RelevanceProBean;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.utils.CommunalCopyTextUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -269,8 +269,8 @@ public class FindTagDetailsActivity extends BaseActivity {
                         if (page == 1) {
                             invitationSearchList.clear();
                         }
-                        Gson gson = new Gson();
-                        invitationDetailEntity = gson.fromJson(result, InvitationDetailEntity.class);
+
+                        invitationDetailEntity = GsonUtils.fromJson(result, InvitationDetailEntity.class);
                         if (invitationDetailEntity != null) {
                             if (invitationDetailEntity.getCode().equals(SUCCESS_CODE)) {
                                 invitationSearchList.addAll(invitationDetailEntity.getInvitationSearchList());
@@ -307,8 +307,8 @@ public class FindTagDetailsActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, FIND_RELEVANCE_TAG_INFO, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                RelevanceTagInfoEntity relevanceTagInfoEntity = gson.fromJson(result, RelevanceTagInfoEntity.class);
+
+                RelevanceTagInfoEntity relevanceTagInfoEntity = GsonUtils.fromJson(result, RelevanceTagInfoEntity.class);
                 if (relevanceTagInfoEntity != null) {
                     if (relevanceTagInfoEntity.getCode().equals(SUCCESS_CODE)) {
                         relevanceTagInfoBean = relevanceTagInfoEntity.getRelevanceTagInfoBean();
@@ -382,8 +382,8 @@ public class FindTagDetailsActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 loadHud.dismiss();
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         tv_collect.setSelected(!tv_collect.isSelected());

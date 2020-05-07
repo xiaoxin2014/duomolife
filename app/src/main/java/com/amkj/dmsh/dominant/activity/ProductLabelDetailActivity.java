@@ -24,9 +24,9 @@ import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.RemoveExistUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -202,8 +202,8 @@ public class ProductLabelDetailActivity extends BaseActivity {
                             labelProductList.clear();
                             removeExistUtils.clearData();
                         }
-                        Gson gson = new Gson();
-                        likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
+
+                        likedProductEntity = GsonUtils.fromJson(result, UserLikedProductEntity.class);
                         if (likedProductEntity != null) {
                             if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
                                 labelProductList.addAll(removeExistUtils.removeExistList(likedProductEntity.getGoodsList()));

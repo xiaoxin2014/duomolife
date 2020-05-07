@@ -18,8 +18,8 @@ import com.amkj.dmsh.dominant.bean.CouponZoneEntity;
 import com.amkj.dmsh.dominant.bean.CouponZoneEntity.CouponZoneBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
-import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
@@ -124,7 +124,7 @@ public class CouponZoneActivity extends BaseActivity {
                     @Override
                     public void onSuccess(String result) {
                         mSmartCommunalRefresh.finishRefresh();
-                        mCouponZoneEntity = new Gson().fromJson(result, CouponZoneEntity.class);
+                        mCouponZoneEntity = GsonUtils.fromJson(result, CouponZoneEntity.class);
                         if (mCouponZoneEntity != null) {
                             mTvHeaderTitle.setText(getStrings(mCouponZoneEntity.getTitle()));
                             mCouponList.clear();

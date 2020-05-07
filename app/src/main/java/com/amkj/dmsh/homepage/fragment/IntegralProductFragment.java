@@ -15,9 +15,9 @@ import com.amkj.dmsh.homepage.adapter.IntegralProductAdapter;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
@@ -98,13 +98,13 @@ public class IntegralProductFragment extends BaseFragment {
                 params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
-                        Gson gson = new Gson();
+
                         smart_communal_refresh.finishRefresh();
                         integralProductAdapter.loadMoreComplete();
                         if (page == 1) {
                             integrationBeanList.clear();
                         }
-                        integrationProEntity = gson.fromJson(result, IntegrationProEntity.class);
+                        integrationProEntity = GsonUtils.fromJson(result, IntegrationProEntity.class);
                         if (integrationProEntity != null) {
                             if (integrationProEntity.getCode().equals(SUCCESS_CODE)) {
                                 integrationBeanList.addAll(integrationProEntity.getIntegrationList());

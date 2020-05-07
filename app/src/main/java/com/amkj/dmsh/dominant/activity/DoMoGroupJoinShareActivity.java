@@ -29,9 +29,9 @@ import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.utils.TimeUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
-import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.text.ParseException;
@@ -151,8 +151,8 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
                     @Override
                     public void onSuccess(String result) {
                         smart_scroll_communal_refresh.finishRefresh();
-                        Gson gson = new Gson();
-                        mGroupShopDetailsEntity = gson.fromJson(result, GroupShopDetailsEntity.class);
+
+                        mGroupShopDetailsEntity = GsonUtils.fromJson(result, GroupShopDetailsEntity.class);
                         if (mGroupShopDetailsEntity != null) {
                             mGroupShopDetailsBean = mGroupShopDetailsEntity.getGroupShopDetailsBean();
                             if (mGroupShopDetailsEntity.getCode().equals(SUCCESS_CODE)) {

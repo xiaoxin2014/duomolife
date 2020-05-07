@@ -21,9 +21,9 @@ import com.amkj.dmsh.mine.bean.MineWarmEntity;
 import com.amkj.dmsh.mine.bean.MineWarmEntity.MineWarmBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -184,8 +184,8 @@ public class ShopTimeMyWarmActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this,url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                RequestStatus status = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus status = GsonUtils.fromJson(result, RequestStatus.class);
                 if (status != null) {
                     if (status.getCode().equals(SUCCESS_CODE)) {
                         loadData();
@@ -226,8 +226,8 @@ public class ShopTimeMyWarmActivity extends BaseActivity {
                 if (page == 1) {
                     mineWarmBeanList.clear();
                 }
-                Gson gson = new Gson();
-                mineWarmEntity = gson.fromJson(result, MineWarmEntity.class);
+
+                mineWarmEntity = GsonUtils.fromJson(result, MineWarmEntity.class);
                 if (mineWarmEntity != null) {
                     if (mineWarmEntity.getCode().equals(SUCCESS_CODE)) {
                         if (!TextUtils.isEmpty(mineWarmEntity.getCurrentTime())) {
@@ -265,8 +265,8 @@ public class ShopTimeMyWarmActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this,TIME_SHOW_PRO_WARM,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                RequestStatus foreShowBean = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus foreShowBean = GsonUtils.fromJson(result, RequestStatus.class);
                 if (foreShowBean != null) {
                     if (foreShowBean.getCode().equals(SUCCESS_CODE)) {
                         if (foreShowBean.getResult().isHadRemind()) {

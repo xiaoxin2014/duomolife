@@ -8,9 +8,9 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.dominant.bean.GroupShopDetailsEntity.GroupShopDetailsBean.ParticipantInfoBean.GroupShopJoinBean;
 import com.amkj.dmsh.utils.ProductLabelCreateUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.flexbox.JustifyContent;
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
@@ -50,7 +50,7 @@ public class AllLotteryActivity extends BaseActivity {
         mTvLotteryList.setTextColor(getResources().getColor(R.color.text_login_gray_s));
         if (getIntent() != null) {
             String allLottery = getIntent().getStringExtra("allLotteryJson");
-            luckUserList = new Gson().fromJson(allLottery, new TypeToken<List<GroupShopJoinBean>>() {
+            luckUserList = GsonUtils.fromJson(allLottery, new TypeToken<List<GroupShopJoinBean>>() {
             }.getType());
             mLlLotteryList.setVisibility(luckUserList.size() > 0 ? View.VISIBLE : View.GONE);
             mTvLotteryList.setText(luckUserList.size() + "名幸运儿");

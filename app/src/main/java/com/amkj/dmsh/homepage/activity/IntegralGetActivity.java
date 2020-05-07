@@ -15,8 +15,8 @@ import com.amkj.dmsh.homepage.bean.IntegralGetEntity;
 import com.amkj.dmsh.homepage.bean.IntegralGetEntity.IntegralGetBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
-import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
@@ -128,8 +128,8 @@ public class IntegralGetActivity extends BaseActivity {
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
                         integralGetBeanList.clear();
-                        Gson gson = new Gson();
-                        attendanceDetailEntity = gson.fromJson(result, IntegralGetEntity.class);
+
+                        attendanceDetailEntity = GsonUtils.fromJson(result, IntegralGetEntity.class);
                         if (attendanceDetailEntity != null) {
                             if (SUCCESS_CODE.equals(attendanceDetailEntity.getCode())) {
                                 integralGetBeanList.addAll(attendanceDetailEntity.getIntegralGetList());

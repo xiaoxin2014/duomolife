@@ -21,10 +21,10 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.views.HorizontalLoadMoreView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.google.gson.Gson;
 
 import java.util.HashMap;
 import java.util.List;
@@ -119,8 +119,8 @@ public class QualityOsMailHeaderAdapter extends BaseQuickAdapter<DMLThemeBean, B
                 , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
-                        Gson gson = new Gson();
-                        DMLThemeEntity dmlTheme = gson.fromJson(result, DMLThemeEntity.class);
+
+                        DMLThemeEntity dmlTheme = GsonUtils.fromJson(result, DMLThemeEntity.class);
                         if (dmlTheme != null) {
                             List<DMLThemeBean> themeList = dmlTheme.getThemeList();
                             if (themeList != null && themeList.size() > 0) {

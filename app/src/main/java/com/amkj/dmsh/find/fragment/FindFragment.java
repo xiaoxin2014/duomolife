@@ -35,6 +35,7 @@ import com.amkj.dmsh.network.NetCacheLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.LifecycleHandler;
 import com.amkj.dmsh.utils.SharedPreUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
 import com.amkj.dmsh.views.guideview.Component;
 import com.amkj.dmsh.views.guideview.FindComponent;
@@ -45,7 +46,6 @@ import com.amkj.dmsh.views.guideview.GuideBuilder;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
-import com.google.gson.Gson;
 import com.gyf.barlibrary.ImmersionBar;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.RefreshState;
@@ -160,9 +160,9 @@ public class FindFragment extends BaseFragment {
         NetLoadUtils.getNetInstance().loadNetDataGetCache(getActivity(), Url.FIND_AD, params, isUpdateCache, new NetCacheLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
+
                 adBeanList.clear();
-                CommunalADActivityEntity adActivityEntity = gson.fromJson(result, CommunalADActivityEntity.class);
+                CommunalADActivityEntity adActivityEntity = GsonUtils.fromJson(result, CommunalADActivityEntity.class);
                 if (adActivityEntity != null) {
                     if (adActivityEntity.getCode().equals(SUCCESS_CODE)) {
                         adBeanList.addAll(adActivityEntity.getCommunalADActivityBeanList());
@@ -206,7 +206,7 @@ public class FindFragment extends BaseFragment {
             public void onSuccess(String result) {
                 smart_refresh_find.finishRefresh();
                 hotTopicList.clear();
-                HotTopicEntity hotTopicEntity = new Gson().fromJson(result, HotTopicEntity.class);
+                HotTopicEntity hotTopicEntity = GsonUtils.fromJson(result, HotTopicEntity.class);
                 if (hotTopicEntity != null) {
                     List<HotTopicBean> topics = hotTopicEntity.getHotTopicList();
                     if (hotTopicEntity.getCode().equals(SUCCESS_CODE) && topics != null && topics.size() > 0) {

@@ -56,9 +56,9 @@ import com.amkj.dmsh.utils.KeyboardUtils;
 import com.amkj.dmsh.utils.WindowUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.StaggeredDividerItemDecoration;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -246,7 +246,7 @@ public class PostDetailActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 mSmartLayout.finishRefresh();
-                mPostDetailEntity = new Gson().fromJson(result, PostDetailEntity.class);
+                mPostDetailEntity = GsonUtils.fromJson(result, PostDetailEntity.class);
                 if (mPostDetailEntity != null && mPostDetailEntity.getResult() != null) {
                     mPostDetailBean = mPostDetailEntity.getResult();
                     postDetailView.updateDetail();
@@ -281,8 +281,8 @@ public class PostDetailActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 mCommentList.clear();
-                Gson gson = new Gson();
-                mPostCommentEntity = gson.fromJson(result, PostCommentEntity.class);
+
+                mPostCommentEntity = GsonUtils.fromJson(result, PostCommentEntity.class);
                 postDetailView.updateComment();
             }
 
@@ -306,7 +306,7 @@ public class PostDetailActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 mSmartLayout.finishRefresh();
-                mPostEntity = new Gson().fromJson(result, PostEntity.class);
+                mPostEntity = GsonUtils.fromJson(result, PostEntity.class);
                 mPostList.clear();
                 if (mPostEntity != null) {
                     String code = mPostEntity.getCode();
@@ -562,9 +562,9 @@ public class PostDetailActivity extends BaseActivity {
                 }
             } else if (mPostDetailBean.getArticletype() == 1) {
                 try {
-                    Gson gson = new Gson();
-                    String Json = gson.toJson(mPostDetailBean.getDescription());
-                    descriptionList = gson.fromJson(Json, new TypeToken<List<CommunalDetailBean>>() {
+
+                    String Json = GsonUtils.toJson(mPostDetailBean.getDescription());
+                    descriptionList = GsonUtils.fromJson(Json, new TypeToken<List<CommunalDetailBean>>() {
                     }.getType());
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -796,8 +796,8 @@ public class PostDetailActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, MINE_INVITATION_DEL, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         EventBus.getDefault().post(new EventMessage(ConstantVariable.DELETE_POST, mArtId));

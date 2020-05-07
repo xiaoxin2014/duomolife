@@ -32,7 +32,6 @@ import android.widget.RadioGroup;
 
 import com.ali.auth.third.ui.context.CallbackContext;
 import com.alibaba.fastjson.JSON;
-import com.amkj.dmsh.utils.AddressUtils;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
@@ -71,6 +70,7 @@ import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
 import com.amkj.dmsh.release.dialogutils.AlertView;
 import com.amkj.dmsh.shopdetails.activity.DirectMyCouponActivity;
+import com.amkj.dmsh.utils.AddressUtils;
 import com.amkj.dmsh.utils.FileStreamUtils;
 import com.amkj.dmsh.utils.SaveUpdateImportDateUtils;
 import com.amkj.dmsh.utils.SelectorUtil;
@@ -79,9 +79,9 @@ import com.amkj.dmsh.utils.TimeUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogImage;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.restartapputils.RestartAPPTool;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
-import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.qiyukf.unicorn.api.msg.MsgTypeEnum;
@@ -268,16 +268,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private void getUnifiedPopup() {
         Map<String, Object> allTime = (Map<String, Object>) getSharedPreferences(InvokeTimeFileName, Context.MODE_PRIVATE).getAll();
         if (!TextUtils.isEmpty((String) allTime.get(MARKING_POPUP))) {
-            Map markingTime = new Gson().fromJson((String) allTime.get(MARKING_POPUP), Map.class);
+            Map markingTime = GsonUtils.fromJson((String) allTime.get(MARKING_POPUP), Map.class);
             allTime.put(MARKING_POPUP, markingTime);
         }
 
         Map<String, Object> map = new HashMap<>();
-        map.put("lastShowTimeMap", new Gson().toJson(allTime));
+        map.put("lastShowTimeMap", GsonUtils.toJson(allTime));
         NetLoadUtils.getNetInstance().loadNetDataPost(this, GET_UNIFIED_POPUP, map, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                RequestStatus requestStatus = new Gson().fromJson(result, RequestStatus.class);
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null && SUCCESS_CODE.equals(requestStatus.getCode())) {
                     switch (requestStatus.getNo()) {
                         //强制更新
@@ -325,7 +325,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, GROUP_GET_GP_POPUP, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                RequestStatus requestStatus = new Gson().fromJson(result, RequestStatus.class);
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null && SUCCESS_CODE.equals(requestStatus.getCode()) && ConstantMethod.getStringChangeIntegers(requestStatus.getGpRecordId()) > 0) {
                     SharedPreUtils.setParam(InvokeTimeFileName, GP_REMIND, TimeUtils.getCurrentTime(requestStatus));//记录调用时间
                     GlideImageLoaderUtil.loadFinishImgDrawable(getActivity(), requestStatus.getCoverImage(), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
@@ -446,8 +446,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.FLUSH_LOGIN_TOKEN, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    CommunalUserInfoBean tokenExpireBean = gson.fromJson(result, CommunalUserInfoBean.class);
+
+                    CommunalUserInfoBean tokenExpireBean = GsonUtils.fromJson(result, CommunalUserInfoBean.class);
                     //刷新本地token过期时间
                     SharedPreUtils.setParam(ConstantVariable.TOKEN_EXPIRE_TIME, System.currentTimeMillis() + tokenExpireBean.getTokenExpireSeconds());
                 }
@@ -514,8 +514,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         String pushInfoMap = sharedPreferences.getString("pushInfoMap", "");
                         if (!TextUtils.isEmpty(pushInfoMap)) {
                             try {
-                                Gson gson = new Gson();
-                                pushMap = gson.fromJson(pushInfoMap, new TypeToken<Map<String, String>>() {
+
+                                pushMap = GsonUtils.fromJson(pushInfoMap, new TypeToken<Map<String, String>>() {
                                 }.getType());
                                 if (pushMap != null && !TextUtils.isEmpty(pushMap.get(String.valueOf(userId)))) {
                                     String pushTime = pushMap.get(String.valueOf(userId));
@@ -560,7 +560,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             pushMap = new HashMap<>();
         }
         pushMap.put(String.valueOf(userId), pushInfoEntity.getCurrentTime());
-        edit.putString("pushInfoMap", new Gson().toJson(pushMap));
+        edit.putString("pushInfoMap", GsonUtils.toJson(pushMap));
         edit.apply();
     }
 
@@ -594,8 +594,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         SharedPreferences sharedPreferences = getSharedPreferences("MainNav", MODE_PRIVATE);
         String result = sharedPreferences.getString("NavDate", "");
         if (!TextUtils.isEmpty(result)) {
-            Gson gson = new Gson();
-            MainNavEntity mainNavEntity = gson.fromJson(result, MainNavEntity.class);
+
+            MainNavEntity mainNavEntity = GsonUtils.fromJson(result, MainNavEntity.class);
             if (mainNavEntity != null && mainNavEntity.getMainNavBeanList().size() == 5
                     && !isTimeExpress(mainNavEntity)) {
                 setDynamicMal(mainNavEntity.getMainNavBeanList());
@@ -832,8 +832,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.MINE_PAGE, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    CommunalUserInfoEntity minePageData = gson.fromJson(result, CommunalUserInfoEntity.class);
+
+                    CommunalUserInfoEntity minePageData = GsonUtils.fromJson(result, CommunalUserInfoEntity.class);
                     if (minePageData != null) {
                         CommunalUserInfoBean communalUserInfoBean = minePageData.getCommunalUserInfoBean();
                         if (minePageData.getCode().equals(SUCCESS_CODE)) {
@@ -936,8 +936,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         SharedPreferences preferences = getSharedPreferences("addressConfig", MODE_PRIVATE);
@@ -1005,8 +1005,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                OSSConfigEntity ossConfigEntity = gson.fromJson(result, OSSConfigEntity.class);
+
+                OSSConfigEntity ossConfigEntity = GsonUtils.fromJson(result, OSSConfigEntity.class);
                 if (ossConfigEntity != null) {
                     if (ossConfigEntity.getCode().equals(SUCCESS_CODE)) {
                         OSSConfigBean ossConfigBean = ossConfigEntity.getOssConfigBean();
@@ -1130,8 +1130,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, H_AD_DIALOG, map, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                CommunalADActivityEntity communalADActivityEntity = gson.fromJson(result, CommunalADActivityEntity.class);
+
+                CommunalADActivityEntity communalADActivityEntity = GsonUtils.fromJson(result, CommunalADActivityEntity.class);
                 if (communalADActivityEntity != null && communalADActivityEntity.getCode().equals(SUCCESS_CODE)) {
                     List<CommunalADActivityBean> communalADActivityBeanList = communalADActivityEntity.getCommunalADActivityBeanList();
                     if (communalADActivityBeanList != null && communalADActivityBeanList.size() > 0) {
@@ -1139,12 +1139,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         if (communalADActivityBean != null) {
                             try {
                                 String json = (String) SharedPreUtils.getParam(InvokeTimeFileName, MARKING_POPUP, "");
-                                Map map = !TextUtils.isEmpty(json) ? gson.fromJson(json, Map.class) : new HashMap();
+                                Map map = !TextUtils.isEmpty(json) ? GsonUtils.fromJson(json, Map.class) : new HashMap();
                                 if (map.size() > 20) {//防止缓存数据过多，每20条清一次
                                     map.clear();
                                 }
                                 map.put(String.valueOf(communalADActivityBean.getId()), TimeUtils.getCurrentTime(communalADActivityEntity));
-                                SharedPreUtils.setParam(InvokeTimeFileName, MARKING_POPUP, gson.toJson(map));
+                                SharedPreUtils.setParam(InvokeTimeFileName, MARKING_POPUP, GsonUtils.toJson(map));
                             } catch (JsonSyntaxException e) {
                                 e.printStackTrace();
                             }
@@ -1185,7 +1185,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), APP_SYS_NOTIFICATION, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
-                    SysNotificationEntity sysNotificationEntity = new Gson().fromJson(result, SysNotificationEntity.class);
+                    SysNotificationEntity sysNotificationEntity = GsonUtils.fromJson(result, SysNotificationEntity.class);
                     if (sysNotificationEntity != null && sysNotificationEntity.getSysNotificationBean() != null &&
                             SUCCESS_CODE.equals(sysNotificationEntity.getCode())) {
                         SysNotificationEntity.SysNotificationBean sysNotificationBean = sysNotificationEntity.getSysNotificationBean();

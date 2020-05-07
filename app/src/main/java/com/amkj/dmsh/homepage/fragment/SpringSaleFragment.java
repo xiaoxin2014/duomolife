@@ -33,12 +33,12 @@ import com.amkj.dmsh.homepage.bean.TimeShowShaftEntity.TimeShowShaftBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.RemoveExistUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.CustomPopWindow;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
-import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
@@ -293,8 +293,8 @@ public class SpringSaleFragment extends BaseFragment {
                             timeShaftList.clear();
                             removeExistUtils.clearData();
                         }
-                        Gson gson = new Gson();
-                        timeForeShowEntity = gson.fromJson(result, TimeForeShowEntity.class);
+
+                        timeForeShowEntity = GsonUtils.fromJson(result, TimeForeShowEntity.class);
                         if (timeForeShowEntity != null) {
                             if (timeForeShowEntity.getCode().equals(SUCCESS_CODE)) {
                                 springSaleRecyclerAdapter.setEnableLoadMore(true);
@@ -398,8 +398,8 @@ public class SpringSaleFragment extends BaseFragment {
                     @Override
                     public void onSuccess(String result) {
                         springSaleRecyclerAdapter.loadMoreComplete();
-                        Gson gson = new Gson();
-                        timeForeShowEntity = gson.fromJson(result, TimeForeShowEntity.class);
+
+                        timeForeShowEntity = GsonUtils.fromJson(result, TimeForeShowEntity.class);
                         if (timeForeShowEntity != null) {
                             if (timeForeShowEntity.getCode().equals(SUCCESS_CODE)) {
                                 NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
@@ -443,8 +443,8 @@ public class SpringSaleFragment extends BaseFragment {
                     @Override
                     public void onSuccess(String result) {
                         springSaleRecyclerAdapter.loadMoreComplete();
-                        Gson gson = new Gson();
-                        timeForeShowEntity = gson.fromJson(result, TimeForeShowEntity.class);
+
+                        timeForeShowEntity = GsonUtils.fromJson(result, TimeForeShowEntity.class);
                         if (timeForeShowEntity != null) {
                             if (timeForeShowEntity.getCode().equals(SUCCESS_CODE)) {
                                 NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);

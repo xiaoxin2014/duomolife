@@ -1,6 +1,6 @@
 package com.amkj.dmsh.homepage.bean;
 
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -27,7 +27,7 @@ public class MarqueeTextEntity {
 
     public static MarqueeTextEntity objectFromData(String str) {
 
-        return new Gson().fromJson(str, MarqueeTextEntity.class);
+        return GsonUtils.fromJson(str, MarqueeTextEntity.class);
     }
 
     public String getMsg() {
@@ -71,7 +71,7 @@ public class MarqueeTextEntity {
 
         public static MarqueeTextBean objectFromData(String str) {
 
-            return new Gson().fromJson(str, MarqueeTextBean.class);
+            return GsonUtils.fromJson(str, MarqueeTextBean.class);
         }
 
         public int getDisplayType() {

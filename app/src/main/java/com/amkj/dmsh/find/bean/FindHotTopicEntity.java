@@ -1,7 +1,7 @@
 package com.amkj.dmsh.find.bean;
 
 import com.amkj.dmsh.base.BaseEntity;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -25,7 +25,7 @@ public class FindHotTopicEntity extends BaseEntity{
 
     public static FindHotTopicEntity objectFromData(String str) {
 
-        return new Gson().fromJson(str, FindHotTopicEntity.class);
+        return GsonUtils.fromJson(str, FindHotTopicEntity.class);
     }
 
     public List<FindHotTopicBean> getHotTopicList() {
@@ -66,7 +66,7 @@ public class FindHotTopicEntity extends BaseEntity{
 
         public static FindHotTopicBean objectFromData(String str) {
 
-            return new Gson().fromJson(str, FindHotTopicBean.class);
+            return GsonUtils.fromJson(str, FindHotTopicBean.class);
         }
 
         public String getTopicCatergory() {

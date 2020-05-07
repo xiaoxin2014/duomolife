@@ -4,7 +4,7 @@ import android.text.TextUtils;
 
 import com.amkj.dmsh.base.BaseTimeEntity;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -95,7 +95,7 @@ public class RequestStatus extends BaseTimeEntity {
     }
 
     public static RequestStatus objectFromData(String str) {
-        return new Gson().fromJson(str, RequestStatus.class);
+        return GsonUtils.fromJson(str, RequestStatus.class);
     }
 
 

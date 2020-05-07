@@ -6,7 +6,7 @@ import android.text.TextUtils;
 
 import com.alipay.sdk.app.PayTask;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -100,7 +100,7 @@ public class AliPay {
                 e.printStackTrace();
             }
         } else if (type == 1 && !TextUtils.isEmpty(result)) {
-            Map resultMap = new Gson().fromJson(result, Map.class);
+            Map resultMap = GsonUtils.fromJson(result, Map.class);
             Map responseMap = (Map) resultMap.get("alipay_trade_app_pay_response");
             if (responseMap != null) {
                 String outTradeNo = (String) responseMap.get("out_trade_no");
@@ -113,7 +113,7 @@ public class AliPay {
                     map.put("tradeNo", tradeNo);
                 }
 
-                map.put("result", new Gson().toJson(responseMap));
+                map.put("result", GsonUtils.toJson(responseMap));
             }
             map.put("status", "9000".equals(code) ? 1 : 0);
 

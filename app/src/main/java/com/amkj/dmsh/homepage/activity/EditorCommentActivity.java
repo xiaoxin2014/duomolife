@@ -27,7 +27,7 @@ import com.amkj.dmsh.homepage.adapter.EditorCommentAdapter;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.CommonUtils;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.luck.picture.lib.decoration.RecycleViewDivider;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
@@ -167,8 +167,8 @@ public class EditorCommentActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 mSmartLayout.finishRefresh();
-                Gson gson = new Gson();
-                mEditorCommentEntity = gson.fromJson(result, EditorCommentEntity.class);
+
+                mEditorCommentEntity = GsonUtils.fromJson(result, EditorCommentEntity.class);
                 if (mEditorCommentEntity != null) {
                     List<EditorCommentBean> resultList = mEditorCommentEntity.getResult();
                     String code = mEditorCommentEntity.getCode();

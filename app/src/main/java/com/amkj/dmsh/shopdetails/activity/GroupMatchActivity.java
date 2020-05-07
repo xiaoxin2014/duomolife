@@ -33,8 +33,8 @@ import com.amkj.dmsh.shopdetails.bean.EditGoodsSkuEntity.EditGoodsSkuBean;
 import com.amkj.dmsh.shopdetails.bean.GroupGoodsEntity;
 import com.amkj.dmsh.shopdetails.bean.GroupGoodsEntity.GroupGoodsBean.CombineCommonBean;
 import com.amkj.dmsh.utils.DoubleUtil;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.views.bottomdialog.SkuDialog;
-import com.google.gson.Gson;
 import com.luck.picture.lib.decoration.RecycleViewDivider;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
@@ -255,7 +255,7 @@ public class GroupMatchActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 mSmartCommunalRefresh.finishRefresh();
-                mGroupGoodsEntity = new Gson().fromJson(result, GroupGoodsEntity.class);
+                mGroupGoodsEntity = GsonUtils.fromJson(result, GroupGoodsEntity.class);
                 if (mGroupGoodsEntity != null && mGroupGoodsEntity.getResult() != null) {
                     GroupGoodsEntity.GroupGoodsBean groupGoodsBean = mGroupGoodsEntity.getResult();
                     if (mGroupGoodsEntity.getCode().equals(SUCCESS_CODE)) {
@@ -403,7 +403,7 @@ public class GroupMatchActivity extends BaseActivity {
 
         combineGoods.add(combineGoodsBean);
         Bundle bundle = new Bundle();
-        bundle.putString("combineGoods", new Gson().toJson(combineGoods));
+        bundle.putString("combineGoods", GsonUtils.toJson(combineGoods));
         ConstantMethod.skipIndentWrite(getActivity(), INDENT_W_TYPE, bundle);
     }
 
@@ -419,7 +419,7 @@ public class GroupMatchActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 mTvAddCar.setEnabled(true);
-                RequestStatus status = new Gson().fromJson(result, RequestStatus.class);
+                RequestStatus status = GsonUtils.fromJson(result, RequestStatus.class);
                 if (status != null && SUCCESS_CODE.equals(status.getCode())) {
                     showToast(getString(R.string.AddCarSuccess));
                     //通知刷新购物车数量

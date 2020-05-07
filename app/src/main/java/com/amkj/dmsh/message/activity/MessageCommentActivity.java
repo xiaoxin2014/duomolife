@@ -24,9 +24,9 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.utils.CommonUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
@@ -211,8 +211,8 @@ public class MessageCommentActivity extends BaseActivity {
                         if (page == 1) {
                             commentList.clear();
                         }
-                        Gson gson = new Gson();
-                        articleCommentEntity = gson.fromJson(result, MessageCommentEntity.class);
+
+                        articleCommentEntity = GsonUtils.fromJson(result, MessageCommentEntity.class);
                         if (articleCommentEntity != null) {
                             if (articleCommentEntity.getCode().equals(SUCCESS_CODE)) {
                                 commentList.addAll(articleCommentEntity.getMessageCommentList());

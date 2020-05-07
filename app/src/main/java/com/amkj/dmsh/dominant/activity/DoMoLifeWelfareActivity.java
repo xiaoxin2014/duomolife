@@ -35,9 +35,9 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.kingja.loadsir.callback.SuccessCallback;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -246,8 +246,8 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
                     //重新加载数据
                     typeDetails.clear();
                 }
-                Gson gson = new Gson();
-                UserLikedProductEntity likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
+
+                UserLikedProductEntity likedProductEntity = GsonUtils.fromJson(result, UserLikedProductEntity.class);
                 if (likedProductEntity != null) {
                     if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
                         typeDetails.addAll(likedProductEntity.getGoodsList());
@@ -276,8 +276,8 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
                         if (themePage == 1) {
                             themeList.clear();
                         }
-                        Gson gson = new Gson();
-                        DMLThemeEntity dmlTheme = gson.fromJson(result, DMLThemeEntity.class);
+
+                        DMLThemeEntity dmlTheme = GsonUtils.fromJson(result, DMLThemeEntity.class);
                         if (dmlTheme != null) {
                             if (dmlTheme.getCode().equals(SUCCESS_CODE)) {
                                 themeList.addAll(dmlTheme.getThemeList());
@@ -317,11 +317,11 @@ public class DoMoLifeWelfareActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 qualityPreviousAdapter.loadMoreComplete();
-                Gson gson = new Gson();
+
                 if (page == 1) {
                     welfarePreviousList.clear();
                 }
-                QualityHistoryListEntity qualityHistoryListEntity = gson.fromJson(result, QualityHistoryListEntity.class);
+                QualityHistoryListEntity qualityHistoryListEntity = GsonUtils.fromJson(result, QualityHistoryListEntity.class);
                 if (qualityHistoryListEntity != null) {
                     if (qualityHistoryListEntity.getCode().equals(SUCCESS_CODE)) {
                         welfarePreviousList.addAll(qualityHistoryListEntity.getQualityHistoryListBeanList());

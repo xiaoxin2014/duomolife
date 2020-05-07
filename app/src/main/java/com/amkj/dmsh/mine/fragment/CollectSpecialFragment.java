@@ -15,8 +15,8 @@ import com.amkj.dmsh.homepage.bean.TopicSpecialEntity;
 import com.amkj.dmsh.homepage.bean.TopicSpecialEntity.TopicSpecialBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
@@ -168,8 +168,8 @@ public class CollectSpecialFragment extends BaseFragment {
                         if (page == 1) {
                             topicBeanList.clear();
                         }
-                        Gson gson = new Gson();
-                        topicDetailEntity = gson.fromJson(result, TopicSpecialEntity.class);
+
+                        topicDetailEntity = GsonUtils.fromJson(result, TopicSpecialEntity.class);
                         if (topicDetailEntity != null) {
                             if (topicDetailEntity.getCode().equals(SUCCESS_CODE)) {
                                 topicBeanList.addAll(topicDetailEntity.getTopicSpecialBeanList());

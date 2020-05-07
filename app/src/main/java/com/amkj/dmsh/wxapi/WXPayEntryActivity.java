@@ -7,14 +7,13 @@ import android.os.Bundle;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.shopdetails.payutils.WXPay;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
 
 import static com.tencent.mm.opensdk.constants.ConstantsAPI.COMMAND_PAY_BY_WX;
 
-;
 
 
 public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
@@ -47,7 +46,7 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
     public void onResp(BaseResp baseResp) {
         if (baseResp.getType() == COMMAND_PAY_BY_WX) {
             if (WXPay.getInstance() != null) {
-                WXPay.getInstance().onResp(new Gson().toJson(baseResp), baseResp.errCode);
+                WXPay.getInstance().onResp(GsonUtils.toJson(baseResp), baseResp.errCode);
                 finish();
             }
         }

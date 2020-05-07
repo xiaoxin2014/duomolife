@@ -15,8 +15,8 @@ import com.amkj.dmsh.shopdetails.bean.GroupGoodsEntity.GroupGoodsBean.CombineCom
 import com.amkj.dmsh.shopdetails.bean.IndentProDiscountBean;
 import com.amkj.dmsh.shopdetails.bean.IndentWriteEntity.IndentWriteBean.ProductsBean;
 import com.amkj.dmsh.shopdetails.bean.IndentWriteEntity.IndentWriteBean.ProductsBean.ProductInfoBean;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
-import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -424,7 +424,7 @@ public class ShopCarDao {
                 }
             }
             combineBean.setCombineMatchs(combineMatchs);
-            return new Gson().toJson(combineBean);
+            return GsonUtils.toJson(combineBean);
         } catch (Exception e) {
             return "";
         }

@@ -45,11 +45,11 @@ import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.DoubleUtil;
 import com.amkj.dmsh.utils.KeyboardUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.RectAddAndSubShopcarView;
 import com.amkj.dmsh.views.bottomdialog.SkuDialog;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.constant.RefreshState;
@@ -365,8 +365,8 @@ public class ShopCarActivity extends BaseActivity {
                     @Override
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
-                        Gson gson = new Gson();
-                        mShopCarNewInfoEntity = gson.fromJson(result, ShopCarEntity.class);
+
+                        mShopCarNewInfoEntity = GsonUtils.fromJson(result, ShopCarEntity.class);
                         if (mShopCarNewInfoEntity != null) {
                             ShopCartBean shopCartBean = mShopCarNewInfoEntity.getResult();
                             String code = mShopCarNewInfoEntity.getCode();
@@ -550,11 +550,11 @@ public class ShopCarActivity extends BaseActivity {
                 if (settlementGoods.size() > 0 || combineGoods.size() > 0) {
                     Bundle bundle = new Bundle();
                     if (settlementGoods.size() > 0) {
-                        bundle.putString("goods", new Gson().toJson(settlementGoods));
+                        bundle.putString("goods", GsonUtils.toJson(settlementGoods));
                     }
 
                     if (combineGoods.size() > 0) {
-                        bundle.putString("combineGoods", new Gson().toJson(combineGoods));
+                        bundle.putString("combineGoods", GsonUtils.toJson(combineGoods));
                     }
                     ConstantMethod.skipIndentWrite(getActivity(), INDENT_W_TYPE, bundle);
                 } else {
@@ -638,7 +638,7 @@ public class ShopCarActivity extends BaseActivity {
                 params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
-                        RequestStatus status = new Gson().fromJson(result, RequestStatus.class);
+                        RequestStatus status = GsonUtils.fromJson(result, RequestStatus.class);
                         if (status != null && status.getCode().equals(SUCCESS_CODE)) {
                             shopCartNum = shopCartNum - getStringChangeIntegers(selGoodsInfo[1]);
                             tv_header_titleAll.setText(shopCartNum < 1 ? "购物车" : "购物车(" + shopCartNum + ")");
@@ -664,8 +664,8 @@ public class ShopCarActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_SHOP_DETAILS_GET_SKU_CAR, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                EditGoodsSkuEntity editGoodsSkuEmpty = gson.fromJson(result, EditGoodsSkuEntity.class);
+
+                EditGoodsSkuEntity editGoodsSkuEmpty = GsonUtils.fromJson(result, EditGoodsSkuEntity.class);
                 if (editGoodsSkuEmpty != null && editGoodsSkuEmpty.getEditGoodsSkuBean() != null) {
                     List<SkuSaleBean> skuSale = editGoodsSkuEmpty.getEditGoodsSkuBean().getSkuSale();
                     if (editGoodsSkuEmpty.getCode().equals(SUCCESS_CODE)) {
@@ -740,7 +740,7 @@ public class ShopCarActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_SHOP_DETAILS_CHANGE_CAR, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                RequestStatus status = new Gson().fromJson(result, RequestStatus.class);
+                RequestStatus status = GsonUtils.fromJson(result, RequestStatus.class);
                 if (status != null && status.getCode().equals(SUCCESS_CODE)) {
                     //修改完成后台会默认选中（自动添加到当天加入购物车的商品）
                     cartInfoBean.setSelected(true);
@@ -789,8 +789,8 @@ public class ShopCarActivity extends BaseActivity {
                 @Override
                 public void onSuccess(String result) {
                     loadHud.dismiss();
-                    Gson gson = new Gson();
-                    ShopCarEntity shopCarNewInfoEntity = gson.fromJson(result, ShopCarEntity.class);
+
+                    ShopCarEntity shopCarNewInfoEntity = GsonUtils.fromJson(result, ShopCarEntity.class);
                     if (shopCarNewInfoEntity != null) {
                         ShopCartBean shopCartBean = shopCarNewInfoEntity.getResult();
                         if (SUCCESS_CODE.equals(shopCarNewInfoEntity.getCode()) && shopCartBean != null) {
@@ -829,7 +829,7 @@ public class ShopCarActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 cartProRecommendList.clear();
-                likedProduct = new Gson().fromJson(result, UserLikedProductEntity.class);
+                likedProduct = GsonUtils.fromJson(result, UserLikedProductEntity.class);
                 if (likedProduct != null) {
                     if (likedProduct.getCode().equals(SUCCESS_CODE)) {
                         cartProRecommendList.addAll(likedProduct.getGoodsList());

@@ -16,8 +16,8 @@ import com.amkj.dmsh.message.bean.MessageNotifyEntity.MessageNotifyBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -206,8 +206,8 @@ public class MessageSysMesActivity extends BaseActivity {
                         if (page == 1) {
                             messageNotifyList.clear();
                         }
-                        Gson gson = new Gson();
-                        messageOfficialEntity = gson.fromJson(result, MessageNotifyEntity.class);
+
+                        messageOfficialEntity = GsonUtils.fromJson(result, MessageNotifyEntity.class);
                         if (messageOfficialEntity != null) {
                             if (messageOfficialEntity.getCode().equals(SUCCESS_CODE)) {
                                 messageNotifyList.addAll(messageOfficialEntity.getMessageNotifyList());

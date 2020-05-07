@@ -26,11 +26,11 @@ import com.amkj.dmsh.utils.ImgUrlHelp;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogBottomListHelper;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.bigkoo.pickerview.builder.TimePickerBuilder;
 import com.bigkoo.pickerview.listener.CustomListener;
 import com.bigkoo.pickerview.listener.OnTimeSelectListener;
 import com.bigkoo.pickerview.view.TimePickerView;
-import com.google.gson.Gson;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import org.lasque.tusdk.TuSdkGeeV1;
@@ -141,8 +141,8 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
                 , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
-                        Gson gson = new Gson();
-                        communalUserInfoEntity = gson.fromJson(result, CommunalUserInfoEntity.class);
+
+                        communalUserInfoEntity = GsonUtils.fromJson(result, CommunalUserInfoEntity.class);
                         if (communalUserInfoEntity != null) {
                             if (communalUserInfoEntity.getCode().equals(SUCCESS_CODE)) {
                                 communalUserInfoBean = communalUserInfoEntity.getCommunalUserInfoBean();
@@ -182,8 +182,8 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                Gson gson = new Gson();
-                CommunalUserInfoEntity communalUserInfoEntity = gson.fromJson(result, CommunalUserInfoEntity.class);
+
+                CommunalUserInfoEntity communalUserInfoEntity = GsonUtils.fromJson(result, CommunalUserInfoEntity.class);
                 if (communalUserInfoEntity != null) {
                     if (communalUserInfoEntity.getCode().equals(SUCCESS_CODE)) {
                         CommunalUserInfoBean communalUserInfoBean = communalUserInfoEntity.getCommunalUserInfoBean();

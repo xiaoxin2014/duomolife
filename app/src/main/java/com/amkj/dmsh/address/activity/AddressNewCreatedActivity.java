@@ -14,21 +14,21 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.utils.AddressUtils;
 import com.amkj.dmsh.address.bean.AddressInfoEntity;
 import com.amkj.dmsh.address.bean.AddressInfoEntity.AddressInfoBean;
 import com.amkj.dmsh.address.bean.CityModel;
 import com.amkj.dmsh.address.bean.DistrictModel;
 import com.amkj.dmsh.address.bean.ProvinceModel;
-import com.contrarywind.listener.OnItemSelectedListener;
-import com.contrarywind.view.WheelView;
-import com.bigkoo.pickerview.adapter.ArrayWheelAdapter;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.AddressUtils;
 import com.amkj.dmsh.utils.KeyboardUtils;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
+import com.bigkoo.pickerview.adapter.ArrayWheelAdapter;
+import com.contrarywind.listener.OnItemSelectedListener;
+import com.contrarywind.view.WheelView;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -163,8 +163,8 @@ public class AddressNewCreatedActivity extends BaseActivity implements View.OnCl
         NetLoadUtils.getNetInstance().loadNetDataPost(this, ADDRESS_DETAILS, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                AddressInfoEntity addressInfoEntity = gson.fromJson(result, AddressInfoEntity.class);
+
+                AddressInfoEntity addressInfoEntity = GsonUtils.fromJson(result, AddressInfoEntity.class);
                 if (addressInfoEntity != null) {
                     if (addressInfoEntity.getCode().equals(SUCCESS_CODE)) {
                         addressInfoBean = addressInfoEntity.getAddressInfoBean();
@@ -261,8 +261,8 @@ public class AddressNewCreatedActivity extends BaseActivity implements View.OnCl
         NetLoadUtils.getNetInstance().loadNetDataPost(this, ADD_ADDRESS, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                AddressInfoEntity addressInfoEntity = gson.fromJson(result, AddressInfoEntity.class);
+
+                AddressInfoEntity addressInfoEntity = GsonUtils.fromJson(result, AddressInfoEntity.class);
                 if (addressInfoEntity != null) {
                     if (addressInfoEntity.getCode().equals(SUCCESS_CODE)) {
                         showToast("添加成功");
@@ -305,8 +305,8 @@ public class AddressNewCreatedActivity extends BaseActivity implements View.OnCl
         NetLoadUtils.getNetInstance().loadNetDataPost(this, EDIT_ADDRESS, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                AddressInfoEntity addressInfoEntity = gson.fromJson(result, AddressInfoEntity.class);
+
+                AddressInfoEntity addressInfoEntity = GsonUtils.fromJson(result, AddressInfoEntity.class);
                 if (addressInfoEntity != null) {
                     if (addressInfoEntity.getCode().equals(SUCCESS_CODE)) {
                         Intent data = new Intent();

@@ -18,9 +18,9 @@ import com.amkj.dmsh.homepage.bean.TimeForeShowEntity;
 import com.amkj.dmsh.homepage.bean.TimeForeShowEntity.TimeForeShowBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -105,8 +105,8 @@ public class TopRecommendAtTimeEndGroupFragment extends BaseFragment {
             @Override
             public void onSuccess(String result) {
                 springSaleRecyclerAdapter.loadMoreComplete();
-                Gson gson = new Gson();
-                TimeForeShowEntity timeForeShowEntity = gson.fromJson(result, TimeForeShowEntity.class);
+
+                TimeForeShowEntity timeForeShowEntity = GsonUtils.fromJson(result, TimeForeShowEntity.class);
                 if (timeForeShowEntity != null) {
                     if (timeForeShowEntity.getCode().equals(SUCCESS_CODE)) {
                         springSaleRecyclerAdapter.setEnableLoadMore(true);

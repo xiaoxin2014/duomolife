@@ -11,7 +11,7 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -105,8 +105,8 @@ public class MessageWarmActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this,MINE_CHANGE_DATA,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                CommunalUserInfoEntity communalUserInfoEntity = gson.fromJson(result, CommunalUserInfoEntity.class);
+
+                CommunalUserInfoEntity communalUserInfoEntity = GsonUtils.fromJson(result, CommunalUserInfoEntity.class);
                 if (communalUserInfoEntity != null) {
                     if (communalUserInfoEntity.getCode().equals(SUCCESS_CODE)) {
                         showToast(R.string.saveSuccess);

@@ -18,8 +18,8 @@ import com.amkj.dmsh.shopdetails.activity.DirectExchangeDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.EditGoodsSkuEntity;
 import com.amkj.dmsh.shopdetails.bean.ShopCarGoodsSku;
 import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.views.bottomdialog.SkuDialog;
-import com.google.gson.Gson;
 import com.kaopiz.kprogresshud.KProgressHUD;
 
 import org.greenrobot.eventbus.EventBus;
@@ -58,7 +58,7 @@ public class OrderDao {
             @Override
             public void onSuccess(String result) {
                 dismissLoadhud(activity);
-                RequestStatus requestStatus = new Gson().fromJson(result, RequestStatus.class);
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast("删除订单成功");
@@ -92,7 +92,7 @@ public class OrderDao {
             @Override
             public void onSuccess(String result) {
                 dismissLoadhud(activity);
-                RequestStatus requestStatus = new Gson().fromJson(result, RequestStatus.class);
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToastRequestMsg(requestStatus);
@@ -120,7 +120,7 @@ public class OrderDao {
             @Override
             public void onSuccess(String result) {
                 dismissLoadhud(activity);
-                RequestStatus requestStatus = new Gson().fromJson(result, RequestStatus.class);
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 showToast(requestStatus.getMsg());
             }
 
@@ -142,7 +142,7 @@ public class OrderDao {
             @Override
             public void onSuccess(String result) {
                 dismissLoadhud(activity);
-                RequestStatus requestStatus = new Gson().fromJson(result, RequestStatus.class);
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 showToast(requestStatus.getMsg());
             }
 
@@ -164,7 +164,7 @@ public class OrderDao {
             @Override
             public void onSuccess(String result) {
                 dismissLoadhud(activity);
-                RequestStatus requestStatus = new Gson().fromJson(result, RequestStatus.class);
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 showToast(requestStatus.getMsg());
             }
 
@@ -185,7 +185,7 @@ public class OrderDao {
             @Override
             public void onSuccess(String result) {
                 dismissLoadhud(activity);
-                RequestStatus requestStatus = new Gson().fromJson(result, RequestStatus.class);
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (SUCCESS_CODE.equals(requestStatus.getCode())) {
                         showToast("成功加入购物车~");
@@ -225,8 +225,8 @@ public class OrderDao {
             @Override
             public void onSuccess(String result) {
                 loadHud.dismiss();
-                Gson gson = new Gson();
-                EditGoodsSkuEntity editGoodsSkuEntity = gson.fromJson(result, EditGoodsSkuEntity.class);
+
+                EditGoodsSkuEntity editGoodsSkuEntity = GsonUtils.fromJson(result, EditGoodsSkuEntity.class);
                 if (editGoodsSkuEntity != null) {
                     if (editGoodsSkuEntity.getCode().equals(SUCCESS_CODE)) {
                         EditGoodsSkuEntity.EditGoodsSkuBean editGoodsSkuBean = editGoodsSkuEntity.getEditGoodsSkuBean();
@@ -309,9 +309,9 @@ public class OrderDao {
             NetLoadUtils.getNetInstance().loadNetDataPost(activity, url, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
-                    Gson gson = new Gson();
+
                     loadHud.dismiss();
-                    RequestStatus status = gson.fromJson(result, RequestStatus.class);
+                    RequestStatus status = GsonUtils.fromJson(result, RequestStatus.class);
                     if (status != null) {
                         if (status.getCode().equals(SUCCESS_CODE)) {
                             showToast("成功加入购物车~");
@@ -340,8 +340,8 @@ public class OrderDao {
             NetLoadUtils.getNetInstance().loadNetDataPost(activity, Q_QUERY_CAR_COUNT, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    MessageBean requestStatus = gson.fromJson(result, MessageBean.class);
+
+                    MessageBean requestStatus = GsonUtils.fromJson(result, MessageBean.class);
                     if (requestStatus != null) {
                         if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                             int cartNumber = requestStatus.getResult();

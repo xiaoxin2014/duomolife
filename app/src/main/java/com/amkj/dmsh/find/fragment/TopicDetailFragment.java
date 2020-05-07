@@ -25,9 +25,9 @@ import com.amkj.dmsh.find.bean.TopicDetailEntity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.views.JzVideo.JzVideoPlayerStatusDialog;
 import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
-import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import org.greenrobot.eventbus.EventBus;
@@ -120,7 +120,7 @@ public class TopicDetailFragment extends BaseFragment {
             @Override
             public void onSuccess(String result) {
                 mSmartRefreshLayout.finishRefresh();
-                topicDetailEntity = new Gson().fromJson(result, TopicDetailEntity.class);
+                topicDetailEntity = GsonUtils.fromJson(result, TopicDetailEntity.class);
                 if (topicDetailEntity != null) {
                     if (topicDetailEntity.getCode().equals(SUCCESS_CODE)) {
                         setTopicData(topicDetailEntity);

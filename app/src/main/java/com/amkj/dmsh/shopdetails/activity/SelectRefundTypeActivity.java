@@ -19,8 +19,8 @@ import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.adapter.DirectProductListAdapter;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.List;
@@ -75,7 +75,7 @@ public class SelectRefundTypeActivity extends BaseActivity {
         if (getIntent() == null) return;
         String mGoods = getIntent().getStringExtra("goods");
         if (!TextUtils.isEmpty(mGoods)) {
-            List<OrderProductNewBean> goodsBeanList = new Gson().fromJson(mGoods, new TypeToken<List<OrderProductNewBean>>() {
+            List<OrderProductNewBean> goodsBeanList = GsonUtils.fromJson(mGoods, new TypeToken<List<OrderProductNewBean>>() {
             }.getType());
             //初始化退款商品列表
             mCommunalRecycler.setLayoutManager(new LinearLayoutManager(this));

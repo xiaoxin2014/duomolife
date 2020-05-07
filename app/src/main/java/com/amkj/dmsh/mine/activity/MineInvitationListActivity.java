@@ -19,9 +19,9 @@ import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -246,8 +246,8 @@ public class MineInvitationListActivity extends BaseActivity {
                         if (page == 1) {
                             invitationDetailList.clear();
                         }
-                        Gson gson = new Gson();
-                        invitationDetailEntity = gson.fromJson(result, InvitationDetailEntity.class);
+
+                        invitationDetailEntity = GsonUtils.fromJson(result, InvitationDetailEntity.class);
                         if (invitationDetailEntity != null) {
                             if (invitationDetailEntity.getCode().equals(SUCCESS_CODE)) {
                                 invitationDetailList.addAll(invitationDetailEntity.getInvitationSearchList());
@@ -283,8 +283,8 @@ public class MineInvitationListActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 loadHud.dismiss();
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         tv_collect.setSelected(!tv_collect.isSelected());
@@ -325,8 +325,8 @@ public class MineInvitationListActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, MINE_INVITATION_DEL, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast("删除帖子完成");

@@ -36,6 +36,7 @@ import com.amkj.dmsh.utils.LifecycleHandler;
 import com.amkj.dmsh.utils.SharedPreUtils;
 import com.amkj.dmsh.utils.WindowUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.views.guideview.Component;
 import com.amkj.dmsh.views.guideview.FindComponent4;
 import com.amkj.dmsh.views.guideview.Guide;
@@ -43,7 +44,6 @@ import com.amkj.dmsh.views.guideview.GuideBuilder;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
-import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.constant.RefreshState;
 
@@ -171,7 +171,7 @@ public class GoodsScoreListActivity extends BaseActivity {
                 loadHud.dismiss();
                 mGoodsList.clear();
                 totalGoodsList.clear();
-                mScoreGoodsEntity = new Gson().fromJson(result, ScoreGoodsEntity.class);
+                mScoreGoodsEntity = GsonUtils.fromJson(result, ScoreGoodsEntity.class);
                 if (mScoreGoodsEntity != null) {
                     mScoreGoodsAdapter.setRewardReminder(mScoreGoodsEntity.getMaxRewardTip());
                     List<ScoreGoodsBean> goodsList = mScoreGoodsEntity.getGoodsList();
@@ -206,9 +206,9 @@ public class GoodsScoreListActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.FIND_AD2, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
+
                 adBeanList.clear();
-                CommunalADActivityEntity adActivityEntity = gson.fromJson(result, CommunalADActivityEntity.class);
+                CommunalADActivityEntity adActivityEntity = GsonUtils.fromJson(result, CommunalADActivityEntity.class);
                 if (adActivityEntity != null) {
                     if (adActivityEntity.getCode().equals(SUCCESS_CODE)) {
                         adBeanList.addAll(adActivityEntity.getCommunalADActivityBeanList());
@@ -249,7 +249,7 @@ public class GoodsScoreListActivity extends BaseActivity {
             public void onSuccess(String result) {
                 mSmartLayout.finishRefresh();
                 hotTopicList.clear();
-                HotTopicEntity hotTopicEntity = new Gson().fromJson(result, HotTopicEntity.class);
+                HotTopicEntity hotTopicEntity = GsonUtils.fromJson(result, HotTopicEntity.class);
                 if (hotTopicEntity != null) {
                     if (hotTopicEntity.getCode().equals(SUCCESS_CODE)) {
                         hotTopicList.addAll(hotTopicEntity.getHotTopicList());
@@ -278,7 +278,7 @@ public class GoodsScoreListActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.Q_GET_TAKE_DELIVERY_POPUP, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                RequestStatus requestStatus = new Gson().fromJson(result, RequestStatus.class);
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 boolean isOpen = requestStatus.isOpen();
                 String imgUrl = requestStatus.getImgUrl();
                 if (isOpen && !TextUtils.isEmpty(imgUrl)) {

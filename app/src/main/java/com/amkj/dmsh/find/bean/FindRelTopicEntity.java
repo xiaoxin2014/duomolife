@@ -1,6 +1,6 @@
 package com.amkj.dmsh.find.bean;
 
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -27,7 +27,7 @@ public class FindRelTopicEntity {
 
     public static FindRelTopicEntity objectFromData(String str) {
 
-        return new Gson().fromJson(str, FindRelTopicEntity.class);
+        return GsonUtils.fromJson(str, FindRelTopicEntity.class);
     }
 
     public String getMsg() {
@@ -67,7 +67,7 @@ public class FindRelTopicEntity {
 
         public static FindRelTopicBean objectFromData(String str) {
 
-            return new Gson().fromJson(str, FindRelTopicBean.class);
+            return GsonUtils.fromJson(str, FindRelTopicBean.class);
         }
 
         public int getId() {

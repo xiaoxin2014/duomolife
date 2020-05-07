@@ -12,12 +12,12 @@ import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.find.adapter.PostContentAdapter;
+import com.amkj.dmsh.find.bean.EventMessageBean;
 import com.amkj.dmsh.find.bean.PostEntity;
 import com.amkj.dmsh.find.bean.PostEntity.PostBean;
-import com.amkj.dmsh.find.bean.EventMessageBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -96,7 +96,7 @@ public class PostContentFragment extends BaseFragment {
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.GET_POST_LIST, map, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                mPostEntity = new Gson().fromJson(result, PostEntity.class);
+                mPostEntity = GsonUtils.fromJson(result, PostEntity.class);
                 if (page == 1) {
                     mPostList.clear();
                 }

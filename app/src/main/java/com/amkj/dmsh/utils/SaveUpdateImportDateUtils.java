@@ -13,7 +13,7 @@ import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBe
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -79,8 +79,8 @@ public class SaveUpdateImportDateUtils {
             @Override
             public void onSuccess(String result) {
                 if (weakReference.get() != null) {
-                    Gson gson = new Gson();
-                    MainNavEntity mainNavEntity = gson.fromJson(result, MainNavEntity.class);
+
+                    MainNavEntity mainNavEntity = GsonUtils.fromJson(result, MainNavEntity.class);
                     if (mainNavEntity != null
                             && mainNavEntity.getCode().equals(SUCCESS_CODE)
                             && mainNavEntity.getMainNavBeanList().size() == 5
@@ -151,8 +151,8 @@ public class SaveUpdateImportDateUtils {
         NetLoadUtils.getNetInstance().loadNetDataPost(weakReference.get(), url, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                CommunalADActivityEntity categoryAD = gson.fromJson(result, CommunalADActivityEntity.class);
+
+                CommunalADActivityEntity categoryAD = GsonUtils.fromJson(result, CommunalADActivityEntity.class);
                 if (categoryAD == null ||
                         !categoryAD.getCode().equals(SUCCESS_CODE) ||
                         categoryAD.getCommunalADActivityBeanList() == null ||

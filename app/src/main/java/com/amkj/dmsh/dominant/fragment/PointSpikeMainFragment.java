@@ -17,12 +17,12 @@ import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayoutDouble;
 import com.amkj.dmsh.views.flycoTablayout.listener.CustomTabDoubleEntity;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
-import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
@@ -100,7 +100,7 @@ public class PointSpikeMainFragment extends BaseFragment {
                     public void onSuccess(String result) {
                         smartPointSpike.finishRefresh();
                         timeAxisInfoList.clear();
-                        PointSpikeTimeShaftEntity pointSpikeTimeShaftEntity = new Gson().fromJson(result, PointSpikeTimeShaftEntity.class);
+                        PointSpikeTimeShaftEntity pointSpikeTimeShaftEntity = GsonUtils.fromJson(result, PointSpikeTimeShaftEntity.class);
                         if (pointSpikeTimeShaftEntity != null && pointSpikeTimeShaftEntity.getCode().equals(SUCCESS_CODE)) {
                             timeAxisInfoList.addAll(pointSpikeTimeShaftEntity.getTimeAxisInfoList());
                             setTimeShaftData(pointSpikeTimeShaftEntity.getTimeAxisInfoList());
@@ -191,7 +191,7 @@ public class PointSpikeMainFragment extends BaseFragment {
                     @Override
                     public void onSuccess(String result) {
                         adBeanList.clear();
-                        CommunalADActivityEntity communalADActivityEntity = new Gson().fromJson(result, CommunalADActivityEntity.class);
+                        CommunalADActivityEntity communalADActivityEntity = GsonUtils.fromJson(result, CommunalADActivityEntity.class);
                         if (communalADActivityEntity != null && communalADActivityEntity.getCode().equals(SUCCESS_CODE)) {
                             adBeanList.addAll(communalADActivityEntity.getCommunalADActivityBeanList());
                             if (adPointSpike.getVisibility() == View.GONE) {

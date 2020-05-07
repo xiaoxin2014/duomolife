@@ -35,11 +35,11 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.amkj.dmsh.utils.webformatdata.ShareDataBean;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
@@ -61,7 +61,6 @@ import static com.amkj.dmsh.R.id.tv_communal_pro_tag;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -211,8 +210,8 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
                     public void onSuccess(String result) {
                         smart_refresh_ql_welfare_details.finishRefresh();
                         optimizedDetailsAdapter.loadMoreComplete();
-                        Gson gson = new Gson();
-                        optimizedSelDetailEntity = gson.fromJson(result, DmlOptimizedSelDetailEntity.class);
+
+                        optimizedSelDetailEntity = GsonUtils.fromJson(result, DmlOptimizedSelDetailEntity.class);
                         if (optimizedSelDetailEntity != null) {
                             if (optimizedSelDetailEntity.getCode().equals(SUCCESS_CODE)) {
                                 optDetailsList.clear();

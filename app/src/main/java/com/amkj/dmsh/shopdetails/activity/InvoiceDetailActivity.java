@@ -31,8 +31,8 @@ import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.adapter.InvoiceListAdapter;
 import com.amkj.dmsh.shopdetails.bean.IndentInvoiceEntity;
 import com.amkj.dmsh.utils.WindowUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.yanzhenjie.permission.Permission;
@@ -150,7 +150,7 @@ public class InvoiceDetailActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
-                mIndentInvoiceEntity = new Gson().fromJson(result, IndentInvoiceEntity.class);
+                mIndentInvoiceEntity = GsonUtils.fromJson(result, IndentInvoiceEntity.class);
 
                 if (mIndentInvoiceEntity != null) {
                     IndentInvoiceEntity.IndentInvoiceBean indentInvoiceBean = mIndentInvoiceEntity.getIndentInvoiceBean();

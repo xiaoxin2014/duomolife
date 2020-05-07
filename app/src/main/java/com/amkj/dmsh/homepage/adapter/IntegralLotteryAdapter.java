@@ -34,10 +34,10 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.android.flexbox.FlexboxLayout;
-import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -615,8 +615,8 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
                 @Override
                 public void onSuccess(String result) {
                     textView.setEnabled(true);
-                    Gson gson = new Gson();
-                    IntegralLotteryAwardEntity integralLotteryAwardEntity = gson.fromJson(result, IntegralLotteryAwardEntity.class);
+
+                    IntegralLotteryAwardEntity integralLotteryAwardEntity = GsonUtils.fromJson(result, IntegralLotteryAwardEntity.class);
                     if (integralLotteryAwardEntity != null) {
                         if (SUCCESS_CODE.equals(integralLotteryAwardEntity.getCode())) {
                             showToast("夺宝参与成功");

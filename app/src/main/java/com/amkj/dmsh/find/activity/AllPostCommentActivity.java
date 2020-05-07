@@ -29,7 +29,7 @@ import com.amkj.dmsh.shopdetails.adapter.PostCommentAdapter;
 import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.KeyboardUtils;
 import com.amkj.dmsh.utils.WindowUtils;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
@@ -174,8 +174,8 @@ public class AllPostCommentActivity extends BaseActivity {
                 if (page == 1 || isComment) {
                     mCommentList.clear();
                 }
-                Gson gson = new Gson();
-                postCommentEntity = gson.fromJson(result, PostCommentEntity.class);
+
+                postCommentEntity = GsonUtils.fromJson(result, PostCommentEntity.class);
                 if (postCommentEntity != null) {
                     List<PostCommentBean> commentList = postCommentEntity.getCommentList();
                     int commentSize = postCommentEntity.getCommentSize();

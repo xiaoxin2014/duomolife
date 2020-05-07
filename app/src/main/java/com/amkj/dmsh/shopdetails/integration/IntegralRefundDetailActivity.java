@@ -48,9 +48,9 @@ import com.amkj.dmsh.shopdetails.bean.RefundTypeBean;
 import com.amkj.dmsh.utils.KeyboardUtils;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.bigkoo.pickerview.adapter.ArrayWheelAdapter;
 import com.contrarywind.view.WheelView;
-import com.google.gson.Gson;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 
@@ -313,8 +313,8 @@ public class IntegralRefundDetailActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_INDENT_REPAIR_DETAIL, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                refundDetailEntity = gson.fromJson(result, RefundDetailEntity.class);
+
+                refundDetailEntity = GsonUtils.fromJson(result, RefundDetailEntity.class);
                 if (refundDetailEntity != null) {
                     if (refundDetailEntity.getCode().equals(SUCCESS_CODE)) {
                         sv_layout_refund_detail.setVisibility(View.VISIBLE);
@@ -356,8 +356,8 @@ public class IntegralRefundDetailActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_INDENT_REFUND_DETAIL, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                refundDetailEntity = gson.fromJson(result, RefundDetailEntity.class);
+
+                refundDetailEntity = GsonUtils.fromJson(result, RefundDetailEntity.class);
                 if (refundDetailEntity != null) {
                     if (refundDetailEntity.getCode().equals(SUCCESS_CODE)) {
                         sv_layout_refund_detail.setVisibility(View.VISIBLE);
@@ -416,8 +416,8 @@ public class IntegralRefundDetailActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast(String.format(getResources().getString(R.string.doSuccess), "撤销"));
@@ -441,8 +441,8 @@ public class IntegralRefundDetailActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_INDENT_LOGISTIC_COM, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                RefundLogisticEntity refundLogisticEntity = gson.fromJson(result, RefundLogisticEntity.class);
+
+                RefundLogisticEntity refundLogisticEntity = GsonUtils.fromJson(result, RefundLogisticEntity.class);
                 if (refundLogisticEntity != null) {
                     if (refundLogisticEntity.getCode().equals(SUCCESS_CODE)) {
                         expressCompanies = refundLogisticEntity.getExpressCompanys();
@@ -851,8 +851,8 @@ public class IntegralRefundDetailActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_INDENT_REPAIR_LOGISTIC_SUB, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast(String.format(getResources().getString(R.string.doSuccess), "提交"));
@@ -889,8 +889,8 @@ public class IntegralRefundDetailActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_INDENT_LOGISTIC_SUB, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast(String.format(getResources().getString(R.string.doSuccess), "提交"));
@@ -921,8 +921,8 @@ public class IntegralRefundDetailActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_INDENT_REPAIR_RECEIVE, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         loadData();

@@ -32,9 +32,9 @@ import com.amkj.dmsh.mine.activity.ShopCarActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.LifecycleHandler;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.views.MarqueeTextView;
 import com.amkj.dmsh.views.flycoTablayout.SlidingIconTabLayout;
-import com.google.gson.Gson;
 import com.gyf.barlibrary.ImmersionBar;
 
 import java.util.ArrayList;
@@ -136,8 +136,8 @@ public class HomePageFragment extends BaseFragment {
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), GTE_HOME_NAVBAR, map, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                mHomeNavbarEntity = gson.fromJson(result, HomeCommonEntity.class);
+
+                mHomeNavbarEntity = GsonUtils.fromJson(result, HomeCommonEntity.class);
                 if (mHomeNavbarEntity != null) {
                     List<HomeCommonBean> goodsNavbarList = mHomeNavbarEntity.getResult();
                     String code = mHomeNavbarEntity.getCode();

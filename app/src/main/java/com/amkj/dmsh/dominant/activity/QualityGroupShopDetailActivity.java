@@ -63,6 +63,7 @@ import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.TimeUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.amkj.dmsh.views.StatusBarUtil;
 import com.amkj.dmsh.views.bottomdialog.SkuDialog;
@@ -75,7 +76,6 @@ import com.bigkoo.convenientbanner.holder.Holder;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.flexbox.JustifyContent;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
@@ -525,8 +525,8 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                     @Override
                     public void onSuccess(String result) {
                         smart_refresh_ql_sp_details.finishRefresh();
-                        Gson gson = new Gson();
-                        mGroupShopDetailsEntity = gson.fromJson(result, GroupShopDetailsEntity.class);
+
+                        mGroupShopDetailsEntity = GsonUtils.fromJson(result, GroupShopDetailsEntity.class);
                         if (mGroupShopDetailsEntity != null) {
                             mGroupShopDetailsBean = mGroupShopDetailsEntity.getGroupShopDetailsBean();
                             if (mGroupShopDetailsEntity.getCode().equals(SUCCESS_CODE)) {
@@ -568,8 +568,8 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 goodsComments.clear();
-                Gson gson = new Gson();
-                GoodsCommentEntity goodsCommentEntity = gson.fromJson(result, GoodsCommentEntity.class);
+
+                GoodsCommentEntity goodsCommentEntity = GsonUtils.fromJson(result, GoodsCommentEntity.class);
                 if (goodsCommentEntity != null) {
                     if (goodsCommentEntity.getCode().equals(SUCCESS_CODE)) {
                         goodsComments.addAll(goodsCommentEntity.getGoodsComments());
@@ -901,7 +901,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, GROUP_SHOP_JOIN_NEW_INDEX, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                QualityGroupEntity qualityGroupEntity = new Gson().fromJson(result, QualityGroupEntity.class);
+                QualityGroupEntity qualityGroupEntity = GsonUtils.fromJson(result, QualityGroupEntity.class);
                 if (qualityGroupEntity != null) {
                     List<QualityGroupBean> hotTopicList = qualityGroupEntity.getQualityGroupBeanList();
                     if (qualityGroupEntity.getCode().equals(SUCCESS_CODE)) {
@@ -1038,7 +1038,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                     List<GroupShopJoinBean> luckUserList = mGroupShopDetailsBean.getLuckUserList();
                     if (luckUserList != null) {
                         intent = new Intent(this, AllLotteryActivity.class);
-                        intent.putExtra("allLotteryJson", new Gson().toJson(luckUserList));
+                        intent.putExtra("allLotteryJson", GsonUtils.toJson(luckUserList));
                         startActivity(intent);
                     }
                 }
@@ -1084,7 +1084,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
     private void skipIndentWrite() {
         if (userId > 0) {
             Bundle bundle = new Bundle();
-            bundle.putString("gpShopInfo", new Gson().toJson(mGroupShopDetailsBean));
+            bundle.putString("gpShopInfo", GsonUtils.toJson(mGroupShopDetailsBean));
             ConstantMethod.skipIndentWrite(getActivity(), INDENT_GROUP_SHOP, bundle);
         } else {
             getLoginStatus(getActivity());
@@ -1119,8 +1119,8 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
             NetLoadUtils.getNetInstance().loadNetDataPost(this, GROUP_SHOP_JOIN_NRE_USER, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
-                    Gson gson = new Gson();
-                    RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+
+                    RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         mGroupShopDetailsBean.setGpStatus(JOIN_GROUP);
                         mGroupShopDetailsBean.setGpRecordId(groupShopjoinBean.getGpRecordId());

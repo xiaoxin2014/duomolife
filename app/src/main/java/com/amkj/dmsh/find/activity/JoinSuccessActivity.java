@@ -21,8 +21,8 @@ import com.amkj.dmsh.find.bean.PostEntity.PostBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.SharedPreUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.StaggeredDividerItemDecoration;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -125,7 +125,7 @@ public class JoinSuccessActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.GET_POST_LIST, map, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                mPostEntity = new Gson().fromJson(result, PostEntity.class);
+                mPostEntity = GsonUtils.fromJson(result, PostEntity.class);
                 mPostList.clear();
                 if (mPostEntity != null) {
                     String code = mPostEntity.getCode();

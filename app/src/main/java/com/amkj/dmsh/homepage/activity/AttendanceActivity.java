@@ -48,12 +48,12 @@ import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.alertdialog.AlertRuleDialogHelper;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.gongwen.marqueen.MarqueeFactory;
 import com.gongwen.marqueen.MarqueeView;
-import com.google.gson.Gson;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 import com.lsjwzh.widget.recyclerviewpager.RecyclerViewPager;
@@ -263,8 +263,8 @@ public class AttendanceActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, H_ATTENDANCE_INTEGRAL_LOTTERY_RULE, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                CommunalRuleEntity communalRuleEntity = gson.fromJson(result, CommunalRuleEntity.class);
+
+                CommunalRuleEntity communalRuleEntity = GsonUtils.fromJson(result, CommunalRuleEntity.class);
                 if (communalRuleEntity != null) {
                     if (communalRuleEntity.getCode().equals(SUCCESS_CODE)) {
                         if (communalRuleEntity.getCommunalRuleList() != null
@@ -289,8 +289,8 @@ public class AttendanceActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, H_ATTENDANCE_RULE, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                CommunalRuleEntity communalRuleEntity = gson.fromJson(result, CommunalRuleEntity.class);
+
+                CommunalRuleEntity communalRuleEntity = GsonUtils.fromJson(result, CommunalRuleEntity.class);
                 if (communalRuleEntity != null) {
                     if (communalRuleEntity.getCode().equals(SUCCESS_CODE)) {
                         if (communalRuleEntity.getCommunalRuleList() != null
@@ -317,9 +317,9 @@ public class AttendanceActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, H_INTEGRAL_PRODUCT_FILTRATE, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
+
                 integrationBeanList.clear();
-                IntegrationProEntity integrationProEntity = gson.fromJson(result, IntegrationProEntity.class);
+                IntegrationProEntity integrationProEntity = GsonUtils.fromJson(result, IntegrationProEntity.class);
                 if (integrationProEntity != null) {
                     if (integrationProEntity.getCode().equals(SUCCESS_CODE)) {
                         IntegrationBean integrationBean = new IntegrationBean();
@@ -357,8 +357,8 @@ public class AttendanceActivity extends BaseActivity {
                     @Override
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
-                        Gson gson = new Gson();
-                        attendanceDetailEntity = gson.fromJson(result, AttendanceDetailEntity.class);
+
+                        attendanceDetailEntity = GsonUtils.fromJson(result, AttendanceDetailEntity.class);
                         if (attendanceDetailEntity != null
                                 && SUCCESS_CODE.equals(attendanceDetailEntity.getCode())) {
                             setAttendanceDetail(attendanceDetailEntity);
@@ -454,8 +454,8 @@ public class AttendanceActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, H_ATTENDANCE_INTEGRAL_LOTTERY, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                IntegralLotteryEntity integralLotteryEntity = gson.fromJson(result, IntegralLotteryEntity.class);
+
+                IntegralLotteryEntity integralLotteryEntity = GsonUtils.fromJson(result, IntegralLotteryEntity.class);
                 if (integralLotteryEntity != null) {
                     if (SUCCESS_CODE.equals(integralLotteryEntity.getCode())) {
                         integralLotteryList.clear();
@@ -507,8 +507,8 @@ public class AttendanceActivity extends BaseActivity {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                Gson gson = new Gson();
-                AttendanceDetailEntity attendanceDetailEntity = gson.fromJson(result, AttendanceDetailEntity.class);
+
+                AttendanceDetailEntity attendanceDetailEntity = GsonUtils.fromJson(result, AttendanceDetailEntity.class);
                 if (attendanceDetailEntity != null) {
                     if (SUCCESS_CODE.equals(attendanceDetailEntity.getCode())) {
                         attendanceHeader.tv_attendance_sign_in.setEnabled(false);
@@ -569,9 +569,9 @@ public class AttendanceActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, H_ATTENDANCE_MORE_ACTIVITY, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
+
                 adActivityBeans.clear();
-                CommunalADActivityEntity activityEntity = gson.fromJson(result, CommunalADActivityEntity.class);
+                CommunalADActivityEntity activityEntity = GsonUtils.fromJson(result, CommunalADActivityEntity.class);
                 if (activityEntity != null) {
                     if (activityEntity.getCode().equals(SUCCESS_CODE)) {
                         for (int i = 0; i < activityEntity.getCommunalADActivityBeanList().size() / 2 * 2; i++) {
@@ -615,8 +615,8 @@ public class AttendanceActivity extends BaseActivity {
             public void onSuccess(String result) {
                 doubleIntegrationList.clear();
                 integralDoubleHelper.rv_integral_double.setVisibility(View.VISIBLE);
-                Gson gson = new Gson();
-                UserLikedProductEntity userLikedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
+
+                UserLikedProductEntity userLikedProductEntity = GsonUtils.fromJson(result, UserLikedProductEntity.class);
                 if (userLikedProductEntity != null) {
                     if (userLikedProductEntity.getCode().equals(SUCCESS_CODE)) {
                         LikedProductBean likedProductBean = new LikedProductBean();
@@ -673,8 +673,8 @@ public class AttendanceActivity extends BaseActivity {
                             if (loadHud != null) {
                                 loadHud.dismiss();
                             }
-                            Gson gson = new Gson();
-                            RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+
+                            RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                             if (requestStatus != null) {
                                 if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                                     textView.setSelected(requestStatus.isSign());
@@ -786,8 +786,8 @@ public class AttendanceActivity extends BaseActivity {
                     if (loadHud != null) {
                         loadHud.dismiss();
                     }
-                    Gson gson = new Gson();
-                    RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+
+                    RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                     if (requestStatus != null) {
                         showToastRequestMsg(requestStatus);
                     }

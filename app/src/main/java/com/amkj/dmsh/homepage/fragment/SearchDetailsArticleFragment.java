@@ -12,7 +12,7 @@ import com.amkj.dmsh.homepage.adapter.SpecialTopicAdapter;
 import com.amkj.dmsh.homepage.bean.TopicSpecialEntity.TopicSpecialBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -90,8 +90,8 @@ public class SearchDetailsArticleFragment extends BaseSearchDetailFragment {
                             specialSearList.clear();
                             removeExistUtils.clearData();
                         }
-                        Gson gson = new Gson();
-                        allSearchEntity = gson.fromJson(result, AllSearchEntity.class);
+
+                        allSearchEntity = GsonUtils.fromJson(result, AllSearchEntity.class);
                         if (allSearchEntity != null && allSearchEntity.getSearchBean() != null) {
                             String code = allSearchEntity.getCode();
                             searchBean = allSearchEntity.getSearchBean();

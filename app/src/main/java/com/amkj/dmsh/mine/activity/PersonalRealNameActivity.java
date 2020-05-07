@@ -18,7 +18,7 @@ import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.KeyboardUtils;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -97,8 +97,8 @@ public class PersonalRealNameActivity extends BaseActivity {
                 , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
-                        Gson gson = new Gson();
-                        CommunalUserInfoEntity communalUserInfoEntity = gson.fromJson(result, CommunalUserInfoEntity.class);
+
+                        CommunalUserInfoEntity communalUserInfoEntity = GsonUtils.fromJson(result, CommunalUserInfoEntity.class);
                         if (communalUserInfoEntity != null) {
                             if (communalUserInfoEntity.getCode().equals(SUCCESS_CODE)) {
                                 CommunalUserInfoBean communalUserInfoBean = communalUserInfoEntity.getCommunalUserInfoBean();
@@ -131,11 +131,11 @@ public class PersonalRealNameActivity extends BaseActivity {
             NetLoadUtils.getNetInstance().loadNetDataPost(this,MINE_RESET_REAL_NAME,params,new NetLoadListenerHelper(){
                 @Override
                 public void onSuccess(String result) {
-                    Gson gson = new Gson();
+
                     if (loadHud != null) {
                         loadHud.dismiss();
                     }
-                    RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+                    RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                     if (requestStatus != null) {
                         if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                             showToast(String.format(getResources().getString(R.string.doSuccess), "修改"));

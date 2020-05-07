@@ -79,7 +79,7 @@ import com.amkj.dmsh.utils.MarketUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogImage;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.hjq.toast.ToastUtils;
@@ -878,8 +878,8 @@ public class ConstantMethod {
         NetLoadUtils.getNetInstance().loadNetDataPost(context, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         if (onSendCommentFinish != null) {
@@ -928,8 +928,8 @@ public class ConstantMethod {
         NetLoadUtils.getNetInstance().loadNetDataPost(context, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         if (onSendCommentFinish != null) {
@@ -975,8 +975,8 @@ public class ConstantMethod {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         if (onSendCommentFinish != null) {
@@ -1026,8 +1026,8 @@ public class ConstantMethod {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                Gson gson = new Gson();
-                RequestStatus requestInfo = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus requestInfo = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestInfo != null) {
                     if (requestInfo.getCode().equals(SUCCESS_CODE)) {
                         if (onSendCommentFinish != null) {
@@ -1065,8 +1065,8 @@ public class ConstantMethod {
         NetLoadUtils.getNetInstance().loadNetDataPost(activity, H_Q_FLOAT_AD, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                HomeQualityFloatAdEntity floatAdEntity = gson.fromJson(result, HomeQualityFloatAdEntity.class);
+
+                HomeQualityFloatAdEntity floatAdEntity = GsonUtils.fromJson(result, HomeQualityFloatAdEntity.class);
                 if (floatAdEntity != null) {
                     if (floatAdEntity.getCode().equals(SUCCESS_CODE)) {
                         CommunalADActivityEntity.CommunalADActivityBean communalADActivityBean = floatAdEntity.getCommunalADActivityBean();
@@ -1233,9 +1233,9 @@ public class ConstantMethod {
                     String combineGoodsJson = bundle.getString("combineGoods");
                     String gpShopInfo = bundle.getString("gpShopInfo");
 
-                    Gson gson = new Gson();
+
                     if (INDENT_GROUP_SHOP.equals(type) && !TextUtils.isEmpty(gpShopInfo)) {
-                        GroupShopDetailsBean groupShopDetailsBean = gson.fromJson(gpShopInfo, GroupShopDetailsBean.class);
+                        GroupShopDetailsBean groupShopDetailsBean = GsonUtils.fromJson(gpShopInfo, GroupShopDetailsBean.class);
                         params.put("gpInfoId", groupShopDetailsBean.getGpInfoId());
                         params.put("gpRecordId", groupShopDetailsBean.getGpRecordId());
                     IndentProDiscountBean indentProBean = new IndentProDiscountBean();
@@ -1244,11 +1244,11 @@ public class ConstantMethod {
                     indentProBean.setCount(1);
                     List<IndentProDiscountBean> discountBeanList = new ArrayList<>();
                     discountBeanList.add(indentProBean);
-                    params.put("goods", gson.toJson(discountBeanList));
+                    params.put("goods", GsonUtils.toJson(discountBeanList));
                 }
 
                 if (!TextUtils.isEmpty(goodsJson)) {
-                    List<CartInfoBean> passGoods = gson.fromJson(goodsJson, new TypeToken<List<CartInfoBean>>() {
+                    List<CartInfoBean> passGoods = GsonUtils.fromJson(goodsJson, new TypeToken<List<CartInfoBean>>() {
                     }.getType());
                     if (passGoods != null) {
                         List<IndentProDiscountBean> discountBeanList = new ArrayList<>();
@@ -1261,7 +1261,7 @@ public class ConstantMethod {
                             indentProBean.setCartId(cartInfoBean.getId());
                             discountBeanList.add(indentProBean);
                         }
-                        params.put("goods", gson.toJson(discountBeanList));
+                        params.put("goods", GsonUtils.toJson(discountBeanList));
                     }
                 }
 
@@ -1278,7 +1278,7 @@ public class ConstantMethod {
             @Override
             public void onSuccess(String result) {
                 dismissLoadhud(context);
-                RequestStatus requestStatus = new Gson().fromJson(result, RequestStatus.class);
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (SUCCESS_CODE.equals(requestStatus.getCode())) {
                         Intent intent = new Intent(context, DirectIndentWriteActivity.class);
@@ -1545,8 +1545,8 @@ public class ConstantMethod {
         NetLoadUtils.getNetInstance().loadNetDataPost(activity, Url.H_MES_STATISTICS_NEW, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                MessageCenterEntity messageCenterEntity = gson.fromJson(result, MessageCenterEntity.class);
+
+                MessageCenterEntity messageCenterEntity = GsonUtils.fromJson(result, MessageCenterEntity.class);
                 if (messageCenterEntity != null) {
                     if (SUCCESS_CODE.equals(messageCenterEntity.getCode())) {
                         int totalCount = messageCenterEntity.getActivityTotal() + messageCenterEntity.getCommentTotal()

@@ -50,11 +50,11 @@ import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
@@ -323,8 +323,8 @@ public class HomeDefalutFragment extends BaseFragment {
     }
 
     private void getADJsonData(String result) {
-        Gson gson = new Gson();
-        CommunalADActivityEntity qualityAdLoop = gson.fromJson(result, CommunalADActivityEntity.class);
+
+        CommunalADActivityEntity qualityAdLoop = GsonUtils.fromJson(result, CommunalADActivityEntity.class);
         if (qualityAdLoop != null) {
             List<CommunalADActivityBean> communalAdList = qualityAdLoop.getCommunalADActivityBeanList();
             if (communalAdList != null && communalAdList.size() > 0) {
@@ -360,8 +360,8 @@ public class HomeDefalutFragment extends BaseFragment {
         NetLoadUtils.getNetInstance().loadNetDataGetCache(getActivity(), GTE_HOME_TOP, map, isUpdateCache, new NetCacheLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                HomeCommonEntity homeNavbarEntity = gson.fromJson(result, HomeCommonEntity.class);
+
+                HomeCommonEntity homeNavbarEntity = GsonUtils.fromJson(result, HomeCommonEntity.class);
                 if (homeNavbarEntity != null) {
                     List<HomeCommonBean> topList = homeNavbarEntity.getResult();
                     if (topList != null && topList.size() > 0) {
@@ -391,8 +391,8 @@ public class HomeDefalutFragment extends BaseFragment {
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.GTE_NEW_USER_GOODS, map, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                mHomeDynamicEntity = gson.fromJson(result, HomeDynamicEntity.class);
+
+                mHomeDynamicEntity = GsonUtils.fromJson(result, HomeDynamicEntity.class);
                 if (mHomeDynamicEntity != null) {
                     GlideImageLoaderUtil.loadImage(getActivity(), mIvCover, mHomeDynamicEntity.getCover());
                     mTvDynamicTitle.setText(getStrings(mHomeDynamicEntity.getTitle()));
@@ -428,8 +428,8 @@ public class HomeDefalutFragment extends BaseFragment {
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.GTE_HOME_SPECIAL_ZONE, map, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                mHomeCommonEntity = gson.fromJson(result, HomeCommonEntity.class);
+
+                mHomeCommonEntity = GsonUtils.fromJson(result, HomeCommonEntity.class);
                 List<HomeCommonBean> homeCommonBeanList = mHomeCommonEntity.getResult();
                 if (mHomeCommonEntity != null) {
                     if (homeCommonBeanList != null && homeCommonBeanList.size() > 0) {
@@ -464,8 +464,8 @@ public class HomeDefalutFragment extends BaseFragment {
                 , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
-                        Gson gson = new Gson();
-                        mHomeWelfareEntity = gson.fromJson(result, HomeWelfareEntity.class);
+
+                        mHomeWelfareEntity = GsonUtils.fromJson(result, HomeWelfareEntity.class);
                         List<HomeWelfareBean> themeList = mHomeWelfareEntity.getResult();
                         if (mHomeWelfareEntity != null) {
                             if (themeList != null && themeList.size() > 0) {
@@ -502,7 +502,7 @@ public class HomeDefalutFragment extends BaseFragment {
                     @Override
                     public void onSuccess(String result) {
                         mSmartLayout.finishRefresh();
-                        UserLikedProductEntity userLikedProductEntity = new Gson().fromJson(result, UserLikedProductEntity.class);
+                        UserLikedProductEntity userLikedProductEntity = GsonUtils.fromJson(result, UserLikedProductEntity.class);
                         if (userLikedProductEntity != null) {
                             List<LikedProductBean> goodProductList = userLikedProductEntity.getGoodsList();
                             if (goodProductList != null && goodProductList.size() > 0) {
@@ -538,8 +538,8 @@ public class HomeDefalutFragment extends BaseFragment {
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), CATE_DOC_LIST, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                mCommunalArticleEntity = gson.fromJson(result, CommunalArticleEntity.class);
+
+                mCommunalArticleEntity = GsonUtils.fromJson(result, CommunalArticleEntity.class);
                 if (mCommunalArticleEntity != null) {
                     List<CommunalArticleBean> communalArticleList = mCommunalArticleEntity.getCommunalArticleList();
                     if (communalArticleList != null && communalArticleList.size() >= 2) {
@@ -565,7 +565,7 @@ public class HomeDefalutFragment extends BaseFragment {
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.HOME_CATERGORY_ONE_LIST, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                QualityTypeEntity qualityTypeEntity = new Gson().fromJson(result, QualityTypeEntity.class);
+                QualityTypeEntity qualityTypeEntity = GsonUtils.fromJson(result, QualityTypeEntity.class);
                 if (qualityTypeEntity != null) {
                     List<QualityTypeBean> typeBeanList = qualityTypeEntity.getQualityTypeBeanList();
                     if (typeBeanList != null && typeBeanList.size() > 0) {
@@ -614,8 +614,8 @@ public class HomeDefalutFragment extends BaseFragment {
                     params, new NetLoadListenerHelper() {
                         @Override
                         public void onSuccess(String result) {
-                            Gson gson = new Gson();
-                            mUserLikedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
+
+                            mUserLikedProductEntity = GsonUtils.fromJson(result, UserLikedProductEntity.class);
                             if (mUserLikedProductEntity != null) {
                                 mUserLikedProductEntity.setCatergoryName(qualityTypeBean.getName());
                                 mUserLikedProductEntity.setId(String.valueOf(qualityTypeBean.getId()));

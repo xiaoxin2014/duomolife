@@ -26,9 +26,9 @@ import com.amkj.dmsh.shopdetails.integration.bean.IntegralIndentOrderEntity;
 import com.amkj.dmsh.shopdetails.integration.bean.IntegralIndentOrderEntity.IntegralIndentOrderBean.OrderListBean;
 import com.amkj.dmsh.shopdetails.integration.bean.IntegralIndentOrderEntity.IntegralIndentOrderBean.OrderListBean.GoodsBean;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -303,8 +303,8 @@ public class IntegralIndentFragment extends BaseFragment {
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),url,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast("取消订单成功");
@@ -357,7 +357,7 @@ public class IntegralIndentFragment extends BaseFragment {
                 public void onSuccess(String result) {
                     smart_communal_refresh.finishRefresh();
                     integralIndentListAdapter.loadMoreComplete();
-                    Gson gson = new Gson();
+
                     String code = "";
                     String msg = "";
                     try {
@@ -371,7 +371,7 @@ public class IntegralIndentFragment extends BaseFragment {
                         orderListBeanList.clear();
                     }
                     if (code.equals(SUCCESS_CODE)) {
-                        indentOrderEntity = gson.fromJson(result, IntegralIndentOrderEntity.class);
+                        indentOrderEntity = GsonUtils.fromJson(result, IntegralIndentOrderEntity.class);
                         INDENT_PRO_STATUS = indentOrderEntity.getIntegralIndentOrderBean().getStatus();
                         orderListBeanList.addAll(indentOrderEntity.getIntegralIndentOrderBean().getOrderList());
                     } else if (!code.equals(EMPTY_CODE)) {
@@ -426,8 +426,8 @@ public class IntegralIndentFragment extends BaseFragment {
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),url,params,new NetLoadListenerHelper(){
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         loadData();

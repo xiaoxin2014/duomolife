@@ -24,9 +24,9 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 
 import java.lang.ref.WeakReference;
 import java.text.ParseException;
@@ -201,7 +201,7 @@ public class PointSpikeProductFragment extends BaseFragment {
                     @Override
                     public void onSuccess(String result) {
                         timeAxisProductListBeans.clear();
-                        PointSpikeProductEntity pointSpikeProductEntity = new Gson().fromJson(result, PointSpikeProductEntity.class);
+                        PointSpikeProductEntity pointSpikeProductEntity = GsonUtils.fromJson(result, PointSpikeProductEntity.class);
                         if (pointSpikeProductEntity != null) {
                             if (pointSpikeProductEntity.getCode().equals(SUCCESS_CODE)) {
                                 int productStatus = 0;

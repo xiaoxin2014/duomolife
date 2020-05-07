@@ -39,10 +39,10 @@ import com.amkj.dmsh.release.bean.ImagePathBean;
 import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
 import com.amkj.dmsh.utils.KeyboardUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.kingja.loadsir.core.Transport;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfigC;
@@ -367,8 +367,8 @@ public class SuggestionFeedBackActivity extends BaseActivity {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                Gson gson = new Gson();
-                RequestStatus requestInfo = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus requestInfo = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestInfo != null) {
                     if (requestInfo.getCode().equals(SUCCESS_CODE)) {
                         showToast("提交完成");
@@ -441,7 +441,7 @@ public class SuggestionFeedBackActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, MINE_FEEDBACK_TYPE, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                SuggestionTypeEntity suggestionTypeEntity = new Gson().fromJson(result, SuggestionTypeEntity.class);
+                SuggestionTypeEntity suggestionTypeEntity = GsonUtils.fromJson(result, SuggestionTypeEntity.class);
                 if (suggestionTypeEntity != null) {
                     if (SUCCESS_CODE.equals(suggestionTypeEntity.getCode())) {
                         feedBackTypeBeans.addAll(suggestionTypeEntity.getFeedBackTypeList());

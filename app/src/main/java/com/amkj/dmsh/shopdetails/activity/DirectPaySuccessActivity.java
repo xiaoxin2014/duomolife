@@ -28,8 +28,8 @@ import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogImage;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
@@ -171,8 +171,8 @@ public class DirectPaySuccessActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_PAY_SUCCESS_AD_DIALOG, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                HomeQualityFloatAdEntity floatAdEntity = gson.fromJson(result, HomeQualityFloatAdEntity.class);
+
+                HomeQualityFloatAdEntity floatAdEntity = GsonUtils.fromJson(result, HomeQualityFloatAdEntity.class);
                 if (floatAdEntity != null) {
                     if (floatAdEntity.getCode().equals(SUCCESS_CODE)) {
                         CommunalADActivityBean communalADActivityBean = floatAdEntity.getCommunalADActivityBean();
@@ -224,8 +224,8 @@ public class DirectPaySuccessActivity extends BaseActivity {
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
                 typeDetails.clear();
-                Gson gson = new Gson();
-                likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
+
+                likedProductEntity = GsonUtils.fromJson(result, UserLikedProductEntity.class);
                 if (likedProductEntity != null) {
                     if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
                         typeDetails.addAll(likedProductEntity.getGoodsList());

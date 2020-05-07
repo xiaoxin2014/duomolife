@@ -1,7 +1,7 @@
 package com.amkj.dmsh.dominant.bean;
 
 import com.amkj.dmsh.constant.CommunalDetailBean;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -29,7 +29,7 @@ public class CustomCoverDesEntity {
 
     public static CustomCoverDesEntity objectFromData(String str) {
 
-        return new Gson().fromJson(str, CustomCoverDesEntity.class);
+        return GsonUtils.fromJson(str, CustomCoverDesEntity.class);
     }
 
     public String getMsg() {
@@ -68,7 +68,7 @@ public class CustomCoverDesEntity {
 
         public static CustomCoverDesBean objectFromData(String str) {
 
-            return new Gson().fromJson(str, CustomCoverDesBean.class);
+            return GsonUtils.fromJson(str, CustomCoverDesBean.class);
         }
 
         public String getPicUrl() {

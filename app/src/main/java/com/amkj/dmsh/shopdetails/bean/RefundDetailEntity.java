@@ -4,9 +4,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.amkj.dmsh.base.BaseEntity;
-import com.google.gson.Gson;
-import com.google.gson.annotations.SerializedName;
 import com.amkj.dmsh.mine.bean.CartProductInfoBean;
+import com.amkj.dmsh.utils.gson.GsonUtils;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 import java.util.Map;
@@ -152,7 +152,7 @@ public class RefundDetailEntity extends BaseEntity{
         }
 
         public static RefundDetailBean objectFromData(String str) {
-            return new Gson().fromJson(str, RefundDetailBean.class);
+            return GsonUtils.fromJson(str, RefundDetailBean.class);
         }
 
         public int getIntegralPrice() {
@@ -563,7 +563,7 @@ public class RefundDetailEntity extends BaseEntity{
 
             public static ExpressInfoBean objectFromData(String str) {
 
-                return new Gson().fromJson(str, ExpressInfoBean.class);
+                return GsonUtils.fromJson(str, ExpressInfoBean.class);
             }
 
             public String getExpressNo() {

@@ -29,7 +29,7 @@ import com.amkj.dmsh.rxeasyhttp.model.HttpParams;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.SharedPreUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.kingja.loadsir.callback.Callback;
 import com.kingja.loadsir.callback.SuccessCallback;
 import com.kingja.loadsir.core.Convertor;
@@ -150,7 +150,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
                     if (weakReference.get() != null) {
                         try {
                             //token校验失败，调用登出接口并重新登录
-                            BaseEntity baseEntity = new Gson().fromJson(result, BaseEntity.class);
+                            BaseEntity baseEntity = GsonUtils.fromJson(result, BaseEntity.class);
                             if (baseEntity != null) {
                                 String code = baseEntity.getCode();
                                 if ("52".equals(code)) {
@@ -667,8 +667,8 @@ public class NetLoadUtils<T, E extends BaseEntity> {
         NetLoadUtils.getNetInstance().loadNetDataPost(mContext, Url.CONFIRM_LOGIN_TOKEN_EXPIRE, null, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                CommunalUserInfoBean tokenExpireBean = gson.fromJson(result, CommunalUserInfoBean.class);
+
+                CommunalUserInfoBean tokenExpireBean = GsonUtils.fromJson(result, CommunalUserInfoBean.class);
                 if (tokenExpireBean != null) {
                     //未过期(更新本地过期时间)
                     if (tokenExpireBean.getStatus() == 1) {

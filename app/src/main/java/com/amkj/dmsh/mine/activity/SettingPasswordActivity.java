@@ -12,7 +12,7 @@ import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.PasswordEncrypt;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -106,7 +106,7 @@ public class SettingPasswordActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 dismissLoadhud(getActivity());
-                RequestStatus requestStatus = new Gson().fromJson(result, RequestStatus.class);
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     String code = requestStatus.getCode();
                     String msg = requestStatus.getMsg();

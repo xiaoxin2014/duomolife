@@ -14,7 +14,7 @@ import com.amkj.dmsh.find.bean.FansEntity.FansBean;
 import com.amkj.dmsh.message.adapter.FansAdapter;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
@@ -74,7 +74,7 @@ public class NewFansActivity extends BaseActivity {
             public void onSuccess(String result) {
                 mSmartLayout.finishRefresh();
                 mFansList.clear();
-                mFansEntity = new Gson().fromJson(result, FansEntity.class);
+                mFansEntity = GsonUtils.fromJson(result, FansEntity.class);
                 if (mFansEntity != null) {
                     List<FansBean> fansList = mFansEntity.getFansList();
                     List<FansBean> recommendUserList = mFansEntity.getRecommendUserList();

@@ -15,9 +15,9 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -102,8 +102,8 @@ public class GroupCustomTopicFragment extends BaseFragment {
                         if (page == 1) {
                             customProList.clear();
                         }
-                        Gson gson = new Gson();
-                        userLikedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
+
+                        userLikedProductEntity = GsonUtils.fromJson(result, UserLikedProductEntity.class);
                         if (userLikedProductEntity != null) {
                             if (userLikedProductEntity.getCode().equals(SUCCESS_CODE)) {
                                 customProList.addAll(userLikedProductEntity.getGoodsList());

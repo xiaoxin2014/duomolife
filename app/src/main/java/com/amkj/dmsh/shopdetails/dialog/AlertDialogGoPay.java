@@ -22,7 +22,7 @@ import com.amkj.dmsh.shopdetails.payutils.AliPay;
 import com.amkj.dmsh.shopdetails.payutils.UnionPay;
 import com.amkj.dmsh.shopdetails.payutils.WXPay;
 import com.amkj.dmsh.utils.LifecycleHandler;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -127,9 +127,9 @@ public class AlertDialogGoPay {
             @Override
             public void onSuccess(String result) {
                 dismissLoadhud(context);
-                Gson gson = new Gson();
+
                 if (payWay.equals(PAY_WX_PAY)) {
-                    QualityCreateWeChatPayIndentBean qualityWeChatIndent = gson.fromJson(result, QualityCreateWeChatPayIndentBean.class);
+                    QualityCreateWeChatPayIndentBean qualityWeChatIndent = GsonUtils.fromJson(result, QualityCreateWeChatPayIndentBean.class);
                     if (qualityWeChatIndent != null) {
                         if (qualityWeChatIndent.getCode().equals(SUCCESS_CODE)) {
                             //返回成功，调起微信支付接口
@@ -140,7 +140,7 @@ public class AlertDialogGoPay {
                         }
                     }
                 } else if (payWay.equals(PAY_ALI_PAY)) {
-                    QualityCreateAliPayIndentBean qualityAliPayIndent = gson.fromJson(result, QualityCreateAliPayIndentBean.class);
+                    QualityCreateAliPayIndentBean qualityAliPayIndent = GsonUtils.fromJson(result, QualityCreateAliPayIndentBean.class);
                     if (qualityAliPayIndent != null) {
                         if (qualityAliPayIndent.getCode().equals(SUCCESS_CODE)) {
                             //返回成功，调起支付宝支付接口
@@ -151,7 +151,7 @@ public class AlertDialogGoPay {
                         }
                     }
                 } else if (payWay.equals(PAY_UNION_PAY)) {
-                    QualityCreateUnionPayIndentEntity qualityUnionIndent = gson.fromJson(result, QualityCreateUnionPayIndentEntity.class);
+                    QualityCreateUnionPayIndentEntity qualityUnionIndent = GsonUtils.fromJson(result, QualityCreateUnionPayIndentEntity.class);
                     if (qualityUnionIndent != null) {
                         if (qualityUnionIndent.getCode().equals(SUCCESS_CODE)) {
                             //返回成功，调起银联支付接口

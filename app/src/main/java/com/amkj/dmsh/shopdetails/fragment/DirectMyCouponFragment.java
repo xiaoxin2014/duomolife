@@ -18,9 +18,9 @@ import com.amkj.dmsh.shopdetails.activity.CouponProductActivity;
 import com.amkj.dmsh.shopdetails.adapter.DirectMyCouponAdapter;
 import com.amkj.dmsh.shopdetails.bean.DirectCouponEntity;
 import com.amkj.dmsh.shopdetails.bean.DirectCouponEntity.DirectCouponBean;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
@@ -123,8 +123,8 @@ public class DirectMyCouponFragment extends BaseFragment {
                 if (page == 1) {
                     couponList.clear();
                 }
-                Gson gson = new Gson();
-                directCouponEntity = gson.fromJson(result, DirectCouponEntity.class);
+
+                directCouponEntity = GsonUtils.fromJson(result, DirectCouponEntity.class);
                 if (directCouponEntity != null) {
                     if (directCouponEntity.getCode().equals(SUCCESS_CODE)) {
                         couponList.addAll(directCouponEntity.getDirectCouponBeanList());

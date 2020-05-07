@@ -43,7 +43,7 @@ import com.amkj.dmsh.shopdetails.payutils.WXPay;
 import com.amkj.dmsh.utils.KeyboardUtils;
 import com.amkj.dmsh.utils.LifecycleHandler;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 
@@ -209,8 +209,8 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, ADDRESS_LIST, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                AddressListEntity addressListEntity = gson.fromJson(result, AddressListEntity.class);
+
+                AddressListEntity addressListEntity = GsonUtils.fromJson(result, AddressListEntity.class);
                 if (addressListEntity != null) {
                     if (addressListEntity.getCode().equals(SUCCESS_CODE)) {
                         List<AddressInfoBean> addressAllBeanList = addressListEntity.getAddressAllBeanList();
@@ -266,8 +266,8 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                IntegralSettlementEntity settlementEntity = gson.fromJson(result, IntegralSettlementEntity.class);
+
+                IntegralSettlementEntity settlementEntity = GsonUtils.fromJson(result, IntegralSettlementEntity.class);
                 if (settlementEntity != null) {
                     if (settlementEntity.getCode().equals(SUCCESS_CODE)) {
                         integralSettlementBean = settlementEntity.getIntegralSettlementBean();
@@ -419,8 +419,8 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 tvIntegralDetailsCreateInt.setEnabled(true);
-                Gson gson = new Gson();
-                IntegrationIndentEntity indentEntity = gson.fromJson(result, IntegrationIndentEntity.class);
+
+                IntegrationIndentEntity indentEntity = GsonUtils.fromJson(result, IntegrationIndentEntity.class);
                 if (indentEntity != null && indentEntity.getResult() != null) {
                     IntegrationIndentBean indentBean = indentEntity.getResult();
                     if (SUCCESS_CODE.equals(indentEntity.getCode())) {
@@ -435,13 +435,13 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
                             //返回成功，调起微信支付接口
                             switch (payType) {
                                 case PAY_WX_PAY:
-                                    doWXPay(orderCreateNo, gson.fromJson(payKey, PayKeyBean.class));
+                                    doWXPay(orderCreateNo, GsonUtils.fromJson(payKey, PayKeyBean.class));
                                     break;
                                 case PAY_ALI_PAY:
                                     doAliPay(orderCreateNo, payKey);
                                     break;
                                 case PAY_UNION_PAY:
-                                    PayKeyBean payKeyBean = gson.fromJson(payKey, PayKeyBean.class);
+                                    PayKeyBean payKeyBean = GsonUtils.fromJson(payKey, PayKeyBean.class);
                                     unionPay(orderCreateNo, payKeyBean.getPaymentUrl());
                                     break;
                             }

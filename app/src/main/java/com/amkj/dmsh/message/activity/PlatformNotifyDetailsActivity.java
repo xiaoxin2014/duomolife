@@ -18,9 +18,9 @@ import com.amkj.dmsh.message.adapter.PlatformDataEntity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
@@ -149,8 +149,8 @@ public class PlatformNotifyDetailsActivity extends BaseActivity {
                     public void onSuccess(String result) {
                         smart_official_details.finishRefresh();
                         platformNotifyList.clear();
-                        Gson gson = new Gson();
-                        platformDataEntity = gson.fromJson(result, PlatformDataEntity.class);
+
+                        platformDataEntity = GsonUtils.fromJson(result, PlatformDataEntity.class);
                         if (platformDataEntity != null) {
                             if (platformDataEntity.getCode().equals(SUCCESS_CODE)
                                     && platformDataEntity.getPlatformDataBean() != null) {

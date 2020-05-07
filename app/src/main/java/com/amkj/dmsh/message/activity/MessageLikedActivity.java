@@ -17,8 +17,8 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
@@ -172,9 +172,9 @@ public class MessageLikedActivity extends BaseActivity {
                         if (page == 1) {
                             articleCommentList.clear();
                         }
-                        Gson gson = new Gson();
+
                         //赞
-                        articleCommentEntity = gson.fromJson(result, ArticleCommentEntity.class);
+                        articleCommentEntity = GsonUtils.fromJson(result, ArticleCommentEntity.class);
                         if (articleCommentEntity != null) {
                             if (articleCommentEntity.getCode().equals(SUCCESS_CODE)) {
                                 articleCommentList.addAll(articleCommentEntity.getArticleCommentList());

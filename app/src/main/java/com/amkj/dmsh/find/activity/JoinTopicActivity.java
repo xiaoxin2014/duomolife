@@ -39,9 +39,9 @@ import com.amkj.dmsh.utils.ImgUrlHelp;
 import com.amkj.dmsh.utils.TextWatchListener;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
-import com.google.gson.Gson;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfigC;
 import com.luck.picture.lib.entity.LocalMediaC;
@@ -340,7 +340,7 @@ public class JoinTopicActivity extends BaseActivity {
             NetLoadUtils.getNetInstance().loadNetDataPost(this, GET_EVALUATE_TIP, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
-                    TopicDetailEntity topicDetailEntity = new Gson().fromJson(result, TopicDetailEntity.class);
+                    TopicDetailEntity topicDetailEntity = GsonUtils.fromJson(result, TopicDetailEntity.class);
                     if (topicDetailEntity != null) {
                         if (topicDetailEntity.getCode().equals(SUCCESS_CODE)) {
                             //编辑框提示
@@ -400,8 +400,8 @@ public class JoinTopicActivity extends BaseActivity {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         if (!TextUtils.isEmpty(topicId)) {

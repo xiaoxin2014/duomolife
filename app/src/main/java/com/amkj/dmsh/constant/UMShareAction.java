@@ -35,8 +35,8 @@ import com.amkj.dmsh.utils.FileStreamUtils;
 import com.amkj.dmsh.utils.LifecycleHandler;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogShareHelper;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.views.HtmlWebView;
-import com.google.gson.Gson;
 import com.umeng.socialize.ShareAction;
 import com.umeng.socialize.UMShareListener;
 import com.umeng.socialize.bean.SHARE_MEDIA;
@@ -391,7 +391,7 @@ public class UMShareAction {
         NetLoadUtils.getNetInstance().loadNetDataPost(context, SHARE_SAVE_IMAGE_URL, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                RequestStatus requestStatus = new Gson().fromJson(result, RequestStatus.class);
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (SUCCESS_CODE.equals(requestStatus.getCode()) &&
                             requestStatus.getResult() != null && !TextUtils.isEmpty(requestStatus.getResult().getImgUrl())) {

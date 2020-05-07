@@ -23,9 +23,9 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogBottomListHelper;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfigC;
 import com.luck.picture.lib.entity.LocalMediaC;
@@ -176,8 +176,8 @@ public class PersonalBgImgSelActivity extends BaseActivity {
                     if (loadHud != null) {
                         loadHud.dismiss();
                     }
-                    Gson gson = new Gson();
-                    CommunalUserInfoEntity communalUserInfoEntity = gson.fromJson(result, CommunalUserInfoEntity.class);
+
+                    CommunalUserInfoEntity communalUserInfoEntity = GsonUtils.fromJson(result, CommunalUserInfoEntity.class);
                     if (communalUserInfoEntity != null) {
                         if (communalUserInfoEntity.getCode().equals(SUCCESS_CODE)) {
                             PictureFileUtils.deleteCacheDirFile(PersonalBgImgSelActivity.this);
@@ -211,8 +211,8 @@ public class PersonalBgImgSelActivity extends BaseActivity {
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
                 mineBgImgBeanList.clear();
-                Gson gson = new Gson();
-                mineBgImgEntity = gson.fromJson(result, MineBgImgEntity.class);
+
+                mineBgImgEntity = GsonUtils.fromJson(result, MineBgImgEntity.class);
                 if (mineBgImgEntity != null) {
                     if (mineBgImgEntity.getCode().equals(SUCCESS_CODE)) {
                         mineBgImgBeanList.addAll(mineBgImgEntity.getMineBgImgList());

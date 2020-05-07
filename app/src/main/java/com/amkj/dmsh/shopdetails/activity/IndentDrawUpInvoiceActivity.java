@@ -28,7 +28,7 @@ import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.shopdetails.bean.IndentInvoicePromptEntity;
 import com.amkj.dmsh.shopdetails.bean.IndentInvoicePromptEntity.IndentInvoicePromptBean;
 import com.amkj.dmsh.utils.KeyboardUtils;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -188,8 +188,8 @@ public class IndentDrawUpInvoiceActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 descriptionBeanList.clear();
-                Gson gson = new Gson();
-                IndentInvoicePromptEntity indentInvoicePromptEntity = gson.fromJson(result, IndentInvoicePromptEntity.class);
+
+                IndentInvoicePromptEntity indentInvoicePromptEntity = GsonUtils.fromJson(result, IndentInvoicePromptEntity.class);
                 if (indentInvoicePromptEntity != null) {
                     if (indentInvoicePromptEntity.getCode().equals(SUCCESS_CODE)) {
                         IndentInvoicePromptBean indentInvoicePromptBean = indentInvoicePromptEntity.getIndentInvoicePromptBean();
@@ -293,8 +293,8 @@ public class IndentDrawUpInvoiceActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 loadHud.dismiss();
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast("发票开具成功");

@@ -16,9 +16,9 @@ import com.amkj.dmsh.mine.bean.WebDataCommunalEntity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
@@ -122,7 +122,7 @@ public class WebRuleCommunalActivity extends BaseActivity{
             public void onSuccess(String result) {
                 smart_communal_refresh_web.finishRefresh();
                 NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
-                WebDataCommunalEntity webDataCommunalEntity = new Gson().fromJson(result, WebDataCommunalEntity.class);
+                WebDataCommunalEntity webDataCommunalEntity = GsonUtils.fromJson(result, WebDataCommunalEntity.class);
                 if(webDataCommunalEntity!=null&&
                         SUCCESS_CODE.equals(webDataCommunalEntity.getCode())&&
                         webDataCommunalEntity.getWebDataCommunalList()!=null&&

@@ -22,8 +22,8 @@ import com.amkj.dmsh.homepage.bean.CommunalArticleEntity.CommunalArticleBean;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -243,8 +243,8 @@ public class QualityDMLLifeSearchActivity extends BaseActivity {
                         if (page == 1) {
                             communalArtList.clear();
                         }
-                        Gson gson = new Gson();
-                        communalArticleEntity = gson.fromJson(result, CommunalArticleEntity.class);
+
+                        communalArticleEntity = GsonUtils.fromJson(result, CommunalArticleEntity.class);
                         if (communalArticleEntity != null) {
                             if (communalArticleEntity.getCode().equals(SUCCESS_CODE)) {
                                 tv_header_titleAll.setText(getStrings(communalArticleEntity.getTitle()));

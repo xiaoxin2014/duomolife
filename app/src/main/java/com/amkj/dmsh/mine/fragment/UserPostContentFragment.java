@@ -18,7 +18,7 @@ import com.amkj.dmsh.find.bean.PostEntity.PostBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.user.bean.UserPagerInfoEntity;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -99,7 +99,7 @@ public class UserPostContentFragment extends BaseFragment {
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.GET_USER_POST_LIST, map, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                mPostEntity = new Gson().fromJson(result, PostEntity.class);
+                mPostEntity = GsonUtils.fromJson(result, PostEntity.class);
                 if (page == 1) {
                     mPostList.clear();
                 }

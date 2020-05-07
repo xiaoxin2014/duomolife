@@ -26,10 +26,10 @@ import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
 import com.amkj.dmsh.homepage.activity.ArticleTypeActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
 import com.amkj.dmsh.views.flycoTablayout.listener.OnTabSelectListener;
-import com.google.gson.Gson;
 import com.gyf.barlibrary.ImmersionBar;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
@@ -152,7 +152,7 @@ public class QualityFragment extends BaseFragment {
             @Override
             public void onSuccess(String result) {
                 mSmartLayout.finishRefresh();
-                mCatergoryEntity = new Gson().fromJson(result, CatergoryOneLevelEntity.class);
+                mCatergoryEntity = GsonUtils.fromJson(result, CatergoryOneLevelEntity.class);
                 if (mCatergoryEntity != null) {
                     String code = mCatergoryEntity.getCode();
                     List<CatergoryOneLevelBean> catergoryList = mCatergoryEntity.getResult();

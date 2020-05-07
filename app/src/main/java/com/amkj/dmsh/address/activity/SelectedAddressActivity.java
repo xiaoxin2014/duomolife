@@ -18,9 +18,9 @@ import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.integration.bean.AddressListEntity;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
@@ -174,8 +174,8 @@ public class SelectedAddressActivity extends BaseActivity {
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
                 selectedAddressAdapter.loadMoreComplete();
-                Gson gson = new Gson();
-                addressListEntity = gson.fromJson(result, AddressListEntity.class);
+
+                addressListEntity = GsonUtils.fromJson(result, AddressListEntity.class);
                 if (addressListEntity != null) {
                     if (addressListEntity.getCode().equals(SUCCESS_CODE)) {
                         addressAllBeanList.clear();
@@ -240,8 +240,8 @@ public class SelectedAddressActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 dismissLoadhud(getActivity());
-                Gson gson = new Gson();
-                RequestStatus status = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus status = GsonUtils.fromJson(result, RequestStatus.class);
                 if (status != null) {
                     if (SUCCESS_CODE.equals(status.getCode())) {
                         Intent dataIntent = new Intent();
@@ -269,8 +269,8 @@ public class SelectedAddressActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, DEL_ADDRESS, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                RequestStatus status = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus status = GsonUtils.fromJson(result, RequestStatus.class);
                 if (status != null) {
                     if (status.getCode().equals(SUCCESS_CODE)) {
                         showToast( "删除地址完成");
@@ -290,8 +290,8 @@ public class SelectedAddressActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, UPDATE_DEFAULT_ADDRESS, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                RequestStatus status = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus status = GsonUtils.fromJson(result, RequestStatus.class);
                 if (status != null) {
                     if (status.getCode().equals(SUCCESS_CODE)) {
                         showToast("修改默认地址完成");

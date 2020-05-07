@@ -18,9 +18,9 @@ import com.amkj.dmsh.mine.bean.UserAttentionFansEntity.UserAttentionFansBean;
 import com.amkj.dmsh.netloadpage.NetEmptyCallback;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.kingja.loadsir.core.Transport;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -169,8 +169,8 @@ public class UserFansAttentionActivity extends BaseActivity {
                 if (page == 1) {
                     attentionFansList.clear();
                 }
-                Gson gson = new Gson();
-                userAttentionFansEntity = gson.fromJson(result, UserAttentionFansEntity.class);
+
+                userAttentionFansEntity = GsonUtils.fromJson(result, UserAttentionFansEntity.class);
                 if (userAttentionFansEntity != null) {
                     if (userAttentionFansEntity.getCode().equals(SUCCESS_CODE)) {
                         attentionFansList.addAll(userAttentionFansEntity.getUserAttentionFansList());

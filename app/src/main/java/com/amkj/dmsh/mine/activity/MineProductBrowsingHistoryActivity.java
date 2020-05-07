@@ -24,9 +24,9 @@ import com.amkj.dmsh.netloadpage.NetLoadCallback;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.constant.RefreshState;
@@ -404,7 +404,7 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
                 if (smart_communal_refresh.getState().equals(RefreshState.Refreshing)) {
                     smart_communal_refresh.finishRefresh();
                 }
-                MineBrowsHistoryTimeShaftEntity mineBrowsHistoryTimeShaftEntity = new Gson().fromJson(result, MineBrowsHistoryTimeShaftEntity.class);
+                MineBrowsHistoryTimeShaftEntity mineBrowsHistoryTimeShaftEntity = GsonUtils.fromJson(result, MineBrowsHistoryTimeShaftEntity.class);
                 if (mineBrowsHistoryTimeShaftEntity != null
                         && SUCCESS_CODE.equals(mineBrowsHistoryTimeShaftEntity.getCode())
                         && mineBrowsHistoryTimeShaftEntity.getHistoryTimeShaftList() != null &&
@@ -449,8 +449,8 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
                     mineBrowsHistoryBeanList.clear();
                     parentBrowsHistoryBeanList.clear();
                 }
-                Gson gson = new Gson();
-                mineBrowsHistoryEntity = gson.fromJson(result, MineBrowsHistoryEntity.class);
+
+                mineBrowsHistoryEntity = GsonUtils.fromJson(result, MineBrowsHistoryEntity.class);
                 if (mineBrowsHistoryEntity == null ||
                         mineBrowsHistoryEntity.getMineBrowsHistoryList() == null ||
                         mineBrowsHistoryEntity.getMineBrowsHistoryList().size() < 1) {

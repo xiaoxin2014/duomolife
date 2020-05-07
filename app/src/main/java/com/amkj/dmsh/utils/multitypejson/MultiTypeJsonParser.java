@@ -1,5 +1,6 @@
 package com.amkj.dmsh.utils.multitypejson;
 
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
@@ -207,7 +208,7 @@ public class MultiTypeJsonParser<T> {
                     return null;
                 }
 
-                item = gson.fromJson(json, mGeneralJsonParser.typeClassMap.get(contentType));
+                item = GsonUtils.fromJson(json, mGeneralJsonParser.typeClassMap.get(contentType));
                 onTargetItemDeserialize(item, contentType);
                 return item;
             }
@@ -260,7 +261,7 @@ public class MultiTypeJsonParser<T> {
                     return null;
                 }
                 Object item;
-                item = gson.fromJson(json, multiTypeJsonParser.targetUpperLevelClass);
+                item = GsonUtils.fromJson(json, multiTypeJsonParser.targetUpperLevelClass);
                 onTargetUpperItemDeserialize(item, typeValue);
                 return item;
             }

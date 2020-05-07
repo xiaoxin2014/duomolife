@@ -22,9 +22,9 @@ import com.amkj.dmsh.mine.activity.ShopCarActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.OffsetLinearLayoutManager;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -194,8 +194,8 @@ public class DmlOptimizedSelActivity extends BaseActivity {
                         if (page == 1) {
                             dmlOptimizedSelList.clear();
                         }
-                        Gson gson = new Gson();
-                        optimizedSelEntity = gson.fromJson(result, DmlOptimizedSelEntity.class);
+
+                        optimizedSelEntity = GsonUtils.fromJson(result, DmlOptimizedSelEntity.class);
                         if (optimizedSelEntity != null) {
                             if (optimizedSelEntity.getCode().equals(SUCCESS_CODE)) {
                                 tv_header_titleAll.setText(getStrings(optimizedSelEntity.getTitle()));

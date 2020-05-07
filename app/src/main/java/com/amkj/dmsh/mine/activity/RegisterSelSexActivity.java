@@ -25,7 +25,7 @@ import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.ByteLimitWatcher;
 import com.amkj.dmsh.utils.KeyboardUtils;
 import com.amkj.dmsh.utils.TextWatchListener;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.HashMap;
@@ -160,8 +160,8 @@ public class RegisterSelSexActivity extends BaseActivity {
                     if (loadHud != null) {
                         loadHud.dismiss();
                     }
-                    Gson gson = new Gson();
-                    LoginDataEntity loginDataEntity = gson.fromJson(result, LoginDataEntity.class);
+
+                    LoginDataEntity loginDataEntity = GsonUtils.fromJson(result, LoginDataEntity.class);
                     if (loginDataEntity != null) {
                         if (loginDataEntity.getCode().equals(SUCCESS_CODE)) {
                             showToast( R.string.saveSuccess);

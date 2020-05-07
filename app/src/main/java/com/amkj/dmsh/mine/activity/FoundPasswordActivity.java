@@ -22,7 +22,7 @@ import com.amkj.dmsh.mine.bean.RegisterPhoneStatus;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -162,8 +162,8 @@ public class FoundPasswordActivity extends BaseActivity {
                             e.printStackTrace();
                         }
                         if (code.equals(SUCCESS_CODE)) {
-                            Gson gson = new Gson();
-                            RegisterPhoneStatus status = gson.fromJson(result, RegisterPhoneStatus.class);
+
+                            RegisterPhoneStatus status = GsonUtils.fromJson(result, RegisterPhoneStatus.class);
                             if (status != null && status.getRegisterFlag() == 1) {
                                 if (isConnectedByState(FoundPasswordActivity.this)) {
                                     //            请求验证码
@@ -231,8 +231,8 @@ public class FoundPasswordActivity extends BaseActivity {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                Gson gson = new Gson();
-                MinePassword minePassword = gson.fromJson(result, MinePassword.class);
+
+                MinePassword minePassword = GsonUtils.fromJson(result, MinePassword.class);
                 if (minePassword != null) {
                     if (minePassword.getCode().equals(SUCCESS_CODE)) {
                         showToast("密码重置成功");

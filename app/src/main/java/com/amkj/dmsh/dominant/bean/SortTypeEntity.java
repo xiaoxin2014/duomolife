@@ -1,6 +1,6 @@
 package com.amkj.dmsh.dominant.bean;
 
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 
 import java.util.Map;
 
@@ -26,7 +26,7 @@ public class SortTypeEntity {
 
     public static SortTypeEntity objectFromData(String str) {
 
-        return new Gson().fromJson(str, SortTypeEntity.class);
+        return GsonUtils.fromJson(str, SortTypeEntity.class);
     }
 
     public String getMsg() {

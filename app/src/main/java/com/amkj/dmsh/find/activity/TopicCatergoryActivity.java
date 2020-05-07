@@ -22,7 +22,7 @@ import com.amkj.dmsh.find.bean.TopicCaterGoryEntity.TopicCaterGoryBean;
 import com.amkj.dmsh.homepage.activity.AllSearchDetailsNewActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -112,7 +112,7 @@ public class TopicCatergoryActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 mCatergoryList.clear();
-                topicCaterGoryEntity = new Gson().fromJson(result, TopicCaterGoryEntity.class);
+                topicCaterGoryEntity = GsonUtils.fromJson(result, TopicCaterGoryEntity.class);
                 if (topicCaterGoryEntity != null) {
                     String code = topicCaterGoryEntity.getCode();
                     List<TopicCaterGoryBean> catergoryList = topicCaterGoryEntity.getCatergoryList();
@@ -146,7 +146,7 @@ public class TopicCatergoryActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 mTopicList.clear();
-                hotTopicEntity = new Gson().fromJson(result, HotTopicEntity.class);
+                hotTopicEntity = GsonUtils.fromJson(result, HotTopicEntity.class);
                 if (hotTopicEntity != null) {
                     String code = hotTopicEntity.getCode();
                     List<HotTopicBean> topicList = hotTopicEntity.getHotTopicList();

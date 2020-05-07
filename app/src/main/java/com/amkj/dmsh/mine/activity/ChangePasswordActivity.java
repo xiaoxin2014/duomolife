@@ -20,7 +20,7 @@ import com.amkj.dmsh.constant.PasswordEncrypt;
 import com.amkj.dmsh.mine.bean.MinePassword;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -127,8 +127,8 @@ public class ChangePasswordActivity extends BaseActivity{
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                Gson gson = new Gson();
-                MinePassword minePassword = gson.fromJson(result, MinePassword.class);
+
+                MinePassword minePassword = GsonUtils.fromJson(result, MinePassword.class);
                 if (minePassword != null) {
                     if (minePassword.getCode().equals(SUCCESS_CODE)) {
                         SharedPreferences loginStatus = getSharedPreferences("loginStatus", Context.MODE_PRIVATE);

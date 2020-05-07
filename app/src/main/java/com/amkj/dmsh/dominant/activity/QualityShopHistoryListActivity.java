@@ -32,11 +32,11 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.amkj.dmsh.utils.webformatdata.ShareDataBean;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -255,8 +255,8 @@ public class QualityShopHistoryListActivity extends BaseActivity {
                         if (page == 1) {
                             qualityBuyListBeanList.clear();
                         }
-                        Gson gson = new Gson();
-                        qualityBuyListEntity = gson.fromJson(result, QualityBuyListEntity.class);
+
+                        qualityBuyListEntity = GsonUtils.fromJson(result, QualityBuyListEntity.class);
                         if (qualityBuyListEntity != null) {
                             if (qualityBuyListEntity.getCode().equals(SUCCESS_CODE)) {
                                 qualityBuyListBeanList.addAll(qualityBuyListEntity.getQualityBuyListBeanList());
@@ -301,8 +301,8 @@ public class QualityShopHistoryListActivity extends BaseActivity {
                     @Override
                     public void onSuccess(String result) {
                         itemDescriptionList.clear();
-                        Gson gson = new Gson();
-                        ShopBuyDetailEntity shopDetailsEntity = gson.fromJson(result, ShopBuyDetailEntity.class);
+
+                        ShopBuyDetailEntity shopDetailsEntity = GsonUtils.fromJson(result, ShopBuyDetailEntity.class);
                         if (shopDetailsEntity != null) {
                             if (shopDetailsEntity.getCode().equals(SUCCESS_CODE)) {
                                 shopBuyDetailBean = shopDetailsEntity.getShopBuyDetailBean();

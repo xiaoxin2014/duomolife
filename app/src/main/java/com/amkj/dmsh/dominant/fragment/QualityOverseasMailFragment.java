@@ -27,12 +27,12 @@ import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.RemoveExistUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
@@ -163,8 +163,8 @@ public class QualityOverseasMailFragment extends BaseFragment {
                     typeDetails.clear();
                     removeExistUtils.clearData();
                 }
-                Gson gson = new Gson();
-                UserLikedProductEntity likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
+
+                UserLikedProductEntity likedProductEntity = GsonUtils.fromJson(result, UserLikedProductEntity.class);
                 if (likedProductEntity != null) {
                     if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
                         typeDetails.addAll(removeExistUtils.removeExistList(likedProductEntity.getGoodsList()));
@@ -203,8 +203,8 @@ public class QualityOverseasMailFragment extends BaseFragment {
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
                         qualityTypeProductAdapter.loadMoreComplete();
-                        Gson gson = new Gson();
-                        dmlThemeEntity = gson.fromJson(result, DMLThemeEntity.class);
+
+                        dmlThemeEntity = GsonUtils.fromJson(result, DMLThemeEntity.class);
                         if (dmlThemeEntity != null) {
                             if (dmlThemeEntity.getCode().equals(SUCCESS_CODE)) {
                                 if (themePage == 1) {
@@ -306,9 +306,9 @@ public class QualityOverseasMailFragment extends BaseFragment {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
-                Gson gson = new Gson();
+
                 adBeanList.clear();
-                CommunalADActivityEntity qualityAdLoop = gson.fromJson(result, CommunalADActivityEntity.class);
+                CommunalADActivityEntity qualityAdLoop = GsonUtils.fromJson(result, CommunalADActivityEntity.class);
                 if (qualityAdLoop != null) {
                     if (qualityAdLoop.getCode().equals(SUCCESS_CODE)) {
                         adBeanList.addAll(qualityAdLoop.getCommunalADActivityBeanList());

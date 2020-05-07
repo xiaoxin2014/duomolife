@@ -15,9 +15,9 @@ import com.amkj.dmsh.mine.bean.MesPushTypeEntity;
 import com.amkj.dmsh.mine.bean.MesPushTypeEntity.MesPushTypeBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
@@ -134,8 +134,8 @@ public class MessagePushTypeActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 loadHud.dismiss();
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         loadData();
@@ -170,8 +170,8 @@ public class MessagePushTypeActivity extends BaseActivity {
                     @Override
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
-                        Gson gson = new Gson();
-                        mesPushTypeEntity = gson.fromJson(result, MesPushTypeEntity.class);
+
+                        mesPushTypeEntity = GsonUtils.fromJson(result, MesPushTypeEntity.class);
                         if (mesPushTypeEntity != null) {
                             if (mesPushTypeEntity.getCode().equals(SUCCESS_CODE)) {
                                 mesPushTypeList.clear();

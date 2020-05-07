@@ -1,7 +1,7 @@
 package com.amkj.dmsh.mine.bean;
 
 import com.amkj.dmsh.base.BaseEntity;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -25,7 +25,7 @@ public class MesPushTypeEntity extends BaseEntity{
 
     public static MesPushTypeEntity objectFromData(String str) {
 
-        return new Gson().fromJson(str, MesPushTypeEntity.class);
+        return GsonUtils.fromJson(str, MesPushTypeEntity.class);
     }
 
     public List<MesPushTypeBean> getMesPushTypeBeanList() {
@@ -51,7 +51,7 @@ public class MesPushTypeEntity extends BaseEntity{
 
         public static MesPushTypeBean objectFromData(String str) {
 
-            return new Gson().fromJson(str, MesPushTypeBean.class);
+            return GsonUtils.fromJson(str, MesPushTypeBean.class);
         }
 
         public int getIsOpen() {

@@ -1,7 +1,7 @@
 package com.amkj.dmsh.find.bean;
 
 import com.amkj.dmsh.release.bean.RelevanceProEntity.RelevanceProBean;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -28,7 +28,7 @@ public class RelevanceTagInfoEntity {
 
     public static RelevanceTagInfoEntity objectFromData(String str) {
 
-        return new Gson().fromJson(str, RelevanceTagInfoEntity.class);
+        return GsonUtils.fromJson(str, RelevanceTagInfoEntity.class);
     }
 
     public RelevanceTagInfoBean getRelevanceTagInfoBean() {
@@ -70,7 +70,7 @@ public class RelevanceTagInfoEntity {
 
         public static RelevanceTagInfoBean objectFromData(String str) {
 
-            return new Gson().fromJson(str, RelevanceTagInfoBean.class);
+            return GsonUtils.fromJson(str, RelevanceTagInfoBean.class);
         }
 
         public int getDocCount() {
@@ -126,7 +126,7 @@ public class RelevanceTagInfoEntity {
 
             public static TagBean objectFromData(String str) {
 
-                return new Gson().fromJson(str, TagBean.class);
+                return GsonUtils.fromJson(str, TagBean.class);
             }
 
             public int getTotal() {
@@ -211,7 +211,7 @@ public class RelevanceTagInfoEntity {
 
             public static TopTagListBean objectFromData(String str) {
 
-                return new Gson().fromJson(str, TopTagListBean.class);
+                return GsonUtils.fromJson(str, TopTagListBean.class);
             }
 
             public int getTotal() {

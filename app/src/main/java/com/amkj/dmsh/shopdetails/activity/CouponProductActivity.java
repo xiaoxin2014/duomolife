@@ -15,8 +15,8 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
-import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
@@ -105,7 +105,7 @@ public class CouponProductActivity extends BaseActivity {
                     @Override
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
-                        likedProductEntity = new Gson().fromJson(result, UserLikedProductEntity.class);
+                        likedProductEntity = GsonUtils.fromJson(result, UserLikedProductEntity.class);
                         if (page == 1) {
                             couponProductList.clear();
                         }

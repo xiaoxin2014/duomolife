@@ -36,9 +36,9 @@ import com.amkj.dmsh.shopdetails.dialog.AlertDialogWheel;
 import com.amkj.dmsh.utils.CountDownTimer;
 import com.amkj.dmsh.utils.KeyboardUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.MainButtonView;
-import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.text.SimpleDateFormat;
@@ -255,7 +255,7 @@ public class DoMoRefundDetailActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
-                refundDetailEntity = new Gson().fromJson(result, RefundNewDetailEntity.class);
+                refundDetailEntity = GsonUtils.fromJson(result, RefundNewDetailEntity.class);
                 if (refundDetailEntity != null) {
                     if (refundDetailEntity.getCode().equals(SUCCESS_CODE)) {
                         mainOrderBean = refundDetailEntity.getRefundDetailBean();
@@ -284,8 +284,8 @@ public class DoMoRefundDetailActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_INDENT_LOGISTIC_COM, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                RefundLogisticEntity refundLogisticEntity = gson.fromJson(result, RefundLogisticEntity.class);
+
+                RefundLogisticEntity refundLogisticEntity = GsonUtils.fromJson(result, RefundLogisticEntity.class);
                 if (refundLogisticEntity != null) {
                     if (refundLogisticEntity.getCode().equals(SUCCESS_CODE)) {
                         List<String> expressCompanys = refundLogisticEntity.getExpressCompanys();
@@ -528,7 +528,7 @@ public class DoMoRefundDetailActivity extends BaseActivity {
                 }
                 intent.putExtra("orderNo", mainOrderBean.getOrderNo());
                 intent.putExtra("refundNo", mainOrderBean.getRefundNo());
-                intent.putExtra("goods", new Gson().toJson(goodsBeanList));
+                intent.putExtra("goods", GsonUtils.toJson(goodsBeanList));
                 startActivity(intent);
                 break;
             //提交物流信息
@@ -566,8 +566,8 @@ public class DoMoRefundDetailActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 dismissLoadhud(getActivity());
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast(String.format(getResources().getString(R.string.doSuccess), "提交"));
@@ -597,8 +597,8 @@ public class DoMoRefundDetailActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 dismissLoadhud(getActivity());
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast(String.format(getResources().getString(R.string.doSuccess), "撤销"));

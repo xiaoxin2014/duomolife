@@ -33,6 +33,7 @@ import com.amkj.dmsh.shopdetails.activity.SearchCouponGoodsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.RemoveExistUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.flycoTablayout.CommonTabLayout;
 import com.amkj.dmsh.views.flycoTablayout.listener.CustomTabEntity;
@@ -40,7 +41,6 @@ import com.amkj.dmsh.views.flycoTablayout.listener.OnTabSelectListener;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -426,9 +426,9 @@ public class QualityTypeProductActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
-                Gson gson = new Gson();
+
                 adBeanList.clear();
-                CommunalADActivityEntity qualityAdLoop = gson.fromJson(result, CommunalADActivityEntity.class);
+                CommunalADActivityEntity qualityAdLoop = GsonUtils.fromJson(result, CommunalADActivityEntity.class);
                 if (qualityAdLoop != null) {
                     if (qualityAdLoop.getCode().equals(SUCCESS_CODE)) {
                         adBeanList.addAll(qualityAdLoop.getCommunalADActivityBeanList());
@@ -486,8 +486,8 @@ public class QualityTypeProductActivity extends BaseActivity {
                         @Override
                         public void onSuccess(String result) {
                             sortTypeList.clear();
-                            Gson gson = new Gson();
-                            SortTypeEntity sortTypeEntity = gson.fromJson(result, SortTypeEntity.class);
+
+                            SortTypeEntity sortTypeEntity = GsonUtils.fromJson(result, SortTypeEntity.class);
                             if (sortTypeEntity != null) {
                                 if (sortTypeEntity.getCode().equals(SUCCESS_CODE)) {
                                     if (sortTypeEntity.getCategoryOrderType() != null) {
@@ -539,9 +539,9 @@ public class QualityTypeProductActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 productTypeList.clear();
-                Gson gson = new Gson();
+
                 if (!TextUtils.isEmpty(result)) {
-                    QualityTypeEntity qualityTypeEntity = gson.fromJson(result, QualityTypeEntity.class);
+                    QualityTypeEntity qualityTypeEntity = GsonUtils.fromJson(result, QualityTypeEntity.class);
                     if (qualityTypeEntity != null) {
                         if (SUCCESS_CODE.equals(qualityTypeEntity.getCode())) {
                             productTypeList.addAll(qualityTypeEntity.getQualityTypeBeanList());
@@ -600,8 +600,8 @@ public class QualityTypeProductActivity extends BaseActivity {
                             removeExistUtils.clearData();
                         }
                         qualityTypeProductAdapter.loadMoreComplete();
-                        Gson gson = new Gson();
-                        likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
+
+                        likedProductEntity = GsonUtils.fromJson(result, UserLikedProductEntity.class);
                         if (likedProductEntity != null) {
                             if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
                                 typeDetails.addAll(removeExistUtils.removeExistList(likedProductEntity.getGoodsList()));
@@ -664,8 +664,8 @@ public class QualityTypeProductActivity extends BaseActivity {
                     @Override
                     public void onSuccess(String result) {
                         childTypeList.clear();
-                        Gson gson = new Gson();
-                        QualityTypeEntity qualityTypeEntity = gson.fromJson(result, QualityTypeEntity.class);
+
+                        QualityTypeEntity qualityTypeEntity = GsonUtils.fromJson(result, QualityTypeEntity.class);
                         if (qualityTypeEntity != null) {
                             if (qualityTypeEntity.getCode().equals(SUCCESS_CODE)) {
                                 if (qualityTypeEntity.getQualityTypeBeanList() != null) {

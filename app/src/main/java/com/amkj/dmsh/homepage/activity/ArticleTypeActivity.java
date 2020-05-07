@@ -13,8 +13,8 @@ import com.amkj.dmsh.bean.CategoryTypeEntity.CategoryTypeBean;
 import com.amkj.dmsh.homepage.adapter.HomeArticleTypeAdapter;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,8 +70,8 @@ public class ArticleTypeActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), H_CATEGORY_LIST, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                mCategoryTypeEntity = gson.fromJson(result, CategoryTypeEntity.class);
+
+                mCategoryTypeEntity = GsonUtils.fromJson(result, CategoryTypeEntity.class);
                 if (mCategoryTypeEntity != null) {
                     List<CategoryTypeBean> categoryTypeList = mCategoryTypeEntity.getCategoryTypeList();
                     if (categoryTypeList != null && categoryTypeList.size() > 0) {

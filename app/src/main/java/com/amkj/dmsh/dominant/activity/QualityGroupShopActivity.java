@@ -22,11 +22,11 @@ import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.views.arclayout.ArcLayout;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
@@ -136,8 +136,8 @@ public class QualityGroupShopActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, GROUP_SHOP_LOOP_INDEX, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                CommunalADActivityEntity adActivityEntity = gson.fromJson(result, CommunalADActivityEntity.class);
+
+                CommunalADActivityEntity adActivityEntity = GsonUtils.fromJson(result, CommunalADActivityEntity.class);
                 if (adActivityEntity != null) {
                     if (adActivityEntity.getCode().equals(SUCCESS_CODE)) {
                         setGpLoopAD(adActivityEntity);
@@ -189,7 +189,7 @@ public class QualityGroupShopActivity extends BaseActivity {
                         if (page == 1) {
                             qualityGroupBeanList.clear();
                         }
-                        qualityGroupEntity = new Gson().fromJson(result, QualityGroupEntity.class);
+                        qualityGroupEntity = GsonUtils.fromJson(result, QualityGroupEntity.class);
                         if (qualityGroupEntity != null) {
                             if (qualityGroupEntity.getCode().equals(SUCCESS_CODE)) {
                                 for (int i = 0; i < qualityGroupEntity.getQualityGroupBeanList().size(); i++) {

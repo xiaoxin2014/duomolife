@@ -64,10 +64,10 @@ import com.amkj.dmsh.utils.KeyboardUtils;
 import com.amkj.dmsh.utils.LifecycleHandler;
 import com.amkj.dmsh.utils.TextWatchListener;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.RectAddAndSubWriteView;
 import com.amkj.dmsh.views.bottomdialog.SkuDialog;
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.tencent.bugly.crashreport.CrashReport;
 
@@ -201,20 +201,20 @@ public class DirectIndentWriteActivity extends BaseActivity {
         header_shared.setVisibility(View.INVISIBLE);
         Intent intent = getIntent();
         try {
-            Gson gson = new Gson();
+
             String goodsJson = intent.getStringExtra("goods");
             String combineGoodsJson = intent.getStringExtra("combineGoods");
             String gpShopInfo = intent.getStringExtra("gpShopInfo");
             if (!TextUtils.isEmpty(goodsJson)) {
-                passGoods = gson.fromJson(goodsJson, new TypeToken<List<CartInfoBean>>() {
+                passGoods = GsonUtils.fromJson(goodsJson, new TypeToken<List<CartInfoBean>>() {
                 }.getType());
             }
             if (!TextUtils.isEmpty(combineGoodsJson)) {
-                combineGoods = gson.fromJson(combineGoodsJson, new TypeToken<List<CombineGoodsBean>>() {
+                combineGoods = GsonUtils.fromJson(combineGoodsJson, new TypeToken<List<CombineGoodsBean>>() {
                 }.getType());
             }
             if (!TextUtils.isEmpty(gpShopInfo)) {
-                groupShopDetailsBean = gson.fromJson(gpShopInfo, GroupShopDetailsBean.class);
+                groupShopDetailsBean = GsonUtils.fromJson(gpShopInfo, GroupShopDetailsBean.class);
             }
             orderNo = intent.getStringExtra("orderNo");
         } catch (Exception e) {
@@ -387,10 +387,10 @@ public class DirectIndentWriteActivity extends BaseActivity {
                 params.put("gpRecordId", groupShopDetailsBean.getGpRecordId());
             }
             if (discountBeanList != null && discountBeanList.size() > 0) {
-                params.put("goods", new Gson().toJson(discountBeanList));
+                params.put("goods", GsonUtils.toJson(discountBeanList));
             }
             if (combineGoods != null && combineGoods.size() > 0) {
-                params.put("combineGoods", new Gson().toJson(combineGoods));
+                params.put("combineGoods", GsonUtils.toJson(combineGoods));
             }
             NetLoadUtils.getNetInstance().loadNetDataPost(this, updatePriceInfo ? Url.INDENT_DISCOUNTS_UPDATE_INFO : Url.INDENT_DISCOUNTS_NEW_INFO, params, new NetLoadListenerHelper() {
                 @Override
@@ -399,7 +399,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                         loadHud.dismiss();
                     }
                     productInfoList.clear();
-                    identWriteEntity = new Gson().fromJson(result, IndentWriteEntity.class);
+                    identWriteEntity = GsonUtils.fromJson(result, IndentWriteEntity.class);
                     if (identWriteEntity != null) {
                         if (identWriteEntity.getCode().equals(SUCCESS_CODE)) {
                             indentWriteBean = identWriteEntity.getIndentWriteBean();
@@ -650,8 +650,8 @@ public class DirectIndentWriteActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, ADDRESS_LIST, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                AddressListEntity addressListEntity = gson.fromJson(result, AddressListEntity.class);
+
+                AddressListEntity addressListEntity = GsonUtils.fromJson(result, AddressListEntity.class);
                 if (addressListEntity != null) {
                     if (addressListEntity.getCode().equals(SUCCESS_CODE)) {
                         List<AddressInfoBean> addressAllBeanList = addressListEntity.getAddressAllBeanList();
@@ -702,7 +702,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                     loadHud.dismiss();
                 }
                 productInfoList.clear();
-                identWriteEntity = new Gson().fromJson(result, IndentWriteEntity.class);
+                identWriteEntity = GsonUtils.fromJson(result, IndentWriteEntity.class);
                 if (identWriteEntity != null && identWriteEntity.getIndentWriteBean() != null) {
                     indentWriteBean = identWriteEntity.getIndentWriteBean();
                     List<ProductsBean> products = indentWriteBean.getProducts();
@@ -786,7 +786,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
         shopCarGoodsSkuTransmit.setSaleSkuId(groupShopDetailsBean.getGpSkuId());
         shopCarGoodsSkuTransmit.setCount(1);
         settlementGoods.add(shopCarGoodsSkuTransmit);
-        params.put("goods", new Gson().toJson(settlementGoods));
+        params.put("goods", GsonUtils.toJson(settlementGoods));
         //用户留言
         if (!TextUtils.isEmpty(message)) {
             params.put("remark", message);
@@ -846,12 +846,12 @@ public class DirectIndentWriteActivity extends BaseActivity {
         params.put("userAddressId", addressId);
         //普通商品
         if (discountBeanList != null && discountBeanList.size() > 0) {
-            params.put("goods", new Gson().toJson(discountBeanList));
+            params.put("goods", GsonUtils.toJson(discountBeanList));
         }
 
         //组合商品
         if (combineGoods != null && combineGoods.size() > 0) {
-            params.put("combineGoods", new Gson().toJson(combineGoods));
+            params.put("combineGoods", GsonUtils.toJson(combineGoods));
         }
 
         //用户留言
@@ -935,9 +935,9 @@ public class DirectIndentWriteActivity extends BaseActivity {
      */
     private void dealingIndentPayResult(String result) {
         dismissLoadhud(this);
-        Gson gson = new Gson();
+
         if (payWay.equals(PAY_WX_PAY)) {
-            qualityWeChatIndent = gson.fromJson(result, QualityCreateWeChatPayIndentBean.class);
+            qualityWeChatIndent = GsonUtils.fromJson(result, QualityCreateWeChatPayIndentBean.class);
             if (qualityWeChatIndent != null) {
                 if (qualityWeChatIndent.getCode().equals(SUCCESS_CODE)) {
                     //返回成功，调起微信支付接口
@@ -955,7 +955,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                 }
             }
         } else if (payWay.equals(PAY_ALI_PAY)) {
-            qualityAliPayIndent = gson.fromJson(result, QualityCreateAliPayIndentBean.class);
+            qualityAliPayIndent = GsonUtils.fromJson(result, QualityCreateAliPayIndentBean.class);
             if (qualityAliPayIndent != null) {
                 if (qualityAliPayIndent.getCode().equals(SUCCESS_CODE)) {
                     //返回成功，调起支付宝支付接口
@@ -973,7 +973,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                 }
             }
         } else if (payWay.equals(PAY_UNION_PAY)) {
-            qualityUnionIndent = gson.fromJson(result, QualityCreateUnionPayIndentEntity.class);
+            qualityUnionIndent = GsonUtils.fromJson(result, QualityCreateUnionPayIndentEntity.class);
             if (qualityUnionIndent != null) {
                 if (qualityUnionIndent.getCode().equals(SUCCESS_CODE)) {
                     //返回成功，调起银联支付接口

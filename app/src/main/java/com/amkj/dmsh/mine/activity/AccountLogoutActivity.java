@@ -29,9 +29,9 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
@@ -145,7 +145,7 @@ public class AccountLogoutActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
-                AccountLogoutReasonEntity accountLogoutReasonEntity = new Gson().fromJson(result, AccountLogoutReasonEntity.class);
+                AccountLogoutReasonEntity accountLogoutReasonEntity = GsonUtils.fromJson(result, AccountLogoutReasonEntity.class);
                 if (accountLogoutReasonEntity != null &&
                         SUCCESS_CODE.equals(accountLogoutReasonEntity.getCode()) &&
                         accountLogoutReasonEntity.getLogoutReasonList() != null &&
@@ -191,7 +191,7 @@ public class AccountLogoutActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
-                WebDataCommunalEntity webDataCommunalEntity = new Gson().fromJson(result, WebDataCommunalEntity.class);
+                WebDataCommunalEntity webDataCommunalEntity = GsonUtils.fromJson(result, WebDataCommunalEntity.class);
                 if (webDataCommunalEntity != null &&
                         SUCCESS_CODE.equals(webDataCommunalEntity.getCode()) &&
                         webDataCommunalEntity.getWebDataCommunalList() != null &&
@@ -225,7 +225,7 @@ public class AccountLogoutActivity extends BaseActivity {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                LogoutAccountResultEntity logoutAccountResultEntity = new Gson().fromJson(result, LogoutAccountResultEntity.class);
+                LogoutAccountResultEntity logoutAccountResultEntity = GsonUtils.fromJson(result, LogoutAccountResultEntity.class);
                 if (logoutAccountResultEntity != null) {
                     setLogoutResult(logoutAccountResultEntity);
                 } else {

@@ -16,9 +16,9 @@ import com.amkj.dmsh.homepage.bean.IntegralLotteryAwardHistoryEntity;
 import com.amkj.dmsh.homepage.bean.IntegralLotteryEntity.PreviousInfoBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 
 import java.util.ArrayList;
@@ -151,8 +151,8 @@ public class IntegralLotteryAwardHistoryActivity extends BaseActivity {
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
                         lotteryInfoListBeanList.clear();
-                        Gson gson = new Gson();
-                        integralLotteryAwardEntity = gson.fromJson(result, IntegralLotteryAwardHistoryEntity.class);
+
+                        integralLotteryAwardEntity = GsonUtils.fromJson(result, IntegralLotteryAwardHistoryEntity.class);
                         if (integralLotteryAwardEntity != null) {
                             if (SUCCESS_CODE.equals(integralLotteryAwardEntity.getCode())) {
                                 lotteryInfoListBeanList.addAll(integralLotteryAwardEntity.getOverLotteryInfoList());

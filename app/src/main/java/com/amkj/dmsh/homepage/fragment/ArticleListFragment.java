@@ -19,8 +19,8 @@ import com.amkj.dmsh.homepage.bean.CommunalArticleEntity;
 import com.amkj.dmsh.homepage.bean.CommunalArticleEntity.CommunalArticleBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
@@ -209,8 +209,8 @@ public class ArticleListFragment extends BaseFragment {
                     public void onSuccess(String result) {
                         mSmartLayout.finishRefresh();
                         loadHud.dismiss();
-                        Gson gson = new Gson();
-                        categoryDocBean = gson.fromJson(result, CommunalArticleEntity.class);
+
+                        categoryDocBean = GsonUtils.fromJson(result, CommunalArticleEntity.class);
                         if (categoryDocBean != null) {
                             List<CommunalArticleBean> communalArticleList = categoryDocBean.getCommunalArticleList();
                             if (communalArticleList != null && communalArticleList.size() > 0) {

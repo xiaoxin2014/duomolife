@@ -24,7 +24,7 @@ import com.amkj.dmsh.mine.bean.RegisterPhoneStatus;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 
@@ -195,7 +195,7 @@ public class BindingMobileActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, CHECK_PHONE_IS_REG, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                RegisterPhoneStatus registerPhoneStatus = new Gson().fromJson(result, RegisterPhoneStatus.class);
+                RegisterPhoneStatus registerPhoneStatus = GsonUtils.fromJson(result, RegisterPhoneStatus.class);
                 if (registerPhoneStatus != null) {
                     String code = registerPhoneStatus.getCode();
                     String msg = registerPhoneStatus.getMsg();
@@ -234,8 +234,8 @@ public class BindingMobileActivity extends BaseActivity {
                     @Override
                     public void onSuccess(String result) {
                         loadHud.dismiss();
-                        Gson gson = new Gson();
-                        RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+
+                        RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                         if (requestStatus != null) {
                             if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                                 RequestStatus.Result resultData = requestStatus.getResult();
@@ -281,8 +281,8 @@ public class BindingMobileActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 dismissLoadhud(getActivity());
-                Gson gson = new Gson();
-                LoginDataEntity loginDataEntity = gson.fromJson(result, LoginDataEntity.class);
+
+                LoginDataEntity loginDataEntity = GsonUtils.fromJson(result, LoginDataEntity.class);
                 if (loginDataEntity != null) {
                     String code = loginDataEntity.getCode();
                     LoginDataEntity.LoginDataBean loginDataBean = loginDataEntity.getLoginDataBean();

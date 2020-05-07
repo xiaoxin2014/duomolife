@@ -49,9 +49,9 @@ import com.amkj.dmsh.utils.SharedPreUtils;
 import com.amkj.dmsh.utils.WindowUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -353,7 +353,7 @@ public class MainButtonView extends LinearLayout {
             @Override
             public void onSuccess(String result) {
                 dismissLoadhud(context);
-                RequestStatus requestStatus = new Gson().fromJson(result, RequestStatus.class);
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                     showToastRequestMsg(requestStatus);
                     EventBus.getDefault().post(new EventMessage(ConstantVariable.UPDATE_INDENT_LIST, simpleName));
@@ -382,7 +382,7 @@ public class MainButtonView extends LinearLayout {
             @Override
             public void onSuccess(String result) {
                 dismissLoadhud(context);
-                RequestStatus requestStatus = new Gson().fromJson(result, RequestStatus.class);
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 boolean isOpen = requestStatus.isOpen();
                 String imgUrl = requestStatus.getImgUrl();
                 if (isOpen && !TextUtils.isEmpty(imgUrl)) {
@@ -438,7 +438,7 @@ public class MainButtonView extends LinearLayout {
             @Override
             public void onSuccess(String result) {
                 dismissLoadhud(context);
-                Map map = new Gson().fromJson(result, Map.class);
+                Map map = GsonUtils.fromJson(result, Map.class);
                 if (mAlertDialogGoPay == null) {
                     mAlertDialogGoPay = new AlertDialogGoPay(context, map.get("result"));
                 }
@@ -462,7 +462,7 @@ public class MainButtonView extends LinearLayout {
             public void onSuccess(String result) {
                 dismissLoadhud(context);
                 Intent intent1 = new Intent();
-                RefundProductsEntity refundProductsEntity = new Gson().fromJson(result, RefundProductsEntity.class);
+                RefundProductsEntity refundProductsEntity = GsonUtils.fromJson(result, RefundProductsEntity.class);
                 if (refundProductsEntity != null) {
                     String code = refundProductsEntity.getCode();
                     String msg = refundProductsEntity.getMsg();
@@ -487,7 +487,7 @@ public class MainButtonView extends LinearLayout {
                             }
 
                             intent1.putExtra("orderNo", mainOrderBean.getOrderNo());
-                            intent1.putExtra("goods", new Gson().toJson(refundProducts));
+                            intent1.putExtra("goods", GsonUtils.toJson(refundProducts));
                             context.startActivity(intent1);
                         }
                     } else {

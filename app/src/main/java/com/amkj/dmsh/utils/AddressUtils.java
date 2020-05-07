@@ -7,7 +7,7 @@ import com.amkj.dmsh.address.bean.AddressInfo;
 import com.amkj.dmsh.address.bean.CityModel;
 import com.amkj.dmsh.address.bean.DistrictModel;
 import com.amkj.dmsh.address.bean.ProvinceModel;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
@@ -132,8 +132,8 @@ public class AddressUtils {
      */
     private AddressInfo getAddressInfoBean(String addressData) {
         if(!TextUtils.isEmpty(addressData)){
-            Gson gson = new Gson();
-            return gson.fromJson(addressData, AddressInfo.class);
+
+            return GsonUtils.fromJson(addressData, AddressInfo.class);
         }
         return null;
     }
@@ -147,8 +147,8 @@ public class AddressUtils {
         try {
             AssetManager asset = mAppContext.getAssets();
             input = asset.open("area.json");
-            Gson gson = new Gson();
-            addressInfo = gson.fromJson(new InputStreamReader(input), AddressInfo.class);
+
+            addressInfo = GsonUtils.fromJson(new InputStreamReader(input), AddressInfo.class);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JsonSyntaxException e) {

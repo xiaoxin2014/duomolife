@@ -15,7 +15,7 @@ import com.amkj.dmsh.homepage.bean.ScoreGoodsEntity;
 import com.amkj.dmsh.homepage.bean.ScoreGoodsEntity.ScoreGoodsBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.luck.picture.lib.decoration.RecycleViewDivider;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
@@ -106,7 +106,7 @@ public class IndentScoreListActivity extends BaseActivity {
             public void onSuccess(String result) {
                 mSmartLayout.finishRefresh();
                 mGoodsList.clear();
-                mScoreGoodsEntity = new Gson().fromJson(result, ScoreGoodsEntity.class);
+                mScoreGoodsEntity = GsonUtils.fromJson(result, ScoreGoodsEntity.class);
                 if (mScoreGoodsEntity != null) {
                     mScoreGoodsAdapter.setRewardReminder(mScoreGoodsEntity.getMaxRewardTip());
                     List<ScoreGoodsBean> goodsList = mScoreGoodsEntity.getGoodsList();

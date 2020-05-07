@@ -17,9 +17,9 @@ import com.amkj.dmsh.homepage.bean.InvitationDetailEntity;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
@@ -34,7 +34,6 @@ import butterknife.BindView;
 import static android.app.Activity.RESULT_OK;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getNumCount;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -180,8 +179,8 @@ public class CollectInvitationFragment extends BaseFragment {
             @Override
             public void onSuccess(String result) {
                 loadHud.dismiss();
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         tv_collect.setSelected(!tv_collect.isSelected());
@@ -244,8 +243,8 @@ public class CollectInvitationFragment extends BaseFragment {
                 if (page == 1) {
                     invitationDetailList.clear();
                 }
-                Gson gson = new Gson();
-                invitationDetailEntity = gson.fromJson(result, InvitationDetailEntity.class);
+
+                invitationDetailEntity = GsonUtils.fromJson(result, InvitationDetailEntity.class);
                 if (invitationDetailEntity != null) {
                     if (invitationDetailEntity.getCode().equals(SUCCESS_CODE)) {
                         invitationDetailList.addAll(invitationDetailEntity.getInvitationSearchList());

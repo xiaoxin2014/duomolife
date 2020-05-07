@@ -18,11 +18,11 @@ import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
-import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
@@ -96,8 +96,8 @@ public class QualityTypeHotSaleProFragment extends BaseFragment {
                     @Override
                     public void onSuccess(String result) {
                         adBeanList.clear();
-                        Gson gson = new Gson();
-                        CommunalADActivityEntity qualityAdLoop = gson.fromJson(result, CommunalADActivityEntity.class);
+
+                        CommunalADActivityEntity qualityAdLoop = GsonUtils.fromJson(result, CommunalADActivityEntity.class);
                         if (qualityAdLoop != null) {
                             if (qualityAdLoop.getCode().equals(SUCCESS_CODE)) {
                                 adBeanList.addAll(qualityAdLoop.getCommunalADActivityBeanList());
@@ -141,8 +141,8 @@ public class QualityTypeHotSaleProFragment extends BaseFragment {
                     @Override
                     public void onSuccess(String result) {
                         smart_refresh_hot_sale.finishRefresh();
-                        Gson gson = new Gson();
-                        qualityHotSaleShaftEntity = gson.fromJson(result, QualityHotSaleShaftEntity.class);
+
+                        qualityHotSaleShaftEntity = GsonUtils.fromJson(result, QualityHotSaleShaftEntity.class);
                         if (qualityHotSaleShaftEntity != null) {
                             if (qualityHotSaleShaftEntity.getCode().equals(SUCCESS_CODE)) {
                                 setHotSaleShaftData(qualityHotSaleShaftEntity.getHotSaleShaft());

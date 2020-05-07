@@ -17,7 +17,7 @@ import com.amkj.dmsh.homepage.bean.TimeShowShaftEntity;
 import com.amkj.dmsh.homepage.bean.TimeShowShaftEntity.TimeShowShaftBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.gyf.barlibrary.ImmersionBar;
 
 import java.util.ArrayList;
@@ -95,8 +95,8 @@ public class TimeShowNewFragment extends BaseFragment {
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), TIME_SHOW_SHAFT, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                mTimeShowEntity = gson.fromJson(result, TimeShowShaftEntity.class);
+
+                mTimeShowEntity = GsonUtils.fromJson(result, TimeShowShaftEntity.class);
                 List<TimeShowShaftBean> timeShowShaftList = mTimeShowEntity.getTimeShowShaftList();
                 if (mTimeShowEntity != null) {
                     if (timeShowShaftList != null && timeShowShaftList.size() > 0) {

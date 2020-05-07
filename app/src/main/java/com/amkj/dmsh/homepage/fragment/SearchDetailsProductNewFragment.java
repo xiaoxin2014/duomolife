@@ -11,8 +11,8 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -93,8 +93,8 @@ public class SearchDetailsProductNewFragment extends BaseSearchDetailFragment {
                             proRecommendList.clear();
                             removeExistUtils.clearData();
                         }
-                        Gson gson = new Gson();
-                        allSearchEntity = gson.fromJson(result, AllSearchEntity.class);
+
+                        allSearchEntity = GsonUtils.fromJson(result, AllSearchEntity.class);
                         if (allSearchEntity != null && allSearchEntity.getSearchBean() != null) {
                             searchBean = allSearchEntity.getSearchBean();
                             setWordData(searchBean.getWatchword());
@@ -141,8 +141,8 @@ public class SearchDetailsProductNewFragment extends BaseSearchDetailFragment {
                 public void onSuccess(String result) {
                     adapterProduct.loadMoreEnd();
                     proRecommendList.clear();
-                    Gson gson = new Gson();
-                    UserLikedProductEntity likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
+
+                    UserLikedProductEntity likedProductEntity = GsonUtils.fromJson(result, UserLikedProductEntity.class);
                     if (likedProductEntity != null) {
                         if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
                             if (likedProductEntity.getGoodsList().size() > 0) {

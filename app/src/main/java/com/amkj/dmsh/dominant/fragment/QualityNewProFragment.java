@@ -27,6 +27,7 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.CustomPopWindow;
 import com.amkj.dmsh.views.flycoTablayout.CommonTabLayout;
@@ -35,7 +36,6 @@ import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
@@ -204,9 +204,9 @@ public class QualityNewProFragment extends BaseFragment {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
-                Gson gson = new Gson();
+
                 adBeanList.clear();
-                CommunalADActivityEntity qualityAdLoop = gson.fromJson(result, CommunalADActivityEntity.class);
+                CommunalADActivityEntity qualityAdLoop = GsonUtils.fromJson(result, CommunalADActivityEntity.class);
                 if (qualityAdLoop != null) {
                     if (qualityAdLoop.getCode().equals(SUCCESS_CODE)) {
                         adBeanList.addAll(qualityAdLoop.getCommunalADActivityBeanList());
@@ -245,8 +245,8 @@ public class QualityNewProFragment extends BaseFragment {
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Q_NEW_PRO_TIME_SHAFT, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                QNewProTimeShaftEntity proTimeShaftEntity = gson.fromJson(result, QNewProTimeShaftEntity.class);
+
+                QNewProTimeShaftEntity proTimeShaftEntity = GsonUtils.fromJson(result, QNewProTimeShaftEntity.class);
                 if (proTimeShaftEntity != null) {
                     if (proTimeShaftEntity.getCode().equals(SUCCESS_CODE)) {
                         timeShaftList.clear();
@@ -293,8 +293,8 @@ public class QualityNewProFragment extends BaseFragment {
                         if (page == 1) {
                             newProList.clear();
                         }
-                        Gson gson = new Gson();
-                        likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
+
+                        likedProductEntity = GsonUtils.fromJson(result, UserLikedProductEntity.class);
                         if (likedProductEntity != null) {
                             if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
                                 newProList.addAll(likedProductEntity.getGoodsList());

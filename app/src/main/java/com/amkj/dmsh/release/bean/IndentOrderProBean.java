@@ -1,6 +1,6 @@
 package com.amkj.dmsh.release.bean;
 
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -35,7 +35,7 @@ public class IndentOrderProBean {
 
     public static IndentOrderProBean objectFromData(String str) {
 
-        return new Gson().fromJson(str, IndentOrderProBean.class);
+        return GsonUtils.fromJson(str, IndentOrderProBean.class);
     }
 
     public String getMsg() {
@@ -98,7 +98,7 @@ public class IndentOrderProBean {
 
         public static FindTopicBean objectFromData(String str) {
 
-            return new Gson().fromJson(str, FindTopicBean.class);
+            return GsonUtils.fromJson(str, FindTopicBean.class);
         }
 
         public int getId() {
@@ -142,7 +142,7 @@ public class IndentOrderProBean {
         private String title;
 
         public static ProductsBean objectFromData(String str) {
-            return new Gson().fromJson(str, ProductsBean.class);
+            return GsonUtils.fromJson(str, ProductsBean.class);
         }
 
         public int getProductId() {

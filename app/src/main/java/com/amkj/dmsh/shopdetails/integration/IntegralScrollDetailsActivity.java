@@ -48,6 +48,7 @@ import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.user.bean.UserPagerInfoEntity;
 import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.amkj.dmsh.views.RectAddAndSubViewCommunal;
 import com.amkj.dmsh.views.bottomdialog.SimpleSkuDialog;
@@ -59,7 +60,6 @@ import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.android.flexbox.FlexboxLayout;
-import com.google.gson.Gson;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -286,8 +286,8 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 smart_integral_details.finishRefresh();
-                Gson gson = new Gson();
-                productInfoEntity = gson.fromJson(result, IntegralProductInfoEntity.class);
+
+                productInfoEntity = GsonUtils.fromJson(result, IntegralProductInfoEntity.class);
                 if (productInfoEntity != null) {
                     if (productInfoEntity.getCode().equals(SUCCESS_CODE)) {
                         productInfoBean = productInfoEntity.getIntegralProductInfoBean();
@@ -323,8 +323,8 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 ll_product_comment.setVisibility(View.GONE);
-                Gson gson = new Gson();
-                GoodsCommentEntity goodsCommentEntity = gson.fromJson(result, GoodsCommentEntity.class);
+
+                GoodsCommentEntity goodsCommentEntity = GsonUtils.fromJson(result, GoodsCommentEntity.class);
                 if (goodsCommentEntity != null) {
                     if (goodsCommentEntity.getCode().equals(SUCCESS_CODE) && goodsCommentEntity.getGoodsComments() != null
                             && goodsCommentEntity.getGoodsComments().size() > 0) {
@@ -580,8 +580,8 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                CommunalRuleEntity communalRuleEntity = gson.fromJson(result, CommunalRuleEntity.class);
+
+                CommunalRuleEntity communalRuleEntity = GsonUtils.fromJson(result, CommunalRuleEntity.class);
                 if (communalRuleEntity != null && SUCCESS_CODE.equals(communalRuleEntity.getCode())) {
                     if (communalRuleEntity.getCommunalRuleList() != null
                             && communalRuleEntity.getCommunalRuleList().size() > 0) {
@@ -608,8 +608,8 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
                 , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
-                        Gson gson = new Gson();
-                        UserPagerInfoEntity pagerInfoBean = gson.fromJson(result, UserPagerInfoEntity.class);
+
+                        UserPagerInfoEntity pagerInfoBean = GsonUtils.fromJson(result, UserPagerInfoEntity.class);
                         if (pagerInfoBean != null) {
                             if (pagerInfoBean.getCode().equals(SUCCESS_CODE)) {
                                 personalScore = pagerInfoBean.getUserInfo().getScore();

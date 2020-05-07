@@ -13,8 +13,8 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
-import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
@@ -90,8 +90,8 @@ public class SearchGoodProMoreActivity extends BaseActivity {
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
                         productSearList.clear();
-                        Gson gson = new Gson();
-                        likedProduct = gson.fromJson(result, UserLikedProductEntity.class);
+
+                        likedProduct = GsonUtils.fromJson(result, UserLikedProductEntity.class);
                         if (likedProduct != null) {
                             if (likedProduct.getCode().equals(SUCCESS_CODE)) {
                                 productSearList.addAll(likedProduct.getGoodsList());

@@ -15,8 +15,8 @@ import com.amkj.dmsh.find.bean.PostEntity.PostBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.bean.GoodsCommentEntity;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
-import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -66,7 +66,7 @@ public class SoftApiDao {
                 @Override
                 public void onSuccess(String result) {
                     activity.loadHud.dismiss();
-                    RequestStatus requestStatus = new Gson().fromJson(result, RequestStatus.class);
+                    RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                     if (requestStatus != null) {
                         if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                             if (item != null) {
@@ -110,8 +110,8 @@ public class SoftApiDao {
                 @Override
                 public void onSuccess(String result) {
                     activity.loadHud.dismiss();
-                    Gson gson = new Gson();
-                    RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+
+                    RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                     if (requestStatus != null) {
                         if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                             tvFollow.setSelected(!tvFollow.isSelected());
@@ -144,8 +144,8 @@ public class SoftApiDao {
                 @Override
                 public void onSuccess(String result) {
                     activity.loadHud.dismiss();
-                    Gson gson = new Gson();
-                    RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+
+                    RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                     if (requestStatus != null) {
                         if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                             tvCollect.setSelected(!tvCollect.isSelected());
@@ -197,8 +197,8 @@ public class SoftApiDao {
                 @Override
                 public void onSuccess(String result) {
                     activity.loadHud.dismiss();
-                    Gson gson = new Gson();
-                    RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+
+                    RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                     if (requestStatus != null) {
                         if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                             tvCollect.setSelected(!tvCollect.isSelected());
@@ -295,7 +295,7 @@ public class SoftApiDao {
         NetLoadUtils.getNetInstance().loadNetDataPost(activity, Url.REPORT_ILLEGAL, map, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                RequestStatus requestStatus = new Gson().fromJson(result, RequestStatus.class);
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (SUCCESS_CODE.equals(requestStatus.getCode())) {
                         ConstantMethod.showToast("举报成功！");

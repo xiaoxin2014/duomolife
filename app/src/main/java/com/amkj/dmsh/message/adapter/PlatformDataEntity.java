@@ -2,7 +2,7 @@ package com.amkj.dmsh.message.adapter;
 
 import com.amkj.dmsh.base.BaseEntity;
 import com.amkj.dmsh.constant.CommunalDetailBean;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -26,7 +26,7 @@ public class PlatformDataEntity extends BaseEntity{
 
     public static PlatformDataEntity objectFromData(String str) {
 
-        return new Gson().fromJson(str, PlatformDataEntity.class);
+        return GsonUtils.fromJson(str, PlatformDataEntity.class);
     }
 
     public PlatformDataBean getPlatformDataBean() {
@@ -63,7 +63,7 @@ public class PlatformDataEntity extends BaseEntity{
 
         public static PlatformDataBean objectFromData(String str) {
 
-            return new Gson().fromJson(str, PlatformDataBean.class);
+            return GsonUtils.fromJson(str, PlatformDataBean.class);
         }
 
         public int getM_uid() {

@@ -24,9 +24,9 @@ import com.amkj.dmsh.shopdetails.adapter.WaitEvaluateProductsAdapter;
 import com.amkj.dmsh.utils.SharedPreUtils;
 import com.amkj.dmsh.utils.WindowUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.OrderLoadMoreView;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
@@ -120,7 +120,7 @@ public class WaitEvaluateFragment extends BaseFragment {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
-                mWaitEvaluaterEntity = new Gson().fromJson(result, WaitEvaluaterProductEntity.class);
+                mWaitEvaluaterEntity = GsonUtils.fromJson(result, WaitEvaluaterProductEntity.class);
                 String code = mWaitEvaluaterEntity.getCode();
                 if (page == 1) {
                     orderProducts.clear();
@@ -158,7 +158,7 @@ public class WaitEvaluateFragment extends BaseFragment {
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.Q_GET_TAKE_DELIVERY_POPUP, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                RequestStatus requestStatus = new Gson().fromJson(result, RequestStatus.class);
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 boolean isOpen = requestStatus.isOpen();
                 String imgUrl = requestStatus.getImgUrl();
                 if (isOpen && !TextUtils.isEmpty(imgUrl)) {

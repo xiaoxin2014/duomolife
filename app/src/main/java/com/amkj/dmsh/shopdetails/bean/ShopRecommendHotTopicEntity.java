@@ -5,8 +5,8 @@ import android.os.Parcelable;
 
 import com.amkj.dmsh.base.BaseEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean.MarketLabelBean;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
-import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -40,7 +40,7 @@ public class ShopRecommendHotTopicEntity extends BaseEntity {
 
     public static ShopRecommendHotTopicEntity objectFromData(String str) {
 
-        return new Gson().fromJson(str, ShopRecommendHotTopicEntity.class);
+        return GsonUtils.fromJson(str, ShopRecommendHotTopicEntity.class);
     }
 
     public List<ShopRecommendHotTopicBean> getShopRecommendHotTopicList() {
@@ -139,7 +139,7 @@ public class ShopRecommendHotTopicEntity extends BaseEntity {
 
         public static ShopRecommendHotTopicBean objectFromData(String str) {
 
-            return new Gson().fromJson(str, ShopRecommendHotTopicBean.class);
+            return GsonUtils.fromJson(str, ShopRecommendHotTopicBean.class);
         }
 
         public String getPicUrl() {

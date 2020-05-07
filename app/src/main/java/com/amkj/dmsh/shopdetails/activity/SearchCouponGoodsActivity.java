@@ -21,9 +21,9 @@ import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.KeyboardUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.EditTextWithClear;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -133,8 +133,8 @@ public class SearchCouponGoodsActivity extends BaseActivity {
                         if (page == 1) {
                             goodsList.clear();
                         }
-                        Gson gson = new Gson();
-                        likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
+
+                        likedProductEntity = GsonUtils.fromJson(result, UserLikedProductEntity.class);
                         if (likedProductEntity != null) {
                             List<LikedProductBean> resultList = likedProductEntity.getGoodsList();
                             String code = likedProductEntity.getCode();

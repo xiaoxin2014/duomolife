@@ -40,10 +40,10 @@ import com.amkj.dmsh.shopdetails.bean.MainOrderListEntity;
 import com.amkj.dmsh.shopdetails.bean.PriceInfoBean;
 import com.amkj.dmsh.utils.CountDownTimer;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.MainButtonView;
 import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
-import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import org.json.JSONObject;
@@ -219,7 +219,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity {
                         dataIndent.putExtra("orderNo", orderNo);
                         List<OrderProductNewBean> goods = new ArrayList<>();
                         goods.add(orderProductInfoBean);
-                        dataIndent.putExtra("goods", new Gson().toJson(goods));
+                        dataIndent.putExtra("goods", GsonUtils.toJson(goods));
                         startActivity(dataIndent);
                         break;
                     //跳转售后详情
@@ -290,8 +290,8 @@ public class DirectExchangeDetailsActivity extends BaseActivity {
                             code = (String) jsonObject.get("code");
                             msg = (String) jsonObject.get("msg");
                             if (code.equals(SUCCESS_CODE)) {
-                                Gson gson = new Gson();
-                                infoDetailEntity = gson.fromJson(result, IndentDetailEntity.class);
+
+                                infoDetailEntity = GsonUtils.fromJson(result, IndentDetailEntity.class);
                                 if (infoDetailEntity != null && infoDetailEntity.getResult() != null) {
                                     setIndentData(infoDetailEntity.getResult());
                                 }

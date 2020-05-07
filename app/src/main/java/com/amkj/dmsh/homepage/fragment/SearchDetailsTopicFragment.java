@@ -19,8 +19,8 @@ import com.amkj.dmsh.find.bean.HotTopicEntity.HotTopicBean;
 import com.amkj.dmsh.find.bean.PostEntity.PostBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.StaggeredDividerItemDecoration;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -108,7 +108,7 @@ public class SearchDetailsTopicFragment extends BaseSearchDetailFragment {
                             removeExistTopicUtils.clearData();
                         }
                         int positionStart = mPostList.size();
-                        allSearchEntity = new Gson().fromJson(result, AllSearchEntity.class);
+                        allSearchEntity = GsonUtils.fromJson(result, AllSearchEntity.class);
                         if (allSearchEntity != null && allSearchEntity.getSearchBean() != null) {
                             String code = allSearchEntity.getCode();
                             searchBean = allSearchEntity.getSearchBean();

@@ -33,11 +33,11 @@ import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.adapter.ExpressAdapter;
 import com.amkj.dmsh.shopdetails.bean.LogisticsNewEntity;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
-import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
@@ -163,8 +163,8 @@ public class DirectLogisticsFragment extends BaseFragment {
                     @Override
                     public void onSuccess(String result) {
                         mSmartScrollCommunalRefresh.finishRefresh();
-                        Gson gson = new Gson();
-                        mLogisticsNewEntity = gson.fromJson(result, LogisticsNewEntity.class);
+
+                        mLogisticsNewEntity = GsonUtils.fromJson(result, LogisticsNewEntity.class);
                         if (mLogisticsNewEntity != null) {
                             if (mLogisticsNewEntity.getCode().equals(SUCCESS_CODE)) {
                                 LogisticsNewEntity.LogisticsDetailBean logisticsDetail = mLogisticsNewEntity.getLogisticsDetail();

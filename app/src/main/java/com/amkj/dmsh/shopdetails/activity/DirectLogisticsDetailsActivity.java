@@ -13,13 +13,13 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.shopdetails.bean.LogisticsNewEntity.PackageInfoBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.adapter.LogisticsPagerAdapter;
 import com.amkj.dmsh.shopdetails.bean.LogisticsNewEntity;
+import com.amkj.dmsh.shopdetails.bean.LogisticsNewEntity.PackageInfoBean;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -107,7 +107,7 @@ public class DirectLogisticsDetailsActivity extends BaseActivity {
                     public void onSuccess(String result) {
                         mPackageInfoList.clear();
                         pageTitle.clear();
-                        mLogisticsNewEntity = new Gson().fromJson(result, LogisticsNewEntity.class);
+                        mLogisticsNewEntity = GsonUtils.fromJson(result, LogisticsNewEntity.class);
                         if (mLogisticsNewEntity != null) {
                             if (mLogisticsNewEntity.getCode().equals(SUCCESS_CODE)) {
                                 List<LogisticsNewEntity.PackageInfoBean> packageInfoList = mLogisticsNewEntity.getPackageInfoList();

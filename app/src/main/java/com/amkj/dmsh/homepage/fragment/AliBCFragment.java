@@ -57,9 +57,9 @@ import com.amkj.dmsh.utils.MarketUtils;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.SharedPreUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
 import com.amkj.dmsh.views.HtmlWebView;
-import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.gyf.barlibrary.ImmersionBar;
 import com.luck.picture.lib.PictureSelector;
@@ -612,7 +612,7 @@ public class AliBCFragment extends BaseFragment {
         public void sharePage(String result) {
             try {
                 getActivity().runOnUiThread(() -> {
-                    mShareBean = new Gson().fromJson(result, H5ShareBean.class);
+                    mShareBean = GsonUtils.fromJson(result, H5ShareBean.class);
                     shareH5();
                 });
             } catch (JsonSyntaxException e) {

@@ -13,8 +13,8 @@ import com.amkj.dmsh.homepage.adapter.SearchDetailsUserAdapter;
 import com.amkj.dmsh.mine.bean.UserAttentionFansEntity.UserAttentionFansBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -76,8 +76,8 @@ public class SearchDetailsUserFragment extends BaseSearchDetailFragment {
                             userAttentionFansList.clear();
                             removeExistUtils.clearData();
                         }
-                        Gson gson = new Gson();
-                        allSearchEntity = gson.fromJson(result, AllSearchEntity.class);
+
+                        allSearchEntity = GsonUtils.fromJson(result, AllSearchEntity.class);
                         if (allSearchEntity != null && allSearchEntity.getSearchBean() != null) {
                             String code = allSearchEntity.getCode();
                             searchBean = allSearchEntity.getSearchBean();

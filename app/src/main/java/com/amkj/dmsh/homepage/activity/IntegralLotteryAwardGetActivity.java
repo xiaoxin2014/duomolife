@@ -18,7 +18,7 @@ import com.amkj.dmsh.homepage.bean.IntegralLotteryAwardGetEntity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -145,8 +145,8 @@ public class IntegralLotteryAwardGetActivity extends BaseActivity {
                 , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
-                        Gson gson = new Gson();
-                        integralLotteryAwardEntity = gson.fromJson(result, IntegralLotteryAwardGetEntity.class);
+
+                        integralLotteryAwardEntity = GsonUtils.fromJson(result, IntegralLotteryAwardGetEntity.class);
                         if (integralLotteryAwardEntity != null) {
                             if (SUCCESS_CODE.equals(integralLotteryAwardEntity.getCode())) {
                                 setLotteryAwardData(integralLotteryAwardEntity);
@@ -220,8 +220,8 @@ public class IntegralLotteryAwardGetActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, DELIVERY_ADDRESS, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                AddressInfoEntity addressInfoEntity = gson.fromJson(result, AddressInfoEntity.class);
+
+                AddressInfoEntity addressInfoEntity = GsonUtils.fromJson(result, AddressInfoEntity.class);
                 if (addressInfoEntity != null) {
                     if (addressInfoEntity.getCode().equals(SUCCESS_CODE)) {
                         setAddressData(addressInfoEntity.getAddressInfoBean());
@@ -241,8 +241,8 @@ public class IntegralLotteryAwardGetActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, ADDRESS_DETAILS, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                AddressInfoEntity addressInfoEntity = gson.fromJson(result, AddressInfoEntity.class);
+
+                AddressInfoEntity addressInfoEntity = GsonUtils.fromJson(result, AddressInfoEntity.class);
                 if (addressInfoEntity != null) {
                     if (addressInfoEntity.getCode().equals(SUCCESS_CODE)) {
                         setAddressData(addressInfoEntity.getAddressInfoBean());
@@ -281,8 +281,8 @@ public class IntegralLotteryAwardGetActivity extends BaseActivity {
                     @Override
                     public void onSuccess(String result) {
                         loadHud.dismiss();
-                        Gson gson = new Gson();
-                        RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+
+                        RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                         if (requestStatus != null) {
                             if (SUCCESS_CODE.equals(requestStatus.getCode())) {
                                 showToast("领取成功");

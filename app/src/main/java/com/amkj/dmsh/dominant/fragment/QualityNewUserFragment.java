@@ -20,9 +20,9 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
@@ -39,7 +39,6 @@ import butterknife.OnClick;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
-
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
@@ -166,8 +165,8 @@ public class QualityNewUserFragment extends BaseFragment {
                         if (page == 1) {
                             qualityNewUserShopList.clear();
                         }
-                        Gson gson = new Gson();
-                        qualityNewUserShopEntity = gson.fromJson(result, UserLikedProductEntity.class);
+
+                        qualityNewUserShopEntity = GsonUtils.fromJson(result, UserLikedProductEntity.class);
                         if (qualityNewUserShopEntity != null) {
                             List<LikedProductBean> goodsList = qualityNewUserShopEntity.getGoodsList();
                             if (goodsList != null && goodsList.size() > 0 && SUCCESS_CODE.equals(qualityNewUserShopEntity.getCode())) {
@@ -209,8 +208,8 @@ public class QualityNewUserFragment extends BaseFragment {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
-                Gson gson = new Gson();
-                UserLikedProductEntity qualityNewUserShopEntity = gson.fromJson(result, UserLikedProductEntity.class);
+
+                UserLikedProductEntity qualityNewUserShopEntity = GsonUtils.fromJson(result, UserLikedProductEntity.class);
                 if (qualityNewUserShopEntity != null) {
                     List<LikedProductBean> goodsList = qualityNewUserShopEntity.getGoodsList();
                     String code = qualityNewUserShopEntity.getCode();
@@ -258,8 +257,8 @@ public class QualityNewUserFragment extends BaseFragment {
             @Override
             public void onSuccess(String result) {
                 loadHud.dismiss();
-                Gson gson = new Gson();
-                NewUserCouponEntity newUserCouponEntity = gson.fromJson(result, NewUserCouponEntity.class);
+
+                NewUserCouponEntity newUserCouponEntity = GsonUtils.fromJson(result, NewUserCouponEntity.class);
                 if (newUserCouponEntity != null) {
                     if (newUserCouponEntity.getCode().equals(SUCCESS_CODE)) {
                         qNewUserCoverHelper.tv_new_user_get_coupon.setText("已领取");

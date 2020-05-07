@@ -18,9 +18,9 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.DirectExchangeDetailsActivity;
 import com.amkj.dmsh.shopdetails.dialog.AlertDialogGoPay;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.umeng.socialize.UMShareAPI;
@@ -155,7 +155,7 @@ public class QualityGroupShopMineActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 dismissLoadhud(getActivity());
-                Map map = new Gson().fromJson(result, Map.class);
+                Map map = GsonUtils.fromJson(result, Map.class);
                 if (mAlertDialogGoPay == null) {
                     mAlertDialogGoPay = new AlertDialogGoPay(getActivity(), map.get("result"));
                 }
@@ -217,8 +217,8 @@ public class QualityGroupShopMineActivity extends BaseActivity {
                         if (page == 1) {
                             qualityGroupMineList.clear();
                         }
-                        Gson gson = new Gson();
-                        qualityGroupMineEntity = gson.fromJson(result, QualityGroupMineEntity.class);
+
+                        qualityGroupMineEntity = GsonUtils.fromJson(result, QualityGroupMineEntity.class);
                         if (qualityGroupMineEntity != null) {
                             if (qualityGroupMineEntity.getCode().equals(SUCCESS_CODE)) {
                                 for (int i = 0; i < qualityGroupMineEntity.getQualityGroupMineBeanList().size(); i++) {

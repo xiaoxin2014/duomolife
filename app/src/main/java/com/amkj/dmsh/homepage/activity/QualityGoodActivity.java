@@ -17,8 +17,8 @@ import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.RemoveExistUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
-import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
@@ -119,7 +119,7 @@ public class QualityGoodActivity extends BaseActivity {
                     @Override
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
-                        mQualityGoodProductEntity = new Gson().fromJson(result, UserLikedProductEntity.class);
+                        mQualityGoodProductEntity = GsonUtils.fromJson(result, UserLikedProductEntity.class);
                         List<LikedProductBean> goodList = removeExistUtils.removeExistList(mQualityGoodProductEntity.getGoodsList());
                         if (mQualityGoodProductEntity != null) {
                             if (goodList != null && goodList.size() > 0) {

@@ -77,6 +77,7 @@ import com.amkj.dmsh.utils.CountDownTimer;
 import com.amkj.dmsh.utils.LifecycleHandler;
 import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.amkj.dmsh.utils.webformatdata.ShareDataBean;
 import com.amkj.dmsh.views.bottomdialog.SkuDialog;
@@ -88,7 +89,6 @@ import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.android.flexbox.FlexboxLayout;
-import com.google.gson.Gson;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 import com.melnykov.fab.FloatingActionButton;
@@ -670,7 +670,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 smart_ql_sp_pro_details.finishRefresh();
-                shopDetailsEntity = new Gson().fromJson(result, ShopDetailsEntity.class);
+                shopDetailsEntity = GsonUtils.fromJson(result, ShopDetailsEntity.class);
                 if (shopDetailsEntity != null) {
                     if (shopDetailsEntity.getCode().equals(SUCCESS_CODE)) {
                         shopPropertyBean = shopDetailsEntity.getShopPropertyBean();
@@ -762,7 +762,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                mGroupGoodsEntity = new Gson().fromJson(result, GroupGoodsEntity.class);
+                mGroupGoodsEntity = GsonUtils.fromJson(result, GroupGoodsEntity.class);
                 if (mGroupGoodsEntity != null && mGroupGoodsEntity.getResult() != null) {
                     if (mGroupGoodsEntity.getCode().equals(SUCCESS_CODE)) {
                         GroupGoodsEntity.GroupGoodsBean groupGoodsBean = mGroupGoodsEntity.getResult();
@@ -794,7 +794,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 goodsComments.clear();
-                GoodsCommentEntity goodsCommentEntity = new Gson().fromJson(result, GoodsCommentEntity.class);
+                GoodsCommentEntity goodsCommentEntity = GsonUtils.fromJson(result, GoodsCommentEntity.class);
                 if (goodsCommentEntity != null) {
                     if (goodsCommentEntity.getCode().equals(SUCCESS_CODE)) {
                         goodsComments.addAll(goodsCommentEntity.getGoodsComments());
@@ -1371,8 +1371,8 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                mDirectGoodsServerEntity = gson.fromJson(result, DirectGoodsServerEntity.class);
+
+                mDirectGoodsServerEntity = GsonUtils.fromJson(result, DirectGoodsServerEntity.class);
                 if (mDirectGoodsServerEntity != null) {
                     if (mDirectGoodsServerEntity.getCode().equals(SUCCESS_CODE)) {
                         serviceDataList.clear();
@@ -1514,8 +1514,8 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     prop.setProperty("proCount", shopCarGoodsSkuDif.getCount() + "");
                     prop.setProperty("proSalSku", getStrings(shopCarGoodsSkuDif.getValuesName()));
                     StatService.trackCustomKVEvent(getActivity(), "addProToCar", prop);
-                    Gson gson = new Gson();
-                    RequestStatus status = gson.fromJson(result, RequestStatus.class);
+
+                    RequestStatus status = GsonUtils.fromJson(result, RequestStatus.class);
                     if (status != null) {
                         if (status.getCode().equals(SUCCESS_CODE)) {
                             showToast(getString(R.string.AddCarSuccess));
@@ -1573,7 +1573,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             StatService.trackCustomKVEvent(getActivity(), "qlProBuy", prop);
 //            结算商品 跳转订单填写
             Bundle bundle = new Bundle();
-            bundle.putString("goods", new Gson().toJson(settlementGoods));
+            bundle.putString("goods", GsonUtils.toJson(settlementGoods));
             ConstantMethod.skipIndentWrite(getActivity(), INDENT_W_TYPE, bundle);
         } else {
             if (skuDialog != null) {
@@ -1604,8 +1604,8 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 loadHud.dismiss();
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         tv_sp_details_collect.setSelected(requestStatus.isCollect());
@@ -1857,8 +1857,8 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         tv_sp_details_add_car.setText(requestStatus.getIsNotice() == 1 ? "到货提醒" : "取消提醒");

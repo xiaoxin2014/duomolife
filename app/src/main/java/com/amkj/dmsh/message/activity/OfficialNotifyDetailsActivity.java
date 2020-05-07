@@ -21,9 +21,9 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
@@ -160,8 +160,8 @@ public class OfficialNotifyDetailsActivity extends BaseActivity {
                     @Override
                     public void onSuccess(String result) {
                         smart_official_details.finishRefresh();
-                        Gson gson = new Gson();
-                        officialNotifyEntity = gson.fromJson(result, OfficialNotifyEntity.class);
+
+                        officialNotifyEntity = GsonUtils.fromJson(result, OfficialNotifyEntity.class);
                         if (officialNotifyEntity != null) {
                             if (officialNotifyEntity.getCode().equals(SUCCESS_CODE)) {
                                 itemBodyList.clear();

@@ -14,7 +14,7 @@ import com.amkj.dmsh.message.bean.MessageIndentEntity;
 import com.amkj.dmsh.message.bean.MessageIndentEntity.MessageIndentBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
@@ -132,8 +132,8 @@ public class MessageIndentActivity extends BaseActivity {
                 if (page == 1) {
                     messageArticleList.clear();
                 }
-                Gson gson = new Gson();
-                messageOfficialEntity = gson.fromJson(result, MessageIndentEntity.class);
+
+                messageOfficialEntity = GsonUtils.fromJson(result, MessageIndentEntity.class);
                 if (messageOfficialEntity != null) {
                     if (messageOfficialEntity.getCode().equals(SUCCESS_CODE)) {
                         List<MessageIndentBean> messageIndentList = messageOfficialEntity.getMessageIndentList();

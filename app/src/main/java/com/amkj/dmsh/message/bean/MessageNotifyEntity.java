@@ -1,7 +1,7 @@
 package com.amkj.dmsh.message.bean;
 
 import com.amkj.dmsh.base.BaseEntity;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -219,7 +219,7 @@ public class MessageNotifyEntity extends BaseEntity {
 
             public static ProductPriceBean objectFromData(String str) {
 
-                return new Gson().fromJson(str, ProductPriceBean.class);
+                return GsonUtils.fromJson(str, ProductPriceBean.class);
             }
 
             public String getNowPrice() {

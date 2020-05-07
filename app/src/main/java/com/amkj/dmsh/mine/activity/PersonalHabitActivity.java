@@ -19,8 +19,8 @@ import com.amkj.dmsh.mine.bean.HabitTypeEntity;
 import com.amkj.dmsh.mine.bean.HabitTypeEntity.HabitTypeBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -128,8 +128,8 @@ public class PersonalHabitActivity extends BaseActivity {
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
                         habitTypeBeanList.clear();
-                        Gson gson = new Gson();
-                        habitTypeEntity = gson.fromJson(result, HabitTypeEntity.class);
+
+                        habitTypeEntity = GsonUtils.fromJson(result, HabitTypeEntity.class);
                         if (habitTypeEntity != null) {
                             if (habitTypeEntity.getCode().equals(SUCCESS_CODE)) {
                                 rel_habit_type.setVisibility(VISIBLE);
@@ -214,8 +214,8 @@ public class PersonalHabitActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 loadHud.dismiss();
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         loadData();

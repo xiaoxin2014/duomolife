@@ -34,11 +34,11 @@ import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.CountDownTimer;
 import com.amkj.dmsh.utils.LifecycleHandler;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.amkj.dmsh.utils.webformatdata.ShareDataBean;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
@@ -206,8 +206,8 @@ public class QualityCustomTopicActivity extends BaseActivity {
                     descriptionList.clear();
                     communalDetailAdapter.notifyDataSetChanged();
                 }
-                Gson gson = new Gson();
-                CustomCoverDesEntity customCoverDesEntity = gson.fromJson(result, CustomCoverDesEntity.class);
+
+                CustomCoverDesEntity customCoverDesEntity = GsonUtils.fromJson(result, CustomCoverDesEntity.class);
                 if (customCoverDesEntity != null) {
                     if (customCoverDesEntity.getCode().equals(SUCCESS_CODE)
                             && customCoverDesEntity.getCoverDesList() != null
@@ -285,8 +285,8 @@ public class QualityCustomTopicActivity extends BaseActivity {
                         if (page == 1) {
                             customProList.clear();
                         }
-                        Gson gson = new Gson();
-                        userLikedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
+
+                        userLikedProductEntity = GsonUtils.fromJson(result, UserLikedProductEntity.class);
                         if (userLikedProductEntity != null) {
                             if (userLikedProductEntity.getCode().equals(SUCCESS_CODE)) {
                                 for (LikedProductBean likedProductBean : userLikedProductEntity.getGoodsList()) {
@@ -340,7 +340,7 @@ public class QualityCustomTopicActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 mCountDownTimer = null;
-                RequestStatus requestStatus = new Gson().fromJson(result, RequestStatus.class);
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     String code = requestStatus.getCode();
                     if (SUCCESS_CODE.equals(code)) {

@@ -11,8 +11,8 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.adapter.DirectSalesReturnRecordAdapter;
 import com.amkj.dmsh.shopdetails.bean.MainOrderListEntity;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
@@ -96,7 +96,7 @@ public class RefundGoodsListFragment extends BaseFragment {
                     orderList.clear();
                 }
 
-                returnRecordEntity = new Gson().fromJson(result, MainOrderListEntity.class);
+                returnRecordEntity = GsonUtils.fromJson(result, MainOrderListEntity.class);
                 if (returnRecordEntity != null) {
                     String code = returnRecordEntity.getCode();
                     List<MainOrderListEntity.MainOrderBean> mainOrderBeans = returnRecordEntity.getResult();

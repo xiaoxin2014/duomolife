@@ -32,11 +32,11 @@ import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.amkj.dmsh.utils.webformatdata.ShareDataBean;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -214,8 +214,8 @@ public class QualityOverseasDetailsActivity extends BaseActivity {
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
                 qualityTypeProductAdapter.loadMoreComplete();
-                Gson gson = new Gson();
-                qualityShopDescripEntity = gson.fromJson(result, QualityShopDescripEntity.class);
+
+                qualityShopDescripEntity = GsonUtils.fromJson(result, QualityShopDescripEntity.class);
                 if (qualityShopDescripEntity != null) {
                     if (qualityShopDescripEntity.getCode().equals(SUCCESS_CODE)) {
                         setData(qualityShopDescripEntity.getQualityShopDescBean());
@@ -258,12 +258,12 @@ public class QualityOverseasDetailsActivity extends BaseActivity {
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
                         qualityTypeProductAdapter.loadMoreComplete();
-                        Gson gson = new Gson();
+
                         if (page == 1) {
                             //重新加载数据
                             proDetailList.clear();
                         }
-                        userLikedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
+                        userLikedProductEntity = GsonUtils.fromJson(result, UserLikedProductEntity.class);
                         if (userLikedProductEntity != null) {
                             if (userLikedProductEntity.getCode().equals(SUCCESS_CODE)) {
                                 proDetailList.addAll(userLikedProductEntity.getGoodsList());

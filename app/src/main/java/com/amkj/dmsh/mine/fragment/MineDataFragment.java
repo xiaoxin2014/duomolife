@@ -60,11 +60,11 @@ import com.amkj.dmsh.user.activity.UserFansAttentionActivity;
 import com.amkj.dmsh.utils.ImageConverterUtils;
 import com.amkj.dmsh.utils.SharedPreUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
-import com.google.gson.Gson;
 import com.gyf.barlibrary.ImmersionBar;
 import com.qiyukf.unicorn.api.ConsultSource;
 import com.umeng.analytics.MobclickAgent;
@@ -324,7 +324,7 @@ public class MineDataFragment extends BaseFragment {
         NetLoadUtils.getNetInstance().loadNetDataPost(context, Url.GET_CUSTOMER_SERVICE_BAR, null, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                QuickEntryEntity quickEntryEntity = new Gson().fromJson(result, QuickEntryEntity.class);
+                QuickEntryEntity quickEntryEntity = GsonUtils.fromJson(result, QuickEntryEntity.class);
 //                if (quickEntryEntity != null) {
 //                    List<QuickEntryBean> list = quickEntryEntity.getList();
 //                    if (list != null) {
@@ -354,8 +354,8 @@ public class MineDataFragment extends BaseFragment {
                         if (cacheResult == null || TextUtils.isEmpty(cacheResult.data)) {
                             return;
                         }
-                        Gson gson = new Gson();
-                        CommunalUserInfoEntity minePageData = gson.fromJson(cacheResult.data, CommunalUserInfoEntity.class);
+
+                        CommunalUserInfoEntity minePageData = GsonUtils.fromJson(cacheResult.data, CommunalUserInfoEntity.class);
                         communalUserInfoBean = minePageData.getCommunalUserInfoBean();
                         if (communalUserInfoBean != null && minePageData.getCode().equals(SUCCESS_CODE)) {
                             ll_mime_no_login.setVisibility(View.GONE);
@@ -454,8 +454,8 @@ public class MineDataFragment extends BaseFragment {
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Q_QUERY_INDENT_COUNT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                mDirectIndentCountEntity = gson.fromJson(result, DirectIndentCountEntity.class);
+
+                mDirectIndentCountEntity = GsonUtils.fromJson(result, DirectIndentCountEntity.class);
                 if (mDirectIndentCountEntity != null) {
                     if (mDirectIndentCountEntity.getCode().equals(SUCCESS_CODE)) {
                         setIndentCount(mDirectIndentCountEntity.getDirectIndentCountBean());
@@ -494,7 +494,7 @@ public class MineDataFragment extends BaseFragment {
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), MINE_BOTTOM_DATA, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                MineTypeEntity mineTypeEntity = new Gson().fromJson(result, MineTypeEntity.class);
+                MineTypeEntity mineTypeEntity = GsonUtils.fromJson(result, MineTypeEntity.class);
                 if (mineTypeEntity != null && SUCCESS_CODE.equals(mineTypeEntity.getCode())) {
                     MineTypeEntity bottomLocalData = getBottomLocalData();
                     if (bottomLocalData == null ||
@@ -531,9 +531,9 @@ public class MineDataFragment extends BaseFragment {
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), MINE_PAGE_AD, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
+
                 adBeanList.clear();
-                CommunalADActivityEntity adActivityEntity = gson.fromJson(result, CommunalADActivityEntity.class);
+                CommunalADActivityEntity adActivityEntity = GsonUtils.fromJson(result, CommunalADActivityEntity.class);
                 if (adActivityEntity != null) {
                     if (adActivityEntity.getCode().equals(SUCCESS_CODE)) {
                         setMineAdData(adActivityEntity);
@@ -746,8 +746,8 @@ public class MineDataFragment extends BaseFragment {
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), MINE_BIND_ACCOUNT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast(requestStatus.getMsg());
@@ -803,7 +803,7 @@ public class MineDataFragment extends BaseFragment {
                 if (bottomShared != null) {
                     String typeJson = bottomShared.getString(MINE_BOTTOM_TYPE, "");
                     if (!TextUtils.isEmpty(typeJson)) {
-                        mineTypeEntity = new Gson().fromJson(typeJson, MineTypeEntity.class);
+                        mineTypeEntity = GsonUtils.fromJson(typeJson, MineTypeEntity.class);
                         return mineTypeEntity;
                     }
                 }

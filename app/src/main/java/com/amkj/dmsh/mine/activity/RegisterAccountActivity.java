@@ -30,7 +30,7 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 
@@ -210,8 +210,8 @@ public class RegisterAccountActivity extends BaseActivity {
                         if (loadHud != null) {
                             loadHud.dismiss();
                         }
-                        Gson gson = new Gson();
-                        LoginDataEntity loginDataEntity = gson.fromJson(result, LoginDataEntity.class);
+
+                        LoginDataEntity loginDataEntity = GsonUtils.fromJson(result, LoginDataEntity.class);
                         if (loginDataEntity != null) {
                             String code = loginDataEntity.getCode();
                             if (SUCCESS_CODE.equals(code)) {
@@ -303,8 +303,8 @@ public class RegisterAccountActivity extends BaseActivity {
                     e.printStackTrace();
                 }
                 if (code.equals(SUCCESS_CODE)) {
-                    Gson gson = new Gson();
-                    RegisterPhoneStatus status = gson.fromJson(result, RegisterPhoneStatus.class);
+
+                    RegisterPhoneStatus status = GsonUtils.fromJson(result, RegisterPhoneStatus.class);
                     if (status != null && status.getRegisterFlag() == 0) {
                         //            请求验证码
                         tv_sms_code.setVisibility(View.GONE);

@@ -28,10 +28,10 @@ import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
@@ -200,8 +200,8 @@ public class HomeCouponGetActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 couponDescriptionList.clear();
-                Gson gson = new Gson();
-                CommunalDescriptionEntity shopDetailsEntity = gson.fromJson(result, CommunalDescriptionEntity.class);
+
+                CommunalDescriptionEntity shopDetailsEntity = GsonUtils.fromJson(result, CommunalDescriptionEntity.class);
                 if (shopDetailsEntity != null) {
                     if (shopDetailsEntity.getCode().equals(SUCCESS_CODE)) {
                         communalDescriptionBean = shopDetailsEntity.getCommunalDescriptionBean();
@@ -240,8 +240,8 @@ public class HomeCouponGetActivity extends BaseActivity {
                         if (page == 1) {
                             likedProductBeanList.clear();
                         }
-                        Gson gson = new Gson();
-                        likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
+
+                        likedProductEntity = GsonUtils.fromJson(result, UserLikedProductEntity.class);
                         if (likedProductEntity != null) {
                             if (likedProductEntity.getCode().equals(SUCCESS_CODE)) {
                                 likedProductBeanList.addAll(likedProductEntity.getGoodsList());

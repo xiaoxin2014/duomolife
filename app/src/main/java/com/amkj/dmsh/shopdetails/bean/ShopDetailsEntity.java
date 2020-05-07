@@ -5,8 +5,8 @@ import android.text.TextUtils;
 import com.amkj.dmsh.base.BaseEntity;
 import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean.MarketLabelBean;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
-import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
@@ -547,7 +547,7 @@ public class ShopDetailsEntity extends BaseEntity {
 
             public static CouponJsonBean objectFromData(String str) {
 
-                return new Gson().fromJson(str, CouponJsonBean.class);
+                return GsonUtils.fromJson(str, CouponJsonBean.class);
             }
 
             public int getId() {

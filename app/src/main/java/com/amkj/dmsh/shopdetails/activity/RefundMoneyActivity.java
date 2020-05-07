@@ -14,7 +14,7 @@ import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -76,8 +76,8 @@ public class RefundMoneyActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.Q_GET_REFUND_GO_INFO, map, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String resultJson) {
-                Gson gson = new Gson();
-                mRequestStatus = gson.fromJson(resultJson, RequestStatus.class);
+
+                mRequestStatus = GsonUtils.fromJson(resultJson, RequestStatus.class);
                 if (mRequestStatus != null) {
                     if (SUCCESS_CODE.equals(mRequestStatus.getCode())) {
                         RequestStatus.Result result = mRequestStatus.getResult();

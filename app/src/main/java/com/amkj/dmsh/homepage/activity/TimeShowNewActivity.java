@@ -16,7 +16,7 @@ import com.amkj.dmsh.homepage.bean.TimeShowShaftEntity;
 import com.amkj.dmsh.homepage.bean.TimeShowShaftEntity.TimeShowShaftBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -97,8 +97,8 @@ public class TimeShowNewActivity extends BaseActivity {
                     e.printStackTrace();
                 }
                 if (code.equals(SUCCESS_CODE)) {
-                    Gson gson = new Gson();
-                    TimeShowShaftEntity timeShowEntity = gson.fromJson(result, TimeShowShaftEntity.class);
+
+                    TimeShowShaftEntity timeShowEntity = GsonUtils.fromJson(result, TimeShowShaftEntity.class);
                     if (timeShowEntity != null) {
                         setTimeShaft(timeShowEntity);
                     }

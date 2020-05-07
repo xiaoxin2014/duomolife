@@ -2,11 +2,11 @@ package com.amkj.dmsh.homepage;
 
 import android.text.TextUtils;
 
+import com.amkj.dmsh.homepage.bean.MarqueeTextEntity.MarqueeTextBean;
 import com.amkj.dmsh.utils.SharedPreUtils;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
-import com.amkj.dmsh.homepage.bean.MarqueeTextEntity.MarqueeTextBean;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,10 +37,10 @@ public class RollMsgIdDataSave {
 
     //保存显示过的通知的id到本地
     public void saveMsgId(List<MarqueeTextBean> marqueeTextList) {
-        Gson gson = new Gson();
+
         try {
             String json = (String) SharedPreUtils.getParam(FILE_NAME, KEY, "");
-            List<Integer> ids = TextUtils.isEmpty(json) ? new ArrayList<>() : gson.fromJson(json, new TypeToken<List<Integer>>() {
+            List<Integer> ids = TextUtils.isEmpty(json) ? new ArrayList<>() : GsonUtils.fromJson(json, new TypeToken<List<Integer>>() {
             }.getType());
 
             for (MarqueeTextBean bean : marqueeTextList) {
@@ -50,7 +50,7 @@ public class RollMsgIdDataSave {
                 }
             }
 
-            SharedPreUtils.setParam(FILE_NAME, KEY, gson.toJson(ids));
+            SharedPreUtils.setParam(FILE_NAME, KEY, GsonUtils.toJson(ids));
         } catch (JsonSyntaxException e) {
             e.printStackTrace();
         }
@@ -61,7 +61,7 @@ public class RollMsgIdDataSave {
         List<Integer> ids = new ArrayList<>();
         try {
             String json = (String) SharedPreUtils.getParam(FILE_NAME, KEY, "");
-            ids = new Gson().fromJson(json, new TypeToken<List<Integer>>() {
+            ids = GsonUtils.fromJson(json, new TypeToken<List<Integer>>() {
             }.getType());
         } catch (JsonSyntaxException e) {
             e.printStackTrace();

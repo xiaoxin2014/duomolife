@@ -19,8 +19,8 @@ import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.RemoveExistUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
-import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
@@ -120,7 +120,7 @@ public class HomeCatergoryActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 mSmartLayout.finishRefresh();
-                mCatergoryEntity = new Gson().fromJson(result, CatergoryOneLevelEntity.class);
+                mCatergoryEntity = GsonUtils.fromJson(result, CatergoryOneLevelEntity.class);
                 if (mCatergoryEntity != null) {
                     String code = mCatergoryEntity.getCode();
                     List<CatergoryOneLevelBean> catergoryList = mCatergoryEntity.getResult();
@@ -152,8 +152,8 @@ public class HomeCatergoryActivity extends BaseActivity {
                     @Override
                     public void onSuccess(String result) {
                         mSmartLayout.finishRefresh();
-                        Gson gson = new Gson();
-                        likedProductEntity = gson.fromJson(result, UserLikedProductEntity.class);
+
+                        likedProductEntity = GsonUtils.fromJson(result, UserLikedProductEntity.class);
                         if (likedProductEntity != null) {
                             List<LikedProductBean> likedProductBeanList = likedProductEntity.getGoodsList();
                             if (likedProductBeanList != null && likedProductBeanList.size() > 0) {

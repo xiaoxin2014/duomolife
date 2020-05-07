@@ -5,8 +5,8 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import com.amkj.dmsh.base.BaseEntity;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
-import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -31,7 +31,7 @@ public class RelevanceProEntity extends BaseEntity implements Parcelable{
     private String orderNo;
 
     public static RelevanceProEntity objectFromData(String str) {
-        return new Gson().fromJson(str, RelevanceProEntity.class);
+        return GsonUtils.fromJson(str, RelevanceProEntity.class);
     }
 
     public List<RelevanceProBean> getRelevanceProList() {

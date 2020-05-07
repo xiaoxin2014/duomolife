@@ -43,10 +43,10 @@ import com.amkj.dmsh.shopdetails.payutils.AliPay;
 import com.amkj.dmsh.shopdetails.payutils.WXPay;
 import com.amkj.dmsh.utils.CommunalCopyTextUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.CustomPopWindow;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
@@ -199,8 +199,8 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
                     e.printStackTrace();
                 }
                 if (code.equals(SUCCESS_CODE)) {
-                    Gson gson = new Gson();
-                    integralOrderDetailEntity = gson.fromJson(result, IntegralOrderDetailEntity.class);
+
+                    integralOrderDetailEntity = GsonUtils.fromJson(result, IntegralOrderDetailEntity.class);
                     if (integralOrderDetailEntity != null) {
                         IntegralOrderDetailBean integralOrderDetailBean = integralOrderDetailEntity.getIntegralOrderDetailBean();
                         if (integralOrderDetailBean != null) {
@@ -393,8 +393,8 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToast("取消订单成功");
@@ -421,8 +421,8 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         showToastRequestMsg( requestStatus);
@@ -462,8 +462,8 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                ApplyRefundCheckEntity refundCheckEntity = gson.fromJson(result, ApplyRefundCheckEntity.class);
+
+                ApplyRefundCheckEntity refundCheckEntity = GsonUtils.fromJson(result, ApplyRefundCheckEntity.class);
                 if (refundCheckEntity != null) {
                     if (refundCheckEntity.getCode().equals(SUCCESS_CODE)) {
                         ApplyRefundCheckBean applyRefundCheckBean = refundCheckEntity.getApplyRefundCheckBean();
@@ -770,9 +770,9 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
+
                 if (payWay.equals(PAY_WX_PAY)) {
-                    QualityCreateWeChatPayIndentBean qualityWeChatIndent = gson.fromJson(result, QualityCreateWeChatPayIndentBean.class);
+                    QualityCreateWeChatPayIndentBean qualityWeChatIndent = GsonUtils.fromJson(result, QualityCreateWeChatPayIndentBean.class);
                     if (qualityWeChatIndent != null) {
                         if (qualityWeChatIndent.getCode().equals(SUCCESS_CODE)) {
                             //返回成功，调起微信支付接口
@@ -783,7 +783,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
                         }
                     }
                 } else if (payWay.equals(PAY_ALI_PAY)) {
-                    QualityCreateAliPayIndentBean qualityAliPayIndent = gson.fromJson(result, QualityCreateAliPayIndentBean.class);
+                    QualityCreateAliPayIndentBean qualityAliPayIndent = GsonUtils.fromJson(result, QualityCreateAliPayIndentBean.class);
                     if (qualityAliPayIndent != null) {
                         if (qualityAliPayIndent.getCode().equals(SUCCESS_CODE)) {
                             //返回成功，调起支付宝支付接口

@@ -35,7 +35,7 @@ import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.KeyboardUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
@@ -208,8 +208,8 @@ public class CommentDetailsActivity extends BaseActivity {
                         if (page == 1) {
                             commentDetailList.clear();
                         }
-                        Gson gson = new Gson();
-                        commentDetailEntity = gson.fromJson(result, CommentDetailEntity.class);
+
+                        commentDetailEntity = GsonUtils.fromJson(result, CommentDetailEntity.class);
                         if (commentDetailEntity != null && commentDetailEntity.getCommentDetailBean() != null) {
                             commentDetailBean = commentDetailEntity.getCommentDetailBean();
                             List<ReplyCommListBean> replyCommList = commentDetailBean.getReplyCommList();

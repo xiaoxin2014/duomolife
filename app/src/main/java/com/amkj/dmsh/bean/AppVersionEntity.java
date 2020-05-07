@@ -1,6 +1,6 @@
 package com.amkj.dmsh.bean;
 
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -27,7 +27,7 @@ public class AppVersionEntity {
 
     public static AppVersionEntity objectFromData(String str) {
 
-        return new Gson().fromJson(str, AppVersionEntity.class);
+        return GsonUtils.fromJson(str, AppVersionEntity.class);
     }
 
     public AppVersionBean getAppVersionBean() {
@@ -97,7 +97,7 @@ public class AppVersionEntity {
 
         public static AppVersionBean objectFromData(String str) {
 
-            return new Gson().fromJson(str, AppVersionBean.class);
+            return GsonUtils.fromJson(str, AppVersionBean.class);
         }
 
         public String getCompel_version() {

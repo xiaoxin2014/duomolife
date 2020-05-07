@@ -27,10 +27,10 @@ import com.amkj.dmsh.homepage.adapter.DoMoLifeTimeBrandAdapter;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.CustomPopWindow;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -225,8 +225,8 @@ public class TimeBrandDetailsActivity extends BaseActivity {
                 if (page == 1) {
                     brandProductList.clear();
                 }
-                Gson gson = new Gson();
-                DMLTimeDetailEntity dmlTimeDetailEntity = gson.fromJson(result, DMLTimeDetailEntity.class);
+
+                DMLTimeDetailEntity dmlTimeDetailEntity = GsonUtils.fromJson(result, DMLTimeDetailEntity.class);
                 if (dmlTimeDetailEntity != null) {
                     if (dmlTimeDetailEntity.getCode().equals(SUCCESS_CODE)) {
                         for (int i = 0; i < dmlTimeDetailEntity.getDmlTimeDetailBeanList().size(); i++) {
@@ -262,8 +262,8 @@ public class TimeBrandDetailsActivity extends BaseActivity {
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
                         duoMoLifeTimeBrandAdapter.loadMoreComplete();
-                        Gson gson = new Gson();
-                        dmlThemeDetail = gson.fromJson(result, DMLThemeDetail.class);
+
+                        dmlThemeDetail = GsonUtils.fromJson(result, DMLThemeDetail.class);
                         if (dmlThemeDetail != null) {
                             if (dmlThemeDetail.getCode().equals(SUCCESS_CODE)) {
                                 setData(dmlThemeDetail);

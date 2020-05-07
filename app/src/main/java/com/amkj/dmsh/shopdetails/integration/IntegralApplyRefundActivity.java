@@ -51,11 +51,11 @@ import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
 import com.amkj.dmsh.utils.KeyboardUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
 import com.bigkoo.pickerview.adapter.ArrayWheelAdapter;
 import com.contrarywind.view.WheelView;
-import com.google.gson.Gson;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 import com.luck.picture.lib.PictureSelector;
@@ -387,8 +387,8 @@ public class IntegralApplyRefundActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_INDENT_APPLY_REFUND, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                RefundApplyEntity refundApplyEntity = gson.fromJson(result, RefundApplyEntity.class);
+
+                RefundApplyEntity refundApplyEntity = GsonUtils.fromJson(result, RefundApplyEntity.class);
                 if (refundApplyEntity != null) {
                     if (refundApplyEntity.getCode().equals(SUCCESS_CODE)) {
                         sv_layout_refund.setVisibility(View.VISIBLE);
@@ -552,8 +552,8 @@ public class IntegralApplyRefundActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, DELIVERY_ADDRESS, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                AddressInfoEntity addressInfoEntity = gson.fromJson(result, AddressInfoEntity.class);
+
+                AddressInfoEntity addressInfoEntity = GsonUtils.fromJson(result, AddressInfoEntity.class);
                 if (addressInfoEntity != null) {
                     if (addressInfoEntity.getCode().equals(SUCCESS_CODE)) {
                         setAddressData(addressInfoEntity.getAddressInfoBean());
@@ -576,8 +576,8 @@ public class IntegralApplyRefundActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, ADDRESS_DETAILS, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                AddressInfoEntity addressInfoEntity = gson.fromJson(result, AddressInfoEntity.class);
+
+                AddressInfoEntity addressInfoEntity = GsonUtils.fromJson(result, AddressInfoEntity.class);
                 if (addressInfoEntity != null) {
                     if (addressInfoEntity.getCode().equals(SUCCESS_CODE)) {
                         setAddressData(addressInfoEntity.getAddressInfoBean());
@@ -797,8 +797,8 @@ public class IntegralApplyRefundActivity extends BaseActivity {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                Gson gson = new Gson();
-                RequestStatus requestInfo = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus requestInfo = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestInfo != null) {
                     if (requestInfo.getCode().equals(SUCCESS_CODE)) {
                         showToast("提交完成");
@@ -886,8 +886,8 @@ public class IntegralApplyRefundActivity extends BaseActivity {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                Gson gson = new Gson();
-                RequestStatus requestInfo = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus requestInfo = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestInfo != null) {
                     if (requestInfo.getCode().equals(SUCCESS_CODE)) {
                         finish();
@@ -930,8 +930,8 @@ public class IntegralApplyRefundActivity extends BaseActivity {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         if (commitDialogHelper == null) {

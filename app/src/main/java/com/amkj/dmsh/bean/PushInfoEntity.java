@@ -1,6 +1,6 @@
 package com.amkj.dmsh.bean;
 
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 
 /**
  * @author LGuiPeng
@@ -25,7 +25,7 @@ public class PushInfoEntity {
 
     public static PushInfoEntity objectFromData(String str) {
 
-        return new Gson().fromJson(str, PushInfoEntity.class);
+        return GsonUtils.fromJson(str, PushInfoEntity.class);
     }
 
     public String getCurrentTime() {
@@ -77,7 +77,7 @@ public class PushInfoEntity {
 
         public static AppPushInfoBean objectFromData(String str) {
 
-            return new Gson().fromJson(str, AppPushInfoBean.class);
+            return GsonUtils.fromJson(str, AppPushInfoBean.class);
         }
 
         public String getSubTitle() {

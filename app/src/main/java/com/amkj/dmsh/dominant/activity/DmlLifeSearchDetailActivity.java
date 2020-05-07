@@ -53,11 +53,11 @@ import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.CommunalCopyTextUtils;
 import com.amkj.dmsh.utils.KeyboardUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.amkj.dmsh.utils.webformatdata.ShareDataBean;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -384,8 +384,8 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
                 if (page == 1) {
                     articleCommentList.clear();
                 }
-                Gson gson = new Gson();
-                DmlSearchCommentEntity dmlSearchCommentEntity = gson.fromJson(result, DmlSearchCommentEntity.class);
+
+                DmlSearchCommentEntity dmlSearchCommentEntity = GsonUtils.fromJson(result, DmlSearchCommentEntity.class);
                 if (dmlSearchCommentEntity != null) {
                     if (dmlSearchCommentEntity.getCode().equals(SUCCESS_CODE)) {
                         articleCommentList.addAll(dmlSearchCommentEntity.getDmlSearchCommentList());
@@ -427,8 +427,8 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
                     @Override
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
-                        Gson gson = new Gson();
-                        dmlSearchDetailEntity = gson.fromJson(result, DmlSearchDetailEntity.class);
+
+                        dmlSearchDetailEntity = GsonUtils.fromJson(result, DmlSearchDetailEntity.class);
                         if (dmlSearchDetailEntity != null) {
                             if (dmlSearchDetailEntity.getCode().equals(SUCCESS_CODE)) {
                                 descripDetailList.clear();
@@ -493,8 +493,8 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, SHARE_COMMUNAL_ARTICLE, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                CommunalOnlyDescription communalOnlyDescription = gson.fromJson(result, CommunalOnlyDescription.class);
+
+                CommunalOnlyDescription communalOnlyDescription = GsonUtils.fromJson(result, CommunalOnlyDescription.class);
                 if (communalOnlyDescription != null) {
                     if (communalOnlyDescription.getCode().equals(SUCCESS_CODE)
                             && communalOnlyDescription.getComOnlyDesBean() != null) {
@@ -576,8 +576,8 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 loadHud.dismiss();
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         tv_article_bottom_collect.setSelected(!tv_article_bottom_collect.isSelected());

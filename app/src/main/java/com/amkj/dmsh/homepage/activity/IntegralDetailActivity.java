@@ -16,6 +16,7 @@ import com.amkj.dmsh.message.bean.IntegrationDetailsEntity;
 import com.amkj.dmsh.message.bean.IntegrationDetailsEntity.IntegrationDetailsBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
@@ -23,7 +24,6 @@ import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.google.gson.Gson;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
@@ -133,8 +133,8 @@ public class IntegralDetailActivity extends BaseActivity {
                         if (page == 1) {
                             integrationDetailsList.clear();
                         }
-                        Gson gson = new Gson();
-                        integrationDetailsEntity = gson.fromJson(result, IntegrationDetailsEntity.class);
+
+                        integrationDetailsEntity = GsonUtils.fromJson(result, IntegrationDetailsEntity.class);
                         if (integrationDetailsEntity != null) {
                             if (SUCCESS_CODE.equals(integrationDetailsEntity.getCode())) {
                                 integrationDetailsList.addAll(integrationDetailsEntity.getIntegrationDetailsList());

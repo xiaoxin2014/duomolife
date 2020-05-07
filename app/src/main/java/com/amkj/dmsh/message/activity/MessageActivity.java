@@ -20,9 +20,9 @@ import com.amkj.dmsh.mine.activity.ShopTimeMyWarmActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -190,8 +190,8 @@ public class MessageActivity extends BaseActivity {
                 , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
-                        Gson gson = new Gson();
-                        messageCenterEntity = gson.fromJson(result, MessageCenterEntity.class);
+
+                        messageCenterEntity = GsonUtils.fromJson(result, MessageCenterEntity.class);
                         if (messageCenterEntity != null) {
                             if (messageCenterEntity.getCode().equals(SUCCESS_CODE)) {
                                 setMessageTotalData();

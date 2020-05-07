@@ -7,7 +7,7 @@ import com.amkj.dmsh.base.BaseEntity;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.homepage.bean.MarqueeTextEntity;
 import com.amkj.dmsh.mine.bean.MineBabyEntity.BabyBean;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -116,7 +116,7 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
 
         public static CommunalUserInfoBean objectFromData(String str) {
 
-            return new Gson().fromJson(str, CommunalUserInfoBean.class);
+            return GsonUtils.fromJson(str, CommunalUserInfoBean.class);
         }
 
         public long getTokenExpireSeconds() {
@@ -506,7 +506,7 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
 
             public static NoticeInfoBean objectFromData(String str) {
 
-                return new Gson().fromJson(str, NoticeInfoBean.class);
+                return GsonUtils.fromJson(str, NoticeInfoBean.class);
             }
 
             public String getGroup_id() {

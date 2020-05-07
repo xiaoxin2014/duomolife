@@ -18,7 +18,7 @@ import com.amkj.dmsh.homepage.adapter.EditorSelectAdapter;
 import com.amkj.dmsh.homepage.view.EditorHeadView;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.luck.picture.lib.decoration.RecycleViewDivider;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
@@ -127,8 +127,8 @@ public class EditorSelectFragment extends BaseFragment {
             @Override
             public void onSuccess(String result) {
                 mSmartLayout.finishRefresh();
-                Gson gson = new Gson();
-                mEditorEntity = gson.fromJson(result, EditorEntity.class);
+
+                mEditorEntity = GsonUtils.fromJson(result, EditorEntity.class);
                 if (mEditorEntity != null) {
                     List<EditorBean> resultList = mEditorEntity.getResult();
                     String code = mEditorEntity.getCode();

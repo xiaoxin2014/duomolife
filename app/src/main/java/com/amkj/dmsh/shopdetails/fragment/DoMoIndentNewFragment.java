@@ -22,9 +22,9 @@ import com.amkj.dmsh.shopdetails.activity.OrderSearchHelpActivity;
 import com.amkj.dmsh.shopdetails.adapter.DirectIndentListAdapter;
 import com.amkj.dmsh.shopdetails.bean.MainOrderListEntity;
 import com.amkj.dmsh.shopdetails.bean.MainOrderListEntity.MainOrderBean;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.OrderLoadMoreView;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
@@ -138,7 +138,7 @@ public class DoMoIndentNewFragment extends BaseFragment {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
-                mOrderListNewEntity = new Gson().fromJson(result, MainOrderListEntity.class);
+                mOrderListNewEntity = GsonUtils.fromJson(result, MainOrderListEntity.class);
                 if (page == 1) {
                     orderListBeanList.clear();
                 }
@@ -212,7 +212,7 @@ public class DoMoIndentNewFragment extends BaseFragment {
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.Q_GET_ORDER_LIST, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                MainOrderListEntity mOrderListNewEntity = new Gson().fromJson(result, MainOrderListEntity.class);
+                MainOrderListEntity mOrderListNewEntity = GsonUtils.fromJson(result, MainOrderListEntity.class);
                 if (mOrderListNewEntity != null) {
                     List<MainOrderBean> orderList = mOrderListNewEntity.getResult();
                     if (orderListBeanList != null && orderListBeanList.size() - 1 >= position) {

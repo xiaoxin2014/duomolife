@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
 
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.LinkedList;
@@ -35,9 +35,9 @@ public class ListHistoryDataSave {
     public <T> void setDataList(String tag, List<T> dataList) {
         if (null == dataList || dataList.size() <= 0)
             return;
-        Gson gson = new Gson();
+
         //转换成json数据，再保存
-        String strJson = gson.toJson(dataList);
+        String strJson = GsonUtils.toJson(dataList);
         editor.remove(tag);
         editor.putString(tag, strJson);
         editor.commit();
@@ -55,8 +55,8 @@ public class ListHistoryDataSave {
         if (TextUtils.isEmpty(strJson)) {
             return dataList;
         }
-        Gson gson = new Gson();
-        dataList = gson.fromJson(strJson, new TypeToken<List<T>>() {
+
+        dataList = GsonUtils.fromJson(strJson, new TypeToken<List<T>>() {
         }.getType());
         return dataList;
     }

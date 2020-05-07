@@ -19,7 +19,7 @@ import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.google.gson.reflect.TypeToken;
 import com.kaopiz.kprogresshud.KProgressHUD;
 
@@ -115,9 +115,9 @@ public class CommunalWebDetailUtils {
                         setGoodsData(detailObjectBean, hashMap);
                     } else if ("picLinkx2".equals(descriptionBean.getType()) || "goodsX2".equals(descriptionBean.getType()) || "pictureGoodsX2".equals(descriptionBean.getType())) {
                         detailObjectBean.setItemType(TYPE_GOODS_2X);
-                        Gson gson = new Gson();
-                        String strContent = gson.toJson(descriptionBean.getContent());
-                        List<LikedProductBean> goodList = gson.fromJson(strContent, new TypeToken<List<LikedProductBean>>() {
+
+                        String strContent = GsonUtils.toJson(descriptionBean.getContent());
+                        List<LikedProductBean> goodList = GsonUtils.fromJson(strContent, new TypeToken<List<LikedProductBean>>() {
                         }.getType());
                         goodList = goodList.size() > 2 ? goodList.subList(0, 2) : goodList;
                         for (LikedProductBean likedProductBean : goodList) {
@@ -128,9 +128,9 @@ public class CommunalWebDetailUtils {
                         detailObjectBean.setGoodsList(goodList);
                     } else if ("picLinkx3".equals(descriptionBean.getType()) || ("goodsX3".equals(descriptionBean.getType()) || "pictureGoodsX3".equals(descriptionBean.getType()))) {
                         detailObjectBean.setItemType(TYPE_GOODS_3X);
-                        Gson gson = new Gson();
-                        String strContent = gson.toJson(descriptionBean.getContent());
-                        List<LikedProductBean> goodList = gson.fromJson(strContent, new TypeToken<List<LikedProductBean>>() {
+
+                        String strContent = GsonUtils.toJson(descriptionBean.getContent());
+                        List<LikedProductBean> goodList = GsonUtils.fromJson(strContent, new TypeToken<List<LikedProductBean>>() {
                         }.getType());
                         goodList = goodList.size() > 3 ? goodList.subList(0, 3) : goodList;
                         for (LikedProductBean likedProductBean : goodList) {
@@ -443,7 +443,7 @@ public class CommunalWebDetailUtils {
                 if (loadHud != null && loadHud.isShowing()) {
                     loadHud.dismiss();
                 }
-                CouponEntity couponEntity = new Gson().fromJson(result, CouponEntity.class);
+                CouponEntity couponEntity = GsonUtils.fromJson(result, CouponEntity.class);
 
                 if (getCouponListener == null) {
                     showToast( couponEntity == null ? "操作失败！" :
@@ -491,8 +491,8 @@ public class CommunalWebDetailUtils {
                 if (loadHud != null && loadHud.isShowing()) {
                     loadHud.dismiss();
                 }
-                Gson gson = new Gson();
-                CouponListEntity couponListEntity = gson.fromJson(result, CouponListEntity.class);
+
+                CouponListEntity couponListEntity = GsonUtils.fromJson(result, CouponListEntity.class);
                 if (getCouponListener == null) {
                     showToast(couponListEntity.getMsg());
                 } else if (couponListEntity != null) {

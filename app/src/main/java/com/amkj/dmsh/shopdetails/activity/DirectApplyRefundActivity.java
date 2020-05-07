@@ -41,9 +41,9 @@ import com.amkj.dmsh.shopdetails.dialog.AlertDialogWheel;
 import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
 import com.amkj.dmsh.utils.KeyboardUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfigC;
@@ -156,7 +156,7 @@ public class DirectApplyRefundActivity extends BaseActivity {
         refundType = getIntent().getStringExtra("refundType");
         goods = getIntent().getStringExtra("goods");
         if (!TextUtils.isEmpty(goods)) {
-            List<OrderProductNewBean> goodsBeanList = new Gson().fromJson(goods, new TypeToken<List<OrderProductNewBean>>() {
+            List<OrderProductNewBean> goodsBeanList = GsonUtils.fromJson(goods, new TypeToken<List<OrderProductNewBean>>() {
             }.getType());
             //初始化退款商品列表
             communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(this));
@@ -237,8 +237,8 @@ public class DirectApplyRefundActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_INDENT_APPLY_REFUND_NEW, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                mRefundInfoEntity = gson.fromJson(result, RefundInfoEntity.class);
+
+                mRefundInfoEntity = GsonUtils.fromJson(result, RefundInfoEntity.class);
                 if (mRefundInfoEntity != null) {
                     if (mRefundInfoEntity.getCode().equals(SUCCESS_CODE)) {
                         mReFundInfoBean = mRefundInfoEntity.getRefundInfo();
@@ -394,8 +394,8 @@ public class DirectApplyRefundActivity extends BaseActivity {
                     @Override
                     public void onSuccess(String result) {
                         dismissLoadhud(getActivity());
-                        Gson gson = new Gson();
-                        RequestStatus requestInfo = gson.fromJson(result, RequestStatus.class);
+
+                        RequestStatus requestInfo = GsonUtils.fromJson(result, RequestStatus.class);
                         if (requestInfo != null) {
                             if (requestInfo.getCode().equals(SUCCESS_CODE)) {
                                 //申请退款成功跳转退款详情

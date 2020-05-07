@@ -18,7 +18,7 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.SharedPreUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
-import com.google.gson.Gson;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.socialize.UMAuthListener;
 import com.umeng.socialize.UMShareAPI;
@@ -32,7 +32,6 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -132,8 +131,8 @@ public class AccountSafeActivity extends BaseActivity {
                 , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
-                        Gson gson = new Gson();
-                        CommunalUserInfoEntity minePageData = gson.fromJson(result, CommunalUserInfoEntity.class);
+
+                        CommunalUserInfoEntity minePageData = GsonUtils.fromJson(result, CommunalUserInfoEntity.class);
                         if (minePageData != null) {
                             if (minePageData.getCode().equals(SUCCESS_CODE)) {
                                 minaData = minePageData.getCommunalUserInfoBean();
@@ -173,8 +172,8 @@ public class AccountSafeActivity extends BaseActivity {
                 , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
-                        Gson gson = new Gson();
-                        otherAccountBindEntity = gson.fromJson(result, OtherAccountBindEntity.class);
+
+                        otherAccountBindEntity = GsonUtils.fromJson(result, OtherAccountBindEntity.class);
                         if (otherAccountBindEntity != null) {
                             if (otherAccountBindEntity.getCode().equals(SUCCESS_CODE)) {
                                 setAccountData(otherAccountBindEntity.getOtherAccountBindInfo());
@@ -453,8 +452,8 @@ public class AccountSafeActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, MINE_BIND_ACCOUNT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         //第三方账号登录统计
@@ -487,8 +486,8 @@ public class AccountSafeActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 loadHud.dismiss();
-                Gson gson = new Gson();
-                RequestStatus requestStatus = gson.fromJson(result, RequestStatus.class);
+
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null && SUCCESS_CODE.equals(requestStatus.getCode())) {
                     showToast( String.format(getResources().getString(R.string.doSuccess), "解绑"));
 //                    设置三方账号状态

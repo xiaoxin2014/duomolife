@@ -17,8 +17,8 @@ import com.amkj.dmsh.message.bean.MessageOfficialEntity;
 import com.amkj.dmsh.message.bean.MessageOfficialEntity.MessageOfficialBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
@@ -201,8 +201,8 @@ public class MessageHotActivity extends BaseActivity {
                         if (page == 1) {
                             messageArticleList.clear();
                         }
-                        Gson gson = new Gson();
-                        messageOfficialEntity = gson.fromJson(result, MessageOfficialEntity.class);
+
+                        messageOfficialEntity = GsonUtils.fromJson(result, MessageOfficialEntity.class);
                         if (messageOfficialEntity != null) {
                             if (messageOfficialEntity.getCode().equals(SUCCESS_CODE)) {
                                 messageArticleList.addAll(messageOfficialEntity.getMessageOfficialList());
