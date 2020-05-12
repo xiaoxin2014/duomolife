@@ -102,7 +102,9 @@ public class WelcomeLaunchActivity extends BaseActivity {
         CountDownTimer countDownTimer = new CountDownTimer(this, (show_time + 1) * 1000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                tv_launch_wel_skip_main.setText((millisUntilFinished / 1000 + " 跳过"));
+                if (tv_launch_wel_skip_main != null) {
+                    tv_launch_wel_skip_main.setText((millisUntilFinished / 1000 + " 跳过"));
+                }
             }
 
             @Override

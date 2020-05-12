@@ -80,6 +80,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getMapValue;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
+import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
 import static com.amkj.dmsh.constant.ConstantMethod.isWebLinkUrl;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showImportantToast;
@@ -444,39 +445,42 @@ public class ArticleOfficialActivity extends BaseActivity {
                     return;
                 }
                 JsInteractiveBean jsInteractiveBean = JSON.parseObject(resultJson, JsInteractiveBean.class);
-                if (mTvTitle != null && jsInteractiveBean != null && !TextUtils.isEmpty(jsInteractiveBean.getType())) {
-                    switch (jsInteractiveBean.getType()) {
-                        case "showToast":
-                            runOnUiThread(() -> showImportToast(jsInteractiveBean.getOtherData()));
-                            break;
-                        case "browseImage":
-                            runOnUiThread(() -> browseImage(jsInteractiveBean.getOtherData()));
-                            break;
-                        case "initArticlePage":
-                            runOnUiThread(() -> initArticlePage(jsInteractiveBean.getOtherData()));
-                            break;
-                        case "getHeaderFromApp":
-                            getHeaderFromApp(jsInteractiveBean.getOtherData());
-                            break;
-                        case "addGoodsToCart":
-                            runOnUiThread(() -> addGoodsToCart(jsInteractiveBean.getOtherData()));
-                            break;
-                        case "replyComment":
-                            runOnUiThread(() -> replyComment(jsInteractiveBean.getOtherData()));
-                            break;
-                        case "setShareButton":
-                            setShareButton(jsInteractiveBean.getOtherData());
-                            break;
-                        case "alibcUrl":
-                            jsSkipTaoBao(jsInteractiveBean.getOtherData());
-                            break;
-                        case "navigationBar":
-                            runOnUiThread(() -> jsSetNavBar(jsInteractiveBean.getOtherData()));
-                            break;
-                        default:
-                            jsInteractiveEmpty(null);
-                            break;
-                    }
+                if (jsInteractiveBean != null && !TextUtils.isEmpty(jsInteractiveBean.getType())) {
+                    if (!isContextExisted(getActivity())) return;
+                    runOnUiThread(() -> {
+                        switch (jsInteractiveBean.getType()) {
+                            case "showToast":
+                                showImportToast(jsInteractiveBean.getOtherData());
+                                break;
+                            case "browseImage":
+                                browseImage(jsInteractiveBean.getOtherData());
+                                break;
+                            case "initArticlePage":
+                                initArticlePage(jsInteractiveBean.getOtherData());
+                                break;
+                            case "getHeaderFromApp":
+                                getHeaderFromApp(jsInteractiveBean.getOtherData());
+                                break;
+                            case "addGoodsToCart":
+                                addGoodsToCart(jsInteractiveBean.getOtherData());
+                                break;
+                            case "replyComment":
+                                replyComment(jsInteractiveBean.getOtherData());
+                                break;
+                            case "setShareButton":
+                                setShareButton(jsInteractiveBean.getOtherData());
+                                break;
+                            case "alibcUrl":
+                                jsSkipTaoBao(jsInteractiveBean.getOtherData());
+                                break;
+                            case "navigationBar":
+                                jsSetNavBar(jsInteractiveBean.getOtherData());
+                                break;
+                            default:
+                                jsInteractiveEmpty(null);
+                                break;
+                        }
+                    });
                 } else {
                     jsInteractiveException();
                 }
@@ -491,7 +495,7 @@ public class ArticleOfficialActivity extends BaseActivity {
      * js设置导航栏
      */
     private void jsSetNavBar(Map<String, Object> otherData) {
-        if (otherData != null) {
+        if (otherData != null && mTvTitle != null) {
             mTvTitle.setText(getStrings((String) otherData.get("navTitle")));
         }
     }
@@ -522,7 +526,7 @@ public class ArticleOfficialActivity extends BaseActivity {
 
     //初始化文章数据
     public void initArticlePage(Map<String, Object> map) {
-        if (map != null) {
+        if (map != null && mTvArticleBottomCollect != null) {
             int isLike = (int) map.get("isLike");
             int isCollect = (int) map.get("isCollect");
             int likeCount = (int) map.get("likeCount");

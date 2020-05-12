@@ -90,6 +90,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getOnlyUrlParams;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getVersionName;
+import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
 import static com.amkj.dmsh.constant.ConstantMethod.isWebLinkUrl;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showImportantToast;
@@ -307,6 +308,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
      * @param refreshStatus
      */
     private void setWebRefreshStatus(int refreshStatus) {
+        if (smart_web_refresh == null) return;
         if (!TextUtils.isEmpty(this.refreshStatus)) {
             smart_web_refresh.setEnableRefresh(this.refreshStatus.contains("1"));
         } else {
@@ -642,100 +644,63 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                     jsInteractiveException();
                 }
                 JsInteractiveBean jsInteractiveBean = JSON.parseObject(resultJson, JsInteractiveBean.class);
-                if (tv_web_title != null && jsInteractiveBean != null && !TextUtils.isEmpty(jsInteractiveBean.getType())) {
-                    switch (jsInteractiveBean.getType()) {
-//                        获取用户Id
-                        case "userId":
-                            jsGetUserId(jsInteractiveBean);
-                            break;
-                        case "showToast":
-                            runOnUiThread(() -> showImportToast(jsInteractiveBean.getOtherData()));
-                            break;
-                        case "getHeaderFromApp":
-                            getHeaderFromApp(jsInteractiveBean.getOtherData());
-                            break;
-                        case "setShareButton":
-                            setShareButton(jsInteractiveBean.getOtherData());
-                            break;
-//                            刷新设置
-                        case "refresh":
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    jsRefreshStatus(jsInteractiveBean);
-                                }
-                            });
-                            break;
-//                            导航栏设置
-                        case "navigationBar":
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    jsSetNavBar(jsInteractiveBean);
-                                }
-                            });
-                            break;
-//                            获取app设备信息
-                        case "appDeviceInfo":
-                            jsGetAppDeviceInfo();
-                            break;
-//                            app更新弹窗
-                        case "appUpdate":
-                            jsInteractiveEmpty(jsInteractiveBean);
-                            break;
-                        case "finishWebPage":
-                            jsAutoFinishPage(jsInteractiveBean);
-                            break;
-                        case "alibcUrl":
-                            jsSkipTaoBao(jsInteractiveBean);
-                            break;
-                        case "statusBar":
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    jsSetStatusBar(jsInteractiveBean);
-                                }
-                            });
-                            break;
-//                            添加日程提醒
-                        case "calendarReminder":
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    addCalendarReminder(jsInteractiveBean);
-                                }
-                            });
-                            break;
-//                            打开通知提醒
-                        case "openNotification":
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    openNotification(jsInteractiveBean);
-                                }
-                            });
-                            break;
-//                            app评分跳转app
-                        case "appMarketGrade":
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    skipAppMarketGrade(jsInteractiveBean);
-                                }
-                            });
-                            break;
-//                            获取通知开关状态
-                        case "notificationStatus":
-                            notificationStatusCallback();
-                            break;
-                        //跳转订单填写页面
-                        case "skipIndentWrite":
-                            skipIndentWrite(jsInteractiveBean.getOtherData());
-                            break;
-                        default:
-                            jsInteractiveEmpty(null);
-                            break;
-                    }
+                if (jsInteractiveBean != null && !TextUtils.isEmpty(jsInteractiveBean.getType())) {
+                    if (!isContextExisted(getActivity())) return;
+                    runOnUiThread(() -> {
+                        switch (jsInteractiveBean.getType()) {
+                            case "userId":
+                                jsGetUserId(jsInteractiveBean);
+                                break;
+                            case "showToast":
+                                showImportToast(jsInteractiveBean.getOtherData());
+                                break;
+                            case "getHeaderFromApp":
+                                getHeaderFromApp(jsInteractiveBean.getOtherData());
+                                break;
+                            case "setShareButton":
+                                setShareButton(jsInteractiveBean.getOtherData());
+                                break;
+                            case "refresh":
+                                jsRefreshStatus(jsInteractiveBean);
+                                break;
+                            case "navigationBar":
+                                jsSetNavBar(jsInteractiveBean);
+                                break;
+                            case "appDeviceInfo":
+                                jsGetAppDeviceInfo();
+                                break;
+                            case "appUpdate":
+                                jsInteractiveEmpty(jsInteractiveBean);
+                                break;
+                            case "finishWebPage":
+                                jsAutoFinishPage(jsInteractiveBean);
+                                break;
+                            case "alibcUrl":
+                                jsSkipTaoBao(jsInteractiveBean);
+                                break;
+                            case "statusBar":
+                                jsSetStatusBar(jsInteractiveBean);
+                                break;
+                            case "calendarReminder":
+                                addCalendarReminder(jsInteractiveBean);
+                                break;
+                            case "openNotification":
+                                openNotification(jsInteractiveBean);
+                                break;
+                            case "appMarketGrade":
+                                skipAppMarketGrade(jsInteractiveBean);
+                                break;
+                            case "notificationStatus":
+                                notificationStatusCallback();
+                                break;
+                            case "skipIndentWrite":
+                                skipIndentWrite(jsInteractiveBean.getOtherData());
+                                break;
+                            default:
+                                jsInteractiveEmpty(null);
+                                break;
+                        }
+                    });
                 } else {
                     jsInteractiveException();
                 }
@@ -1039,7 +1004,7 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
      */
     private void jsSetNavBar(JsInteractiveBean jsInteractiveBean) {
         Map<String, Object> otherData = jsInteractiveBean.getOtherData();
-        if (otherData != null && otherData.get("navBarVisibility") != null) {
+        if (tl_web_normal_bar != null && otherData != null && otherData.get("navBarVisibility") != null) {
             try {
                 int navBarVisibility = (int) otherData.get("navBarVisibility");
                 if (navBarVisibility == 1) {

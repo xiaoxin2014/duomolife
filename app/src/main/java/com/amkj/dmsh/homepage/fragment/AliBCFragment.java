@@ -91,6 +91,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getOnlyUrlParams;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getVersionName;
+import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showImportantToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -303,6 +304,7 @@ public class AliBCFragment extends BaseFragment {
     }
 
     private void setWebRefreshStatus(int refreshStatus) {
+        if (smart_web_fragment_refresh == null) return;
         if (!TextUtils.isEmpty(this.refreshStatus)) {
             smart_web_fragment_refresh.setEnableRefresh(this.refreshStatus.contains("1"));
         } else {
@@ -655,104 +657,62 @@ public class AliBCFragment extends BaseFragment {
                     jsInteractiveException("web");
                 }
                 JsInteractiveBean jsInteractiveBean = JSON.parseObject(resultJson, JsInteractiveBean.class);
-                if (tv_header_title != null && jsInteractiveBean != null && !TextUtils.isEmpty(jsInteractiveBean.getType())) {
-                    switch (jsInteractiveBean.getType()) {
-//                        获取用户Id
-                        case "userId":
-                            jsGetUserId(jsInteractiveBean);
-                            break;
-                        case "getHeaderFromApp":
-                            getHeaderFromApp(jsInteractiveBean.getOtherData());
-                            break;
-                        case "showToast":
-                            getActivity().runOnUiThread(() -> showImportToast(jsInteractiveBean.getOtherData()));
-                            break;
-//                            刷新设置
-                        case "refresh":
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    jsRefreshStatus(jsInteractiveBean);
+                if (jsInteractiveBean != null && !TextUtils.isEmpty(jsInteractiveBean.getType())) {
+                    if (!isContextExisted(getActivity())) return;
+                    getActivity().runOnUiThread(() -> {
+                        switch (jsInteractiveBean.getType()) {
+                            case "userId":
+                                jsGetUserId(jsInteractiveBean);
+                                break;
+                            case "getHeaderFromApp":
+                                getHeaderFromApp(jsInteractiveBean.getOtherData());
+                                break;
+                            case "showToast":
+                                showImportToast(jsInteractiveBean.getOtherData());
+                                break;
+                            case "refresh":
+                                jsRefreshStatus(jsInteractiveBean);
+                                break;
+                            case "navigationBar":
+                                jsSetNavBar(jsInteractiveBean);
+                                break;
+                            case "appDeviceInfo":
+                                jsGetAppDeviceInfo();
+                                break;
+                            case "appUpdate":
+                                jsInteractiveEmpty(jsInteractiveBean);
+                                break;
+                            case "finishWebPage":
+                                jsAutoFinishPage(jsInteractiveBean);
+                                break;
+                            case "alibcUrl":
+                                jsSkipTaoBao(jsInteractiveBean);
+                                break;
+                            case "statusBar":
+                                if (isCanEditStatusBar) {
+                                    jsSetStatusBar(jsInteractiveBean);
                                 }
-                            });
-                            break;
-//                            导航栏设置
-                        case "navigationBar":
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    jsSetNavBar(jsInteractiveBean);
-                                }
-                            });
-                            break;
-//                            获取app设备信息
-                        case "appDeviceInfo":
-                            jsGetAppDeviceInfo();
-                            break;
-//                            app更新弹窗
-                        case "appUpdate":
-                            jsInteractiveEmpty(jsInteractiveBean);
-                            break;
-                        case "finishWebPage":
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    jsAutoFinishPage(jsInteractiveBean);
-                                }
-                            });
-                            break;
-                        case "alibcUrl":
-                            jsSkipTaoBao(jsInteractiveBean);
-                            break;
-                        case "statusBar":
-                            if (isCanEditStatusBar) {
-                                getActivity().runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        jsSetStatusBar(jsInteractiveBean);
-                                    }
-                                });
-                            }
-                            break;
-                        //                            添加日程提醒
-                        case "calendarReminder":
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    addCalendarReminder(jsInteractiveBean);
-                                }
-                            });
-                            break;
-//                            打开通知提醒
-                        case "openNotification":
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    openNotification(jsInteractiveBean);
-                                }
-                            });
-                            break;
-//                            app评分跳转app
-                        case "appMarketGrade":
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    skipAppMarketGrade(jsInteractiveBean);
-                                }
-                            });
-                            break;
-                        //                            获取通知开关状态
-                        case "notificationStatus":
-                            notificationStatusCallback();
-                            break;
-                        //跳转订单填写页面
-                        case "skipIndentWrite":
-                            skipIndentWrite(jsInteractiveBean.getOtherData());
-                            break;
-                        default:
-                            jsInteractiveEmpty(null);
-                            break;
-                    }
+                                break;
+                            case "calendarReminder":
+                                addCalendarReminder(jsInteractiveBean);
+                                break;
+                            case "openNotification":
+                                openNotification(jsInteractiveBean);
+                                break;
+                            case "appMarketGrade":
+                                skipAppMarketGrade(jsInteractiveBean);
+                                break;
+                            case "notificationStatus":
+                                notificationStatusCallback();
+                                break;
+                            case "skipIndentWrite":
+                                skipIndentWrite(jsInteractiveBean.getOtherData());
+                                break;
+                            default:
+                                jsInteractiveEmpty(null);
+                                break;
+                        }
+                    });
                 } else {
                     jsInteractiveException("web");
                 }
@@ -1048,7 +1008,7 @@ public class AliBCFragment extends BaseFragment {
      */
     private void jsSetNavBar(JsInteractiveBean jsInteractiveBean) {
         Map<String, Object> otherData = jsInteractiveBean.getOtherData();
-        if (otherData != null && otherData.get("navBarVisibility") != null) {
+        if (tl_normal_bar != null && otherData != null && otherData.get("navBarVisibility") != null) {
             try {
                 int navBarVisibility = (int) otherData.get("navBarVisibility");
                 if (navBarVisibility == 1) {
