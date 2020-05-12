@@ -1,7 +1,7 @@
 package com.amkj.dmsh.shopdetails.adapter;
 
 import android.app.Activity;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.amkj.dmsh.R;
@@ -15,7 +15,6 @@ import java.util.List;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
-import static com.amkj.dmsh.constant.ConstantMethod.skipJoinTopic;
 
 /**
  * Created by xiaoxin on 2020/4/18

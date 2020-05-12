@@ -9,7 +9,7 @@
 
     <include layout="@layout/activity_domolife_header"/>
 
-    <android.support.v4.widget.NestedScrollView
+    <androidx.core.widget.NestedScrollView
         android:id="@+id/sv_layout_refund"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -146,7 +146,7 @@
                         android:textColor="@color/text_black_t"
                         android:textSize="@dimen/sc_mm_28"/>
 
-                    <android.support.v7.widget.RecyclerView
+                    <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_apply_refund_img"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -184,7 +184,7 @@
                 </FrameLayout>
             </RelativeLayout>
         </LinearLayout>
-    </android.support.v4.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
 
     <include layout="@layout/layout_direct_refund_submit"/>
 

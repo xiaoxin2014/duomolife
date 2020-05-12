@@ -2,7 +2,7 @@ package com.amkj.dmsh.release.bean;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.amkj.dmsh.base.BaseEntity;
 import com.amkj.dmsh.utils.gson.GsonUtils;

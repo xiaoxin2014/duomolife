@@ -2,10 +2,10 @@ package com.amkj.dmsh.mine.activity;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.Nullable;
-import android.support.text.emoji.widget.EmojiEditText;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.Nullable;
+import androidx.emoji.widget.EmojiEditText;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.view.Gravity;

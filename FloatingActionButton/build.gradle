@@ -22,8 +22,8 @@ android {
 }
 
 dependencies {
-    implementation "com.android.support:support-annotations:$versions.supportLibs"
-    implementation "com.android.support:recyclerview-v7:$versions.supportLibs"
+    implementation 'androidx.annotation:annotation:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation "com.nineoldandroids:library:2.4.0"
-    implementation "com.android.support:support-v4:$versions.supportLibs"
+    implementation 'androidx.appcompat:appcompat:1.0.0'
 }

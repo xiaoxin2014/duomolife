@@ -35,7 +35,7 @@
             attr:civ_border_width="@dimen/dimen_1dp"
             />
 
-        <android.support.text.emoji.widget.EmojiTextView xmlns:app="http://schemas.android.com/apk/res-auto"
+        <androidx.emoji.widget.EmojiTextView xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/tv_search_details_user_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

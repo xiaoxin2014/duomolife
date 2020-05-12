@@ -1,7 +1,7 @@
 package com.amkj.dmsh.homepage.fragment;
 
 import android.content.Intent;
-import android.support.v7.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import android.text.TextUtils;
 import android.view.View;
 

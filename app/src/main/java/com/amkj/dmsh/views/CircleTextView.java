@@ -9,7 +9,7 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
-import android.support.v7.widget.AppCompatTextView;
+import androidx.appcompat.widget.AppCompatTextView;
 import android.util.AttributeSet;
 
 import com.amkj.dmsh.R;

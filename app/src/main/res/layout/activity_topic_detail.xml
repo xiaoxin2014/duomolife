@@ -31,21 +31,21 @@
             <include
                 layout="@layout/layout_refresh_header_gif"/>
 
-            <android.support.design.widget.CoordinatorLayout
+            <androidx.coordinatorlayout.widget.CoordinatorLayout
                 android:id="@+id/coordinator"
                 xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/transparent">
 
-                <android.support.design.widget.AppBarLayout
+                <com.google.android.material.appbar.AppBarLayout
                     android:id="@+id/ab_find_topic_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/transparent"
                     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-                    <android.support.design.widget.CollapsingToolbarLayout
+                    <com.google.android.material.appbar.CollapsingToolbarLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@color/transparent"
@@ -54,7 +54,7 @@
 
                         <include layout="@layout/layout_topic_info"/>
 
-                    </android.support.design.widget.CollapsingToolbarLayout>
+                    </com.google.android.material.appbar.CollapsingToolbarLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -80,9 +80,9 @@
                             tl:tl_textUnselectColor="@color/text_login_gray_s"
                             tl:tl_textsize="15sp"/>
                     </LinearLayout>
-                </android.support.design.widget.AppBarLayout>
+                </com.google.android.material.appbar.AppBarLayout>
 
-                <android.support.v4.view.ViewPager
+                <androidx.viewpager.widget.ViewPager
                     android:id="@+id/vp_post"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -90,7 +90,7 @@
                     app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
                 <include layout="@layout/layout_find_topic_release"/>
-            </android.support.design.widget.CoordinatorLayout>
+            </androidx.coordinatorlayout.widget.CoordinatorLayout>
         </com.scwang.smartrefresh.layout.SmartRefreshLayout>
     </LinearLayout>
 </FrameLayout>

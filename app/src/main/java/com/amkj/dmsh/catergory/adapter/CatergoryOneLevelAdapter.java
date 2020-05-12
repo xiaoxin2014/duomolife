@@ -3,9 +3,9 @@ package com.amkj.dmsh.catergory.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Parcelable;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
 import com.amkj.dmsh.R;

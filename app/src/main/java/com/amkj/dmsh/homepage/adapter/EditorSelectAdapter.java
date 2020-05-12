@@ -2,9 +2,9 @@ package com.amkj.dmsh.homepage.adapter;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;

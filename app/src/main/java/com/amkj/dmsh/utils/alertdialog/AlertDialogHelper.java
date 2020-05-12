@@ -3,7 +3,7 @@ package com.amkj.dmsh.utils.alertdialog;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
-import android.support.v7.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;

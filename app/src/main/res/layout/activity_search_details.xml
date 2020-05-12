@@ -23,7 +23,7 @@
         app:tl_textUnselectColor="@color/text_black_t"
         app:tl_textsize="14sp" />
 
-    <android.support.v4.view.ViewPager
+    <androidx.viewpager.widget.ViewPager
         android:id="@+id/vp_search_details_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

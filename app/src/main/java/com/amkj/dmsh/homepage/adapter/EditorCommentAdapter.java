@@ -1,7 +1,7 @@
 package com.amkj.dmsh.homepage.adapter;
 
 import android.app.Activity;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;

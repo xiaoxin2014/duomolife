@@ -1,9 +1,9 @@
 package com.amkj.dmsh.dominant.fragment;
 
 import android.app.Activity;
-import android.arch.lifecycle.LifecycleOwner;
-import android.support.annotation.NonNull;
-import android.support.v4.view.ViewPager;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.annotation.NonNull;
+import androidx.viewpager.widget.ViewPager;
 import android.view.View;
 
 import com.amkj.dmsh.R;

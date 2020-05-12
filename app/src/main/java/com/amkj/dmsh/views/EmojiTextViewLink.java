@@ -1,7 +1,7 @@
 package com.amkj.dmsh.views;
 
 import android.content.Context;
-import android.support.text.emoji.widget.EmojiTextView;
+import androidx.emoji.widget.EmojiTextView;
 import android.text.method.MovementMethod;
 import android.util.AttributeSet;
 import android.view.MotionEvent;

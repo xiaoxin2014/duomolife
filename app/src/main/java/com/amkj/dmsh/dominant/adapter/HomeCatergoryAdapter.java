@@ -1,10 +1,10 @@
 package com.amkj.dmsh.dominant.adapter;
 
 import android.app.Activity;
-import android.arch.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LifecycleOwner;
 import android.content.Intent;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
 import com.amkj.dmsh.R;

@@ -3,7 +3,7 @@ package com.amkj.dmsh.views.bottomdialog;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.support.v4.widget.NestedScrollView;
+import androidx.core.widget.NestedScrollView;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;

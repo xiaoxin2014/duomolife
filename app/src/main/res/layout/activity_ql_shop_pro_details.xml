@@ -24,7 +24,7 @@
 
                 <include layout="@layout/layout_refresh_header_gif" />
 
-                <android.support.v4.widget.NestedScrollView
+                <androidx.core.widget.NestedScrollView
                     android:id="@+id/scroll_pro"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
@@ -183,7 +183,7 @@
                                 app:flexDirection="column"
                                 app:showDivider="middle" />
 
-                            <android.support.v7.widget.RecyclerView
+                            <androidx.recyclerview.widget.RecyclerView
                                 android:id="@+id/rv_shop_details_text_communal"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -231,7 +231,7 @@
                                     android:textColor="@color/text_black_t"
                                     android:textSize="@dimen/sc_mm_30" />
 
-                                <android.support.v7.widget.RecyclerView
+                                <androidx.recyclerview.widget.RecyclerView
                                     android:id="@+id/rv_goods_group"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
@@ -251,7 +251,7 @@
 
                                 <include layout="@layout/layout_product_comment_eva" />
 
-                                <android.support.v7.widget.RecyclerView
+                                <androidx.recyclerview.widget.RecyclerView
                                     android:id="@+id/communal_recycler_wrap"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
@@ -280,7 +280,7 @@
                                     android:textColor="@color/text_black_t"
                                     android:textSize="@dimen/sc_mm_30" />
 
-                                <android.support.v7.widget.RecyclerView
+                                <androidx.recyclerview.widget.RecyclerView
                                     android:id="@+id/rv_goods_recommend"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
@@ -349,13 +349,13 @@
                             </LinearLayout>
                         </LinearLayout>
 
-                        <android.support.v7.widget.RecyclerView
+                        <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/rv_product_details"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:scrollbars="none" />
                     </LinearLayout>
-                </android.support.v4.widget.NestedScrollView>
+                </androidx.core.widget.NestedScrollView>
             </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
             <include layout="@layout/layout_shop_details_bottom" />

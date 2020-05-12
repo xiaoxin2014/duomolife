@@ -22,7 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <android.support.v4.widget.NestedScrollView
+            <androidx.core.widget.NestedScrollView
                 android:id="@+id/sv_layout_refund_detail"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
@@ -136,7 +136,7 @@
 
                     <include layout="@layout/layout_refund_logistic_info" />
 
-                    <android.support.v7.widget.RecyclerView
+                    <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/communal_recycler"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -148,7 +148,7 @@
 
                     <include layout="@layout/layout_contact_qy_service" />
                 </LinearLayout>
-            </android.support.v4.widget.NestedScrollView>
+            </androidx.core.widget.NestedScrollView>
 
             <TextView
                 android:id="@+id/tv_commit_apply"

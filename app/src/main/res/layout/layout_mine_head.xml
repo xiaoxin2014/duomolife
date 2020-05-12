@@ -77,7 +77,7 @@
                     android:layout_toRightOf="@+id/iv_mine_header"
                     android:orientation="horizontal">
 
-                    <android.support.text.emoji.widget.EmojiTextView
+                    <androidx.emoji.widget.EmojiTextView
                         android:id="@+id/tv_mine_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

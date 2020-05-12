@@ -1,8 +1,8 @@
 package com.amkj.dmsh.mine.adapter;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.shopdetails.fragment.RefundGoodsListFragment;

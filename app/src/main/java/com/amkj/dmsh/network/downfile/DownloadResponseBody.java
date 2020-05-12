@@ -1,7 +1,7 @@
 package com.amkj.dmsh.network.downfile;
 
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import java.io.IOException;
 

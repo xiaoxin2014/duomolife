@@ -2,11 +2,6 @@ package com.amkj.dmsh.homepage.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.Nullable;
-import android.support.text.emoji.widget.EmojiEditText;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
@@ -36,6 +31,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.emoji.widget.EmojiEditText;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 import butterknife.OnTouch;

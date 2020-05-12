@@ -1,7 +1,7 @@
 package com.amkj.dmsh.homepage.activity;
 
 import android.content.Intent;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;

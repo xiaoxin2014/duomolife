@@ -1,11 +1,11 @@
 package com.amkj.dmsh.homepage.fragment;
 
 import android.content.Intent;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.NestedScrollView;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
+import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;

@@ -1,8 +1,8 @@
 package com.amkj.dmsh.shopdetails.adapter;
 
 import android.app.Activity;
-import android.arch.lifecycle.LifecycleOwner;
-import android.support.annotation.NonNull;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.amkj.dmsh.R;

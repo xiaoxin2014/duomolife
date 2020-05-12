@@ -1,8 +1,8 @@
 package com.amkj.dmsh.dominant.activity;
 
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;

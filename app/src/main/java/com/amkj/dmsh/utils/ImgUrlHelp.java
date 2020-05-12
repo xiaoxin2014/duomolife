@@ -4,7 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.alibaba.sdk.android.oss.ClientException;
 import com.alibaba.sdk.android.oss.OSS;

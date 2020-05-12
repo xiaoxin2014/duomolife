@@ -27,13 +27,13 @@
 
                 <include layout="@layout/layout_refresh_header_gif"/>
 
-                <android.support.v4.widget.NestedScrollView
+                <androidx.core.widget.NestedScrollView
                     android:layout_width="match_parent"
                     android:id="@+id/scroll_integral_product_header"
                     android:layout_height="match_parent">
 
                     <include layout="@layout/layout_integration_details" />
-                </android.support.v4.widget.NestedScrollView>
+                </androidx.core.widget.NestedScrollView>
             </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
             <include layout="@layout/layout_integral_exchange"/>

@@ -1,8 +1,8 @@
 package com.amkj.dmsh.homepage.activity;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v4.view.ViewPager;
+import androidx.annotation.NonNull;
+import androidx.viewpager.widget.ViewPager;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.MotionEvent;

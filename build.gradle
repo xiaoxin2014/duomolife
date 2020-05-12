@@ -7,7 +7,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.4'
+        classpath 'com.android.tools.build:gradle:3.2.1'
         classpath 'com.novoda:bintray-release:0.9'
         // tinkersupport插件, 其中lastest.release指拉取最新版本，也可以指定明确版本号，例如1.0.4
         classpath "com.tencent.bugly:tinker-support:1.1.5"
@@ -46,7 +46,7 @@ allprojects {
 subprojects {
     project.configurations.all {
         resolutionStrategy.eachDependency { details ->
-            if (details.requested.group == 'com.android.support'
+            if (details.requested.group == 'androidx'
                     && !details.requested.name.contains('multidex')) {
                 //统一版本号
                 details.useVersion versions.supportLibs

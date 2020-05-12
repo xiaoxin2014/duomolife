@@ -21,14 +21,14 @@
 
             <include layout="@layout/layout_refresh_header_gif"/>
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_comment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:paddingStart="@dimen/sc_mm_20"
                 android:paddingEnd="@dimen/sc_mm_20"
                 android:scrollbars="none">
-            </android.support.v7.widget.RecyclerView>
+            </androidx.recyclerview.widget.RecyclerView>
         </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
         <RelativeLayout

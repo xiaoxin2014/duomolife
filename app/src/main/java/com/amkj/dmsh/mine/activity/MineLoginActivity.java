@@ -3,7 +3,7 @@ package com.amkj.dmsh.mine.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.MotionEvent;

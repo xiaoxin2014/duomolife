@@ -1,6 +1,6 @@
 package com.amkj.dmsh.homepage.adapter;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.bean.CouponEntity.CouponListEntity.CouponBean;

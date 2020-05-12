@@ -40,7 +40,7 @@
         android:layout_height="@dimen/sc_mm_200"
         app:canLoop="true"/>
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_catergory_goods"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

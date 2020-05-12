@@ -2,12 +2,6 @@ package com.amkj.dmsh.find.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.text.emoji.widget.EmojiEditText;
-import android.support.text.emoji.widget.EmojiTextView;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -72,6 +66,12 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import androidx.annotation.NonNull;
+import androidx.emoji.widget.EmojiEditText;
+import androidx.emoji.widget.EmojiTextView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;

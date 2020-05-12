@@ -13,7 +13,7 @@
         <include layout="@layout/layout_refresh_header_gif"/>
 
 
-        <android.support.v4.widget.NestedScrollView
+        <androidx.core.widget.NestedScrollView
             android:id="@+id/scrollview"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -31,7 +31,7 @@
                     android:layout_height="@dimen/sc_mm_300"
                     app:canLoop="true"/>
 
-                <android.support.v7.widget.RecyclerView
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_top"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -41,7 +41,7 @@
 
                 <include layout="@layout/layout_home_dynamic"/>
 
-                <android.support.v7.widget.RecyclerView
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_special_zone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -93,7 +93,7 @@
                             android:text="更多 >"/>
                     </RelativeLayout>
 
-                    <android.support.v4.view.ViewPager
+                    <androidx.viewpager.widget.ViewPager
                         android:id="@+id/vp_welfare"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/sc_mm_600"
@@ -158,7 +158,7 @@
                         android:layout_height="@dimen/sc_mm_10"
                         android:background="@color/light_gray_f"/>
 
-                    <android.support.v7.widget.RecyclerView
+                    <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_nice"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -219,7 +219,7 @@
                             android:textSize="@dimen/sc_mm_24"/>
                     </RelativeLayout>
 
-                    <android.support.v7.widget.RecyclerView
+                    <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_artical"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -250,13 +250,13 @@
                         android:background="@color/light_gray_f"/>
                 </LinearLayout>
 
-                <android.support.v7.widget.RecyclerView
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_product"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:scrollbars="none"/>
             </LinearLayout>
-        </android.support.v4.widget.NestedScrollView>
+        </androidx.core.widget.NestedScrollView>
 
     </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 

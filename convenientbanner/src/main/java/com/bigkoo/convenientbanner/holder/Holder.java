@@ -6,7 +6,7 @@ package com.bigkoo.convenientbanner.holder;
  * @param <T> 任何你指定的对象
  */
 
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
 public abstract class Holder<T> extends RecyclerView.ViewHolder {

@@ -12,7 +12,7 @@
               android:paddingRight="@dimen/sc_mm_16"
               android:visibility="gone">
 
-    <android.support.text.emoji.widget.EmojiEditText
+    <androidx.emoji.widget.EmojiEditText
         android:id="@+id/emoji_edit_comment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

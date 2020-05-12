@@ -74,7 +74,7 @@
                 android:id="@+id/iv_find_article_cover"
                 android:adjustViewBounds="true"
                 android:layout_height="wrap_content" />
-            <android.support.text.emoji.widget.EmojiTextView
+            <androidx.emoji.widget.EmojiTextView
                 android:layout_width="match_parent"
                 android:layout_below="@id/iv_find_article_cover"
                 android:id="@+id/tv_find_article_digest"
@@ -86,7 +86,7 @@
                 app:emojiconSize="17sp" />
         </RelativeLayout>
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_find_image"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

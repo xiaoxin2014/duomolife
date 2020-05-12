@@ -1,10 +1,11 @@
 package com.bigkoo.convenientbanner.adapter;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.bigkoo.convenientbanner.utils.ScreenUtil;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * adapter中调用onCreateViewHolder, onBindViewHolder

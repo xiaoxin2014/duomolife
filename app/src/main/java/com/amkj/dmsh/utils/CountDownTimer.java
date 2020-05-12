@@ -17,7 +17,7 @@
 package com.amkj.dmsh.utils;
 
 import android.annotation.SuppressLint;
-import android.arch.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LifecycleOwner;
 import android.os.Message;
 import android.os.SystemClock;
 

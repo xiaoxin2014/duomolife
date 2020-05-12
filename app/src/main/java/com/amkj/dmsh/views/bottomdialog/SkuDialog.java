@@ -5,7 +5,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.support.v4.widget.NestedScrollView;
+import androidx.core.widget.NestedScrollView;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;

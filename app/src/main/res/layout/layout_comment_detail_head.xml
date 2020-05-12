@@ -12,7 +12,7 @@
         android:layout_height="@dimen/sc_mm_70"
         android:layout_marginTop="@dimen/sc_mm_24"/>
 
-    <android.support.text.emoji.widget.EmojiTextView
+    <androidx.emoji.widget.EmojiTextView
         android:id="@+id/tv_comm_comment_nick_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -35,7 +35,7 @@
         android:text="@string/defaul"
         android:textColor="@color/color_blue_reply_com"/>
 
-    <android.support.text.emoji.widget.EmojiTextView
+    <androidx.emoji.widget.EmojiTextView
         android:id="@+id/tv_comm_comment_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

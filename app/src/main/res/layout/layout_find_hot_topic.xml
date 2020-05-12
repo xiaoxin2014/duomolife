@@ -14,7 +14,7 @@
 
     <include layout="@layout/layout_find_hot_topic_header"/>
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_topic"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

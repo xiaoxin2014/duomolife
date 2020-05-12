@@ -1,6 +1,6 @@
 package com.amkj.dmsh.utils;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;

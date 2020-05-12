@@ -1,7 +1,7 @@
 package com.amkj.dmsh.dominant.dialog;
 
 import android.app.Activity;
-import android.support.v7.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;

@@ -2,9 +2,9 @@ package com.amkj.dmsh.utils.alertdialog;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;

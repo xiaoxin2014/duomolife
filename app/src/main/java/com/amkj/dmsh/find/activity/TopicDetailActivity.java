@@ -1,12 +1,6 @@
 package com.amkj.dmsh.find.activity;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.text.emoji.widget.EmojiTextView;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.CardView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -26,6 +20,7 @@ import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.views.JzVideo.JzVideoPlayerStatusDialog;
 import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
+import com.google.android.material.appbar.AppBarLayout;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import org.greenrobot.eventbus.EventBus;
@@ -33,6 +28,11 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.HashMap;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.emoji.widget.EmojiTextView;
+import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.jzvd.Jzvd;

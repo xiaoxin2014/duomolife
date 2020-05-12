@@ -39,7 +39,7 @@
                 android:paddingBottom="@dimen/sc_mm_40"
                 android:src="@drawable/selector_left_arrow"/>
 
-            <android.support.v4.view.ViewPager
+            <androidx.viewpager.widget.ViewPager
                 android:id="@+id/vp_goods"
                 android:layout_width="@dimen/sc_mm_360"
                 android:layout_height="@dimen/sc_mm_360"/>

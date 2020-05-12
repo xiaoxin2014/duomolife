@@ -3,7 +3,7 @@ package com.amkj.dmsh.views.arclayout.manager;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 public class ClipPathManager implements ClipManager {
 

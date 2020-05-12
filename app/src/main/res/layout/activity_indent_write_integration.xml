@@ -11,7 +11,7 @@
         android:orientation="vertical"
         android:layout_height="match_parent">
         <include layout="@layout/activity_domolife_header"/>
-        <android.support.v4.widget.NestedScrollView
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1">
@@ -81,7 +81,7 @@
                 </RelativeLayout>
                 <include layout="@layout/layout_integral_indent_write_foot"/>
             </LinearLayout>
-        </android.support.v4.widget.NestedScrollView>
+        </androidx.core.widget.NestedScrollView>
         <include layout="@layout/layout_integral_direct_bottom"/>
     </LinearLayout>
 

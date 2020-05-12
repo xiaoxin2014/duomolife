@@ -23,19 +23,19 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/white">
 
-                <android.support.design.widget.AppBarLayout
+                <com.google.android.material.appbar.AppBarLayout
                     android:id="@+id/ab_find_topic_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/white"
                     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-                    <android.support.design.widget.CollapsingToolbarLayout
+                    <com.google.android.material.appbar.CollapsingToolbarLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:contentScrim="@android:color/white"
@@ -109,7 +109,7 @@
                                 android:textColor="@color/text_login_gray_s"
                                 android:textSize="@dimen/sc_mm_26" />
                         </LinearLayout>
-                    </android.support.design.widget.CollapsingToolbarLayout>
+                    </com.google.android.material.appbar.CollapsingToolbarLayout>
 
                     <com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout xmlns:tl="http://schemas.android.com/apk/res-auto"
                                                                          android:id="@+id/std_find_topic_art_type"
@@ -127,9 +127,9 @@
                                                                          tl:tl_textSelectColor="@color/text_login_blue_z"
                                                                          tl:tl_textUnselectColor="@color/text_login_gray_s"
                                                                          tl:tl_textsize="15sp" />
-                </android.support.design.widget.AppBarLayout>
+                </com.google.android.material.appbar.AppBarLayout>
 
-                <android.support.v4.view.ViewPager
+                <androidx.viewpager.widget.ViewPager
                     android:id="@+id/find_topic_container"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -137,7 +137,7 @@
                     app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
                 <include layout="@layout/layout_find_topic_release" />
-            </android.support.design.widget.CoordinatorLayout>
+            </androidx.coordinatorlayout.widget.CoordinatorLayout>
         </LinearLayout>
     </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 </RelativeLayout>

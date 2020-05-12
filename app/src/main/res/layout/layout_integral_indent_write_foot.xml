@@ -41,7 +41,7 @@
                 android:textSize="@dimen/sc_mm_28" />
         </LinearLayout>
     </LinearLayout>
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:nestedScrollingEnabled="false"
         android:id="@+id/rv_integral_write_info"

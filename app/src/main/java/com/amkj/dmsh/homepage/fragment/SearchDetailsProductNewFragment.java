@@ -1,6 +1,6 @@
 package com.amkj.dmsh.homepage.fragment;
 
-import android.support.v7.widget.GridLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import android.text.TextUtils;
 import android.view.View;
 

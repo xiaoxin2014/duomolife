@@ -35,7 +35,7 @@
             android:src="@drawable/default_ava_img"/>
 
 
-        <android.support.text.emoji.widget.EmojiTextView
+        <androidx.emoji.widget.EmojiTextView
             android:id="@+id/tv_user_name2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

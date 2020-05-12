@@ -51,13 +51,13 @@
 
     <include layout="@layout/layout_communal_recycler_wrap"/>
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_goods"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:scrollbars="none">
-    </android.support.v7.widget.RecyclerView>
+    </androidx.recyclerview.widget.RecyclerView>
 
     <include
         layout="@layout/layout_com_art_bottom"

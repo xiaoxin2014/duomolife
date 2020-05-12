@@ -24,7 +24,7 @@
         app:tl_textUnselectColor="@color/text_login_gray_s"
         app:tl_textsize="@dimen/sc_mm_30"/>
 
-    <android.support.v4.view.ViewPager
+    <androidx.viewpager.widget.ViewPager
         android:id="@+id/vp_search_details_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

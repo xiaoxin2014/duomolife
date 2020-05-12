@@ -20,7 +20,7 @@
 
             <include layout="@layout/layout_post_user_info"/>
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_detail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -32,7 +32,7 @@
         </LinearLayout>
 
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_related"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

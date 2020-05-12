@@ -1,7 +1,7 @@
 package com.amkj.dmsh.find.view;
 
 import android.content.Context;
-import android.support.text.emoji.widget.EmojiTextView;
+import androidx.emoji.widget.EmojiTextView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;

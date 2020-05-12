@@ -7,10 +7,9 @@ package com.amkj.dmsh.views;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
-import android.support.v7.widget.AppCompatTextView;
+import androidx.appcompat.widget.AppCompatTextView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.widget.TextView;
 
 /**
  * drawableLeft与文本一起居中显示

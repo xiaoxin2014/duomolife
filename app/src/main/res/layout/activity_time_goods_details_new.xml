@@ -23,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <android.support.v4.widget.NestedScrollView
+            <androidx.core.widget.NestedScrollView
                 android:id="@+id/nsv_time_detail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -166,7 +166,7 @@
                         android:layout_height="wrap_content"
                         android:minHeight="@dimen/sc_mm_500"/>
                 </LinearLayout>
-            </android.support.v4.widget.NestedScrollView>
+            </androidx.core.widget.NestedScrollView>
 
             <include layout="@layout/layout_communal_floating"/>
         </FrameLayout>

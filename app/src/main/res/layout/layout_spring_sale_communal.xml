@@ -37,7 +37,7 @@
             android:background="@drawable/sel_time_spring_tab_red_ffs_un_ffb"
             android:layout_height="match_parent" />
     </RadioGroup>
-    <android.support.v4.view.ViewPager
+    <androidx.viewpager.widget.ViewPager
         android:layout_width="match_parent"
         android:id="@+id/vp_show_time"
         android:background="@color/white"

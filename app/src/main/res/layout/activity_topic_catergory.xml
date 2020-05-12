@@ -18,13 +18,13 @@
         android:background="@color/light_gray_f"
         android:orientation="horizontal">
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_catergory"
             android:layout_width="@dimen/sc_mm_220"
             android:layout_height="match_parent"
             android:scrollbars="none"/>
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_topic"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

@@ -18,7 +18,7 @@
         attr:civ_border_width="@dimen/dimen_1dp"
         />
 
-    <android.support.text.emoji.widget.EmojiTextView
+    <androidx.emoji.widget.EmojiTextView
         android:id="@+id/tv_search_details_user_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

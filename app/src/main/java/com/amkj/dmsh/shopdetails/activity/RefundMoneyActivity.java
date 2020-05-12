@@ -1,6 +1,6 @@
 package com.amkj.dmsh.shopdetails.activity;
 
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;

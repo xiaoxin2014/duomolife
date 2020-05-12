@@ -16,7 +16,7 @@
         android:paddingLeft="@dimen/gap_left"
         android:gravity="center_vertical"
         android:layout_height="@dimen/sc_mm_100" />
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_below="@id/tv_activity_prefecture"
         android:id="@+id/rv_activity_prefecture"

@@ -1,7 +1,7 @@
 package com.amkj.dmsh.homepage.adapter;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.homepage.bean.CommunalArticleEntity.CommunalArticleBean;

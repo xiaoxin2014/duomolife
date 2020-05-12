@@ -17,7 +17,7 @@
         <include layout="@layout/activity_duomolife_blue_header"/>
     </LinearLayout>
 
-    <android.support.v4.widget.NestedScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -252,5 +252,5 @@
                 android:textColor="@color/text_login_gray_s"
                 android:textSize="@dimen/sc_mm_24"/>
         </LinearLayout>
-    </android.support.v4.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
 </LinearLayout>

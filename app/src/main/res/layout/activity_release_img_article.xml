@@ -15,7 +15,7 @@
         <include layout="@layout/activity_domolife_header" />
     </RelativeLayout>
 
-    <android.support.v4.widget.NestedScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1">
@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <android.support.text.emoji.widget.EmojiEditText
+            <androidx.emoji.widget.EmojiEditText
                 android:id="@+id/release_et_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -43,7 +43,7 @@
                 android:textCursorDrawable="@null"
                 android:textSize="@dimen/sc_mm_28" />
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_img_article"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -90,7 +90,7 @@
                 <include layout="@layout/layout_communal_recycler_wrap" />
             </RelativeLayout>
         </LinearLayout>
-    </android.support.v4.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
 
     <include layout="@layout/layout_find_topic_release" />
 </LinearLayout>

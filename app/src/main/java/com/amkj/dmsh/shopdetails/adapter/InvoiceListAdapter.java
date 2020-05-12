@@ -1,7 +1,7 @@
 package com.amkj.dmsh.shopdetails.adapter;
 
 import android.graphics.Bitmap;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.widget.ImageView;
 
 import com.amkj.dmsh.R;

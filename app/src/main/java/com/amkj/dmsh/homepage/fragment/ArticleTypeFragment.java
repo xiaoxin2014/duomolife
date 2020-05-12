@@ -1,8 +1,8 @@
 package com.amkj.dmsh.homepage.fragment;
 
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.Toolbar;
+import androidx.viewpager.widget.ViewPager;
+import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 

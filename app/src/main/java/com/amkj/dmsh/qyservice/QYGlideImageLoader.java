@@ -3,7 +3,7 @@ package com.amkj.dmsh.qyservice;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.amkj.dmsh.R;
 import com.bumptech.glide.Glide;

@@ -1,7 +1,7 @@
 package com.amkj.dmsh.shopdetails.adapter;
 
 import android.app.Activity;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.shopdetails.bean.RefundDetailProductBean;

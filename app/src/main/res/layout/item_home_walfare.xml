@@ -17,7 +17,7 @@
         android:layout_marginRight="@dimen/sc_mm_10"
         android:src="@drawable/load_loading_image"/>
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_topic_goods"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

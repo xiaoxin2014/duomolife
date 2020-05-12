@@ -6,7 +6,7 @@
     android:focusableInTouchMode="true"
     android:focusable="true"
     android:orientation="vertical">
-    <android.support.v4.widget.NestedScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_marginLeft="@dimen/gap_left"
         android:layout_marginRight="@dimen/gap_right"
@@ -28,7 +28,7 @@
                 android:id="@+id/rp_account_logout"
                 android:layout_below="@id/tv_check_logout_reason"
                 android:layout_height="wrap_content"/>
-            <android.support.text.emoji.widget.EmojiEditText
+            <androidx.emoji.widget.EmojiEditText
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/sc_mm_200"
                 android:layout_below="@id/rp_account_logout"
@@ -41,7 +41,7 @@
                 android:background="@drawable/border_rect_four_gray_bg_white"
                 android:id="@+id/ev_account_logout_reason"/>
         </RelativeLayout>
-    </android.support.v4.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
     <TextView
         android:layout_width="match_parent"
         android:id="@+id/tv_account_logout_selected"

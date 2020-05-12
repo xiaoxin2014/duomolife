@@ -7,7 +7,7 @@
     android:showDividers="beginning"
     android:background="@color/white"
     android:orientation="vertical">
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:nestedScrollingEnabled="false"
         android:background="@drawable/border_bottom_line"
