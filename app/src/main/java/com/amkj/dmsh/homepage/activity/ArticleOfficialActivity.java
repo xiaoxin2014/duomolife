@@ -413,6 +413,7 @@ public class ArticleOfficialActivity extends BaseActivity {
         alertDialogHelper.show();
     }
 
+    //js调用android子线程中执行
     public class JsData {
         //跳转页面
         @JavascriptInterface
@@ -448,37 +449,41 @@ public class ArticleOfficialActivity extends BaseActivity {
                 if (jsInteractiveBean != null && !TextUtils.isEmpty(jsInteractiveBean.getType())) {
                     if (!isContextExisted(getActivity())) return;
                     runOnUiThread(() -> {
-                        switch (jsInteractiveBean.getType()) {
-                            case "showToast":
-                                showImportToast(jsInteractiveBean.getOtherData());
-                                break;
-                            case "browseImage":
-                                browseImage(jsInteractiveBean.getOtherData());
-                                break;
-                            case "initArticlePage":
-                                initArticlePage(jsInteractiveBean.getOtherData());
-                                break;
-                            case "getHeaderFromApp":
-                                getHeaderFromApp(jsInteractiveBean.getOtherData());
-                                break;
-                            case "addGoodsToCart":
-                                addGoodsToCart(jsInteractiveBean.getOtherData());
-                                break;
-                            case "replyComment":
-                                replyComment(jsInteractiveBean.getOtherData());
-                                break;
-                            case "setShareButton":
-                                setShareButton(jsInteractiveBean.getOtherData());
-                                break;
-                            case "alibcUrl":
-                                jsSkipTaoBao(jsInteractiveBean.getOtherData());
-                                break;
-                            case "navigationBar":
-                                jsSetNavBar(jsInteractiveBean.getOtherData());
-                                break;
-                            default:
-                                jsInteractiveEmpty(null);
-                                break;
+                        try {//在子线程中无法捕获主线程抛出的异常，所以这里再捕获一次
+                            switch (jsInteractiveBean.getType()) {
+                                case "showToast":
+                                    showImportToast(jsInteractiveBean.getOtherData());
+                                    break;
+                                case "browseImage":
+                                    browseImage(jsInteractiveBean.getOtherData());
+                                    break;
+                                case "initArticlePage":
+                                    initArticlePage(jsInteractiveBean.getOtherData());
+                                    break;
+                                case "getHeaderFromApp":
+                                    getHeaderFromApp(jsInteractiveBean.getOtherData());
+                                    break;
+                                case "addGoodsToCart":
+                                    addGoodsToCart(jsInteractiveBean.getOtherData());
+                                    break;
+                                case "replyComment":
+                                    replyComment(jsInteractiveBean.getOtherData());
+                                    break;
+                                case "setShareButton":
+                                    setShareButton(jsInteractiveBean.getOtherData());
+                                    break;
+                                case "alibcUrl":
+                                    jsSkipTaoBao(jsInteractiveBean.getOtherData());
+                                    break;
+                                case "navigationBar":
+                                    jsSetNavBar(jsInteractiveBean.getOtherData());
+                                    break;
+                                default:
+                                    jsInteractiveEmpty(null);
+                                    break;
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     });
                 } else {

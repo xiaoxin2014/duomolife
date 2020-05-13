@@ -12,10 +12,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -78,6 +74,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
 import butterknife.BindView;
 import butterknife.OnClick;
 import me.jessyan.autosize.AutoSize;
@@ -647,58 +647,62 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                 if (jsInteractiveBean != null && !TextUtils.isEmpty(jsInteractiveBean.getType())) {
                     if (!isContextExisted(getActivity())) return;
                     runOnUiThread(() -> {
-                        switch (jsInteractiveBean.getType()) {
-                            case "userId":
-                                jsGetUserId(jsInteractiveBean);
-                                break;
-                            case "showToast":
-                                showImportToast(jsInteractiveBean.getOtherData());
-                                break;
-                            case "getHeaderFromApp":
-                                getHeaderFromApp(jsInteractiveBean.getOtherData());
-                                break;
-                            case "setShareButton":
-                                setShareButton(jsInteractiveBean.getOtherData());
-                                break;
-                            case "refresh":
-                                jsRefreshStatus(jsInteractiveBean);
-                                break;
-                            case "navigationBar":
-                                jsSetNavBar(jsInteractiveBean);
-                                break;
-                            case "appDeviceInfo":
-                                jsGetAppDeviceInfo();
-                                break;
-                            case "appUpdate":
-                                jsInteractiveEmpty(jsInteractiveBean);
-                                break;
-                            case "finishWebPage":
-                                jsAutoFinishPage(jsInteractiveBean);
-                                break;
-                            case "alibcUrl":
-                                jsSkipTaoBao(jsInteractiveBean);
-                                break;
-                            case "statusBar":
-                                jsSetStatusBar(jsInteractiveBean);
-                                break;
-                            case "calendarReminder":
-                                addCalendarReminder(jsInteractiveBean);
-                                break;
-                            case "openNotification":
-                                openNotification(jsInteractiveBean);
-                                break;
-                            case "appMarketGrade":
-                                skipAppMarketGrade(jsInteractiveBean);
-                                break;
-                            case "notificationStatus":
-                                notificationStatusCallback();
-                                break;
-                            case "skipIndentWrite":
-                                skipIndentWrite(jsInteractiveBean.getOtherData());
-                                break;
-                            default:
-                                jsInteractiveEmpty(null);
-                                break;
+                        try {//在子线程中无法捕获主线程抛出的异常，所以这里再捕获一次
+                            switch (jsInteractiveBean.getType()) {
+                                case "userId":
+                                    jsGetUserId(jsInteractiveBean);
+                                    break;
+                                case "showToast":
+                                    showImportToast(jsInteractiveBean.getOtherData());
+                                    break;
+                                case "getHeaderFromApp":
+                                    getHeaderFromApp(jsInteractiveBean.getOtherData());
+                                    break;
+                                case "setShareButton":
+                                    setShareButton(jsInteractiveBean.getOtherData());
+                                    break;
+                                case "refresh":
+                                    jsRefreshStatus(jsInteractiveBean);
+                                    break;
+                                case "navigationBar":
+                                    jsSetNavBar(jsInteractiveBean);
+                                    break;
+                                case "appDeviceInfo":
+                                    jsGetAppDeviceInfo();
+                                    break;
+                                case "appUpdate":
+                                    jsInteractiveEmpty(jsInteractiveBean);
+                                    break;
+                                case "finishWebPage":
+                                    jsAutoFinishPage(jsInteractiveBean);
+                                    break;
+                                case "alibcUrl":
+                                    jsSkipTaoBao(jsInteractiveBean);
+                                    break;
+                                case "statusBar":
+                                    jsSetStatusBar(jsInteractiveBean);
+                                    break;
+                                case "calendarReminder":
+                                    addCalendarReminder(jsInteractiveBean);
+                                    break;
+                                case "openNotification":
+                                    openNotification(jsInteractiveBean);
+                                    break;
+                                case "appMarketGrade":
+                                    skipAppMarketGrade(jsInteractiveBean);
+                                    break;
+                                case "notificationStatus":
+                                    notificationStatusCallback();
+                                    break;
+                                case "skipIndentWrite":
+                                    skipIndentWrite(jsInteractiveBean.getOtherData());
+                                    break;
+                                default:
+                                    jsInteractiveEmpty(null);
+                                    break;
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     });
                 } else {

@@ -41,7 +41,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.TAOBAO_PID;
  */
 public class BaiChuanDao {
     public static void skipAliBC(Context activity, String tbUrl, String thirdId) {
-        skipAliBC(activity, tbUrl, thirdId, false);
+        skipAliBC(activity, tbUrl.trim(), thirdId, false);
     }
 
     //跳转淘宝
@@ -92,7 +92,6 @@ public class BaiChuanDao {
             taokeParams.setPid(TAOBAO_PID);
             if (!TextUtils.isEmpty(tbUrl)) {
                 if (isTaoBaoUrl(tbUrl) || isTbUrl) {
-
                     // 以显示传入url的方式打开页面（第二个参数是套件名称）
                     AlibcTrade.openByUrl(context, "", tbUrl, null,
                             new WebViewClient(), new WebChromeClient(), showParams,
@@ -103,11 +102,11 @@ public class BaiChuanDao {
 
                                 @Override
                                 public void onFailure(int code, String msg) {
-                                    showToast( msg);
+                                    showToast(msg);
                                 }
                             });
                 } else {
-                    //                     网页地址
+                    //网页地址
                     Intent intent = new Intent();
                     intent.setClass(context, DoMoLifeCommunalActivity.class);
                     intent.putExtra("loadUrl", tbUrl);
@@ -126,7 +125,7 @@ public class BaiChuanDao {
                             @Override
                             public void onFailure(int code, String msg) {
                                 // 失败回调信息
-                                showToast( msg);
+                                showToast(msg);
                             }
                         });
             } else {
@@ -166,7 +165,7 @@ public class BaiChuanDao {
                             @Override
                             public void onFailure(int code, String msg) {
                                 // 失败回调信息
-                                showToast( msg);
+                                showToast(msg);
                             }
                         });
             }
