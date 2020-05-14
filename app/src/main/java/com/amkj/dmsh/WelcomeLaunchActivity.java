@@ -95,25 +95,29 @@ public class WelcomeLaunchActivity extends BaseActivity {
     }
 
     private void setAdDataShow(String showSeconds) {
-        fl_skip.setVisibility(View.VISIBLE);
-        show_time = Integer.parseInt(getNumber(!TextUtils.isEmpty(showSeconds) ? showSeconds : "3"));
-        show_time = (show_time > 4 ? 5 : show_time < 1 ? 5 : show_time);
+        try {
+            fl_skip.setVisibility(View.VISIBLE);
+            show_time = Integer.parseInt(getNumber(!TextUtils.isEmpty(showSeconds) ? showSeconds : "3"));
+            show_time = (show_time > 4 ? 5 : show_time < 1 ? 5 : show_time);
 
-        CountDownTimer countDownTimer = new CountDownTimer(this, (show_time + 1) * 1000, 1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                if (tv_launch_wel_skip_main != null) {
-                    tv_launch_wel_skip_main.setText((millisUntilFinished / 1000 + " 跳过"));
+            CountDownTimer countDownTimer = new CountDownTimer(this, (show_time + 1) * 1000, 1000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    if (tv_launch_wel_skip_main != null) {
+                        tv_launch_wel_skip_main.setText((millisUntilFinished / 1000 + " 跳过"));
+                    }
                 }
-            }
 
-            @Override
-            public void onFinish() {
-                cancel();
-                skipMainActivity();
-            }
-        };
-        countDownTimer.start();
+                @Override
+                public void onFinish() {
+                    cancel();
+                    skipMainActivity();
+                }
+            };
+            countDownTimer.start();
+        } catch (Exception e) {
+            skipMainActivity();
+        }
     }
 
     @Override

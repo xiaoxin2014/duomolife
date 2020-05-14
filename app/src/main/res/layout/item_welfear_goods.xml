@@ -1,18 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/iv_goods_pic"
+    <RelativeLayout
+        android:id="@+id/rel_goods_layout"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/sc_mm_180"
-        android:scaleType="centerCrop"/>
+        android:layout_height="wrap_content">
 
-    <include layout="@layout/layout_activity_label"/>
-    
+        <ImageView
+            android:id="@+id/iv_goods_pic"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/sc_mm_180"
+            android:scaleType="centerCrop" />
+
+        <ImageView
+            android:id="@+id/iv_com_pro_tag_out"
+            android:layout_width="@dimen/sc_mm_160"
+            android:layout_height="@dimen/sc_mm_160"
+            android:layout_centerInParent="true"
+            android:layout_margin="@dimen/sc_mm_10"
+            android:src="@drawable/goods_sold_out"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+
+    <include layout="@layout/layout_activity_label" />
+
     <TextView
         android:id="@+id/tv_price"
         android:layout_width="wrap_content"
@@ -21,5 +36,5 @@
         android:maxLines="1"
         android:text="@string/defaul"
         android:textColor="@color/text_normal_red"
-        android:textSize="@dimen/sc_mm_28"/>
+        android:textSize="@dimen/sc_mm_28" />
 </LinearLayout>

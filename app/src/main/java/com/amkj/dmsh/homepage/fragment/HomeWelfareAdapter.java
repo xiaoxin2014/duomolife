@@ -2,8 +2,6 @@ package com.amkj.dmsh.homepage.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 
@@ -24,6 +22,8 @@ import com.google.android.flexbox.FlexboxLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
@@ -79,7 +79,8 @@ public class HomeWelfareAdapter extends CommonPagerAdapter<HomeWelfareBean> {
             protected void convert(BaseViewHolder helper, UserLikedProductEntity.LikedProductBean likedProductBean) {
                 if (likedProductBean == null) return;
                 GlideImageLoaderUtil.loadImage(mContext, helper.getView(R.id.iv_goods_pic), likedProductBean.getPicUrl());
-                helper.setText(R.id.tv_price, ConstantMethod.getRmbFormat(mContext, likedProductBean.getPrice()));
+                helper.setText(R.id.tv_price, ConstantMethod.getRmbFormat(mContext, likedProductBean.getPrice()))
+                        .setGone(R.id.iv_com_pro_tag_out, likedProductBean.getQuantity() < 1);
                 FlexboxLayout fbl_label = helper.getView(R.id.fbl_market_label);
                 if (!TextUtils.isEmpty(likedProductBean.getActivityTag()) || (likedProductBean.getMarketLabelList() != null
                         && likedProductBean.getMarketLabelList().size() > 0)) {
