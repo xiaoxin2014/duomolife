@@ -2,8 +2,6 @@ package com.amkj.dmsh.utils.alertdialog;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.Build;
-import androidx.appcompat.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -13,6 +11,7 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 
+import androidx.appcompat.app.AlertDialog;
 import me.jessyan.autosize.AutoSize;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
@@ -81,22 +80,20 @@ public class AlertDialogHelper {
         isFirstSet = true;
         defaultAlertDialog = builder.create();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            Window window = defaultAlertDialog.getWindow();
-            if (window != null) {
-                window.getDecorView()
-                        .getViewTreeObserver()
-                        .addOnWindowAttachListener(new ViewTreeObserver.OnWindowAttachListener() {
-                            @Override
-                            public void onWindowAttached() {
-                            }
+        Window window = defaultAlertDialog.getWindow();
+        if (window != null) {
+            window.getDecorView()
+                    .getViewTreeObserver()
+                    .addOnWindowAttachListener(new ViewTreeObserver.OnWindowAttachListener() {
+                        @Override
+                        public void onWindowAttached() {
+                        }
 
-                            @Override
-                            public void onWindowDetached() {
-                                onClickListener = null;
-                            }
-                        });
-            }
+                        @Override
+                        public void onWindowDetached() {
+                            onClickListener = null;
+                        }
+                    });
         }
     }
 

@@ -1,4 +1,4 @@
-package com.lsjwzh.widget.recyclerviewpager;
+package com.amkj.dmsh.views.recyclerviewpager;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -12,6 +12,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewTreeObserver;
+
+import com.amkj.dmsh.BuildConfig;
+import com.amkj.dmsh.R;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -216,7 +219,7 @@ public class RecyclerViewPager extends RecyclerView {
                         }
 
                         @Override
-                        protected void onTargetFound(View targetView, RecyclerView.State state, Action action) {
+                        protected void onTargetFound(View targetView, State state, Action action) {
                             if (getLayoutManager() == null) {
                                 return;
                             }

@@ -1,4 +1,4 @@
-package com.lsjwzh.widget.recyclerviewpager;
+package com.amkj.dmsh.views.recyclerviewpager;
 
 import android.view.View;
 

@@ -1,13 +1,10 @@
-package top.zibin.luban;
+package com.amkj.dmsh.utils.luban;
 
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import androidx.annotation.Nullable;
-import androidx.annotation.UiThread;
-import androidx.annotation.WorkerThread;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -16,6 +13,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import androidx.annotation.Nullable;
+import androidx.annotation.UiThread;
+import androidx.annotation.WorkerThread;
 
 public class Luban implements Handler.Callback {
   private static final String TAG = "Luban";

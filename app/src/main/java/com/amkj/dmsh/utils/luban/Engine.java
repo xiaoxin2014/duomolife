@@ -1,15 +1,16 @@
-package top.zibin.luban;
+package com.amkj.dmsh.utils.luban;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
-import androidx.annotation.NonNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
+import androidx.annotation.NonNull;
 
 /**
  * Responsible for starting compress and managing active and cached resources.

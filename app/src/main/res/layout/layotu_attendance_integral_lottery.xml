@@ -39,7 +39,7 @@
             android:text="我的奖励"
             android:layout_height="match_parent" />
     </RelativeLayout>
-    <com.lsjwzh.widget.recyclerviewpager.RecyclerViewPager
+    <com.amkj.dmsh.views.recyclerviewpager.RecyclerViewPager
         android:layout_width="match_parent"
         android:orientation="horizontal"
         android:layout_marginLeft="@dimen/sc_mm_26"
