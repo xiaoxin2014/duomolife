@@ -174,7 +174,6 @@ public class SelectedAddressActivity extends BaseActivity {
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
                 selectedAddressAdapter.loadMoreComplete();
-
                 addressListEntity = GsonUtils.fromJson(result, AddressListEntity.class);
                 if (addressListEntity != null) {
                     if (addressListEntity.getCode().equals(SUCCESS_CODE)) {

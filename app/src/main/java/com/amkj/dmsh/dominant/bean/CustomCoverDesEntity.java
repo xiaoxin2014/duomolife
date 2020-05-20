@@ -1,6 +1,6 @@
 package com.amkj.dmsh.dominant.bean;
 
-import com.amkj.dmsh.constant.CommunalDetailBean;
+import com.amkj.dmsh.bean.CommunalDetailBean;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.google.gson.annotations.SerializedName;
 

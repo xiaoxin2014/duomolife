@@ -1,36 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_indent_address_empty_default"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
-    android:id="@+id/ll_indent_address_empty_default"
     android:orientation="vertical">
+
     <TextView
-        android:layout_width="match_parent"
         android:id="@+id/tv_oversea_buy_tint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/text_blue_e_thre"
+        android:gravity="center_vertical"
+        android:lineSpacingExtra="@dimen/dp_4"
         android:paddingLeft="@dimen/gap_left"
+        android:paddingTop="@dimen/sc_mm_12"
         android:paddingRight="@dimen/gap_right"
+        android:paddingBottom="@dimen/sc_mm_12"
+        android:text="@string/text_oversea_hint"
         android:textColor="@color/text_login_gray_s"
         android:textSize="@dimen/sc_mm_24"
-        android:visibility="gone"
-        android:lineSpacingExtra="@dimen/dp_4"
-        android:gravity="center_vertical"
-        android:text="@string/text_oversea_hint"
-        android:lines="2"
-        android:background="@color/text_blue_e_thre"
-        android:layout_height="@dimen/sc_mm_90" />
+        android:visibility="gone" />
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:orientation="vertical"
+        android:layout_height="wrap_content"
         android:divider="@drawable/divider_ll_10dp_gray_bg"
-        android:showDividers="end|middle"
-        android:layout_height="wrap_content">
+        android:orientation="vertical"
+        android:showDividers="end|middle">
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <include layout="@layout/layout_address_top_null"/>
-            <include layout="@layout/layout_recycler_top_address_default"/>
+
+            <include layout="@layout/layout_address_top_null" />
+
+            <include layout="@layout/layout_recycler_top_address_default" />
         </RelativeLayout>
-        <include layout="@layout/layout_overseas_user_info"/>
+
+        <include layout="@layout/layout_overseas_user_info" />
     </LinearLayout>
 </LinearLayout>

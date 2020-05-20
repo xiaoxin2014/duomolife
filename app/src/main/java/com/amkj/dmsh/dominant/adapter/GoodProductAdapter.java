@@ -7,7 +7,7 @@ import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
+import com.amkj.dmsh.bean.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.dao.AddClickDao;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;

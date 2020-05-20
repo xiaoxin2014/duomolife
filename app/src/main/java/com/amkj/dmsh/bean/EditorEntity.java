@@ -4,7 +4,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.amkj.dmsh.base.BaseEntity;
-import com.amkj.dmsh.constant.CommunalDetailBean;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 
 import java.util.ArrayList;

@@ -1,7 +1,6 @@
 package com.amkj.dmsh.rxeasyhttp.interceptor;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
@@ -21,6 +20,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
 import okhttp3.FormBody;
 import okhttp3.Interceptor;
 import okhttp3.Request;
@@ -107,22 +107,20 @@ public class MyInterceptor implements Interceptor {
             Log.d("retrofitHeaderJson", domoJson);
             //打印请求参数
             String method = request.method();
-            try {
-                if ("POST".equals(method)) {
-                    StringBuilder sb = new StringBuilder();
-                    if (request.body() instanceof FormBody) {
-                        FormBody formBody = (FormBody) request.body();
-                        for (int i = 0; i < formBody.size(); i++) {
-                            sb.append(formBody.encodedName(i) + "=" + EncodeUtils.urlDecode(formBody.encodedValue(i)).replace("<", "<").replace(">", ">").replace("%24", "$") + ",");
-                        }
-                        sb.delete(sb.length() - 1, sb.length());
-                        Log.d("retrofitRequestBody", "{" + sb.toString() + "}");
+            if ("POST".equals(method)) {
+                StringBuilder sb = new StringBuilder();
+                if (request.body() instanceof FormBody) {
+                    FormBody formBody = (FormBody) request.body();
+                    for (int i = 0; i < formBody.size(); i++) {
+                        sb.append(formBody.encodedName(i)).append("=").append(EncodeUtils.urlDecode(formBody.encodedValue(i)).replace("<", "<").replace(">", ">").replace("%24", "$")).append(",");
                     }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
 
+                    if (sb.length() > 1) {
+                        sb.delete(sb.length() - 1, sb.length());
+                    }
+                    Log.d("retrofitRequestBody", "{" + sb.toString() + "}");
+                }
+            }
             Log.d("retrofitResponse", responseInfo);
 //            Log.d("retrofitResponseCode", "响应码:" + response.code());
             Log.d("retrofit", "----------end-----------");

@@ -4,7 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.amkj.dmsh.base.BaseTimeEntity;
-import com.amkj.dmsh.constant.CommunalDetailBean;
+import com.amkj.dmsh.bean.CommunalDetailBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.shopdetails.bean.PropsBean;

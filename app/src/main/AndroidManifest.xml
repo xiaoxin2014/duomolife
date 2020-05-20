@@ -1002,10 +1002,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <!--订单搜索-->
-        <activity
-            android:name=".shopdetails.activity.IndentDrawUpInvoiceActivity"
-            android:screenOrientation="portrait" />
+        <!--积分订单结算台-->
         <activity
             android:name=".shopdetails.integration.IntegrationIndentWriteActivity"
             android:screenOrientation="portrait" />

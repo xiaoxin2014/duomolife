@@ -6,7 +6,7 @@ import android.text.TextUtils;
 
 import com.amkj.dmsh.base.BaseEntity;
 import com.amkj.dmsh.base.BaseRemoveExistProductBean;
-import com.amkj.dmsh.constant.CommunalDetailBean;
+import com.amkj.dmsh.bean.CommunalDetailBean;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.annotations.SerializedName;

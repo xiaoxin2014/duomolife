@@ -1,7 +1,7 @@
 package com.amkj.dmsh.shopdetails.integration.bean;
 
 import com.amkj.dmsh.base.BaseEntity;
-import com.amkj.dmsh.constant.CommunalDetailBean;
+import com.amkj.dmsh.bean.CommunalDetailBean;
 import com.amkj.dmsh.shopdetails.bean.PropsBean;
 import com.amkj.dmsh.shopdetails.bean.PropvaluesBean;
 import com.amkj.dmsh.shopdetails.bean.ShopDetailsEntity.ShopPropertyBean.TagsBean;

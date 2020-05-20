@@ -1,7 +1,7 @@
 package com.amkj.dmsh.message.adapter;
 
 import com.amkj.dmsh.base.BaseEntity;
-import com.amkj.dmsh.constant.CommunalDetailBean;
+import com.amkj.dmsh.bean.CommunalDetailBean;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.google.gson.annotations.SerializedName;
 

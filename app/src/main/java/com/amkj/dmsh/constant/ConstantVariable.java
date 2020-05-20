@@ -16,30 +16,17 @@ public class ConstantVariable {
 
     public static final boolean isDebugTag = BuildConfig.DEBUG;
 
-    public static final String I_TAG = "iTag";
     public static final String TAOBAO_PID = "mm_113346569_43964046_400008826";
     //    adzoneid
     public static final String TAOBAO_ADZONEID = "400008826";
     //    淘宝联盟appKey
     public static final String TAOBAO_APPKEY = "27852329";
-    //   积分详情
-    public static final String TAG_DETAILS_INTEG = "Integration_Details";
     //    默认图片名称
     public static final String DEFAULT_ADD_IMG = "plus_icon_nor.png";
     //    收到消息广播，发送刷新，更新消息
     public static final String REFRESH_MESSAGE_TOTAL = "RefreshMessageTotal";
-    //    轮播广告视频播放停止翻页
-    public static final String STOP_AUTO_PAGE_TURN = "stopAutoPageTurn";
-    //    启动自动翻页
-    public static final String START_AUTO_PAGE_TURN = "startAutoPageTurn";
-    //    //    整点秒杀数据加载完成
-//    public static final String POINT_SPIKE_LOAD_COMPLETE = "pointSpikeLoadComplete";
     //    token过期，强制登出
     public static final String TOKEN_EXPIRE_LOG_OUT = "tokenExpireLogOut";
-    //    //    用户登录状态改变
-//    public static final String LOGIN_STATUS_CHANGE = "loginStatusChange";
-    //    是否跳转
-    public static final String SKIP_PAGE = "isSkipPage";
     //    首页
     public static final String MAIN_HOME = "homePage";
     //    发现
@@ -52,9 +39,6 @@ public class ConstantVariable {
     public static final String MAIN_TIME = "time";
     //    关注回调请求码 请求登录
     public static final int IS_LOGIN_CODE = 10;
-    //    注册 登录回调
-    public static final String R_LOGIN_BACK_CODE = "0x101";
-    public static final String R_LOGIN_BACK_DATA_CODE = "AccountInf";
     //    子评论默认加载条数
     public static final int DEFAULT_COMMENT_TOTAL_COUNT = 20;
     //    默认加载条目
@@ -67,8 +51,6 @@ public class ConstantVariable {
     public static final int TOTAL_COUNT_FORTY = 40;
     //    加载条目80
     public static final int TOTAL_COUNT_EIGHTY = 80;
-    //  关联商品请求码
-    public static final int RELEVANCE_PRO_REQ = 201;
     //    背景图片请求码
     public static final int REQ_MINE_BG = 107;
     //    请求通知状态
@@ -90,34 +72,20 @@ public class ConstantVariable {
      */
     //    重新购买
     public static final String BUY_AGAIN = "buyAgain";
-    //    删除
-    public static final String DEL = "del";
     //    取消订单 待付款
     public static final String CANCEL_ORDER = "cancelOrder";
     //    取消订单 待发货
     public static final String CANCEL_PAY_ORDER = "cancelPayOrder";
-    //    拼团 邀请参团
-    public static final String INVITE_GROUP = "inviteGroup";
     //    部分发货
     public static final String LITTER_CONSIGN = "litterConsignment";
     //    付款
     public static final String PAY = "pay";
-    //    整单退款查询去向
-    public static final String REFUND_TO_WHERE = "refundToWhere";
-    //    提醒发货
-    public static final String REMIND_DELIVERY = "remindDelivery";
     //    查看物流
     public static final String CHECK_LOG = "checkLogistics";
     //    确认订单
     public static final String CONFIRM_ORDER = "confirmOrder";
-    //    申请退款
-    public static final String REFUND_ORDER = "refundOrder";
     //    商品评价
     public static final String PRO_APPRAISE = "productAppraise";
-    //    发票详情
-    public static final String PRO_INVOICE = "invoice";
-    //    评价晒单
-    public static final String BASK_READER = "baskReader";
     /**
      * 积分
      */
@@ -127,11 +95,9 @@ public class ConstantVariable {
     public static final String REFUND_FEEDBACK = "feedbackRefund";
     //    售后维修
     public static final String REFUND_INTEGRAL_REPAIR = "repairIntegralRefund";
-
     //    积分订单专属 - 虚拟商品 - 查看优惠券
     public static final String VIRTUAL_COUPON = "checkCoupon";
-    //    收藏类型
-//    多么优选
+    //    多么优选
     public static final String TYPE_C_SEARCH = "domoyx";
     //    多么福利社
     public static final String TYPE_C_WELFARE = "domofls";
@@ -149,7 +115,6 @@ public class ConstantVariable {
     public static final String MES_ADVISE = "advise";
     //    消息-评论-反馈意见
     public static final String MES_FEEDBACK = "feedback";
-    public static Map<String, String> CAR_PRO_STATUS = new HashMap<>();
     /**
      * 正则表达式
      */
@@ -194,7 +159,7 @@ public class ConstantVariable {
     /**
      * 支付类型
      */
-//    支付宝
+    //    支付宝
     public static final String PAY_ALI_PAY = "aliPay";
     //    微信支付
     public static final String PAY_WX_PAY = "wechatPay";
@@ -223,19 +188,17 @@ public class ConstantVariable {
     public static final String SEARCH_TYPE = "searchType";
     //    正常搜索
     public static final String SEARCH_ALL = "allSearch";
-    //    订单搜索
-    public static final String SEARCH_INDENT = "indentSearch";
     /**
      * 售后 退款 退货 维修
      */
-//    售后类型参数
+    //    售后类型参数
     public static final String REFUND_TYPE = "refundType";
     //    维修类型
     public static final String REFUND_REPAIR = "refundRepair";
+
     /**
      * 广播action
      */
-//    广播接收
     public static final String BROADCAST_NOTIFY = "cn.broadcast.notify.click";
 
     /**
@@ -250,7 +213,7 @@ public class ConstantVariable {
     /**
      * 公用web数据类型
      */
-//    注册协议
+    //    注册协议
     public static final String WEB_TYPE_REG_AGREEMENT = "register_agreement";
     //    隐私政策
     public static final String WEB_TYPE_PRIVACY_POLICY = "privacy_policy";
@@ -258,37 +221,16 @@ public class ConstantVariable {
     public static final String WEB_VALUE_TYPE = "webRuleType";
 
     /**
-     * 推送通知开关
-     */
-    public static final String PUSH_CHECK = "P_C";
-    //    检查时间
-    public static final String PUSH_CHECK_TIME = "P_C_T";
-    /**
      * 统计 map参数
      */
-//    统计Id
+    //    统计Id
     public static final String TOTAL_ID = "totalId";
     //    统计名称
     public static final String TOTAL_NAME = "totalName";
-    //    统计大小默认值
-    public static int UP_TOTAL_SIZE = 50;
-    //    是否正在上传数据
-    public static boolean isUpTotalFile = false;
 
     /**
      * 商品详情 推荐分类
      */
-    public static String TOTAL_NAME_TYPE = "totalNameType";
-    //    推荐分类
-    public static String RECOMMEND_TYPE = "recommendType";
-    //    购物车推荐
-    public static String RECOMMEND_CAR = "carRecommend";
-    //    搜索推荐
-    public static String RECOMMEND_SEARCH = "searchRecommend";
-    //    商品详情推荐
-    public static String RECOMMEND_PRODUCT = "productRecommend";
-    //    支付推荐
-    public static String RECOMMEND_PAY_SUCCESS = "paySuccessRecommend";
     //    签到 双倍积分类型
     public static String DOUBLE_INTEGRAL_PREFECTURE = "50";
     //    双倍积分 专区类型
@@ -373,7 +315,6 @@ public class ConstantVariable {
     public static final int PRODUCT = 0;//普通商品
     public static final int AD_COVER = 1;//好物封面
     public static final int TITLE = 2;//标题
-    public static final int PIC_GOODS = 3;//图片商品
 
 
     /**
@@ -436,7 +377,6 @@ public class ConstantVariable {
     public static final String GP_REMIND = "21";//拼团未完成
     public static final String NOT_FORCE_UPDATE = "22";//非强制更新
     public static final String PUSH_OPEN_REMIND = "23";//推送通知打开提醒
-    public static final String APP_REMARK_GUDIANCE = "24";//app评分引导
     public static final String MARKING_POPUP = "31";//营销弹窗
 
 
@@ -485,7 +425,6 @@ public class ConstantVariable {
     public static final int EDIT_ADDRESS_REQ = 104;
     public static final int DIRECT_COUPON_REQ = 105;
     public static final int CHANGE_ORDER_ADDRESS = 106;
-    public static final int SKIP_INDENT_DETAIL = 107;
 
 
     /**

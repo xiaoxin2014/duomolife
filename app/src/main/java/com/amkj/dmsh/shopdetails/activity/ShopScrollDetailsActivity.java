@@ -7,11 +7,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.core.widget.NestedScrollView;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -30,10 +25,10 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
+import com.amkj.dmsh.bean.TabEntity;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
-import com.amkj.dmsh.constant.TabEntity;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.activity.DirectProductEvaluationActivity;
@@ -74,7 +69,6 @@ import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean.MarketLabelBean;
 import com.amkj.dmsh.utils.CountDownTimer;
-import com.amkj.dmsh.utils.LifecycleHandler;
 import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.gson.GsonUtils;
@@ -110,6 +104,11 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.iwgang.countdownview.CountdownView;
@@ -682,10 +681,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     } else if (!shopDetailsEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(shopDetailsEntity.getMsg());
                         if ("32".equals(shopDetailsEntity.getCode())) {
-                            new LifecycleHandler(getActivity()).postDelayed(() -> {
-                                //商品已下架，关闭页面
-                                finish();
-                            }, 500);
+                            finish();
                         }
                     }
                 }
@@ -1862,9 +1858,9 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         tv_sp_details_add_car.setText(requestStatus.getIsNotice() == 1 ? "到货提醒" : "取消提醒");
-                        showToast( requestStatus.getIsNotice() == 1 ? "已取消通知" : "已设置通知");
+                        showToast(requestStatus.getIsNotice() == 1 ? "已取消通知" : "已设置通知");
                     } else {
-                        showToastRequestMsg( requestStatus);
+                        showToastRequestMsg(requestStatus);
                     }
                 }
             }

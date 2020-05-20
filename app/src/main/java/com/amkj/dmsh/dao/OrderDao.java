@@ -8,7 +8,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.MessageBean;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
+import com.amkj.dmsh.bean.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;

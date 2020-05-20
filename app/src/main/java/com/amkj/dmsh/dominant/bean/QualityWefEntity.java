@@ -1,7 +1,7 @@
 package com.amkj.dmsh.dominant.bean;
 
 import com.amkj.dmsh.base.BaseEntity;
-import com.amkj.dmsh.constant.CommunalDetailBean;
+import com.amkj.dmsh.bean.CommunalDetailBean;
 import com.amkj.dmsh.dominant.bean.DmlSearchDetailEntity.DmlSearchDetailBean.ProductListBean;
 import com.google.gson.annotations.SerializedName;
 

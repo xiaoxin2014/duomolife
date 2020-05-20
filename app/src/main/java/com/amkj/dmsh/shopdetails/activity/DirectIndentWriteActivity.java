@@ -3,9 +3,6 @@ package com.amkj.dmsh.shopdetails.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -76,6 +73,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -153,11 +153,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
 
     //    优惠券id
     private int couponId;
-    private final int REQ_INVOICE = 130;
-    private String invoiceTitle;
     private GroupShopDetailsBean groupShopDetailsBean;
-
-    private String invoiceNum;
     private IndentDiscountAdapter indentDiscountAdapter;
     private IndentWriteEntity identWriteEntity;
     private boolean isReal = false;
@@ -165,7 +161,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
     private IndentWriteBean indentWriteBean;
     private AlertDialogHelper payCancelDialogHelper;
     private QualityCreateUnionPayIndentEntity qualityUnionIndent;
-    private UnionPay unionPay;
     private WriteProductListAdapter directProductAdapter;
     //    普通订单数据
     private List<CartInfoBean> passGoods = new ArrayList<>();
@@ -372,7 +367,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
     /**
      * 获取订单结算信息
      *
-     * @param updatePriceInfo(是否需要修改订单结算信息,选择优惠券或者修改地址时为true)
+     * @param updatePriceInfo (是否需要修改订单结算信息,选择优惠券或者修改地址时为true)
      */
     private void getIndentDiscounts(boolean updatePriceInfo) {
         if (discountBeanList.size() > 0 || combineGoods.size() > 0) {
@@ -612,6 +607,14 @@ public class DirectIndentWriteActivity extends BaseActivity {
     }
 
     private void setOverseaData(IndentWriteBean indentWriteBean) {
+        //顶部通知
+        if (!TextUtils.isEmpty(indentWriteBean.getPrompt())) {
+            pullHeaderView.tv_oversea_buy_tint.setVisibility(VISIBLE);
+            pullHeaderView.tv_oversea_buy_tint.setText(getStrings(indentWriteBean.getPrompt()));
+        } else {
+            pullHeaderView.tv_oversea_buy_tint.setVisibility(View.GONE);
+        }
+        //实名信息
         if (indentWriteBean.isReal()) {
             pullHeaderView.ll_oversea_info.setVisibility(VISIBLE);
             pullHeaderView.et_oversea_name.setText(getStringFilter(indentWriteBean.getRealName()));
@@ -620,14 +623,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
             pullHeaderView.et_oversea_card.setSelection(getStrings(indentWriteBean.getShowIdCard()).length());
             pullHeaderView.et_oversea_card.setTag(R.id.id_tag, getStrings(indentWriteBean.getIdCard()));
             pullHeaderView.et_oversea_card.setTag(getStrings(indentWriteBean.getShowIdCard()));
-            if (!TextUtils.isEmpty(indentWriteBean.getPrompt())) {
-                pullHeaderView.tv_oversea_buy_tint.setVisibility(VISIBLE);
-                pullHeaderView.tv_oversea_buy_tint.setText(getStrings(indentWriteBean.getPrompt()));
-            } else {
-                pullHeaderView.tv_oversea_buy_tint.setVisibility(View.GONE);
-            }
         } else {
-            pullHeaderView.tv_oversea_buy_tint.setVisibility(View.GONE);
             pullHeaderView.ll_oversea_info.setVisibility(View.GONE);
         }
     }
@@ -791,13 +787,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
         if (!TextUtils.isEmpty(message)) {
             params.put("remark", message);
         }
-        //是否开具发票
-        if (!TextUtils.isEmpty(invoiceTitle)) {
-            params.put("invoice", invoiceTitle);
-            if (!TextUtils.isEmpty(invoiceNum)) {
-                params.put("taxpayer_on", invoiceNum);
-            }
-        }
         //付款方式
         params.put("buyType", payWay);
         //2019.1.16 新增银联支付
@@ -858,10 +847,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
         if (!TextUtils.isEmpty(message)) {
             params.put("remark", message);
         }
-        //是否开具发票
-        if (!TextUtils.isEmpty(invoiceTitle)) {
-            params.put("invoice", invoiceTitle);
-        }
+
         //是否使用优惠券
         if (couponId > 0) {
             params.put("userCouponId", couponId);
@@ -995,8 +981,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
 
     /**
      * 创建订单返回状态
-     *
-     * @param codeStatus
      */
     private void presentStatusUpdate(String codeStatus) {
         try {
@@ -1064,10 +1048,10 @@ public class DirectIndentWriteActivity extends BaseActivity {
             public void onError(int error_code) {
                 switch (error_code) {
                     case WXPay.NO_OR_LOW_WX:
-                        showToast( "未安装微信或微信版本过低");
+                        showToast("未安装微信或微信版本过低");
                         break;
                     case WXPay.ERROR_PAY_PARAM:
-                        showToast( "参数错误");
+                        showToast("参数错误");
                         break;
                     case WXPay.ERROR_PAY:
                         showToast("支付失败");
@@ -1091,7 +1075,8 @@ public class DirectIndentWriteActivity extends BaseActivity {
             if (loadHud != null) {
                 loadHud.show();
             }
-            unionPay = new UnionPay(getActivity(), qualityUnionIndent.getQualityCreateUnionPayIndent().getNo(),
+            //                跳转订单完成页
+            UnionPay unionPay = new UnionPay(getActivity(), qualityUnionIndent.getQualityCreateUnionPayIndent().getNo(),
                     qualityUnionIndent.getQualityCreateUnionPayIndent().getPayKeyBean().getPaymentUrl(),
                     new UnionPay.UnionPayResultCallBack() {
                         @Override
@@ -1112,7 +1097,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                             if (loadHud != null) {
                                 loadHud.dismiss();
                             }
-                            showToast( errorMes);
+                            showToast(errorMes);
                             skipIndentDetail();
                         }
                     });
@@ -1271,44 +1256,24 @@ public class DirectIndentWriteActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
-            if (requestCode == REQ_INVOICE) {
-                if (TextUtils.isEmpty(invoiceTitle)) {
-                    invoiceTitle = "";
-                    pullFootView.tv_direct_product_invoice.setText("不开发票");
-                }
-            } else {
-                return;
-            }
+            return;
         }
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            switch (requestCode) {
-                case NEW_CRE_ADDRESS_REQ:
-                case SEL_ADDRESS_REQ:
-                    //            获取地址成功
-                    AddressInfoBean addressInfoBean = data.getParcelableExtra("addressInfoBean");
-                    isFirst = false;
-                    setAddressData(addressInfoBean);
-                    break;
-                case DIRECT_COUPON_REQ:
-                    //            获取优惠券
-                    couponId = data.getIntExtra("couponId", -1);
-                    String couponAmount = data.getStringExtra("couponAmount");
-                    pullFootView.tv_direct_product_favorable.setText(couponId < 1 ? "不使用优惠券" : "-¥" + couponAmount);
-                    getIndentDiscounts(true);
-                    break;
-                case REQ_INVOICE:
-                    invoiceTitle = data.getStringExtra("invoiceTitle");
-                    if (!TextUtils.isEmpty(invoiceTitle)) {
-                        invoiceNum = data.getStringExtra("invoiceNum");
-                    }
-                    if (!TextUtils.isEmpty(invoiceTitle)) {
-                        pullFootView.tv_direct_product_invoice.setText("开发票");
-                    } else {
-                        pullFootView.tv_direct_product_invoice.setText("不开发票");
-                    }
-                    break;
-            }
+        switch (requestCode) {
+            case NEW_CRE_ADDRESS_REQ:
+            case SEL_ADDRESS_REQ:
+                //            获取地址成功
+                AddressInfoBean addressInfoBean = data.getParcelableExtra("addressInfoBean");
+                isFirst = false;
+                setAddressData(addressInfoBean);
+                break;
+            case DIRECT_COUPON_REQ:
+                //            获取优惠券
+                couponId = data.getIntExtra("couponId", -1);
+                String couponAmount = data.getStringExtra("couponAmount");
+                pullFootView.tv_direct_product_favorable.setText(couponId < 1 ? "不使用优惠券" : "-¥" + couponAmount);
+                getIndentDiscounts(true);
+                break;
         }
     }
 
@@ -1362,7 +1327,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
                     startActivityForResult(intent, SEL_ADDRESS_REQ);
                 } else {
                     img_skip_address.setVisibility(View.GONE);
-                    return;
                 }
             }
         }
@@ -1377,9 +1341,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
         EditText edt_direct_product_note;
         @BindView(R.id.ll_indent_product_note)
         LinearLayout ll_indent_product_note;
-        //        发票展示
-        @BindView(R.id.tv_direct_product_invoice)
-        TextView tv_direct_product_invoice;
         //        优惠券布局
         @BindView(R.id.ll_layout_coupon)
         LinearLayout ll_layout_coupon;
@@ -1424,24 +1385,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
                 }
             }
         }
-
-        //        开发票
-        @OnClick(R.id.ll_indent_open_invoice)
-        void selInvoice(View view) {
-            if (TextUtils.isEmpty(orderCreateNo)) {
-//            选择发票
-                Intent intent = new Intent(getActivity(), IndentDrawUpInvoiceActivity.class);
-                intent.putExtra("type", "indentWrite");
-                if (!TextUtils.isEmpty(invoiceTitle)) {
-                    intent.putExtra("invoiceTitle", invoiceTitle);
-                    if (!TextUtils.isEmpty(invoiceNum)) {
-                        intent.putExtra("invoiceNum", invoiceNum);
-                    }
-                }
-                startActivityForResult(intent, REQ_INVOICE);
-            }
-        }
-
     }
 
     @OnClick(R.id.tv_life_back)

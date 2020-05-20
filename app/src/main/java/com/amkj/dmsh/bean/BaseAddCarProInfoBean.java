@@ -1,4 +1,4 @@
-package com.amkj.dmsh.constant;
+package com.amkj.dmsh.bean;
 
 /**
  * @author LGuiPeng

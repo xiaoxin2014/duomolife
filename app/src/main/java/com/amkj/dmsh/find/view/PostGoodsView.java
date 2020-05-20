@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.constant.BaseAddCarProInfoBean;
+import com.amkj.dmsh.bean.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.find.bean.RelatedGoodsBean;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;

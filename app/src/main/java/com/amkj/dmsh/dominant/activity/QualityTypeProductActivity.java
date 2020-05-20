@@ -1,12 +1,6 @@
 package com.amkj.dmsh.dominant.activity;
 
 import android.content.Intent;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,8 +12,8 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.QualityTypeEntity;
 import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean;
+import com.amkj.dmsh.bean.TabEntity;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
-import com.amkj.dmsh.constant.TabEntity;
 import com.amkj.dmsh.dominant.adapter.ChildProductTypeAdapter;
 import com.amkj.dmsh.dominant.adapter.GoodProductAdapter;
 import com.amkj.dmsh.dominant.adapter.ProductTypeSortAdapter;
@@ -52,6 +46,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -76,6 +76,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.QUALITY_CATEGORY_TYPE;
 import static com.amkj.dmsh.constant.Url.Q_COUPON_PRODUCT_TYPE_LIST;
 import static com.amkj.dmsh.constant.Url.Q_PRODUCT_TYPE;
+import static com.amkj.dmsh.constant.Url.Q_PRODUCT_TYPE_LIST;
 import static com.amkj.dmsh.constant.Url.Q_QUALITY_TYPE_AD;
 import static com.amkj.dmsh.constant.Url.Q_SORT_TYPE;
 
@@ -588,7 +589,7 @@ public class QualityTypeProductActivity extends BaseActivity {
         if (!TextUtils.isEmpty(couponId)) {
             mParams.put("couponId", couponId);
         }
-        NetLoadUtils.getNetInstance().loadNetDataPost(QualityTypeProductActivity.this, Q_COUPON_PRODUCT_TYPE_LIST
+        NetLoadUtils.getNetInstance().loadNetDataPost(QualityTypeProductActivity.this, !TextUtils.isEmpty(couponId) ? Q_COUPON_PRODUCT_TYPE_LIST : Q_PRODUCT_TYPE_LIST
                 , mParams, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
