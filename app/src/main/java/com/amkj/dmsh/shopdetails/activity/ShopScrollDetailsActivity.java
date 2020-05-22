@@ -982,14 +982,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                         mTvProductMartketPrice.setText(getStringsFormat(this, R.string.xsg_market_price, shopProperty.getPrice()) + end);
                         mTvProductMartketPrice.setPaintFlags(mTvProductMartketPrice.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
                     }
-                } else if (activityCode.contains("LJ") || activityCode.contains("ZK") || activityCode.contains("TH")) {
-                    setTopTimeVisible(false);
-                    mRlActivityPrice.setVisibility(GONE);
-                    mIvNextIcon.setVisibility(GONE);
-                    tv_product_activity_description.setVisibility(VISIBLE);
-                    mLlScroolDetailPrice.setVisibility(VISIBLE);
-                    mLlTimeHoursBottom.setVisibility(GONE);
-                    startActivityDownTime(cv_countdownTime_white_hours, false);
                 } else if (activityCode.contains("MJ") || activityCode.contains("MM") || activityCode.contains("MZ")) {
                     setTopTimeVisible(true);
                     mRlActivityPrice.setVisibility(GONE);
@@ -999,9 +991,14 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     mLlTimeHoursBottom.setVisibility(VISIBLE);
                     startActivityDownTime(mCtCountDownBottom, true);
                 } else {
-                    ll_product_activity_detail.setVisibility(GONE);
+                    //activityCode.contains("LJ") || activityCode.contains("ZK") || activityCode.contains("TH")|| activityCode.contains("YK")
+                    setTopTimeVisible(false);
+                    mRlActivityPrice.setVisibility(GONE);
+                    mIvNextIcon.setVisibility(GONE);
+                    tv_product_activity_description.setVisibility(VISIBLE);
                     mLlScroolDetailPrice.setVisibility(VISIBLE);
                     mLlTimeHoursBottom.setVisibility(GONE);
+                    startActivityDownTime(cv_countdownTime_white_hours, false);
                 }
 
                 //活动规则

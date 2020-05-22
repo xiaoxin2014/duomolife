@@ -72,7 +72,6 @@ public class ShopCarGoodsAdapter extends BaseMultiItemQuickAdapter<MultiItemEnti
                 }
 
                 GlideImageLoaderUtil.loadCenterCrop(context, helper.getView(R.id.img_shop_car_product), cartInfoBean.getPicUrl());
-                //"activityType": { "0": "满减", "1": "折扣", "2": "立减", "3": "限时购", "4": "满赠", "5": "首单赠", "6": "组合商品", "7": "赠品", "8": "第二件半价" }
                 helper.addOnClickListener(R.id.cb_shop_car_sel).setTag(R.id.cb_shop_car_sel, R.id.shop_car_cb, cartInfoBean)//是否选中商品
                         .setText(R.id.tv_shop_car_name, getStrings(cartInfoBean.getName()))
                         .setText(R.id.tv_shop_car_product_sku, getStrings(cartInfoBean.getSaleSkuValue()))
@@ -186,7 +185,7 @@ public class ShopCarGoodsAdapter extends BaseMultiItemQuickAdapter<MultiItemEnti
                     layoutParams.width = 0;
                 }
                 helper.itemView.setLayoutParams(layoutParams);
-
+                //"activityType": { "0": "满减", "1": "折扣", "2": "立减", "3": "限时购", "4": "满赠", "5": "首单赠", "6": "组合商品", "7": "赠品", "8": "第二件半价", "11": "打包一口价" }
                 if (showActivityInfo) {
                     //设置标签
                     helper.setText(R.id.tv_communal_activity_tag, getStrings(activityInfoData.getActivityTag()))
@@ -195,38 +194,32 @@ public class ShopCarGoodsAdapter extends BaseMultiItemQuickAdapter<MultiItemEnti
                             .addOnClickListener(R.id.ll_communal_activity_tag_rule).setTag(R.id.ll_communal_activity_tag_rule, activityInfoData);
                     //设置规则
                     switch (activityInfoData.getActivityType()) {
-                        //显示规则，可进入专场
-                        case 0:
-                        case 1:
-                        case 2:
-                        case 4:
-                        case 5:
-                        case 8:
-                            helper.setText(R.id.tv_communal_activity_tag_rule, ShopCarDao.subItemCheceked(activityInfoData) ? getStrings(activityInfoData.getActivityRule()) : getStrings(activityInfoData.getPreActivityRule()))
-                                    .setGone(R.id.tv_communal_activity_tag_next, true)
-                                    .setEnabled(R.id.ll_communal_activity_tag_rule, true);
-                            break;
-                        //显示规则，不能进入专场
+                        //显示规则，不能进入专场（组合商品）
                         case 6:
                             helper.setText(R.id.tv_communal_activity_tag_rule, ShopCarDao.subItemCheceked(activityInfoData) ? getStrings(activityInfoData.getActivityRule()) : getStrings(activityInfoData.getPreActivityRule()))
                                     .setGone(R.id.tv_communal_activity_tag_next, false)
                                     .setEnabled(R.id.ll_communal_activity_tag_rule, false);
                             break;
-                        //不显示规则，可以进入专场
+                        //不显示规则，可以进入专场（限时购）
                         case 3:
                             helper.setText(R.id.tv_communal_activity_tag_rule, "")
                                     .setGone(R.id.tv_communal_activity_tag_next, true)
                                     .setEnabled(R.id.ll_communal_activity_tag_rule, true);
                             break;
-                        //不显示规则，也不能进入专场
+                        //不显示规则，也不能进入专场（赠品）
                         case 7:
                             helper.setText(R.id.tv_communal_activity_tag_rule, "")
                                     .setGone(R.id.tv_communal_activity_tag_next, false)
                                     .setEnabled(R.id.ll_communal_activity_tag_rule, false);
                             break;
+                        //显示规则，可进入专场
+                        default:
+                            helper.setText(R.id.tv_communal_activity_tag_rule, ShopCarDao.subItemCheceked(activityInfoData) ? getStrings(activityInfoData.getActivityRule()) : getStrings(activityInfoData.getPreActivityRule()))
+                                    .setGone(R.id.tv_communal_activity_tag_next, true)
+                                    .setEnabled(R.id.ll_communal_activity_tag_rule, true);
+                            break;
                     }
                 }
-
                 break;
         }
 

@@ -1,8 +1,6 @@
 package com.amkj.dmsh.shopdetails.adapter;
 
 import android.app.Activity;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.amkj.dmsh.R;
@@ -18,6 +16,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.LifecycleOwner;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getSpannableString;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -70,17 +71,6 @@ public class WriteProductListAdapter extends BaseQuickAdapter<ProductInfoBean, B
                     helper.setGone(R.id.tv_communal_activity_tag_next, false);
                     //设置规则
                     switch (activityInfoData.getActivityType()) {
-                        //显示规则，可进入专场
-                        case 0:
-                        case 1:
-                        case 2:
-                        case 4:
-                        case 5:
-                        case 6:
-                        case 8:
-                        case 10:
-                            helper.setText(R.id.tv_communal_activity_tag_rule, getStrings(activityInfoData.getActivityRule()));
-                            break;
                         //不显示规则，显示倒计时，可以进入专场
                         case 3:
                             setCountTime(helper, activityInfoData);
@@ -88,6 +78,10 @@ public class WriteProductListAdapter extends BaseQuickAdapter<ProductInfoBean, B
                         //不显示规则，也不能进入专场
                         case 7:
                             helper.setText(R.id.tv_communal_activity_tag_rule, "");
+                            break;
+                        //显示规则，可进入专场
+                        default:
+                            helper.setText(R.id.tv_communal_activity_tag_rule, getStrings(activityInfoData.getActivityRule()));
                             break;
                     }
                 } else {

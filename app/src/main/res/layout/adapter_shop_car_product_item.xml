@@ -95,7 +95,7 @@
                     android:textSize="@dimen/sc_mm_26" />
 
                 <TextView
-                    android:text="66666666666666666666666666666666666666666666666666"
+                    android:text="@string/defaul"
                     android:id="@+id/tv_shop_car_product_sku"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
