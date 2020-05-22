@@ -1,14 +1,7 @@
 package com.amkj.dmsh.shopdetails.fragment;
 
 import android.graphics.Bitmap;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.SimpleItemAnimator;
 import android.text.TextUtils;
-import android.view.Gravity;
-import android.view.View;
-import android.widget.PopupWindow;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
@@ -22,7 +15,7 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.adapter.WaitEvaluateProductsAdapter;
 import com.amkj.dmsh.utils.SharedPreUtils;
-import com.amkj.dmsh.utils.WindowUtils;
+import com.amkj.dmsh.utils.alertdialog.AlertDialogImage;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
@@ -35,6 +28,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 import butterknife.BindView;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
@@ -62,7 +59,7 @@ public class WaitEvaluateFragment extends BaseFragment {
     private int page = 1;
     private WaitEvaluateProductsAdapter doMoIndentListAdapter;
     private WaitEvaluaterProductEntity mWaitEvaluaterEntity;
-    private PopupWindow mPwScore;
+    private AlertDialogImage alertDialogScore;
 
     @Override
     protected int getContentView() {
@@ -167,18 +164,16 @@ public class WaitEvaluateFragment extends BaseFragment {
                         public void onSuccess(Bitmap bitmap) {
                             int joinCount = (int) SharedPreUtils.getParam(DEMO_LIFE_FILE, "IndentJoinCount", 0);
                             if (joinCount < 2) {
-                                if (mPwScore == null) {
-                                    mPwScore = WindowUtils.getAlphaPw(getActivity(), R.layout.pw_join_tips, Gravity.CENTER);
+                                if (alertDialogScore == null) {
+                                    alertDialogScore = new AlertDialogImage(getActivity());
                                 }
 
-                                GlideImageLoaderUtil.loadCenterCrop(getActivity(), mPwScore.getContentView().findViewById(R.id.iv_cover), imgUrl);
-                                mPwScore.getContentView().setOnClickListener((View v1) -> {
-                                    mPwScore.dismiss();
+                                alertDialogScore.setAlertClickListener(() -> {
                                     //写点评
                                     skipJoinTopic(getActivity(), scoreGoodsBean, null);
-
                                 });
-                                WindowUtils.showPw(getActivity(), mPwScore, Gravity.CENTER);
+                                alertDialogScore.setImage(bitmap);
+                                alertDialogScore.show();
                                 SharedPreUtils.setParam(DEMO_LIFE_FILE, "IndentJoinCount", joinCount + 1);
                             } else {
                                 //写点评
@@ -210,11 +205,5 @@ public class WaitEvaluateFragment extends BaseFragment {
                 doMoIndentListAdapter.remove(position);
             }
         }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        WindowUtils.closePw(mPwScore);
     }
 }

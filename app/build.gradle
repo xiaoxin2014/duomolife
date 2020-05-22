@@ -16,8 +16,8 @@ android {
         applicationId "com.amkj.dmsh"
         minSdkVersion versions.minSdk
         targetSdkVersion versions.targetSdk
-        versionCode 228
-        versionName '4.5.1'
+        versionCode 229
+        versionName '4.6.0'
         multiDexEnabled true
         ndk {
             //选择要添加的对应cpu类型的.so库。

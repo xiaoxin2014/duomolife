@@ -939,8 +939,6 @@ public class AttendanceActivity extends BaseActivity {
             rv_activity_prefecture.addItemDecoration(new ItemDecoration.Builder()
                     // 设置分隔线资源ID
                     .setDividerId(R.drawable.item_divider_img_white)
-
-
                     .create());
             homeImgActivityAdapter = new HomeImgActivityAdapter(AttendanceActivity.this, adActivityBeans);
             rv_activity_prefecture.setAdapter(homeImgActivityAdapter);
@@ -963,8 +961,6 @@ public class AttendanceActivity extends BaseActivity {
             rv_integral_double.addItemDecoration(new ItemDecoration.Builder()
                     // 设置分隔线资源ID
                     .setDividerId(R.drawable.item_divider_five_gray_f)
-
-
                     .create());
             mDoubleIntegralAdpter = new DoubleIntegralAdpter(AttendanceActivity.this, doubleIntegrationList);
             rv_integral_double.setAdapter(mDoubleIntegralAdpter);

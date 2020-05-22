@@ -2,9 +2,6 @@ package com.amkj.dmsh.utils.alertdialog;
 
 import android.app.Activity;
 import android.content.Context;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -15,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.bean.ShareIconTitleBean;
 import com.amkj.dmsh.find.activity.JoinSuccessActivity;
 import com.amkj.dmsh.find.activity.PostDetailActivity;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -25,6 +23,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import me.jessyan.autosize.AutoSize;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 

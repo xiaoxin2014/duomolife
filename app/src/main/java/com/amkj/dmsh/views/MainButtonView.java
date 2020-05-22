@@ -44,6 +44,7 @@ import com.amkj.dmsh.utils.LifecycleHandler;
 import com.amkj.dmsh.utils.SharedPreUtils;
 import com.amkj.dmsh.utils.WindowUtils;
 import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
+import com.amkj.dmsh.utils.alertdialog.AlertDialogImage;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
@@ -110,11 +111,11 @@ public class MainButtonView extends LinearLayout {
     private AlertDialogHelper confirmOrderDialogHelper;
     private AlertDialogHelper delOrderDialogHelper;
     private PopupWindow mPwMoreButton;
-    private PopupWindow mPwScore;
     private int buttonLimit = 4;//超出这个数量时会显示更多按钮
     private AppCompatActivity context;
     private AlertDialogGoPay mAlertDialogGoPay;
     private AlertDialogHelper mAlertDialogService;
+    private AlertDialogImage alertDialogScore;
 
     public MainButtonView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -391,22 +392,21 @@ public class MainButtonView extends LinearLayout {
                         public void onSuccess(Bitmap bitmap) {
                             int joinCount = (int) SharedPreUtils.getParam(DEMO_LIFE_FILE, "IndentJoinCount", 0);
                             if (joinCount < 2) {
-                                if (mPwScore == null) {
-                                    mPwScore = WindowUtils.getAlphaPw(context, R.layout.pw_join_tips, Gravity.CENTER);
+                                if (alertDialogScore == null) {
+                                    alertDialogScore = new AlertDialogImage(context);
                                 }
 
-                                GlideImageLoaderUtil.loadCenterCrop(context, mPwScore.getContentView().findViewById(R.id.iv_cover), imgUrl);
-                                mPwScore.getContentView().setOnClickListener((View v1) -> {
-                                    mPwScore.dismiss();
+                                alertDialogScore.setAlertClickListener(() -> {
                                     //写点评
                                     skipIndentScoreList(orderNo);
                                 });
+                                alertDialogScore.setImage(bitmap);
 
                                 //确认收货刷新列表会自动关闭弹窗，所以延时处理
                                 new LifecycleHandler(context).postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
-                                        WindowUtils.showPw(context, mPwScore, Gravity.CENTER);
+                                        alertDialogScore.show();
                                     }
                                 }, isConfirm ? 1000 : 0);
                                 SharedPreUtils.setParam(DEMO_LIFE_FILE, "IndentJoinCount", joinCount + 1);
@@ -543,7 +543,6 @@ public class MainButtonView extends LinearLayout {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        WindowUtils.closePw(mPwScore);
         WindowUtils.closePw(mPwMoreButton);
     }
 }

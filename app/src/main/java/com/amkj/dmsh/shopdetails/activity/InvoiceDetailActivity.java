@@ -5,15 +5,10 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
@@ -30,7 +25,6 @@ import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.adapter.InvoiceListAdapter;
 import com.amkj.dmsh.shopdetails.bean.IndentInvoiceEntity;
-import com.amkj.dmsh.utils.WindowUtils;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -46,6 +40,10 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -93,7 +91,6 @@ public class InvoiceDetailActivity extends BaseActivity {
 
     private String mOrderNo;
     private IndentInvoiceEntity mIndentInvoiceEntity;
-    private PopupWindow mPw_email;
     private InvoiceListAdapter mInvoiceListAdapter;
     private List<ImageBean> mImageBeanList;
     private List<Bitmap> mBitmapList = new ArrayList<>();
@@ -137,7 +134,7 @@ public class InvoiceDetailActivity extends BaseActivity {
     }
 
     private void refreshData() {
-        mPw_email = null;
+        mAlertDialogSendInvoice = null;
         loadData();
     }
 
@@ -275,7 +272,6 @@ public class InvoiceDetailActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        WindowUtils.closePw(mPw_email);
         recycleInvoice();
         ((TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike()).getImageBeanList().clear();
     }
@@ -343,7 +339,7 @@ public class InvoiceDetailActivity extends BaseActivity {
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
         if (INVOICE_APPLY_SUCCESS.equals(message.type)) {
-            mPw_email = null;
+            mAlertDialogSendInvoice = null;
             loadData();
         }
     }

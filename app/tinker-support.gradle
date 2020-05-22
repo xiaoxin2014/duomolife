@@ -36,7 +36,7 @@ tinkerSupport {
 
     // 构建基准包和补丁包都要指定不同的tinkerId，并且必须保证唯一性
     //    版本号-年月日时分-补丁包几
-    tinkerId = "v4.5.1-05161420-base"
+    tinkerId = "v4.6.0-05221545-base"
 
     // 构建多渠道补丁时使用
     // buildAllFlavorsDir = "${bakPath}/${baseApkDir}"

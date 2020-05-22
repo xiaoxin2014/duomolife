@@ -1,55 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/translucence">
+    android:layout_gravity="center"
+    android:layout_height="wrap_content"
+    android:layout_centerInParent="true"
+    android:background="@drawable/border_cir_7dp_bg_white"
+    android:divider="@drawable/divider_ll_0_5_dp"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    android:showDividers="middle">
 
-    <LinearLayout
-        android:layout_width="@dimen/sc_mm_540"
-        android:layout_height="@dimen/sc_mm_665"
-        android:layout_centerInParent="true"
-        android:background="@drawable/border_cir_7dp_bg_white"
-        android:divider="@drawable/divider_ll_0_5_dp"
-        android:gravity="center_vertical"
-        android:orientation="vertical"
-        android:showDividers="middle">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:paddingBottom="@dimen/sc_mm_30">
-
-            <TextView
-                android:id="@+id/tv_integral_rule_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="@dimen/sc_mm_40"
-                android:paddingLeft="@dimen/sc_mm_50"
-                android:paddingRight="@dimen/sc_mm_40"
-                android:textColor="@color/text_black_t"
-                android:textSize="@dimen/sc_mm_32" />
-            <androidx.recyclerview.widget.RecyclerView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/rv_communal_rule"
-                android:scrollbars="vertical"
-                android:layout_below="@id/tv_integral_rule_title"
-                android:layout_centerInParent="true"
-                android:layout_marginLeft="@dimen/sc_mm_50"
-                android:layout_marginRight="@dimen/sc_mm_40"
-                android:layout_marginTop="@dimen/sc_mm_50"/>
-        </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingBottom="@dimen/sc_mm_30">
 
         <TextView
-            android:id="@+id/tv_integral_rule_dismiss"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/sc_mm_88"
-            android:layout_centerInParent="true"
-            android:gravity="center"
-            android:text="我知道了"
-            android:textColor="@color/text_login_blue_z"
+            android:text="@string/defaul"
+            android:id="@+id/tv_integral_rule_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/sc_mm_40"
+            android:paddingLeft="@dimen/sc_mm_50"
+            android:paddingRight="@dimen/sc_mm_40"
+            android:textColor="@color/text_black_t"
             android:textSize="@dimen/sc_mm_32" />
-    </LinearLayout>
-</RelativeLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_communal_rule"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/sc_mm_500"
+            android:layout_below="@id/tv_integral_rule_title"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="@dimen/sc_mm_50"
+            android:layout_marginTop="@dimen/sc_mm_50"
+            android:layout_marginRight="@dimen/sc_mm_40"
+            android:scrollbars="vertical" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_integral_rule_dismiss"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sc_mm_88"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:text="我知道了"
+        android:textColor="@color/text_login_blue_z"
+        android:textSize="@dimen/sc_mm_32" />
+</LinearLayout>

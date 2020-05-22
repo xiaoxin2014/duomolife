@@ -1,4 +1,4 @@
-package com.amkj.dmsh.utils.alertdialog;
+package com.amkj.dmsh.bean;
 
 import com.umeng.socialize.bean.SHARE_MEDIA;
 
