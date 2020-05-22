@@ -646,7 +646,6 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     private void onDestroy() {
-        alertDialogIntegral.dismiss();
         attendanceLotteryCodePopWindow.dismiss();
         ((AppCompatActivity) context).getLifecycle().removeObserver(this);
     }

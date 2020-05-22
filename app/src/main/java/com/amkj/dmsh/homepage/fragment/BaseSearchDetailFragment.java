@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -48,6 +46,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -356,7 +356,6 @@ public abstract class BaseSearchDetailFragment extends BaseFragment {
                         mSearchDialogImage.hideCloseBtn();
                     }
                     mSearchDialogImage.setAlertClickListener(() -> {
-                        mSearchDialogImage.dismiss();
                         openCoupon(getStringChangeIntegers(watchwordBean.getObjId()), type);
                     });
 
@@ -440,9 +439,6 @@ public abstract class BaseSearchDetailFragment extends BaseFragment {
         if (mFailDialogImage == null) {
             mFailDialogImage = new AlertDialogImage(getActivity());
             mFailDialogImage.hideCloseBtn();
-            mFailDialogImage.setAlertClickListener(() -> {
-                mFailDialogImage.dismiss();
-            });
             mFailDialogImage.setImageResource(R.drawable.get_coupon_fail);
         }
         mFailDialogImage.setDialogText(couponListEntity.getMsg());
@@ -464,22 +460,6 @@ public abstract class BaseSearchDetailFragment extends BaseFragment {
         super.getReqParams(bundle);
         if (bundle != null) {
             mTitle = (String) bundle.get("title");
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (mFailDialogImage != null && mFailDialogImage.isShowing()) {
-            mFailDialogImage.dismiss();
-        }
-
-        if (mSucessDialogImage != null && mSucessDialogImage.isShowing()) {
-            mSucessDialogImage.dismiss();
-        }
-
-        if (mSearchDialogImage != null && mSearchDialogImage.isShowing()) {
-            mSearchDialogImage.dismiss();
         }
     }
 }

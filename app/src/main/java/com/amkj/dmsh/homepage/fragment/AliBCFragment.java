@@ -821,7 +821,6 @@ public class AliBCFragment extends BaseFragment {
 
                         @Override
                         public void cancel() {
-                            marketStoreGradeDialog.dismiss();
                         }
                     });
                 }
@@ -860,12 +859,10 @@ public class AliBCFragment extends BaseFragment {
                         Uri uri = Uri.fromParts("package", activityWeakReference.get().getPackageName(), null);
                         intent.setData(uri);
                         startActivityForResult(intent, REQUEST_NOTIFICATION_STATUS);
-                        notificationAlertDialogHelper.dismiss();
                     }
 
                     @Override
                     public void cancel() {
-                        notificationAlertDialogHelper.dismiss();
                     }
                 });
             }
@@ -1122,7 +1119,6 @@ public class AliBCFragment extends BaseFragment {
 
                 @Override
                 public void cancel() {
-                    alertDialogHelper.dismiss();
                 }
             });
         }
@@ -1203,9 +1199,6 @@ public class AliBCFragment extends BaseFragment {
         if (web_fragment_communal != null) {
             web_fragment_communal.removeAllViews();
             web_fragment_communal.destroy();
-        }
-        if (alertDialogHelper != null) {
-            alertDialogHelper.dismiss();
         }
     }
 

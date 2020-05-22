@@ -14,10 +14,6 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.net.Uri;
 import android.provider.Settings;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -102,6 +98,10 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import butterknife.BindView;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
@@ -148,7 +148,6 @@ import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.fileIsExist;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getImageFilePath;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.saveImageToFile;
 
-;
 
 /**
  * @author Liuguipeng
@@ -387,7 +386,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                                                     });
                                             break;
                                     }
-                                    mAlertDialogUserImage.dismiss();
                                 });
                                 mAlertDialogUserImage.setImage(bitmap);
                             }
@@ -1130,7 +1128,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, H_AD_DIALOG, map, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-
                 CommunalADActivityEntity communalADActivityEntity = GsonUtils.fromJson(result, CommunalADActivityEntity.class);
                 if (communalADActivityEntity != null && communalADActivityEntity.getCode().equals(SUCCESS_CODE)) {
                     List<CommunalADActivityBean> communalADActivityBeanList = communalADActivityEntity.getCommunalADActivityBeanList();
@@ -1165,7 +1162,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }
                 alertDialogAdImage.show();
                 alertDialogAdImage.setAlertClickListener(() -> {
-                    alertDialogAdImage.dismiss();
                     AddClickDao.addMarketClick(getActivity(), communalADActivityBean.getAndroidLink(), communalADActivityBean.getId());
                 });
                 alertDialogAdImage.setImage(bitmap);
@@ -1199,12 +1195,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                                 Uri uri = Uri.fromParts("package", getActivity().getPackageName(), null);
                                 intent.setData(uri);
                                 getActivity().startActivity(intent);
-                                mAlertDialogNotify.dismiss();
                             }
 
                             @Override
                             public void cancel() {
-                                mAlertDialogNotify.dismiss();
                             }
                         });
                         mAlertDialogNotify.setTitle("通知提示")
@@ -1391,21 +1385,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         super.onDestroy();
         if (constantMethod != null) {
             constantMethod.releaseHandlers();
-        }
-        if (alertDialogHelper != null && alertDialogHelper.isShowing()) {
-            alertDialogHelper.dismiss();
-        }
-        if (mAlertDialogNotify != null && mAlertDialogNotify.isShowing()) {
-            mAlertDialogNotify.dismiss();
-        }
-        if (alertDialogAdImage != null && alertDialogAdImage.isShowing()) {
-            alertDialogAdImage.dismiss();
-        }
-        if (mAlertDialogGroup != null && mAlertDialogGroup.isShowing()) {
-            mAlertDialogGroup.dismiss();
-        }
-        if (mAlertDialogUserImage != null && mAlertDialogUserImage.isShowing()) {
-            mAlertDialogUserImage.dismiss();
         }
     }
 

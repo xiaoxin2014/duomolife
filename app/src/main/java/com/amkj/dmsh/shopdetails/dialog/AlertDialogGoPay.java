@@ -1,14 +1,8 @@
 package com.amkj.dmsh.shopdetails.dialog;
 
 import android.content.Intent;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.LinearLayout;
 
 import com.amkj.dmsh.R;
@@ -22,23 +16,23 @@ import com.amkj.dmsh.shopdetails.payutils.AliPay;
 import com.amkj.dmsh.shopdetails.payutils.UnionPay;
 import com.amkj.dmsh.shopdetails.payutils.WXPay;
 import com.amkj.dmsh.utils.LifecycleHandler;
+import com.amkj.dmsh.utils.alertdialog.BaseAlertDialogHelper;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
-import me.jessyan.autosize.AutoSize;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static android.view.View.GONE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.dismissLoadhud;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
 import static com.amkj.dmsh.constant.ConstantMethod.showLoadhud;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -55,30 +49,20 @@ import static com.amkj.dmsh.constant.Url.Q_PAYMENT_INDENT;
  * Version:v4.5.0
  * ClassDescription :去支付弹窗
  */
-public class AlertDialogGoPay {
+public class AlertDialogGoPay extends BaseAlertDialogHelper {
     @BindView(R.id.ll_pay_ali)
     LinearLayout mLlPayAli;
     @BindView(R.id.ll_pay_we_chat)
     LinearLayout mLlPayWeChat;
     @BindView(R.id.ll_pay_union)
     LinearLayout mLlPayUnion;
-    private AppCompatActivity context;
-    private AlertDialog imageAlertDialog;
-    private View dialogView;
-    private boolean isFirstSet = true;
     private String orderNo;
+    private AppCompatActivity mActicity;
 
 
-    public AlertDialogGoPay(AppCompatActivity context, Object object) {
-        if (!isContextExisted(context)) {
-            return;
-        }
-        this.context = context;
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setCancelable(true);
-        dialogView = LayoutInflater.from(context).inflate(R.layout.layout_indent_pay_pop, null, false);
-        imageAlertDialog = builder.create();
-        ButterKnife.bind(this, dialogView);
+    public AlertDialogGoPay(AppCompatActivity activity, Object object) {
+        super(activity);
+        mActicity = activity;
         if (object instanceof List && ((List) object).size() > 0) {
             List payWays = (List) object;
             //微信
@@ -94,6 +78,24 @@ public class AlertDialogGoPay {
                 mLlPayUnion.setVisibility(GONE);
             }
         }
+    }
+
+    /**
+     * 展示dialog
+     */
+    public void show(String orderNo) {
+        show();
+        this.orderNo = orderNo;
+    }
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.layout_indent_pay_pop;
+    }
+
+    @Override
+    protected int getLayoutWith() {
+        return AutoSizeUtils.mm2px(mAppContext, 540);
     }
 
     @OnClick({R.id.ll_pay_ali, R.id.ll_pay_we_chat, R.id.ll_pay_union, R.id.tv_pay_cancel})
@@ -113,7 +115,7 @@ public class AlertDialogGoPay {
     }
 
     private void paymentIndent(String payWay) {
-        showLoadhud(context);
+        showLoadhud(mActicity);
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderNo);
         params.put("userId", userId);
@@ -126,7 +128,7 @@ public class AlertDialogGoPay {
         NetLoadUtils.getNetInstance().loadNetDataPost(context, Q_PAYMENT_INDENT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                dismissLoadhud(context);
+                dismissLoadhud(mActicity);
 
                 if (payWay.equals(PAY_WX_PAY)) {
                     QualityCreateWeChatPayIndentBean qualityWeChatIndent = GsonUtils.fromJson(result, QualityCreateWeChatPayIndentBean.class);
@@ -135,7 +137,7 @@ public class AlertDialogGoPay {
                             //返回成功，调起微信支付接口
                             doWXPay(qualityWeChatIndent.getResult());
                         } else {
-                            showToast( qualityWeChatIndent.getResult() == null
+                            showToast(qualityWeChatIndent.getResult() == null
                                     ? qualityWeChatIndent.getMsg() : qualityWeChatIndent.getResult().getMsg());
                         }
                     }
@@ -146,7 +148,7 @@ public class AlertDialogGoPay {
                             //返回成功，调起支付宝支付接口
                             doAliPay(qualityAliPayIndent.getResult());
                         } else {
-                            showToast( qualityAliPayIndent.getResult() == null
+                            showToast(qualityAliPayIndent.getResult() == null
                                     ? qualityAliPayIndent.getMsg() : qualityAliPayIndent.getResult().getMsg());
                         }
                     }
@@ -157,7 +159,7 @@ public class AlertDialogGoPay {
                             //返回成功，调起银联支付接口
                             unionPay(qualityUnionIndent);
                         } else {
-                            showToast( qualityUnionIndent.getQualityCreateUnionPayIndent() != null &&
+                            showToast(qualityUnionIndent.getQualityCreateUnionPayIndent() != null &&
                                     qualityUnionIndent.getQualityCreateUnionPayIndent() != null &&
                                     !TextUtils.isEmpty(qualityUnionIndent.getQualityCreateUnionPayIndent().getMsg()) ?
                                     getStrings(qualityUnionIndent.getQualityCreateUnionPayIndent().getMsg()) :
@@ -169,14 +171,14 @@ public class AlertDialogGoPay {
 
             @Override
             public void onError(Throwable throwable) {
-                dismissLoadhud(context);
+                dismissLoadhud(mActicity);
                 showToast(R.string.do_failed);
             }
         });
     }
 
     private void doWXPay(QualityCreateWeChatPayIndentBean.ResultBean pay_param) {
-        WXPay.init(context);//要在支付前调用
+        WXPay.init(mActicity);//要在支付前调用
         WXPay.getInstance().doPayDateObject(pay_param.getNo(), pay_param.getPayKey(), new WXPay.WXPayResultCallBack() {
             @Override
             public void onSuccess() {
@@ -207,7 +209,7 @@ public class AlertDialogGoPay {
     }
 
     private void skipPaySuccess() {
-        new LifecycleHandler(context).postDelayed(() -> {
+        new LifecycleHandler(mActicity).postDelayed(() -> {
             Intent intent = new Intent(context, DirectPaySuccessActivity.class);
             intent.putExtra("indentNo", orderNo);
             intent.putExtra(INDENT_PRODUCT_TYPE, INDENT_PROPRIETOR_PRODUCT);
@@ -216,7 +218,7 @@ public class AlertDialogGoPay {
     }
 
     private void doAliPay(QualityCreateAliPayIndentBean.ResultBean resultBean) {
-        new AliPay(context, resultBean.getNo(), resultBean.getPayKey(), new AliPay.AliPayResultCallBack() {
+        new AliPay(mActicity, resultBean.getNo(), resultBean.getPayKey(), new AliPay.AliPayResultCallBack() {
             @Override
             public void onSuccess() {
                 showToast("支付成功");
@@ -261,7 +263,7 @@ public class AlertDialogGoPay {
     private void unionPay(@NonNull QualityCreateUnionPayIndentEntity qualityUnionIndent) {
         if (qualityUnionIndent.getQualityCreateUnionPayIndent().getPayKeyBean() != null &&
                 !TextUtils.isEmpty(qualityUnionIndent.getQualityCreateUnionPayIndent().getPayKeyBean().getPaymentUrl())) {
-            new UnionPay(context, qualityUnionIndent.getQualityCreateUnionPayIndent().getNo(),
+            new UnionPay(mActicity, qualityUnionIndent.getQualityCreateUnionPayIndent().getNo(),
                     qualityUnionIndent.getQualityCreateUnionPayIndent().getPayKeyBean().getPaymentUrl(),
                     new UnionPay.UnionPayResultCallBack() {
                         @Override
@@ -277,39 +279,6 @@ public class AlertDialogGoPay {
                     });
         } else {
             showToast("缺少重要参数，请选择其它支付渠道！");
-        }
-    }
-
-    /**
-     * 展示dialog
-     */
-    public void show(String orderNo) {
-        if (imageAlertDialog == null) {
-            return;
-        }
-
-        this.orderNo = orderNo;
-        if (!imageAlertDialog.isShowing() && isContextExisted(context)) {
-            AutoSize.autoConvertDensityOfGlobal(context);
-            imageAlertDialog.show();
-        }
-        if (isFirstSet) {
-            Window window = imageAlertDialog.getWindow();
-            if (window != null) {
-                window.setBackgroundDrawableResource(android.R.color.transparent);
-                WindowManager.LayoutParams params = window.getAttributes();
-                params.width = AutoSizeUtils.mm2px(mAppContext, 540);
-                window.setAttributes(params);
-                window.setContentView(dialogView);
-            }
-        }
-        isFirstSet = false;
-    }
-
-    public void dismiss() {
-        if (imageAlertDialog != null
-                && isContextExisted(context) && imageAlertDialog.isShowing()) {
-            imageAlertDialog.dismiss();
         }
     }
 }

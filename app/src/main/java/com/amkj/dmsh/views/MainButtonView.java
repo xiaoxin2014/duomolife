@@ -4,10 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -60,6 +56,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import me.jessyan.autosize.utils.AutoSizeUtils;
@@ -545,20 +545,5 @@ public class MainButtonView extends LinearLayout {
         super.onDetachedFromWindow();
         WindowUtils.closePw(mPwScore);
         WindowUtils.closePw(mPwMoreButton);
-        if (cancelOrderDialogHelper != null) {
-            cancelOrderDialogHelper.dismiss();
-        }
-        if (confirmOrderDialogHelper != null) {
-            confirmOrderDialogHelper.dismiss();
-        }
-        if (delOrderDialogHelper != null) {
-            delOrderDialogHelper.dismiss();
-        }
-        if (mAlertDialogGoPay != null) {
-            mAlertDialogGoPay.dismiss();
-        }
-        if (mAlertDialogService != null) {
-            mAlertDialogService.dismiss();
-        }
     }
 }

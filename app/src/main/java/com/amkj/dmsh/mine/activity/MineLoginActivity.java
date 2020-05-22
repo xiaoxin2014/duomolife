@@ -3,7 +3,6 @@ package com.amkj.dmsh.mine.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import androidx.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -40,6 +39,7 @@ import com.umeng.socialize.bean.SHARE_MEDIA;
 import java.util.HashMap;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -616,23 +616,6 @@ public class MineLoginActivity extends BaseActivity {
         countDownHelper.setSmsCountDown(tv_login_send_code);
     }
 
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (qqDialogHelper != null && qqDialogHelper.isShowing()) {
-            qqDialogHelper.dismiss();
-        }
-        if (weChatDialogHelper != null && weChatDialogHelper.isShowing()) {
-            weChatDialogHelper.dismiss();
-        }
-        if (sinaDialogHelper != null && sinaDialogHelper.isShowing()) {
-            sinaDialogHelper.dismiss();
-        }
-        if (alertDialogHelper != null && alertDialogHelper.isShowing()) {
-            alertDialogHelper.dismiss();
-        }
-    }
 
 
     @Override

@@ -2,11 +2,6 @@ package com.amkj.dmsh.shopdetails.activity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,6 +34,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -197,7 +197,6 @@ public class DirectPaySuccessActivity extends BaseActivity {
                     @Override
                     public void imageClick() {
                         AddClickDao.adClickTotal(getActivity(),communalADActivityBean.getAndroidLink(), communalADActivityBean.getId(),false);
-                        alertDialogAdImage.dismiss();
                     }
                 });
                 alertDialogAdImage.setImage(bitmap);

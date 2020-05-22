@@ -694,10 +694,6 @@ public class PostDetailActivity extends BaseActivity {
         KeyboardUtils.unregisterSoftInputChangedListener(this);
         WindowUtils.closePw(mAlphaPw);
         WindowUtils.closePw(postCommentAdapter.getChildPostCommentPw());
-        if (delArticleDialogHelper != null && delArticleDialogHelper.getAlertDialog() != null
-                && delArticleDialogHelper.getAlertDialog().isShowing()) {
-            delArticleDialogHelper.dismiss();
-        }
     }
 
     /**
@@ -772,8 +768,9 @@ public class PostDetailActivity extends BaseActivity {
         if (delArticleDialogHelper == null) {
             delArticleDialogHelper = new AlertDialogHelper(this);
             delArticleDialogHelper.setTitleVisibility(View.GONE).setMsgTextGravity(Gravity.CENTER)
-                    .setMsg("确定删除该篇帖子？").setCancelText("取消").setConfirmText("提交").setCancelable(false)
-                    .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s));
+                    .setMsg("确定删除该篇帖子？").setCancelText("取消").setConfirmText("提交")
+                    .setCancelTextColor(getResources().getColor(R.color.text_login_gray_s))
+                    .setCancelable(false);
             delArticleDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
                 @Override
                 public void confirm() {

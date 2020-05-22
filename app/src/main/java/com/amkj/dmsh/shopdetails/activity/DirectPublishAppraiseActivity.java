@@ -4,9 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -41,6 +38,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -366,13 +366,5 @@ public class DirectPublishAppraiseActivity extends BaseActivity{
             });
         }
         alertDialogHelper.show();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if(alertDialogHelper!=null&&alertDialogHelper.getAlertDialog().isShowing()){
-            alertDialogHelper.dismiss();
-        }
     }
 }

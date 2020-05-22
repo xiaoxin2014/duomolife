@@ -709,7 +709,6 @@ public class NetLoadUtils<T, E extends BaseEntity> {
 
                     @Override
                     public void cancel() {
-                        mNotificationAlertDialogHelper.dismiss();
                     }
                 });
 

@@ -819,7 +819,6 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
 
                         @Override
                         public void cancel() {
-                            marketStoreGradeDialog.dismiss();
                         }
                     });
                 }
@@ -856,12 +855,10 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                             Uri uri = Uri.fromParts("package", getPackageName(), null);
                             intent.setData(uri);
                             startActivityForResult(intent, REQUEST_NOTIFICATION_STATUS);
-                            notificationAlertDialogHelper.dismiss();
                         }
 
                         @Override
                         public void cancel() {
-                            notificationAlertDialogHelper.dismiss();
                         }
                     });
                 }
@@ -1117,7 +1114,6 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
 
                 @Override
                 public void cancel() {
-                    alertDialogHelper.dismiss();
                 }
             });
         }
@@ -1187,15 +1183,6 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
         if (web_communal != null) {
             web_communal.removeAllViews();
             web_communal.destroy();
-        }
-        if (alertDialogHelper != null) {
-            alertDialogHelper.dismiss();
-        }
-        if (notificationAlertDialogHelper != null) {
-            notificationAlertDialogHelper.dismiss();
-        }
-        if (marketStoreGradeDialog != null) {
-            marketStoreGradeDialog.dismiss();
         }
         super.onDestroy();
     }

@@ -159,6 +159,8 @@ public class QualityTypeProductActivity extends BaseActivity {
             categoryName = getStrings(intent.getStringExtra(CATEGORY_NAME));
             couponId = intent.getStringExtra("couponId");
         }
+
+        iv_search.setVisibility(!TextUtils.isEmpty(couponId) ? VISIBLE : GONE);
         if (categoryId < 1) {
             showToast(R.string.miss_parameters_hint);
             return;
@@ -574,7 +576,6 @@ public class QualityTypeProductActivity extends BaseActivity {
     }
 
     private void getQualityTypePro() {
-        iv_search.setVisibility(VISIBLE);
         mParams = new HashMap<>();
         mParams.put("currentPage", page);
         mParams.put("showCount", TOTAL_COUNT_TWENTY);

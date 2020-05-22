@@ -391,7 +391,6 @@ public class ArticleOfficialActivity extends BaseActivity {
 
                 @Override
                 public void cancel() {
-                    alertDialogHelper.dismiss();
                 }
             });
         }

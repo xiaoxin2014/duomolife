@@ -884,10 +884,6 @@ public class ShopCarActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (alertDialogHelper != null) {
-            alertDialogHelper.dismiss();
-        }
-
         KeyboardUtils.unregisterSoftInputChangedListener(this);
     }
 

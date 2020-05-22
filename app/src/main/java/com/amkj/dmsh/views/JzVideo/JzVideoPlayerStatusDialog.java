@@ -47,7 +47,6 @@ public class JzVideoPlayerStatusDialog extends JzvdStd {
             alertDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
                 @Override
                 public void confirm() {
-                    alertDialogHelper.dismiss();
                     onEvent(JZUserActionStd.ON_CLICK_START_WIFIDIALOG);
                     startVideo();
                     WIFI_TIP_DIALOG_SHOWED = true;
@@ -55,7 +54,6 @@ public class JzVideoPlayerStatusDialog extends JzvdStd {
 
                 @Override
                 public void cancel() {
-                    alertDialogHelper.dismiss();
                     clearFloatScreen();
                 }
             });

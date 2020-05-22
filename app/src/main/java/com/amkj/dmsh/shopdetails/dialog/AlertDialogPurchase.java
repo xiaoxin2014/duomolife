@@ -1,13 +1,7 @@
 package com.amkj.dmsh.shopdetails.dialog;
 
-import android.app.Activity;
 import android.content.Context;
-import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.app.AlertDialog;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,60 +9,47 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.shopdetails.adapter.PurchaseCoverAdapter;
 import com.amkj.dmsh.shopdetails.bean.IndentWriteEntity.IndentWriteBean.PrerogativeActivityInfo;
 import com.amkj.dmsh.shopdetails.bean.IndentWriteEntity.IndentWriteBean.PrerogativeActivityInfo.GoodsListBean;
+import com.amkj.dmsh.utils.alertdialog.BaseAlertDialogHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import me.jessyan.autosize.AutoSize;
+import androidx.viewpager.widget.ViewPager;
+import butterknife.BindView;
+import butterknife.OnClick;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getSpannableString;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
 
 /**
  * Created by xiaoxin on 2019/9/30
  * Version:v4.3.0
  * ClassDescription :加价购活动弹窗
  */
-public class AlertDialogPurchase {
+public class AlertDialogPurchase extends BaseAlertDialogHelper {
 
-    private Context context;
-    private AlertDialog imageAlertDialog;
+    @BindView(R.id.tv_discount_edition)
+    TextView mTvDiscountEdition;
+    @BindView(R.id.iv_left)
+    ImageView mIvLeft;
+    @BindView(R.id.vp_goods)
+    ViewPager mVpGoods;
+    @BindView(R.id.iv_right)
+    ImageView mIvRight;
+    @BindView(R.id.tv_title)
+    TextView mTvTitle;
+    @BindView(R.id.tv_dicount_price)
+    TextView mTvDicountPrice;
+    @BindView(R.id.tv_discount_info)
+    TextView mTvDiscountInfo;
     private AddOrderListener mAddOrderListener;
-    private View dialogView;
-    private boolean isFirstSet;
     private PurchaseCoverAdapter mPurchaseCoverAdapter;
     private List<GoodsListBean> goodList = new ArrayList<>();
-    private TextView mTvDiscountEdition;
-    private ImageView mIvLeft;
-    private ViewPager mVpGoods;
-    private ImageView mIvRight;
-    private TextView mTvTitle;
-    private TextView mTvDicountPrice;
-    private TextView mTvDicountInfo;
-    private TextView mTvCancle;
-    private TextView mTvAdd;
 
     public AlertDialogPurchase(Context context) {
-        if (!isContextExisted(context)) {
-            return;
-        }
-        this.context = context;
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setCancelable(true);
-        dialogView = LayoutInflater.from(context).inflate(R.layout.layout_alert_dialog_purchase, null, false);
-        imageAlertDialog = builder.create();
-        mTvDiscountEdition = dialogView.findViewById(R.id.tv_discount_edition);
-        mIvLeft = dialogView.findViewById(R.id.iv_left);
-        mVpGoods = dialogView.findViewById(R.id.vp_goods);
-        mIvRight = dialogView.findViewById(R.id.iv_right);
-        mTvTitle = dialogView.findViewById(R.id.tv_title);
-        mTvDicountInfo = dialogView.findViewById(R.id.tv_discount_info);
-        mTvDicountPrice = dialogView.findViewById(R.id.tv_dicount_price);
-        mTvCancle = dialogView.findViewById(R.id.tv_cancle);
-        mTvAdd = dialogView.findViewById(R.id.tv_add);
+        super(context);
         mPurchaseCoverAdapter = new PurchaseCoverAdapter(context, goodList);
         mVpGoods.setAdapter(mPurchaseCoverAdapter);
         mVpGoods.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -87,26 +68,18 @@ public class AlertDialogPurchase {
 
             }
         });
+    }
 
-        mIvLeft.setOnClickListener(v -> {
-            int currentItem = mVpGoods.getCurrentItem();
-            if (currentItem - 1 >= 0) {
-                mVpGoods.setCurrentItem(currentItem - 1);
-            }
-        });
-        mIvRight.setOnClickListener(v -> {
-            int currentItem = mVpGoods.getCurrentItem();
-            if (currentItem + 1 <= goodList.size()) {
-                mVpGoods.setCurrentItem(currentItem + 1);
-            }
-        });
-        mTvCancle.setOnClickListener(v -> dismiss());
-        mTvAdd.setOnClickListener(v -> {
-            if (mAddOrderListener != null) {
-                mAddOrderListener.addOrderClick();
-            }
-        });
-        isFirstSet = true;
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.layout_alert_dialog_purchase;
+    }
+
+
+    @Override
+    protected int getLayoutWith() {
+        return AutoSizeUtils.mm2px(mAppContext, 560);
     }
 
     public void updateData(PrerogativeActivityInfo purchaseBean) {
@@ -130,9 +103,9 @@ public class AlertDialogPurchase {
         mTvTitle.setText(getStrings(goodsListBean.getSubTitle() + goodsListBean.getProductName()));
         String priceText = "专享价¥" + getStrings(goodsListBean.getPrice());
         mTvDicountPrice.setText(getSpannableString(priceText, 3, priceText.length(), -1, "#ff5e6b"));
-        mTvDicountInfo.setText(getStrings(goodsListBean.getDiscountPrice()));
+        mTvDiscountInfo.setText(getStrings(goodsListBean.getDiscountPrice()));
         mIvLeft.setEnabled(currentItem != 0);
-        mIvRight.setEnabled(currentItem!=goodList.size()-1);
+        mIvRight.setEnabled(currentItem != goodList.size() - 1);
     }
 
     public int getCurrentItem() {
@@ -143,45 +116,33 @@ public class AlertDialogPurchase {
         this.mAddOrderListener = addOrderListener;
     }
 
+    @OnClick({R.id.iv_left, R.id.iv_right, R.id.tv_cancle, R.id.tv_add})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.iv_left:
+                int currentItem = mVpGoods.getCurrentItem();
+                if (currentItem - 1 >= 0) {
+                    mVpGoods.setCurrentItem(currentItem - 1);
+                }
+                break;
+            case R.id.iv_right:
+                int currentItemRight = mVpGoods.getCurrentItem();
+                if (currentItemRight + 1 <= goodList.size()) {
+                    mVpGoods.setCurrentItem(currentItemRight + 1);
+                }
+                break;
+            case R.id.tv_cancle:
+                dismiss();
+                break;
+            case R.id.tv_add:
+                if (mAddOrderListener != null) {
+                    mAddOrderListener.addOrderClick();
+                }
+                break;
+        }
+    }
+
     public interface AddOrderListener {
         void addOrderClick();
-    }
-
-    /**
-     * 展示dialog
-     */
-    public void show() {
-        if (imageAlertDialog == null) {
-            return;
-        }
-        if (!imageAlertDialog.isShowing() && isContextExisted(context)) {
-            AutoSize.autoConvertDensityOfGlobal((Activity) context);
-            imageAlertDialog.show();
-        }
-        if (isFirstSet) {
-            Window window = imageAlertDialog.getWindow();
-            if (window != null) {
-                window.setBackgroundDrawableResource(android.R.color.transparent);
-                WindowManager.LayoutParams params = window.getAttributes();
-                params.width = AutoSizeUtils.mm2px(mAppContext, 560);
-                window.setAttributes(params);
-                window.setContentView(dialogView);
-            }
-        }
-        isFirstSet = false;
-    }
-
-    public void dismiss() {
-        if (imageAlertDialog != null && isContextExisted(context)) {
-            imageAlertDialog.dismiss();
-        }
-    }
-
-    /**
-     * dialog 是否在展示
-     */
-    public boolean isShowing() {
-        return imageAlertDialog != null
-                && isContextExisted(context) && imageAlertDialog.isShowing();
     }
 }

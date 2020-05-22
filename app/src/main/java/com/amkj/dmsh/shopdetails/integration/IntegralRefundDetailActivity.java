@@ -6,9 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import androidx.core.widget.NestedScrollView;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -63,6 +60,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -1035,9 +1035,6 @@ public class IntegralRefundDetailActivity extends BaseActivity {
             constantMethod.releaseHandlers();
         }
         super.onDestroy();
-        if (cancelApplyDialogHelper != null && cancelApplyDialogHelper.isShowing()) {
-            cancelApplyDialogHelper.dismiss();
-        }
         KeyboardUtils.unregisterSoftInputChangedListener(this);
     }
 

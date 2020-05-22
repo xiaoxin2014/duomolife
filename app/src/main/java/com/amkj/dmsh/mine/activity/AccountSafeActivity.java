@@ -557,16 +557,6 @@ public class AccountSafeActivity extends BaseActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (accountDialogHelper != null &&
-                accountDialogHelper.getAlertDialog() != null &&
-                accountDialogHelper.getAlertDialog().isShowing()) {
-            accountDialogHelper.dismiss();
-        }
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
         loadData();

@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -38,6 +36,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.iwgang.countdownview.CountdownView;
@@ -127,12 +127,10 @@ public class PointSpikeProductFragment extends BaseFragment {
                                                     Uri uri = Uri.fromParts("package", activityWeakReference.get().getPackageName(), null);
                                                     intent.setData(uri);
                                                     startActivityForResult(intent, REQUEST_NOTIFICATION_STATUS);
-                                                    notificationAlertDialogHelper.dismiss();
                                                 }
 
                                                 @Override
                                                 public void cancel() {
-                                                    notificationAlertDialogHelper.dismiss();
                                                 }
                                             });
                                         }

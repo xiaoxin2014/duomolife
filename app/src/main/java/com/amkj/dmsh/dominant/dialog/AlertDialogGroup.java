@@ -1,10 +1,8 @@
 package com.amkj.dmsh.dominant.dialog;
 
 import android.app.Activity;
-import androidx.appcompat.app.AlertDialog;
-import android.view.LayoutInflater;
+import android.content.Context;
 import android.view.View;
-import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -12,13 +10,15 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.dao.GroupDao;
 import com.amkj.dmsh.dominant.bean.GroupShopDetailsEntity.GroupShopDetailsBean;
+import com.amkj.dmsh.utils.alertdialog.BaseAlertDialogHelper;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 
-import me.jessyan.autosize.AutoSize;
+import butterknife.BindView;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
-import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
 import static com.amkj.dmsh.utils.TimeUtils.getCurrentTime;
 import static com.amkj.dmsh.utils.TimeUtils.getTimeDifference;
 import static com.amkj.dmsh.utils.TimeUtils.getTimeDifferenceText;
@@ -29,36 +29,23 @@ import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTime;
  * Version:v4.4.0
  * ClassDescription :提示拼团未完成弹窗
  */
-public class AlertDialogGroup {
+public class AlertDialogGroup extends BaseAlertDialogHelper {
 
-    private Activity context;
-    private AlertDialog imageAlertDialog;
-    private View dialogView;
-    private boolean isFirstSet;
-    private TextView mTvRemain;
-    private TextView mTvGpPrice;
-    private ImageView mIvCover;
-    private TextView mTvEndTime;
-    private TextView mTvInvate;
-    private TextView mTvNewUser;
+    @BindView(R.id.tv_remain)
+    TextView mTvRemain;
+    @BindView(R.id.tv_gp_price)
+    TextView mTvGpPrice;
+    @BindView(R.id.iv_cover)
+    ImageView mIvCover;
+    @BindView(R.id.tv_end_time)
+    TextView mTvEndTime;
+    @BindView(R.id.tv_invate_group)
+    TextView mTvInvate;
+    @BindView(R.id.tv_new_user)
+    TextView mTvNewUser;
 
-    public AlertDialogGroup(Activity context) {
-        if (!isContextExisted(context)) {
-            return;
-        }
-        this.context = context;
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        dialogView = LayoutInflater.from(context).inflate(R.layout.layout_dialog_group_uncomplete, null, false);
-        builder.setCancelable(true);
-        imageAlertDialog = builder.create();
-
-        mTvRemain = dialogView.findViewById(R.id.tv_remain);
-        mTvGpPrice = dialogView.findViewById(R.id.tv_gp_price);
-        mIvCover = dialogView.findViewById(R.id.iv_cover);
-        mTvEndTime = dialogView.findViewById(R.id.tv_end_time);
-        mTvInvate = dialogView.findViewById(R.id.tv_invate_group);
-        mTvNewUser = dialogView.findViewById(R.id.tv_new_user);
-        isFirstSet = true;
+    public AlertDialogGroup(Context context) {
+        super(context);
     }
 
     public void update(RequestStatus requestStatus) {
@@ -86,45 +73,19 @@ public class AlertDialogGroup {
             groupShopDetailsBean.setGpInfoId(requestStatus.getGpInfoId());
             groupShopDetailsBean.setGpRecordId(requestStatus.getGpRecordId());
             groupShopDetailsBean.setType(requestStatus.getType());
-            GroupDao.invitePartnerGroup(context, groupShopDetailsBean);
+            GroupDao.invitePartnerGroup((Activity) context, groupShopDetailsBean);
         });
 
         mTvNewUser.setVisibility(requestStatus.getRange() == 1 ? View.VISIBLE : View.GONE);
     }
 
-
-    /**
-     * 展示dialog
-     */
-    public void show() {
-        if (imageAlertDialog == null) {
-            return;
-        }
-        if (!imageAlertDialog.isShowing() && isContextExisted(context)) {
-            AutoSize.autoConvertDensityOfGlobal(context);
-            imageAlertDialog.show();
-        }
-        if (isFirstSet) {
-            Window window = imageAlertDialog.getWindow();
-            if (window != null) {
-                window.setBackgroundDrawableResource(android.R.color.transparent);
-                window.setContentView(dialogView);
-            }
-        }
-        isFirstSet = false;
+    @Override
+    protected int getLayoutId() {
+        return R.layout.layout_dialog_group_uncomplete;
     }
 
-    public void dismiss() {
-        if (imageAlertDialog != null && isContextExisted(context)) {
-            imageAlertDialog.dismiss();
-        }
-    }
-
-    /**
-     * dialog 是否在展示
-     */
-    public boolean isShowing() {
-        return imageAlertDialog != null
-                && isContextExisted(context) && imageAlertDialog.isShowing();
+    @Override
+    protected int getLayoutWith() {
+        return AutoSizeUtils.mm2px(mAppContext, 540);
     }
 }

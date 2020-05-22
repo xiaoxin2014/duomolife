@@ -102,12 +102,10 @@ public class EditorHeadView extends LinearLayout {
                     Uri uri = Uri.fromParts("package", mContext.getPackageName(), null);
                     intent.setData(uri);
                     mContext.startActivityForResult(intent, REQUEST_NOTIFICATION_STATUS);
-                    notificationAlertDialogHelper.dismiss();
                 }
 
                 @Override
                 public void cancel() {
-                    notificationAlertDialogHelper.dismiss();
                 }
             });
 

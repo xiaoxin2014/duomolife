@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import androidx.annotation.Nullable;
-import androidx.emoji.widget.EmojiTextView;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -48,6 +46,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import androidx.annotation.Nullable;
+import androidx.emoji.widget.EmojiTextView;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -495,10 +495,6 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (commitBirthdayDialogHelper != null && commitBirthdayDialogHelper.getAlertDialog() != null
-                && commitBirthdayDialogHelper.getAlertDialog().isShowing()) {
-            commitBirthdayDialogHelper.dismiss();
-        }
         if (sexDialogBottomListHelper != null && sexDialogBottomListHelper.getAlertDialog() != null
                 && sexDialogBottomListHelper.getAlertDialog().isShowing()) {
             sexDialogBottomListHelper.dismiss();

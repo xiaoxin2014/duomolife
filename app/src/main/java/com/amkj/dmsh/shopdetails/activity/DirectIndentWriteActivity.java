@@ -1422,20 +1422,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (constantMethod != null) {
-            if (constantMethod.alertImportDialogHelper != null) {
-                constantMethod.alertImportDialogHelper.dismiss();
-            }
-        }
-        if (payCancelDialogHelper != null
-                && payCancelDialogHelper.getAlertDialog() != null && payCancelDialogHelper.getAlertDialog().isShowing()) {
-            payCancelDialogHelper.dismiss();
-        }
-
-        if (mAlertDialogPurchase != null && mAlertDialogPurchase.isShowing()) {
-            mAlertDialogPurchase.dismiss();
-        }
-
         KeyboardUtils.unregisterSoftInputChangedListener(this);
     }
 

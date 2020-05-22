@@ -562,12 +562,4 @@ public class JoinTopicActivity extends BaseActivity {
             finish();
         }
     }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (alertDialogHelper != null && alertDialogHelper.getAlertDialog().isShowing()) {
-            alertDialogHelper.dismiss();
-        }
-    }
 }

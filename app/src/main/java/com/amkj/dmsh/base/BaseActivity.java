@@ -406,9 +406,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
         // 必须调用该方法，防止内存泄漏
         ImmersionBar.with(this).destroy();
-        if (mAlertDialogQyMsg != null) {
-            mAlertDialogQyMsg.dismiss();
-        }
         if (loadHud != null) {
             loadHud.dismiss();
         }

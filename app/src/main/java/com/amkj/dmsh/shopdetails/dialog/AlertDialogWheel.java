@@ -1,12 +1,10 @@
 package com.amkj.dmsh.shopdetails.dialog;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.utils.alertdialog.BaseAlertDialogHelper;
 import com.bigkoo.pickerview.adapter.ArrayWheelAdapter;
-import com.amkj.dmsh.utils.alertdialog.BaseAlertDialog;
 import com.contrarywind.view.WheelView;
 
 import java.util.ArrayList;
@@ -14,6 +12,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -22,7 +22,7 @@ import butterknife.OnClick;
  * Version:v4.5.0
  * ClassDescription :滚轮弹窗
  */
-public class AlertDialogWheel extends BaseAlertDialog {
+public class AlertDialogWheel extends BaseAlertDialogHelper {
 
     @BindView(R.id.wv_communal_one)
     WheelView mWvCommunalOne;
@@ -30,18 +30,17 @@ public class AlertDialogWheel extends BaseAlertDialog {
     private Map<String, String> mMap = new LinkedHashMap<>();
 
     public AlertDialogWheel(@NonNull AppCompatActivity context) {
-        super(context, R.style.NobackDialog);
+        super(context);
     }
 
-
     @Override
-    protected int getContentView() {
+    protected int getLayoutId() {
         return R.layout.alter_dialog_wheel;
     }
 
     @Override
-    protected void initViews() {
-
+    protected int getThemeResId() {
+        return  R.style.NobackDialog;
     }
 
     public void updateView(Map<String, String> map) {
@@ -68,6 +67,7 @@ public class AlertDialogWheel extends BaseAlertDialog {
     public void setConfirmListener(ClickConfirmListener clickConfirmListener) {
         mClickConfirmListener = clickConfirmListener;
     }
+
 
     public interface ClickConfirmListener {
         void confirm(String key, String value);

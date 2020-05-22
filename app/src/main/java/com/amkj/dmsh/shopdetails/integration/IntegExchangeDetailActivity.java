@@ -6,8 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -60,6 +58,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -891,19 +891,5 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
         }
         super.onResume();
         isOnPause = false;
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (cancelOrderDialogHelper != null && cancelOrderDialogHelper.isShowing()) {
-            cancelOrderDialogHelper.dismiss();
-        }
-        if (confirmOrderDialogHelper != null && confirmOrderDialogHelper.isShowing()) {
-            confirmOrderDialogHelper.dismiss();
-        }
-        if (refundOrderDialogHelper != null && refundOrderDialogHelper.isShowing()) {
-            refundOrderDialogHelper.dismiss();
-        }
     }
 }

@@ -2,14 +2,8 @@ package com.amkj.dmsh.shopdetails.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
-import androidx.annotation.NonNull;
-import androidx.core.widget.NestedScrollView;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -55,8 +49,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static android.view.View.VISIBLE;
@@ -457,8 +455,8 @@ public class DirectApplyRefundActivity extends BaseActivity {
                         tv_dir_indent_apply_type_sel.setSelected(true);
                     });
                 }
-                mAlertDialogWheelType.show(Gravity.BOTTOM);
                 mAlertDialogWheelType.updateView(refundTypeMap);
+                mAlertDialogWheelType.show(Gravity.BOTTOM);
                 break;
             //选择退款原因
             case R.id.ll_select_apply_reason:
@@ -474,8 +472,8 @@ public class DirectApplyRefundActivity extends BaseActivity {
                         tv_dir_indent_apply_reason_sel.setSelected(true);
                     });
                 }
-                mAlertDialogWheelReason.show(Gravity.BOTTOM);
                 mAlertDialogWheelReason.updateView(refundReasonMap.get(refundType));
+                mAlertDialogWheelReason.show(Gravity.BOTTOM);
                 break;
         }
     }
@@ -517,12 +515,6 @@ public class DirectApplyRefundActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         KeyboardUtils.unregisterSoftInputChangedListener(this);
-        if (mAlertDialogWheelReason != null) {
-            mAlertDialogWheelReason.dismiss();
-        }
-        if (mAlertDialogWheelType != null) {
-            mAlertDialogWheelType.dismiss();
-        }
     }
 
     @Override
@@ -560,12 +552,5 @@ public class DirectApplyRefundActivity extends BaseActivity {
                     && event.getY() > top && event.getY() < bottom);
         }
         return false;
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // TODO: add setContentView(...) invocation
-        ButterKnife.bind(this);
     }
 }

@@ -571,14 +571,6 @@ public class DirectExchangeDetailsActivity extends BaseActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mAlertDialogService != null) {
-            mAlertDialogService.dismiss();
-        }
-    }
-
-    @Override
     protected void postEventResult(@NonNull EventMessage message) {
         if (UPDATE_INDENT_LIST.equals(message.type)) {
             if (getSimpleName().equals(message.result)) {

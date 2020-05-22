@@ -4,9 +4,6 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import androidx.core.widget.NestedScrollView;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -49,6 +46,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 import me.jessyan.autosize.utils.AutoSizeUtils;
@@ -488,8 +488,8 @@ public class DoMoRefundDetailActivity extends BaseActivity {
                         tv_refund_logistic_sel.setText(value);
                     });
                 }
-                mAlertDialogExpress.show(Gravity.BOTTOM);
                 mAlertDialogExpress.updateView(mExpressCompanies);
+                mAlertDialogExpress.show(Gravity.BOTTOM);
                 break;
             //退款去向
             case R.id.tv_refund_aspect:
@@ -667,11 +667,5 @@ public class DoMoRefundDetailActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         KeyboardUtils.unregisterSoftInputChangedListener(this);
-        if (cancelApplyDialogHelper != null) {
-            cancelApplyDialogHelper.dismiss();
-        }
-        if (mAlertDialogExpress != null) {
-            mAlertDialogExpress.dismiss();
-        }
     }
 }

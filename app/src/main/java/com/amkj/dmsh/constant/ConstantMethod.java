@@ -33,7 +33,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -162,7 +161,6 @@ public class ConstantMethod {
     private Context context;
     private KProgressHUD loadHud;
     private ScheduledExecutorService scheduler;
-    private static Toast toast = null;
     //   定时时间更新
     private RefreshTimeListener refreshTimeListener;
     //    线程池
@@ -170,8 +168,6 @@ public class ConstantMethod {
     public static int userId = 0;
     public static boolean NEW_USER_DIALOG = true;
     private AlertDialogHelper alertDialogHelper;
-    public AlertDialogHelper alertImportDialogHelper;
-//    private AlertDialogHelper alertDialogRequestHelper;
 
 
     //    判断变量是否为空
@@ -664,7 +660,6 @@ public class ConstantMethod {
 
                 @Override
                 public void cancel() {
-                    alertDialogHelper.dismiss();
                 }
             });
             alertDialogHelper.setTitle("通知提示")
@@ -1168,7 +1163,6 @@ public class ConstantMethod {
                             alertDialogAdImage.setAlertClickListener(new AlertDialogImage.AlertImageClickListener() {
                                 @Override
                                 public void imageClick() {
-                                    alertDialogAdImage.dismiss();
                                     String androidLink = requestStatus.getAndroidLink();
                                     AddClickDao.adClickTotal(context, TextUtils.isEmpty(androidLink) ? LOTTERY_URL : androidLink, requestStatus.getId(), false);
                                 }
@@ -1420,12 +1414,10 @@ public class ConstantMethod {
                                                     }
                                                 })
                                                 .start();
-                                        alertDialogHelper.dismiss();
                                     }
 
                                     @Override
                                     public void cancel() {
-                                        alertDialogHelper.dismiss();
                                     }
                                 });
                             }

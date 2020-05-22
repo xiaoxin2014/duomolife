@@ -356,13 +356,4 @@ public class MineInvitationListActivity extends BaseActivity {
     void goBack(View view) {
         finish();
     }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (delArticleDialogHelper != null && delArticleDialogHelper.getAlertDialog() != null
-                && delArticleDialogHelper.getAlertDialog().isShowing()) {
-            delArticleDialogHelper.dismiss();
-        }
-    }
 }
