@@ -1,35 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:id="@+id/ll_home_marquee"
-              android:layout_width="match_parent"
-              android:layout_height="@dimen/sc_mm_68"
-              android:background="@color/bg_blue_dz"
-              android:gravity="center_vertical"
-              android:orientation="horizontal"
-              android:visibility="gone">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ll_home_marquee"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/sc_mm_68"
+    android:background="@color/bg_blue_dz"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:visibility="gone">
 
     <ImageView
         android:layout_width="@dimen/sc_mm_29"
         android:layout_height="@dimen/sc_mm_28"
         android:layout_marginLeft="@dimen/sc_mm_15"
         android:layout_marginRight="@dimen/sc_mm_16"
-        android:src="@drawable/marquee_not"/>
+        android:src="@drawable/marquee_not" />
 
-    <com.amkj.dmsh.views.MarqueeTextView
-        android:id="@+id/tv_marquee_text"
+    <LinearLayout
         android:layout_width="0px"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:ellipsize="marquee"
-        android:marqueeRepeatLimit="1"
-        android:singleLine="true"
-        android:textColor="@color/text_login_gray_s"
-        android:textSize="@dimen/sc_mm_24"/>
+        android:orientation="horizontal">
+
+        <li.yz.simplemarqueeviewlib.SimpleMarqueeView
+            android:id="@+id/tv_marquee_text"
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#00000000"
+            app:smvTextSingleLine="true"
+            app:text="Hello World! This is a Simple Marquee View. You can use it instead of textviewmarquee"
+            app:textColor="@color/text_login_gray_s"
+            app:textSize="@dimen/sc_mm_24" />
+    </LinearLayout>
 
     <View
         android:layout_width="@dimen/sc_mm_2"
         android:layout_height="@dimen/sc_mm_35"
-        android:background="@color/text_login_gray_s"/>
+        android:background="@color/text_login_gray_s" />
 
     <ImageView
         android:id="@+id/iv_home_marquee_close"
@@ -37,5 +45,5 @@
         android:layout_height="match_parent"
         android:padding="@dimen/sc_mm_20"
         android:scaleType="fitCenter"
-        android:src="@drawable/marquee_close"/>
+        android:src="@drawable/marquee_close" />
 </LinearLayout>

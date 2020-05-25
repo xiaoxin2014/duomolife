@@ -1,12 +1,7 @@
 package com.amkj.dmsh.homepage.fragment;
 
-import androidx.lifecycle.LifecycleOwner;
 import android.content.Intent;
 import android.graphics.Color;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +28,6 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.LifecycleHandler;
 import com.amkj.dmsh.utils.gson.GsonUtils;
-import com.amkj.dmsh.views.MarqueeTextView;
 import com.amkj.dmsh.views.flycoTablayout.SlidingIconTabLayout;
 import com.gyf.barlibrary.ImmersionBar;
 
@@ -42,8 +36,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.OnClick;
+import li.yz.simplemarqueeviewlib.SimpleMarqueeView;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 import q.rorbin.badgeview.Badge;
 
@@ -90,7 +90,7 @@ public class HomePageFragment extends BaseFragment {
     @BindView(R.id.ll_home_marquee)
     LinearLayout ll_home_marquee;
     @BindView(R.id.tv_marquee_text)
-    MarqueeTextView mTvMarqueeText;
+    SimpleMarqueeView mTvMarqueeText;
     private Badge badgeCart;
     private Badge badgeMsg;
     private List<HomeCommonBean> mGoodsNavbarList = new ArrayList<>();
@@ -106,6 +106,7 @@ public class HomePageFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
+
         badgeMsg = getTopBadge(getActivity(), mFraHomeMessage);
         badgeCart = getTopBadge(getActivity(), mFlShopCar);
         mTablayoutHome.setTextsize(AutoSizeUtils.mm2px(mAppContext, 30));
@@ -205,7 +206,7 @@ public class HomePageFragment extends BaseFragment {
                             String rollMsg = getRollMsg(getActivity(), marqueeTextList, ll_home_marquee);
                             if (!TextUtils.isEmpty(rollMsg)) {
                                 ll_home_marquee.setVisibility(View.VISIBLE);
-                                mTvMarqueeText.setText(rollMsg);
+                                mTvMarqueeText.setText(rollMsg,true);
                                 RollMsgIdDataSave.getSingleton().saveMsgId(marqueeTextList);
                             }
                         } else {
