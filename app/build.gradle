@@ -126,29 +126,26 @@ repositories {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     testImplementation 'junit:junit:4.12'
-    implementation 'androidx.multidex:multidex:2.0.0'
-    implementation 'com.aliyun.dpa:oss-android-sdk:2.9.2'
-    implementation 'com.yanzhenjie:permission:2.0.0-rc12'
+    implementation "androidx.appcompat:appcompat:$versions.appcompat"
+    implementation "androidx.multidex:multidex:$versions.multidex"
+    implementation "androidx.constraintlayout:constraintlayout:$versions.constraintlayout"
+    implementation "androidx.emoji:emoji:$versions.emoji"
+    implementation "androidx.emoji:emoji-bundled:$versions.emoji"
+    implementation "androidx.recyclerview:recyclerview:$versions.recyclerview"
+    implementation "com.google.android.material:material:$versions.material"
+    implementation "com.google.firebase:firebase-appindexing:$versions.firebase"
+    implementation "com.google.code.gson:gson:$versions.gson"
+    implementation "com.squareup.retrofit2:converter-gson:$versions.converterGson"
+    implementation "com.google.android:flexbox:$versions.flexbox"
 
+    implementation 'com.yanzhenjie:permission:2.0.0-rc12'
     //    渠道包 暂时有问题留意后续版本
 //    api 'com.leon.channel:helper:2.0.2'
-
-    //    google 标签
-    implementation 'com.google.android:flexbox:1.0.0'
-
-    //    约束布局
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
     // 图表统计
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
 
     //noinspection GradleCompatible
-    implementation 'com.google.android.material:material:1.0.0'
-    implementation 'androidx.appcompat:appcompat:1.0.0'
-    implementation 'androidx.emoji:emoji:1.0.0'
-    implementation 'androidx.emoji:emoji-bundled:1.0.0'
-    implementation 'com.google.firebase:firebase-appindexing:17.1.0'
-    implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.gongwen:marqueelibrary:1.1.3'
 
     //    basePopupWindows
@@ -160,28 +157,24 @@ dependencies {
     //    leakcanary 内存
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.2'
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.2'
-
-    // Optional, if you use support library fragments:
     debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.2'
 
     //ButterKnife view注解
-    implementation 'com.jakewharton:butterknife:10.0.0'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:10.0.0'
-    implementation "com.github.bumptech.glide:glide:$versions.glideVersion"
-    annotationProcessor "com.github.bumptech.glide:compiler:$versions.glideVersion"
-//    implementation 'jp.wasabeef:glide-transformations:4.0.1'
+    implementation "com.jakewharton:butterknife:$versions.butterknife"
+    annotationProcessor "com.jakewharton:butterknife-compiler:$versions.butterknife"
+    implementation "com.github.bumptech.glide:glide:$versions.glide"
+    annotationProcessor "com.github.bumptech.glide:compiler:$versions.glide"
 
-
-    implementation "io.reactivex.rxjava2:rxjava:$versions.rxjava2Versions"
-    implementation "io.reactivex.rxjava2:rxandroid:$versions.rxandroidVersions"
-    implementation 'com.dhh:rxLife2:1.1.3'
+    //rx全家桶
+    implementation "io.reactivex.rxjava2:rxjava:$versions.rxjava"
+    implementation "io.reactivex.rxjava2:rxandroid:$versions.rxandroid"
+    implementation "com.dhh:rxLife2:$versions.rxLife2"
 
     //    retrofit 2
     implementation "com.squareup.retrofit2:retrofit:$versions.retrofit"
-    implementation "com.squareup.retrofit2:adapter-rxjava2:$versions.retrofit_rxjava2"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:$versions.retrofit"
     implementation "com.squareup.okhttp3:okhttp:$versions.okhttp"
-    implementation "com.squareup.okhttp3:logging-interceptor:$versions.okhttp_logging"
-    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
+    implementation "com.squareup.okhttp3:logging-interceptor:$versions.okhttp"
     implementation 'com.jakewharton:disklrucache:2.0.2'
 
     //fastjson
@@ -194,8 +187,11 @@ dependencies {
     //状态栏设置
     implementation 'com.gyf.immersionbar:immersionbar:2.3.3'
 
+    //阿里云oss
+    implementation 'com.aliyun.dpa:oss-android-sdk:2.9.2'
+
     //基础安全组件（必选）
-    implementation  'com.taobao.android:securityguardaar3:5.4.171@aar'
+    implementation 'com.taobao.android:securityguardaar3:5.4.171@aar'
     implementation 'com.taobao.android:securitybodyaar3:5.4.99@aar'
     implementation 'com.taobao.android:avmpaar3:5.4.36@aar'
     implementation 'com.taobao.android:sgmiddletieraar3:5.4.9@aar'
@@ -277,12 +273,11 @@ dependencies {
     implementation 'com.contrarywind:Android-PickerView:4.1.9'
     implementation 'com.qiyukf.unicorn:unicorn:5.7.6'
     implementation 'com.github.princekin-f:EasyFloat:1.3.0'
+    implementation 'cn.jzvd:jiaozivideoplayer:6.4.1'
     implementation project(':countdowntime')
     implementation project(':TuSDKUIDefault')
     implementation project(':TextView-LinkBuilder')
     implementation project(':picture_library')
     implementation project(':convenientbanner')
-    implementation 'cn.jzvd:jiaozivideoplayer:6.4.1'
     implementation project(':FloatingActionButton')
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
 }

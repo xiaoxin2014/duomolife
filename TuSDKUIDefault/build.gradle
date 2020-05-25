@@ -33,7 +33,8 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion versions.minSdk
+        targetSdkVersion versions.targetSdk
     }
 }
 dependencies {

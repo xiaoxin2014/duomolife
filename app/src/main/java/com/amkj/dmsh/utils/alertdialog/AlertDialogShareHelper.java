@@ -1,15 +1,11 @@
 package com.amkj.dmsh.utils.alertdialog;
 
 import android.app.Activity;
-import android.content.Context;
 import android.text.TextUtils;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.bean.ShareIconTitleBean;
@@ -23,15 +19,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import me.jessyan.autosize.AutoSize;
+import butterknife.BindView;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
 
 /**
  * @author LGuiPeng
@@ -40,13 +34,12 @@ import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
  * version 3.1.3
  * class description:分享统一弹窗
  */
-public class AlertDialogShareHelper {
-    private final View loadView;
-    private final Context context;
-    private boolean isFirstSet;
+public class AlertDialogShareHelper extends BaseAlertDialogHelper {
+    @BindView(R.id.communal_recycler_wrap)
+    RecyclerView communal_recycler_wrap;
+    @BindView(R.id.rel_share_loading)
+    RelativeLayout loadView;
     private AlertSelectShareListener alertSelectShareListener;
-    private AlertDialog shareAlertDialog;
-    private View dialogView;
     private List<ShareIconTitleBean> iconTitleList = new ArrayList<>();
 
     public AlertDialogShareHelper(Activity context) {
@@ -54,12 +47,7 @@ public class AlertDialogShareHelper {
     }
 
     public AlertDialogShareHelper(Activity context, boolean showDownImg, String h5Platform) {
-        this.context = context;
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        dialogView = LayoutInflater.from(context).inflate(R.layout.layout_alert_dialog_share, null, false);
-        loadView = dialogView.findViewById(R.id.rel_share_loading);
-        builder.setCancelable(true);
-
+        super(context);
         if (TextUtils.isEmpty(h5Platform)) {
             //默认显示微信和朋友圈
             iconTitleList.add(new ShareIconTitleBean(R.drawable.share_wechat_icon, "微信", SHARE_MEDIA.WEIXIN));
@@ -111,7 +99,6 @@ public class AlertDialogShareHelper {
             }
         }
 
-        RecyclerView communal_recycler_wrap = dialogView.findViewById(R.id.communal_recycler_wrap);
         if (iconTitleList.size() == 2) {
             LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) communal_recycler_wrap.getLayoutParams();
             layoutParams.setMargins(AutoSizeUtils.mm2px(mAppContext, 125), 0, AutoSizeUtils.mm2px(mAppContext, 125), 0);
@@ -128,44 +115,24 @@ public class AlertDialogShareHelper {
                 }
             }
         });
-        shareAlertDialog = builder.create();
-        Window window = shareAlertDialog.getWindow();
-        if (window != null) {
-            window.setBackgroundDrawableResource(android.R.color.transparent);
-        }
-        isFirstSet = true;
     }
 
-    /**
-     * 展示dialog
-     */
-    public void show() {
-        if (!shareAlertDialog.isShowing()
-                && isContextExisted(context)) {
-            AutoSize.autoConvertDensityOfGlobal((Activity) context);
-            shareAlertDialog.show();
-        }
+    @Override
+    protected int getLayoutId() {
+        return R.layout.layout_alert_dialog_share;
+    }
+
+    @Override
+    public void show(int gravity) {
+        super.show(gravity);
         if (loadView != null) {
             loadView.setVisibility(View.GONE);
         }
-        if (isFirstSet) {
-            Window window = shareAlertDialog.getWindow();
-            if (window != null) {
-                window.setGravity(Gravity.BOTTOM);
-                window.getDecorView().setPadding(0, 0, 0, 0);
-                WindowManager.LayoutParams attributes = window.getAttributes();
-                attributes.width = WindowManager.LayoutParams.MATCH_PARENT;
-                window.setAttributes(attributes);
-                shareAlertDialog.setContentView(dialogView);
-            }
-        }
-        isFirstSet = false;
     }
 
+    @Override
     public void dismiss() {
-        if (shareAlertDialog != null && isContextExisted(context)) {
-            shareAlertDialog.dismiss();
-        }
+        super.dismiss();
         if (loadView != null) {
             loadView.setVisibility(View.GONE);
         }
