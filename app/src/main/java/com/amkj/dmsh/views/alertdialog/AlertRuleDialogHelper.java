@@ -1,9 +1,10 @@
-package com.amkj.dmsh.utils.alertdialog;
+package com.amkj.dmsh.views.alertdialog;
 
 import android.app.Activity;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.base.BaseAlertDialog;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 
@@ -26,7 +27,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
  * version 3.1.5
  * class description:规则dialog
  */
-public class AlertRuleDialogHelper extends BaseAlertDialogHelper {
+public class AlertRuleDialogHelper extends BaseAlertDialog {
 
     @BindView(R.id.tv_integral_rule_title)
     TextView tv_integral_rule_title;

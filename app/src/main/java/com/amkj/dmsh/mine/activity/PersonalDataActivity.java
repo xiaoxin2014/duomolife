@@ -21,8 +21,8 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.ImageConverterUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
-import com.amkj.dmsh.utils.alertdialog.AlertDialogBottomListHelper;
-import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
+import com.amkj.dmsh.views.alertdialog.AlertDialogBottomListHelper;
+import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.bigkoo.pickerview.builder.TimePickerBuilder;
@@ -338,12 +338,7 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
             sexDialogBottomListHelper.setTitleVisibility(GONE).setMsg("性别")
                     .setItemData(SEX).itemNotifyDataChange().setAlertListener(new AlertDialogBottomListHelper.AlertItemClickListener() {
                 @Override
-                public void itemClick(@Nullable String text) {
-
-                }
-
-                @Override
-                public void itemPosition(int itemPosition) {
+                public void itemClick(@Nullable String text,int itemPosition) {
                     sexSelector = (itemPosition == 0 ? 1 : 0);
                     changePersonalData("SexSelector", null);
                 }
@@ -489,15 +484,6 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
         nowBabyTime.dismiss();
         if (v.getId() == R.id.tv_time_confirm) {
             nowBabyTime.returnData();
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (sexDialogBottomListHelper != null && sexDialogBottomListHelper.getAlertDialog() != null
-                && sexDialogBottomListHelper.getAlertDialog().isShowing()) {
-            sexDialogBottomListHelper.dismiss();
         }
     }
 }

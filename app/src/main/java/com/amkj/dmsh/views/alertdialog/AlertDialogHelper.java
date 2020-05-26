@@ -1,10 +1,11 @@
-package com.amkj.dmsh.utils.alertdialog;
+package com.amkj.dmsh.views.alertdialog;
 
 import android.content.Context;
 import android.view.View;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.base.BaseAlertDialog;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -20,7 +21,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
  * Version:v4.5.2
  * ClassDescription :AlertDialog默认样式
  */
-public class AlertDialogHelper extends BaseAlertDialogHelper {
+public class AlertDialogHelper extends BaseAlertDialog {
 
     @BindView(R.id.tv_alert_title)
     TextView tv_alert_title;

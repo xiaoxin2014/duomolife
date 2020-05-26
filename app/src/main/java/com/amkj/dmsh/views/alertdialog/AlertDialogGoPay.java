@@ -1,4 +1,4 @@
-package com.amkj.dmsh.shopdetails.dialog;
+package com.amkj.dmsh.views.alertdialog;
 
 import android.content.Intent;
 import android.text.TextUtils;
@@ -16,7 +16,7 @@ import com.amkj.dmsh.shopdetails.payutils.AliPay;
 import com.amkj.dmsh.shopdetails.payutils.UnionPay;
 import com.amkj.dmsh.shopdetails.payutils.WXPay;
 import com.amkj.dmsh.utils.LifecycleHandler;
-import com.amkj.dmsh.utils.alertdialog.BaseAlertDialogHelper;
+import com.amkj.dmsh.base.BaseAlertDialog;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 
 import java.util.HashMap;
@@ -49,7 +49,7 @@ import static com.amkj.dmsh.constant.Url.Q_PAYMENT_INDENT;
  * Version:v4.5.0
  * ClassDescription :去支付弹窗
  */
-public class AlertDialogGoPay extends BaseAlertDialogHelper {
+public class AlertDialogGoPay extends BaseAlertDialog {
     @BindView(R.id.ll_pay_ali)
     LinearLayout mLlPayAli;
     @BindView(R.id.ll_pay_we_chat)

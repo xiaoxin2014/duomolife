@@ -1,4 +1,4 @@
-package com.amkj.dmsh.shopdetails.dialog;
+package com.amkj.dmsh.views.alertdialog;
 
 import android.content.Context;
 import android.view.View;
@@ -9,7 +9,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.shopdetails.adapter.PurchaseCoverAdapter;
 import com.amkj.dmsh.shopdetails.bean.IndentWriteEntity.IndentWriteBean.PrerogativeActivityInfo;
 import com.amkj.dmsh.shopdetails.bean.IndentWriteEntity.IndentWriteBean.PrerogativeActivityInfo.GoodsListBean;
-import com.amkj.dmsh.utils.alertdialog.BaseAlertDialogHelper;
+import com.amkj.dmsh.base.BaseAlertDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
  * Version:v4.3.0
  * ClassDescription :加价购活动弹窗
  */
-public class AlertDialogPurchase extends BaseAlertDialogHelper {
+public class AlertDialogPurchase extends BaseAlertDialog {
 
     @BindView(R.id.tv_discount_edition)
     TextView mTvDiscountEdition;

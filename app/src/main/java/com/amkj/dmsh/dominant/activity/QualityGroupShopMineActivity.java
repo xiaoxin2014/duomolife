@@ -15,7 +15,7 @@ import com.amkj.dmsh.dominant.bean.QualityGroupMineEntity.QualityGroupMineBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.DirectExchangeDetailsActivity;
-import com.amkj.dmsh.shopdetails.dialog.AlertDialogGoPay;
+import com.amkj.dmsh.views.alertdialog.AlertDialogGoPay;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;

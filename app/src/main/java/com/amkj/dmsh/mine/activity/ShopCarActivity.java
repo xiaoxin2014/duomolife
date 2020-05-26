@@ -28,7 +28,7 @@ import com.amkj.dmsh.mine.bean.ShopCarEntity;
 import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean;
 import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean.CartBean;
 import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean.CartBean.CartInfoBean;
-import com.amkj.dmsh.mine.biz.ShopCarDao;
+import com.amkj.dmsh.dao.ShopCarDao;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
@@ -40,7 +40,7 @@ import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.DoubleUtil;
 import com.amkj.dmsh.utils.KeyboardUtils;
-import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
+import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.RectAddAndSubShopcarView;
@@ -90,12 +90,12 @@ import static com.amkj.dmsh.constant.Url.NEW_PRO_SETTLE_PRICE;
 import static com.amkj.dmsh.constant.Url.Q_SHOP_DETAILS_CHANGE_CAR;
 import static com.amkj.dmsh.constant.Url.Q_SHOP_DETAILS_DEL_CAR;
 import static com.amkj.dmsh.constant.Url.Q_SHOP_DETAILS_GET_SKU_CAR;
-import static com.amkj.dmsh.mine.biz.ShopCarDao.MATCH_INVALID;
-import static com.amkj.dmsh.mine.biz.ShopCarDao.NORMAL;
-import static com.amkj.dmsh.mine.biz.ShopCarDao.getCartIds;
-import static com.amkj.dmsh.mine.biz.ShopCarDao.isMatchInValid;
-import static com.amkj.dmsh.mine.biz.ShopCarDao.removeSelGoods;
-import static com.amkj.dmsh.mine.biz.ShopCarDao.updateGoodsInfo;
+import static com.amkj.dmsh.dao.ShopCarDao.MATCH_INVALID;
+import static com.amkj.dmsh.dao.ShopCarDao.NORMAL;
+import static com.amkj.dmsh.dao.ShopCarDao.getCartIds;
+import static com.amkj.dmsh.dao.ShopCarDao.isMatchInValid;
+import static com.amkj.dmsh.dao.ShopCarDao.removeSelGoods;
+import static com.amkj.dmsh.dao.ShopCarDao.updateGoodsInfo;
 
 /**
  * Created by atd48 on 2016/10/22.

@@ -1,4 +1,4 @@
-package com.amkj.dmsh.mine.biz;
+package com.amkj.dmsh.dao;
 
 import android.text.TextUtils;
 

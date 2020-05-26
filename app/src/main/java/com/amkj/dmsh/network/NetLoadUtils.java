@@ -2,7 +2,6 @@ package com.amkj.dmsh.network;
 
 import android.app.Activity;
 import android.content.Context;
-import androidx.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.Gravity;
 
@@ -28,7 +27,7 @@ import com.amkj.dmsh.rxeasyhttp.exception.ApiException;
 import com.amkj.dmsh.rxeasyhttp.model.HttpParams;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.SharedPreUtils;
-import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
+import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.kingja.loadsir.callback.Callback;
 import com.kingja.loadsir.callback.SuccessCallback;
@@ -37,7 +36,6 @@ import com.kingja.loadsir.core.LoadService;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -45,6 +43,8 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import androidx.annotation.Nullable;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringMapValue;
@@ -118,7 +118,6 @@ public class NetLoadUtils<T, E extends BaseEntity> {
         if (params != null) {
             map.putAll(params);
         }
-        WeakReference<Activity> weakReference = new WeakReference<>(context);
         if (context instanceof BaseActivity) {
             map.putAll(((BaseActivity) context).commonMap);
         }
@@ -130,44 +129,39 @@ public class NetLoadUtils<T, E extends BaseEntity> {
 
         if (NetWorkUtils.checkNet(context)) {
             HttpParams httpParams = getHttpParams(map);
-
             EasyHttp.post(url).params(httpParams).execute(context, new SimpleCallBack<String>() {
                 @Override
                 public void onError(ApiException e) {
-                    if (weakReference.get() != null) {
-                        try {
-                            if (netLoadListener != null) {
-                                netLoadListener.onNotNetOrException();
-                                netLoadListener.onError(e);
-                            }
-                        } catch (Exception e1) {
+                    try {
+                        if (netLoadListener != null) {
+                            netLoadListener.onNotNetOrException();
+                            netLoadListener.onError(e);
                         }
+                    } catch (Exception ignored) {
                     }
                 }
 
                 @Override
                 public void onSuccess(String result) {
-                    if (weakReference.get() != null) {
-                        try {
-                            //token校验失败，调用登出接口并重新登录
-                            BaseEntity baseEntity = GsonUtils.fromJson(result, BaseEntity.class);
-                            if (baseEntity != null) {
-                                String code = baseEntity.getCode();
-                                if ("52".equals(code)) {
-                                    loginOut(context);
-                                    netLoadListener.onNotNetOrException();
-                                    return;
-                                }
-                            }
-                            if (netLoadListener != null) {
-                                netLoadListener.onSuccess(result);
-                            }
-                        } catch (Exception e) {
-                            try {
+                    try {
+                        //token校验失败，清除登录信息提示用户重新登录
+                        BaseEntity baseEntity = GsonUtils.fromJson(result, BaseEntity.class);
+                        if (baseEntity != null) {
+                            String code = baseEntity.getCode();
+                            if ("52".equals(code)) {
+                                loginOut(context);
                                 netLoadListener.onNotNetOrException();
-                                netLoadListener.onError(e);
-                            } catch (Exception e1) {
+                                return;
                             }
+                        }
+                        if (netLoadListener != null) {
+                            netLoadListener.onSuccess(result);
+                        }
+                    } catch (Exception e) {
+                        try {
+                            netLoadListener.onNotNetOrException();
+                            netLoadListener.onError(e);
+                        } catch (Exception ignored) {
                         }
                     }
                 }
@@ -260,21 +254,17 @@ public class NetLoadUtils<T, E extends BaseEntity> {
         return httpParams;
     }
 
-    /**
-     * @param context
-     * @param url
-     */
-    public void loadNetDataPostSync(Context context, String url) throws IOException {
-        loadNetDataPostSync(context, url, null);
-    }
 
     /**
-     * post 同步方法
-     *
+     * post同步方法
      * @param context
      * @param url
-     * @param params
+     * @return 返回值为json值
      */
+    public String loadNetDataPostSync(Context context, String url) {
+        return loadNetDataPostSync(context, url, null);
+    }
+
     public String loadNetDataPostSync(Context context, String url, Map<String, Object> params) {
         if (NetWorkUtils.checkNet(context)) {
             HttpParams httpParams = getHttpParams(params);
@@ -296,19 +286,6 @@ public class NetLoadUtils<T, E extends BaseEntity> {
         }
     }
 
-    public void loadNetDataGetCache(Activity activity, String url, boolean isForceNet, NetCacheLoadListener netCacheLoadListener) {
-        //调用接口之前判断token是否过期,如果登录条件下过期，不调用接口
-        if (checkTokenExpire(activity, url)) {
-            loadNetDataGetCache(activity, url, null, isForceNet, netCacheLoadListener);
-        } else {
-            try {
-                netCacheLoadListener.onNotNetOrException();
-                netCacheLoadListener.netClose();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
     /**
      * 缓存策略-->
@@ -515,26 +492,6 @@ public class NetLoadUtils<T, E extends BaseEntity> {
     }
 
     /**
-     * 集合数据
-     *
-     * @param loadService
-     * @param list
-     * @param resultCode  返回码
-     */
-    @SuppressWarnings("unchecked")
-    public void showLoadSirString(LoadService loadService, List<T> list, String resultCode) {
-        if (loadService != null) {
-            if (list != null && list.size() > 0) {
-                loadService.showWithConvertor(SUCCESS_CODE);
-            } else if (!TextUtils.isEmpty(resultCode)) {
-                loadService.showWithConvertor(resultCode);
-            } else {
-                loadService.showWithConvertor(ERROR_CODE);
-            }
-        }
-    }
-
-    /**
      * @param loadService
      * @param resultClass
      */
@@ -568,22 +525,6 @@ public class NetLoadUtils<T, E extends BaseEntity> {
         }
     }
 
-    /**
-     * 返回码
-     *
-     * @param loadService
-     * @param code
-     */
-    @SuppressWarnings("unchecked")
-    public void showLoadSir(LoadService loadService, String code) {
-        if (loadService != null) {
-            if (!TextUtils.isEmpty(code)) {
-                loadService.showWithConvertor(code);
-            } else {
-                loadService.showWithConvertor(ERROR_CODE);
-            }
-        }
-    }
 
     public void showLoadSirSuccess(LoadService loadService) {
         if (loadService != null) {

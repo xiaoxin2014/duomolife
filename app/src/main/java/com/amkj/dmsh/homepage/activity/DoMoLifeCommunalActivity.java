@@ -52,7 +52,7 @@ import com.amkj.dmsh.utils.Log;
 import com.amkj.dmsh.utils.MarketUtils;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.SharedPreUtils;
-import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
+import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
 import com.amkj.dmsh.views.HtmlWebView;

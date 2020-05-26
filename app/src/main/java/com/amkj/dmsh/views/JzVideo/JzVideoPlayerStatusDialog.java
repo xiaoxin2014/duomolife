@@ -5,7 +5,7 @@ import androidx.appcompat.app.AlertDialog;
 import android.util.AttributeSet;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
+import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 
 import cn.jzvd.JZUserActionStd;
 import cn.jzvd.JzvdStd;

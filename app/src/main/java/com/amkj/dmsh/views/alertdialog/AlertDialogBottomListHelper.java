@@ -1,24 +1,17 @@
-package com.amkj.dmsh.utils.alertdialog;
+package com.amkj.dmsh.views.alertdialog;
 
-import android.app.Activity;
 import android.content.Context;
-import androidx.annotation.IdRes;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.base.BaseAlertDialog;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
+import com.amkj.dmsh.utils.WindowUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -28,12 +21,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import me.jessyan.autosize.AutoSize;
+import androidx.annotation.IdRes;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import butterknife.BindView;
+import butterknife.OnClick;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
 
 /**
  * @author LGuiPeng
@@ -42,32 +40,24 @@ import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
  * version 3.1.3
  * class description:默认样式dialog
  */
-public class AlertDialogBottomListHelper {
-    private Context context;
-    private String title;
-    private String msg;
-    private boolean isFirstSet = true;
+public class AlertDialogBottomListHelper extends BaseAlertDialog {
+    @BindView(R.id.tv_alert_bottom_list_title)
+    TextView tv_alert_bottom_list_title;
+    @BindView(R.id.tv_alert_bottom_list_message)
+    TextView tv_alert_bottom_list_message;
+    @BindView(R.id.communal_recycler_wrap)
+    RecyclerView communal_recycler_wrap;
+    @BindView(R.id.tv_alert_bottom_list_cancel)
+    TextView tv_alert_bottom_list_cancel;
     private AlertItemClickListener alertItemClickListener;
-    private final AlertDialog bottomListAlertDialog;
-    private final TextView tv_alert_bottom_list_title;
-    private final TextView tv_alert_bottom_list_message;
-    private final RecyclerView communal_recycler_wrap;
-    private final TextView tv_alert_bottom_list_cancel;
     private List<String> bottomItemStringList = new ArrayList<>();
-    private final View dialogView;
     private final BottomListTextAdapter bottomListTextAdapter;
     private int itemTextColor;
     private int itemTextSize;
     private final int screenHeight;
 
     public AlertDialogBottomListHelper(Context context) {
-        this.context = context;
-        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.service_dialog_theme);
-        dialogView = LayoutInflater.from(context).inflate(R.layout.layout_alert_dialog_botom_list, null, false);
-        builder.setCancelable(true);
-        tv_alert_bottom_list_title = dialogView.findViewById(R.id.tv_alert_bottom_list_title);
-        tv_alert_bottom_list_message = dialogView.findViewById(R.id.tv_alert_bottom_list_message);
-        communal_recycler_wrap = dialogView.findViewById(R.id.communal_recycler_wrap);
+        super(context);
         communal_recycler_wrap.setBackgroundColor(context.getResources().getColor(R.color.transparent));
         communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(context));
         communal_recycler_wrap.addItemDecoration(new ItemDecoration.Builder()
@@ -82,38 +72,49 @@ public class AlertDialogBottomListHelper {
                 if (alertItemClickListener != null) {
                     String text = (String) view.getTag();
                     if (!TextUtils.isEmpty(text)) {
-                        alertItemClickListener.itemClick(text);
+                        alertItemClickListener.itemClick(text, position);
                     }
-                    alertItemClickListener.itemPosition(position);
                 }
                 dismiss();
             }
         });
-        tv_alert_bottom_list_cancel = dialogView.findViewById(R.id.tv_alert_bottom_list_cancel);
-        tv_alert_bottom_list_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismiss();
-            }
-        });
-        isFirstSet = true;
         TinkerBaseApplicationLike tinkerBaseApplicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
         screenHeight = tinkerBaseApplicationLike.getScreenHeight() / 3 * 2;
-        bottomListAlertDialog = builder.create();
     }
 
-    public AlertDialog getAlertDialog() {
-        return bottomListAlertDialog;
+    @Override
+    protected int getLayoutId() {
+        return R.layout.layout_alert_dialog_botom_list;
     }
 
-    /**
-     * @param cancelable
-     * @return
-     */
-    public AlertDialogBottomListHelper setCancelable(boolean cancelable) {
-        bottomListAlertDialog.setCancelable(cancelable);
-        return this;
+    @Override
+    protected int getLayoutWith() {
+        return AutoSizeUtils.mm2px(mAppContext, 630);
     }
+
+    @OnClick(R.id.tv_alert_bottom_list_cancel)
+    public void onViewClicked() {
+        dismiss();
+    }
+
+    @Override
+    public void show() {
+        if (getAlertDialog().getWindow() != null) {
+            getAlertDialog().getWindow().setWindowAnimations(WindowUtils.getAnimaitionStyle(Gravity.BOTTOM));
+        }
+        getDialogView().addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                if (v.getMeasuredHeight() > screenHeight) {
+                    ViewGroup.LayoutParams layoutParams = v.getLayoutParams();
+                    layoutParams.height = screenHeight;
+                    v.setLayoutParams(layoutParams);
+                }
+            }
+        });
+        super.show(Gravity.BOTTOM);
+    }
+
 
     /**
      * 设置标题
@@ -122,7 +123,6 @@ public class AlertDialogBottomListHelper {
      * @return
      */
     public AlertDialogBottomListHelper setTitle(String title) {
-        this.title = title;
         tv_alert_bottom_list_title.setText(getStrings(title));
         return this;
     }
@@ -156,7 +156,6 @@ public class AlertDialogBottomListHelper {
      * @return
      */
     public AlertDialogBottomListHelper setMsg(String msg) {
-        this.msg = msg;
         tv_alert_bottom_list_message.setText(getStrings(msg));
         return this;
     }
@@ -168,8 +167,15 @@ public class AlertDialogBottomListHelper {
      * @return
      */
     public AlertDialogBottomListHelper setMsg(int msgResId) {
-        this.msg = context.getResources().getString(msgResId);
-        tv_alert_bottom_list_message.setText(getStrings(msg));
+        tv_alert_bottom_list_message.setText(getStrings(context.getResources().getString(msgResId)));
+        return this;
+    }
+
+    /**
+     * 控制描述信息是否显示
+     */
+    public AlertDialogBottomListHelper setMsgVisible(int visible) {
+        tv_alert_bottom_list_message.setVisibility(visible);
         return this;
     }
 
@@ -275,55 +281,13 @@ public class AlertDialogBottomListHelper {
         return this;
     }
 
-    /**
-     * 展示dialog
-     */
-    public void show() {
-        if (!bottomListAlertDialog.isShowing()
-                && isContextExisted(context)) {
-            AutoSize.autoConvertDensityOfGlobal((Activity) context);
-            bottomListAlertDialog.show();
-        }
-        if (isFirstSet) {
-            Window window = bottomListAlertDialog.getWindow();
-            if (window != null) {
-                window.setBackgroundDrawableResource(android.R.color.transparent);
-                WindowManager.LayoutParams params = window.getAttributes();
-                params.width = WindowManager.LayoutParams.MATCH_PARENT;
-                params.height = WindowManager.LayoutParams.WRAP_CONTENT;
-                dialogView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-                    @Override
-                    public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                        if (v.getMeasuredHeight() > screenHeight) {
-                            ViewGroup.LayoutParams layoutParams = v.getLayoutParams();
-                            layoutParams.height = screenHeight;
-                            v.setLayoutParams(layoutParams);
-                        }
-                    }
-                });
-                window.setAttributes(params);
-                window.setGravity(Gravity.BOTTOM);
-                window.setContentView(dialogView);
-            }
-        }
-        isFirstSet = false;
-    }
-
-    public void dismiss() {
-        if (bottomListAlertDialog != null
-                && isContextExisted(context)) {
-            bottomListAlertDialog.dismiss();
-        }
-    }
-
     public void setAlertListener(AlertItemClickListener alertConfirmCancelListener) {
         this.alertItemClickListener = alertConfirmCancelListener;
     }
 
-    public interface AlertItemClickListener {
-        void itemClick(@Nullable String text);
 
-        void itemPosition(int itemPosition);
+    public interface AlertItemClickListener {
+        void itemClick(@Nullable String text, int itemPosition);
     }
 
     private class BottomListTextAdapter extends BaseQuickAdapter<String, BaseViewHolder> {

@@ -13,7 +13,7 @@ import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
 import com.amkj.dmsh.mine.bean.ActivityInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean.CartBean.CartInfoBean;
-import com.amkj.dmsh.mine.biz.ShopCarDao;
+import com.amkj.dmsh.dao.ShopCarDao;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
 import com.amkj.dmsh.utils.TextWatchListener;

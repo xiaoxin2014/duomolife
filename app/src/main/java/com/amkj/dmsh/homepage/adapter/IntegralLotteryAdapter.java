@@ -26,7 +26,7 @@ import com.amkj.dmsh.homepage.bean.IntegralLotteryEntity.PreviousInfoBean.WinLis
 import com.amkj.dmsh.homepage.initviews.AttendanceLotteryCodePopWindow;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
+import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;

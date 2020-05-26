@@ -17,10 +17,8 @@ import android.provider.Settings;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -50,7 +48,8 @@ import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dao.AddClickDao;
 import com.amkj.dmsh.dominant.activity.QualityNewUserActivity;
-import com.amkj.dmsh.dominant.dialog.AlertDialogGroup;
+import com.amkj.dmsh.views.alertdialog.AlertDialogEdit;
+import com.amkj.dmsh.views.alertdialog.AlertDialogGroup;
 import com.amkj.dmsh.find.fragment.FindFragment;
 import com.amkj.dmsh.homepage.activity.MainPageTabBarActivity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
@@ -63,8 +62,6 @@ import com.amkj.dmsh.mine.fragment.MineDataFragment;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
-import com.amkj.dmsh.release.dialogutils.AlertSettingBean;
-import com.amkj.dmsh.release.dialogutils.AlertView;
 import com.amkj.dmsh.shopdetails.activity.DirectMyCouponActivity;
 import com.amkj.dmsh.utils.AddressUtils;
 import com.amkj.dmsh.utils.FileStreamUtils;
@@ -72,12 +69,13 @@ import com.amkj.dmsh.utils.SaveUpdateImportDateUtils;
 import com.amkj.dmsh.utils.SelectorUtil;
 import com.amkj.dmsh.utils.SharedPreUtils;
 import com.amkj.dmsh.utils.TimeUtils;
-import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
-import com.amkj.dmsh.utils.alertdialog.AlertDialogImage;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.restartapputils.RestartAPPTool;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
+import com.amkj.dmsh.views.alertdialog.AlertDialogBottomListHelper;
+import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
+import com.amkj.dmsh.views.alertdialog.AlertDialogImage;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.qiyukf.unicorn.api.msg.MsgTypeEnum;
@@ -160,10 +158,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private FragmentTransaction transaction;
     public static final int MINE_REQ_CODE = 13;
     private Map<String, String> params = new HashMap<>();
-    private AlertView selectServer;
-    private String[] SERVER = {"正式库", "测试库", "招立", "泽鑫", "泽鑫9090", "预发布", "王凯2", "王凯1", "鸿星", "修改BaseUrl", "修改UID"};
-    private AlertView mAlertViewExt;
-    private EditText etName;
+    private String[] SERVER = {"正式库", "测试库", "招立", "泽鑫", "泽鑫9090", "预发布", "王凯2", "王凯1", "鸿星", "修改BaseUrl"};
     private List<MainIconBean> iconDataList = new ArrayList<>();
     public static final String ImgKey = "ImgPath";
     public static final String TimeKey = "ShowSeconds";
@@ -184,6 +179,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private AlertDialogGroup mAlertDialogGroup;
     private AlertDialogHelper mAlertDialogNotify;
     private AlertDialogImage mAlertDialogUserImage;
+    private AlertDialogBottomListHelper mAlertDialogServer;
+    private AlertDialogEdit mAlertDialogEdit;
 
 
     @Override
@@ -1003,7 +1000,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-
                 OSSConfigEntity ossConfigEntity = GsonUtils.fromJson(result, OSSConfigEntity.class);
                 if (ossConfigEntity != null) {
                     if (ossConfigEntity.getCode().equals(SUCCESS_CODE)) {
@@ -1024,101 +1020,37 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
 
     private void getSelectedDialog() {
-        if (selectServer == null) {
-            AlertSettingBean alertSettingBean = new AlertSettingBean();
-            AlertSettingBean.AlertData alertData = new AlertSettingBean.AlertData();
-            alertData.setCancelStr("取消");
-            alertData.setNormalData(SERVER);
-            alertData.setFirstDet(true);
-            alertData.setTitle((String) SharedPreUtils.getParam("selectedServer", "selectServerUrl", Url.getUrl(0)));
-            alertSettingBean.setStyle(AlertView.Style.ActionSheet);
-            alertSettingBean.setAlertData(alertData);
-            selectServer = new AlertView(alertSettingBean, this, (o, position) -> {
-                if (position != AlertView.CANCELPOSITION && SERVER[position].contains("UID")) {
-                    //                    编辑框
-                    selectServer.dismissImmediately();
-                    if (mAlertViewExt == null) {
-                        AlertSettingBean alertSettingBean1 = new AlertSettingBean();
-                        AlertSettingBean.AlertData alertData1 = new AlertSettingBean.AlertData();
-                        alertData1.setCancelStr("取消");
-                        alertData1.setDetermineStr("完成");
-                        alertData1.setFirstDet(true);
-                        alertSettingBean1.setStyle(AlertView.Style.Alert);
-                        alertSettingBean1.setAlertData(alertData1);
-                        mAlertViewExt = new AlertView(alertSettingBean1, MainActivity.this, (o1, position1) -> {
-                            if (o1 == mAlertViewExt) {
-                                closeKeyboard();
-                                if (position1 != AlertView.CANCELPOSITION) {
-                                    String inputUid = etName.getText().toString().trim();
-                                    SharedPreferences loginStatus = getSharedPreferences("loginStatus", Context.MODE_PRIVATE);
-                                    SharedPreferences.Editor edit = loginStatus.edit();
-                                    edit.putBoolean("isLogin", true);
-                                    edit.putInt("uid", Integer.parseInt(inputUid));
-                                    edit.apply();
-                                }
+        if (mAlertDialogServer == null) {
+            mAlertDialogServer = new AlertDialogBottomListHelper(getActivity());
+            mAlertDialogServer.setMsgVisible(View.GONE)
+                    .setTitle(Url.BASE_URL)
+                    .setItemData(SERVER).itemNotifyDataChange()
+                    .setAlertListener((text, position) -> {
+                        if ("修改BaseUrl".equals(text)) {
+                            if (mAlertDialogEdit == null) {
+                                mAlertDialogEdit = new AlertDialogEdit(getActivity());
+                                mAlertDialogEdit.setCancleVisible(View.VISIBLE)
+                                        .setEditHint(text)
+                                        .setEditText("http://192.168.2.98:8080/")
+                                        .setOnAlertListener(text1 -> {
+                                            changeBaseUrl(position);
+                                        });
                             }
-                        });
-                        ViewGroup extView = (ViewGroup) LayoutInflater.from(MainActivity.this).inflate(R.layout.alertext_form, null);
-                        etName = (EditText) extView.findViewById(R.id.etName);
-                        etName.setHint("请输入用户Id");
-                        mAlertViewExt.addExtView(extView);
-                    }
-                    mAlertViewExt.show();
-                } else if (position != AlertView.CANCELPOSITION && SERVER[position].contains("BaseUrl")) {
-                    //                    编辑框
-                    selectServer.dismissImmediately();
-                    if (mAlertViewExt == null) {
-                        AlertSettingBean alertSettingBean1 = new AlertSettingBean();
-                        AlertSettingBean.AlertData alertData1 = new AlertSettingBean.AlertData();
-                        alertData1.setCancelStr("取消");
-                        alertData1.setDetermineStr("完成");
-                        alertData1.setFirstDet(true);
-                        alertSettingBean1.setStyle(AlertView.Style.Alert);
-                        alertSettingBean1.setAlertData(alertData1);
-                        mAlertViewExt = new AlertView(alertSettingBean1, MainActivity.this, (o1, position1) -> {
-                            if (o1 == mAlertViewExt) {
-                                closeKeyboard();
-                                if (position1 != AlertView.CANCELPOSITION && !TextUtils.isEmpty(etName.getText().toString())) {
-                                    SharedPreferences sharedPreferences = getSharedPreferences("selectedServer", MODE_PRIVATE);
-                                    SharedPreferences.Editor edit = sharedPreferences.edit();
-                                    edit.putString("selectServerUrl", etName.getText().toString());
-                                    edit.commit();
-                                    SharedPreferences loginStatus = getSharedPreferences("loginStatus", MODE_PRIVATE);
-                                    SharedPreferences.Editor loginEdit = loginStatus.edit();
-                                    loginEdit.putBoolean("isLogin", false);
-                                    loginEdit.commit();
-                                    RestartAPPTool.restartAPP(MainActivity.this);
-                                }
-                            }
-                        });
-                        ViewGroup extView = (ViewGroup) LayoutInflater.from(MainActivity.this).inflate(R.layout.alertext_form, null);
-                        etName = (EditText) extView.findViewById(R.id.etName);
-                        etName.setHint("请输入BaseUrl");
-                        etName.setText("http://192.168.2.98:8080/");
-                        mAlertViewExt.addExtView(extView);
-                    }
-                    mAlertViewExt.show();
-                } else if (o.equals(selectServer) && position != AlertView.CANCELPOSITION) {
-                    SharedPreferences sharedPreferences = getSharedPreferences("selectedServer", MODE_PRIVATE);
-                    SharedPreferences.Editor edit = sharedPreferences.edit();
-                    edit.putString("selectServerUrl", Url.getUrl(position));
-                    edit.commit();
-                    SharedPreferences loginStatus = getSharedPreferences("loginStatus", MODE_PRIVATE);
-                    SharedPreferences.Editor loginEdit = loginStatus.edit();
-                    loginEdit.putBoolean("isLogin", false);
-                    loginEdit.commit();
-                    RestartAPPTool.restartAPP(MainActivity.this);
-                }
-            });
-            selectServer.setCancelable(true);
+
+                            mAlertDialogEdit.show();
+                        } else {
+                            changeBaseUrl(position);
+                        }
+                    });
         }
-        selectServer.show();
+        mAlertDialogServer.show();
     }
 
-    private void closeKeyboard() {
-        //关闭软键盘
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(etName.getWindowToken(), 0);
+    //切换BaseUrl
+    private void changeBaseUrl(int position) {
+        SharedPreUtils.setParam("selectedServer", "selectServerUrl", Url.getUrl(position));
+        SharedPreUtils.setParam("isLogin", false);
+        RestartAPPTool.restartAPP(MainActivity.this);
     }
 
     //获取营销弹窗

@@ -19,7 +19,7 @@ import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.rxeasyhttp.EasyHttp;
 import com.amkj.dmsh.utils.FileCacheUtils;
-import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
+import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.bumptech.glide.load.engine.cache.InternalCacheDiskCacheFactory;

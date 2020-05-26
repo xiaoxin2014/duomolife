@@ -31,7 +31,7 @@ import com.amkj.dmsh.dominant.activity.QualityProductActActivity;
 import com.amkj.dmsh.dominant.bean.GroupShopDetailsEntity.GroupShopDetailsBean;
 import com.amkj.dmsh.mine.bean.ActivityInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean.CartBean.CartInfoBean;
-import com.amkj.dmsh.mine.biz.ShopCarDao;
+import com.amkj.dmsh.dao.ShopCarDao;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.adapter.IndentDiscountAdapter;
@@ -52,7 +52,7 @@ import com.amkj.dmsh.shopdetails.bean.QualityCreateUnionPayIndentEntity;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateWeChatPayIndentBean;
 import com.amkj.dmsh.shopdetails.bean.ShopCarGoodsSkuTransmit;
 import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
-import com.amkj.dmsh.shopdetails.dialog.AlertDialogPurchase;
+import com.amkj.dmsh.views.alertdialog.AlertDialogPurchase;
 import com.amkj.dmsh.shopdetails.integration.bean.AddressListEntity;
 import com.amkj.dmsh.shopdetails.payutils.AliPay;
 import com.amkj.dmsh.shopdetails.payutils.UnionPay;
@@ -60,7 +60,7 @@ import com.amkj.dmsh.shopdetails.payutils.WXPay;
 import com.amkj.dmsh.utils.KeyboardUtils;
 import com.amkj.dmsh.utils.LifecycleHandler;
 import com.amkj.dmsh.utils.TextWatchListener;
-import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
+import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.RectAddAndSubWriteView;
@@ -114,7 +114,7 @@ import static com.amkj.dmsh.constant.Url.Q_CREATE_GROUP_NEW_INDENT;
 import static com.amkj.dmsh.constant.Url.Q_CREATE_INDENT;
 import static com.amkj.dmsh.constant.Url.Q_NEW_RE_BUY_INDENT;
 import static com.amkj.dmsh.constant.Url.Q_PAYMENT_INDENT;
-import static com.amkj.dmsh.mine.biz.ShopCarDao.getCouponGoodsInfo;
+import static com.amkj.dmsh.dao.ShopCarDao.getCouponGoodsInfo;
 
 
 /**

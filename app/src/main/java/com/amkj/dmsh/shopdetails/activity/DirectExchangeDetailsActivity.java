@@ -33,14 +33,12 @@ import com.amkj.dmsh.shopdetails.bean.IndentDetailEntity;
 import com.amkj.dmsh.shopdetails.bean.MainOrderListEntity;
 import com.amkj.dmsh.shopdetails.bean.PriceInfoBean;
 import com.amkj.dmsh.utils.CountDownTimer;
-import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
+import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.MainButtonView;
 import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-
-import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -283,28 +281,18 @@ public class DirectExchangeDetailsActivity extends BaseActivity {
                         smart_communal_refresh.finishRefresh();
                         goodsBeanList.clear();
                         priceInfoList.clear();
-                        String code = "";
-                        String msg = "";
-                        try {
-                            JSONObject jsonObject = new JSONObject(result);
-                            code = (String) jsonObject.get("code");
-                            msg = (String) jsonObject.get("msg");
-                            if (code.equals(SUCCESS_CODE)) {
-
-                                infoDetailEntity = GsonUtils.fromJson(result, IndentDetailEntity.class);
-                                if (infoDetailEntity != null && infoDetailEntity.getResult() != null) {
-                                    setIndentData(infoDetailEntity.getResult());
-                                }
-                            } else {
-                                showToast(msg);
+                        infoDetailEntity = GsonUtils.fromJson(result, IndentDetailEntity.class);
+                        if (SUCCESS_CODE.equals(infoDetailEntity.getCode())) {
+                            if (infoDetailEntity.getResult() != null) {
+                                setIndentData(infoDetailEntity.getResult());
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        } else {
+                            showToast(infoDetailEntity.getMsg());
                         }
                         directProductListAdapter.notifyDataSetChanged();
                         indentDiscountAdapter.notifyDataSetChanged();
                         communal_recycler.smoothScrollToPosition(0);
-                        NetLoadUtils.getNetInstance().showLoadSir(loadService, code);
+                        NetLoadUtils.getNetInstance().showLoadSir(loadService, infoDetailEntity);
                     }
 
                     @Override

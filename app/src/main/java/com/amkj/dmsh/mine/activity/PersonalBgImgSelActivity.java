@@ -3,10 +3,6 @@ package com.amkj.dmsh.mine.activity;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
@@ -22,9 +18,9 @@ import com.amkj.dmsh.mine.bean.MineBgImgEntity.MineBgImgBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
-import com.amkj.dmsh.utils.alertdialog.AlertDialogBottomListHelper;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
+import com.amkj.dmsh.views.alertdialog.AlertDialogBottomListHelper;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfigC;
@@ -40,6 +36,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 import me.jessyan.autosize.utils.AutoSizeUtils;
@@ -53,9 +53,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.MINE_BG_IMG_LIST;
 import static com.amkj.dmsh.constant.Url.MINE_CHANGE_DATA;
-
-;
-;
 
 
 /**
@@ -116,13 +113,9 @@ public class PersonalBgImgSelActivity extends BaseActivity {
                             alertDialogBottomListHelper.setTitleVisibility(GONE).setMsg("选择图片")
                                     .setItemData(new String[]{"从相册上传", "拍照上传"}).itemNotifyDataChange().setAlertListener(new AlertDialogBottomListHelper.AlertItemClickListener() {
                                 @Override
-                                public void itemClick(@Nullable String text) {
-
-                                }
-
-                                @Override
-                                public void itemPosition(int itemPosition) {
+                                public void itemClick(@Nullable String text,int itemPosition) {
                                     openImageGallery(itemPosition);
+
                                 }
                             });
                         }
@@ -321,15 +314,6 @@ public class PersonalBgImgSelActivity extends BaseActivity {
                     }
                 }
             });
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (alertDialogBottomListHelper != null && alertDialogBottomListHelper.getAlertDialog() != null
-                && alertDialogBottomListHelper.getAlertDialog().isShowing()) {
-            alertDialogBottomListHelper.dismiss();
         }
     }
 }

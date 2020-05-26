@@ -3,9 +3,6 @@ package com.amkj.dmsh.shopdetails.integration;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -25,7 +22,7 @@ import com.amkj.dmsh.shopdetails.bean.DirectAppraisePassBean;
 import com.amkj.dmsh.shopdetails.integration.bean.IntegralIndentOrderEntity;
 import com.amkj.dmsh.shopdetails.integration.bean.IntegralIndentOrderEntity.IntegralIndentOrderBean.OrderListBean;
 import com.amkj.dmsh.shopdetails.integration.bean.IntegralIndentOrderEntity.IntegralIndentOrderBean.OrderListBean.GoodsBean;
-import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
+import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -35,14 +32,14 @@ import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 
 import static android.view.View.GONE;
@@ -296,11 +293,11 @@ public class IntegralIndentFragment extends BaseFragment {
      * @param orderListBean
      */
     private void cancelIntegralIndent(OrderListBean orderListBean) {
-        String url =  Url.Q_INDENT_CANCEL;
+        String url = Url.Q_INDENT_CANCEL;
         Map<String, Object> params = new HashMap<>();
         params.put("userId", userId);
         params.put("no", orderListBean.getNo());
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),url,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
 
@@ -310,14 +307,14 @@ public class IntegralIndentFragment extends BaseFragment {
                         showToast("取消订单成功");
                         loadData();
                     } else {
-                        showToastRequestMsg( requestStatus);
+                        showToastRequestMsg(requestStatus);
                     }
                 }
             }
 
             @Override
             public void onError(Throwable throwable) {
-                showToast( R.string.do_failed);
+                showToast(R.string.do_failed);
             }
         });
     }
@@ -344,7 +341,7 @@ public class IntegralIndentFragment extends BaseFragment {
 
     private void getIntegralIndentList() {
         if (userId > 0) {
-            String url =  Url.INTEGRAL_INDENT_LIST;
+            String url = Url.INTEGRAL_INDENT_LIST;
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
             params.put("showCount", TOTAL_COUNT_TEN);
@@ -357,42 +354,30 @@ public class IntegralIndentFragment extends BaseFragment {
                 public void onSuccess(String result) {
                     smart_communal_refresh.finishRefresh();
                     integralIndentListAdapter.loadMoreComplete();
-
-                    String code = "";
-                    String msg = "";
-                    try {
-                        JSONObject jsonObject = new JSONObject(result);
-                        code = (String) jsonObject.get("code");
-                        msg = (String) jsonObject.get("msg");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
                     if (page == 1) {
                         orderListBeanList.clear();
                     }
-                    if (code.equals(SUCCESS_CODE)) {
-                        indentOrderEntity = GsonUtils.fromJson(result, IntegralIndentOrderEntity.class);
-                        INDENT_PRO_STATUS = indentOrderEntity.getIntegralIndentOrderBean().getStatus();
-                        orderListBeanList.addAll(indentOrderEntity.getIntegralIndentOrderBean().getOrderList());
-                    } else if (!code.equals(EMPTY_CODE)) {
-                        showToast( msg);
-                    }else{
-                        integralIndentListAdapter.loadMoreEnd();
+                    indentOrderEntity = GsonUtils.fromJson(result, IntegralIndentOrderEntity.class);
+                    String code = indentOrderEntity.getCode();
+                    if (indentOrderEntity != null) {
+                        if (SUCCESS_CODE.equals(code)) {
+                            INDENT_PRO_STATUS = indentOrderEntity.getIntegralIndentOrderBean().getStatus();
+                            orderListBeanList.addAll(indentOrderEntity.getIntegralIndentOrderBean().getOrderList());
+                        } else if (!code.equals(EMPTY_CODE)) {
+                            showToast(indentOrderEntity.getMsg());
+                        } else {
+                            integralIndentListAdapter.loadMoreEnd();
+                        }
                     }
                     integralIndentListAdapter.notifyDataSetChanged();
-                    NetLoadUtils.getNetInstance().showLoadSirString(loadService,orderListBeanList,code);;
+                    NetLoadUtils.getNetInstance().showLoadSir(loadService, orderListBeanList, indentOrderEntity);
                 }
 
                 @Override
                 public void onNotNetOrException() {
                     smart_communal_refresh.finishRefresh();
                     integralIndentListAdapter.loadMoreEnd(true);
-                    NetLoadUtils.getNetInstance().showLoadSir(loadService,orderListBeanList,indentOrderEntity);
-                }
-
-                @Override
-                public void onError(Throwable throwable) {
-                    showToast( R.string.invalidData);
+                    NetLoadUtils.getNetInstance().showLoadSir(loadService, orderListBeanList, indentOrderEntity);
                 }
             });
         } else {
@@ -418,12 +403,12 @@ public class IntegralIndentFragment extends BaseFragment {
      * 取消积分订单
      */
     private void confirmIntegralOrder() {
-        String url =  Url.Q_INDENT_CONFIRM;
+        String url = Url.Q_INDENT_CONFIRM;
         Map<String, Object> params = new HashMap<>();
         params.put("no", orderListBean.getNo());
         params.put("userId", userId);
         params.put("orderProductId",/*orderBean.getId()*/0);
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(),url,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
 
@@ -431,7 +416,7 @@ public class IntegralIndentFragment extends BaseFragment {
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         loadData();
-                        showToastRequestMsg( requestStatus);
+                        showToastRequestMsg(requestStatus);
                     } else {
                         showToastRequestMsg(requestStatus);
                     }

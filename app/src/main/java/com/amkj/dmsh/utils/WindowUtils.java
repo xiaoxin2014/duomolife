@@ -109,16 +109,13 @@ public class WindowUtils {
 
 
     //选择弹窗动画(坐标原点为左上角)
-    private static int getAnimaitionStyle(int gravity) {
+    public static int getAnimaitionStyle(int gravity) {
         switch (gravity) {
-            case Gravity
-                    .BOTTOM:
+            case Gravity.BOTTOM:
                 return R.style.pw_slide_up;
-            case Gravity
-                    .CENTER:
+            case Gravity.CENTER:
                 return R.style.pw_slide_center;
-            case Gravity
-                    .TOP:
+            case Gravity.TOP:
                 return R.style.pw_slide_down;
             default:
                 return R.style.pw_slide_abc;

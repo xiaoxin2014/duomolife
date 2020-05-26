@@ -49,8 +49,7 @@ android {
                 storePassword properties.getProperty('keyPassword')
                 v1SigningEnabled true
                 v2SigningEnabled true
-            } catch (ex) {
-                throw new InvalidUserDataException(ex.toString())
+            } catch (ignored) {
             }
         }
     }
@@ -135,7 +134,6 @@ dependencies {
     implementation "com.google.android.material:material:$versions.material"
     implementation "com.google.firebase:firebase-appindexing:$versions.firebase"
     implementation "com.google.code.gson:gson:$versions.gson"
-    implementation "com.squareup.retrofit2:converter-gson:$versions.converterGson"
     implementation "com.google.android:flexbox:$versions.flexbox"
 
     implementation 'com.yanzhenjie:permission:2.0.0-rc12'
@@ -173,6 +171,7 @@ dependencies {
     //    retrofit 2
     implementation "com.squareup.retrofit2:retrofit:$versions.retrofit"
     implementation "com.squareup.retrofit2:adapter-rxjava2:$versions.retrofit"
+    implementation "com.squareup.retrofit2:converter-gson:$versions.retrofit"
     implementation "com.squareup.okhttp3:okhttp:$versions.okhttp"
     implementation "com.squareup.okhttp3:logging-interceptor:$versions.okhttp"
     implementation 'com.jakewharton:disklrucache:2.0.2'

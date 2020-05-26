@@ -28,7 +28,7 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.LifecycleHandler;
 import com.amkj.dmsh.utils.SharedPreUtils;
-import com.amkj.dmsh.utils.alertdialog.AlertDialogImage;
+import com.amkj.dmsh.views.alertdialog.AlertDialogImage;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.views.guideview.Component;

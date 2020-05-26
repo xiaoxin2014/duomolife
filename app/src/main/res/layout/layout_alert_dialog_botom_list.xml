@@ -4,18 +4,16 @@
     android:layout_height="wrap_content"
     android:background="@color/transparent"
     android:orientation="vertical">
+
     <LinearLayout
-        android:layout_width="match_parent"
-        android:orientation="vertical"
         android:id="@+id/ll_alert_bottom_list_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="@drawable/border_rect_10dp_bg_white"
-        android:layout_marginLeft="@dimen/sc_mm_60"
-        android:layout_marginRight="@dimen/sc_mm_60"
-        android:layout_marginStart="@dimen/sc_mm_60"
-        android:layout_marginEnd="@dimen/sc_mm_60"
         android:divider="@drawable/item_divider_gray_f_one_px"
-        android:showDividers="middle"
-        android:layout_height="wrap_content">
+        android:orientation="vertical"
+        android:showDividers="middle">
+
         <TextView
             android:id="@+id/tv_alert_bottom_list_title"
             android:layout_width="match_parent"
@@ -43,22 +41,20 @@
             android:textColor="@color/text_login_gray_s"
             android:textSize="@dimen/sc_mm_26"
             android:visibility="visible" />
-        <include layout="@layout/layout_communal_recycler_wrap"/>
+
+        <include layout="@layout/layout_communal_recycler_wrap" />
     </LinearLayout>
+
     <TextView
+        android:id="@+id/tv_alert_bottom_list_cancel"
         android:layout_width="match_parent"
-        android:minHeight="@dimen/sc_mm_68"
-        android:layout_marginBottom="@dimen/sc_mm_10"
-        android:background="@drawable/border_rect_10dp_bg_white"
-        android:text="取消"
-        android:layout_marginLeft="@dimen/sc_mm_60"
-        android:layout_marginRight="@dimen/sc_mm_60"
-        android:layout_marginStart="@dimen/sc_mm_60"
-        android:layout_marginEnd="@dimen/sc_mm_60"
-        android:gravity="center"
-        android:textSize="@dimen/sc_mm_24"
+        android:layout_height="wrap_content"
         android:layout_below="@id/ll_alert_bottom_list_info"
         android:layout_marginTop="@dimen/sc_mm_10"
-        android:id="@+id/tv_alert_bottom_list_cancel"
-        android:layout_height="wrap_content" />
+        android:layout_marginBottom="@dimen/sc_mm_10"
+        android:background="@drawable/border_rect_10dp_bg_white"
+        android:gravity="center"
+        android:minHeight="@dimen/sc_mm_68"
+        android:text="取消"
+        android:textSize="@dimen/sc_mm_24" />
 </RelativeLayout>

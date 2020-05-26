@@ -1,9 +1,9 @@
-package com.amkj.dmsh.shopdetails.dialog;
+package com.amkj.dmsh.views.alertdialog;
 
 import android.view.View;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.utils.alertdialog.BaseAlertDialogHelper;
+import com.amkj.dmsh.base.BaseAlertDialog;
 import com.bigkoo.pickerview.adapter.ArrayWheelAdapter;
 import com.contrarywind.view.WheelView;
 
@@ -22,7 +22,7 @@ import butterknife.OnClick;
  * Version:v4.5.0
  * ClassDescription :滚轮弹窗
  */
-public class AlertDialogWheel extends BaseAlertDialogHelper {
+public class AlertDialogWheel extends BaseAlertDialog {
 
     @BindView(R.id.wv_communal_one)
     WheelView mWvCommunalOne;

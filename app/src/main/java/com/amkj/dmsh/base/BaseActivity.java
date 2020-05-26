@@ -23,7 +23,7 @@ import com.amkj.dmsh.netloadpage.NetLoadCallback;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.utils.TimeUtils;
-import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
+import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.gyf.barlibrary.ImmersionBar;
 import com.hjq.toast.ToastUtils;
 import com.kaopiz.kprogresshud.KProgressHUD;

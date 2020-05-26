@@ -7,7 +7,6 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,7 +17,7 @@ import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.ImageBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.dominant.dialog.AlertDialogSendInvoice;
+import com.amkj.dmsh.views.alertdialog.AlertDialogEdit;
 import com.amkj.dmsh.find.activity.ImagePagerActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
@@ -47,6 +46,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 
+import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.dismissLoadhud;
 import static com.amkj.dmsh.constant.ConstantMethod.showLoadhud;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -94,7 +94,7 @@ public class InvoiceDetailActivity extends BaseActivity {
     private InvoiceListAdapter mInvoiceListAdapter;
     private List<ImageBean> mImageBeanList;
     private List<Bitmap> mBitmapList = new ArrayList<>();
-    private AlertDialogSendInvoice mAlertDialogSendInvoice;
+    private AlertDialogEdit mAlertDialogSendInvoice;
 
     @Override
     protected int getContentView() {
@@ -159,12 +159,12 @@ public class InvoiceDetailActivity extends BaseActivity {
                             String imgBase64Arr = indentInvoiceBean.getInvoice().getImgBase64Arr();
                             mTvInvoiceStatus.setText(status);
                             //"0": "未开","1": "待出","2": "已开 ","3": "作废","4": "重开"
-                            mTvApplyFor.setVisibility(statusNum == 0 ? View.VISIBLE : View.GONE);
-                            mTvSave.setVisibility(statusNum != 0 ? View.VISIBLE : View.GONE);
+                            mTvApplyFor.setVisibility(statusNum == 0 ? VISIBLE : View.GONE);
+                            mTvSave.setVisibility(statusNum != 0 ? VISIBLE : View.GONE);
                             mTvSave.setEnabled(statusNum == 2);
-                            mRvInvoice.setVisibility(statusNum == 1 || statusNum == 2 ? View.VISIBLE : View.GONE);
-                            mTvSendEmail.setVisibility(statusNum == 2 ? View.VISIBLE : View.GONE);
-                            mTvCompleteTime.setVisibility(statusNum == 1 ? View.VISIBLE : View.GONE);
+                            mRvInvoice.setVisibility(statusNum == 1 || statusNum == 2 ? VISIBLE : View.GONE);
+                            mTvSendEmail.setVisibility(statusNum == 2 ? VISIBLE : View.GONE);
+                            mTvCompleteTime.setVisibility(statusNum == 1 ? VISIBLE : View.GONE);
                             if (!TextUtils.isEmpty(imgBase64Arr)) {
                                 String[] invoiceList = imgBase64Arr.split("@@");
                                 List<Bitmap> bitmaps = new ArrayList<>();
@@ -180,7 +180,7 @@ public class InvoiceDetailActivity extends BaseActivity {
                             }
                         }
                     } else {
-                        showToast( mIndentInvoiceEntity.getMsg());
+                        showToast(mIndentInvoiceEntity.getMsg());
                     }
                 }
 
@@ -211,7 +211,7 @@ public class InvoiceDetailActivity extends BaseActivity {
                 finish();
                 break;
             case R.id.iv_img_service:
-                QyServiceUtils.getQyInstance().openQyServiceChat(getActivity(),"发票详情");
+                QyServiceUtils.getQyInstance().openQyServiceChat(getActivity(), "发票详情");
                 break;
             //申请发票
             case R.id.tv_apply_for:
@@ -236,11 +236,10 @@ public class InvoiceDetailActivity extends BaseActivity {
             case R.id.tv_send_email:
                 try {
                     if (mAlertDialogSendInvoice == null) {
-                        mAlertDialogSendInvoice = new AlertDialogSendInvoice(this);
-                        View contentView = mAlertDialogSendInvoice.getDialogView();
-                        TextView tvConfirm = contentView.findViewById(R.id.tv_confirm);
-                        EditText etEmail = contentView.findViewById(R.id.et_email);
-                        tvConfirm.setOnClickListener(v -> sendEmail(etEmail));
+                        mAlertDialogSendInvoice = new AlertDialogEdit(this);
+                        mAlertDialogSendInvoice.setCoverVisible(VISIBLE)
+                                .setTitleVisible(VISIBLE)
+                                .setOnAlertListener(this::sendEmail);
                     }
 
                     ImageView ivCover = mAlertDialogSendInvoice.getDialogView().findViewById(R.id.iv_invoice_cover);
@@ -301,8 +300,7 @@ public class InvoiceDetailActivity extends BaseActivity {
         showToast("已保存至" + dirPath);
     }
 
-    private void sendEmail(EditText etEmail) {
-        String mEmail = etEmail.getText().toString();
+    private void sendEmail(String mEmail) {
         if (TextUtils.isEmpty(mEmail)) {
             showToast("邮箱地址不能为空");
             return;
@@ -330,7 +328,7 @@ public class InvoiceDetailActivity extends BaseActivity {
             @Override
             public void onNotNetOrException() {
                 dismissLoadhud(getActivity());
-                showToast( "发送失败");
+                showToast("发送失败");
             }
         });
     }

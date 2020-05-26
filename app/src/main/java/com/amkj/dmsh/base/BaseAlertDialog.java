@@ -1,4 +1,4 @@
-package com.amkj.dmsh.utils.alertdialog;
+package com.amkj.dmsh.base;
 
 import android.app.Activity;
 import android.content.Context;
@@ -27,17 +27,17 @@ import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
  * Version:v4.5.2
  * ClassDescription :AlertDialog基类
  */
-public abstract class BaseAlertDialogHelper implements LifecycleObserver {
+public abstract class BaseAlertDialog implements LifecycleObserver {
     protected Context context;
     private AlertDialog defaultAlertDialog;
     protected View dialogView;
 
 
-    public BaseAlertDialogHelper(Context context) {
+    public BaseAlertDialog(Context context) {
         this(context, 0);
     }
 
-    protected BaseAlertDialogHelper(Context context, int layoutId) {
+    protected BaseAlertDialog(Context context, int layoutId) {
         this.context = context;
         if (context instanceof LifecycleOwner) {
             ((LifecycleOwner) context).getLifecycle().addObserver(this);

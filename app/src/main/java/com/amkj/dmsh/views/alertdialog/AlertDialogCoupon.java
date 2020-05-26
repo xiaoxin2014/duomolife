@@ -1,4 +1,4 @@
-package com.amkj.dmsh.homepage.dialog;
+package com.amkj.dmsh.views.alertdialog;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +9,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.bean.CouponEntity.CouponListEntity.CouponBean;
 import com.amkj.dmsh.homepage.adapter.CouponListAdapter;
 import com.amkj.dmsh.shopdetails.activity.DirectMyCouponActivity;
-import com.amkj.dmsh.utils.alertdialog.BaseAlertDialogHelper;
+import com.amkj.dmsh.base.BaseAlertDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,7 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
  * Version:v4.2.2
  * ClassDescription :口令红包-领取优惠券弹窗
  */
-public class AlertDialogCoupon extends BaseAlertDialogHelper {
+public class AlertDialogCoupon extends BaseAlertDialog {
 
     @BindView(R.id.iv_dialog_image_close)
     ImageView iv_dialog_image_close;

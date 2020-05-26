@@ -1,4 +1,4 @@
-package com.amkj.dmsh.dominant.dialog;
+package com.amkj.dmsh.views.alertdialog;
 
 import android.app.Activity;
 import android.content.Context;
@@ -10,7 +10,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.dao.GroupDao;
 import com.amkj.dmsh.dominant.bean.GroupShopDetailsEntity.GroupShopDetailsBean;
-import com.amkj.dmsh.utils.alertdialog.BaseAlertDialogHelper;
+import com.amkj.dmsh.base.BaseAlertDialog;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 
 import butterknife.BindView;
@@ -29,7 +29,7 @@ import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTime;
  * Version:v4.4.0
  * ClassDescription :提示拼团未完成弹窗
  */
-public class AlertDialogGroup extends BaseAlertDialogHelper {
+public class AlertDialogGroup extends BaseAlertDialog {
 
     @BindView(R.id.tv_remain)
     TextView mTvRemain;

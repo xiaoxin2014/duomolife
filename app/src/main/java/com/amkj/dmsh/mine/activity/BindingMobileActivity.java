@@ -23,7 +23,7 @@ import com.amkj.dmsh.mine.bean.OtherAccountBindEntity.OtherAccountBindInfo;
 import com.amkj.dmsh.mine.bean.RegisterPhoneStatus;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
+import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;

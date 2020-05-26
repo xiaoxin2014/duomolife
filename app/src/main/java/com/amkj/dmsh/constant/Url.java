@@ -15,7 +15,6 @@ public class Url {
         } else if (position == 2) {//钊立
             return BASE_URL = "http://192.168.2.98:8080/";
         } else if (position == 3) {//泽鑫
-//                BASE_URL = "http://192.168.1.180:8080/";
             return BASE_URL = "http://192.168.1.51:8080/";
         } else if (position == 4) {//泽鑫2
             return BASE_URL = "http://192.168.1.178:9090/";
@@ -26,7 +25,6 @@ public class Url {
         } else if (position == 7) {//王凯1
             return BASE_URL = "http://192.168.2.212:80/";
         } else if (position == 8) {//鸿星
-//                BASE_URL = "http://192.168.101.12:8080/";
             return BASE_URL = "http://192.168.1.9:8080/";
         }
         return BASE_URL = "https://app.domolife.cn/";

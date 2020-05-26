@@ -46,7 +46,7 @@ import com.amkj.dmsh.homepage.bean.JsInteractiveBean;
 import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.SharedPreUtils;
-import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
+import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.views.HtmlWebView;
 import com.melnykov.fab.FloatingActionButton;

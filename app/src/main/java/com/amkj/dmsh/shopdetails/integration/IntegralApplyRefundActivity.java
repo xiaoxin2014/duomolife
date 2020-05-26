@@ -45,7 +45,7 @@ import com.amkj.dmsh.shopdetails.bean.RefundApplyEntity.RefundApplyBean.WaitDeli
 import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
 import com.amkj.dmsh.utils.KeyboardUtils;
-import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
+import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;

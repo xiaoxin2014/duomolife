@@ -22,7 +22,7 @@ import com.amkj.dmsh.shopdetails.adapter.DirectPublishAppraiseAdapter;
 import com.amkj.dmsh.shopdetails.bean.DirectAppraisePassBean;
 import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
-import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
+import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.luck.picture.lib.PictureSelector;

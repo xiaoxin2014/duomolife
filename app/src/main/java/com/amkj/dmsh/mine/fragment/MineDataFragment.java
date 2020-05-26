@@ -1,16 +1,8 @@
 package com.amkj.dmsh.mine.fragment;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Paint;
-import androidx.annotation.NonNull;
-import androidx.emoji.widget.EmojiTextView;
-import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.SimpleItemAnimator;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -30,7 +22,6 @@ import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantVariable;
-import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dao.AddClickDao;
 import com.amkj.dmsh.dao.UserDao;
 import com.amkj.dmsh.homepage.activity.AttendanceActivity;
@@ -45,7 +36,6 @@ import com.amkj.dmsh.mine.adapter.MineTypeAdapter;
 import com.amkj.dmsh.mine.bean.MineTypeEntity;
 import com.amkj.dmsh.mine.bean.MineTypeEntity.MineTypeBean;
 import com.amkj.dmsh.mine.bean.OtherAccountBindEntity.OtherAccountBindInfo;
-import com.amkj.dmsh.mine.bean.QuickEntryEntity;
 import com.amkj.dmsh.network.NetCacheLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
@@ -66,7 +56,6 @@ import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.gyf.barlibrary.ImmersionBar;
-import com.qiyukf.unicorn.api.ConsultSource;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.socialize.UMAuthListener;
 import com.umeng.socialize.UMShareAPI;
@@ -81,6 +70,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+import androidx.emoji.widget.EmojiTextView;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 import butterknife.BindView;
 import butterknife.OnClick;
 import q.rorbin.badgeview.Badge;
@@ -313,34 +309,9 @@ public class MineDataFragment extends BaseFragment {
             getMineAd();
             getMessageCount(getActivity(), badgeMsg);
             getCarCount(getActivity());
-            getCustomerServiceBar(getActivity(), null);
         } else {
             setErrorUserData();
         }
-    }
-
-    //获取快捷入口
-    private void getCustomerServiceBar(Context context, ConsultSource pageSource) {
-        NetLoadUtils.getNetInstance().loadNetDataPost(context, Url.GET_CUSTOMER_SERVICE_BAR, null, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                QuickEntryEntity quickEntryEntity = GsonUtils.fromJson(result, QuickEntryEntity.class);
-//                if (quickEntryEntity != null) {
-//                    List<QuickEntryBean> list = quickEntryEntity.getList();
-//                    if (list != null) {
-//                        for (int i = 0; i < list.size(); i++) {
-//                            QuickEntryBean quickEntryBean = list.get(i);
-//                            pageSource.quickEntryList.add(new QuickEntry(i + 2, quickEntryBean.getTitle(), quickEntryBean.getLink()));
-//                        }
-//                    }
-//                }
-            }
-
-            @Override
-            public void onNotNetOrException() {
-
-            }
-        });
     }
 
     //获取用户信息

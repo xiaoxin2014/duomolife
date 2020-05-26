@@ -1,4 +1,4 @@
-package com.amkj.dmsh.utils.alertdialog;
+package com.amkj.dmsh.views.alertdialog;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.base.BaseAlertDialog;
 
 import androidx.annotation.NonNull;
 import butterknife.BindView;
@@ -23,7 +24,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
  * version 3.1.5
  * class description:弹窗广告
  */
-public class AlertDialogImage extends BaseAlertDialogHelper {
+public class AlertDialogImage extends BaseAlertDialog {
 
     @BindView(R.id.iv_dialog_image_close)
     ImageView iv_dialog_image_close;

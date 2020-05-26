@@ -1,4 +1,4 @@
-package com.amkj.dmsh.utils.alertdialog;
+package com.amkj.dmsh.views.alertdialog;
 
 import android.app.Activity;
 import android.text.TextUtils;
@@ -8,6 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.base.BaseAlertDialog;
 import com.amkj.dmsh.bean.ShareIconTitleBean;
 import com.amkj.dmsh.find.activity.JoinSuccessActivity;
 import com.amkj.dmsh.find.activity.PostDetailActivity;
@@ -34,7 +35,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
  * version 3.1.3
  * class description:分享统一弹窗
  */
-public class AlertDialogShareHelper extends BaseAlertDialogHelper {
+public class AlertDialogShareHelper extends BaseAlertDialog {
     @BindView(R.id.communal_recycler_wrap)
     RecyclerView communal_recycler_wrap;
     @BindView(R.id.rel_share_loading)

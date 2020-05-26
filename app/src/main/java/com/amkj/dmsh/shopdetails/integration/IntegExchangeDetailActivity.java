@@ -40,7 +40,7 @@ import com.amkj.dmsh.shopdetails.integration.bean.IntegralOrderDetailEntity.Inte
 import com.amkj.dmsh.shopdetails.payutils.AliPay;
 import com.amkj.dmsh.shopdetails.payutils.WXPay;
 import com.amkj.dmsh.utils.CommunalCopyTextUtils;
-import com.amkj.dmsh.utils.alertdialog.AlertDialogHelper;
+import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.CustomPopWindow;
@@ -73,7 +73,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.CANCEL_ORDER;
 import static com.amkj.dmsh.constant.ConstantVariable.CANCEL_PAY_ORDER;
 import static com.amkj.dmsh.constant.ConstantVariable.CHECK_LOG;
 import static com.amkj.dmsh.constant.ConstantVariable.CONFIRM_ORDER;
-import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRO_STATUS;
 import static com.amkj.dmsh.constant.ConstantVariable.LITTER_CONSIGN;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY;
@@ -189,37 +188,24 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
-                String code = "";
-                String msg = "";
-                try {
-                    JSONObject jsonObject = new JSONObject(result);
-                    code = (String) jsonObject.get("code");
-                    msg = (String) jsonObject.get("msg");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                if (code.equals(SUCCESS_CODE)) {
-
-                    integralOrderDetailEntity = GsonUtils.fromJson(result, IntegralOrderDetailEntity.class);
-                    if (integralOrderDetailEntity != null) {
+                integralOrderDetailEntity = GsonUtils.fromJson(result, IntegralOrderDetailEntity.class);
+                if (integralOrderDetailEntity != null) {
+                    if (SUCCESS_CODE.equals(integralOrderDetailEntity.getCode())) {
                         IntegralOrderDetailBean integralOrderDetailBean = integralOrderDetailEntity.getIntegralOrderDetailBean();
                         if (integralOrderDetailBean != null) {
                             INDENT_PRO_STATUS = integralOrderDetailBean.getStatus();
                             setIntegralIndentData(integralOrderDetailBean);
                         }
+                    } else {
+                        showToast(integralOrderDetailEntity.getMsg());
                     }
-                } else if (code.equals(EMPTY_CODE)) {
-                    showToast( R.string.shopOverdue);
-                } else {
-                    showToast(msg);
                 }
-                NetLoadUtils.getNetInstance().showLoadSir(loadService, code);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, integralOrderDetailEntity);
             }
 
             @Override
             public void onNotNetOrException() {
                 smart_communal_refresh.finishRefresh();
-                showToast(R.string.connectedFaile);
                 NetLoadUtils.getNetInstance().showLoadSir(loadService, integralOrderDetailEntity);
             }
         });
@@ -425,10 +411,10 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
                 RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        showToastRequestMsg( requestStatus);
+                        showToastRequestMsg(requestStatus);
                         finish();
                     } else {
-                        showToastRequestMsg( requestStatus);
+                        showToastRequestMsg(requestStatus);
                     }
                 }
             }
@@ -493,7 +479,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
                                 startActivity(intent);
                                 break;
                             case 1:
-                                showToast( refundCheckEntity.getApplyRefundCheckBean() == null
+                                showToast(refundCheckEntity.getApplyRefundCheckBean() == null
                                         ? refundCheckEntity.getMsg() : refundCheckEntity.getApplyRefundCheckBean().getMsg()
                                 );
                                 break;
@@ -526,7 +512,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
                                 break;
                         }
                     } else {
-                        showToast( refundCheckEntity.getApplyRefundCheckBean() == null
+                        showToast(refundCheckEntity.getApplyRefundCheckBean() == null
                                 ? refundCheckEntity.getMsg() : refundCheckEntity.getApplyRefundCheckBean().getMsg()
                         );
                     }
@@ -778,7 +764,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
                             //返回成功，调起微信支付接口
                             doWXPay(qualityWeChatIndent.getResult());
                         } else {
-                            showToast( qualityWeChatIndent.getResult() == null
+                            showToast(qualityWeChatIndent.getResult() == null
                                     ? qualityWeChatIndent.getMsg() : qualityWeChatIndent.getResult().getMsg());
                         }
                     }
@@ -798,7 +784,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
 
             @Override
             public void onError(Throwable throwable) {
-                showToast( R.string.do_failed);
+                showToast(R.string.do_failed);
             }
         });
     }
