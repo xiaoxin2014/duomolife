@@ -14,26 +14,22 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
-import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.dominant.adapter.PointSpikeProductAdapter;
 import com.amkj.dmsh.dominant.bean.PointSpikeProductEntity;
 import com.amkj.dmsh.dominant.bean.PointSpikeProductEntity.TimeAxisProductListBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
-import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
+import com.amkj.dmsh.utils.CountDownTimer;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
+import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 
 import java.lang.ref.WeakReference;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -45,6 +41,7 @@ import cn.iwgang.countdownview.DynamicConfig;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static android.app.Activity.RESULT_OK;
+import static android.view.View.GONE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getDeviceAppNotificationStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
@@ -57,6 +54,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.Q_POINT_SPIKE_PRODUCT;
 import static com.amkj.dmsh.constant.Url.Q_POINT_SPIKE_PRODUCT_CLICK_TOTAL;
 import static com.amkj.dmsh.constant.Url.Q_POINT_SPIKE_PRODUCT_STATUS;
+import static com.amkj.dmsh.utils.TimeUtils.getTimeDifference;
 import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTime;
 
 
@@ -76,9 +74,9 @@ public class PointSpikeProductFragment extends BaseFragment {
     private String pointSpikeEndTime;
     private String pointSpikeStartTime;
     private PointSpikeHelper pointSpikeHelper;
-    private ConstantMethod constantMethod;
     private WeakReference<Activity> activityWeakReference;
     private AlertDialogHelper notificationAlertDialogHelper;
+    private CountDownTimer mCountDownTimer;
 
     @Override
     protected int getContentView() {
@@ -151,7 +149,7 @@ public class PointSpikeProductFragment extends BaseFragment {
                                     String proStatus;
                                     if (timeAxisProductListBean.getStatusCode() == 0) {
                                         checkedTextView.setChecked(timeAxisProductListBean.getIsNotice() == 0);
-                                        proStatus = timeAxisProductListBean.getIsNotice() == 0?"提醒我":"已设置";
+                                        proStatus = timeAxisProductListBean.getIsNotice() == 0 ? "提醒我" : "已设置";
                                         checkedTextView.setChecked(timeAxisProductListBean.getIsNotice() == 1);
                                     } else if (timeAxisProductListBean.getStatusCode() == 1) {
                                         checkedTextView.setSelected(true);
@@ -201,21 +199,24 @@ public class PointSpikeProductFragment extends BaseFragment {
                         timeAxisProductListBeans.clear();
                         PointSpikeProductEntity pointSpikeProductEntity = GsonUtils.fromJson(result, PointSpikeProductEntity.class);
                         if (pointSpikeProductEntity != null) {
+                            String currentTime = pointSpikeProductEntity.getCurrentTime();
                             if (pointSpikeProductEntity.getCode().equals(SUCCESS_CODE)) {
                                 int productStatus = 0;
-                                String timeStatus = "距离开始还有";
-//                                是否已开始
-                                if (isEndOrStartTime(pointSpikeProductEntity.getCurrentTime(), pointSpikeStartTime)) {
+                                //活动未开始
+                                if (!isEndOrStartTime(currentTime, pointSpikeStartTime)) {
+                                    pointSpikeHelper.tv_show_communal_time_status.setText("距离开始还有");
+                                    setPointSpikeTime(getTimeDifference(currentTime, pointSpikeStartTime));
+                                } else if (!isEndOrStartTime(currentTime, pointSpikeEndTime)) {
+                                    //已开始，未结束
                                     productStatus = 1;
-                                    timeStatus = "距离结束还有";
-//                                是否已结束
-                                    if (isEndOrStartTime(pointSpikeProductEntity.getCurrentTime(), pointSpikeEndTime)) {
-                                        productStatus = 2;
-                                        timeStatus = "已结束";
-                                    }
+                                    pointSpikeHelper.tv_show_communal_time_status.setText("距离结束还有");
+                                    setPointSpikeTime(getTimeDifference(currentTime, pointSpikeEndTime));
+                                } else {
+                                    //已结束
+                                    productStatus = 2;
+                                    pointSpikeHelper.tv_show_communal_time_status.setText("已结束");
+                                    pointSpikeHelper.ct_time_communal_show_bg.setVisibility(GONE);
                                 }
-                                pointSpikeHelper.tv_show_communal_time_status.setText(timeStatus);
-                                setPointSpikeTime(pointSpikeProductEntity);
                                 for (TimeAxisProductListBean timeAxisProductListBean : pointSpikeProductEntity.getTimeAxisProductList()) {
                                     timeAxisProductListBean.setStatusCode(productStatus);
                                 }
@@ -239,65 +240,31 @@ public class PointSpikeProductFragment extends BaseFragment {
 
     /**
      * 设置整点秒杀
-     *
-     * @param pointSpikeProductEntity
      */
-    private void setPointSpikeTime(PointSpikeProductEntity pointSpikeProductEntity) {
-        //格式化结束时间
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-        Date currentTime;
-        Date startTime;
-        Date endTime;
-        try {
-            if (TextUtils.isEmpty(pointSpikeProductEntity.getCurrentTime())) {
-                currentTime = new Date();
-            } else {
-                currentTime = formatter.parse(pointSpikeProductEntity.getCurrentTime());
-            }
-            startTime = formatter.parse(pointSpikeStartTime);
-            endTime = formatter.parse(pointSpikeEndTime);
-            long milliseconds = startTime.getTime() > currentTime.getTime()
-                    ? startTime.getTime() - currentTime.getTime() : currentTime.getTime() < endTime.getTime() ? endTime.getTime() - currentTime.getTime() : 0;
-            DynamicConfig.Builder dynamic = new DynamicConfig.Builder();
-            dynamic.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext, 26));
-            dynamic.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext, 26));
-            if (milliseconds < 1000 * 60 * 60 * 99) {
-                dynamic.setConvertDaysToHours(true);
-                dynamic.setShowDay(false);
-            }
-            pointSpikeHelper.ct_time_communal_show_bg.dynamicShow(dynamic.build());
-            final long[] seconds = {0};
-            if (milliseconds > 0) {
-                pointSpikeHelper.ct_time_communal_show_bg.setVisibility(View.VISIBLE);
-                if (constantMethod == null) {
-                    constantMethod = new ConstantMethod();
-                }
-                constantMethod.createSchedule();
-                constantMethod.setRefreshTimeListener(new ConstantMethod.RefreshTimeListener() {
-                    @Override
-                    public void refreshTime() {
-                        seconds[0] += 1;
-                        if (milliseconds - (seconds[0] * 1000) < 1) {
-                            constantMethod.stopSchedule();
-                        }
-                        pointSpikeHelper.ct_time_communal_show_bg.updateShow(milliseconds - seconds[0] * 1000);
-                    }
-                });
-                pointSpikeHelper.ct_time_communal_show_bg.updateShow(milliseconds - seconds[0] * 1000);
-            } else {
-                pointSpikeHelper.ct_time_communal_show_bg.setVisibility(View.GONE);
-            }
-            pointSpikeHelper.ct_time_communal_show_bg.setOnCountdownEndListener(new CountdownView.OnCountdownEndListener() {
-                @Override
-                public void onEnd(CountdownView cv) {
-                    pointSpikeHelper.ct_time_communal_show_bg.stop();
-                    pointSpikeHelper.ct_time_communal_show_bg.setOnCountdownEndListener(null);
-                    loadData();
-                }
-            });
-        } catch (ParseException e) {
-            e.printStackTrace();
+    private void setPointSpikeTime(long millisInFuture) {
+        DynamicConfig.Builder dynamic = new DynamicConfig.Builder();
+        dynamic.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext, 26));
+        dynamic.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext, 26));
+        if (millisInFuture < 1000 * 60 * 60 * 99) {
+            dynamic.setConvertDaysToHours(true);
+            dynamic.setShowDay(false);
         }
+        pointSpikeHelper.ct_time_communal_show_bg.dynamicShow(dynamic.build());
+        if (mCountDownTimer == null) {
+            mCountDownTimer = new CountDownTimer(getActivity()) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    pointSpikeHelper.ct_time_communal_show_bg.updateShow(millisUntilFinished);
+                }
+
+                @Override
+                public void onFinish() {
+                   loadData();
+                }
+            };
+        }
+        mCountDownTimer.setMillisInFuture(millisInFuture);
+        mCountDownTimer.start();
     }
 
     /**
@@ -316,6 +283,7 @@ public class PointSpikeProductFragment extends BaseFragment {
 
     /**
      * 添加整点秒杀统计
+     *
      * @param productId
      */
     private void addClickPointSpikeProductTotal(int productId) {
@@ -324,6 +292,7 @@ public class PointSpikeProductFragment extends BaseFragment {
         NetLoadUtils.getNetInstance().loadNetDataPost(activityWeakReference.get(), Q_POINT_SPIKE_PRODUCT_CLICK_TOTAL
                 , params, null);
     }
+
     @Override
     protected void getReqParams(Bundle bundle) {
         pointSpikeId = (String) bundle.get("pointSpikeId");
@@ -351,17 +320,9 @@ public class PointSpikeProductFragment extends BaseFragment {
         }
     }
 
+
     @Override
     protected boolean isAddLoad() {
         return true;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        if (constantMethod != null) {
-            constantMethod.stopSchedule();
-        }
-        pointSpikeHelper.ct_time_communal_show_bg.stop();
     }
 }

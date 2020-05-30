@@ -24,13 +24,13 @@ import com.amkj.dmsh.bean.LoginDataEntity;
 import com.amkj.dmsh.constant.PasswordEncrypt;
 import com.amkj.dmsh.constant.Sha1Md5;
 import com.amkj.dmsh.dao.UserDao;
-import com.amkj.dmsh.mine.CountDownHelper;
+import com.amkj.dmsh.mine.SmsCodeHelper;
 import com.amkj.dmsh.mine.bean.RegisterPhoneStatus;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.NetWorkUtils;
-import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.gson.GsonUtils;
+import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 
@@ -82,7 +82,6 @@ public class RegisterAccountActivity extends BaseActivity {
     @BindView(R.id.reg_req_code_gif_view)
     public ProgressBar reg_req_code_gif_view;
     private boolean flag;
-    private CountDownHelper countDownHelper;
     private AlertDialogHelper alertDialogHelper;
 
     @Override
@@ -153,10 +152,7 @@ public class RegisterAccountActivity extends BaseActivity {
                     showToast( R.string.GetSmsCodeSuccess);
                     tv_sms_code.setVisibility(View.VISIBLE);
                     reg_req_code_gif_view.setVisibility(View.GONE);
-                    if (countDownHelper == null) {
-                        countDownHelper = CountDownHelper.getTimerInstance();
-                    }
-                    countDownHelper.setSmsCountDown(tv_sms_code, getResources().getString(R.string.send_sms), 60);
+                    SmsCodeHelper.startCountDownTimer(getActivity(), tv_sms_code);
                 } else if (event == SMSSDK.EVENT_GET_SUPPORTED_COUNTRIES) { //返回支持发送验证码的国家列表
                 }
             } else if (data != null) { //回调失败
@@ -388,15 +384,6 @@ public class RegisterAccountActivity extends BaseActivity {
     @OnClick(R.id.tv_reg_login)
     void goBack(View view) {
         finish();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (countDownHelper == null) {
-            countDownHelper = CountDownHelper.getTimerInstance();
-        }
-        countDownHelper.setSmsCountDown(tv_sms_code);
     }
 
     @Override

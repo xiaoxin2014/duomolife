@@ -1,9 +1,12 @@
 package com.amkj.dmsh.utils.gson;
 
+import android.text.TextUtils;
+
 import com.alibaba.fastjson.JSON;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.internal.bind.TypeAdapters;
 import com.google.gson.stream.JsonReader;
 
@@ -49,8 +52,9 @@ public class GsonUtils {
         return mGson;
     }
 
-    //普通对象
+    //解析成实体类
     public static <T> T fromJson(String result, Class<T> classOfT) {
+        if (TextUtils.isEmpty(result)) return null;
         try {
             return getInstance().fromJson(result, classOfT);
         } catch (Exception ex) {
@@ -73,9 +77,13 @@ public class GsonUtils {
         }
     }
 
-    //集合数据
+    //解析成具体的数据类型
     public static <T> T fromJson(String result, Type typeToken) {
-        return getInstance().fromJson(result, typeToken);
+        try {
+            return getInstance().fromJson(result, typeToken);
+        } catch (JsonSyntaxException e) {
+            return null;
+        }
     }
 
     public static <T> T fromJson(JsonReader reader, Type typeOfT) {
@@ -95,7 +103,7 @@ public class GsonUtils {
         return getInstance().fromJson(json, typeOf);
     }
 
-
+    //对象转json字符串
     public static String toJson(Object src) {
         try {
             return getInstance().toJson(src);

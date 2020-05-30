@@ -1,8 +1,6 @@
 package com.amkj.dmsh.dominant.adapter;
 
-import androidx.lifecycle.LifecycleOwner;
 import android.content.Context;
-import androidx.annotation.NonNull;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.dominant.bean.GroupShopDetailsEntity.GroupShopDetailsBean.ParticipantInfoBean.GroupShopJoinBean;
@@ -16,6 +14,7 @@ import com.google.android.flexbox.JustifyContent;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getSpannableString;
@@ -89,7 +88,7 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
                     helper.setEnabled(R.id.tv_ql_gp_sp_join, true);
                 }
                 helper.itemView.setEnabled(true);
-                CountDownTimer countDownTimer = new CountDownTimer((LifecycleOwner) context, timeDifference, 1000) {
+                CountDownTimer countDownTimer = new CountDownTimer(context) {
                     @Override
                     public void onTick(long millisUntilFinished) {
                         String downTime = prefix + getCoutDownTime(millisUntilFinished, true);
@@ -98,14 +97,13 @@ public class JoinGroupAdapter extends BaseMultiItemQuickAdapter<GroupShopJoinBea
 
                     @Override
                     public void onFinish() {
-                        cancel();
                         helper.setText(R.id.tv_countdownTime, "已过期");
                         if (isGroupList) {
                             helper.setEnabled(R.id.tv_ql_gp_sp_join, false);
                         }
                     }
                 };
-
+                countDownTimer.setMillisInFuture(timeDifference);
                 countDownTimer.start();
                 helper.itemView.setTag(R.id.id_tag, countDownTimer);
             } else {

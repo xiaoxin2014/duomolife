@@ -35,8 +35,6 @@ import androidx.appcompat.widget.Toolbar;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-import static com.amkj.dmsh.constant.ConstantMethod.NEW_USER_DIALOG;
-import static com.amkj.dmsh.constant.ConstantMethod.createExecutor;
 import static com.amkj.dmsh.constant.ConstantMethod.getMarketApp;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -45,6 +43,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.DELIVERY_ADDRESS;
 import static com.amkj.dmsh.dao.UserDao.logout;
+import static com.amkj.dmsh.utils.AsyncUtils.createExecutor;
 import static com.amkj.dmsh.utils.FileCacheUtils.getFolderSize;
 
 
@@ -87,7 +86,6 @@ public class AppDataActivity extends BaseActivity {
         header_shared.setVisibility(View.INVISIBLE);
         setLayoutUI();
         getCacheStatic();
-
         if (getIntent() != null) {
             Intent intent = getIntent();
             mobile = intent.getStringExtra("mobile");
@@ -185,7 +183,6 @@ public class AppDataActivity extends BaseActivity {
             alertDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
                 @Override
                 public void confirm() {
-                    NEW_USER_DIALOG = true;
                     //调用登出接口
                     logout(getActivity(), true);
                 }

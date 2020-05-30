@@ -1,7 +1,6 @@
 package com.amkj.dmsh.mine.adapter;
 
 import android.content.Context;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.SparseArray;
 import android.view.View;
@@ -10,8 +9,8 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.mine.bean.MineWarmEntity.MineWarmBean;
+import com.amkj.dmsh.utils.CountDownTimer;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -34,7 +33,6 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTimeAddSeconds;
 
-;
 
 /**
  * Created by atd48 on 2016/10/20.
@@ -45,25 +43,19 @@ public class ShopTimeMyWarmAdapter extends BaseQuickAdapter<MineWarmBean, BaseVi
     private final List<MineWarmBean> mineWarmBeanList;
     private SparseArray<Object> sparseArray = new SparseArray<>();
     private Map<Integer, MineWarmBean> beanMap = new HashMap<>();
-    private ConstantMethod constantMethod;
+    private CountDownTimer mCountDownTimer;
 
     public ShopTimeMyWarmAdapter(Context context, List<MineWarmBean> mineWarmBeanList) {
         super(R.layout.adapter_mine_warm, mineWarmBeanList);
         this.context = context;
         this.mineWarmBeanList = mineWarmBeanList;
-        getConstant();
+        CreatCountDownTimer();
     }
 
-    private void getConstant() {
-        if (constantMethod == null) {
-            constantMethod = new ConstantMethod();
-        }
-    }
 
     @Override
     public int getItemCount() {
         if (mineWarmBeanList != null && mineWarmBeanList.size() > 0) {
-            constantMethod.createSchedule();
             for (int i = 0; i < mineWarmBeanList.size(); i++) {
                 beanMap.put(i, mineWarmBeanList.get(i));
             }
@@ -71,22 +63,28 @@ public class ShopTimeMyWarmAdapter extends BaseQuickAdapter<MineWarmBean, BaseVi
         return super.getItemCount();
     }
 
-    @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
-        if (constantMethod != null) {
-            constantMethod.setRefreshTimeListener(new ConstantMethod.RefreshTimeListener() {
+    //创建定时任务
+    private void CreatCountDownTimer() {
+        if (mCountDownTimer == null) {
+            mCountDownTimer = new CountDownTimer(context) {
                 @Override
-                public void refreshTime() {
+                public void onTick(long millisUntilFinished) {
                     if (mineWarmBeanList != null && mineWarmBeanList.size() > 0) {
-//                刷新数据
+                        //刷新数据
                         refreshData();
-//                刷新倒计时
+                        //刷新倒计时
                         refreshSchedule();
                     }
                 }
-            });
+
+                @Override
+                public void onFinish() {
+
+                }
+            };
+            mCountDownTimer.setMillisInFuture(3600 * 24 *30* 1000L);
         }
+        mCountDownTimer.start();
     }
 
     private void refreshData() {
@@ -101,18 +99,8 @@ public class ShopTimeMyWarmAdapter extends BaseQuickAdapter<MineWarmBean, BaseVi
         for (int i = 0; i < sparseArray.size(); i++) {
             CountdownView countdownView = (CountdownView) sparseArray.get(sparseArray.keyAt(i));
             MineWarmBean mineWarmBean = beanMap.get(sparseArray.keyAt(i));
-            setCountTime(mineWarmBean,countdownView);
+            setCountTime(mineWarmBean, countdownView);
         }
-    }
-
-    @Override
-    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
-        constantMethod.releaseHandlers();
-        constantMethod.stopSchedule();
-        super.onDetachedFromRecyclerView(recyclerView);
-    }
-    private void setCountDownView(int i, CountdownView countdownView) {
-        sparseArray.put(i,countdownView);
     }
 
     private void setCountTime(MineWarmBean mineWarmBean, CountdownView cv_countdownTime_red_hours) {
@@ -127,16 +115,16 @@ public class ShopTimeMyWarmAdapter extends BaseQuickAdapter<MineWarmBean, BaseVi
                 } else {
                     dateCurrent = new Date();
                 }
-                cv_countdownTime_red_hours.updateShow(dateStart.getTime() - dateCurrent.getTime()-mineWarmBean.getAddSecond()*1000);
+                cv_countdownTime_red_hours.updateShow(dateStart.getTime() - dateCurrent.getTime() - mineWarmBean.getAddSecond() * 1000);
             } catch (ParseException e) {
                 e.printStackTrace();
             }
         } else {
             cv_countdownTime_red_hours.setVisibility(View.GONE);
         }
-        if(!isEndOrStartTimeAddSeconds(mineWarmBean.getCurrentTime()
-                ,mineWarmBean.getStart_time()
-                ,mineWarmBean.getAddSecond())){
+        if (!isEndOrStartTimeAddSeconds(mineWarmBean.getCurrentTime()
+                , mineWarmBean.getStart_time()
+                , mineWarmBean.getAddSecond())) {
             cv_countdownTime_red_hours.setOnCountdownEndListener(new CountdownView.OnCountdownEndListener() {
                 @Override
                 public void onEnd(CountdownView cv) {
@@ -144,7 +132,7 @@ public class ShopTimeMyWarmAdapter extends BaseQuickAdapter<MineWarmBean, BaseVi
                     EventBus.getDefault().post(new EventMessage("refreshTimeShop", cv.getTag()));
                 }
             });
-        }else{
+        } else {
             cv_countdownTime_red_hours.setOnCountdownEndListener(null);
         }
     }
@@ -152,7 +140,7 @@ public class ShopTimeMyWarmAdapter extends BaseQuickAdapter<MineWarmBean, BaseVi
     private boolean isTimeStart(MineWarmBean mineWarmBean) {
         try {
             //格式化开始时间
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.CHINA);
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
             Date dateStart = formatter.parse(mineWarmBean.getStart_time());
             Date dateCurrent;
             if (!TextUtils.isEmpty(mineWarmBean.getCurrentTime())) {
@@ -172,7 +160,7 @@ public class ShopTimeMyWarmAdapter extends BaseQuickAdapter<MineWarmBean, BaseVi
     @Override
     protected void convert(BaseViewHolder helper, MineWarmBean mineWarmBean) {
         TextView tv_mine_warm_set_status = helper.getView(R.id.tv_mine_warm_set_status);
-        helper.setGone(R.id.ll_communal_count_time,true);
+        helper.setGone(R.id.ll_communal_count_time, true);
 //        开团状态
         TextView tv_count_time_before_hours = helper.getView(R.id.tv_count_time_before_hours);
         GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.img_mine_warm_product), mineWarmBean.getPath());
@@ -205,12 +193,12 @@ public class ShopTimeMyWarmAdapter extends BaseQuickAdapter<MineWarmBean, BaseVi
                 .addOnClickListener(R.id.tv_mine_warm_set_status).setTag(R.id.tv_mine_warm_set_status, mineWarmBean);
         CountdownView cv_countdownTime_red_hours = helper.getView(R.id.cv_countdownTime_red_hours);
         DynamicConfig.Builder dynamicDetails = new DynamicConfig.Builder();
-        dynamicDetails.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext,28));
-        dynamicDetails.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext,28));
+        dynamicDetails.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext, 28));
+        dynamicDetails.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext, 28));
         cv_countdownTime_red_hours.dynamicShow(dynamicDetails.build());
 
-        setCountTime(mineWarmBean,cv_countdownTime_red_hours);
-        setCountDownView(helper.getAdapterPosition() - getHeaderLayoutCount(),cv_countdownTime_red_hours);
+        setCountTime(mineWarmBean, cv_countdownTime_red_hours);
+        sparseArray.put(helper.getAdapterPosition() - getHeaderLayoutCount(), cv_countdownTime_red_hours);
         helper.itemView.setTag(mineWarmBean);
     }
 }

@@ -1,5 +1,6 @@
 package com.amkj.dmsh.homepage.fragment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.text.TextUtils;
@@ -38,7 +39,6 @@ import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
@@ -310,7 +310,7 @@ public class HomePageFragment extends BaseFragment {
     }
 
     //拼装滚动通知内容，并计算滚动时间
-    private String getRollMsg(LifecycleOwner activity, List<MarqueeTextBean> marqueeTextList, ViewGroup viewGroup) {
+    private String getRollMsg(Context context, List<MarqueeTextBean> marqueeTextList, ViewGroup viewGroup) {
         StringBuffer msg = new StringBuffer();
         try {
             int totalBlankLength = 0;
@@ -333,7 +333,7 @@ public class HomePageFragment extends BaseFragment {
             }
             //根据通知的长度计算滚动时间，滚动结束隐藏通知
             long totalTime = 300 * (int) ((msg.length() - totalBlankLength) + totalBlankLength * 1.0f / 3);
-            new LifecycleHandler(activity).postDelayed(() -> viewGroup.setVisibility(View.GONE), totalTime);
+            new LifecycleHandler(context).postDelayed(() -> viewGroup.setVisibility(View.GONE), totalTime);
         } catch (Exception e) {
             e.printStackTrace();
         }

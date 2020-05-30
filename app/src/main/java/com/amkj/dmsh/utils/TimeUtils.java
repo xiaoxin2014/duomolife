@@ -84,25 +84,25 @@ public class TimeUtils {
     }
 
     /**
-     * 获取毫秒 空值为当前默认时间
+     * 毫秒转换时间
      *
-     * @param time
+     * @param milliSecond
      * @return
      */
-    public static long getDateMilliSecondSystemTime(String time) {
-        if (!TextUtils.isEmpty(time)) {
+    public static String getMilliSecondDate(long milliSecond) {
+        if (milliSecond > 0) {
             try {
-                SimpleDateFormat timeReceiveFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-                Date date = timeReceiveFormat.parse(time);
-                return date.getTime();
+                Date time = new Date(milliSecond);
+                SimpleDateFormat formats = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+                return formats.format(time);
             } catch (Exception e) {
-                e.printStackTrace();
-                return new Date().getTime();
+                return "";
             }
         } else {
-            return new Date().getTime();
+            return "";
         }
     }
+
 
     //时分秒获取 时
     private static int getDataFormatHour(String time) {

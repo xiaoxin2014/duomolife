@@ -1,11 +1,13 @@
 package com.amkj.dmsh.utils;
 
+import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
+
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.OnLifecycleEvent;
-import android.os.Handler;
-import android.os.Looper;
 
 
 /**
@@ -13,38 +15,42 @@ import android.os.Looper;
  */
 public class LifecycleHandler extends Handler implements LifecycleObserver {
 
-    private LifecycleOwner lifecycleOwner;
+    private Context mContext;
 
-    public LifecycleHandler(final LifecycleOwner lifecycleOwner) {
-        this.lifecycleOwner = lifecycleOwner;
+    public LifecycleHandler(final Context lifecycleOwner) {
+        this.mContext = lifecycleOwner;
         addObserver();
     }
 
-    public LifecycleHandler(final Callback callback, final LifecycleOwner lifecycleOwner) {
+    public LifecycleHandler(final Context lifecycleOwner,final Callback callback ) {
         super(callback);
-        this.lifecycleOwner = lifecycleOwner;
+        this.mContext = lifecycleOwner;
         addObserver();
     }
 
-    public LifecycleHandler(final Looper looper, final LifecycleOwner lifecycleOwner) {
+    public LifecycleHandler(final Context lifecycleOwner,final Looper looper ) {
         super(looper);
-        this.lifecycleOwner = lifecycleOwner;
+        this.mContext = lifecycleOwner;
         addObserver();
     }
 
-    public LifecycleHandler(final Looper looper, final Callback callback, final LifecycleOwner lifecycleOwner) {
+    public LifecycleHandler(final Context lifecycleOwner, final Looper looper, final Callback callback) {
         super(looper, callback);
-        this.lifecycleOwner = lifecycleOwner;
+        this.mContext = lifecycleOwner;
         addObserver();
     }
 
     private void addObserver() {
-        lifecycleOwner.getLifecycle().addObserver(this);
+        if (mContext instanceof LifecycleOwner) {
+            ((LifecycleOwner) mContext).getLifecycle().addObserver(this);
+        }
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     private void onDestroy() {
         removeCallbacksAndMessages(null);
-        lifecycleOwner.getLifecycle().removeObserver(this);
+        if (mContext instanceof LifecycleOwner) {
+            ((LifecycleOwner) mContext).getLifecycle().removeObserver(this);
+        }
     }
 }

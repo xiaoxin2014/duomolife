@@ -366,6 +366,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     private GroupGoodsEntity mGroupGoodsEntity;
     private CountDownTimer mCountDownEndTimer;
     private CountDownTimer mCountDownStartTimer;
+    private CountDownTimer mCountDownForSale;
 
 
     @Override
@@ -930,12 +931,10 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             });
         }
 
-
         String end = "";
         if (skuSaleList != null && skuSaleList.size() > 0) {
             end = skuSaleList.get(0).getPrice().equals(skuSaleList.get(skuSaleList.size() - 1).getPrice()) ? "" : "起";
         }
-
 
         //优先显示新人专享信息
         if (!TextUtils.isEmpty(shopProperty.getNewUserTag())) {
@@ -1257,10 +1256,9 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             long dateCurret = !TextUtils.isEmpty(currentTime) ? formatter.parse(currentTime).getTime() : System.currentTimeMillis();
             //活动未开始
             if (!isEndOrStartTime(shopDetailsEntity.getCurrentTime(), shopPropertyBean.getActivityStartTime())) {
-                long millisInFuture = dateStart + 1 - dateCurret;
                 mTvTipsBottom.setText("距开始");
                 if (mCountDownStartTimer == null) {
-                    mCountDownStartTimer = new CountDownTimer(this, 1000) {
+                    mCountDownStartTimer = new CountDownTimer(this) {
                         @Override
                         public void onTick(long millisUntilFinished) {
                             if (isMJ) {
@@ -1279,14 +1277,13 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     };
                 }
 
-                mCountDownStartTimer.setMillisInFuture(millisInFuture);
+                mCountDownStartTimer.setMillisInFuture(dateStart - dateCurret);
                 mCountDownStartTimer.start();
             } else if (!isEndOrStartTime(currentTime, activityEndTime)) {
                 //活动已开始未结束
-                long millisInFuture = dateEnd + 1 - dateCurret;
                 mTvTipsBottom.setText("距结束");
                 if (mCountDownEndTimer == null) {
-                    mCountDownEndTimer = new CountDownTimer(this, 1000) {
+                    mCountDownEndTimer = new CountDownTimer(this) {
                         @Override
                         public void onTick(long millisUntilFinished) {
                             countDownTimeView.updateShow(millisUntilFinished);
@@ -1300,7 +1297,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                         }
                     };
                 }
-                mCountDownEndTimer.setMillisInFuture(millisInFuture);
+                mCountDownEndTimer.setMillisInFuture(dateEnd - dateCurret);
                 mCountDownEndTimer.start();
             } else {
                 //活动已结束
@@ -1322,21 +1319,22 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
             long dateStart = formatter.parse(startTime).getTime();
             long dateCurret = !TextUtils.isEmpty(currentTime) ? formatter.parse(currentTime).getTime() : System.currentTimeMillis();
-            CountDownTimer countDownTimer = new CountDownTimer(this, dateStart + 1 - dateCurret, 1000) {
-                @Override
-                public void onTick(long millisUntilFinished) {
-                    ct_pro_show_time_detail.updateShow(millisUntilFinished);
-                }
+            if (mCountDownForSale == null) {
+                mCountDownForSale = new CountDownTimer(this) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+                        ct_pro_show_time_detail.updateShow(millisUntilFinished);
+                    }
 
-                @Override
-                public void onFinish() {
-                    cancel();
-                    //商品已开售
-                    loadData();
-                }
-            };
-
-            countDownTimer.start();
+                    @Override
+                    public void onFinish() {
+                        //商品已开售
+                        loadData();
+                    }
+                };
+            }
+            mCountDownForSale.setMillisInFuture(dateStart - dateCurret);
+            mCountDownForSale.start();
         } catch (ParseException e) {
             rel_shop_pro_time.setVisibility(GONE);
         }

@@ -70,8 +70,6 @@ public class NetLoadUtils<T, E extends BaseEntity> {
     private static NetLoadUtils netLoadUtils;
     private Convertor<String> convertor;
     private static boolean confirmIng = true;  //避免确认token过期接口重复调用
-    public static String token;
-    public static String uid;
     private AlertDialogHelper mNotificationAlertDialogHelper;
     private long mLastTime;
     //需要添加埋点的接口（收藏商品，加购以及创建订单）
@@ -149,7 +147,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
                         if (baseEntity != null) {
                             String code = baseEntity.getCode();
                             if ("52".equals(code)) {
-                                loginOut(context);
+                                exitLogin(context);
                                 netLoadListener.onNotNetOrException();
                                 return;
                             }
@@ -608,14 +606,13 @@ public class NetLoadUtils<T, E extends BaseEntity> {
         NetLoadUtils.getNetInstance().loadNetDataPost(mContext, Url.CONFIRM_LOGIN_TOKEN_EXPIRE, null, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-
                 CommunalUserInfoBean tokenExpireBean = GsonUtils.fromJson(result, CommunalUserInfoBean.class);
                 if (tokenExpireBean != null) {
                     //未过期(更新本地过期时间)
                     if (tokenExpireBean.getStatus() == 1) {
                         SharedPreUtils.setParam(TOKEN_EXPIRE_TIME, System.currentTimeMillis() + tokenExpireBean.getExpireTime());
                     } else {
-                        loginOut(mContext);
+                        exitLogin(mContext);
                     }
                 }
                 confirmIng = true;
@@ -630,7 +627,7 @@ public class NetLoadUtils<T, E extends BaseEntity> {
     }
 
     //提示登录
-    private void loginOut(Activity mContext) {
+    private void exitLogin(Activity mContext) {
         //判断条件是为了避免重复调用
         long currentTime = System.currentTimeMillis();
         if (ConstantMethod.userId > 0 && currentTime - mLastTime > 3000) {

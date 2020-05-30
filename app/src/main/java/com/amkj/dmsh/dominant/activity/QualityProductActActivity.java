@@ -1,10 +1,6 @@
 package com.amkj.dmsh.dominant.activity;
 
 import android.content.Intent;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -38,6 +34,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -236,9 +236,9 @@ public class QualityProductActActivity extends BaseActivity {
             if (!isEndOrStartTime(shopPropertyBean.getCurrentTime(), shopPropertyBean.getActivityStartTime())) {
                 qActivityProView.mLlTopEndTime.setVisibility(GONE);
                 qActivityProView.mLlTopStartTime.setVisibility(VISIBLE);
-                long millisInFuture = dateStart + 1 - dateCurret;
+                long millisInFuture = dateStart - dateCurret;
                 if (mCountDownStartTimer == null) {
-                    mCountDownStartTimer = new CountDownTimer(this, 1000) {
+                    mCountDownStartTimer = new CountDownTimer(this) {
                         @Override
                         public void onTick(long millisUntilFinished) {
                             qActivityProView.mTvStartTime.setText(String.format("距开始%s", getTimeDifferenceText(millisUntilFinished)));
@@ -261,7 +261,7 @@ public class QualityProductActActivity extends BaseActivity {
                 //活动已开始未结束
                 long millisInFuture = dateEnd + 1 - dateCurret;
                 if (mCountDownEndTimer == null) {
-                    mCountDownEndTimer = new CountDownTimer(this, 1000) {
+                    mCountDownEndTimer = new CountDownTimer(this) {
                         @Override
                         public void onTick(long millisUntilFinished) {
                             qActivityProView.mCvCountdownTimeWhiteHours.updateShow(millisUntilFinished);

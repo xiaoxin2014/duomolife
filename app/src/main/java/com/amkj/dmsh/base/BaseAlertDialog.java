@@ -39,6 +39,7 @@ public abstract class BaseAlertDialog implements LifecycleObserver {
 
     protected BaseAlertDialog(Context context, int layoutId) {
         this.context = context;
+        //这里生命周期拥有者是被观察者，实现LifecycleObserver的类是观察者，当LifecycleOwner生命周期发生变化时，就会通知观察者，进行回调
         if (context instanceof LifecycleOwner) {
             ((LifecycleOwner) context).getLifecycle().addObserver(this);
         }

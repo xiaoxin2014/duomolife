@@ -16,9 +16,6 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.provider.Settings;
 import android.text.InputFilter;
 import android.text.SpannableString;
@@ -72,10 +69,10 @@ import com.amkj.dmsh.shopdetails.bean.IndentProDiscountBean;
 import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.utils.MarketUtils;
-import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
-import com.amkj.dmsh.views.alertdialog.AlertDialogImage;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.gson.GsonUtils;
+import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
+import com.amkj.dmsh.views.alertdialog.AlertDialogImage;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.hjq.toast.ToastUtils;
@@ -92,7 +89,6 @@ import com.yanzhenjie.permission.Permission;
 import com.yanzhenjie.permission.Setting;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -106,13 +102,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -120,6 +109,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import me.jessyan.autosize.AutoSize;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 import q.rorbin.badgeview.Badge;
@@ -158,15 +149,7 @@ import static com.yanzhenjie.permission.AndPermission.getFileUri;
 public class ConstantMethod {
     private OnSendCommentFinish onSendCommentFinish;
     private OnGetPermissionsSuccessListener onGetPermissionsSuccessListener;
-    private Context context;
-    private KProgressHUD loadHud;
-    private ScheduledExecutorService scheduler;
-    //   定时时间更新
-    private RefreshTimeListener refreshTimeListener;
-    //    线程池
-    private static ExecutorService executorService;
     public static int userId = 0;
-    public static boolean NEW_USER_DIALOG = true;
     private AlertDialogHelper alertDialogHelper;
 
 
@@ -200,16 +183,6 @@ public class ConstantMethod {
         Matcher m = p.matcher(text);
         text = m.replaceAll("");
         return text;
-    }
-
-    /**
-     * 数字转String
-     *
-     * @param number
-     * @return
-     */
-    public static String getStringsInteger(int number) {
-        return String.valueOf(number);
     }
 
     /**
@@ -840,9 +813,7 @@ public class ConstantMethod {
                 setFeedbackData(context, communalComment);
                 break;
             default:
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
+                dismissLoadhud(context);
                 if (onSendCommentFinish != null) {
                     onSendCommentFinish.onError();
                 }
@@ -968,10 +939,7 @@ public class ConstantMethod {
         NetLoadUtils.getNetInstance().loadNetDataPost(context, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-
+                dismissLoadhud(context);
                 RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
@@ -990,9 +958,7 @@ public class ConstantMethod {
 
             @Override
             public void onNotNetOrException() {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
+                dismissLoadhud(context);
                 if (onSendCommentFinish != null) {
                     onSendCommentFinish.onError();
                 }
@@ -1019,10 +985,7 @@ public class ConstantMethod {
         NetLoadUtils.getNetInstance().loadNetDataPost(context, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
-
+                dismissLoadhud(context);
                 RequestStatus requestInfo = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestInfo != null) {
                     if (requestInfo.getCode().equals(SUCCESS_CODE)) {
@@ -1041,9 +1004,7 @@ public class ConstantMethod {
 
             @Override
             public void onNotNetOrException() {
-                if (loadHud != null) {
-                    loadHud.dismiss();
-                }
+                dismissLoadhud(context);
                 if (onSendCommentFinish != null) {
                     onSendCommentFinish.onError();
                 }
@@ -1223,16 +1184,16 @@ public class ConstantMethod {
         try {
             if (BUY_AGAIN.equals(type)) {
                 params.put("orderNo", bundle.getString("orderNo"));
-                } else {
-                    String goodsJson = bundle.getString("goods");
-                    String combineGoodsJson = bundle.getString("combineGoods");
-                    String gpShopInfo = bundle.getString("gpShopInfo");
+            } else {
+                String goodsJson = bundle.getString("goods");
+                String combineGoodsJson = bundle.getString("combineGoods");
+                String gpShopInfo = bundle.getString("gpShopInfo");
 
 
-                    if (INDENT_GROUP_SHOP.equals(type) && !TextUtils.isEmpty(gpShopInfo)) {
-                        GroupShopDetailsBean groupShopDetailsBean = GsonUtils.fromJson(gpShopInfo, GroupShopDetailsBean.class);
-                        params.put("gpInfoId", groupShopDetailsBean.getGpInfoId());
-                        params.put("gpRecordId", groupShopDetailsBean.getGpRecordId());
+                if (INDENT_GROUP_SHOP.equals(type) && !TextUtils.isEmpty(gpShopInfo)) {
+                    GroupShopDetailsBean groupShopDetailsBean = GsonUtils.fromJson(gpShopInfo, GroupShopDetailsBean.class);
+                    params.put("gpInfoId", groupShopDetailsBean.getGpInfoId());
+                    params.put("gpRecordId", groupShopDetailsBean.getGpRecordId());
                     IndentProDiscountBean indentProBean = new IndentProDiscountBean();
                     indentProBean.setId(groupShopDetailsBean.getProductId());
                     indentProBean.setSaleSkuId(groupShopDetailsBean.getGpSkuId());
@@ -1385,7 +1346,6 @@ public class ConstantMethod {
 
     //    获取系统权限
     public void getPermissions(final Context context, final String... permissions) {
-        this.context = context;
         AndPermission.with(context)
                 .runtime()
                 .permission(permissions)
@@ -1970,115 +1930,19 @@ public class ConstantMethod {
         }
     }
 
-    /**
-     * 创建线程定时器
-     */
-    public ScheduledExecutorService createSchedule() {
-        return createSchedule(1000);
-    }
 
-    /**
-     * 间隔时间定时器
-     *
-     * @param longMilliseconds 单位毫秒
-     * @return
-     */
-    public ScheduledExecutorService createSchedule(int longMilliseconds) {
-        if (getScheduler() == null
-                || (getScheduler() != null && getScheduler().isShutdown())) {
-            stopSchedule();
-            scheduler = Executors.newScheduledThreadPool(1);
-            scheduler.scheduleAtFixedRate(new Runnable() {
-                @Override
-                public void run() {
-                    synchronized (this) {
-                        Message message = mHandler.obtainMessage();
-                        message.arg1 = 1;
-                        mHandler.sendMessage(message);
-                    }
-                }
-            }, longMilliseconds, longMilliseconds, TimeUnit.MILLISECONDS);
-        }
-        return scheduler;
-    }
-
-    /**
-     * 获取当前scheduler
-     */
-    public ScheduledExecutorService getScheduler() {
-        return scheduler;
-    }
-
-    /**
-     * 主线程接收更新
-     */
-    private Handler mHandler = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message message) {
-            if (message.arg1 == 1) {
-                if (refreshTimeListener != null) {
-                    refreshTimeListener.refreshTime();
-                }
-            }
-            return false;
-        }
-    });
-
-    /**
-     * 停用定时器
-     */
-    public void stopSchedule() {
-        if (scheduler != null) {
-            scheduler.shutdownNow();
-        }
-    }
-
-    /**
-     * 创建线程池
-     */
-    public static ExecutorService createExecutor() {
-        if (executorService == null) {
-            int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
-            int KEEP_ALIVE_TIME = 1;
-            TimeUnit KEEP_ALIVE_TIME_UNIT = TimeUnit.SECONDS;
-            BlockingQueue<Runnable> taskQueue = new LinkedBlockingQueue<Runnable>();
-            executorService = new ThreadPoolExecutor(NUMBER_OF_CORES,
-                    NUMBER_OF_CORES * 2, KEEP_ALIVE_TIME, KEEP_ALIVE_TIME_UNIT, taskQueue);
-        }
-        return executorService;
-    }
-
-    /**
-     * 移除引用的Handler
-     */
-    public void releaseHandlers() {
+    public static void clearFragmentCache(FragmentManager fragmentManager) {
         try {
-            Class<?> clazz = getClass();
-            Field[] fields = clazz.getDeclaredFields();
-            if (fields == null || fields.length <= 0) {
-                return;
+            FragmentTransaction mCurTransaction = fragmentManager.beginTransaction();
+            List<Fragment> fragments = fragmentManager.getFragments();
+            Iterator<Fragment> iterator = fragments.iterator();
+            while (iterator.hasNext()) {
+                mCurTransaction.remove(iterator.next());
             }
-            for (Field field : fields) {
-                field.setAccessible(true);
-                if (!Handler.class.isAssignableFrom(field.getType())) continue;
-                Handler handler = (Handler) field.get(this);
-                if (handler != null && handler.getLooper() == Looper.getMainLooper()) {
-                    handler.removeCallbacksAndMessages(null);
-                }
-                field.setAccessible(false);
-            }
-        } catch (IllegalAccessException e) {
+            mCurTransaction.commitNowAllowingStateLoss();
+        } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public interface RefreshTimeListener {
-        void refreshTime();
-
-    }
-
-    public void setRefreshTimeListener(RefreshTimeListener refreshTimeListener) {
-        this.refreshTimeListener = refreshTimeListener;
     }
 
     /**

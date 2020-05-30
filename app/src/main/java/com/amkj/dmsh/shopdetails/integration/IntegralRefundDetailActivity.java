@@ -42,21 +42,19 @@ import com.amkj.dmsh.shopdetails.bean.RefundDetailEntity.RefundDetailBean.Refund
 import com.amkj.dmsh.shopdetails.bean.RefundDetailProductBean;
 import com.amkj.dmsh.shopdetails.bean.RefundLogisticEntity;
 import com.amkj.dmsh.shopdetails.bean.RefundTypeBean;
+import com.amkj.dmsh.utils.CountDownTimer;
 import com.amkj.dmsh.utils.KeyboardUtils;
 import com.amkj.dmsh.utils.NetWorkUtils;
-import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.gson.GsonUtils;
+import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.bigkoo.pickerview.adapter.ArrayWheelAdapter;
 import com.contrarywind.view.WheelView;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -88,6 +86,8 @@ import static com.amkj.dmsh.constant.Url.Q_INDENT_REFUND_DETAIL;
 import static com.amkj.dmsh.constant.Url.Q_INDENT_REPAIR_DETAIL;
 import static com.amkj.dmsh.constant.Url.Q_INDENT_REPAIR_LOGISTIC_SUB;
 import static com.amkj.dmsh.constant.Url.Q_INDENT_REPAIR_RECEIVE;
+import static com.amkj.dmsh.utils.TimeUtils.getCoutDownTime;
+import static com.amkj.dmsh.utils.TimeUtils.getTimeDifference;
 import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTimeAddSeconds;
 
 /**
@@ -208,6 +208,7 @@ public class IntegralRefundDetailActivity extends BaseActivity {
     private AlertDialogHelper cancelApplyDialogHelper;
     private List<RefundDetailProductBean> products = new ArrayList<>();
     private RefundDetailProductAdapter refundDetailProductAdapter;
+    private CountDownTimer mCountDownTimer;
 
     @Override
     protected int getContentView() {
@@ -365,7 +366,7 @@ public class IntegralRefundDetailActivity extends BaseActivity {
                         refundDetailBean.setCurrentTime(refundDetailEntity.getCurrentTime());
                         setRefundDetailData(refundDetailBean);
                     } else if (refundDetailEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast( R.string.invalidData);
+                        showToast(R.string.invalidData);
                     } else {
                         showToast(refundDetailEntity.getMsg());
                     }
@@ -423,7 +424,7 @@ public class IntegralRefundDetailActivity extends BaseActivity {
                         showToast(String.format(getResources().getString(R.string.doSuccess), "撤销"));
                         finish();
                     } else if (requestStatus.getCode().equals(EMPTY_CODE)) {
-                        showToast( R.string.invalidData);
+                        showToast(R.string.invalidData);
                     } else {
                         showToastRequestMsg(requestStatus);
                     }
@@ -432,7 +433,7 @@ public class IntegralRefundDetailActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable throwable) {
-                showToast( R.string.invalidData);
+                showToast(R.string.invalidData);
             }
         });
     }
@@ -457,7 +458,7 @@ public class IntegralRefundDetailActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable throwable) {
-                showToast( R.string.invalidData);
+                showToast(R.string.invalidData);
             }
         });
     }
@@ -483,9 +484,6 @@ public class IntegralRefundDetailActivity extends BaseActivity {
         if (refundDetailBean.getAutoUndoRefundGoodsTime() > 0) {
             setRefundTime(refundDetailBean);
         } else {
-            if (constantMethod != null) {
-                constantMethod.stopSchedule();
-            }
             if (refundDetailBean.getRefundPayInfo() != null
                     && !TextUtils.isEmpty(refundDetailBean.getRefundPayInfo().getRefundAccount())) {
                 RefundPayInfoBean refundPayInfo = refundDetailBean.getRefundPayInfo();
@@ -723,69 +721,42 @@ public class IntegralRefundDetailActivity extends BaseActivity {
      * @param refundDetailBean
      */
     private void setRefundTime(final RefundDetailBean refundDetailBean) {
-        //            创建时间加倒计时间 大于等于当前时间 展示倒计时
-        if (isEndOrStartTimeAddSeconds(refundDetailBean.getUpdateTime()
-                , refundDetailBean.getCurrentTime()
-                , refundDetailBean.getAutoUndoRefundGoodsTime())) {
-            setReFundTimeDown(refundDetailBean);
-            if (constantMethod == null) {
-                constantMethod = new ConstantMethod();
-            }
-            constantMethod.createSchedule();
-            constantMethod.setRefreshTimeListener(new ConstantMethod.RefreshTimeListener() {
-                @Override
-                public void refreshTime() {
-                    setReFundTimeDown(refundDetailBean);
+        try {
+            String updateTime = refundDetailBean.getUpdateTime();
+            String currentTime = refundDetailBean.getCurrentTime();
+            long autoUndoRefundGoodsTime = refundDetailBean.getAutoUndoRefundGoodsTime();
+            if (isEndOrStartTimeAddSeconds(updateTime, currentTime, autoUndoRefundGoodsTime)) {
+                if (mCountDownTimer == null) {
+                    mCountDownTimer = new CountDownTimer(getActivity()) {
+                        @Override
+                        public void onTick(long millisUntilFinished) {
+                            String coutDownTime = getCoutDownTime(millisUntilFinished, false);
+                            String coutDownText = "距离自动关闭售后申请还剩" + coutDownTime;
+                            Link link = new Link(Pattern.compile(REGEX_NUM));
+                            link.setTextColor(0xffff5e6b);
+                            link.setUnderlined(false);
+                            link.setHighlightAlpha(0f);
+                            tv_refund_detail_msg.setText(LinkBuilder.from(getActivity(), coutDownText)
+                                    .addLink(link)
+                                    .build());
+                        }
+
+                        @Override
+                        public void onFinish() {
+                            getRefundDetailData();
+                        }
+                    };
                 }
-            });
-        } else {
-            if (constantMethod != null) {
-                constantMethod.stopSchedule();
+                mCountDownTimer.setMillisInFuture(autoUndoRefundGoodsTime * 1000 - getTimeDifference(updateTime, currentTime));
+                mCountDownTimer.start();
+            } else {
+                tv_refund_detail_msg.setText(getStrings(refundDetailBean.getNoticeMsg()));
             }
-            tv_refund_detail_msg.setText(getStrings(refundDetailBean.getNoticeMsg()));
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    /**
-     * 更新退款倒计时
-     *
-     * @param refundDetailBean
-     */
-    private void setReFundTimeDown(RefundDetailBean refundDetailBean) {
-        try {
-            refundDetailBean.setAutoUndoRefundGoodsTime(refundDetailBean.getAutoUndoRefundGoodsTime() - 1);
-//            格式化结束时间
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-            Date dateCreate = formatter.parse(refundDetailBean.getUpdateTime());
-            long overTime = refundDetailBean.getAutoUndoRefundGoodsTime() * 1000;
-            Date dateCurrent;
-            if (!TextUtils.isEmpty(refundDetailBean.getCurrentTime())) {
-                dateCurrent = formatter.parse(refundDetailBean.getCurrentTime());
-            } else {
-                dateCurrent = new Date();
-            }
-            long ms = dateCreate.getTime() + overTime - dateCurrent.getTime();
-            if (ms >= 0) {
-                int day = (int) (ms / (1000 * 60 * 60 * 24));
-                int hour = (int) ((ms % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                int minute = (int) ((ms % (1000 * 60 * 60)) / (1000 * 60));
-                int second = (int) ((ms % (1000 * 60)) / 1000);
-                String timeMsg = (getStrings(refundDetailBean.getNoticeMsg())
-                        + String.format(getString(R.string.refund_time), day, hour, minute, second));
-                Link link = new Link(Pattern.compile(REGEX_NUM));
-                link.setTextColor(0xffff5e6b);
-                link.setUnderlined(false);
-                link.setHighlightAlpha(0f);
-                tv_refund_detail_msg.setText(LinkBuilder.from(getActivity(), timeMsg)
-                        .addLink(link)
-                        .build());
-            } else {
-                getRefundDetailData();
-            }
-        } catch (Exception e) {
-            tv_refund_detail_msg.setText(getStrings(refundDetailBean.getNoticeMsg()));
-        }
-    }
 
     @OnClick({R.id.tv_one_click_cancel, R.id.tv_one_click_confirmed})
     void selLogisticCancelConfirm(View view) {
@@ -858,7 +829,7 @@ public class IntegralRefundDetailActivity extends BaseActivity {
                         showToast(String.format(getResources().getString(R.string.doSuccess), "提交"));
                         loadData();
                     } else if (requestStatus.getCode().equals(EMPTY_CODE)) {
-                        showToast( R.string.invalidData);
+                        showToast(R.string.invalidData);
                     } else {
                         showToastRequestMsg(requestStatus);
                     }
@@ -927,7 +898,7 @@ public class IntegralRefundDetailActivity extends BaseActivity {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                         loadData();
                     } else if (requestStatus.getCode().equals(EMPTY_CODE)) {
-                        showToast( R.string.invalidData);
+                        showToast(R.string.invalidData);
                     } else {
                         showToastRequestMsg(requestStatus);
                     }
@@ -1030,10 +1001,6 @@ public class IntegralRefundDetailActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        if (constantMethod != null) {
-            constantMethod.stopSchedule();
-            constantMethod.releaseHandlers();
-        }
         super.onDestroy();
         KeyboardUtils.unregisterSoftInputChangedListener(this);
     }

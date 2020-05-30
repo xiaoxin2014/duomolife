@@ -1,13 +1,7 @@
 package com.amkj.dmsh.shopdetails.adapter;
 
 import android.app.Activity;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleObserver;
-import androidx.lifecycle.OnLifecycleEvent;
 import android.content.Intent;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -22,28 +16,26 @@ import com.amkj.dmsh.shopdetails.activity.DirectExchangeDetailsActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectLogisticsDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.MainOrderListEntity.MainOrderBean;
 import com.amkj.dmsh.shopdetails.fragment.DoMoIndentNewFragment;
+import com.amkj.dmsh.utils.CountDownTimer;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.MainButtonView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import cn.iwgang.countdownview.CountdownView;
-import cn.iwgang.countdownview.DynamicConfig;
-import me.jessyan.autosize.utils.AutoSizeUtils;
 
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.getSpannableString;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_TYPE;
+import static com.amkj.dmsh.utils.TimeUtils.getCoutDownTime;
+import static com.amkj.dmsh.utils.TimeUtils.getTimeDifference;
 import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTimeAddSeconds;
 
 
@@ -52,81 +44,56 @@ import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTimeAddSeconds;
  * Version:v4.5.0
  * ClassDescription :订单列表适配器重构
  */
-public class DirectIndentListAdapter extends BaseQuickAdapter<MainOrderBean, BaseViewHolder> implements LifecycleObserver {
+public class DirectIndentListAdapter extends BaseQuickAdapter<MainOrderBean, BaseViewHolder> {
     private AppCompatActivity context;
     private DoMoIndentNewFragment fragment;
     private LayoutInflater layoutInflater;
-    private List<MainOrderBean> orderList;
     private SparseArray<Object> sparseArray = new SparseArray<>();
-    private Map<Integer, MainOrderBean> beanMap = new HashMap<>();
-    private ConstantMethod constantMethod;
+    private CountDownTimer mCountDownTimer;
 
 
     public DirectIndentListAdapter(DoMoIndentNewFragment fragment, Activity activity, List<MainOrderBean> orderList) {
         super(R.layout.layout_communal_recycler_wrap, orderList);
         this.context = ((AppCompatActivity) activity);
         this.fragment = fragment;
-        context.getLifecycle().addObserver(this);
-        this.orderList = orderList;
         layoutInflater = LayoutInflater.from(activity);
-        getConstant();
+        CreatCountDownTimer();
     }
 
-    private void getConstant() {
-        if (constantMethod == null) {
-            constantMethod = new ConstantMethod();
-        }
-    }
-
-    @Override
-    public int getItemCount() {
-        if (orderList != null && orderList.size() > 0) {
-            constantMethod.createSchedule();
-            for (int i = 0; i < orderList.size(); i++) {
-                MainOrderBean OrderListNewBean = orderList.get(i);
-                if (0 <= OrderListNewBean.getStatus() && OrderListNewBean.getStatus() < 10) {
-                    beanMap.put(i, OrderListNewBean);
-                }
-            }
-        }
-        return super.getItemCount();
-    }
-
-    @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
-        if (constantMethod != null) {
-            constantMethod.setRefreshTimeListener(() -> {
-                if (orderList != null && orderList.size() > 0) {
-                    //刷新数据
-                    refreshData();
+    //创建定时任务
+    private void CreatCountDownTimer() {
+        if (mCountDownTimer == null) {
+            mCountDownTimer = new CountDownTimer(context) {
+                @Override
+                public void onTick(long millisUntilFinished) {
                     //刷新倒计时
                     refreshSchedule();
                 }
-            });
-        }
-    }
 
-    private void refreshData() {
-        for (Map.Entry<Integer, MainOrderBean> entry : beanMap.entrySet()) {
-            MainOrderBean OrderListNewBean = entry.getValue();
-            OrderListNewBean.setSecond(OrderListNewBean.getSecond() - 1);
-            beanMap.put(entry.getKey(), OrderListNewBean);
+                @Override
+                public void onFinish() {
+
+                }
+            };
+            mCountDownTimer.setMillisInFuture(3600 * 24 * 30 * 1000L);
         }
+        mCountDownTimer.start();
     }
 
     private void refreshSchedule() {
         for (int i = 0; i < sparseArray.size(); i++) {
             IntentHView intentHView = (IntentHView) sparseArray.get(sparseArray.keyAt(i));
-            setCountTime(intentHView, beanMap.get(sparseArray.keyAt(i)));
+            if (intentHView != null) {
+                MainOrderBean mainOrderBean = intentHView.getTag();
+                if (mainOrderBean != null && 0 <= mainOrderBean.getStatus() && mainOrderBean.getStatus() < 10) {
+                    mainOrderBean.setSecond(mainOrderBean.getSecond() - 1);//刷新数据
+                    setCountTime(intentHView, mainOrderBean);
+                }
+            }
         }
     }
 
 
-    /**
-     * @param helper
-     * @param mainOrderBean
-     */
     @Override
     protected void convert(BaseViewHolder helper, final MainOrderBean mainOrderBean) {
         if (mainOrderBean == null) return;
@@ -159,10 +126,6 @@ public class DirectIndentListAdapter extends BaseQuickAdapter<MainOrderBean, Bas
         View headerView = layoutInflater.inflate(R.layout.layout_indent_item_header, communal_recycler_wrap, false);
         IntentHView intentHView = new IntentHView();
         ButterKnife.bind(intentHView, headerView);
-        DynamicConfig.Builder dynamic = new DynamicConfig.Builder();
-        dynamic.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext, 28));
-        dynamic.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext, 28));
-        intentHView.cv_countdownTime_direct.dynamicShow(dynamic.build());
         directProductListAdapter.addHeaderView(headerView);
         //主订单状态
         intentHView.tv_indent_type_show.setText(getStrings(mainOrderBean.getStatusText()));
@@ -193,88 +156,62 @@ public class DirectIndentListAdapter extends BaseQuickAdapter<MainOrderBean, Bas
         intentFView.tv_msg.setVisibility(!TextUtils.isEmpty(mainOrderBean.getMsg()) ? View.VISIBLE : View.GONE);
         intentFView.tv_msg.setText(getStrings(mainOrderBean.getMsg()));
 
-        //待支付倒计时
-        if (0 <= mainOrderBean.getStatus() && mainOrderBean.getStatus() < 10) {
-            //            展示倒计时
-            if (!TextUtils.isEmpty(mainOrderBean.getCurrentTime())
-                    && isEndOrStartTimeAddSeconds(mainOrderBean.getCreateTime()
-                    , mainOrderBean.getCurrentTime()
-                    , mainOrderBean.getSecond())) {
-                intentHView.tv_direct_indent_create_time.setVisibility(View.GONE);
-                intentHView.ll_direct_count_time.setVisibility(View.VISIBLE);
-                sparseArray.put(helper.getAdapterPosition() - getHeaderLayoutCount(), intentHView);
-                setCountTime(intentHView, mainOrderBean);
-            } else {
-                intentHView.tv_direct_indent_create_time.setVisibility(View.VISIBLE);
-                intentHView.ll_direct_count_time.setVisibility(View.GONE);
-            }
+        //待支付并且倒计时未结束时
+        if (0 <= mainOrderBean.getStatus() && mainOrderBean.getStatus() < 10
+                && isEndOrStartTimeAddSeconds(mainOrderBean.getCreateTime(), mainOrderBean.getCurrentTime(), mainOrderBean.getSecond())) {
+            intentHView.tv_direct_indent_create_time.setVisibility(View.GONE);
+            intentHView.tv_countdownTime_direct.setVisibility(View.VISIBLE);
+            intentHView.setTag(mainOrderBean);//绑定数据
+            sparseArray.put(helper.getAdapterPosition() - getHeaderLayoutCount(), intentHView);
+            //初始化倒计时控件
+            setCountTime(intentHView, mainOrderBean);
+        } else {
+            intentHView.tv_direct_indent_create_time.setVisibility(View.VISIBLE);
+            intentHView.tv_direct_indent_create_time.setText(getStrings(mainOrderBean.getCreateTime()));
+            intentHView.tv_countdownTime_direct.setVisibility(View.GONE);
         }
-        intentHView.tv_direct_indent_create_time.setText(getStrings(mainOrderBean.getCreateTime()));
         helper.itemView.setTag(mainOrderBean);
     }
 
-    private void setCountTime(final IntentHView holder, MainOrderBean orderListNewBean) {
-        try {
-            //格式化结束时间
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-            Date dateCreate = formatter.parse(orderListNewBean.getCreateTime());
-            long overTime = orderListNewBean.getSecond() * 1000;
-            Date dateCurrent;
-            if (!TextUtils.isEmpty(orderListNewBean.getCurrentTime())) {
-                dateCurrent = formatter.parse(orderListNewBean.getCurrentTime());
-            } else {
-                dateCurrent = new Date();
-            }
-            holder.cv_countdownTime_direct.updateShow(dateCreate.getTime() + overTime - dateCurrent.getTime());
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        if (isEndOrStartTimeAddSeconds(orderListNewBean.getCreateTime()
-                , orderListNewBean.getCurrentTime()
-                , orderListNewBean.getSecond())) {
-            holder.cv_countdownTime_direct.setOnCountdownEndListener(new CountdownView.OnCountdownEndListener() {
-                @Override
-                public void onEnd(CountdownView cv) {
-                    cv.setOnCountdownEndListener(null);
-                }
-            });
+    private void setCountTime(final IntentHView intentHView, @NonNull MainOrderBean mainOrderBean) {
+        //待支付倒计时
+        String currentTime = mainOrderBean.getCurrentTime();
+        String createTime = mainOrderBean.getCreateTime();
+        long second = mainOrderBean.getSecond();
+        if (isEndOrStartTimeAddSeconds(createTime, currentTime, second)) {
+            String coutDownTime = getCoutDownTime(second * 1000 - getTimeDifference(currentTime, createTime), false);
+            String text = "剩 " + coutDownTime + " 自动关闭";
+            intentHView.tv_countdownTime_direct.setText(getSpannableString(text, 2, text.length() - 5, 1.1f, "#0a88fa", true));
         } else {
-            holder.cv_countdownTime_direct.setVisibility(View.GONE);
-            holder.tv_indent_type_show.setText("已关闭");
+            //隐藏倒计时显示创建时间
+            intentHView.tv_direct_indent_create_time.setVisibility(View.VISIBLE);
+            intentHView.tv_direct_indent_create_time.setText(getStrings(mainOrderBean.getCreateTime()));
+            intentHView.tv_countdownTime_direct.setVisibility(View.GONE);
+            intentHView.tv_indent_type_show.setText("已关闭");
         }
     }
 
-    @Override
-    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
-        super.onDetachedFromRecyclerView(recyclerView);
-        if (constantMethod != null) {
-            constantMethod.stopSchedule();
-            constantMethod.releaseHandlers();
-        }
-    }
-
-    class IntentHView {
+    static class IntentHView {
         //        订单状态
         @BindView(R.id.tv_integ_indent_time)
         TextView tv_indent_type_show;
         //        创建时间
         @BindView(R.id.tv_direct_indent_create_time)
         TextView tv_direct_indent_create_time;
-        //        倒计时布局
-        @BindView(R.id.ll_direct_count_time)
-        LinearLayout ll_direct_count_time;
-        //        倒计时
-        @BindView(R.id.tv_count_time_before)
-        TextView tv_count_time_before;
-        //        倒计时前
-        @BindView(R.id.cv_countdownTime_direct)
-        CountdownView cv_countdownTime_direct;
-        //        倒计时后
-        @BindView(R.id.tv_count_time_after)
-        TextView tv_count_time_after;
+        @BindView(R.id.tv_countdownTime_direct)
+        TextView tv_countdownTime_direct;
+        private MainOrderBean mMainOrderBean;
+
+        private void setTag(MainOrderBean mainOrderBean) {
+            mMainOrderBean = mainOrderBean;
+        }
+
+        public MainOrderBean getTag() {
+            return mMainOrderBean;
+        }
     }
 
-    class IntentFView {
+    static class IntentFView {
         @BindView(R.id.tv_intent_count_price)
         TextView tv_intent_count_price;
         @BindView(R.id.main_button_view)
@@ -285,10 +222,5 @@ public class DirectIndentListAdapter extends BaseQuickAdapter<MainOrderBean, Bas
         TextView tv_msg;
         @BindView(R.id.ll_express_info)
         LinearLayout ll_express_info;
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    private void onDestroy() {
-        context.getLifecycle().removeObserver(this);
     }
 }

@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.createExecutor;
+import static com.amkj.dmsh.utils.AsyncUtils.createExecutor;
 
 public class AddressUtils {
     private static AddressUtils addressUtils;
@@ -63,7 +63,8 @@ public class AddressUtils {
      */
     public String mCurrentZipCode = "";
 
-    private AddressUtils() {}
+    private AddressUtils() {
+    }
 
     public static AddressUtils getQyInstance() {
         if (addressUtils == null) {
@@ -76,8 +77,8 @@ public class AddressUtils {
         return addressUtils;
     }
 
-    public void initAddress(){
-        if(mProvinceData==null){
+    public void initAddress() {
+        if (mProvinceData == null) {
             createExecutor().execute(new Runnable() {
                 @Override
                 public void run() {
@@ -86,8 +87,9 @@ public class AddressUtils {
             });
         }
     }
-    public void initAddress(String address){
-        if(mProvinceData==null&& !TextUtils.isEmpty(address)){
+
+    public void initAddress(String address) {
+        if (mProvinceData == null && !TextUtils.isEmpty(address)) {
             createExecutor().execute(new Runnable() {
                 @Override
                 public void run() {
@@ -101,11 +103,12 @@ public class AddressUtils {
     private void initProvinceData() {
         initProvinceData(null);
     }
+
     private void initProvinceData(String addressData) {
         String adsPath = mAppContext.getFilesDir().getAbsolutePath() + "/adr_s/asr_s.txt";
-        if(!TextUtils.isEmpty(addressData)){
+        if (!TextUtils.isEmpty(addressData)) {
             setAddressData(getAddressInfoBean(addressData));
-        }else if (new File(adsPath).exists()) {
+        } else if (new File(adsPath).exists()) {
             try {
                 setAddressData(getAddressInfoBean(FileStreamUtils.readFile2String(adsPath)));
             } catch (JsonSyntaxException e) {
@@ -127,11 +130,12 @@ public class AddressUtils {
 
     /**
      * 根据数据获取addressinfo对象
+     *
      * @param addressData
      * @return
      */
     private AddressInfo getAddressInfoBean(String addressData) {
-        if(!TextUtils.isEmpty(addressData)){
+        if (!TextUtils.isEmpty(addressData)) {
 
             return GsonUtils.fromJson(addressData, AddressInfo.class);
         }
@@ -156,7 +160,7 @@ public class AddressUtils {
         } catch (JsonIOException e) {
             e.printStackTrace();
         } finally {
-            if(input!=null){
+            if (input != null) {
                 input.close();
             }
         }
@@ -272,6 +276,7 @@ public class AddressUtils {
             e.printStackTrace();
         }
     }
+
     //      所有省
     public ProvinceModel[] getAllProvince() {
         return mProvinceData;

@@ -131,11 +131,11 @@
                                 android:layout_gravity="center_vertical">
 
                                 <TextView
+                                    android:text="@string/send_sms"
                                     android:id="@+id/tv_login_send_code"
                                     android:layout_width="wrap_content"
                                     android:layout_height="@dimen/sc_mm_100"
                                     android:layout_gravity="center"
-
                                     android:gravity="center_vertical"
                                     android:paddingRight="@dimen/gap_right"
                                     android:textColor="@color/selector_font_blue_hint_gray"

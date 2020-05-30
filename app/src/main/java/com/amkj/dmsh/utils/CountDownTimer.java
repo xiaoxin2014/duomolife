@@ -17,34 +17,16 @@
 package com.amkj.dmsh.utils;
 
 import android.annotation.SuppressLint;
-import androidx.lifecycle.LifecycleOwner;
+import android.content.Context;
 import android.os.Message;
 import android.os.SystemClock;
 
+
 /**
- * Schedule a countdown until a time in the future, with
- * regular notifications on intervals along the way.
- * <p>
- * Example of showing a 30 second countdown in a text field:
- *
- * <pre class="prettyprint">
- * new CountDownTimer(30000, 1000) {
- *
- *     public void onTick(long millisUntilFinished) {
- *         mTextField.setText("seconds remaining: " + millisUntilFinished / 1000);
- *     }
- *
- *     public void onFinish() {
- *         mTextField.setText("done!");
- *     }
- *  }.start();
- * </pre>
- * <p>
- * The calls to {@link #onTick(long)} are synchronized to this object so that
- * one call to {@link #onTick(long)} won't ever occur before the previous
- * callback is complete.  This is only relevant when the implementation of
- * {@link #onTick(long)} takes an amount of time to execute that is significant
- * compared to the countdown interval.
+ * Created by xiaoxin on 2020/5/27
+ * Version:v4.6.1
+ * ClassDescription :定时任务工具类
+ * 基于官方CountDownTimer修改，使用LifecycleHandler处理定时任务，页面销毁时自动移除未处理的message,避免内存泄漏
  */
 public abstract class CountDownTimer {
 
@@ -57,8 +39,10 @@ public abstract class CountDownTimer {
         return mMillisInFuture;
     }
 
-    public void setMillisInFuture(long time) {
-        mMillisInFuture = time;
+    //动态设置倒计时总时长，复用定时任务时需要更新倒计时时间，避免错乱
+    public void setMillisInFuture(long millisInFuture) {
+        //代码执行需要时间，所以+300处理误差
+        mMillisInFuture = millisInFuture + 300;
     }
 
     /**
@@ -73,22 +57,20 @@ public abstract class CountDownTimer {
      */
     private boolean mCancelled = false;
 
-    /**
-     * @param millisInFuture    The number of millis in the future from the call
-     *                          to {@link #start()} until the countdown is done and {@link #onFinish()}
-     *                          is called.
-     * @param countDownInterval The interval along the way to receive
-     *                          {@link #onTick(long)} callbacks.
-     */
+
     @SuppressLint("HandlerLeak")
-    public CountDownTimer(LifecycleOwner lifecycleOwner, long millisInFuture, long countDownInterval) {
-        mMillisInFuture = millisInFuture;
+    public CountDownTimer(Context lifecycleOwner) {
+        //默认间隔时间1s
+        this(lifecycleOwner, 1000);
+    }
+
+    @SuppressLint("HandlerLeak")
+    private CountDownTimer(Context lifecycleOwner, long countDownInterval) {
         mCountdownInterval = countDownInterval;
         if (mHandler == null) {
             mHandler = new LifecycleHandler(lifecycleOwner) {
                 @Override
                 public void handleMessage(Message msg) {
-
                     synchronized (CountDownTimer.this) {
                         if (mCancelled) {
                             return;
@@ -96,7 +78,9 @@ public abstract class CountDownTimer {
 
                         final long millisLeft = mStopTimeInFuture - SystemClock.elapsedRealtime();
 
+                        //倒计时结束
                         if (millisLeft <= 0) {
+                            cancel();
                             onFinish();
                         } else {
                             long lastTickStart = SystemClock.elapsedRealtime();
@@ -129,10 +113,6 @@ public abstract class CountDownTimer {
         }
     }
 
-    @SuppressLint("HandlerLeak")
-    public CountDownTimer(LifecycleOwner lifecycleOwner, long countDownInterval) {
-        this(lifecycleOwner, 0, countDownInterval);
-    }
 
     /**
      * Cancel the countdown.

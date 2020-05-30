@@ -29,21 +29,18 @@ import com.amkj.dmsh.shopdetails.bean.MainOrderListEntity.MainOrderBean;
 import com.amkj.dmsh.shopdetails.bean.RefundGoodsAddressInfoBean;
 import com.amkj.dmsh.shopdetails.bean.RefundLogisticEntity;
 import com.amkj.dmsh.shopdetails.bean.RefundNewDetailEntity;
-import com.amkj.dmsh.views.alertdialog.AlertDialogWheel;
 import com.amkj.dmsh.utils.CountDownTimer;
 import com.amkj.dmsh.utils.KeyboardUtils;
-import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.MainButtonView;
+import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
+import com.amkj.dmsh.views.alertdialog.AlertDialogWheel;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import androidx.core.widget.NestedScrollView;
@@ -73,6 +70,7 @@ import static com.amkj.dmsh.constant.Url.Q_INDENT_LOGISTIC_COM;
 import static com.amkj.dmsh.constant.Url.Q_INDENT_LOGISTIC_SUB;
 import static com.amkj.dmsh.constant.Url.Q_INDENT_REFUND_NEW_DETAIL;
 import static com.amkj.dmsh.utils.TimeUtils.getCoutDownTime;
+import static com.amkj.dmsh.utils.TimeUtils.getTimeDifference;
 import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTime;
 
 
@@ -406,15 +404,10 @@ public class DoMoRefundDetailActivity extends BaseActivity {
         String currentTime = mainOrderBean.getCurrentTime();
         String endTime = mainOrderBean.getEndTime();
         try {
-            //格式化开始时间
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-            Date dateCurrent = formatter.parse(currentTime);
-            Date dateEnd = formatter.parse(endTime);
             if (isEndOrStartTime(endTime, currentTime)) {
                 mTvCloseTime.setVisibility(View.VISIBLE);
-                long millisInFuture = dateEnd.getTime() - dateCurrent.getTime();
                 if (mCountDownTimer == null) {
-                    mCountDownTimer = new CountDownTimer(getActivity(), 1000) {
+                    mCountDownTimer = new CountDownTimer(getActivity()) {
                         @Override
                         public void onTick(long millisUntilFinished) {
                             String coutDownTime = getCoutDownTime(millisUntilFinished, false);
@@ -424,12 +417,11 @@ public class DoMoRefundDetailActivity extends BaseActivity {
 
                         @Override
                         public void onFinish() {
-                            cancel();
                             mTvCloseTime.setText("已结束");
                         }
                     };
                 }
-                mCountDownTimer.setMillisInFuture(millisInFuture);
+                mCountDownTimer.setMillisInFuture(getTimeDifference(currentTime,endTime));
                 mCountDownTimer.start();
             } else {
                 mTvCloseTime.setVisibility(GONE);

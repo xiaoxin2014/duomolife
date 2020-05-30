@@ -130,10 +130,6 @@ public class MainOrderListEntity extends BaseTimeEntity {
             this.orderRefundProductId = orderRefundProductId;
         }
 
-        public void setSecond(String second) {
-            this.second = second;
-        }
-
         public String getIsPostage() {
             return isPostage;
         }

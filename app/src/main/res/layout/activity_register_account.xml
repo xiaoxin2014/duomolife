@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@drawable/login_bg"
-              android:focusable="false"
-              android:focusableInTouchMode="true"
-              android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/login_bg"
+    android:focusable="false"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -19,7 +19,7 @@
             android:orientation="vertical"
             android:paddingTop="@dimen/sc_mm_100">
 
-            <include layout="@layout/layout_mine_wel_image"/>
+            <include layout="@layout/layout_mine_wel_image" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -42,7 +42,7 @@
                     android:singleLine="true"
                     android:textColor="@color/login_text_color"
                     android:textColorHint="@color/text_gray_hint_n"
-                    android:textSize="@dimen/sc_mm_28"/>
+                    android:textSize="@dimen/sc_mm_28" />
 
 
                 <RelativeLayout
@@ -63,7 +63,7 @@
                         android:singleLine="true"
                         android:textColor="@color/login_text_color"
                         android:textColorHint="@color/text_gray_hint_n"
-                        android:textSize="@dimen/sc_mm_28"/>
+                        android:textSize="@dimen/sc_mm_28" />
 
                     <TextView
                         android:id="@+id/tv_sms_code"
@@ -71,11 +71,11 @@
                         android:layout_height="@dimen/sc_mm_100"
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
-
                         android:gravity="center_vertical"
+                        android:text="@string/send_sms"
                         android:textColor="@color/selector_font_blue_hint_gray"
                         android:textSize="@dimen/sc_mm_24"
-                        android:visibility="visible"/>
+                        android:visibility="visible" />
 
                     <ProgressBar
                         android:id="@+id/reg_req_code_gif_view"
@@ -85,7 +85,7 @@
                         android:layout_centerVertical="true"
                         android:indeterminateBehavior="repeat"
                         android:indeterminateDrawable="@drawable/anim_loading_flower_rotate"
-                        android:visibility="gone"/>
+                        android:visibility="gone" />
                 </RelativeLayout>
 
                 <LinearLayout
@@ -108,15 +108,14 @@
                         android:singleLine="true"
                         android:textColor="@color/login_text_color"
                         android:textColorHint="@color/text_gray_hint_n"
-                        android:textSize="@dimen/sc_mm_28"/>
+                        android:textSize="@dimen/sc_mm_28" />
 
                     <ImageView
                         android:id="@+id/iv_password_code_visibility"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="@dimen/sc_mm_25"
-                        android:src="@drawable/register_icon_eye_nor"
-                        />
+                        android:src="@drawable/register_icon_eye_nor" />
                 </LinearLayout>
 
                 <TextView
@@ -128,7 +127,7 @@
                     android:gravity="center"
                     android:text="注 册"
                     android:textColor="@color/text_login_gray_s"
-                    android:textSize="@dimen/sc_mm_32"/>
+                    android:textSize="@dimen/sc_mm_32" />
             </LinearLayout>
 
             <TextView
@@ -142,7 +141,7 @@
                 android:gravity="center"
                 android:text="登录"
                 android:textColor="@color/text_login_blue_z"
-                android:textSize="@dimen/sc_mm_32"/>
+                android:textSize="@dimen/sc_mm_32" />
 
             <TextView
                 android:id="@+id/tv_register_agreement_privacy"
@@ -153,7 +152,7 @@
                 android:lineSpacingExtra="@dimen/sc_mm_4"
                 android:text="@string/defaul"
                 android:textColor="@color/text_login_gray_s"
-                android:textSize="@dimen/sc_mm_24"/>
+                android:textSize="@dimen/sc_mm_24" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

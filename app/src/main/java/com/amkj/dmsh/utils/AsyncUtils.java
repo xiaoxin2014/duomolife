@@ -3,6 +3,12 @@ package com.amkj.dmsh.utils;
 import com.amkj.dmsh.base.BaseActivity;
 import com.dhh.rxlife2.RxLife;
 
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -17,6 +23,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public abstract class AsyncUtils<T> {
 
+    private static ThreadPoolExecutor executorService;
     private final BaseActivity mActivity;
 
     protected AsyncUtils(BaseActivity activity) {
@@ -63,4 +70,20 @@ public abstract class AsyncUtils<T> {
     public abstract T runOnIO();
 
     public abstract void runOnUI(T t);
+
+
+    /**
+     * 创建线程池
+     */
+    public static ExecutorService createExecutor() {
+        if (executorService == null) {
+            int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
+            int KEEP_ALIVE_TIME = 1;
+            TimeUnit KEEP_ALIVE_TIME_UNIT = TimeUnit.SECONDS;
+            BlockingQueue<Runnable> taskQueue = new LinkedBlockingQueue<>();
+            executorService = new ThreadPoolExecutor(NUMBER_OF_CORES,
+                    NUMBER_OF_CORES * 2, KEEP_ALIVE_TIME, KEEP_ALIVE_TIME_UNIT, taskQueue);
+        }
+        return executorService;
+    }
 }

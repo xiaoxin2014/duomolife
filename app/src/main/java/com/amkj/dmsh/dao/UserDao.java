@@ -169,8 +169,6 @@ public class UserDao {
         if (isHandOperation) {
             showLoadhud(activity);
         }
-        NetLoadUtils.token = (String) SharedPreUtils.getParam(TOKEN, "");
-        NetLoadUtils.uid = String.valueOf(SharedPreUtils.getParam("uid", 0));
 
         NetLoadUtils.getNetInstance().loadNetDataPost(activity, Url.LOG_OUT, null, new NetLoadListenerHelper() {
             @Override

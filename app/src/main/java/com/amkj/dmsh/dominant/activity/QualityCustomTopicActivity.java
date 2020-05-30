@@ -414,24 +414,26 @@ public class QualityCustomTopicActivity extends BaseActivity {
     void startBrowse(View view) {
         if (userId > 0) {
             mTvBrowse.setVisibility(View.GONE);
-            mCountDownTimer = new CountDownTimer(getActivity(), mViewTime * 1000 + 300, 1000) {
-                @Override
-                public void onTick(long millisUntilFinished) {
-                    int second = (int) (millisUntilFinished / 1000);
-                    if (second > 0) {
-                        mTvIntegralRule.setText(getIntegralFormat(getActivity(), R.string.shoppig_reward_rule, second));
+            if (mCountDownTimer == null) {
+                mCountDownTimer = new CountDownTimer(getActivity()) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+                        int second = (int) (millisUntilFinished / 1000);
+                        if (second > 0) {
+                            mTvIntegralRule.setText(getIntegralFormat(getActivity(), R.string.shoppig_reward_rule, second));
+                        }
                     }
-                }
 
-                @Override
-                public void onFinish() {
-                    cancel();
-                    mLLHeader.setSelected(true);
-                    mTvIntegralRule.setText("积分奖励发放中...");
-                    getReward();
-                }
-            };
+                    @Override
+                    public void onFinish() {
+                        mLLHeader.setSelected(true);
+                        mTvIntegralRule.setText("积分奖励发放中...");
+                        getReward();
+                    }
+                };
+            }
 
+            mCountDownTimer.setMillisInFuture(mViewTime * 1000);
             mCountDownTimer.start();
         } else {
             getLoginStatus(getActivity());

@@ -2,6 +2,8 @@ package com.amkj.dmsh.shopdetails.adapter;
 
 import android.app.Activity;
 import android.text.TextUtils;
+import android.util.SparseArray;
+import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.mine.bean.ActivityInfoBean;
@@ -12,13 +14,7 @@ import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-
-import androidx.annotation.NonNull;
-import androidx.lifecycle.LifecycleOwner;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getSpannableString;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -27,6 +23,9 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_GROUP_SHOP;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_W_TYPE;
 import static com.amkj.dmsh.utils.TimeUtils.getCoutDownTime;
+import static com.amkj.dmsh.utils.TimeUtils.getCurrentTime;
+import static com.amkj.dmsh.utils.TimeUtils.getTimeDifference;
+import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTime;
 
 
 /**
@@ -37,11 +36,46 @@ import static com.amkj.dmsh.utils.TimeUtils.getCoutDownTime;
 public class WriteProductListAdapter extends BaseQuickAdapter<ProductInfoBean, BaseViewHolder> {
     private final String type;
     private final Activity context;
+    private CountDownTimer mCountDownTimer;
+    private SparseArray<Object> sparseArray = new SparseArray<>();
 
     public WriteProductListAdapter(Activity context, List<ProductInfoBean> list, String type) {
         super(R.layout.layout_direct_indent_product_item, list);
         this.context = context;
         this.type = type;
+        CreatCountDownTimer();
+    }
+
+    //创建定时任务
+    private void CreatCountDownTimer() {
+        if (mCountDownTimer == null) {
+            mCountDownTimer = new CountDownTimer(context) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    //刷新倒计时
+                    refreshSchedule();
+                }
+
+                @Override
+                public void onFinish() {
+
+                }
+            };
+            mCountDownTimer.setMillisInFuture(3600 * 24 * 30 * 1000L);
+        }
+        mCountDownTimer.start();
+    }
+
+    private void refreshSchedule() {
+        for (int i = 0; i < sparseArray.size(); i++) {
+            TextView tvRule = (TextView) sparseArray.get(sparseArray.keyAt(i));
+            if (tvRule != null) {
+                ActivityInfoBean activityInfoBean = (ActivityInfoBean) tvRule.getTag();
+                if (activityInfoBean != null && activityInfoBean.getActivityType() == 3) {
+                    setCountTime(tvRule, activityInfoBean);
+                }
+            }
+        }
     }
 
     @Override
@@ -60,7 +94,8 @@ public class WriteProductListAdapter extends BaseQuickAdapter<ProductInfoBean, B
         switch (type) {
             //普通订单填写
             case INDENT_W_TYPE:
-                if (productInfoBean.getActivityInfoBean() != null && productInfoBean.getShowActInfo() == 1) {
+                ActivityInfoBean activityInfoBean = productInfoBean.getActivityInfoBean();
+                if (activityInfoBean != null && !TextUtils.isEmpty(activityInfoBean.getActivityTag()) && productInfoBean.getShowActInfo() == 1) {
                     ActivityInfoBean activityInfoData = productInfoBean.getActivityInfoBean();
                     String activityTags = getStrings(activityInfoData.getActivityTag());
                     helper.setGone(R.id.ll_communal_activity_topic_tag, true)
@@ -70,18 +105,23 @@ public class WriteProductListAdapter extends BaseQuickAdapter<ProductInfoBean, B
 //                            .addOnClickListener(R.id.ll_communal_activity_tag_rule).setTag(R.id.ll_communal_activity_tag_rule, productInfoBean);
                     helper.setGone(R.id.tv_communal_activity_tag_next, false);
                     //设置规则
+                    TextView tvRule = helper.getView(R.id.tv_communal_activity_tag_rule);
                     switch (activityInfoData.getActivityType()) {
                         //不显示规则，显示倒计时，可以进入专场
                         case 3:
-                            setCountTime(helper, activityInfoData);
+                            if (showTime(activityInfoData)) {
+                                sparseArray.put(helper.getAdapterPosition() - getHeaderLayoutCount(), tvRule);
+                                tvRule.setTag(activityInfoData);
+                            }
+                            setCountTime(tvRule, activityInfoData);
                             break;
                         //不显示规则，也不能进入专场
                         case 7:
-                            helper.setText(R.id.tv_communal_activity_tag_rule, "");
+                            tvRule.setText("");
                             break;
                         //显示规则，可进入专场
                         default:
-                            helper.setText(R.id.tv_communal_activity_tag_rule, getStrings(activityInfoData.getActivityRule()));
+                            tvRule.setText(getStrings(activityInfoData.getActivityRule()));
                             break;
                     }
                 } else {
@@ -114,48 +154,16 @@ public class WriteProductListAdapter extends BaseQuickAdapter<ProductInfoBean, B
         helper.itemView.setTag(productInfoBean);
     }
 
-    private void setCountTime(final BaseViewHolder helper, ActivityInfoBean activityInfoData) {
-        String startTime = activityInfoData.getActivityStartTime();
-        String endTime = activityInfoData.getActivityEndTime();
-        long currentTime = System.currentTimeMillis();
-        try {
-            //格式化开始时间
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-            Date dateStart = formatter.parse(startTime);
-            Date dateEnd = formatter.parse(endTime);
-            if (currentTime >= dateStart.getTime() && currentTime < dateEnd.getTime()) {
-                CountDownTimer countDownTimer = new CountDownTimer((LifecycleOwner) context, dateEnd.getTime() - currentTime, 1000) {
-                    @Override
-                    public void onTick(long millisUntilFinished) {
-                        helper.setText(R.id.tv_communal_activity_tag_rule, "距结束 " + getCoutDownTime(millisUntilFinished, true));
-                    }
-
-                    @Override
-                    public void onFinish() {
-                        cancel();
-                        helper.setText(R.id.tv_communal_activity_tag_rule, "已结束");
-                    }
-                };
-
-                countDownTimer.start();
-                helper.itemView.setTag(R.id.id_tag, countDownTimer);
-            } else {
-                helper.setText(R.id.tv_communal_activity_tag_rule, "");
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            helper.setText(R.id.tv_communal_activity_tag_rule, "");
-        }
+    private void setCountTime(TextView tvRule, ActivityInfoBean activityInfoData) {
+        tvRule.setText(showTime(activityInfoData) ?
+                "距结束 " + getCoutDownTime(getTimeDifference(getCurrentTime(), activityInfoData.getActivityEndTime()), true) : "");
     }
 
-    //视图被回收时，取消定时器，防止列表滚动复用导致错乱
-    @Override
-    public void onViewRecycled(@NonNull BaseViewHolder holder) {
-        super.onViewRecycled(holder);
-        Object tag = holder.itemView.getTag(R.id.id_tag);
-        if (tag != null) {
-            ((CountDownTimer) tag).cancel();
-        }
+    //是否显示倒计时(活动已开始未结束)
+    private boolean showTime(ActivityInfoBean activityInfoData) {
+        String startTime = activityInfoData.getActivityStartTime();
+        String endTime = activityInfoData.getActivityEndTime();
+        String currentTime = getCurrentTime();
+        return isEndOrStartTime(currentTime, startTime) && !isEndOrStartTime(currentTime, endTime);
     }
 }

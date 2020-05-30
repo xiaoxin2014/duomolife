@@ -1,10 +1,6 @@
 package com.amkj.dmsh.dominant.activity;
 
 import android.content.Intent;
-import androidx.annotation.NonNull;
-import androidx.viewpager.widget.ViewPager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,9 +11,8 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.bean.TabNameBean;
 import com.amkj.dmsh.bean.CommunalDetailBean;
-import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.bean.TabNameBean;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.dao.GroupDao;
 import com.amkj.dmsh.dominant.adapter.QualityCustomAdapter;
@@ -27,6 +22,7 @@ import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
+import com.amkj.dmsh.utils.CountDownTimer;
 import com.amkj.dmsh.utils.TimeUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.gson.GsonUtils;
@@ -34,15 +30,15 @@ import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -84,12 +80,12 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
     private GroupShareJoinView groupShareJoinView;
     private CommunalDetailAdapter gpRuleDetailsAdapter;
     private String orderNo;
-    private ConstantMethod constantMethod;
     private QualityCustomAdapter qualityCustomAdapter;
     private String[] titles = {"自定义专区1", "自定义专区2", "自定义专区3"};
     private List<String> mProductTypeList = new ArrayList<>();
     private GroupShopDetailsEntity mGroupShopDetailsEntity;
     private GroupShopDetailsEntity.GroupShopDetailsBean mGroupShopDetailsBean;
+    private CountDownTimer mCountDownTimer;
 
     @Override
     protected int getContentView() {
@@ -109,9 +105,17 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
         groupShareJoinView = new GroupShareJoinView();
         ButterKnife.bind(groupShareJoinView, headerView);
         DynamicConfig.Builder dynamic = new DynamicConfig.Builder();
+        dynamic.setTimeTextColor(0xffffffff);
+        dynamic.setSuffixTextColor(0xff333333);
+        DynamicConfig.BackgroundInfo backgroundInfo = new DynamicConfig.BackgroundInfo();
+        backgroundInfo.setColor(getResources().getColor(R.color.text_normal_red));
+        dynamic.setBackgroundInfo(backgroundInfo);
         dynamic.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext, 28));
         dynamic.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext, 28));
         groupShareJoinView.ct_time_communal_show_bg.dynamicShow(dynamic.build());
+        groupShareJoinView.ct_time_communal_show_bg.setVisibility(GONE);
+        groupShareJoinView.tv_show_communal_time_status.setText("剩余");
+        //初始化拼团规则
         communal_recycler_wrap.setNestedScrollingEnabled(false);
         gpRuleDetailsAdapter = new CommunalDetailAdapter(DoMoGroupJoinShareActivity.this, gpRuleList);
         gpRuleDetailsAdapter.addHeaderView(headerView);
@@ -151,7 +155,6 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
                     @Override
                     public void onSuccess(String result) {
                         smart_scroll_communal_refresh.finishRefresh();
-
                         mGroupShopDetailsEntity = GsonUtils.fromJson(result, GroupShopDetailsEntity.class);
                         if (mGroupShopDetailsEntity != null) {
                             mGroupShopDetailsBean = mGroupShopDetailsEntity.getGroupShopDetailsBean();
@@ -160,7 +163,7 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
                                     setGroupShopDetailsData();
                                 }
                             } else {
-                                showToast( mGroupShopDetailsEntity.getMsg());
+                                showToast(mGroupShopDetailsEntity.getMsg());
                             }
                         }
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, mGroupShopDetailsBean, mGroupShopDetailsEntity);
@@ -199,17 +202,29 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
             }
 
             String endTime = participantInfo.getEndTime();
-            if (!TextUtils.isEmpty(endTime)) {
-                getConstant();
-                setCountTime(groupShareJoinView.ct_time_communal_show_bg, endTime);
-                constantMethod.createSchedule();
-                constantMethod.setRefreshTimeListener(new ConstantMethod.RefreshTimeListener() {
-                    @Override
-                    public void refreshTime() {
-                        mGroupShopDetailsEntity.setSecond(mGroupShopDetailsEntity.getSecond() + 1);
-                        setCountTime(groupShareJoinView.ct_time_communal_show_bg, endTime);
-                    }
-                });
+            if (!isEndOrStartTime(mGroupShopDetailsEntity.getCurrentTime(), endTime)) {
+                if (mCountDownTimer == null) {
+                    mCountDownTimer = new CountDownTimer(getActivity()) {
+                        @Override
+                        public void onTick(long millisUntilFinished) {
+                            String timeformat = TimeUtils.getTimeDifferenceText(millisUntilFinished);
+                            groupShareJoinView.ct_time_communal_show_bg.customTimeShow(timeformat.contains("天"), timeformat.contains("时"), timeformat.contains("分"), !timeformat.contains("天"), false);
+                            groupShareJoinView.ct_time_communal_show_bg.updateShow(millisUntilFinished);
+                            groupShareJoinView.ct_time_communal_show_bg.setVisibility(View.VISIBLE);
+                        }
+
+                        @Override
+                        public void onFinish() {
+                            groupShareJoinView.tv_show_communal_time_status.setText("已过期");
+                            groupShareJoinView.ct_time_communal_show_bg.setVisibility(GONE);
+                        }
+                    };
+                }
+                mCountDownTimer.setMillisInFuture(getTimeDifference(mGroupShopDetailsEntity.getCurrentTime(), endTime));
+                mCountDownTimer.start();
+            } else {
+                groupShareJoinView.tv_show_communal_time_status.setText("已过期");
+                groupShareJoinView.ct_time_communal_show_bg.setVisibility(GONE);
             }
         }
 
@@ -230,52 +245,6 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
         groupShareJoinView.tv_gp_ql_share_pro_name.setText(getStrings(!TextUtils.isEmpty(gpName) ? gpName : (TextUtils.isEmpty(subTitle) ? productName : (subTitle + "•" + productName))));
         groupShareJoinView.tv_gp_ql_share_price.setText(("拼团价¥" + getStrings(mGroupShopDetailsBean.getGpPrice())));
         groupShareJoinView.tv_gp_ql_share_only_price.setText(("单买价¥" + getStrings(mGroupShopDetailsBean.getPrice())));
-    }
-
-    public void setCountTime(CountdownView countdownView, String gpEndTime) {
-        //格式化结束时间
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-        Date startTime = null;
-        Date endTime = null;
-        try {
-            if (TextUtils.isEmpty(mGroupShopDetailsEntity.getCurrentTime())) {
-                startTime = new Date();
-            } else {
-                startTime = formatter.parse(mGroupShopDetailsEntity.getCurrentTime());
-            }
-            endTime = formatter.parse(gpEndTime);
-            if (startTime != null && endTime != null && endTime.getTime() > startTime.getTime()) {
-                DynamicConfig.Builder dynamic = new DynamicConfig.Builder();
-                dynamic.setTimeTextColor(0xffffffff);
-                dynamic.setSuffixTextColor(0xff333333);
-                DynamicConfig.BackgroundInfo backgroundInfo = new DynamicConfig.BackgroundInfo();
-                backgroundInfo.setColor(getResources().getColor(R.color.text_normal_red));
-                dynamic.setBackgroundInfo(backgroundInfo);
-                countdownView.dynamicShow(dynamic.build());
-                String timeformat = TimeUtils.getTimeDifferenceText(getTimeDifference(gpEndTime, formatter.format(startTime)));
-                //倒计时样式格式化
-                countdownView.customTimeShow(timeformat.contains("天"), timeformat.contains("时"), timeformat.contains("分"), !timeformat.contains("天"), false);
-                countdownView.updateShow(endTime.getTime() - startTime.getTime() - mGroupShopDetailsEntity.getSecond() * 1000);
-                groupShareJoinView.tv_show_communal_time_status.setText("剩余");
-                if (!isEndOrStartTime(mGroupShopDetailsEntity.getCurrentTime()
-                        , gpEndTime)) {
-                    countdownView.setOnCountdownEndListener(new CountdownView.OnCountdownEndListener() {
-                        @Override
-                        public void onEnd(CountdownView cv) {
-                            cv.setOnCountdownEndListener(null);
-                            loadData();
-                        }
-                    });
-                } else {
-                    countdownView.setOnCountdownEndListener(null);
-                }
-            } else {
-                groupShareJoinView.tv_show_communal_time_status.setText("已过期");
-                groupShareJoinView.ct_time_communal_show_bg.setVisibility(GONE);
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
     }
 
     class GroupShareJoinView {
@@ -335,21 +304,6 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
     @OnClick(R.id.tv_header_shared)
     void sendShare(View view) {
         invateJoin();
-    }
-
-
-    private void getConstant() {
-        if (constantMethod == null) {
-            constantMethod = new ConstantMethod();
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        getConstant();
-        constantMethod.stopSchedule();
-        constantMethod.releaseHandlers();
-        super.onDestroy();
     }
 
     @Override

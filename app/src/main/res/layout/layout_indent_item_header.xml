@@ -12,10 +12,14 @@
         android:layout_marginLeft="@dimen/gap_left"
         android:layout_weight="1">
 
-        <include
-            layout="@layout/layout_direct_countdown_time"
+        <TextView
+            android:id="@+id/tv_countdownTime_direct"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent" />
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/text_login_gray_s"
+            android:textSize="@dimen/sc_mm_26"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/tv_direct_indent_create_time"

@@ -26,6 +26,7 @@ import com.amkj.dmsh.homepage.bean.IntegralLotteryEntity.PreviousInfoBean.WinLis
 import com.amkj.dmsh.homepage.initviews.AttendanceLotteryCodePopWindow;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.CountDownTimer;
 import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.gson.GsonUtils;
@@ -80,7 +81,6 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
     private final Activity context;
     private final List<PreviousInfoBean> integralLotteryList;
     private final LayoutInflater inflater;
-    private ConstantMethod constantMethod;
     private Map<Integer, PreviousInfoBean> beanMap = new HashMap<>();
     public String messageType = "refreshData";
     private AttendanceLotteryCodePopWindow attendanceLotteryCodePopWindow;
@@ -88,17 +88,17 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
     private LotteryAwardAdapter lotteryAwardAdapter;
     private List<String> lotteryCodeList = new ArrayList<>();
     private AlertDialogHelper alertDialogIntegral;
+    private CountDownTimer mCountDownTimer;
 
-    public IntegralLotteryAdapter(Activity context, ConstantMethod constantMethod, List<PreviousInfoBean> integralLotteryList) {
+    public IntegralLotteryAdapter(Activity context, List<PreviousInfoBean> integralLotteryList) {
         super(R.layout.adapter_integral_lottery, integralLotteryList);
         this.integralLotteryList = integralLotteryList;
         this.context = context;
         inflater = LayoutInflater.from(context);
-        this.constantMethod = constantMethod;
-        getConstant();
         setLotteryCodePopWindows();
         setIntegralPopWindows();
         ((AppCompatActivity) context).getLifecycle().addObserver(this);
+        CreatCountDownTimer();
     }
 
     /**
@@ -244,23 +244,26 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
         helper.setText(R.id.tv_integral_lottery_time_status, prizeText);
     }
 
-    private void getConstant() {
-        if (constantMethod != null) {
-            constantMethod.createSchedule();
-            if (constantMethod != null) {
-                constantMethod.setRefreshTimeListener(new ConstantMethod.RefreshTimeListener() {
-                    @Override
-                    public void refreshTime() {
-                        if (integralLotteryList != null && integralLotteryList.size() > 0) {
-//                刷新数据
-                            refreshData();
-//                刷新倒计时
-//                        refreshSchedule();
-                        }
+    //创建定时任务
+    private void CreatCountDownTimer() {
+        if (mCountDownTimer == null) {
+            mCountDownTimer = new CountDownTimer(context) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    if (integralLotteryList != null && integralLotteryList.size() > 0) {
+                        //刷新数据
+                        refreshData();
                     }
-                });
-            }
+                }
+
+                @Override
+                public void onFinish() {
+
+                }
+            };
+            mCountDownTimer.setMillisInFuture(3600 * 24 * 30 * 1000L);
         }
+        mCountDownTimer.start();
     }
 
     @Override
@@ -634,7 +637,7 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
 
                 @Override
                 public void onError(Throwable throwable) {
-                    showToast( R.string.do_failed);
+                    showToast(R.string.do_failed);
                 }
             });
         } else {

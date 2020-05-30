@@ -22,9 +22,8 @@ import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.CommunalAdHolderView;
-import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.bean.TabEntity;
+import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.bean.PromotionProductDetailEntity;
@@ -38,6 +37,7 @@ import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyProductIndentInfo;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
+import com.amkj.dmsh.utils.CountDownTimer;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.amkj.dmsh.utils.webformatdata.ShareDataBean;
@@ -60,14 +60,10 @@ import com.umeng.socialize.UMShareAPI;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -111,6 +107,7 @@ import static com.amkj.dmsh.dao.BaiChuanDao.skipAliBC;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_EMPTY_OBJECT;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PROMOTION_TITLE;
+import static com.amkj.dmsh.utils.TimeUtils.getTimeDifference;
 import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTime;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getWaterMarkImgUrl;
 
@@ -165,7 +162,6 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
     private String thirdId;
     private CustomPopWindow mCustomPopWindow;
     private String sharePageUrl = Url.BASE_SHARE_PAGE_TWO + "m/template/common/taoBaoGoods.html?id=";
-    private ConstantMethod constantMethod;
     private CBViewHolderCreator cbViewHolderCreator;
     private FragmentManager fragmentManager;
     private String[] promotionProduct = {"Top团品推荐", "即将截团"};
@@ -176,6 +172,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
     private PromotionProductDetailEntity productDetailEntity;
     private PromotionProductDetailBean productDetailBean;
     private int screenHeight;
+    private CountDownTimer mCountDownTimer;
 
     @Override
     protected int getContentView() {
@@ -329,7 +326,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                             } else if (productDetailEntity.getCode().equals(EMPTY_CODE)) {
                                 showToast(R.string.shopOverdue);
                             } else {
-                                showToast( productDetailEntity.getMsg());
+                                showToast(productDetailEntity.getMsg());
                             }
                         }
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, productDetailEntity, productDetailEntity);
@@ -364,7 +361,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                         productDetailBean.setRemind(false);
                         showToast("已取消提醒");
                     } else {
-                        showToastRequestMsg( status);
+                        showToastRequestMsg(status);
                     }
                     tvTimeProductDetailsWarm.setEnabled(true);
                 }
@@ -394,7 +391,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                         showToast("已设置提醒");
                         productDetailBean.setRemind(true);
                     } else {
-                        showToastRequestMsg( status);
+                        showToastRequestMsg(status);
                     }
                     tvTimeProductDetailsWarm.setEnabled(true);
                 }
@@ -546,25 +543,25 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
         }
 
         //淘你所爱商品只要上架了就可以参团，不用管开始时间和结束时间
-        if ("1".equals(isTaobao)){
+        if ("1".equals(isTaobao)) {
             tvTimeProductDetailsBuyIt.setEnabled(true);
             tvTimeProductDetailsBuyIt.setText("我要跟团");
         }
-        setCountTime();
-        if (!isEndOrStartTime(productDetailEntity.getCurrentTime(), productDetailBean.getEndTime())) {
-            getConstant();
-            constantMethod.createSchedule();
-            constantMethod.setRefreshTimeListener(new ConstantMethod.RefreshTimeListener() {
-                @Override
-                public void refreshTime() {
-                    productDetailBean.setAddSecond(productDetailBean.getAddSecond() + 1);
-                    setCountTime();
-                }
-            });
+
+        String currentTime = productDetailEntity.getCurrentTime();
+        String startTime = productDetailBean.getStartTime();
+        String endTime = productDetailBean.getEndTime();
+        //活动未开始
+        if (!isEndOrStartTime(currentTime, startTime)) {
+            tvPromotionProductTimeStatus.setText("距开团");
+            setCountTime(getTimeDifference(currentTime, startTime));
+        } else if (!isEndOrStartTime(currentTime, endTime)) {
+            //已开始，未结束
+            tvPromotionProductTimeStatus.setText("距结束");
+            setCountTime(getTimeDifference(currentTime, endTime));
         } else {
-            if (constantMethod != null) {
-                constantMethod.stopSchedule();
-            }
+            //已结束
+            relPromotionProductTime.setVisibility(GONE);
         }
 //            详情内容
         if (productDetailBean.getLuckyMoneyList() != null || productDetailBean.getItemBodyList() != null
@@ -731,7 +728,6 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, TIME_WARM_PRO, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-
                 RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null && requestStatus.getCode().equals(SUCCESS_CODE)) {
                     showToast("已设置产品提醒时间，提前" + requestStatus.getLongtime() + "分钟");
@@ -757,46 +753,22 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
         QyServiceUtils.getQyInstance().openQyServiceChat(this, sourceTitle, sourceUrl, qyProductIndentInfo);
     }
 
-    public void setCountTime() {
-        //格式化结束时间
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-        Date startTime;
-        Date endTime;
-        try {
-            //格式化结束时间
-            Date dateCurrent;
-            if (!TextUtils.isEmpty(productDetailEntity.getCurrentTime())) {
-                dateCurrent = formatter.parse(productDetailEntity.getCurrentTime());
-            } else {
-                dateCurrent = new Date();
-            }
-            startTime = formatter.parse(productDetailBean.getStartTime());
-            long timeMillis;
-            if (dateCurrent.getTime() < startTime.getTime()) {
-                timeMillis = startTime.getTime() - dateCurrent.getTime() - productDetailBean.getAddSecond() * 1000;
-                tvPromotionProductTimeStatus.setText("距开团");
-            } else {
-                //格式化开始时间
-                endTime = formatter.parse(productDetailBean.getEndTime());
-                timeMillis = endTime.getTime() - dateCurrent.getTime() - productDetailBean.getAddSecond() * 1000;
-                tvPromotionProductTimeStatus.setText("距结束");
-            }
-            ctPromotionProductTime.updateShow(timeMillis);
-            relPromotionProductTime.setVisibility(timeMillis > 0 ? VISIBLE : GONE);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        if (!isEndOrStartTime(productDetailEntity.getCurrentTime(), productDetailBean.getEndTime())) {
-            ctPromotionProductTime.setOnCountdownEndListener(new CountdownView.OnCountdownEndListener() {
+    public void setCountTime(long millisInFuture) {
+        if (mCountDownTimer == null) {
+            mCountDownTimer = new CountDownTimer(getActivity()) {
                 @Override
-                public void onEnd(CountdownView cv) {
-                    cv.setOnCountdownEndListener(null);
+                public void onTick(long millisUntilFinished) {
+                    ctPromotionProductTime.updateShow(millisUntilFinished);
+                }
+
+                @Override
+                public void onFinish() {
                     loadData();
                 }
-            });
-        } else {
-            ctPromotionProductTime.setOnCountdownEndListener(null);
+            };
         }
+        mCountDownTimer.setMillisInFuture(millisInFuture);
+        mCountDownTimer.start();
     }
 
     /**
@@ -824,15 +796,6 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
         return "3";
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (constantMethod != null) {
-            constantMethod.stopSchedule();
-            constantMethod.releaseHandlers();
-        }
-    }
-
     @OnClick(R.id.tv_life_back)
     void goBack(View view) {
         finish();
@@ -847,12 +810,6 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                     , getStringsFormat(this, R.string.group_price, productDetailBean.getPrice()) + productDetailBean.getName()
                     , getStrings(productDetailBean.getSubtitle())
                     , sharePageUrl + productDetailBean.getId(), productDetailBean.getId());
-        }
-    }
-
-    private void getConstant() {
-        if (constantMethod == null) {
-            constantMethod = new ConstantMethod();
         }
     }
 }

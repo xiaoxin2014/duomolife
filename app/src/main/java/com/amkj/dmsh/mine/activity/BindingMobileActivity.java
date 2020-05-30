@@ -3,7 +3,6 @@ package com.amkj.dmsh.mine.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -18,19 +17,20 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.LoginDataEntity;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.dao.UserDao;
-import com.amkj.dmsh.mine.CountDownHelper;
+import com.amkj.dmsh.mine.SmsCodeHelper;
 import com.amkj.dmsh.mine.bean.OtherAccountBindEntity.OtherAccountBindInfo;
 import com.amkj.dmsh.mine.bean.RegisterPhoneStatus;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.gson.GsonUtils;
+import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import androidx.appcompat.widget.Toolbar;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -81,21 +81,26 @@ public class BindingMobileActivity extends BaseActivity {
     Toolbar mTlNormalBar;
 
     private String phoneNumber;
-    private CountDownHelper countDownHelper;
     private AlertDialogHelper alertDialogHelper;
     private String uid;
     private String openId;
     private String unionid;
     private String type;
     private String accessToken;
+    private TestResource mTestResource;
 
     @Override
     protected int getContentView() {
         return R.layout.activity_binding_mobile;
     }
 
+    class TestResource {
+        //...
+    }
+
     @Override
     protected void initViews() {
+        mTestResource = new TestResource();
         mTvHeaderTitle.setText("绑定手机号");
         mTvHeaderShared.setVisibility(View.INVISIBLE);
         mTlNormalBar.setSelected(true);
@@ -164,7 +169,7 @@ public class BindingMobileActivity extends BaseActivity {
             reg_bind_code_gif_view.setVisibility(View.VISIBLE);
             reqSMSCode(phoneNumber);
         } else {
-            showToast( R.string.MobileError);
+            showToast(R.string.MobileError);
         }
     }
 
@@ -182,7 +187,7 @@ public class BindingMobileActivity extends BaseActivity {
         final String smsCode = edit_get_code.getText().toString().trim();
         phoneNumber = edit_binding_mobile.getText().toString().trim();
         if (TextUtils.isEmpty(phoneNumber) || phoneNumber.length() != 11) {
-            showToast( R.string.MobileError);
+            showToast(R.string.MobileError);
             return;
         }
         if (TextUtils.isEmpty(smsCode)) {
@@ -203,7 +208,7 @@ public class BindingMobileActivity extends BaseActivity {
                         setBindWxMobile();
                     } else {
                         dismissLoadhud(getActivity());
-                        showToast( msg);
+                        showToast(msg);
                     }
                 } else {
                     dismissLoadhud(getActivity());
@@ -241,13 +246,10 @@ public class BindingMobileActivity extends BaseActivity {
                                 RequestStatus.Result resultData = requestStatus.getResult();
                                 if (resultData != null) {
                                     if (resultData.getResultCode().equals(SUCCESS_CODE)) {
-                                        showToast( R.string.GetSmsCodeSuccess);
+                                        showToast(R.string.GetSmsCodeSuccess);
                                         tv_bind_send_code.setVisibility(View.VISIBLE);
                                         reg_bind_code_gif_view.setVisibility(View.GONE);
-                                        if (countDownHelper == null) {
-                                            countDownHelper = CountDownHelper.getTimerInstance();
-                                        }
-                                        countDownHelper.setSmsCountDown(tv_bind_send_code, getResources().getString(R.string.send_sms), 60);
+                                        SmsCodeHelper.startCountDownTimer(getActivity(), tv_bind_send_code);
                                     } else {
                                         showException(resultData.getResultMsg());
                                     }
@@ -369,14 +371,5 @@ public class BindingMobileActivity extends BaseActivity {
                     && event.getY() > top && event.getY() < bottom);
         }
         return false;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (countDownHelper == null) {
-            countDownHelper = CountDownHelper.getTimerInstance();
-        }
-        countDownHelper.setSmsCountDown(tv_bind_send_code);
     }
 }

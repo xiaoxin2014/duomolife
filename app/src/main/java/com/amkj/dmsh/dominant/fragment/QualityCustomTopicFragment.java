@@ -1,10 +1,6 @@
 package com.amkj.dmsh.dominant.fragment;
 
 import android.os.Bundle;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,6 +38,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -244,7 +244,7 @@ public class QualityCustomTopicFragment extends BaseFragment {
                             } else if (userLikedProductEntity.getCode().equals(EMPTY_CODE)) {
                                 qualityCustomTopicAdapter.loadMoreEnd();
                             } else {
-                                showToast( userLikedProductEntity.getMsg());
+                                showToast(userLikedProductEntity.getMsg());
                             }
 
 
@@ -348,24 +348,25 @@ public class QualityCustomTopicFragment extends BaseFragment {
     void startBrowse(View view) {
         if (userId > 0) {
             mTvBrowse.setVisibility(View.GONE);
-            mCountDownTimer = new CountDownTimer(getActivity(), mViewTime * 1000 + 300, 1000) {
-                @Override
-                public void onTick(long millisUntilFinished) {
-                    int second = (int) (millisUntilFinished / 1000);
-                    if (second > 0) {
-                        mTvIntegralRule.setText(getIntegralFormat(getActivity(), R.string.shoppig_reward_rule, second));
+            if (mCountDownTimer==null){
+                mCountDownTimer = new CountDownTimer(getActivity()) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+                        int second = (int) (millisUntilFinished / 1000);
+                        if (second > 0) {
+                            mTvIntegralRule.setText(getIntegralFormat(getActivity(), R.string.shoppig_reward_rule, second));
+                        }
                     }
-                }
 
-                @Override
-                public void onFinish() {
-                    cancel();
-                    mLLHeader.setSelected(true);
-                    mTvIntegralRule.setText("积分奖励发放中...");
-                    getReward();
-                }
-            };
-
+                    @Override
+                    public void onFinish() {
+                        mLLHeader.setSelected(true);
+                        mTvIntegralRule.setText("积分奖励发放中...");
+                        getReward();
+                    }
+                };
+            }
+            mCountDownTimer.setMillisInFuture(mViewTime * 1000);
             mCountDownTimer.start();
         } else {
             getLoginStatus(getActivity());

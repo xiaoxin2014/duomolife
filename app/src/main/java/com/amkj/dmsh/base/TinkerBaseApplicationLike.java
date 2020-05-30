@@ -93,7 +93,6 @@ import me.jessyan.autosize.AutoSizeConfig;
 import me.jessyan.autosize.unit.Subunits;
 
 import static android.content.Context.MODE_PRIVATE;
-import static com.amkj.dmsh.constant.ConstantMethod.createExecutor;
 import static com.amkj.dmsh.constant.ConstantMethod.getSourceType;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -104,6 +103,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.RECEIVED_NEW_QY_MESSAGE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_ID;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_NAME;
 import static com.amkj.dmsh.constant.ConstantVariable.isDebugTag;
+import static com.amkj.dmsh.utils.AsyncUtils.createExecutor;
 
 
 /**
@@ -178,6 +178,8 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
     public void registerActivityLifecycleCallback(Application.ActivityLifecycleCallbacks callbacks) {
         getApplication().registerActivityLifecycleCallbacks(callbacks);
     }
+
+
 
     @Override
     public void onCreate() {

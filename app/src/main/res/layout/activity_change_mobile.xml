@@ -3,82 +3,90 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/light_gray_f"
-    android:focusableInTouchMode="true"
-    android:focusable="true"
     android:divider="@drawable/item_divider_gray_f_one_px"
-    android:showDividers="middle"
-    android:orientation="vertical">
-    <include layout="@layout/activity_domolife_header"/>
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical"
+    android:showDividers="middle">
+
+    <include layout="@layout/activity_domolife_header" />
+
     <TextView
-        android:paddingLeft="@dimen/gap_left"
-        android:layout_width="match_parent"
         android:id="@+id/tv_mine_per_cm"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sc_mm_104"
         android:background="@color/white"
-        android:textSize="@dimen/sc_mm_30"
         android:gravity="center_vertical"
+        android:paddingLeft="@dimen/gap_left"
         android:textColor="@color/text_login_gray_s"
-        android:layout_height="@dimen/sc_mm_104" />
+        android:textSize="@dimen/sc_mm_30" />
+
     <RelativeLayout
         android:layout_width="match_parent"
+        android:layout_height="@dimen/sc_mm_104"
         android:background="@color/white"
-        android:paddingLeft="@dimen/gap_left"
-        android:layout_height="@dimen/sc_mm_104">
+        android:paddingLeft="@dimen/gap_left">
+
         <EditText
-            android:layout_width="wrap_content"
-            android:background="@color/white"
-            android:textColor="@color/text_login_gray_s"
-            android:textSize="@dimen/sc_mm_32"
-            android:inputType="number|phone"
-            android:singleLine="true"
-            android:hint="请输入新绑定的手机号"
             android:id="@+id/et_change_mobile"
-            android:maxLength="11"
-            android:textColorHint="@color/text_gray_hint_n"
-            android:gravity="center_vertical"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentTop="true"
+            android:background="@color/white"
+            android:gravity="center_vertical"
+            android:hint="请输入新绑定的手机号"
+            android:inputType="number|phone"
+            android:maxLength="11"
+            android:singleLine="true"
+            android:textColor="@color/text_login_gray_s"
+            android:textColorHint="@color/text_gray_hint_n"
+            android:textSize="@dimen/sc_mm_32" />
+
         <FrameLayout
             android:layout_width="wrap_content"
-            android:layout_gravity="center_vertical"
+            android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:paddingRight="@dimen/gap_right"
             android:layout_centerVertical="true"
-            android:layout_height="wrap_content">
-            <TextView
-                android:gravity="center_vertical"
-                android:layout_width="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:paddingRight="@dimen/gap_right">
 
-                android:textSize="@dimen/sc_mm_28"
-                android:layout_gravity="center"
+            <TextView
                 android:id="@+id/tv_change_send_code"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/sc_mm_100"
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:text="@string/send_sms"
                 android:textColor="@color/selector_font_blue_hint_gray"
-                android:layout_height="@dimen/sc_mm_100"/>
+                android:textSize="@dimen/sc_mm_28" />
+
             <ProgressBar
                 android:id="@+id/reg_change_code_gif_view"
                 android:layout_width="@dimen/sc_mm_60"
-                android:paddingRight="@dimen/gap_right"
                 android:layout_height="@dimen/sc_mm_60"
                 android:layout_gravity="center"
-                android:visibility="gone"
+                android:indeterminateBehavior="repeat"
                 android:indeterminateDrawable="@drawable/anim_loading_flower_rotate"
-                android:indeterminateBehavior="repeat" />
+                android:paddingRight="@dimen/gap_right"
+                android:visibility="gone" />
         </FrameLayout>
     </RelativeLayout>
+
     <EditText
-        android:layout_width="match_parent"
-        android:paddingLeft="@dimen/gap_left"
-        android:paddingRight="@dimen/gap_right"
-        android:textColor="@color/text_login_gray_s"
-        android:textSize="@dimen/sc_mm_30"
-        android:inputType="number|phone"
-        android:maxLength="6"
-        android:singleLine="true"
-        android:background="@color/white"
         android:id="@+id/edit_cm_get_code"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sc_mm_104"
+        android:background="@color/white"
         android:gravity="center_vertical"
         android:hint="验证码"
+        android:inputType="number|phone"
+        android:maxLength="6"
+        android:paddingLeft="@dimen/gap_left"
+        android:paddingRight="@dimen/gap_right"
+        android:singleLine="true"
+        android:textColor="@color/text_login_gray_s"
         android:textColorHint="@color/text_gray_hint_n"
-        android:layout_height="@dimen/sc_mm_104"/>
+        android:textSize="@dimen/sc_mm_30" />
 </LinearLayout>

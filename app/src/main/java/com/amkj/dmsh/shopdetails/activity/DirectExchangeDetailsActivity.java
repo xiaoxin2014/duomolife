@@ -440,7 +440,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity {
                 tv_countdownTime.setVisibility(View.VISIBLE);
                 long millisInFuture = dateCreat.getTime() + second * 1000 - dateCurrent.getTime();
                 if (mCountDownTimer == null) {
-                    mCountDownTimer = new CountDownTimer(getActivity(), 1000) {
+                    mCountDownTimer = new CountDownTimer(getActivity()) {
                         @Override
                         public void onTick(long millisUntilFinished) {
                             String coutDownTime = getCoutDownTime(millisUntilFinished, false);
@@ -450,7 +450,6 @@ public class DirectExchangeDetailsActivity extends BaseActivity {
 
                         @Override
                         public void onFinish() {
-                            cancel();
                             tv_countdownTime.setText("已结束");
                         }
                     };

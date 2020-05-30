@@ -14,7 +14,6 @@ import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.IntegrationProEntity;
 import com.amkj.dmsh.bean.IntegrationProEntity.IntegrationBean;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dao.AddClickDao;
@@ -41,11 +40,11 @@ import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
-import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
-import com.amkj.dmsh.views.alertdialog.AlertRuleDialogHelper;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
+import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
+import com.amkj.dmsh.views.alertdialog.AlertRuleDialogHelper;
 import com.amkj.dmsh.views.recyclerviewpager.RecyclerViewPager;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.gongwen.marqueen.MarqueeFactory;
@@ -145,7 +144,6 @@ public class AttendanceActivity extends BaseActivity {
     private AlertRuleDialogHelper alertIntegralRuleDialogHelper;
     private AlertDialogHelper alertDialogHelper;
     private AttendanceDetailEntity attendanceDetailEntity;
-    private ConstantMethod constantMethod;
 
     @Override
     protected int getContentView() {
@@ -812,8 +810,7 @@ public class AttendanceActivity extends BaseActivity {
 
         public void initViews() {
             rvp_integral_lottery.setLayoutManager(new LinearLayoutManager(AttendanceActivity.this, LinearLayoutManager.HORIZONTAL, false));
-            constantMethod = new ConstantMethod();
-            integralLotteryAdapter = new IntegralLotteryAdapter(AttendanceActivity.this, constantMethod, integralLotteryList);
+            integralLotteryAdapter = new IntegralLotteryAdapter(AttendanceActivity.this, integralLotteryList);
             rvp_integral_lottery.setAdapter(integralLotteryAdapter);
             integralLotteryAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
                 @Override
@@ -992,15 +989,6 @@ public class AttendanceActivity extends BaseActivity {
                     }
                 }
             });
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (constantMethod != null) {
-            constantMethod.stopSchedule();
-            constantMethod.releaseHandlers();
         }
     }
 }

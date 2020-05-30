@@ -16,13 +16,14 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.constant.PasswordEncrypt;
-import com.amkj.dmsh.mine.CountDownHelper;
+import com.amkj.dmsh.mine.SmsCodeHelper;
 import com.amkj.dmsh.mine.bean.MinePassword;
 import com.amkj.dmsh.mine.bean.RegisterPhoneStatus;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
+import com.amkj.dmsh.utils.LifecycleHandler;
 import com.amkj.dmsh.utils.gson.GsonUtils;
+import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -67,7 +68,6 @@ public class FoundPasswordActivity extends BaseActivity {
     EditText edit_bind_set_password_new;
     private String phoneNumber;
     private String password;
-    private CountDownHelper countDownHelper;
     private AlertDialogHelper alertDialogHelper;
 
     @Override
@@ -97,7 +97,7 @@ public class FoundPasswordActivity extends BaseActivity {
 
     }
 
-    private Handler handler = new Handler(new Handler.Callback() {
+    private LifecycleHandler handler = new LifecycleHandler(getActivity(),new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             int event = msg.arg1;
@@ -115,10 +115,7 @@ public class FoundPasswordActivity extends BaseActivity {
                     showToast( R.string.GetSmsCodeSuccess);
                     tv_bind_send_code.setVisibility(View.VISIBLE);
                     reg_bind_code_gif_view.setVisibility(View.GONE);
-                    if (countDownHelper == null) {
-                        countDownHelper = CountDownHelper.getTimerInstance();
-                    }
-                    countDownHelper.setSmsCountDown(tv_bind_send_code, getResources().getString(R.string.send_sms), 60);
+                    SmsCodeHelper.startCountDownTimer(getActivity(), tv_bind_send_code);
                 } else if (event == SMSSDK.EVENT_GET_SUPPORTED_COUNTRIES) { //返回支持发送验证码的国家列表
                 }
             } else { //回调失败
@@ -302,17 +299,8 @@ public class FoundPasswordActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         SMSSDK.unregisterAllEventHandler();
-        handler.removeCallbacksAndMessages(null);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (countDownHelper == null) {
-            countDownHelper = CountDownHelper.getTimerInstance();
-        }
-        countDownHelper.setSmsCountDown(tv_bind_send_code);
-    }
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {

@@ -1,9 +1,5 @@
 package com.amkj.dmsh.dominant.adapter;
 
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
-
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.dominant.bean.PointSpikeTimeShaftEntity.TimeAxisInfoListBean;
 import com.amkj.dmsh.dominant.fragment.PointSpikeProductFragment;
@@ -11,6 +7,10 @@ import com.amkj.dmsh.dominant.fragment.PointSpikeProductFragment;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
 
 /**
  * @author LGuiPeng
@@ -30,10 +30,10 @@ public class PointSpikeTimeShaftAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int i) {
-        Map<String,String> params = new HashMap<>();
-        params.put("pointSpikeId",String.valueOf(timeAxisInfoListBeans.get(i).getId()));
-        params.put("pointSpikeStartTime",String.valueOf(timeAxisInfoListBeans.get(i).getStartTime()));
-        params.put("pointSpikeEndTime",String.valueOf(timeAxisInfoListBeans.get(i).getEndTime()));
+        Map<String, String> params = new HashMap<>();
+        params.put("pointSpikeId", String.valueOf(timeAxisInfoListBeans.get(i).getId()));
+        params.put("pointSpikeStartTime", String.valueOf(timeAxisInfoListBeans.get(i).getStartTime()));
+        params.put("pointSpikeEndTime", String.valueOf(timeAxisInfoListBeans.get(i).getEndTime()));
         return BaseFragment.newInstance(PointSpikeProductFragment.class, params, null);
     }
 
@@ -41,5 +41,10 @@ public class PointSpikeTimeShaftAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
         return timeAxisInfoListBeans != null ? timeAxisInfoListBeans.size() : 0;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return System.currentTimeMillis();
     }
 }

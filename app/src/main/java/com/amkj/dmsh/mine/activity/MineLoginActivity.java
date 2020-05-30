@@ -21,14 +21,14 @@ import com.amkj.dmsh.bean.LoginDataEntity;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.PasswordEncrypt;
-import com.amkj.dmsh.mine.CountDownHelper;
+import com.amkj.dmsh.mine.SmsCodeHelper;
 import com.amkj.dmsh.mine.bean.LoginPhoneCodeEntity;
 import com.amkj.dmsh.mine.bean.LoginPhoneCodeEntity.LoginPhoneCodeBean;
 import com.amkj.dmsh.mine.bean.OtherAccountBindEntity.OtherAccountBindInfo;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.gson.GsonUtils;
+import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 import com.umeng.socialize.UMAuthListener;
@@ -108,7 +108,6 @@ public class MineLoginActivity extends BaseActivity {
     @BindView(R.id.tv_agreement_privacy)
     public TextView tv_agreement_privacy;
     private boolean isPhoneLogin = true;//默认为手机验证码登录
-    private CountDownHelper countDownHelper;
     private AlertDialogHelper weChatDialogHelper;
     private AlertDialogHelper sinaDialogHelper;
     private AlertDialogHelper qqDialogHelper;
@@ -223,10 +222,7 @@ public class MineLoginActivity extends BaseActivity {
                                         showToast(R.string.GetSmsCodeSuccess);
                                         tv_login_send_code.setVisibility(View.VISIBLE);
                                         reg_login_code_gif_view.setVisibility(View.GONE);
-                                        if (countDownHelper == null) {
-                                            countDownHelper = CountDownHelper.getTimerInstance();
-                                        }
-                                        countDownHelper.setSmsCountDown(tv_login_send_code, getResources().getString(R.string.send_sms), 60);
+                                        SmsCodeHelper.startCountDownTimer(getActivity(), tv_login_send_code);
                                     } else {
                                         showException(resultData.getResultMsg());
                                     }
@@ -610,10 +606,6 @@ public class MineLoginActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         dismissLoadhud(getActivity());
-        if (countDownHelper == null) {
-            countDownHelper = CountDownHelper.getTimerInstance();
-        }
-        countDownHelper.setSmsCountDown(tv_login_send_code);
     }
 
 

@@ -4,10 +4,6 @@ import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.View;
 import android.view.animation.Animation;
@@ -19,7 +15,6 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
 import com.amkj.dmsh.dominant.activity.TimeBrandDetailsActivity;
 import com.amkj.dmsh.homepage.adapter.SpringSaleRecyclerAdapterNew;
@@ -50,6 +45,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -73,7 +72,6 @@ import static com.amkj.dmsh.constant.Url.TIME_SHOW_PRODUCT_TOPIC_SHAFT;
 import static com.amkj.dmsh.constant.Url.TIME_SHOW_PRO_TOP_PRODUCT;
 import static com.amkj.dmsh.constant.Url.TIME_SHOW_TAOBAO_PRODUCT;
 
-;
 
 
 /**
@@ -534,12 +532,6 @@ public class SpringSaleFragment extends BaseFragment {
         } else {
             setScrollPosition(0);
         }
-    }
-
-    @Override
-    public void onDestroyView() {
-        new ConstantMethod().releaseHandlers();
-        super.onDestroyView();
     }
 
     class PopupShaftViewHelper {

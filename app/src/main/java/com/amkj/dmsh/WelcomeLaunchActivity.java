@@ -54,6 +54,7 @@ public class WelcomeLaunchActivity extends BaseActivity {
     private SharedPreferences sharedPreferences;
     private String skipUrlPath;
     private int launcherAdId;
+    private CountDownTimer mCountDownTimer;
 
     @Override
     protected int getContentView() {
@@ -99,22 +100,23 @@ public class WelcomeLaunchActivity extends BaseActivity {
             fl_skip.setVisibility(View.VISIBLE);
             show_time = Integer.parseInt(getNumber(!TextUtils.isEmpty(showSeconds) ? showSeconds : "3"));
             show_time = (show_time > 4 ? 5 : show_time < 1 ? 5 : show_time);
-
-            CountDownTimer countDownTimer = new CountDownTimer(this, (show_time + 1) * 1000, 1000) {
-                @Override
-                public void onTick(long millisUntilFinished) {
-                    if (tv_launch_wel_skip_main != null) {
-                        tv_launch_wel_skip_main.setText((millisUntilFinished / 1000 + " 跳过"));
+            if (mCountDownTimer==null){
+                mCountDownTimer = new CountDownTimer(this) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+                        if (tv_launch_wel_skip_main != null) {
+                            tv_launch_wel_skip_main.setText((millisUntilFinished / 1000 + " 跳过"));
+                        }
                     }
-                }
 
-                @Override
-                public void onFinish() {
-                    cancel();
-                    skipMainActivity();
-                }
-            };
-            countDownTimer.start();
+                    @Override
+                    public void onFinish() {
+                        skipMainActivity();
+                    }
+                };
+            }
+            mCountDownTimer.setMillisInFuture(show_time * 1000);
+            mCountDownTimer.start();
         } catch (Exception e) {
             skipMainActivity();
         }

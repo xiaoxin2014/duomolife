@@ -48,8 +48,6 @@ import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dao.AddClickDao;
 import com.amkj.dmsh.dominant.activity.QualityNewUserActivity;
-import com.amkj.dmsh.views.alertdialog.AlertDialogEdit;
-import com.amkj.dmsh.views.alertdialog.AlertDialogGroup;
 import com.amkj.dmsh.find.fragment.FindFragment;
 import com.amkj.dmsh.homepage.activity.MainPageTabBarActivity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
@@ -64,6 +62,7 @@ import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.activity.DirectMyCouponActivity;
 import com.amkj.dmsh.utils.AddressUtils;
+import com.amkj.dmsh.utils.CountDownTimer;
 import com.amkj.dmsh.utils.FileStreamUtils;
 import com.amkj.dmsh.utils.SaveUpdateImportDateUtils;
 import com.amkj.dmsh.utils.SelectorUtil;
@@ -74,6 +73,8 @@ import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.restartapputils.RestartAPPTool;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.amkj.dmsh.views.alertdialog.AlertDialogBottomListHelper;
+import com.amkj.dmsh.views.alertdialog.AlertDialogEdit;
+import com.amkj.dmsh.views.alertdialog.AlertDialogGroup;
 import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.views.alertdialog.AlertDialogImage;
 import com.google.gson.JsonSyntaxException;
@@ -170,7 +171,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     //    地址存储路径
     private Fragment fragment;
     private boolean isChecked;
-    private ConstantMethod constantMethod;
     private Map<String, String> pushMap;
     private AlertDialogImage alertDialogAdImage;
     private AlertDialogHelper alertDialogHelper;
@@ -181,6 +181,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private AlertDialogImage mAlertDialogUserImage;
     private AlertDialogBottomListHelper mAlertDialogServer;
     private AlertDialogEdit mAlertDialogEdit;
+    private CountDownTimer mCountDownTimer;
 
 
     @Override
@@ -198,7 +199,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     protected void initViews() {
         fragmentManager = getSupportFragmentManager();
-        constantMethod = new ConstantMethod();
         boolean isFirstTime = setIntentBottomIconData();
         if (isFirstTime) {
             // 七鱼客服登录 获取用户信息 登进登出……
@@ -533,15 +533,20 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void setPushInfoReceive(SharedPreferences sharedPreferences, PushInfoEntity pushInfoEntity) {
-        final int[] currentSecond = {0};
-        constantMethod.createSchedule();
-        constantMethod.setRefreshTimeListener(() -> {
-            currentSecond[0]++;
-            if (currentSecond[0] == pushInfoEntity.getAppPushInfo().getPushSecond()) {
-                constantMethod.stopSchedule();
-                getReceivePushInfo(pushInfoEntity, sharedPreferences);
-            }
-        });
+        if (mCountDownTimer == null) {
+            mCountDownTimer = new CountDownTimer(getActivity()) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                }
+
+                @Override
+                public void onFinish() {
+                    getReceivePushInfo(pushInfoEntity, sharedPreferences);
+                }
+            };
+        }
+        mCountDownTimer.setMillisInFuture(pushInfoEntity.getAppPushInfo().getPushSecond() * 1000);
+        mCountDownTimer.start();
     }
 
     private void getReceivePushInfo(PushInfoEntity pushInfoEntity, SharedPreferences sharedPreferences) {
@@ -1310,14 +1315,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             changePage(mainIconBean);
         }
         isChecked = false;
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (constantMethod != null) {
-            constantMethod.releaseHandlers();
-        }
     }
 
     @Override

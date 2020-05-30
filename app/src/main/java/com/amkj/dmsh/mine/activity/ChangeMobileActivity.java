@@ -17,13 +17,14 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.mine.CountDownHelper;
+import com.amkj.dmsh.mine.SmsCodeHelper;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.KeyboardUtils;
+import com.amkj.dmsh.utils.LifecycleHandler;
 import com.amkj.dmsh.utils.NetWorkUtils;
-import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.gson.GsonUtils;
+import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 
 import org.json.JSONObject;
 
@@ -72,7 +73,6 @@ public class ChangeMobileActivity extends BaseActivity {
     private String uid;
     private String oldMobile;
     private String phoneNumber;
-    private CountDownHelper countDownHelper;
     private AlertDialogHelper alertDialogHelper;
 
     @Override
@@ -87,8 +87,8 @@ public class ChangeMobileActivity extends BaseActivity {
         tv_header_shared.setText("完成");
         Intent intent = getIntent();
         if (getIntent() != null) {
-            uid= intent.getStringExtra("uid");
-            oldMobile= intent.getStringExtra("mobile");
+            uid = intent.getStringExtra("uid");
+            oldMobile = intent.getStringExtra("mobile");
         } else {
             finish();
         }
@@ -127,13 +127,13 @@ public class ChangeMobileActivity extends BaseActivity {
                 if (NetWorkUtils.isConnectedByState(ChangeMobileActivity.this)) {
                     SMSSDK.submitVerificationCode("86", phoneNumber, smsCode);
                 } else {
-                    showToast( R.string.unConnectedNetwork);
+                    showToast(R.string.unConnectedNetwork);
                 }
             } else {
-                showToast( R.string.MobileError);
+                showToast(R.string.MobileError);
             }
         } else if (TextUtils.isEmpty(phoneNumber)) {
-            showToast( R.string.MobileError);
+            showToast(R.string.MobileError);
         } else {
             showToast(R.string.SmsCodeNull);
         }
@@ -153,14 +153,14 @@ public class ChangeMobileActivity extends BaseActivity {
             } else {
                 tv_change_send_code.setVisibility(View.VISIBLE);
                 reg_change_code_gif_view.setVisibility(View.GONE);
-                showToast( R.string.unConnectedNetwork);
+                showToast(R.string.unConnectedNetwork);
             }
         } else {
-            showToast( R.string.MobileError);
+            showToast(R.string.MobileError);
         }
     }
 
-    private Handler handler = new Handler(new Handler.Callback() {
+    private LifecycleHandler handler = new LifecycleHandler(getActivity(), new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             int event = msg.arg1;
@@ -178,11 +178,8 @@ public class ChangeMobileActivity extends BaseActivity {
                     //请求验证码成功，进入倒计时
                     tv_change_send_code.setVisibility(View.VISIBLE);
                     reg_change_code_gif_view.setVisibility(View.GONE);
-                    showToast( R.string.GetSmsCodeSuccess);
-                    if (countDownHelper == null) {
-                        countDownHelper = CountDownHelper.getTimerInstance();
-                    }
-                    countDownHelper.setSmsCountDown(tv_change_send_code, getResources().getString(R.string.send_sms), 60);
+                    showToast(R.string.GetSmsCodeSuccess);
+                    SmsCodeHelper.startCountDownTimer(getActivity(), tv_change_send_code);
                 } else if (event == SMSSDK.EVENT_GET_SUPPORTED_COUNTRIES) { //返回支持发送验证码的国家列表
                 }
             } else if (data != null) { //回调失败
@@ -196,7 +193,7 @@ public class ChangeMobileActivity extends BaseActivity {
                     throwable.printStackTrace();
                     JSONObject object = new JSONObject(throwable.getMessage());
                     int status = object.optInt("status");//错误代码
-                    disposeMessageCode( status);
+                    disposeMessageCode(status);
                 } catch (Exception e) {
                     showToast(R.string.unConnectedNetwork);
                 }
@@ -219,7 +216,6 @@ public class ChangeMobileActivity extends BaseActivity {
                 if (loadHud != null) {
                     loadHud.dismiss();
                 }
-
                 RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
@@ -279,15 +275,6 @@ public class ChangeMobileActivity extends BaseActivity {
     @OnClick(R.id.tv_life_back)
     void goBack(View view) {
         finish();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (countDownHelper == null) {
-            countDownHelper = CountDownHelper.getTimerInstance();
-        }
-        countDownHelper.setSmsCountDown(tv_change_send_code);
     }
 
     @Override
