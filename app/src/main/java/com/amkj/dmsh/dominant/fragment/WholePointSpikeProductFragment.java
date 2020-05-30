@@ -1,8 +1,5 @@
 package com.amkj.dmsh.dominant.fragment;
 
-import androidx.annotation.NonNull;
-import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
@@ -10,6 +7,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.dominant.adapter.PointSpikeTimeShaftAdapter;
 import com.amkj.dmsh.dominant.bean.PointSpikeTimeShaftEntity;
 import com.amkj.dmsh.dominant.bean.PointSpikeTimeShaftEntity.TimeAxisInfoListBean;
@@ -31,6 +29,9 @@ import com.tencent.bugly.beta.tinker.TinkerManager;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
@@ -146,20 +147,21 @@ public class WholePointSpikeProductFragment extends BaseFragment {
                     }
                 });
             }
-            int defaultItemPosition = 0;
-            if (vpPointSpikeContainer.getAdapter() != null) {
-                defaultItemPosition = vpPointSpikeContainer.getCurrentItem();
-            }
+
             float sWidth = AutoSizeUtils.mm2px(mAppContext, 178);
             int sItemCount = (int) (screenWidth / sWidth);
             if (sItemCount >= timeAxisInfoList.size()) {
                 sWidth = (int) (screenWidth * 1f / timeAxisInfoList.size());
             }
             stdPointSpikeType.setTabWidth(sWidth);
+            //清空FragmentManager中的缓存(否则Viewpager中的fragment页面无法刷新)
+            ConstantMethod.clearFragmentCache(getChildFragmentManager());
             PointSpikeTimeShaftAdapter spikeTimeShaftAdapter = new PointSpikeTimeShaftAdapter(getChildFragmentManager(), timeAxisInfoList);
             vpPointSpikeContainer.setAdapter(spikeTimeShaftAdapter);
+            vpPointSpikeContainer.setOffscreenPageLimit(spikeTimeShaftAdapter.getCount() - 1);
             stdPointSpikeType.setViewPager(vpPointSpikeContainer, customTabDoubleEntities);
 
+            int defaultItemPosition = stdPointSpikeType.getCurrentTab();
             //默认选中抢购中
             for (int i = 0; i < timeAxisInfoList.size(); i++) {
                 if (timeAxisInfoList.get(i).getStatusCode() == 1) {
@@ -167,29 +169,12 @@ public class WholePointSpikeProductFragment extends BaseFragment {
                     break;
                 }
             }
-            if (defaultItemPosition > 0) {
-                stdPointSpikeType.setCurrentTab(defaultItemPosition);
-                vpPointSpikeContainer.setCurrentItem(defaultItemPosition);
-            } else {
-                setDefaultCategoryType();
-            }
+            stdPointSpikeType.setCurrentTab(defaultItemPosition);
         } else {
             if (stdPointSpikeType.getVisibility() == View.VISIBLE) {
                 stdPointSpikeType.setVisibility(View.GONE);
                 vpPointSpikeContainer.setVisibility(View.GONE);
             }
-        }
-    }
-
-    /**
-     * 刷新 tab恢复默认
-     */
-    private void setDefaultCategoryType() {
-        if (vpPointSpikeContainer.getAdapter() != null
-                && stdPointSpikeType.getCurrentTab() != 0
-                && vpPointSpikeContainer.getCurrentItem() != 0) {
-            stdPointSpikeType.setCurrentTab(0);
-            vpPointSpikeContainer.setCurrentItem(0);
         }
     }
 

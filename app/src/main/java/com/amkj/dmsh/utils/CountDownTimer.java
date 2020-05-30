@@ -25,8 +25,10 @@ import android.os.SystemClock;
 /**
  * Created by xiaoxin on 2020/5/27
  * Version:v4.6.1
- * ClassDescription :定时任务工具类
- * 基于官方CountDownTimer修改，使用LifecycleHandler处理定时任务，页面销毁时自动移除未处理的message,避免内存泄漏
+ * ClassDescription :定时任务工具类,基于官方CountDownTimer修改
+ * 优化1.使用LifecycleHandler处理定时任务，页面销毁时自动移除未处理的message,避免内存泄漏
+ * 优化2.可动态设置倒计时总时长，并处理误差
+ * 优化3.倒计时结束时自动取消定时任务
  */
 public abstract class CountDownTimer {
 
@@ -41,7 +43,7 @@ public abstract class CountDownTimer {
 
     //动态设置倒计时总时长，复用定时任务时需要更新倒计时时间，避免错乱
     public void setMillisInFuture(long millisInFuture) {
-        //代码执行需要时间，所以+300处理误差
+        //代码执行消耗时间，所以+300处理误差
         mMillisInFuture = millisInFuture + 300;
     }
 
