@@ -3,10 +3,6 @@ package com.amkj.dmsh.homepage.adapter;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import androidx.emoji.widget.EmojiTextView;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -32,6 +28,7 @@ import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.adapter.InvitationProAdapter;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
+import com.amkj.dmsh.utils.AsyncUtils;
 import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
@@ -62,6 +59,10 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import androidx.emoji.widget.EmojiTextView;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import cn.jzvd.Jzvd;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
@@ -101,6 +102,7 @@ import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_RELEV
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_SHARE;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_VIDEO;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getOpenglRenderLimitValue;
+import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getVideoSnapShot;
 import static me.jessyan.autosize.utils.AutoSizeUtils.dp2px;
 
 
@@ -378,10 +380,32 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                 break;
             case TYPE_VIDEO:
                 JzVideoPlayerStatus jvp_video_play = holder.getView(R.id.jvp_video_play);
-                if (!TextUtils.isEmpty(detailObjectBean.getUrl())) {
-                    jvp_video_play.setVisibility(View.VISIBLE);
-                    jvp_video_play.setUp(getStrings(detailObjectBean.getUrl()), "", Jzvd.SCREEN_WINDOW_NORMAL);
-                    GlideImageLoaderUtil.loadCenterCrop(context, jvp_video_play.thumbImageView, getStrings(detailObjectBean.getPicUrl()));
+                String videoUrl = detailObjectBean.getUrl();
+                String videoSnapShot = getVideoSnapShot(videoUrl);
+                if (!TextUtils.isEmpty(videoUrl)) {
+                    new AsyncUtils<int[]>(context) {
+                        @Override
+                        public int[] runOnIO() {
+                            return GlideImageLoaderUtil.getImageUrlWidthHeight(videoSnapShot);
+                        }
+
+                        @Override
+                        public void runOnUI(int[] imageUrlWidthHeight) {
+                            int imgWidth = imageUrlWidthHeight[0];
+                            int imgHeight = imageUrlWidthHeight[1];
+                            ViewGroup.LayoutParams layoutParams = jvp_video_play.getLayoutParams();
+                            layoutParams.width = screenWidth;
+                            layoutParams.height = AutoSizeUtils.mm2px(context, 395);
+                            if (imgWidth > 0 && imgHeight > 0) {
+                                int screenWidth = ((TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike()).getScreenWidth();
+                                layoutParams.height = screenWidth * imgHeight / imgWidth;
+                            }
+                            jvp_video_play.setLayoutParams(layoutParams);
+                            jvp_video_play.setVisibility(View.VISIBLE);
+                            jvp_video_play.setUp(getStrings(detailObjectBean.getUrl()), "", Jzvd.SCREEN_WINDOW_NORMAL);
+                            GlideImageLoaderUtil.loadCenterCrop(context, jvp_video_play.thumbImageView, !TextUtils.isEmpty(videoSnapShot) ? videoSnapShot : detailObjectBean.getPicUrl());
+                        }
+                    }.excueTask();
                 } else {
                     jvp_video_play.setVisibility(View.GONE);
                 }

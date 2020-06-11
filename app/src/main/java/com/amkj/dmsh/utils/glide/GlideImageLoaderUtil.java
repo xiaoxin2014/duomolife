@@ -326,10 +326,6 @@ public class GlideImageLoaderUtil {
 
     /**
      * 获取水印图片
-     *
-     * @param imgUrl
-     * @param waterRemark
-     * @return
      */
     public static String getWaterMarkImgUrl(String imgUrl, String waterRemark) {
         TinkerBaseApplicationLike applicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
@@ -346,18 +342,27 @@ public class GlideImageLoaderUtil {
         return imgUrl;
     }
 
+    //获取视频第一帧
+    public static String getVideoSnapShot(String videoUrl) {
+        TinkerBaseApplicationLike applicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
+        String ossDataUrl = applicationLike.getOSSDataUrl();
+        if (!TextUtils.isEmpty(videoUrl) && videoUrl.contains(ossDataUrl)) {
+            String ossPrefix = "?x-oss-process=video";
+            String ossImgResizeOri = "/snapshot,t_100,f_jpg";
+            return videoUrl + (videoUrl.contains(ossPrefix) ? "" : ossPrefix) + ossImgResizeOri;
+        }
+        return "";
+    }
+
     /**
      * 获取矩形圆角
-     *
-     * @param radius
-     * @return
      */
     public static String getCornerImg(String imgUrl, int radius) {
         TinkerBaseApplicationLike applicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
         String ossDataUrl = applicationLike.getOSSDataUrl();
         if (!TextUtils.isEmpty(imgUrl) && imgUrl.contains(ossDataUrl)) {
             String ossPrefix = "?x-oss-process=image";
-            String ossImgRadius = "/rounded-corners,r_" + String.valueOf(radius) + "/format,png";
+            String ossImgRadius = "/rounded-corners,r_" + radius + "/format,png";
             if (imgUrl.contains(ossPrefix)) {
                 return imgUrl + ossImgRadius;
             } else {
@@ -369,9 +374,6 @@ public class GlideImageLoaderUtil {
 
     /**
      * 获取头像缩略图
-     *
-     * @param imgUrl
-     * @return
      */
     private static String getHeaderThumbImgUrl(String imgUrl) {
         TinkerBaseApplicationLike applicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
@@ -389,12 +391,6 @@ public class GlideImageLoaderUtil {
         return imgUrl;
     }
 
-    /**
-     * @param context
-     * @param iv
-     * @param imgUrl
-     * @param defaultImgResource
-     */
     public static void loadWithFitCenter(Context context, ImageView iv, String imgUrl,
                                          int defaultImgResource) {
         if (null != context && iv != null) {
@@ -407,9 +403,7 @@ public class GlideImageLoaderUtil {
     }
 
     /**
-     * @param context
-     * @param iv
-     * @param imgUrl  加载矩形圆角
+     * 加载矩形圆角
      */
     public static void loadRoundImg(final Context context, final ImageView iv,
                                     String imgUrl, int radius) {
@@ -419,10 +413,7 @@ public class GlideImageLoaderUtil {
     }
 
     /**
-     * @param context
-     * @param iv
-     * @param imgUrl
-     * @param defaultImgResource 加载矩形圆角
+     * 加载矩形圆角
      */
     public static void loadRoundImg(final Context context, final ImageView iv,
                                     String imgUrl, int radius, int defaultImgResource) {
@@ -435,6 +426,28 @@ public class GlideImageLoaderUtil {
                             .placeholder(defaultImgResource)
                             .error(defaultImgResource)
                             .transforms(new CenterCrop(), new RoundedCornersTransformation(radius, 0)))
+                    .into(iv);
+        }
+    }
+
+
+    /**
+     * 加载矩形圆角
+     *
+     * @param cornerType 指定圆角类型
+     */
+    public static void loadRoundImg(final Context context, final ImageView iv,
+                                    String imgUrl, int radius, RoundedCornersTransformation.CornerType cornerType) {
+
+        if (null != context && iv != null) {
+            if (TextUtils.isEmpty(imgUrl)) {
+                imgUrl = "android.resource://com.amkj.dmsh/" + R.drawable.load_loading_image;
+            }
+            Glide.with(context).load(imgUrl)
+                    .apply(new RequestOptions().dontAnimate()
+                            .placeholder(R.drawable.load_loading_image)
+                            .error(R.drawable.load_loading_image)
+                            .transforms(new CenterCrop(), new RoundedCornersTransformation(radius, 0, cornerType)))
                     .into(iv);
         }
     }
@@ -459,23 +472,6 @@ public class GlideImageLoaderUtil {
         return bitmap;
     }
 
-    /**
-     *
-     */
-    public static void loadRoundImg(final Context context, final ImageView iv,
-                                    String imgUrl, int radius, RoundedCornersTransformation.CornerType cornerType) {
-        if (null != context && iv != null) {
-            if (TextUtils.isEmpty(imgUrl)) {
-                imgUrl = "android.resource://com.amkj.dmsh/" + R.drawable.load_loading_image;
-            }
-            Glide.with(context).load(imgUrl)
-                    .apply(new RequestOptions().dontAnimate()
-                            .placeholder(R.drawable.load_loading_image)
-                            .error(R.drawable.load_loading_image)
-                            .transforms(new CenterCrop(), new RoundedCornersTransformation(radius, 0, cornerType)))
-                    .into(iv);
-        }
-    }
 
     /**
      * 带回调的，例如启动页广告需要加载完成在展示
