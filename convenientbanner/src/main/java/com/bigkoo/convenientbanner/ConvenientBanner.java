@@ -1,13 +1,7 @@
 package com.bigkoo.convenientbanner;
 
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleObserver;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.OnLifecycleEvent;
 import android.content.Context;
 import android.content.res.TypedArray;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -27,6 +21,13 @@ import com.bigkoo.convenientbanner.view.CBLoopViewPager;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.OnLifecycleEvent;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * 页面翻转控件，极方便的广告栏
@@ -49,7 +50,6 @@ public class ConvenientBanner<T> extends RelativeLayout implements LifecycleObse
     private CBPageChangeListener pageChangeListener;
     private OnPageChangeListener onPageChangeListener;
     private AdSwitchTask adSwitchTask;
-    private boolean isVertical = false;
     private LifecycleOwner lifecycleOwner;
 
     public enum PageIndicatorAlign {
@@ -101,6 +101,13 @@ public class ConvenientBanner<T> extends RelativeLayout implements LifecycleObse
         cbLoopScaleHelper.setFirstItemPos(canLoop ? mDatas.size() : 0);
         cbLoopScaleHelper.attachToRecyclerView(viewPager);
 
+        //设置是否可轮播
+        setCanLoop(datas != null && datas.size() > 1);
+        //设置是否显示指示器
+        if (datas != null && datas.size() > 1) {
+            setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius});
+        }
+        setPointViewVisible(datas != null && datas.size() > 1);
         //添加生命周期监听
         this.lifecycleOwner = lifecycleOwner;
         lifecycleOwner.getLifecycle().addObserver(this);
