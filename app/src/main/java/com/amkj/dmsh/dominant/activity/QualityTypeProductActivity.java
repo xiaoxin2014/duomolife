@@ -242,6 +242,7 @@ public class QualityTypeProductActivity extends BaseActivity {
     private void openCloseTypeSelector(final int tabPosition, final boolean isReselect) {
         if (bottomPopWindows == null) {
             bottomPopWindows = new BottomPopWindows(QualityTypeProductActivity.this);
+            bottomPopWindows.bindLifecycleOwner(this);
             bottomPopWindows.setOnDismissListener(new BasePopupWindow.OnDismissListener() {
                 @Override
                 public void onDismiss() {
@@ -448,8 +449,7 @@ public class QualityTypeProductActivity extends BaseActivity {
                                 }
                             };
                         }
-                        qTypeView.ad_communal_banner.setPages(QualityTypeProductActivity.this, cbViewHolderCreator, adBeanList).setCanLoop(true)
-                                .setPointViewVisible(true).setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
+                        qTypeView.ad_communal_banner.setPages(QualityTypeProductActivity.this, cbViewHolderCreator, adBeanList)
                                 .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
                     }
                     if (adBeanList.size() > 0) {

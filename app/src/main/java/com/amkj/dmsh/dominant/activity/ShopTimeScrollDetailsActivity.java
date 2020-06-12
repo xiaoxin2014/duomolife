@@ -473,8 +473,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
                 }
             };
         }
-        bannerShopTimeDetails.setPages(ShopTimeScrollDetailsActivity.this, cbViewHolderCreator, imagesVideoList).setCanLoop(true)
-                .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius});
+        bannerShopTimeDetails.setPages(ShopTimeScrollDetailsActivity.this, cbViewHolderCreator, imagesVideoList);
         bannerShopTimeDetails.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(int position) {

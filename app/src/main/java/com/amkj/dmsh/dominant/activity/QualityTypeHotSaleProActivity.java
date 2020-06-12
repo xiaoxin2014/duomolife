@@ -1,9 +1,6 @@
 package com.amkj.dmsh.dominant.activity;
 
 import android.content.Intent;
-import androidx.annotation.NonNull;
-import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -39,6 +36,9 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.OnClick;
 import me.jessyan.autosize.utils.AutoSizeUtils;
@@ -160,8 +160,7 @@ public class QualityTypeHotSaleProActivity extends BaseActivity {
                                         }
                                     };
                                 }
-                                adCommunalBanner.setPages(QualityTypeHotSaleProActivity.this, cbViewHolderCreator, adBeanList).setCanLoop(true).setPointViewVisible(true)
-                                        .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
+                                adCommunalBanner.setPages(QualityTypeHotSaleProActivity.this, cbViewHolderCreator, adBeanList)
                                         .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
                             }
                             if (adBeanList.size() > 0) {

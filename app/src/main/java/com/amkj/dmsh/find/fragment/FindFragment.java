@@ -1,12 +1,6 @@
 package com.amkj.dmsh.find.fragment;
 
 import android.content.Intent;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.viewpager.widget.ViewPager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -56,6 +50,12 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.OnClick;
 import me.jessyan.autosize.utils.AutoSizeUtils;
@@ -180,8 +180,7 @@ public class FindFragment extends BaseFragment {
                                 }
                             };
                         }
-                        ad_communal_banner.setPages(getActivity(), cbViewHolderCreator, adBeanList).setCanLoop(true).setPointViewVisible(true)
-                                .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
+                        ad_communal_banner.setPages(getActivity(), cbViewHolderCreator, adBeanList)
                                 .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
                     } else {
                         rel_find_ad.setVisibility(View.GONE);

@@ -224,8 +224,7 @@ public class GoodsScoreListActivity extends BaseActivity {
                                 }
                             };
                         }
-                        mAdCommunalBanner.setPages(getActivity(), cbViewHolderCreator, adBeanList).setCanLoop(true).setPointViewVisible(true)
-                                .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
+                        mAdCommunalBanner.setPages(getActivity(), cbViewHolderCreator, adBeanList)
                                 .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
                     } else {
                         mRelFindAd.setVisibility(View.GONE);

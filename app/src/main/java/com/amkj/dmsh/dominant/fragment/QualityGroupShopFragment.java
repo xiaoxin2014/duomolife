@@ -1,10 +1,6 @@
 package com.amkj.dmsh.dominant.fragment;
 
 import android.content.Intent;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +34,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -170,8 +170,7 @@ public class QualityGroupShopFragment extends BaseFragment {
                     }
                 };
             }
-            groupShopHeaderView.ad_communal_banner.setPages(getActivity(), cbViewHolderCreator, adBeanList).setCanLoop(true)
-                    .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
+            groupShopHeaderView.ad_communal_banner.setPages(getActivity(), cbViewHolderCreator, adBeanList)
                     .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
         } else {
             groupShopHeaderView.rel_communal_banner.setVisibility(View.GONE);

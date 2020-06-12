@@ -72,6 +72,14 @@ public class DeviceUtils {
 
 
     /**
+     * 获取设备唯一码
+     */
+    public static String getDeviceId(Context context) {
+        return getAndroidID(context) + Build.SERIAL;
+    }
+
+
+    /**
      * 获取设备厂商
      * <p>如Xiaomi</p>
      *

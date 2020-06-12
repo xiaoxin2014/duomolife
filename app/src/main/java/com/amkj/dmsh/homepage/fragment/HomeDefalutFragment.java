@@ -1,11 +1,6 @@
 package com.amkj.dmsh.homepage.fragment;
 
 import android.content.Intent;
-import androidx.viewpager.widget.ViewPager;
-import androidx.core.widget.NestedScrollView;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -66,6 +61,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.OnClick;
 import me.jessyan.autosize.utils.AutoSizeUtils;
@@ -211,8 +211,6 @@ public class HomeDefalutFragment extends BaseFragment {
         });
         //初始化Top适配器
         mTopManager = new GridLayoutManager(getActivity(), 5);
-//        LinearLayoutManager topManager = new LinearLayoutManager(getActivity()
-//                , LinearLayoutManager.HORIZONTAL, false);
         mRvTop.setLayoutManager(mTopManager);
         mHomeTopAdapter = new HomeTopAdapter(getActivity(), mTopList);
         mRvTop.setAdapter(mHomeTopAdapter);
@@ -323,7 +321,6 @@ public class HomeDefalutFragment extends BaseFragment {
     }
 
     private void getADJsonData(String result) {
-
         CommunalADActivityEntity qualityAdLoop = GsonUtils.fromJson(result, CommunalADActivityEntity.class);
         if (qualityAdLoop != null) {
             List<CommunalADActivityBean> communalAdList = qualityAdLoop.getCommunalADActivityBeanList();
@@ -344,9 +341,7 @@ public class HomeDefalutFragment extends BaseFragment {
                         }
                     };
                 }
-                mCbBanner.setPages(getActivity(), cbViewHolderCreator, adBeanList).setCanLoop(true)
-                        .setPointViewVisible(true)
-                        .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
+                mCbBanner.setPages(getActivity(), cbViewHolderCreator, adBeanList)
                         .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
             } else {
                 mCbBanner.setVisibility(View.GONE);

@@ -37,7 +37,6 @@ import com.amkj.dmsh.MainActivity;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
-import com.amkj.dmsh.bean.CommunalComment;
 import com.amkj.dmsh.bean.HomeQualityFloatAdEntity;
 import com.amkj.dmsh.bean.ImageBean;
 import com.amkj.dmsh.bean.RequestStatus;
@@ -59,7 +58,6 @@ import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean.CartBean.CartInfoBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
-import com.amkj.dmsh.rxeasyhttp.utils.DeviceUtils;
 import com.amkj.dmsh.shopdetails.activity.DirectExchangeDetailsActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectIndentWriteActivity;
 import com.amkj.dmsh.shopdetails.activity.DoMoRefundDetailActivity;
@@ -68,7 +66,6 @@ import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.IndentProDiscountBean;
 import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
-import com.amkj.dmsh.utils.MarketUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
@@ -117,22 +114,15 @@ import q.rorbin.badgeview.Badge;
 import q.rorbin.badgeview.QBadgeView;
 
 import static android.content.Context.MODE_PRIVATE;
-import static com.ali.auth.third.core.context.KernelContext.getApplicationContext;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.base.WeChatPayConstants.APP_ID;
 import static com.amkj.dmsh.constant.ConstantVariable.BUY_AGAIN;
-import static com.amkj.dmsh.constant.ConstantVariable.COMMENT_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_GROUP_SHOP;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.MES_ADVISE;
-import static com.amkj.dmsh.constant.ConstantVariable.MES_FEEDBACK;
-import static com.amkj.dmsh.constant.ConstantVariable.PRO_COMMENT;
-import static com.amkj.dmsh.constant.ConstantVariable.PRO_TOPIC;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_SPACE_CHAR;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_TEXT;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_URL;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.TYPE_C_WELFARE;
 import static com.amkj.dmsh.constant.UMShareAction.routineId;
 import static com.amkj.dmsh.constant.Url.CHECK_BUY_AGAIN_NEWV2;
 import static com.amkj.dmsh.constant.Url.CHECK_ORDER_SETTLE_INFOV2;
@@ -147,7 +137,7 @@ import static com.yanzhenjie.permission.AndPermission.getFileUri;
  */
 
 public class ConstantMethod {
-    private OnSendCommentFinish onSendCommentFinish;
+
     private OnGetPermissionsSuccessListener onGetPermissionsSuccessListener;
     public static int userId = 0;
     private AlertDialogHelper alertDialogHelper;
@@ -794,227 +784,6 @@ public class ConstantMethod {
         } else {
             return isViewSel ? String.valueOf(numCount + 1) : zeroString;
         }
-    }
-
-    public void setSendComment(final Activity context, CommunalComment communalComment) {
-        switch (communalComment.getCommType()) {
-            case PRO_COMMENT:
-                setGoodsComment(context, communalComment);
-                break;
-            case COMMENT_TYPE:
-            case PRO_TOPIC:
-            case TYPE_C_WELFARE:
-                setDocComment(context, communalComment);
-                break;
-            case MES_ADVISE:
-                setAdviceData(context, communalComment);
-                break;
-            case MES_FEEDBACK:
-                setFeedbackData(context, communalComment);
-                break;
-            default:
-                dismissLoadhud(context);
-                if (onSendCommentFinish != null) {
-                    onSendCommentFinish.onError();
-                }
-                showToast(R.string.comment_send_failed);
-                break;
-        }
-
-    }
-
-
-    private void setGoodsComment(final Activity context, CommunalComment communalComment) {
-        String url = Url.GOODS_COMMENT;
-        Map<String, Object> params = new HashMap<>();
-        //回复评论
-        params.put("uid", communalComment.getUserId());
-        params.put("obj_id", communalComment.getObjId());
-        params.put("content", communalComment.getContent());
-        params.put("is_at", 0);
-        params.put("com_type", "goods");
-        if (communalComment.getIsReply() == 1) {
-            params.put("is_reply", 1);
-            params.put("reply_uid", communalComment.getReplyUserId());
-            //评论id
-            params.put("pid", communalComment.getPid());
-        } else {
-            //回复文章或帖子
-            params.put("is_reply", 0);
-        }
-        NetLoadUtils.getNetInstance().loadNetDataPost(context, url, params, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-
-                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
-                if (requestStatus != null) {
-                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        if (onSendCommentFinish != null) {
-                            onSendCommentFinish.onSuccess();
-                        }
-                        showToast(R.string.comment_send_success);
-                    } else {
-                        if (onSendCommentFinish != null) {
-                            onSendCommentFinish.onError();
-                        }
-                        showToastRequestMsg(requestStatus);
-                    }
-                }
-            }
-
-            @Override
-            public void onNotNetOrException() {
-                if (onSendCommentFinish != null) {
-                    onSendCommentFinish.onError();
-                }
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                showToast(R.string.comment_send_failed);
-            }
-        });
-    }
-
-    private void setDocComment(final Activity context, CommunalComment communalComment) {
-        String url = Url.FIND_COMMENT;
-        Map<String, Object> params = new HashMap<>();
-        //回复文章或帖子
-        params.put("is_reply", communalComment.getIsReply());
-        params.put("uid", communalComment.getUserId());
-        params.put("to_uid", communalComment.getToUid());
-        params.put("obj_id", communalComment.getObjId());
-        params.put("content", communalComment.getContent());
-        params.put("com_type", communalComment.getCommType());
-        if (communalComment.getIsReply() == 1) {
-            params.put("reply_uid", communalComment.getReplyUserId() > 0 ? String.valueOf(communalComment.getReplyUserId()) : "");
-            params.put("pid", communalComment.getPid() > 0 ? String.valueOf(communalComment.getPid()) : "");
-            params.put("pid_type", communalComment.getCommType());
-            params.put("main_comment_id", communalComment.getMainCommentId() > 0 ? String.valueOf(communalComment.getMainCommentId()) : "");
-        }
-        NetLoadUtils.getNetInstance().loadNetDataPost(context, url, params, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-
-                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
-                if (requestStatus != null) {
-                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        if (onSendCommentFinish != null) {
-                            onSendCommentFinish.onSuccess();
-                        }
-                    } else {
-                        if (onSendCommentFinish != null) {
-                            onSendCommentFinish.onError();
-                        }
-                        showToastRequestMsg(requestStatus);
-                    }
-                }
-            }
-
-            @Override
-            public void onNotNetOrException() {
-                if (onSendCommentFinish != null) {
-                    onSendCommentFinish.onError();
-                }
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                showToast(R.string.comment_send_failed);
-            }
-        });
-    }
-
-    /**
-     * 发送留言
-     *
-     * @param context
-     * @param communalComment
-     */
-    private void setAdviceData(final Activity context, CommunalComment communalComment) {
-        String url = Url.SEARCH_LEAVE_MES;
-        Map<String, Object> params = new HashMap<>();
-        params.put("uid", communalComment.getUserId());
-        params.put("content", getStrings(communalComment.getContent()));
-        NetLoadUtils.getNetInstance().loadNetDataPost(context, url, params, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                dismissLoadhud(context);
-                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
-                if (requestStatus != null) {
-                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        if (onSendCommentFinish != null) {
-                            onSendCommentFinish.onSuccess();
-                        }
-                        showToast(R.string.Submit_Success);
-                    } else {
-                        if (onSendCommentFinish != null) {
-                            onSendCommentFinish.onError();
-                        }
-                        showToast(requestStatus.getMsg() + ",请重新提交");
-                    }
-                }
-            }
-
-            @Override
-            public void onNotNetOrException() {
-                dismissLoadhud(context);
-                if (onSendCommentFinish != null) {
-                    onSendCommentFinish.onError();
-                }
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                showToast(R.string.commit_failed);
-            }
-        });
-    }
-
-    /**
-     * 发送意见反馈
-     *
-     * @param context
-     * @param communalComment
-     */
-    private void setFeedbackData(final Activity context, CommunalComment communalComment) {
-        String url = Url.MINE_FEEDBACK;
-        Map<String, Object> params = new HashMap<>();
-        params.put("uid", communalComment.getUserId());
-        params.put("remark", getStrings(communalComment.getContent()));
-        NetLoadUtils.getNetInstance().loadNetDataPost(context, url, params, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                dismissLoadhud(context);
-                RequestStatus requestInfo = GsonUtils.fromJson(result, RequestStatus.class);
-                if (requestInfo != null) {
-                    if (requestInfo.getCode().equals(SUCCESS_CODE)) {
-                        if (onSendCommentFinish != null) {
-                            onSendCommentFinish.onSuccess();
-                        }
-                        showToast(R.string.Submit_Success);
-                    } else {
-                        if (onSendCommentFinish != null) {
-                            onSendCommentFinish.onError();
-                        }
-                        showToastRequestMsg(requestInfo);
-                    }
-                }
-            }
-
-            @Override
-            public void onNotNetOrException() {
-                dismissLoadhud(context);
-                if (onSendCommentFinish != null) {
-                    onSendCommentFinish.onError();
-                }
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                showToast(R.string.commit_failed);
-            }
-        });
     }
 
     //获取浮动广告
@@ -1765,16 +1534,7 @@ public class ConstantMethod {
         }
     }
 
-    //    发送评论回调
-    public void setOnSendCommentFinish(OnSendCommentFinish onSendCommentFinish) {
-        this.onSendCommentFinish = onSendCommentFinish;
-    }
 
-    public interface OnSendCommentFinish {
-        void onSuccess();
-
-        void onError();
-    }
 
     public void setOnGetPermissionsSuccess(OnGetPermissionsSuccessListener onGetPermissionsSuccessListener) {
         this.onGetPermissionsSuccessListener = onGetPermissionsSuccessListener;
@@ -1866,71 +1626,8 @@ public class ConstantMethod {
                 .build();
     }
 
-    /**
-     * 获取应用市场
-     */
-    public static void getMarketApp(Context context, String hintText) {
-        //        获取已安装应用的包名列表
-        try {
-            List<PackageInfo> packageInfo = context.getPackageManager().getInstalledPackages(0);
-            List<String> marketPackages = MarketUtils.getMarketPackages();
-            //本地安装的应用商店列表
-            List<String> installList = new ArrayList<>();
-            String appMarketStore = "";
-            for (int i = 0; i < packageInfo.size(); i++) {
-                String packageName = packageInfo.get(i).packageName;
-                if (marketPackages.contains(packageName) && !installList.contains(packageName)) {
-                    installList.add(packageName);
-                }
-            }
-            //获取本地是否安装官方应用商店(优先跳转厂商官方应用商店)
-            String model = DeviceUtils.getManufacturer().toLowerCase();
-            switch (model) {
-                case "huawei":
-                    if (installList.contains("com.huawei.appmarket"))
-                        appMarketStore = "com.huawei.appmarket";
-                    break;
-                case "meizu":
-                    if (installList.contains("com.meizu.mstore"))
-                        appMarketStore = "com.meizu.mstore";
-                    break;
-                case "xiaomi":
-                    if (installList.contains("com.xiaomi.market"))
-                        appMarketStore = "com.xiaomi.market";
-                    break;
-                case "oppo":
-                    if (installList.contains("com.oppo.market"))
-                        appMarketStore = "com.oppo.market";
-                    break;
-                case "vivo":
-                    if (installList.contains("com.bbk.appstore"))
-                        appMarketStore = "com.bbk.appstore";
-                    break;
-                case "lenovo":
-                    if (installList.contains("com.lenovo.leos.appstore"))
-                        appMarketStore = "com.lenovo.leos.appstore";
-                    break;
-                default:
-                    if (installList.size() > 0)
-                        appMarketStore = installList.get(0);
-                    break;
-            }
 
-            if (!TextUtils.isEmpty(appMarketStore)) {
-                try {
-                    MarketUtils.launchAppDetail(getApplicationContext(), context.getPackageName(), appMarketStore);
-                } catch (Exception e) {
-                    showToast(hintText);
-                }
-            } else {
-                showToast(hintText);
-            }
-        } catch (Exception e) {
-            showToast(hintText);
-        }
-    }
-
-
+    //清除FragmentManager
     public static void clearFragmentCache(FragmentManager fragmentManager) {
         try {
             FragmentTransaction mCurTransaction = fragmentManager.beginTransaction();
@@ -2005,17 +1702,6 @@ public class ConstantMethod {
         return dest;
     }
 
-    /**
-     * 获取设备唯一码
-     *
-     * @param context
-     * @return
-     */
-    public static String getDeviceId(Context context) {
-        String androidID = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
-        String id = androidID + Build.SERIAL;
-        return id;
-    }
 
     /**
      * md5加密

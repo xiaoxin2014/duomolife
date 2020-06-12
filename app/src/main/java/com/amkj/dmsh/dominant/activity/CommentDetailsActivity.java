@@ -2,10 +2,6 @@ package com.amkj.dmsh.dominant.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import androidx.annotation.NonNull;
-import androidx.emoji.widget.EmojiEditText;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -21,8 +17,8 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.CommunalComment;
-import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.dao.CommentDao;
 import com.amkj.dmsh.dominant.adapter.ArticleCommentDetailAdapter;
 import com.amkj.dmsh.dominant.bean.CommentDetailEntity;
 import com.amkj.dmsh.dominant.bean.PostCommentEntity;
@@ -46,6 +42,10 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import androidx.annotation.NonNull;
+import androidx.emoji.widget.EmojiEditText;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -324,8 +324,7 @@ public class CommentDetailsActivity extends BaseActivity {
         loadHud.show();
         tv_send_comment.setText("发送中…");
         tv_send_comment.setEnabled(false);
-        ConstantMethod constantMethod = new ConstantMethod();
-        constantMethod.setOnSendCommentFinish(new ConstantMethod.OnSendCommentFinish() {
+        CommentDao.setSendComment(CommentDetailsActivity.this, communalComment, new CommentDao.OnSendCommentFinish() {
             @Override
             public void onSuccess() {
                 loadHud.dismiss();
@@ -345,7 +344,6 @@ public class CommentDetailsActivity extends BaseActivity {
                 tv_send_comment.setEnabled(true);
             }
         });
-        constantMethod.setSendComment(CommentDetailsActivity.this, communalComment);
     }
 
     @Override
@@ -517,13 +515,6 @@ public class CommentDetailsActivity extends BaseActivity {
     public View getLoadView() {
         return smart_communal_refresh;
     }
-
-//    @Override
-//    protected void postEventResult(@NonNull EventMessage message) {
-//        if (UPDATE_POST_COMMENT.equals(message.type) && getSimpleName().equals(message.result)) {
-//            loadData();
-//        }
-//    }
 
 
     @Override

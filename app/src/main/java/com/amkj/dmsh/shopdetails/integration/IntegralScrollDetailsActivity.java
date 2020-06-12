@@ -3,11 +3,6 @@ package com.amkj.dmsh.shopdetails.integration;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.emoji.widget.EmojiTextView;
-import androidx.core.widget.NestedScrollView;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -17,10 +12,10 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.bean.ImageBean;
-import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.bean.CommunalDetailBean;
+import com.amkj.dmsh.bean.ImageBean;
 import com.amkj.dmsh.bean.TabEntity;
+import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.activity.DirectProductEvaluationActivity;
@@ -74,6 +69,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import androidx.annotation.NonNull;
+import androidx.core.widget.NestedScrollView;
+import androidx.emoji.widget.EmojiTextView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -443,8 +443,7 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
                 }
             };
         }
-        banner_integration_details.setPages(this, cbViewHolderCreator, imagesVideoList).setCanLoop(true)
-                .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius});
+        banner_integration_details.setPages(this, cbViewHolderCreator, imagesVideoList);
 
 //        商品名字
         tv_integration_details_introduce_productName.setText(getStrings(productInfoBean.getName()));
@@ -516,7 +515,8 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
             if (integralPopWindows == null) {
                 SkuSaleBean skuSaleBean = productInfoBean.getSkuSale().get(0);
                 integralPopWindows = new IntegralPopWindows(IntegralScrollDetailsActivity.this);
-                integralPopWindows.setPopupWindowFullScreen(true);
+                integralPopWindows.bindLifecycleOwner(this);
+                integralPopWindows.setOverlayStatusbar(true);
                 View popupWindowView = integralPopWindows.getContentView();
                 RectAddAndSubViewCommunal rectAddAndSubViewCommunal = popupWindowView.findViewById(R.id.rect_integral_product_number);
                 TextView tv_integral_product_exchange = popupWindowView.findViewById(R.id.tv_integral_product_exchange);

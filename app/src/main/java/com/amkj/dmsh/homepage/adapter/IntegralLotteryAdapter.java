@@ -27,9 +27,9 @@ import com.amkj.dmsh.homepage.initviews.AttendanceLotteryCodePopWindow;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.CountDownTimer;
-import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.gson.GsonUtils;
+import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.android.flexbox.FlexboxLayout;
@@ -46,10 +46,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleObserver;
-import androidx.lifecycle.OnLifecycleEvent;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
@@ -77,7 +74,7 @@ import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTimeAddSeconds;
  * version 3.1.5
  * class description:积分夺宝
  */
-public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, IntegralLotteryAdapter.IntegralLotteryViewHolder> implements LifecycleObserver {
+public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, IntegralLotteryAdapter.IntegralLotteryViewHolder>  {
     private final Activity context;
     private final List<PreviousInfoBean> integralLotteryList;
     private final LayoutInflater inflater;
@@ -97,7 +94,6 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
         inflater = LayoutInflater.from(context);
         setLotteryCodePopWindows();
         setIntegralPopWindows();
-        ((AppCompatActivity) context).getLifecycle().addObserver(this);
         CreatCountDownTimer();
     }
 
@@ -106,6 +102,7 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
      */
     private void setLotteryCodePopWindows() {
         attendanceLotteryCodePopWindow = new AttendanceLotteryCodePopWindow(context);
+        attendanceLotteryCodePopWindow.bindLifecycleOwner((LifecycleOwner) context);
         attendanceLotteryCodePopWindow.getPopupWindow().setOutsideTouchable(true);
         View popupWindowView = attendanceLotteryCodePopWindow.getContentView();
         attendanceLotteryCode = new AttendanceLotteryCode();
@@ -644,12 +641,5 @@ public class IntegralLotteryAdapter extends BaseQuickAdapter<PreviousInfoBean, I
             getLoginStatus(context);
             textView.setEnabled(true);
         }
-    }
-
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    private void onDestroy() {
-        attendanceLotteryCodePopWindow.dismiss();
-        ((AppCompatActivity) context).getLifecycle().removeObserver(this);
     }
 }

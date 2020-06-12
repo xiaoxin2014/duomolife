@@ -3,12 +3,6 @@ package com.amkj.dmsh.dominant.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
-import androidx.annotation.NonNull;
-import androidx.emoji.widget.EmojiEditText;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -33,6 +27,7 @@ import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.dao.CommentDao;
 import com.amkj.dmsh.dominant.adapter.ArticleCommentAdapter;
 import com.amkj.dmsh.dominant.adapter.WelfareSlideProAdapter;
 import com.amkj.dmsh.dominant.bean.DmlSearchCommentEntity;
@@ -66,6 +61,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.emoji.widget.EmojiEditText;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -274,7 +275,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                     saveSourceId(getClass().getSimpleName(), welfareId);             //记录埋点参数sourceId
                     skipProductUrl(DoMoLifeWelfareDetailsActivity.this, productListBean.getItemTypeId(), productListBean.getId());
                     //                    统计商品点击
-                    totalWelfareProNum(getActivity(), productListBean.getId(),welfareId);
+                    totalWelfareProNum(getActivity(), productListBean.getId(), welfareId);
                 }
             }
         });
@@ -356,7 +357,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
 
                     @Override
                     public void onError(Throwable throwable) {
-                        showToast( R.string.invalidData);
+                        showToast(R.string.invalidData);
                     }
                 });
     }
@@ -529,14 +530,13 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
         loadHud.show();
         tv_send_comment.setText("发送中…");
         tv_send_comment.setEnabled(false);
-        ConstantMethod constantMethod = new ConstantMethod();
-        constantMethod.setOnSendCommentFinish(new ConstantMethod.OnSendCommentFinish() {
+        CommentDao.setSendComment(this, communalComment, new CommentDao.OnSendCommentFinish() {
             @Override
             public void onSuccess() {
                 loadHud.dismiss();
                 tv_send_comment.setText("发送");
                 tv_send_comment.setEnabled(true);
-                showToast( R.string.comment_article_send_success);
+                showToast(R.string.comment_article_send_success);
                 commentViewVisible(GONE, null);
                 page = 1;
                 getTopicComment();
@@ -550,7 +550,6 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                 tv_send_comment.setEnabled(true);
             }
         });
-        constantMethod.setSendComment(DoMoLifeWelfareDetailsActivity.this, communalComment);
     }
 
     private void setPublishComment() {
@@ -646,7 +645,7 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                 }
             }
         } else if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
-            if (badge!=null){
+            if (badge != null) {
                 badge.setBadgeNumber((int) message.result);
             }
         }

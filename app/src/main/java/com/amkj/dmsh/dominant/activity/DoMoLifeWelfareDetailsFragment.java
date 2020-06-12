@@ -3,12 +3,6 @@ package com.amkj.dmsh.dominant.activity;
 import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.emoji.widget.EmojiEditText;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -29,6 +23,7 @@ import com.amkj.dmsh.bean.CommunalComment;
 import com.amkj.dmsh.bean.CommunalDetailBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.dao.CommentDao;
 import com.amkj.dmsh.dominant.adapter.ArticleCommentAdapter;
 import com.amkj.dmsh.dominant.adapter.WelfareSlideProAdapter;
 import com.amkj.dmsh.dominant.bean.DmlSearchCommentEntity;
@@ -53,14 +48,18 @@ import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.amkj.dmsh.utils.webformatdata.ShareDataBean;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.emoji.widget.EmojiEditText;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -252,8 +251,6 @@ public class DoMoLifeWelfareDetailsFragment extends BaseFragment {
         rv_wel_details_pro.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_gray_f_one_px)
-
-
                 .create());
         welfareSlideProAdapter = new WelfareSlideProAdapter(getActivity(), welfareProductList);
         welfareSlideProAdapter.setEnableLoadMore(false);
@@ -271,23 +268,15 @@ public class DoMoLifeWelfareDetailsFragment extends BaseFragment {
                 }
             }
         });
-        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                loadData();
-            }
-        });
+        smart_communal_refresh.setOnRefreshListener(refreshLayout -> loadData());
         //          关闭手势滑动
         dr_welfare_detail_pro.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, Gravity.END);
         badge = getBadge(getActivity(), fl_header_service);
         tv_publish_comment.setText(R.string.comment_article_hint);
         if (getActivity() != null) {
-            KeyboardUtils.registerSoftInputChangedListener(getActivity(), new KeyboardUtils.OnSoftInputChangedListener() {
-                @Override
-                public void onSoftInputChanged(int height) {
-                    if (height == 0) {
-                        ((ViewGroup) getActivity().findViewById(android.R.id.content)).getChildAt(0).requestFocus();
-                    }
+            KeyboardUtils.registerSoftInputChangedListener(getActivity(), height -> {
+                if (height == 0) {
+                    ((ViewGroup) getActivity().findViewById(android.R.id.content)).getChildAt(0).requestFocus();
                 }
             });
         }
@@ -330,7 +319,7 @@ public class DoMoLifeWelfareDetailsFragment extends BaseFragment {
                                 qualityWefBean = qualityWefEntity.getQualityWefBean();
                                 setData(qualityWefBean);
                             } else if (!qualityWefEntity.getCode().equals(EMPTY_CODE)) {
-                                showToast( qualityWefEntity.getMsg());
+                                showToast(qualityWefEntity.getMsg());
                             }
                         }
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, qualityWefBean, qualityWefEntity);
@@ -445,7 +434,7 @@ public class DoMoLifeWelfareDetailsFragment extends BaseFragment {
                     } else if (dmlSearchCommentEntity.getCode().equals(EMPTY_CODE)) {
                         adapterTopicComment.loadMoreEnd();
                     } else {
-                        showToast( dmlSearchCommentEntity.getMsg());
+                        showToast(dmlSearchCommentEntity.getMsg());
                     }
                     adapterTopicComment.removeHeaderView(commentHeaderView);
                     if (articleCommentList.size() > 0) {
@@ -478,8 +467,7 @@ public class DoMoLifeWelfareDetailsFragment extends BaseFragment {
         loadHud.show();
         tv_send_comment.setText("发送中…");
         tv_send_comment.setEnabled(false);
-        ConstantMethod constantMethod = new ConstantMethod();
-        constantMethod.setOnSendCommentFinish(new ConstantMethod.OnSendCommentFinish() {
+        CommentDao.setSendComment(getActivity(), communalComment, new CommentDao.OnSendCommentFinish() {
             @Override
             public void onSuccess() {
                 loadHud.dismiss();
@@ -499,7 +487,6 @@ public class DoMoLifeWelfareDetailsFragment extends BaseFragment {
                 tv_send_comment.setEnabled(true);
             }
         });
-        constantMethod.setSendComment(getActivity(), communalComment);
     }
 
     private void setPublishComment() {

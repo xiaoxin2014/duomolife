@@ -1,6 +1,7 @@
 package com.amkj.dmsh.utils;
 
-import com.amkj.dmsh.base.BaseActivity;
+import android.app.Activity;
+
 import com.dhh.rxlife2.RxLife;
 
 import java.util.concurrent.BlockingQueue;
@@ -9,6 +10,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import androidx.lifecycle.LifecycleOwner;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -24,9 +26,9 @@ import io.reactivex.schedulers.Schedulers;
 public abstract class AsyncUtils<T> {
 
     private static ThreadPoolExecutor executorService;
-    private final BaseActivity mActivity;
+    private final Activity mActivity;
 
-    protected AsyncUtils(BaseActivity activity) {
+    protected AsyncUtils(Activity activity) {
         mActivity = activity;
     }
 
@@ -63,8 +65,11 @@ public abstract class AsyncUtils<T> {
             }
         };
 
-        observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).compose(RxLife.with(mActivity).bindToLifecycle()).subscribe(observer);
-
+        Observable<T> tObservable = observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        if (mActivity instanceof LifecycleOwner) {
+            tObservable = tObservable.compose(RxLife.with((LifecycleOwner) mActivity).bindToLifecycle());
+        }
+        tObservable.subscribe(observer);
     }
 
     public abstract T runOnIO();

@@ -1,5 +1,4 @@
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:focusable="true"
@@ -10,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <include layout="@layout/layout_refresh_header_gif"/>
+        <include layout="@layout/layout_refresh_header_gif" />
 
 
         <androidx.core.widget.NestedScrollView
@@ -24,12 +23,11 @@
                 android:descendantFocusability="blocksDescendants"
                 android:orientation="vertical">
 
-                <com.bigkoo.convenientbanner.ConvenientBanner
-                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                <com.bigkoo.convenientbanner.ConvenientBanner xmlns:app="http://schemas.android.com/apk/res-auto"
                     android:id="@+id/cb_banner"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/sc_mm_300"
-                    app:canLoop="true"/>
+                    app:canLoop="true" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_top"
@@ -37,9 +35,9 @@
                     android:layout_height="wrap_content"
                     android:background="@color/white"
                     android:paddingTop="@dimen/sc_mm_30"
-                    android:paddingBottom="@dimen/sc_mm_40"/>
+                    android:paddingBottom="@dimen/sc_mm_40" />
 
-                <include layout="@layout/layout_home_dynamic"/>
+                <include layout="@layout/layout_home_dynamic" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_special_zone"
@@ -47,7 +45,7 @@
                     android:layout_height="wrap_content"
                     android:background="@color/light_gray_f"
                     android:paddingBottom="@dimen/sc_mm_20"
-                    android:scrollbars="none"/>
+                    android:scrollbars="none" />
 
                 <LinearLayout
                     android:id="@+id/ll_felware"
@@ -72,7 +70,7 @@
                             android:layout_height="wrap_content"
                             android:text="精选专题"
                             android:textColor="@color/text_black_t"
-                            android:textSize="@dimen/sc_mm_32"/>
+                            android:textSize="@dimen/sc_mm_32" />
 
                         <TextView
                             android:id="@+id/tv_welfare_desc"
@@ -82,7 +80,7 @@
                             android:layout_marginTop="@dimen/sc_mm_12"
                             android:text="想你所想，生活幸福感添加剂~"
                             android:textColor="@color/text_login_gray_s"
-                            android:textSize="@dimen/sc_mm_26"/>
+                            android:textSize="@dimen/sc_mm_26" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -90,7 +88,8 @@
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
                             android:layout_marginRight="@dimen/sc_mm_28"
-                            android:text="更多 >"/>
+                            android:text="更多 >"
+                            android:textSize="@dimen/sc_mm_28" />
                     </RelativeLayout>
 
                     <androidx.viewpager.widget.ViewPager
@@ -103,9 +102,9 @@
                         android:clipChildren="false"
                         android:clipToPadding="false"
                         android:paddingLeft="@dimen/sc_mm_20"
-                        android:paddingRight="@dimen/sc_mm_130"/>
+                        android:paddingRight="@dimen/sc_mm_130" />
 
-                    <include layout="@layout/view_decoration_20_gray"/>
+                    <include layout="@layout/view_decoration_20_gray" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -132,7 +131,7 @@
                             android:layout_height="wrap_content"
                             android:text="优选好物"
                             android:textColor="@color/text_black_t"
-                            android:textSize="@dimen/sc_mm_32"/>
+                            android:textSize="@dimen/sc_mm_32" />
 
                         <TextView
                             android:id="@+id/tv_nice_desc"
@@ -142,21 +141,22 @@
                             android:layout_marginTop="@dimen/sc_mm_12"
                             android:text="多妈团队甄选的全球好货"
                             android:textColor="@color/text_login_gray_s"
-                            android:textSize="@dimen/sc_mm_26"/>
+                            android:textSize="@dimen/sc_mm_26" />
 
                         <TextView
+                            android:textSize="@dimen/sc_mm_28"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
                             android:layout_marginRight="@dimen/sc_mm_28"
-                            android:text="更多 >"/>
+                            android:text="更多 >" />
                     </RelativeLayout>
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/sc_mm_10"
-                        android:background="@color/light_gray_f"/>
+                        android:background="@color/light_gray_f" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_nice"
@@ -164,7 +164,7 @@
                         android:layout_height="wrap_content"
                         android:background="@color/light_gray_f"
                         android:paddingBottom="@dimen/sc_mm_10"
-                        android:scrollbars="none"/>
+                        android:scrollbars="none" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -178,10 +178,10 @@
                             android:layout_height="wrap_content"
                             android:text="查看更多 >"
                             android:textColor="@color/text_login_gray_s"
-                            android:textSize="@dimen/sc_mm_28"/>
+                            android:textSize="@dimen/sc_mm_28" />
                     </LinearLayout>
 
-                    <include layout="@layout/view_decoration_20_gray"/>
+                    <include layout="@layout/view_decoration_20_gray" />
                 </LinearLayout>
 
 
@@ -207,7 +207,7 @@
                             android:layout_centerHorizontal="true"
                             android:text="种草特辑"
                             android:textColor="@color/text_black_t"
-                            android:textSize="@dimen/sc_mm_32"/>
+                            android:textSize="@dimen/sc_mm_32" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -216,7 +216,7 @@
                             android:layout_marginTop="@dimen/sc_mm_5"
                             android:text="更多 >"
                             android:textColor="@color/text_black_t"
-                            android:textSize="@dimen/sc_mm_24"/>
+                            android:textSize="@dimen/sc_mm_24" />
                     </RelativeLayout>
 
                     <androidx.recyclerview.widget.RecyclerView
@@ -225,7 +225,7 @@
                         android:layout_height="wrap_content"
                         android:paddingLeft="@dimen/sc_mm_30"
                         android:paddingRight="@dimen/sc_mm_20"
-                        android:scrollbars="none"/>
+                        android:scrollbars="none" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -241,24 +241,24 @@
                             android:drawablePadding="@dimen/sc_mm_20"
                             android:text="换一批"
                             android:textColor="@color/text_login_gray_s"
-                            android:textSize="@dimen/sc_mm_28"/>
+                            android:textSize="@dimen/sc_mm_28" />
                     </LinearLayout>
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/sc_mm_20"
-                        android:background="@color/light_gray_f"/>
+                        android:background="@color/light_gray_f" />
                 </LinearLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_product"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:scrollbars="none"/>
+                    android:scrollbars="none" />
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 
     </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
-    <include layout="@layout/layout_communal_floating"/>
+    <include layout="@layout/layout_communal_floating" />
 </FrameLayout>

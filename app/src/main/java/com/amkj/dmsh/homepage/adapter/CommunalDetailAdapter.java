@@ -391,6 +391,7 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
 
                         @Override
                         public void runOnUI(int[] imageUrlWidthHeight) {
+                            //成功获取视频第一帧的宽高并计算视频占满全屏时的宽高
                             int imgWidth = imageUrlWidthHeight[0];
                             int imgHeight = imageUrlWidthHeight[1];
                             ViewGroup.LayoutParams layoutParams = jvp_video_play.getLayoutParams();

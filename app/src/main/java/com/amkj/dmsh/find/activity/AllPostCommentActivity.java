@@ -16,6 +16,7 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.CommunalComment;
 import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.dao.CommentDao;
 import com.amkj.dmsh.dominant.bean.PostCommentEntity;
 import com.amkj.dmsh.dominant.bean.PostCommentEntity.PostCommentBean;
 import com.amkj.dmsh.find.view.PostReplyPw;
@@ -261,8 +262,7 @@ public class AllPostCommentActivity extends BaseActivity {
         loadHud.show();
         mTvSendComment.setText("发送中…");
         mTvSendComment.setEnabled(false);
-        ConstantMethod constantMethod = new ConstantMethod();
-        constantMethod.setOnSendCommentFinish(new ConstantMethod.OnSendCommentFinish() {
+        CommentDao.setSendComment(this, communalComment, new CommentDao.OnSendCommentFinish() {
             @Override
             public void onSuccess() {
                 loadHud.dismiss();
@@ -282,7 +282,6 @@ public class AllPostCommentActivity extends BaseActivity {
                 mTvSendComment.setEnabled(true);
             }
         });
-        constantMethod.setSendComment(this, communalComment);
     }
 
     @Override

@@ -188,6 +188,8 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
         UserDao.getPersonalInfo(mAppContext);
         //当 App 中出现多进程, 并且您需要适配所有的进程, 就需要在 App 初始化时调用 initCompatMultiProcess()
         AutoSize.initCompatMultiProcess(mAppContext);
+        //让App内的字体大小不跟随系统设置中字体大小的改变
+        AutoSizeConfig.getInstance().setExcludeFontScale(true);
         //RxJava2默认不会帮我们处理异常，为了避免app会崩溃，这里手动处理
         RxJavaPlugins.setErrorHandler(e -> {
             //异常处理

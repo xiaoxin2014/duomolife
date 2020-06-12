@@ -65,7 +65,6 @@ public class CommunalAdHolderView extends Holder<CommunalADActivityBean> {
                         convenientBanner.startTurning();
                         convenientBanner.setPointViewVisible(true);
                     }
-
                 }
 
                 @Override
@@ -103,3 +102,4 @@ public class CommunalAdHolderView extends Holder<CommunalADActivityBean> {
         }
     }
 }
+

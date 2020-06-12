@@ -1,10 +1,6 @@
 package com.amkj.dmsh.dominant.activity;
 
 import android.content.Intent;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,6 +45,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -388,8 +388,7 @@ public class QualityOverseasMailActivity extends BaseActivity {
                                 }
                             };
                         }
-                        overseasHeaderView.ad_communal_banner.setPages(QualityOverseasMailActivity.this, cbViewHolderCreator, adBeanList).setCanLoop(true)
-                                .setPointViewVisible(true).setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
+                        overseasHeaderView.ad_communal_banner.setPages(QualityOverseasMailActivity.this, cbViewHolderCreator, adBeanList)
                                 .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
                     } else {
                         if (adBeanList.size() < 1) {

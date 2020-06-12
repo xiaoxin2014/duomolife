@@ -850,8 +850,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 }
             };
         }
-        banner_ql_sp_pro_details.setPages(this, cbViewHolderCreator, imagesVideoList).setCanLoop(false)
-                .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius});
+        banner_ql_sp_pro_details.setPages(this, cbViewHolderCreator, imagesVideoList);
         banner_ql_sp_pro_details.setOnItemClickListener(position -> {
             if (imagesVideoList.size() > position) {
                 CommunalADActivityBean communalADActivityBean = imagesVideoList.get(position);

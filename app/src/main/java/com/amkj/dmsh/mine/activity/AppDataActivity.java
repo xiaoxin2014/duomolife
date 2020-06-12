@@ -35,7 +35,6 @@ import androidx.appcompat.widget.Toolbar;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-import static com.amkj.dmsh.constant.ConstantMethod.getMarketApp;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -45,6 +44,7 @@ import static com.amkj.dmsh.constant.Url.DELIVERY_ADDRESS;
 import static com.amkj.dmsh.dao.UserDao.logout;
 import static com.amkj.dmsh.utils.AsyncUtils.createExecutor;
 import static com.amkj.dmsh.utils.FileCacheUtils.getFolderSize;
+import static com.amkj.dmsh.utils.MarketUtils.getMarketApp;
 
 
 /**

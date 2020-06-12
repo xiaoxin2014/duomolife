@@ -46,7 +46,6 @@ import cn.smssdk.EventHandler;
 import cn.smssdk.SMSSDK;
 
 import static com.amkj.dmsh.constant.ConstantMethod.disposeMessageCode;
-import static com.amkj.dmsh.constant.ConstantMethod.getDeviceId;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
@@ -55,6 +54,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.WEB_TYPE_REG_AGREEMENT;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_VALUE_TYPE;
 import static com.amkj.dmsh.constant.Url.CHECK_PHONE_IS_REG;
 import static com.amkj.dmsh.constant.Url.USER_REGISTER_ACCOUNT;
+import static com.amkj.dmsh.rxeasyhttp.utils.DeviceUtils.getDeviceId;
 
 
 /**

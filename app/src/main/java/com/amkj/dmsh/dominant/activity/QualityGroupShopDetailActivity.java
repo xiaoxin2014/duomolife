@@ -3,11 +3,6 @@ package com.amkj.dmsh.dominant.activity;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.core.widget.NestedScrollView;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -25,12 +20,12 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
-import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.bean.CommunalDetailBean;
+import com.amkj.dmsh.bean.RequestStatus;
+import com.amkj.dmsh.bean.TabEntity;
+import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
-import com.amkj.dmsh.bean.TabEntity;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dao.GroupDao;
@@ -86,6 +81,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 import me.jessyan.autosize.utils.AutoSizeUtils;
@@ -622,8 +622,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                 }
             };
         }
-        banner_ql_sp_pro_details.setPages(this, cbViewHolderCreator, imagesVideoList).setCanLoop(false)
-                .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius});
+        banner_ql_sp_pro_details.setPages(this, cbViewHolderCreator, imagesVideoList);
         banner_ql_sp_pro_details.setOnItemClickListener(position -> {
             if (imagesVideoList.size() > position) {
                 CommunalADActivityBean communalADActivityBean = imagesVideoList.get(position);

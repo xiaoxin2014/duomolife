@@ -59,6 +59,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import cn.jzvd.JzvdStd;
 import me.jessyan.autosize.AutoSize;
+import me.jessyan.autosize.AutoSizeCompat;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static android.view.View.GONE;
@@ -302,16 +303,14 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
-        if (newConfig.fontScale != 1) {//非默认值
-            getResources();
-        }
         super.onConfigurationChanged(newConfig);
         // 如果你的app可以横竖屏切换，并且适配4.4或者emui3手机请务必在onConfigurationChanged方法里添加这句话
-        setStatusBar();
+//        setStatusBar();
     }
 
     @Override
     public Resources getResources() {
+        AutoSizeCompat.autoConvertDensityOfGlobal(super.getResources());//如果没有自定义需求用这个方法
         return super.getResources();
     }
 

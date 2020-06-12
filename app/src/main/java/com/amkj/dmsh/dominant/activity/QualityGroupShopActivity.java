@@ -1,9 +1,6 @@
 package com.amkj.dmsh.dominant.activity;
 
 import android.content.Intent;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +32,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -167,9 +167,7 @@ public class QualityGroupShopActivity extends BaseActivity {
                     }
                 };
             }
-            groupShopHeaderView.ad_communal_banner.setPages(this, cbViewHolderCreator, adBeanList).setCanLoop(true)
-                    .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
-                    .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
+            groupShopHeaderView.ad_communal_banner.startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
         } else {
             groupShopHeaderView.rel_communal_banner.setVisibility(View.GONE);
         }

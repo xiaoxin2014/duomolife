@@ -52,10 +52,10 @@ import com.amkj.dmsh.utils.Log;
 import com.amkj.dmsh.utils.MarketUtils;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.SharedPreUtils;
-import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
 import com.amkj.dmsh.views.HtmlWebView;
+import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.google.gson.JsonSyntaxException;
 import com.gyf.barlibrary.ImmersionBar;
 import com.luck.picture.lib.PictureSelector;
@@ -65,6 +65,7 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.constant.RefreshState;
 import com.umeng.socialize.UMShareAPI;
 import com.yanzhenjie.permission.Permission;
+
 
 import org.json.JSONObject;
 
@@ -84,7 +85,6 @@ import me.jessyan.autosize.AutoSize;
 
 import static android.app.Activity.RESULT_OK;
 import static com.amkj.dmsh.constant.ConstantMethod.getDeviceAppNotificationStatus;
-import static com.amkj.dmsh.constant.ConstantMethod.getDeviceId;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getMapValue;
 import static com.amkj.dmsh.constant.ConstantMethod.getOnlyUrlParams;
@@ -106,6 +106,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.WEB_TB_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TMALL_SCHEME;
 import static com.amkj.dmsh.dao.BaiChuanDao.skipAliBC;
 import static com.amkj.dmsh.rxeasyhttp.interceptor.MyInterceptor.getCommonApiParameter;
+import static com.amkj.dmsh.rxeasyhttp.utils.DeviceUtils.getDeviceId;
 import static com.amkj.dmsh.utils.TimeUtils.getDateMilliSecond;
 import static com.luck.picture.lib.config.PictureConfigC.CHOOSE_REQUEST;
 

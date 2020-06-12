@@ -2,6 +2,7 @@ package com.amkj.dmsh.views.alertdialog;
 
 import android.app.Activity;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -124,8 +125,8 @@ public class AlertDialogShareHelper extends BaseAlertDialog {
     }
 
     @Override
-    public void show(int gravity) {
-        super.show(gravity);
+    public void show() {
+        super.show(Gravity.BOTTOM);
         if (loadView != null) {
             loadView.setVisibility(View.GONE);
         }

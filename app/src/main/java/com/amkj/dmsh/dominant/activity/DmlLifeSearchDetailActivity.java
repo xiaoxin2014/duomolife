@@ -3,12 +3,6 @@ package com.amkj.dmsh.dominant.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
-import androidx.annotation.NonNull;
-import androidx.emoji.widget.EmojiEditText;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -26,13 +20,14 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.bean.CommunalComment;
 import com.amkj.dmsh.bean.CommunalDetailBean;
+import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.dao.CommentDao;
 import com.amkj.dmsh.dominant.adapter.ArticleCommentAdapter;
 import com.amkj.dmsh.dominant.adapter.WelfareSlideProAdapter;
 import com.amkj.dmsh.dominant.bean.DmlSearchCommentEntity;
@@ -60,8 +55,6 @@ import com.amkj.dmsh.utils.webformatdata.ShareDataBean;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.umeng.socialize.UMShareAPI;
 
 import java.util.ArrayList;
@@ -71,6 +64,12 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.emoji.widget.EmojiEditText;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -206,8 +205,6 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_gray_f_one_px)
-
-
                 .create());
         adapterArticleComment.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
@@ -276,8 +273,6 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
         rv_communal_pro.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_gray_f_one_px)
-
-
                 .create());
 
         searchSlideProAdapter = new WelfareSlideProAdapter(DmlLifeSearchDetailActivity.this, searchProductList);
@@ -312,12 +307,9 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
             }
         });
 
-        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                page = 1;
-                getData();
-            }
+        smart_communal_refresh.setOnRefreshListener(refreshLayout -> {
+            page = 1;
+            getData();
         });
         badge = ConstantMethod.getBadge(DmlLifeSearchDetailActivity.this, fl_header_service);
         //          关闭手势滑动
@@ -435,7 +427,7 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
                                 dmlSearchDetailBean = dmlSearchDetailEntity.getDmlSearchDetailBean();
                                 setSearchData(dmlSearchDetailBean);
                             } else if (!dmlSearchDetailEntity.getCode().equals(EMPTY_CODE)) {
-                                showToast( dmlSearchDetailEntity.getMsg());
+                                showToast(dmlSearchDetailEntity.getMsg());
                             }
                         }
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, descripDetailList, dmlSearchDetailEntity);
@@ -604,15 +596,14 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
         loadHud.show();
         tv_send_comment.setText("发送中…");
         tv_send_comment.setEnabled(false);
-        ConstantMethod constantMethod = new ConstantMethod();
-        constantMethod.setOnSendCommentFinish(new ConstantMethod.OnSendCommentFinish() {
+        CommentDao.setSendComment(this, communalComment, new CommentDao.OnSendCommentFinish() {
             @Override
             public void onSuccess() {
                 loadHud.dismiss();
                 tv_send_comment.setText("发送");
                 tv_send_comment.setEnabled(true);
                 commentViewVisible(View.GONE, null);
-                showToast( R.string.comment_article_send_success);
+                showToast(R.string.comment_article_send_success);
                 page = 1;
                 getSearchComment();
                 emoji_edit_comment.setText("");
@@ -625,7 +616,6 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
                 tv_send_comment.setEnabled(true);
             }
         });
-        constantMethod.setSendComment(DmlLifeSearchDetailActivity.this, communalComment);
     }
 
     private void setPublishComment() {
@@ -799,7 +789,7 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
                 }
             }
         } else if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
-            if (badge!=null){
+            if (badge != null) {
                 badge.setBadgeNumber((int) message.result);
             }
         }

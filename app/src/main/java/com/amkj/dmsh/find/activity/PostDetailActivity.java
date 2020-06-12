@@ -26,6 +26,7 @@ import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.dao.CommentDao;
 import com.amkj.dmsh.dao.SoftApiDao;
 import com.amkj.dmsh.dominant.bean.PostCommentEntity;
 import com.amkj.dmsh.dominant.bean.PostCommentEntity.PostCommentBean;
@@ -391,8 +392,7 @@ public class PostDetailActivity extends BaseActivity {
         loadHud.show();
         mTvSendComment.setText("发送中…");
         mTvSendComment.setEnabled(false);
-        ConstantMethod constantMethod = new ConstantMethod();
-        constantMethod.setOnSendCommentFinish(new ConstantMethod.OnSendCommentFinish() {
+        CommentDao.setSendComment(this, communalComment, new CommentDao.OnSendCommentFinish() {
             @Override
             public void onSuccess() {
                 loadHud.dismiss();
@@ -411,7 +411,6 @@ public class PostDetailActivity extends BaseActivity {
                 mTvSendComment.setEnabled(true);
             }
         });
-        constantMethod.setSendComment(this, communalComment);
     }
 
     @OnClick({R.id.iv_img_share, R.id.tv_article_bottom_like, R.id.tv_article_bottom_collect, R.id.tv_publish_comment})

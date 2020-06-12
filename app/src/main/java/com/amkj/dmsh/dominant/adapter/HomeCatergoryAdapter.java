@@ -1,10 +1,7 @@
 package com.amkj.dmsh.dominant.adapter;
 
 import android.app.Activity;
-import androidx.lifecycle.LifecycleOwner;
 import android.content.Intent;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
 import com.amkj.dmsh.R;
@@ -22,6 +19,10 @@ import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.lifecycle.LifecycleOwner;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 
@@ -76,9 +77,7 @@ public class HomeCatergoryAdapter extends BaseQuickAdapter<UserLikedProductEntit
                 adBeanList.add(communalADActivityBean);
             }
 
-            convenientBanner.setPages((LifecycleOwner) mContext, cbViewHolderCreator, adBeanList).setCanLoop(true)
-                    .setPointViewVisible(true)
-                    .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
+            convenientBanner.setPages((LifecycleOwner) mContext, cbViewHolderCreator, adBeanList)
                     .startTurning(getShowNumber("5") * 1000);
         } else {
             convenientBanner.setVisibility(View.GONE);

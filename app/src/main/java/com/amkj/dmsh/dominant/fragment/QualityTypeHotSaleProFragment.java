@@ -1,7 +1,5 @@
 package com.amkj.dmsh.dominant.fragment;
 
-import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
@@ -31,6 +29,8 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.appcompat.widget.Toolbar;
+import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
@@ -114,8 +114,7 @@ public class QualityTypeHotSaleProFragment extends BaseFragment {
                                         }
                                     };
                                 }
-                                adCommunalBanner.setPages(getActivity(), cbViewHolderCreator, adBeanList).setCanLoop(true).setPointViewVisible(true)
-                                        .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
+                                adCommunalBanner.setPages(getActivity(), cbViewHolderCreator, adBeanList)
                                         .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
                             }
                             if (adBeanList.size() > 0) {

@@ -207,8 +207,7 @@ public class WholePointSpikeProductFragment extends BaseFragment {
                                     }
                                 };
                             }
-                            adPointSpike.setPages(getActivity(), cbViewHolderCreator, adBeanList).setCanLoop(true)
-                                    .setPageIndicator(new int[]{R.drawable.unselected_radius, R.drawable.selected_radius})
+                            adPointSpike.setPages(getActivity(), cbViewHolderCreator, adBeanList)
                                     .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
                         }
                     }

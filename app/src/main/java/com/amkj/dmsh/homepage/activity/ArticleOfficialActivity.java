@@ -40,6 +40,7 @@ import com.amkj.dmsh.bean.CommunalComment;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.dao.CommentDao;
 import com.amkj.dmsh.dao.SoftApiDao;
 import com.amkj.dmsh.dominant.bean.DmlSearchCommentEntity.DmlSearchCommentBean;
 import com.amkj.dmsh.homepage.bean.JsInteractiveBean;
@@ -661,8 +662,7 @@ public class ArticleOfficialActivity extends BaseActivity {
         loadHud.show();
         mTvSendComment.setText("发送中…");
         mTvSendComment.setEnabled(false);
-        ConstantMethod constantMethod = new ConstantMethod();
-        constantMethod.setOnSendCommentFinish(new ConstantMethod.OnSendCommentFinish() {
+        CommentDao.setSendComment(this, communalComment, new CommentDao.OnSendCommentFinish() {
             @Override
             public void onSuccess() {
                 loadHud.dismiss();
@@ -682,7 +682,6 @@ public class ArticleOfficialActivity extends BaseActivity {
                 webViewJs(getStringsFormat(getActivity(), R.string.web_comment_success_method, ERROR_CODE, communalComment.getContent()));
             }
         });
-        constantMethod.setSendComment(ArticleOfficialActivity.this, communalComment);
     }
 
 
