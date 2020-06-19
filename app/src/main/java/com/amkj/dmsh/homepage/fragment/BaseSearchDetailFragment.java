@@ -362,7 +362,7 @@ public abstract class BaseSearchDetailFragment extends BaseFragment {
                     //如果有返回图片
                     if (!TextUtils.isEmpty(imgUrl)) {
                         if (isContextExisted(getActivity())) {
-                            GlideImageLoaderUtil.loadFinishImgDrawable(getActivity(), imgUrl, new GlideImageLoaderUtil.ImageLoaderFinishListener() {
+                            GlideImageLoaderUtil.setLoadImgFinishListener(getActivity(), imgUrl, new GlideImageLoaderUtil.ImageLoaderFinishListener() {
                                 @Override
                                 public void onSuccess(Bitmap bitmap) {
                                     mSearchDialogImage.setImage(bitmap);

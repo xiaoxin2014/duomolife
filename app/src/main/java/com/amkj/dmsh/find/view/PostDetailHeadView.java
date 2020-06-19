@@ -1,7 +1,6 @@
 package com.amkj.dmsh.find.view;
 
 import android.content.Context;
-import androidx.emoji.widget.EmojiTextView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +17,7 @@ import com.amkj.dmsh.dao.SoftApiDao;
 import com.amkj.dmsh.find.bean.PostDetailEntity.PostDetailBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 
+import androidx.emoji.widget.EmojiTextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -72,10 +72,10 @@ public class PostDetailHeadView extends LinearLayout {
         }
     }
 
-    @OnClick({R.id.tv_life_back, R.id.iv_head2, R.id.tv_follow2, R.id.iv_img_share})
+    @OnClick({R.id.ll_back, R.id.iv_head2, R.id.tv_follow2, R.id.iv_img_share})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.tv_life_back:
+            case R.id.ll_back:
                 if (isContextExisted(mActivity)) {
                     mActivity.finish();
                 }

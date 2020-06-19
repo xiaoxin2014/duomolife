@@ -5,6 +5,7 @@ import android.content.Intent;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.views.JzVideo.JzVideoPlayerFullScrren;
+import com.gyf.barlibrary.BarHide;
 import com.gyf.barlibrary.ImmersionBar;
 
 import butterknife.BindView;
@@ -41,8 +42,12 @@ public class JzVideoFullScreenActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
-        //全屏显示
-        ImmersionBar.with(this).fullScreen(true).init();
+    }
+
+    @Override
+    public void setStatusBar() {
+        //全屏|隐藏状态栏
+        ImmersionBar.with(this).fullScreen(true).hideBar(BarHide.FLAG_HIDE_STATUS_BAR).init();
     }
 
     //拦截返回按键
@@ -50,9 +55,5 @@ public class JzVideoFullScreenActivity extends BaseActivity {
     public void onBackPressed() {
         super.onBackPressed();
         finish();
-    }
-
-    @Override
-    public void setStatusBar() {
     }
 }

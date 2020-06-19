@@ -186,7 +186,7 @@ public class DirectPaySuccessActivity extends BaseActivity {
     }
 
     private void setPaySuccessDialog(CommunalADActivityBean communalADActivityBean) {
-        GlideImageLoaderUtil.loadFinishImgDrawable(DirectPaySuccessActivity.this, communalADActivityBean.getPicUrl(), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
+        GlideImageLoaderUtil.setLoadImgFinishListener(DirectPaySuccessActivity.this, communalADActivityBean.getPicUrl(), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
             @Override
             public void onSuccess(Bitmap bitmap) {
                 if (alertDialogAdImage == null) {

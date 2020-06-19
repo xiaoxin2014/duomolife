@@ -60,7 +60,6 @@ import com.amkj.dmsh.utils.TimeUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
-import com.amkj.dmsh.views.StatusBarUtil;
 import com.amkj.dmsh.views.bottomdialog.SkuDialog;
 import com.amkj.dmsh.views.flycoTablayout.CommonTabLayout;
 import com.amkj.dmsh.views.flycoTablayout.listener.CustomTabEntity;
@@ -71,6 +70,7 @@ import com.bigkoo.convenientbanner.holder.Holder;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.flexbox.JustifyContent;
+import com.gyf.barlibrary.ImmersionBar;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
@@ -206,7 +206,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
     @BindView(R.id.rv_product_details)
     RecyclerView rv_product_details;
     @BindView(R.id.rl_toolbar)
-    LinearLayout mRlToolbar;
+    RelativeLayout mRlToolbar;
     @BindView(R.id.rl_toolbar2)
     RelativeLayout mRlToolbar2;
     @BindView(R.id.ll_group_detail_bottom)
@@ -294,17 +294,24 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
+        //动态修改标题栏padding
+        statusBarHeight = ImmersionBar.getStatusBarHeight(this);
+        int paddingTop = statusBarHeight > 0 ? statusBarHeight : AutoSizeUtils.mm2px(this, 40);
+        mRlToolbar.setPadding(0, paddingTop, 0, 0);
+        mRlToolbar2.setPadding(0, paddingTop, 0, 0);
+        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) fl_header_service.getLayoutParams();
+        layoutParams.topMargin = paddingTop;
+        fl_header_service.setLayoutParams(layoutParams);
+//        --------------------------------
         badge = getBadge(getActivity(), fl_header_service);
         tv_gp_sp_nor_price.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
         tv_gp_sp_nor_price.getPaint().setAntiAlias(true);
         Intent intent = getIntent();
         gpInfoId = intent.getStringExtra("gpInfoId");
-//        productId = intent.getStringExtra("productId");
         gpRecordId = intent.getStringExtra("gpRecordId");
         TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
         screenHeight = app.getScreenHeight();
         screenWith = app.getScreenWidth();
-        statusBarHeight = StatusBarUtil.getStatusBarHeight(this);
         ll_gp_detail_bottom.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -320,7 +327,6 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
             }
         });
         smart_refresh_ql_sp_details.setOnRefreshListener(refreshLayout -> loadData());
-
         //初始化拼团列表
         rv_group_join.setLayoutManager(new LinearLayoutManager(QualityGroupShopDetailActivity.this));
         joinGroupAdapter = new JoinGroupAdapter(QualityGroupShopDetailActivity.this, groupShopJoinList);
@@ -941,21 +947,25 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         }
     }
 
-    @OnClick({R.id.iv_life_back, R.id.iv_img_service, R.id.iv_img_share, R.id.ll_group_buy, R.id.ll_alone_buy, R.id.tv_all_lottery, R.id.iv_lottery_zone,
-            R.id.rel_pro_comment, R.id.tv_group_home, R.id.tv_ql_sp_pro_sku, R.id.ll_layout_pro_sc_tag, R.id.tv_quality_all_gp_sp, R.id.tv_invate})
+    @OnClick({R.id.ll_back, R.id.ll_back2, R.id.ll_service, R.id.ll_service2, R.id.ll_share, R.id.ll_share2,
+            R.id.ll_group_buy, R.id.ll_alone_buy, R.id.tv_all_lottery, R.id.iv_lottery_zone, R.id.rel_pro_comment,
+            R.id.tv_group_home, R.id.tv_ql_sp_pro_sku, R.id.ll_layout_pro_sc_tag, R.id.tv_quality_all_gp_sp, R.id.tv_invate})
     public void onViewClicked(View view) {
         Intent intent = null;
         switch (view.getId()) {
-            case R.id.iv_life_back:
+            case R.id.ll_back:
+            case R.id.ll_back2:
                 finish();
                 break;
-            case R.id.iv_img_service:
+            case R.id.ll_service:
+            case R.id.ll_service2:
                 intent = new Intent(getActivity(), ShopCarActivity.class);
                 startActivity(intent);
 //                skipServiceDataInfo(mGroupShopDetailsBean);
                 break;
             //分享拼团详情
-            case R.id.iv_img_share:
+            case R.id.ll_share:
+            case R.id.ll_share2:
                 if (mGroupShopDetailsBean != null) {
                     new UMShareAction(QualityGroupShopDetailActivity.this
                             , mGroupShopDetailsBean.getCoverImage()

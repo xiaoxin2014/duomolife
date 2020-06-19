@@ -189,7 +189,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (this instanceof ShopScrollDetailsActivity || this instanceof TopicDetailActivity || this instanceof ArticleOfficialActivity || this instanceof QualityGroupShopDetailActivity) {
             ImmersionBar.with(this).keyboardEnable(true).navigationBarEnable(false).statusBarDarkFont(true).fullScreen(true).init();
         } else {
-//            设置共同沉浸式样式
+            //设置共同沉浸式样式
             ImmersionBar.with(this).statusBarColor(R.color.colorPrimary).keyboardEnable(true).navigationBarEnable(false).statusBarDarkFont(true).fitsSystemWindows(true).init();
         }
     }

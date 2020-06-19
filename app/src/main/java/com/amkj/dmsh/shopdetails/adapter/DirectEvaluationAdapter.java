@@ -1,9 +1,6 @@
 package com.amkj.dmsh.shopdetails.adapter;
 
 import android.app.Activity;
-import androidx.emoji.widget.EmojiTextView;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -27,6 +24,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import androidx.emoji.widget.EmojiTextView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import me.zhanghai.android.materialratingbar.MaterialRatingBar;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -131,7 +131,7 @@ public class DirectEvaluationAdapter extends BaseMultiItemQuickAdapter<GoodsComm
                             imageBeanList.add(imageBean);
                         }
                         ImagePagerActivity.startImagePagerActivity(context, IMAGE_DEF, imageBeanList
-                                , pictureBean.getIndex() < pictureBean.getOriginalList().size() ? pictureBean.getIndex() : 0, null);
+                                , pictureBean.getIndex() < pictureBean.getOriginalList().size() ? pictureBean.getIndex() : 0);
                     }
                 }
             });

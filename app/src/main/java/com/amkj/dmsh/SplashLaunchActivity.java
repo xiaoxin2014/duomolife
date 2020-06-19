@@ -1,19 +1,20 @@
 package com.amkj.dmsh;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.app.AppCompatActivity;
-import android.view.View;
+import android.util.Log;
 
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.utils.SharedPreUtils;
+import com.gyf.barlibrary.BarHide;
+import com.gyf.barlibrary.ImmersionBar;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -40,11 +41,13 @@ public class SplashLaunchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_launch_guide);
         mBind = ButterKnife.bind(this);
         initViews();
+        if (BuildConfig.DEBUG) Log.d("className", getClass().getSimpleName());
     }
 
 
     protected void initViews() {
-        hideNavStatus();
+        //全屏|隐藏导航栏
+        ImmersionBar.with(this).fullScreen(true).hideBar(BarHide.FLAG_HIDE_NAVIGATION_BAR).init();
         if (!this.isTaskRoot()) {
             finish();
             return;
@@ -89,19 +92,6 @@ public class SplashLaunchActivity extends AppCompatActivity {
         }
     }
 
-
-    private void hideNavStatus() {
-        View decorView = getWindow().getDecorView();
-        //隐藏虚拟按键，并且全屏
-        if (Build.VERSION.SDK_INT < 19) { // lower api
-            decorView.setSystemUiVisibility(View.GONE);
-        } else {
-            int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN;
-            decorView.setSystemUiVisibility(uiOptions);
-        }
-    }
-
     private void skipWelcome() {
         Intent intent = new Intent(this, WelcomeLaunchActivity.class);
         startActivity(intent);
@@ -119,5 +109,6 @@ public class SplashLaunchActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         mBind.unbind();
+        ImmersionBar.with(this).destroy();
     }
 }

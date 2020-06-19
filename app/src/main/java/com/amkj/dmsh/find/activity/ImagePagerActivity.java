@@ -5,22 +5,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.PointF;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Parcelable;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
 import android.text.TextUtils;
-import android.view.GestureDetector;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -28,23 +19,21 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.ImageBean;
+import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.views.photoimage.PhotoView;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.Priority;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
-import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.transition.Transition;
-import com.davemorrissey.labs.subscaleview.ImageSource;
-import com.davemorrissey.labs.subscaleview.ImageViewState;
-import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
+import com.gyf.barlibrary.BarHide;
+import com.gyf.barlibrary.ImmersionBar;
+import com.nostra13.universalimageloader.core.assist.ImageSize;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import pl.droidsonroids.gif.GifImageView;
+import androidx.annotation.NonNull;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 
@@ -63,16 +52,14 @@ public class ImagePagerActivity extends Activity {
     public RelativeLayout rel_shop_sku;
     private int startPos;
     private List<ImageBean> imgUrls;
-    private int screenWidth;
     private String imageType;
 
 
-    public static void startImagePagerActivity(Context context, String imageType, List<ImageBean> imgUrls, int position, ImageSize imageSize) {
+    public static void startImagePagerActivity(Context context, String imageType, List<ImageBean> imgUrls, int position) {
         try {
             Intent intent = new Intent(context, ImagePagerActivity.class);
             intent.putParcelableArrayListExtra(INTENT_IMGURLS, (ArrayList<? extends Parcelable>) imgUrls);
             intent.putExtra(INTENT_POSITION, position);
-            intent.putExtra(INTENT_IMAGESIZE, imageSize);
             intent.putExtra(INTENT_IMAGE_TYPE, imageType);
             context.startActivity(intent);
         } catch (Exception e) {
@@ -84,15 +71,16 @@ public class ImagePagerActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_imagepager);
-        final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
-        indicator = (TextView) findViewById(R.id.indicator);
-        tv_sku_value_name = (TextView) findViewById(R.id.tv_sku_value_name);
-        tv_sku_value_indicator = (TextView) findViewById(R.id.tv_sku_value_indicator);
-        rel_shop_sku = (RelativeLayout) findViewById(R.id.rel_shop_sku);
+        //全屏|隐藏状态栏
+        ImmersionBar.with(this).fullScreen(true).hideBar(BarHide.FLAG_HIDE_STATUS_BAR).init();
+        final ViewPager viewPager = findViewById(R.id.pager);
+        indicator = findViewById(R.id.indicator);
+        tv_sku_value_name = findViewById(R.id.tv_sku_value_name);
+        tv_sku_value_indicator = findViewById(R.id.tv_sku_value_indicator);
+        rel_shop_sku = findViewById(R.id.rel_shop_sku);
         getIntentData();
         ImageAdapter mAdapter = new ImageAdapter(this);
         mAdapter.setImageBeanList(imgUrls);
-        mAdapter.setImageSize(imageSize);
         viewPager.setAdapter(mAdapter);
         if (IMAGE_PRO.equals(imageType)) {
             indicator.setVisibility(View.GONE);
@@ -103,8 +91,6 @@ public class ImagePagerActivity extends Activity {
             rel_shop_sku.setVisibility(View.GONE);
             setIndicatorData(startPos, imgUrls.size());
         }
-        TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-        screenWidth = app.getScreenWidth();
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -142,7 +128,7 @@ public class ImagePagerActivity extends Activity {
         Intent intent = getIntent();
         startPos = intent.getIntExtra(INTENT_POSITION, 0);
         imgUrls = intent.getParcelableArrayListExtra(INTENT_IMGURLS);
-        if (imgUrls==null){
+        if (imgUrls == null) {
             imgUrls = ((TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike()).getImageBeanList();
         }
         imageSize = (ImageSize) intent.getSerializableExtra(INTENT_IMAGESIZE);
@@ -166,19 +152,14 @@ public class ImagePagerActivity extends Activity {
 
         private List<ImageBean> imageBeanList = new ArrayList<>();
         private LayoutInflater inflater;
-        private Context context;
-        private ImageSize imageSize;
+        private Activity context;
 
         public void setImageBeanList(List<ImageBean> imageBeanList) {
             if (imageBeanList != null)
                 this.imageBeanList = imageBeanList;
         }
 
-        public void setImageSize(ImageSize imageSize) {
-            this.imageSize = imageSize;
-        }
-
-        public ImageAdapter(Context context) {
+        public ImageAdapter(Activity context) {
             this.context = context;
             this.inflater = LayoutInflater.from(context);
         }
@@ -190,113 +171,45 @@ public class ImagePagerActivity extends Activity {
         }
 
 
+        @NonNull
         @SuppressLint("ClickableViewAccessibility")
         @Override
-        public Object instantiateItem(final ViewGroup container, final int position) {
-            final View view = inflater.inflate(R.layout.item_pager_image, container, false);
+        public Object instantiateItem(@NonNull final ViewGroup container, final int position) {
+            View view = inflater.inflate(R.layout.item_pager_image, container, false);
             if (view != null) {
-//                final PhotoView normal_image = (PhotoView) view.findViewById(R.id.normal_image);
-                final SubsamplingScaleImageView big_image = (SubsamplingScaleImageView) view.findViewById(R.id.big_image);
-                final GifImageView gif_iv_image = (GifImageView) view.findViewById(R.id.gif_iv_image);
-                big_image.setDoubleTapZoomStyle(SubsamplingScaleImageView.ZOOM_FOCUS_CENTER);
-                final GestureDetector gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
-                    @Override
-                    public boolean onSingleTapConfirmed(MotionEvent e) {
-                        finish();
-                        overridePendingTransition(0, 0);
-                        return true;
-                    }
-                });
-                big_image.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        return gestureDetector.onTouchEvent(event);
-                    }
-                });
-
-                gif_iv_image.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        finish();
-                        overridePendingTransition(0, 0);
-                    }
-                });
-//                if (imageSize != null) {
-                //预览imageView
-//                    smallImageView = new ImageView(context);
-//                    FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(imageSize.getWidth(), imageSize.getHeight());
-//                    layoutParams.gravity = Gravity.CENTER;
-//                    smallImageView.setLayoutParams(layoutParams);
-//                    smallImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-//                    ((FrameLayout) view).addView(smallImageView);
-//                } else {
-//                    smallImageView = new ImageView(context);
-//                    FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
-//                    layoutParams.gravity = Gravity.CENTER;
-//                    smallImageView.setLayoutParams(layoutParams);
-//                    smallImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-//                    ((FrameLayout) view).addView(smallImageView);
-//                }
-
-                //loading
-                final ProgressBar loading = new ProgressBar(context);
-                FrameLayout.LayoutParams loadingLayoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT);
-                loadingLayoutParams.gravity = Gravity.CENTER;
-                loading.setLayoutParams(loadingLayoutParams);
-                ((FrameLayout) view).addView(loading);
+                PhotoView big_image = view.findViewById(R.id.big_image);
+                ProgressBar loading = view.findViewById(R.id.progressbar);
+                big_image.setMaxScale(2);
+                big_image.enable();
+                big_image.setOnClickListener(v -> finish());
                 final String imgUrl = imageBeanList.get(position).getPicUrl();
                 if (!TextUtils.isEmpty(imgUrl)) {
                     if (imgUrl.contains(".gif")) {
-                        RequestOptions gifOptions = new RequestOptions()
-                                .priority(Priority.HIGH)
-                                .diskCacheStrategy(DiskCacheStrategy.NONE);
-                        Glide.with(ImagePagerActivity.this)
-                                .asGif()
-                                .load(imgUrl)
-                                .apply(gifOptions)
-                                .into(new SimpleTarget<GifDrawable>() {
-                                    @Override
-                                    public void onResourceReady(@NonNull GifDrawable gifDrawable, @Nullable Transition<? super GifDrawable> transition) {
-                                        loading.setVisibility(View.GONE);
-                                        big_image.setVisibility(View.GONE);
-                                        gif_iv_image.setVisibility(View.VISIBLE);
-                                        gif_iv_image.setImageDrawable(gifDrawable);
-                                    }
+                        GlideImageLoaderUtil.setLoadGifFinishListener(context, imgUrl, new GlideImageLoaderUtil.GifLoaderFinishListener() {
+                            @Override
+                            public void onSuccess(GifDrawable drawable) {
+                                loading.setVisibility(View.GONE);
+                                Glide.with(context).load(drawable).into(big_image);
+                            }
 
-                                    @Override
-                                    public void onLoadFailed(@Nullable Drawable errorDrawable) {
-                                        super.onLoadFailed(errorDrawable);
-                                        loading.setVisibility(View.GONE);
-                                    }
-                                });
+                            @Override
+                            public void onError() {
+                                loading.setVisibility(View.GONE);
+                            }
+                        });
                     } else {
-                        RequestOptions options = new RequestOptions()
-                                .diskCacheStrategy(DiskCacheStrategy.ALL);
-                        Glide.with(ImagePagerActivity.this)
-                                .asBitmap()
-                                .load(imgUrl)
-                                .apply(options)
-                                .into(new SimpleTarget<Bitmap>() {
-                                    @Override
-                                    public void onResourceReady(Bitmap bitmap, Transition<? super Bitmap> transition) {
-                                        loading.setVisibility(View.GONE);
-                                        big_image.setVisibility(View.VISIBLE);
-                                        gif_iv_image.setVisibility(View.GONE);
-                                        float scaleFloat = screenWidth * 1f / bitmap.getWidth();
-                                        big_image.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CUSTOM);
-                                        big_image.setMinScale(scaleFloat);
-                                        big_image.setMaxScale(scaleFloat * 2f);
-                                        big_image.setDoubleTapZoomScale(scaleFloat * 2f);
-                                        big_image.setImage(ImageSource.bitmap(bitmap), new ImageViewState(scaleFloat, new PointF(0, 0), 0));
-                                    }
+                        GlideImageLoaderUtil.setLoadDynamicFinishListener(context, big_image, imgUrl, -1, new GlideImageLoaderUtil.ImageLoaderFinishListener() {
+                            @Override
+                            public void onSuccess(Bitmap bitmap) {
+                                loading.setVisibility(View.GONE);
+                                big_image.setImageBitmap(bitmap);
+                            }
 
-                                    @Override
-                                    public void onLoadFailed(@Nullable Drawable errorDrawable) {
-                                        super.onLoadFailed(errorDrawable);
-                                        loading.setVisibility(View.GONE);
-                                    }
-                                });
+                            @Override
+                            public void onError() {
+                                loading.setVisibility(View.GONE);
+                            }
+                        });
                     }
                 }
 
@@ -306,12 +219,12 @@ public class ImagePagerActivity extends Activity {
         }
 
         @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
+        public void destroyItem(ViewGroup container, int position, @NonNull Object object) {
             container.removeView((View) object);
         }
 
         @Override
-        public boolean isViewFromObject(View view, Object object) {
+        public boolean isViewFromObject(View view, @NonNull Object object) {
             return view.equals(object);
         }
 
@@ -326,31 +239,9 @@ public class ImagePagerActivity extends Activity {
 
     }
 
-    public static class ImageSize implements Serializable {
-
-        private int width;
-        private int height;
-
-        public ImageSize(int width, int height) {
-            this.width = width;
-            this.height = height;
-        }
-
-        public int getHeight() {
-            return height;
-        }
-
-        public void setHeight(int height) {
-            this.height = height;
-        }
-
-        public int getWidth() {
-            return width;
-        }
-
-        public void setWidth(int width) {
-            this.width = width;
-        }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ImmersionBar.with(this).destroy();
     }
-
 }

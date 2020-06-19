@@ -279,7 +279,7 @@ public class GoodsScoreListActivity extends BaseActivity {
                 boolean isOpen = requestStatus.isOpen();
                 String imgUrl = requestStatus.getImgUrl();
                 if (isOpen && !TextUtils.isEmpty(imgUrl)) {
-                    GlideImageLoaderUtil.loadFinishImgDrawable(getActivity(), imgUrl, new GlideImageLoaderUtil.ImageLoaderFinishListener() {
+                    GlideImageLoaderUtil.setLoadImgFinishListener(getActivity(), imgUrl, new GlideImageLoaderUtil.ImageLoaderFinishListener() {
                         @Override
                         public void onSuccess(Bitmap bitmap) {
                             int joinCount = (int) SharedPreUtils.getParam(DEMO_LIFE_FILE, "IndentJoinCount", 0);

@@ -51,6 +51,7 @@ import com.qiyukf.unicorn.api.UnreadCountChangeListener;
 import com.qiyukf.unicorn.api.msg.UnicornMessage;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
+import com.squareup.leakcanary.LeakCanary;
 import com.tencent.bugly.Bugly;
 import com.tencent.bugly.beta.Beta;
 import com.tencent.bugly.beta.interfaces.BetaPatchListener;
@@ -134,7 +135,7 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
     //
     private Map<String, Map<String, String>> totalActionMap;
     // 此处采用 LinkedList作为容器，增删速度快
-    private LinkedList<Activity> activityLinkedList;
+    private LinkedList<Activity> activityLinkedList = new LinkedList<>();
     //    全局上下文
     public static Context mAppContext;
     //    是否已初始化TuSdk
@@ -180,49 +181,9 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
     }
 
 
-
     @Override
     public void onCreate() {
         mAppContext = getApplication().getApplicationContext();
-        //每次启动app自动获取登录信息
-        UserDao.getPersonalInfo(mAppContext);
-        //当 App 中出现多进程, 并且您需要适配所有的进程, 就需要在 App 初始化时调用 initCompatMultiProcess()
-        AutoSize.initCompatMultiProcess(mAppContext);
-        //让App内的字体大小不跟随系统设置中字体大小的改变
-        AutoSizeConfig.getInstance().setExcludeFontScale(true);
-        //RxJava2默认不会帮我们处理异常，为了避免app会崩溃，这里手动处理
-        RxJavaPlugins.setErrorHandler(e -> {
-            //异常处理
-            if (e instanceof UndeliverableException) {
-                e = e.getCause();
-            }
-            if ((e instanceof IOException)) {
-                // fine, irrelevant network problem or API that throws on cancellation
-                return;
-            }
-            if (e instanceof InterruptedException) {
-                // fine, some blocking code was interrupted by a dispose call
-                return;
-            }
-            if ((e instanceof NullPointerException) || (e instanceof IllegalArgumentException)) {
-                // that's likely a bug in the application
-                Thread.currentThread().getUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
-                return;
-            }
-            if (e instanceof IllegalStateException) {
-                // that's a bug in RxJava or in a custom operator
-                Thread.currentThread().getUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
-            }
-        });
-        //初始化EasyHttp
-        EasyHttp.setContext(mAppContext);
-        //设置SmartLayout全局默认配置
-        setDefaultRefresh();
-        //初始化Toast工具类
-        ToastUtils.init(getApplication());
-        //bugly统计
-        setTotalChanel();
-        activityLinkedList = new LinkedList<>();
         getApplication().registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
             @Override
             public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
@@ -263,7 +224,6 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
                 activityLinkedList.remove(activity);
             }
         });
-
         if (isDebugTag) {
             // 补丁回调接口
             Beta.betaPatchListener = new BetaPatchListener() {
@@ -293,7 +253,7 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
 
                 @Override
                 public void onApplySuccess(String msg) {
-                    showToast( "补丁应用成功");
+                    showToast("补丁应用成功");
                 }
 
                 @Override
@@ -310,20 +270,54 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
             Bugly.setIsDevelopmentDevice(mAppContext, true);
         }
         super.onCreate();
-//        if (LeakCanary.isInAnalyzerProcess(getApplication())) {
-//            // This process is dedicated to LeakCanary for heap analysis.
-//            // You should not setContext your app in this process.
-//            return;
-//        }
-//        LeakCanary.install(getApplication());
+        //每次启动app自动获取登录信息
+        UserDao.getPersonalInfo(mAppContext);
+        //RxJava2默认不会帮我们处理异常，为了避免app会崩溃，这里手动处理
+        RxJavaPlugins.setErrorHandler(e -> {
+            //异常处理
+            if (e instanceof UndeliverableException) {
+                e = e.getCause();
+            }
+            if ((e instanceof IOException)) {
+                // fine, irrelevant network problem or API that throws on cancellation
+                return;
+            }
+            if (e instanceof InterruptedException) {
+                // fine, some blocking code was interrupted by a dispose call
+                return;
+            }
+            if ((e instanceof NullPointerException) || (e instanceof IllegalArgumentException)) {
+                // that's likely a bug in the application
+                Thread.currentThread().getUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
+                return;
+            }
+            if (e instanceof IllegalStateException) {
+                // that's a bug in RxJava or in a custom operator
+                Thread.currentThread().getUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
+            }
+        });
+        //初始化EasyHttp
+        EasyHttp.setContext(mAppContext);
+        //设置SmartLayout全局默认配置
+        setDefaultRefresh();
+        //初始化Toast工具类
+        ToastUtils.init(getApplication());
+        //bugly统计
+        setTotalChanel();
+        //当 App 中出现多进程, 并且您需要适配所有的进程, 就需要在 App 初始化时调用 initCompatMultiProcess()
+        AutoSize.initCompatMultiProcess(mAppContext);
+        //让App内的字体大小不跟随系统设置中字体大小的改变
+        AutoSizeConfig.getInstance().setExcludeFontScale(true);
+        //初始化屏幕适配
         initAutoSizeScreen();
-        //        LinkedMe 深度链接
+        //LinkedMe 深度链接
         initLinkMe();
         // 初始化xUtils
         if (isAppMainProcess()) {
             if (isDebugTag) {
                 SharedPreferences sharedPreferences = mAppContext.getSharedPreferences("selectedServer", MODE_PRIVATE);
                 Url.setBaseUrl(sharedPreferences.getString("selectServerUrl", Url.getUrl(0)));
+                LeakCanary.install(getApplication());
             }
             initLoadSir();
             //        阿里百川 在异步初始化
@@ -693,17 +687,17 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
         webUrlTransform.put("proprietary.html", "app://ShopScrollDetailsActivity");
         webUrlParameterTransform.put("proprietary.html", getWebUrlParameter("id", "productId", null));
         //        pc自营商品商品详情
-        webUrlTransform.put("ProductDetails.html", "app://ShopScrollDetailsActivity");
-        webUrlParameterTransform.put("ProductDetails.html", getWebUrlParameter("id", "productId", null));
+        webUrlTransform.put("products", "app://ShopScrollDetailsActivity");
+        webUrlParameterTransform.put("products", getWebUrlParameter("id", "productId", null));
         //        淘宝商品详情
         webUrlTransform.put("taoBaoGoods.html", "app://ShopTimeScrollDetailsActivity");
         webUrlParameterTransform.put("taoBaoGoods.html", getWebUrlParameter("id", "productId", null));
         //        pc淘宝商品详情
-        webUrlTransform.put("LimitedBlurb.html", "app://ShopTimeScrollDetailsActivity");
-        webUrlParameterTransform.put("LimitedBlurb.html", getWebUrlParameter("id", "productId", null));
+        webUrlTransform.put("LimitedBlurb", "app://ShopTimeScrollDetailsActivity");
+        webUrlParameterTransform.put("LimitedBlurb", getWebUrlParameter("id", "productId", null));
         //        pc积分商品详情
-        webUrlTransform.put("IntegralGoods.html", "app://IntegralScrollDetailsActivity");
-        webUrlParameterTransform.put("IntegralGoods.html", getWebUrlParameter("id", "productId", null));
+        webUrlTransform.put("IntegralGoods", "app://IntegralScrollDetailsActivity");
+        webUrlParameterTransform.put("IntegralGoods", getWebUrlParameter("id", "productId", null));
         //        文章详情
         webUrlTransform.put("study_detail.html", "app://ArticleOfficialActivity");
         webUrlParameterTransform.put("study_detail.html", getWebUrlParameter("id", "ArtId", null));

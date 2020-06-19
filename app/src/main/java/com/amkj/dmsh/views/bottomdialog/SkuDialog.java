@@ -1401,7 +1401,7 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
                             picPosition = i;
                         }
                     }
-                    ImagePagerActivity.startImagePagerActivity(baseAct, ImagePagerActivity.IMAGE_PRO, picValueList, picPosition, null);
+                    ImagePagerActivity.startImagePagerActivity(baseAct, ImagePagerActivity.IMAGE_PRO, picValueList, picPosition);
                 }
             }
         }

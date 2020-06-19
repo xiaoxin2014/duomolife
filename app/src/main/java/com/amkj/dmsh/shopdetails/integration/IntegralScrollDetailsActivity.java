@@ -704,7 +704,7 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
                             imageBeanList.add(imageBean);
                         }
                         ImagePagerActivity.startImagePagerActivity(IntegralScrollDetailsActivity.this, IMAGE_DEF, imageBeanList
-                                , pictureBean.getIndex() < pictureBean.getOriginalList().size() ? pictureBean.getIndex() : 0, null);
+                                , pictureBean.getIndex() < pictureBean.getOriginalList().size() ? pictureBean.getIndex() : 0);
                     }
                 }
             });

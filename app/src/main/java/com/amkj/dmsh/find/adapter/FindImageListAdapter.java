@@ -1,6 +1,6 @@
 package com.amkj.dmsh.find.adapter;
 
-import android.content.Context;
+import android.app.Activity;
 import android.text.TextUtils;
 import android.widget.ImageView;
 
@@ -12,14 +12,13 @@ import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
-import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_1;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_3;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_4;
+import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getThumbImgUrl;
 
-;
 
 /**
  * @author LGuiPeng
@@ -30,9 +29,9 @@ import static com.amkj.dmsh.constant.ConstantVariable.TYPE_4;
  */
 
 public class FindImageListAdapter extends BaseMultiItemQuickAdapter<PictureBean, BaseViewHolder> {
-    private final Context context;
+    private final Activity context;
 
-    public FindImageListAdapter(Context context, List<PictureBean> pictureBeanList) {
+    public FindImageListAdapter(Activity context, List<PictureBean> pictureBeanList) {
         super(pictureBeanList);
         addItemType(TYPE_0, R.layout.adapter_image_communal);
         addItemType(TYPE_1, R.layout.adapter_image_width_communal);
@@ -50,7 +49,7 @@ public class FindImageListAdapter extends BaseMultiItemQuickAdapter<PictureBean,
                 final ImageView iv_image_details = helper.getView(R.id.iv_image_details);
                 iv_image_details.setImageResource(R.drawable.load_loading_image);
                 if (!TextUtils.isEmpty(pictureBean.getPath())) {
-                    GlideImageLoaderUtil.loadImgDynamicDrawable(context, iv_image_details, pictureBean.getPath(),-1);
+                    GlideImageLoaderUtil.loadImgDynamicDrawable(context, iv_image_details, pictureBean.getPath(), -1);
                 }
                 break;
             case TYPE_2:
@@ -58,15 +57,11 @@ public class FindImageListAdapter extends BaseMultiItemQuickAdapter<PictureBean,
                 break;
             case TYPE_3:
             case TYPE_4:
-                final ImageView iv_eva_image = helper.getView(R.id.iv_eva_image);
-                iv_eva_image.setImageResource(R.drawable.load_loading_image);
+                GlideImageLoaderUtil.loadCenterCrop(context, helper.getView(R.id.iv_eva_image), getThumbImgUrl(pictureBean.getPath(), 300));
                 helper.itemView.setTag(pictureBean);
-                if (!TextUtils.isEmpty(pictureBean.getPath())) {
-                    GlideImageLoaderUtil.loadThumbCenterCrop(context, iv_eva_image, pictureBean.getPath(),null);
-                }
                 break;
             default:
-                GlideImageLoaderUtil.loadThumbCenterCrop(context, (ImageView) helper.getView(R.id.iv_image_path), getStrings(pictureBean.getPath()), null);
+                GlideImageLoaderUtil.loadCenterCrop(context, helper.getView(R.id.iv_image_path), getThumbImgUrl(pictureBean.getPath(), 300));
                 helper.itemView.setTag(pictureBean);
                 break;
         }

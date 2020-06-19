@@ -387,7 +387,7 @@ public class MainButtonView extends LinearLayout {
                 boolean isOpen = requestStatus.isOpen();
                 String imgUrl = requestStatus.getImgUrl();
                 if (isOpen && !TextUtils.isEmpty(imgUrl)) {
-                    GlideImageLoaderUtil.loadFinishImgDrawable(context, imgUrl, new GlideImageLoaderUtil.ImageLoaderFinishListener() {
+                    GlideImageLoaderUtil.setLoadImgFinishListener(context, imgUrl, new GlideImageLoaderUtil.ImageLoaderFinishListener() {
                         @Override
                         public void onSuccess(Bitmap bitmap) {
                             int joinCount = (int) SharedPreUtils.getParam(DEMO_LIFE_FILE, "IndentJoinCount", 0);

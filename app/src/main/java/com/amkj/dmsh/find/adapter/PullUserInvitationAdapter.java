@@ -3,8 +3,6 @@ package com.amkj.dmsh.find.adapter;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -33,6 +31,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showImageActivity;
@@ -45,7 +46,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.TOPIC_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 
-;
 
 
 /**

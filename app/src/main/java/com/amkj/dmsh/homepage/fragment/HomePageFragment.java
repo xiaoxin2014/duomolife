@@ -106,7 +106,6 @@ public class HomePageFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
-
         badgeMsg = getTopBadge(getActivity(), mFraHomeMessage);
         badgeCart = getTopBadge(getActivity(), mFlShopCar);
         mTablayoutHome.setTextsize(AutoSizeUtils.mm2px(mAppContext, 30));

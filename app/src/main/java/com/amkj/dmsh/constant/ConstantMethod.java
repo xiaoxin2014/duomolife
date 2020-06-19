@@ -26,7 +26,6 @@ import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -868,8 +867,7 @@ public class ConstantMethod {
             imageBean.setPicUrl(picUrl);
             imageBeanList.add(imageBean);
         }
-        ImagePagerActivity.startImagePagerActivity(context, imageType, imageBeanList
-                , firstShowPosition, new ImagePagerActivity.ImageSize(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        ImagePagerActivity.startImagePagerActivity(context, imageType, imageBeanList, firstShowPosition);
     }
 
 
@@ -885,7 +883,7 @@ public class ConstantMethod {
                 RequestStatus requestStatus = RequestStatus.objectFromData(result);
                 if (requestStatus != null && requestStatus.getCode().equals(SUCCESS_CODE)
                         && !TextUtils.isEmpty(requestStatus.getSrc())) {
-                    GlideImageLoaderUtil.loadFinishImgDrawable(context, requestStatus.getSrc(), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
+                    GlideImageLoaderUtil.setLoadImgFinishListener(context, requestStatus.getSrc(), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
                         @Override
                         public void onSuccess(Bitmap bitmap) {
                             AlertDialogImage alertDialogAdImage = new AlertDialogImage(context);

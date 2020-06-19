@@ -33,7 +33,7 @@ import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.JzVideo.CustomAudioPlayer;
-import com.amkj.dmsh.views.JzVideo.JzVideoPlayerStatus;
+import com.amkj.dmsh.views.JzVideo.JzVideoPlayerStatusDialog;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -312,7 +312,7 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                 break;
             case TYPE_GIF_IMG:
                 final ImageView iv_gif_load_image = holder.getView(R.id.iv_gif_load_image);
-                GlideImageLoaderUtil.loadGif(context, iv_gif_load_image, detailObjectBean.getPicUrl());
+                GlideImageLoaderUtil.loadImgDynamicDrawable(context, iv_gif_load_image, detailObjectBean.getPicUrl(), -1);
                 break;
             case TYPE_PROMOTION_TITLE:
                 holder.setText(R.id.tv_communal_red_column_title, getStrings(detailObjectBean.getName()));
@@ -379,7 +379,7 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                 }
                 break;
             case TYPE_VIDEO:
-                JzVideoPlayerStatus jvp_video_play = holder.getView(R.id.jvp_video_play);
+                JzVideoPlayerStatusDialog jvp_video_play = holder.getView(R.id.jvp_video_play);
                 String videoUrl = detailObjectBean.getUrl();
                 String videoSnapShot = getVideoSnapShot(videoUrl);
                 if (!TextUtils.isEmpty(videoUrl)) {
@@ -396,17 +396,17 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                             int imgHeight = imageUrlWidthHeight[1];
                             ViewGroup.LayoutParams layoutParams = jvp_video_play.getLayoutParams();
                             layoutParams.width = screenWidth;
-                            layoutParams.height = AutoSizeUtils.mm2px(context, 395);
+                            layoutParams.height = AutoSizeUtils.mm2px(context, 395);//默认高度
                             if (imgWidth > 0 && imgHeight > 0) {
                                 int screenWidth = ((TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike()).getScreenWidth();
                                 layoutParams.height = screenWidth * imgHeight / imgWidth;
                             }
                             jvp_video_play.setLayoutParams(layoutParams);
-                            jvp_video_play.setVisibility(View.VISIBLE);
                             jvp_video_play.setUp(getStrings(detailObjectBean.getUrl()), "", Jzvd.SCREEN_WINDOW_NORMAL);
-                            GlideImageLoaderUtil.loadCenterCrop(context, jvp_video_play.thumbImageView, !TextUtils.isEmpty(videoSnapShot) ? videoSnapShot : detailObjectBean.getPicUrl());
+                            jvp_video_play.setVisibility(View.VISIBLE);
                         }
                     }.excueTask();
+                    GlideImageLoaderUtil.loadCenterCrop(context, jvp_video_play.thumbImageView, !TextUtils.isEmpty(detailObjectBean.getPicUrl()) ? detailObjectBean.getPicUrl() : videoSnapShot);
                 } else {
                     jvp_video_play.setVisibility(View.GONE);
                 }
@@ -614,7 +614,7 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                                         imageBean.setPicUrl(picUrl);
                                         imageBeanList.add(imageBean);
                                     }
-                                    ImagePagerActivity.startImagePagerActivity(context, IMAGE_DEF, imageBeanList, position, null);
+                                    ImagePagerActivity.startImagePagerActivity(context, IMAGE_DEF, imageBeanList, position);
                                 }
                             }
                         }).urlClick(new OnUrlClickListener() {

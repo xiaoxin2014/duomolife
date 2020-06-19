@@ -83,6 +83,7 @@ import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.android.flexbox.FlexboxLayout;
+import com.gyf.barlibrary.ImmersionBar;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 import com.melnykov.fab.FloatingActionButton;
@@ -266,7 +267,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     @BindView(R.id.iv_img_share2)
     ImageView mIvImgShare2;
     @BindView(R.id.rl_toolbar)
-    LinearLayout mRlToolbar;
+    RelativeLayout mRlToolbar;
     @BindView(R.id.rl_toolbar2)
     RelativeLayout mRlToolbar2;
     @BindView(R.id.rv_goods_recommend)
@@ -377,6 +378,14 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     @Override
     protected void initViews() {
         tv_product_activity_description.setSelected(true);
+        //动态修改标题栏padding
+        int statusBarHeight = ImmersionBar.getStatusBarHeight(this);
+        int paddingTop = statusBarHeight > 0 ? statusBarHeight : AutoSizeUtils.mm2px(this, 40);
+        mRlToolbar.setPadding(0, paddingTop, 0, 0);
+        mRlToolbar2.setPadding(0, paddingTop, 0, 0);
+        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) fl_header_service.getLayoutParams();
+        layoutParams.topMargin = paddingTop;
+        fl_header_service.setLayoutParams(layoutParams);
         DynamicConfig.Builder dynamicDetails = new DynamicConfig.Builder();
         dynamicDetails.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext, 22));
         dynamicDetails.setTimeTextSize(AutoSizeUtils.mm2px(mAppContext, 22));
@@ -555,7 +564,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             download_btn_communal.hide(false);
         });
         badge = getBadge(getActivity(), fl_header_service);
-
         //初始化评论列表
         communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(getActivity()));
         directEvaluationAdapter = new DirectEvaluationAdapter(getActivity(), goodsComments);
@@ -1659,14 +1667,15 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         }
     }
 
-    @OnClick({R.id.iv_life_back, R.id.iv_life_back2, R.id.ll_product_activity_detail, R.id.tv_sp_details_service,
-            R.id.tv_sp_details_add_car, R.id.tv_sp_details_buy_it, R.id.tv_sp_details_collect, R.id.iv_img_service, R.id.iv_img_share,
+    @OnClick({R.id.ll_back, R.id.ll_back2, R.id.ll_service, R.id.ll_service2, R.id.ll_share, R.id.ll_share2,
+            R.id.ll_product_activity_detail, R.id.tv_sp_details_service,
+            R.id.tv_sp_details_add_car, R.id.tv_sp_details_buy_it, R.id.tv_sp_details_collect,
             R.id.tv_group_product, R.id.iv_ql_shop_pro_cp_tag, R.id.tv_ql_sp_pro_sku, R.id.ll_layout_pro_sc_tag, R.id.tv_shop_comment_more})
     public void onViewClicked(View view) {
         Intent intent;
         switch (view.getId()) {
-            case R.id.iv_life_back:
-            case R.id.iv_life_back2:
+            case R.id.ll_back:
+            case R.id.ll_back2:
                 finish();
                 break;
             //打开活动专区
@@ -1701,7 +1710,8 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 }
                 break;
             //跳转购物车
-            case R.id.iv_img_service:
+            case R.id.ll_service:
+            case R.id.ll_service2:
                 intent = new Intent(getActivity(), ShopCarActivity.class);
                 startActivity(intent);
                 break;
@@ -1712,7 +1722,8 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 }
                 break;
             //分享
-            case R.id.iv_img_share:
+            case R.id.ll_share:
+            case R.id.ll_share2:
                 if (shopPropertyBean != null) {
                     String title = shopPropertyBean.getName();
                     String activityCode = shopPropertyBean.getActivityCode();

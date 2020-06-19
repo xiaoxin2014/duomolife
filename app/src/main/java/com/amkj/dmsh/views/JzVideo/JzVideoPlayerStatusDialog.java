@@ -1,12 +1,12 @@
 package com.amkj.dmsh.views.JzVideo;
 
 import android.content.Context;
-import androidx.appcompat.app.AlertDialog;
 import android.util.AttributeSet;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 
+import androidx.appcompat.app.AlertDialog;
 import cn.jzvd.JZUserActionStd;
 import cn.jzvd.JzvdStd;
 

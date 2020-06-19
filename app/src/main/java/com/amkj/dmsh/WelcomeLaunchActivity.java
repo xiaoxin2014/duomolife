@@ -3,6 +3,7 @@ package com.amkj.dmsh;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
@@ -15,6 +16,8 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.dao.AddClickDao;
 import com.amkj.dmsh.utils.CountDownTimer;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.gyf.barlibrary.BarHide;
+import com.gyf.barlibrary.ImmersionBar;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -75,6 +78,8 @@ public class WelcomeLaunchActivity extends BaseActivity {
 
     @Override
     public void setStatusBar() {
+        //全屏|隐藏导航栏
+        ImmersionBar.with(this).fullScreen(true).hideBar(BarHide.FLAG_HIDE_NAVIGATION_BAR).init();
     }
 
     private void hideNavStatus() {
@@ -89,10 +94,6 @@ public class WelcomeLaunchActivity extends BaseActivity {
                 }
             }
         });
-        //隐藏虚拟按键，并且全屏
-        int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN;
-        decorView.setSystemUiVisibility(uiOptions);
     }
 
     private void setAdDataShow(String showSeconds) {
@@ -100,7 +101,7 @@ public class WelcomeLaunchActivity extends BaseActivity {
             fl_skip.setVisibility(View.VISIBLE);
             show_time = Integer.parseInt(getNumber(!TextUtils.isEmpty(showSeconds) ? showSeconds : "3"));
             show_time = (show_time > 4 ? 5 : show_time < 1 ? 5 : show_time);
-            if (mCountDownTimer==null){
+            if (mCountDownTimer == null) {
                 mCountDownTimer = new CountDownTimer(this) {
                     @Override
                     public void onTick(long millisUntilFinished) {
@@ -182,10 +183,11 @@ public class WelcomeLaunchActivity extends BaseActivity {
     private void setLaunchImage() {
         if (!TextUtils.isEmpty(imgPath) && sharedPreferences != null) {
             showSeconds = sharedPreferences.getString(TimeKey, "5");
-            GlideImageLoaderUtil.loadCenterCropListener(WelcomeLaunchActivity.this, iv_launch_wel_page
-                    , "file://" + imgPath, new GlideImageLoaderUtil.ImageLoaderListener() {
+            GlideImageLoaderUtil.setLoadImgFinishListener(getActivity()
+                    , "file://" + imgPath, new GlideImageLoaderUtil.ImageLoaderFinishListener() {
                         @Override
-                        public void onSuccess() {
+                        public void onSuccess(Bitmap bitmap) {
+                            iv_launch_wel_page.setImageBitmap(bitmap);
                             if (Integer.parseInt(getNorNumber(showSeconds)) > 0) {
                                 setAdDataShow(showSeconds);
                             } else {

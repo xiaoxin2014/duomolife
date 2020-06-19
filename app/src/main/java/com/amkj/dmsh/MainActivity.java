@@ -324,7 +324,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null && SUCCESS_CODE.equals(requestStatus.getCode()) && ConstantMethod.getStringChangeIntegers(requestStatus.getGpRecordId()) > 0) {
                     SharedPreUtils.setParam(InvokeTimeFileName, GP_REMIND, TimeUtils.getCurrentTime(requestStatus));//记录调用时间
-                    GlideImageLoaderUtil.loadFinishImgDrawable(getActivity(), requestStatus.getCoverImage(), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
+                    GlideImageLoaderUtil.setLoadImgFinishListener(getActivity(), requestStatus.getCoverImage(), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
                         @Override
                         public void onSuccess(Bitmap bitmap) {
                             showAlertDialogGroup(requestStatus);
@@ -352,7 +352,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         && 0 < requestStatus.getUserType() && requestStatus.getUserType() < 4) {
                     SharedPreUtils.setParam(InvokeTimeFileName, COUPON_POPUP, TimeUtils.getCurrentTime(requestStatus));//记录调用时间
                     if (isContextExisted(context)) {
-                        GlideImageLoaderUtil.loadFinishImgDrawable(context, requestStatus.getImgUrl(), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
+                        GlideImageLoaderUtil.setLoadImgFinishListener(context, requestStatus.getImgUrl(), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
                             @Override
                             public void onSuccess(Bitmap bitmap) {
                                 mAlertDialogUserImage = new AlertDialogImage(context);
@@ -1091,7 +1091,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void showAdDialog(CommunalADActivityBean communalADActivityBean) {
-        GlideImageLoaderUtil.loadFinishImgDrawable(MainActivity.this, communalADActivityBean.getPicUrl(), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
+        GlideImageLoaderUtil.setLoadImgFinishListener(MainActivity.this, communalADActivityBean.getPicUrl(), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
             @Override
             public void onSuccess(Bitmap bitmap) {
                 if (alertDialogAdImage == null) {

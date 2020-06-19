@@ -149,7 +149,7 @@ public class UMShareAction {
         if (!TextUtils.isEmpty(h5Platform) && "1".equals(h5Platform)) {
             if (!TextUtils.isEmpty(imgUrl)) {
                 //        加载图片
-                GlideImageLoaderUtil.loadFinishImgDrawable(context, getThumbImgUrl(imgUrl, 300), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
+                GlideImageLoaderUtil.setLoadImgFinishListener(context, getThumbImgUrl(imgUrl, 300), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
                     @Override
                     public void onSuccess(Bitmap bitmap) {
                         mBitmap = bitmap;
@@ -254,7 +254,7 @@ public class UMShareAction {
                         } else {
                             if (!TextUtils.isEmpty(imgUrl)) {
                                 //        加载图片
-                                GlideImageLoaderUtil.loadFinishImgDrawable(context, getThumbImgUrl(imgUrl, 300), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
+                                GlideImageLoaderUtil.setLoadImgFinishListener(context, getThumbImgUrl(imgUrl, 300), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
                                     @Override
                                     public void onSuccess(Bitmap bitmap) {
                                         mBitmap = bitmap;
