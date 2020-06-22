@@ -35,11 +35,13 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 import static com.amkj.dmsh.constant.ConstantMethod.dismissLoadhud;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showLoadhud;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.toMD5;
 import static com.amkj.dmsh.constant.ConstantVariable.BIND_PHONE;
+import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TYPE_PRIVACY_POLICY;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TYPE_REG_AGREEMENT;
@@ -87,20 +89,16 @@ public class BindingMobileActivity extends BaseActivity {
     private String unionid;
     private String type;
     private String accessToken;
-    private TestResource mTestResource;
 
     @Override
     protected int getContentView() {
         return R.layout.activity_binding_mobile;
     }
 
-    class TestResource {
-        //...
-    }
 
     @Override
     protected void initViews() {
-        mTestResource = new TestResource();
+        getLoginStatus(this);
         mTvHeaderTitle.setText("绑定手机号");
         mTvHeaderShared.setVisibility(View.INVISIBLE);
         mTlNormalBar.setSelected(true);
@@ -152,6 +150,7 @@ public class BindingMobileActivity extends BaseActivity {
     @Override
     protected void loadData() {
     }
+
 
     //点击绑定手机号
     @OnClick({R.id.tv_bind_mobile_click})
@@ -337,6 +336,20 @@ public class BindingMobileActivity extends BaseActivity {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != RESULT_OK) {
+            if (requestCode == IS_LOGIN_CODE) {
+                finish();
+            }
+            return;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == IS_LOGIN_CODE) {
+            loadData();
+        }
+    }
+
+    @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (ev.getAction() == MotionEvent.ACTION_DOWN) {
             View v = getCurrentFocus();
@@ -360,7 +373,7 @@ public class BindingMobileActivity extends BaseActivity {
 
     // Return whether touch the view.
     private boolean isShouldHideKeyboard(View v, MotionEvent event) {
-        if (v != null && (v instanceof EditText)) {
+        if (v instanceof EditText) {
             int[] l = {0, 0};
             v.getLocationInWindow(l);
             int left = l[0],

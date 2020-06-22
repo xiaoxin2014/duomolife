@@ -78,7 +78,7 @@ android {
 // 在MobSDK的扩展中注册SMSSDK的相关信息
 MobSDK {
     SMSSDK {
-        version "3.3.0"
+        version "3.3.2"
         gui false
     }
 }

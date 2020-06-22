@@ -1,6 +1,6 @@
 package com.amkj.dmsh.utils;
 
-import android.app.Activity;
+import android.content.Context;
 
 import com.dhh.rxlife2.RxLife;
 
@@ -26,10 +26,10 @@ import io.reactivex.schedulers.Schedulers;
 public abstract class AsyncUtils<T> {
 
     private static ThreadPoolExecutor executorService;
-    private final Activity mActivity;
+    private final Context mContext;
 
-    protected AsyncUtils(Activity activity) {
-        mActivity = activity;
+    protected AsyncUtils(Context context) {
+        mContext = context;
     }
 
     public void excueTask() {
@@ -66,8 +66,8 @@ public abstract class AsyncUtils<T> {
         };
 
         Observable<T> tObservable = observable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
-        if (mActivity instanceof LifecycleOwner) {
-            tObservable = tObservable.compose(RxLife.with((LifecycleOwner) mActivity).bindToLifecycle());
+        if (mContext instanceof LifecycleOwner) {
+            tObservable = tObservable.compose(RxLife.with((LifecycleOwner) mContext).bindToLifecycle());
         }
         tObservable.subscribe(observer);
     }

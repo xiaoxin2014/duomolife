@@ -648,7 +648,7 @@ public class DoMoLifeWelfareDetailsFragment extends BaseFragment {
 
     // Return whether touch the view.
     private boolean isShouldHideKeyboard(View v, MotionEvent event) {
-        if (v != null && (v instanceof EditText)) {
+        if (v instanceof EditText) {
             int[] l = {0, 0};
             v.getLocationInWindow(l);
             int left = l[0],

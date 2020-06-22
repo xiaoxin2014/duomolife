@@ -28,6 +28,7 @@ import com.amkj.dmsh.mine.SmsCodeHelper;
 import com.amkj.dmsh.mine.bean.RegisterPhoneStatus;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.LifecycleHandler;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
@@ -135,7 +136,7 @@ public class RegisterAccountActivity extends BaseActivity {
         });
     }
 
-    private Handler handler = new Handler(new Handler.Callback() {
+    private LifecycleHandler handler = new LifecycleHandler(this, new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             int event = msg.arg1;
@@ -149,7 +150,7 @@ public class RegisterAccountActivity extends BaseActivity {
 //                    showToast(RegisterAccountActivity.this, "提交成功");
                     getData(edit_register_mobile.getText().toString().trim(), edit_register_password.getText().toString().trim());
                 } else if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE) { //获取验证码成功
-                    showToast( R.string.GetSmsCodeSuccess);
+                    showToast(R.string.GetSmsCodeSuccess);
                     tv_sms_code.setVisibility(View.VISIBLE);
                     reg_req_code_gif_view.setVisibility(View.GONE);
                     SmsCodeHelper.startCountDownTimer(getActivity(), tv_sms_code);
@@ -173,7 +174,7 @@ public class RegisterAccountActivity extends BaseActivity {
                     showToast(R.string.unConnectedNetwork);
                 }
             } else {
-                showToast( R.string.do_failed);
+                showToast(R.string.do_failed);
             }
             return false;
         }
@@ -275,7 +276,7 @@ public class RegisterAccountActivity extends BaseActivity {
      */
     private void isPhoneReg(final String phoneNumber) {
         if (phoneNumber.length() != 11) {
-            showToast( R.string.MobileError);
+            showToast(R.string.MobileError);
             return;
         }
         if (loadHud != null) {
@@ -316,7 +317,7 @@ public class RegisterAccountActivity extends BaseActivity {
                         showToast(status.getResult());
                     }
                 } else {
-                    showToast( R.string.unConnectedNetwork);
+                    showToast(R.string.unConnectedNetwork);
                 }
             }
 
@@ -348,11 +349,11 @@ public class RegisterAccountActivity extends BaseActivity {
             return;
         }
         if (TextUtils.isEmpty(password) || password.length() < 6) {
-            showToast( R.string.PasswordLessSix);
+            showToast(R.string.PasswordLessSix);
             return;
         }
         if (!PasswordEncrypt.isPwEligibility(password)) {
-            showToast( R.string.PasswordInconformity);
+            showToast(R.string.PasswordInconformity);
             return;
         }
         if (!NetWorkUtils.isConnectedByState(RegisterAccountActivity.this)) {
@@ -415,7 +416,7 @@ public class RegisterAccountActivity extends BaseActivity {
 
     // Return whether touch the view.
     private boolean isShouldHideKeyboard(View v, MotionEvent event) {
-        if (v != null && (v instanceof EditText)) {
+        if (v instanceof EditText) {
             int[] l = {0, 0};
             v.getLocationInWindow(l);
             int left = l[0],

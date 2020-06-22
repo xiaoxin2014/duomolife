@@ -1,7 +1,6 @@
 package com.amkj.dmsh.find.activity;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -32,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
@@ -40,7 +40,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 /**
  * Created by yiw on 2016/1/6.
  */
-public class ImagePagerActivity extends Activity {
+public class ImagePagerActivity extends AppCompatActivity {
     public static final String INTENT_IMGURLS = "imgurls";
     public static final String INTENT_POSITION = "position";
     public static final String INTENT_IMAGESIZE = "imagesize";
@@ -152,14 +152,14 @@ public class ImagePagerActivity extends Activity {
 
         private List<ImageBean> imageBeanList = new ArrayList<>();
         private LayoutInflater inflater;
-        private Activity context;
+        private AppCompatActivity context;
 
         public void setImageBeanList(List<ImageBean> imageBeanList) {
             if (imageBeanList != null)
                 this.imageBeanList = imageBeanList;
         }
 
-        public ImageAdapter(Activity context) {
+        public ImageAdapter(AppCompatActivity context) {
             this.context = context;
             this.inflater = LayoutInflater.from(context);
         }

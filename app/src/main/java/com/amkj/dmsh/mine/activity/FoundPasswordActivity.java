@@ -44,7 +44,6 @@ import static com.amkj.dmsh.constant.Url.CHECK_PHONE_IS_REG;
 import static com.amkj.dmsh.constant.Url.MINE_RESET_PASSWORD;
 import static com.amkj.dmsh.utils.NetWorkUtils.isConnectedByState;
 
-;
 
 public class FoundPasswordActivity extends BaseActivity {
     @BindView(R.id.tv_blue_title)
@@ -97,7 +96,7 @@ public class FoundPasswordActivity extends BaseActivity {
 
     }
 
-    private LifecycleHandler handler = new LifecycleHandler(getActivity(),new Handler.Callback() {
+    private LifecycleHandler handler = new LifecycleHandler(getActivity(), new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             int event = msg.arg1;
@@ -112,7 +111,7 @@ public class FoundPasswordActivity extends BaseActivity {
                     resetPassword(password);
                 } else if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE) { //获取验证码成功
                     //请求验证码成功，进入倒计时
-                    showToast( R.string.GetSmsCodeSuccess);
+                    showToast(R.string.GetSmsCodeSuccess);
                     tv_bind_send_code.setVisibility(View.VISIBLE);
                     reg_bind_code_gif_view.setVisibility(View.GONE);
                     SmsCodeHelper.startCountDownTimer(getActivity(), tv_bind_send_code);
@@ -126,9 +125,9 @@ public class FoundPasswordActivity extends BaseActivity {
                     throwable.printStackTrace();
                     JSONObject object = new JSONObject(throwable.getMessage());
                     int status = object.optInt("status");//错误代码
-                    disposeMessageCode( status);
+                    disposeMessageCode(status);
                 } catch (Exception e) {
-                    showToast( R.string.unConnectedNetwork);
+                    showToast(R.string.unConnectedNetwork);
                 }
             }
             return false;
@@ -181,7 +180,7 @@ public class FoundPasswordActivity extends BaseActivity {
 
                     @Override
                     public void onError(Throwable throwable) {
-                        showToast( R.string.do_failed);
+                        showToast(R.string.do_failed);
                     }
                 });
     }
@@ -196,7 +195,7 @@ public class FoundPasswordActivity extends BaseActivity {
             return;
         }
         if (TextUtils.isEmpty(msgCode)) {
-            showToast( R.string.SmsCodeNull);
+            showToast(R.string.SmsCodeNull);
             return;
         }
         if (!isConnectedByState(FoundPasswordActivity.this)) {
@@ -260,11 +259,11 @@ public class FoundPasswordActivity extends BaseActivity {
             return true;
         }
         if (newPassword.length() < 5) {
-            showToast( R.string.PasswordLessSix);
+            showToast(R.string.PasswordLessSix);
             return true;
         }
         if (!PasswordEncrypt.isPwEligibility(newPassword)) {
-            showToast( R.string.PasswordInconformity);
+            showToast(R.string.PasswordInconformity);
             return true;
         }
         return false;
@@ -326,7 +325,7 @@ public class FoundPasswordActivity extends BaseActivity {
 
     // Return whether touch the view.
     private boolean isShouldHideKeyboard(View v, MotionEvent event) {
-        if (v != null && (v instanceof EditText)) {
+        if (v instanceof EditText) {
             int[] l = {0, 0};
             v.getLocationInWindow(l);
             int left = l[0],

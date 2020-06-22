@@ -42,7 +42,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.MINE_CHANGE_MOBILE;
 
-;
 
 /**
  * @author LGuiPeng
@@ -92,6 +91,7 @@ public class ChangeMobileActivity extends BaseActivity {
         } else {
             finish();
         }
+
         //注册短信回调
         SMSSDK.registerEventHandler(new EventHandler() {
             @Override
@@ -114,51 +114,6 @@ public class ChangeMobileActivity extends BaseActivity {
         });
     }
 
-    @OnClick({R.id.tv_header_shared})
-    void addCode(View view) {
-        final String smsCode = edit_cm_get_code.getText().toString().trim();
-        phoneNumber = et_change_mobile.getText().toString().trim();
-        if (!TextUtils.isEmpty(smsCode) && !TextUtils.isEmpty(phoneNumber)) {
-            if (phoneNumber.length() == 11) {
-                //            提交验证码
-                if (loadHud != null) {
-                    loadHud.show();
-                }
-                if (NetWorkUtils.isConnectedByState(ChangeMobileActivity.this)) {
-                    SMSSDK.submitVerificationCode("86", phoneNumber, smsCode);
-                } else {
-                    showToast(R.string.unConnectedNetwork);
-                }
-            } else {
-                showToast(R.string.MobileError);
-            }
-        } else if (TextUtils.isEmpty(phoneNumber)) {
-            showToast(R.string.MobileError);
-        } else {
-            showToast(R.string.SmsCodeNull);
-        }
-
-    }
-
-    //    发送验证码
-    @OnClick(R.id.tv_change_send_code)
-    void sendSmsCode(View view) {
-        phoneNumber = et_change_mobile.getText().toString().trim();
-        if (phoneNumber.length() == 11) {
-            //            请求验证码
-            tv_change_send_code.setVisibility(View.GONE);
-            reg_change_code_gif_view.setVisibility(View.VISIBLE);
-            if (NetWorkUtils.isConnectedByState(ChangeMobileActivity.this)) {
-                SMSSDK.getVerificationCode("86", phoneNumber);
-            } else {
-                tv_change_send_code.setVisibility(View.VISIBLE);
-                reg_change_code_gif_view.setVisibility(View.GONE);
-                showToast(R.string.unConnectedNetwork);
-            }
-        } else {
-            showToast(R.string.MobileError);
-        }
-    }
 
     private LifecycleHandler handler = new LifecycleHandler(getActivity(), new Handler.Callback() {
         @Override
@@ -264,12 +219,58 @@ public class ChangeMobileActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        handler.removeCallbacksAndMessages(null);
+        SMSSDK.unregisterAllEventHandler();
         KeyboardUtils.unregisterSoftInputChangedListener(this);
     }
 
     @Override
     protected void loadData() {
+    }
+
+    @OnClick({R.id.tv_header_shared})
+    void addCode(View view) {
+        final String smsCode = edit_cm_get_code.getText().toString().trim();
+        phoneNumber = et_change_mobile.getText().toString().trim();
+        if (!TextUtils.isEmpty(smsCode) && !TextUtils.isEmpty(phoneNumber)) {
+            if (phoneNumber.length() == 11) {
+                //            提交验证码
+                if (loadHud != null) {
+                    loadHud.show();
+                }
+                if (NetWorkUtils.isConnectedByState(ChangeMobileActivity.this)) {
+                    SMSSDK.submitVerificationCode("86", phoneNumber, smsCode);
+                } else {
+                    showToast(R.string.unConnectedNetwork);
+                }
+            } else {
+                showToast(R.string.MobileError);
+            }
+        } else if (TextUtils.isEmpty(phoneNumber)) {
+            showToast(R.string.MobileError);
+        } else {
+            showToast(R.string.SmsCodeNull);
+        }
+
+    }
+
+    //    发送验证码
+    @OnClick(R.id.tv_change_send_code)
+    void sendSmsCode(View view) {
+        phoneNumber = et_change_mobile.getText().toString().trim();
+        if (phoneNumber.length() == 11) {
+            //            请求验证码
+            tv_change_send_code.setVisibility(View.GONE);
+            reg_change_code_gif_view.setVisibility(View.VISIBLE);
+            if (NetWorkUtils.isConnectedByState(ChangeMobileActivity.this)) {
+                SMSSDK.getVerificationCode("86", phoneNumber);
+            } else {
+                tv_change_send_code.setVisibility(View.VISIBLE);
+                reg_change_code_gif_view.setVisibility(View.GONE);
+                showToast(R.string.unConnectedNetwork);
+            }
+        } else {
+            showToast(R.string.MobileError);
+        }
     }
 
     @OnClick(R.id.tv_life_back)
@@ -301,7 +302,7 @@ public class ChangeMobileActivity extends BaseActivity {
 
     // Return whether touch the view.
     private boolean isShouldHideKeyboard(View v, MotionEvent event) {
-        if (v != null && (v instanceof EditText)) {
+        if (v instanceof EditText) {
             int[] l = {0, 0};
             v.getLocationInWindow(l);
             int left = l[0],

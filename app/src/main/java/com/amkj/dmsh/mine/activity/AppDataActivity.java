@@ -289,7 +289,7 @@ public class AppDataActivity extends BaseActivity {
 //                        网络缓存
                         EasyHttp.clearCache();
                         PictureFileUtils.deleteCacheDirFile(applicationContext);
-                        GlideImageLoaderUtil.clearMemoryByContext(applicationContext);
+                        GlideImageLoaderUtil.clearCache(applicationContext);
                         SharedPreferences sharedPreferences = getSharedPreferences("launchAD", Context.MODE_PRIVATE);
                         SharedPreferences.Editor edit = sharedPreferences.edit();
                         edit.clear().apply();
