@@ -82,7 +82,6 @@ public class UMShareAction {
     public static String routineId = "gh_cdbcf7765273";
     private String logoUrl = "http://domolifes.oss-cn-beijing.aliyuncs.com/wechatIcon/domolife_logo.png";
     private ConstantMethod constantMethod;
-    private Bitmap mBitmap;
 
 
     /**
@@ -152,7 +151,6 @@ public class UMShareAction {
                 GlideImageLoaderUtil.setLoadImgFinishListener(context, getThumbImgUrl(imgUrl, 300), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
                     @Override
                     public void onSuccess(Bitmap bitmap) {
-                        mBitmap = bitmap;
                         setLoadImageShare(SHARE_MEDIA.WEIXIN, new UMImage(context, bitmap), context, urlLink, title, description);
                     }
 
@@ -247,7 +245,6 @@ public class UMShareAction {
 
                                 @Override
                                 public void runOnUI(Bitmap bitmap) {
-                                    mBitmap = bitmap;
                                     setLoadImageShare(sharePlatformType, new UMImage(context, bitmap), context, urlLink, title, description);
                                 }
                             }.excueTask(), 200);
@@ -257,7 +254,6 @@ public class UMShareAction {
                                 GlideImageLoaderUtil.setLoadImgFinishListener(context, getThumbImgUrl(imgUrl, 300), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
                                     @Override
                                     public void onSuccess(Bitmap bitmap) {
-                                        mBitmap = bitmap;
                                         setLoadImageShare(sharePlatformType, new UMImage(context, bitmap), context, urlLink, title, description);
                                     }
 
@@ -478,8 +474,6 @@ public class UMShareAction {
             if (needStatistics(context) && id > 0) {
                 addArticleShareCount(context, id);
             }
-
-            ConstantMethod.recycleBitmap(mBitmap);
         }
 
         @Override
@@ -490,7 +484,6 @@ public class UMShareAction {
             }
 
             showToast(getPlatFormText(platform) + " 分享失败,请检查是否安装该应用");
-            ConstantMethod.recycleBitmap(mBitmap);
         }
 
         @Override
@@ -500,15 +493,12 @@ public class UMShareAction {
             if (alertDialogShareHelper != null) {
                 alertDialogShareHelper.dismiss();
             }
-
-            ConstantMethod.recycleBitmap(mBitmap);
         }
     };
 
     /**
      * 统计用户分享行为
      *
-     * @param activity
      * @param objId    对应的内容ID，如-分享文章类型，则传文章ID，对于一些固定的专区，如每周优选，传0即可
      * @param ObjName  分享对象名称， 如分享文章类型，则传文章标题
      * @param platform 要分享的平台
@@ -558,7 +548,6 @@ public class UMShareAction {
      * 返回分享途径字符串
      *
      * @param platform 平台
-     * @return
      */
     @NonNull
     private String getShareRoad(SHARE_MEDIA platform) {

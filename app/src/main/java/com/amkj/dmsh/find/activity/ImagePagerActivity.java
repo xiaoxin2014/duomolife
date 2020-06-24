@@ -20,7 +20,6 @@ import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.ImageBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.views.photoimage.PhotoView;
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.gyf.barlibrary.BarHide;
 import com.gyf.barlibrary.ImmersionBar;
@@ -189,7 +188,9 @@ public class ImagePagerActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(GifDrawable drawable) {
                                 loading.setVisibility(View.GONE);
-                                Glide.with(context).load(drawable).into(big_image);
+                                drawable.setLoopCount(GifDrawable.LOOP_FOREVER);
+                                drawable.start();//不设置的话gif只显示第一帧
+                                big_image.setImageDrawable(drawable);
                             }
 
                             @Override

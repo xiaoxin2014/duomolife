@@ -3,15 +3,17 @@ package com.amkj.dmsh.qyservice;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import androidx.annotation.Nullable;
 
 import com.amkj.dmsh.R;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.qiyukf.unicorn.api.ImageLoaderListener;
 import com.qiyukf.unicorn.api.UnicornImageLoader;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 
 /**
@@ -38,16 +40,24 @@ public class QYGlideImageLoader implements UnicornImageLoader {
     public void loadImage(String uri, int width, int height, ImageLoaderListener listener) {
         Glide.with(context).asBitmap().load(uri)
                 .apply(new RequestOptions().centerCrop().placeholder(R.drawable.load_loading_image))
-                .into(new SimpleTarget<Bitmap>() {
+                .into(new CustomTarget<Bitmap>() {
                     @Override
-                    public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+                    public void onResourceReady(@NonNull Bitmap resource, Transition<? super Bitmap> transition) {
                         if (listener != null) {
                             listener.onLoadComplete(resource);
                         }
                     }
 
                     @Override
+                    public void onLoadCleared(@Nullable Drawable placeholder) {
+                        if (listener != null) {
+                            listener.onLoadFailed(null);
+                        }
+                    }
+
+                    @Override
                     public void onLoadFailed(Drawable errorDrawable) {
+                        super.onLoadFailed(errorDrawable);
                         if (listener != null) {
                             listener.onLoadFailed(null);
                         }
