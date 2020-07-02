@@ -63,6 +63,7 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
         private int documentcount;
         private String bgimg_url;
         private String idcard;
+        private String showIdcard;
         private String real_name;
         private String interests;
         private int is_wechat;
@@ -77,6 +78,8 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
         private String device_source;
         private String device_model;
         private String device_sys_version;
+        private String idcardImg1;
+        private String idcardImg2;
         private int sysNotice;
         private NoticeInfoBean noticeInfo;
         private List<MarqueeTextEntity.MarqueeTextBean> noticeInfoList;
@@ -85,6 +88,29 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
         private String isNeedBinding;
         private String openId;
 
+        public String getShowIdcard() {
+            return showIdcard;
+        }
+
+        public void setShowIdcard(String showIdcard) {
+            this.showIdcard = showIdcard;
+        }
+
+        public String getIdcardImg1() {
+            return idcardImg1;
+        }
+
+        public void setIdcardImg1(String idcardImg1) {
+            this.idcardImg1 = idcardImg1;
+        }
+
+        public String getIdcardImg2() {
+            return idcardImg2;
+        }
+
+        public void setIdcardImg2(String idcardImg2) {
+            this.idcardImg2 = idcardImg2;
+        }
 
         public List<MarqueeTextEntity.MarqueeTextBean> getNoticeInfoList() {
             return noticeInfoList;

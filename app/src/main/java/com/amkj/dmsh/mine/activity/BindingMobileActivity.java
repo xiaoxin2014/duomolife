@@ -35,13 +35,11 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 import static com.amkj.dmsh.constant.ConstantMethod.dismissLoadhud;
-import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showLoadhud;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.toMD5;
 import static com.amkj.dmsh.constant.ConstantVariable.BIND_PHONE;
-import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TYPE_PRIVACY_POLICY;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TYPE_REG_AGREEMENT;
@@ -98,7 +96,6 @@ public class BindingMobileActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
-        getLoginStatus(this);
         mTvHeaderTitle.setText("绑定手机号");
         mTvHeaderShared.setVisibility(View.INVISIBLE);
         mTlNormalBar.setSelected(true);
@@ -323,7 +320,7 @@ public class BindingMobileActivity extends BaseActivity {
         tv_bind_send_code.setVisibility(View.VISIBLE);
         reg_bind_code_gif_view.setVisibility(View.GONE);
         if (alertDialogHelper == null) {
-            alertDialogHelper = new AlertDialogHelper(BindingMobileActivity.this)
+            alertDialogHelper = new AlertDialogHelper(this)
                     .setTitle("重要提示")
                     .setSingleButton(true)
                     .setTitleGravity(Gravity.CENTER)
@@ -333,20 +330,6 @@ public class BindingMobileActivity extends BaseActivity {
             alertDialogHelper.setMsg(getStrings(exceptionMsg));
         }
         alertDialogHelper.show();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != RESULT_OK) {
-            if (requestCode == IS_LOGIN_CODE) {
-                finish();
-            }
-            return;
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == IS_LOGIN_CODE) {
-            loadData();
-        }
     }
 
     @Override

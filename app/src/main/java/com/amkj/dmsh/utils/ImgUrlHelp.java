@@ -146,7 +146,7 @@ public class ImgUrlHelp {
         });
     }
 
-    Handler handler = new Handler(new Handler.Callback() {
+    LifecycleHandler handler = new LifecycleHandler(context, new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
             PutObjectRequest request = (PutObjectRequest) msg.obj;

@@ -10,7 +10,6 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/gap_left"
         android:layout_marginRight="@dimen/gap_right"
-        android:background="@color/white"
         android:gravity="left|center_vertical"
         android:lineSpacingExtra="@dimen/sc_mm_6"
         android:textColor="@color/home_text_color"

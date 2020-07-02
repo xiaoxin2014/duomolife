@@ -23,15 +23,14 @@ import com.amkj.dmsh.address.activity.SelectedAddressActivity;
 import com.amkj.dmsh.address.bean.AddressInfoEntity.AddressInfoBean;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.dao.ShopCarDao;
 import com.amkj.dmsh.dominant.activity.DoMoGroupJoinShareActivity;
 import com.amkj.dmsh.dominant.activity.QualityGroupShopMineActivity;
 import com.amkj.dmsh.dominant.activity.QualityProductActActivity;
 import com.amkj.dmsh.dominant.bean.GroupShopDetailsEntity.GroupShopDetailsBean;
 import com.amkj.dmsh.mine.bean.ActivityInfoBean;
 import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean.CartBean.CartInfoBean;
-import com.amkj.dmsh.dao.ShopCarDao;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.adapter.IndentDiscountAdapter;
@@ -52,7 +51,6 @@ import com.amkj.dmsh.shopdetails.bean.QualityCreateUnionPayIndentEntity;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateWeChatPayIndentBean;
 import com.amkj.dmsh.shopdetails.bean.ShopCarGoodsSkuTransmit;
 import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
-import com.amkj.dmsh.views.alertdialog.AlertDialogPurchase;
 import com.amkj.dmsh.shopdetails.integration.bean.AddressListEntity;
 import com.amkj.dmsh.shopdetails.payutils.AliPay;
 import com.amkj.dmsh.shopdetails.payutils.UnionPay;
@@ -60,12 +58,17 @@ import com.amkj.dmsh.shopdetails.payutils.WXPay;
 import com.amkj.dmsh.utils.KeyboardUtils;
 import com.amkj.dmsh.utils.LifecycleHandler;
 import com.amkj.dmsh.utils.TextWatchListener;
-import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.RectAddAndSubWriteView;
+import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
+import com.amkj.dmsh.views.alertdialog.AlertDialogPurchase;
+import com.amkj.dmsh.views.alertdialog.AlertDialogRealName;
 import com.amkj.dmsh.views.bottomdialog.SkuDialog;
 import com.google.gson.reflect.TypeToken;
+import com.luck.picture.lib.PictureSelector;
+import com.luck.picture.lib.config.PictureConfigC;
+import com.luck.picture.lib.entity.LocalMediaC;
 import com.tencent.bugly.crashreport.CrashReport;
 
 import java.util.ArrayList;
@@ -87,10 +90,7 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.dismissLoadhud;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
-import static com.amkj.dmsh.constant.ConstantMethod.getStringFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.setEtFilter;
-import static com.amkj.dmsh.constant.ConstantMethod.showImportantToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showLoadhud;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -157,7 +157,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
     private IndentDiscountAdapter indentDiscountAdapter;
     private IndentWriteEntity identWriteEntity;
     private boolean isReal = false;
-    private ConstantMethod constantMethod;
     private IndentWriteBean indentWriteBean;
     private AlertDialogHelper payCancelDialogHelper;
     private QualityCreateUnionPayIndentEntity qualityUnionIndent;
@@ -177,6 +176,9 @@ public class DirectIndentWriteActivity extends BaseActivity {
     private AlertDialogPurchase mAlertDialogPurchase;
     //选中的加价购商品id
     private int purchaseProductId;
+    private AlertDialogRealName mAlertDialogRealName;
+    private AlertDialogHelper mAlertDialogRealNameError;
+    private AlertDialogHelper mAlertDialogRealNameDiffer;
 
 
     @Override
@@ -191,7 +193,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
             loadHud.setCancellable(false);
         }
         isReal = false;
-        constantMethod = new ConstantMethod();
         tv_header_titleAll.setText("订单填写");
         header_shared.setVisibility(View.INVISIBLE);
         Intent intent = getIntent();
@@ -220,8 +221,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
         View headerView = LayoutInflater.from(this).inflate(R.layout.layout_direct_indent_write_header_address, (ViewGroup) communal_recycler.getParent(), false);
         pullHeaderView = new PullHeaderView();
         ButterKnife.bind(pullHeaderView, headerView);
-        setEtFilter(pullHeaderView.et_oversea_name);
-        setEtFilter(pullHeaderView.et_oversea_card);
 //        订单详情
         View footView = LayoutInflater.from(this).inflate(R.layout.layout_direct_indent_write_foot, (ViewGroup) communal_recycler.getParent(), false);
         pullFootView = new PullFootView();
@@ -309,7 +308,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
 
             @Override
             public void onMaxQuantity(View view, int num) {
-                showImportantToast(getActivity(), R.string.product_sell_out);
+                showToast(R.string.product_sell_out);
             }
         });
         pullFootView.rv_indent_write_info.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -332,7 +331,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                             } else if (mNum > pullFootView.rect_indent_number.getMaxNum()) {
                                 mNum = pullFootView.rect_indent_number.getMaxNum();
                                 pullFootView.rect_indent_number.setNum(mNum);
-                                showImportantToast(getActivity(), R.string.product_sell_out);
+                                showToast(R.string.product_sell_out);
                             }
                             if (discountBeanList.size() > 0 && discountBeanList.get(0).getCount() != mNum) {
                                 if (loadHud != null) {
@@ -359,7 +358,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
     @Override
     protected void loadData() {
         if (type.equals(INDENT_GROUP_SHOP)) {
-            pullFootView.ll_layout_coupon.setVisibility(View.GONE);
+            pullFootView.ll_layout_coupon.setVisibility(GONE);
         }
         getAddress();
     }
@@ -406,9 +405,9 @@ public class DirectIndentWriteActivity extends BaseActivity {
                                 showPayType(indentWriteBean);
                             }
                         } else if (identWriteEntity.getCode().equals(EMPTY_CODE)) {
-                            showImportantToast(getActivity(), R.string.invalidData);
+                            showToast(R.string.invalidData);
                         } else {
-                            showImportantToast(getActivity(), identWriteEntity.getMsg());
+                            showToast(identWriteEntity.getMsg());
                         }
                     }
 
@@ -567,7 +566,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                 }
             }
         } else {
-            pullFootView.rect_indent_number.setVisibility(View.GONE);
+            pullFootView.rect_indent_number.setVisibility(GONE);
         }
     }
 
@@ -612,19 +611,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
             pullHeaderView.tv_oversea_buy_tint.setVisibility(VISIBLE);
             pullHeaderView.tv_oversea_buy_tint.setText(getStrings(indentWriteBean.getPrompt()));
         } else {
-            pullHeaderView.tv_oversea_buy_tint.setVisibility(View.GONE);
-        }
-        //实名信息
-        if (indentWriteBean.isReal()) {
-            pullHeaderView.ll_oversea_info.setVisibility(VISIBLE);
-            pullHeaderView.et_oversea_name.setText(getStringFilter(indentWriteBean.getRealName()));
-            pullHeaderView.et_oversea_name.setSelection(getStrings(indentWriteBean.getRealName()).length());
-            pullHeaderView.et_oversea_card.setText(getStringFilter(indentWriteBean.getShowIdCard()));
-            pullHeaderView.et_oversea_card.setSelection(getStrings(indentWriteBean.getShowIdCard()).length());
-            pullHeaderView.et_oversea_card.setTag(R.id.id_tag, getStrings(indentWriteBean.getIdCard()));
-            pullHeaderView.et_oversea_card.setTag(getStrings(indentWriteBean.getShowIdCard()));
-        } else {
-            pullHeaderView.ll_oversea_info.setVisibility(View.GONE);
+            pullHeaderView.tv_oversea_buy_tint.setVisibility(GONE);
         }
     }
 
@@ -657,7 +644,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                     } else if (addressListEntity.getCode().equals(EMPTY_CODE)) {
                         setAddressData(null);
                     } else {
-                        showImportantToast(getActivity(), addressListEntity.getMsg());
+                        showToast(addressListEntity.getMsg());
                     }
                 }
             }
@@ -669,12 +656,12 @@ public class DirectIndentWriteActivity extends BaseActivity {
         if (addressInfoBean != null) {
             addressId = addressInfoBean.getId();
             pullHeaderView.ll_indent_address_default.setVisibility(VISIBLE);
-            pullHeaderView.ll_indent_address_null.setVisibility(View.GONE);
+            pullHeaderView.ll_indent_address_null.setVisibility(GONE);
             pullHeaderView.tv_consignee_name.setText(addressInfoBean.getConsignee());
             pullHeaderView.tv_address_mobile_number.setText(addressInfoBean.getMobile());
             pullHeaderView.tv_indent_details_address.setText((addressInfoBean.getAddress_com() + addressInfoBean.getAddress() + " "));
         } else {
-            pullHeaderView.ll_indent_address_default.setVisibility(View.GONE);
+            pullHeaderView.ll_indent_address_default.setVisibility(GONE);
             pullHeaderView.ll_indent_address_null.setVisibility(VISIBLE);
         }
         //            再次购买
@@ -707,9 +694,9 @@ public class DirectIndentWriteActivity extends BaseActivity {
                             setDiscountsInfo(indentWriteBean);
                         }
                     } else if (identWriteEntity.getCode().equals(EMPTY_CODE)) {
-                        showImportantToast(getActivity(), R.string.invalidData);
+                        showToast(R.string.invalidData);
                     } else {
-                        showImportantToast(getActivity(), identWriteEntity.getMsg());
+                        showToast(identWriteEntity.getMsg());
                     }
                 }
 
@@ -727,9 +714,8 @@ public class DirectIndentWriteActivity extends BaseActivity {
         });
     }
 
-    //提交订单
-    @OnClick(R.id.tv_indent_write_commit)
-    void goExchange() {
+
+    private void goExchange() {
         if (userId > 0) {
             //订单锁定,再次支付
             if (!TextUtils.isEmpty(orderCreateNo)) {
@@ -737,24 +723,43 @@ public class DirectIndentWriteActivity extends BaseActivity {
             } else {
                 //第一次提交订单
                 if (addressId == 0) {
-                    showImportantToast(this, "收货地址为空");
+                    showToast("收货地址为空");
                 } else if (TextUtils.isEmpty(payWay)) {
-                    showImportantToast(this, "请选择支付方式");
-                } else if (isReal && (pullHeaderView.et_oversea_name.getText().toString().length() <= 0 || pullHeaderView.et_oversea_card.getText().toString().length() <= 0)) {
-                    showImportantToast(this, "因国家海关要求，购买跨境商品时需完善实名信息后方可购买");
+                    showToast("请选择支付方式");
+                } else if (isReal && (TextUtils.isEmpty(indentWriteBean.getIdcardImg1()) || TextUtils.isEmpty(indentWriteBean.getIdcardImg2()))) {
+                    //如果需要实名并且用户还没有完善实名信息
+                    showAlertDialogRealName();
                 } else if (indentWriteBean.getAllProductNotBuy() == 1) {
-                    showImportantToast(this, "订单内含有无法购买的商品，请移除后再提交");
+                    showToast("订单内含有无法购买的商品，请移除后再提交");
                 } else if (type.equals(INDENT_GROUP_SHOP) && groupShopDetailsBean != null) {
                     createGroupIndent(payWay, groupShopDetailsBean);
                 } else if (type.equals(INDENT_W_TYPE) && productInfoList.size() > 0) {
                     createIndent();
                 } else {
-                    showImportantToast(this, "商品数据错误");
+                    showToast("商品数据错误");
                 }
             }
         } else {
             getLoginStatus(this);
         }
+    }
+
+    private void showAlertDialogRealName() {
+        if (mAlertDialogRealName == null) {
+            mAlertDialogRealName = new AlertDialogRealName(this, indentWriteBean);
+        }
+
+        //直接提交订单
+        mAlertDialogRealName.setOnCommitListener((name, idcard, idcardImg1, idcardImg2) -> {
+            if (indentWriteBean != null) {
+                indentWriteBean.setRealName(name);
+                indentWriteBean.setIdCard(idcard);
+                indentWriteBean.setIdcardImg1(idcardImg1);
+                indentWriteBean.setIdcardImg2(idcardImg2);
+                goExchange();
+            }
+        });
+        mAlertDialogRealName.show(Gravity.BOTTOM);
     }
 
     /**
@@ -796,16 +801,10 @@ public class DirectIndentWriteActivity extends BaseActivity {
         }
         //实名信息
         if (isReal) {
-            params.put("realName", pullHeaderView.et_oversea_name.getText().toString().trim());
-            String idCard = pullHeaderView.et_oversea_card.getText().toString().trim();
-            String showIdCard = (String) pullHeaderView.et_oversea_card.getTag();
-            String reallyIdCard = (String) pullHeaderView.et_oversea_card.getTag(R.id.id_tag);
-            //判断是否修改了默认的idcard
-            if (idCard.equals(getStrings(showIdCard))) {
-                params.put("idcard", reallyIdCard);
-            } else {
-                params.put("idcard", idCard);
-            }
+            params.put("realName", indentWriteBean.getRealName());
+            params.put("idcard", indentWriteBean.getIdCard());
+            params.put("idcardImg1", indentWriteBean.getIdcardImg1());
+            params.put("idcardImg2", indentWriteBean.getIdcardImg2());
         }
         params.put("source", 0);
         NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_CREATE_GROUP_NEW_INDENT, params, new NetLoadListenerHelper() {
@@ -817,7 +816,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
             @Override
             public void onNotNetOrException() {
                 dismissLoadhud(getActivity());
-                showImportantToast(getActivity(), R.string.do_failed);
+                showToast(R.string.do_failed);
             }
         });
     }
@@ -861,16 +860,10 @@ public class DirectIndentWriteActivity extends BaseActivity {
         }
         params.put("isWeb", false);
         if (isReal) {
-            params.put("realName", pullHeaderView.et_oversea_name.getText().toString().trim());
-            String idCard = pullHeaderView.et_oversea_card.getText().toString().trim();
-            String showIdCard = (String) pullHeaderView.et_oversea_card.getTag();
-            String reallyIdCard = (String) pullHeaderView.et_oversea_card.getTag(R.id.id_tag);
-            //判断是否修改了默认的idcard
-            if (idCard.equals(getStrings(showIdCard))) {
-                params.put("idcard", reallyIdCard);
-            } else {
-                params.put("idcard", idCard);
-            }
+            params.put("realName", indentWriteBean.getRealName());
+            params.put("idcard", indentWriteBean.getIdCard());
+            params.put("idcardImg1", indentWriteBean.getIdcardImg1());
+            params.put("idcardImg2", indentWriteBean.getIdcardImg2());
         }
         //订单来源
         params.put("source", 0);
@@ -883,7 +876,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
             @Override
             public void onNotNetOrException() {
                 dismissLoadhud(getActivity());
-                showImportantToast(getActivity(), R.string.do_failed);
+                showToast(R.string.do_failed);
             }
         });
     }
@@ -909,7 +902,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
 
             @Override
             public void onNotNetOrException() {
-                showImportantToast(getActivity(), R.string.do_failed);
+                showToast(R.string.do_failed);
             }
         });
     }
@@ -921,19 +914,26 @@ public class DirectIndentWriteActivity extends BaseActivity {
      */
     private void dealingIndentPayResult(String result) {
         dismissLoadhud(this);
-
+        if (mAlertDialogRealName != null) {
+            mAlertDialogRealName.dismiss();
+        }
         if (payWay.equals(PAY_WX_PAY)) {
             qualityWeChatIndent = GsonUtils.fromJson(result, QualityCreateWeChatPayIndentBean.class);
             if (qualityWeChatIndent != null) {
+                String msg = qualityWeChatIndent.getResult() != null &&
+                        !TextUtils.isEmpty(qualityWeChatIndent.getResult().getMsg()) ?
+                        getStrings(qualityWeChatIndent.getResult().getMsg()) :
+                        getStrings(qualityWeChatIndent.getMsg());
                 if (qualityWeChatIndent.getCode().equals(SUCCESS_CODE)) {
                     //返回成功，调起微信支付接口
-                    doWXPay(qualityWeChatIndent.getResult());
                     orderCreateNo = qualityWeChatIndent.getResult().getNo();
+                    doWXPay(qualityWeChatIndent.getResult());
+                } else if ("75".equals(qualityWeChatIndent.getCode())) {//实名信息与收件人不一致
+                    showRealNameDiffer(msg);
+                } else if ("72".equals(qualityWeChatIndent.getCode())) {//实名信息有误
+                    showRealNameError(msg);
                 } else {
-                    showImportantToast(getActivity(), qualityWeChatIndent.getResult() != null &&
-                            !TextUtils.isEmpty(qualityWeChatIndent.getResult().getMsg()) ?
-                            getStrings(qualityWeChatIndent.getResult().getMsg()) :
-                            getStrings(qualityWeChatIndent.getMsg()));
+                    showToast(msg);
 //                            赠品送完刷新数据
                     if (qualityWeChatIndent.getResult() != null) {
                         presentStatusUpdate(qualityWeChatIndent.getResult().getCode());
@@ -943,33 +943,43 @@ public class DirectIndentWriteActivity extends BaseActivity {
         } else if (payWay.equals(PAY_ALI_PAY)) {
             qualityAliPayIndent = GsonUtils.fromJson(result, QualityCreateAliPayIndentBean.class);
             if (qualityAliPayIndent != null) {
+                String msg = qualityAliPayIndent.getResult() != null &&
+                        !TextUtils.isEmpty(qualityAliPayIndent.getResult().getMsg()) ?
+                        getStrings(qualityAliPayIndent.getResult().getMsg()) :
+                        getStrings(qualityAliPayIndent.getMsg());
                 if (qualityAliPayIndent.getCode().equals(SUCCESS_CODE)) {
                     //返回成功，调起支付宝支付接口
                     orderCreateNo = qualityAliPayIndent.getResult().getNo();
                     doAliPay(qualityAliPayIndent.getResult());
+                } else if ("75".equals(qualityAliPayIndent.getCode())) {
+                    showRealNameDiffer(msg);
+                } else if ("72".equals(qualityAliPayIndent.getCode())) {
+                    showRealNameError(msg);
                 } else {
                     //                            赠品送完刷新数据
                     if (qualityAliPayIndent.getResult() != null) {
                         presentStatusUpdate(qualityAliPayIndent.getResult().getCode());
                     }
-                    showImportantToast(getActivity(), qualityAliPayIndent.getResult() != null &&
-                            !TextUtils.isEmpty(qualityAliPayIndent.getResult().getMsg()) ?
-                            getStrings(qualityAliPayIndent.getResult().getMsg()) :
-                            getStrings(qualityAliPayIndent.getMsg()));
+                    showToast(msg);
                 }
             }
         } else if (payWay.equals(PAY_UNION_PAY)) {
             qualityUnionIndent = GsonUtils.fromJson(result, QualityCreateUnionPayIndentEntity.class);
             if (qualityUnionIndent != null) {
-                if (qualityUnionIndent.getCode().equals(SUCCESS_CODE)) {
+                String msg = qualityUnionIndent.getQualityCreateUnionPayIndent() != null &&
+                        !TextUtils.isEmpty(qualityUnionIndent.getQualityCreateUnionPayIndent().getMsg()) ?
+                        getStrings(qualityUnionIndent.getQualityCreateUnionPayIndent().getMsg()) :
+                        getStrings(qualityUnionIndent.getMsg());
+                if (SUCCESS_CODE.equals(qualityUnionIndent.getCode())) {
                     //返回成功，调起银联支付接口
                     orderCreateNo = qualityUnionIndent.getQualityCreateUnionPayIndent().getNo();
                     unionPay(qualityUnionIndent);
+                } else if ("75".equals(qualityUnionIndent.getCode())) {
+                    showRealNameDiffer(msg);
+                } else if ("72".equals(qualityUnionIndent.getCode())) {
+                    showRealNameError(msg);
                 } else {
-                    showImportantToast(getActivity(), qualityUnionIndent.getQualityCreateUnionPayIndent() != null &&
-                            !TextUtils.isEmpty(qualityUnionIndent.getQualityCreateUnionPayIndent().getMsg()) ?
-                            getStrings(qualityUnionIndent.getQualityCreateUnionPayIndent().getMsg()) :
-                            getStrings(qualityUnionIndent.getMsg()));
+                    showToast(msg);
 //                            赠品送完刷新数据
                     if (qualityUnionIndent.getQualityCreateUnionPayIndent() != null) {
                         presentStatusUpdate(qualityUnionIndent.getQualityCreateUnionPayIndent().getCode());
@@ -978,6 +988,53 @@ public class DirectIndentWriteActivity extends BaseActivity {
             }
         }
     }
+
+    //收件人与实名信息不一致
+    private void showRealNameDiffer(String msg) {
+        if (mAlertDialogRealNameDiffer == null) {
+            mAlertDialogRealNameDiffer = new AlertDialogHelper(this);
+            mAlertDialogRealNameDiffer.setCancelText("重新实名认证")
+                    .setConfirmText("同意")
+                    .setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                        @Override
+                        public void confirm() {
+                            Intent intent = new Intent(getActivity(), SelectedAddressActivity.class);
+                            intent.putExtra("addressId", String.valueOf(addressId));
+                            startActivityForResult(intent, SEL_ADDRESS_REQ);
+                        }
+
+                        @Override
+                        public void cancel() {
+                            showAlertDialogRealName();
+                        }
+                    });
+        }
+        mAlertDialogRealNameDiffer.setMsg(msg);
+        mAlertDialogRealNameDiffer.show();
+    }
+
+    //实名信息有误
+    private void showRealNameError(String msg) {
+        if (mAlertDialogRealNameError == null) {
+            mAlertDialogRealNameError = new AlertDialogHelper(this);
+            mAlertDialogRealNameError.setSingleButton(true)
+                    .setConfirmText("重新实名认证")
+                    .setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                        @Override
+                        public void confirm() {
+                            showAlertDialogRealName();
+                        }
+
+                        @Override
+                        public void cancel() {
+
+                        }
+                    });
+        }
+        mAlertDialogRealNameError.setMsg(msg);
+        mAlertDialogRealNameError.show();
+    }
+
 
     /**
      * 创建订单返回状态
@@ -1102,7 +1159,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                         }
                     });
         } else {
-            showImportantToast(getActivity(), "缺少重要参数，请选择其它支付渠道！");
+            showToast("缺少重要参数，请选择其它支付渠道！");
         }
     }
 
@@ -1274,6 +1331,25 @@ public class DirectIndentWriteActivity extends BaseActivity {
                 pullFootView.tv_direct_product_favorable.setText(couponId < 1 ? "不使用优惠券" : "-¥" + couponAmount);
                 getIndentDiscounts(true);
                 break;
+            case PictureConfigC.CHOOSE_REQUEST:
+                List<LocalMediaC> localMediaList = PictureSelector.obtainMultipleResult(data);
+                if (localMediaList != null && localMediaList.size() > 0) {
+                    mAlertDialogRealName.update(localMediaList.get(0).getPath());
+                }
+                break;
+        }
+    }
+
+
+    @OnClick({R.id.tv_life_back, R.id.tv_indent_write_commit})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.tv_life_back:
+                payCancel();
+                break;
+            case R.id.tv_indent_write_commit:
+                goExchange();
+                break;
         }
     }
 
@@ -1299,15 +1375,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
         //        海外购实名提示
         @BindView(R.id.tv_oversea_buy_tint)
         TextView tv_oversea_buy_tint;
-        //        实名填写布局
-        @BindView(R.id.ll_oversea_info)
-        LinearLayout ll_oversea_info;
-        //        实名用户姓名
-        @BindView(R.id.et_oversea_name)
-        EditText et_oversea_name;
-        //        实名用户身份证号码
-        @BindView(R.id.et_oversea_card)
-        EditText et_oversea_card;
 
         //    地址列表为空 跳转新建地址
         @OnClick(R.id.tv_lv_top)
@@ -1326,7 +1393,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                     intent.putExtra("addressId", String.valueOf(addressId));
                     startActivityForResult(intent, SEL_ADDRESS_REQ);
                 } else {
-                    img_skip_address.setVisibility(View.GONE);
+                    img_skip_address.setVisibility(GONE);
                 }
             }
         }
@@ -1385,11 +1452,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
                 }
             }
         }
-    }
-
-    @OnClick(R.id.tv_life_back)
-    void goBack(View view) {
-        payCancel();
     }
 
     @Override

@@ -3,10 +3,6 @@ package com.amkj.dmsh.shopdetails.integration;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
@@ -57,6 +53,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 import me.jessyan.autosize.utils.AutoSizeUtils;
@@ -66,7 +66,6 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.showImportantToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
@@ -220,7 +219,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
                     } else if (addressListEntity.getCode().equals(EMPTY_CODE)) {
                         setAddressData(null);
                     } else {
-                        showImportantToast(getActivity(), addressListEntity.getMsg());
+                        showToast(addressListEntity.getMsg());
                     }
                 }
             }
@@ -278,7 +277,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable throwable) {
-                showToast( R.string.connectedFaile);
+                showToast(R.string.connectedFaile);
             }
         });
     }
@@ -447,7 +446,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
                             }
                         }
                     } else {
-                        showToast( indentBean == null ?
+                        showToast(indentBean == null ?
                                 indentEntity.getMsg() : indentBean.getMsg());
                     }
                 } else {
@@ -462,7 +461,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable throwable) {
-                showToast( R.string.do_failed);
+                showToast(R.string.do_failed);
             }
         });
     }
@@ -505,7 +504,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
             @Override
             public void onCancel() {
                 cancelIntegralIndent();
-                showToast( "支付取消");
+                showToast("支付取消");
             }
         }).doPay();
     }
@@ -558,7 +557,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
                     if (loadHud != null) {
                         loadHud.dismiss();
                     }
-                    showToast( "支付成功");
+                    showToast("支付成功");
                     skipDirectIndent();
                 }
 

@@ -1,6 +1,7 @@
 package com.amkj.dmsh.views.alertdialog;
 
 import android.app.Activity;
+import android.view.View;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
@@ -53,6 +54,10 @@ public class AlertRuleDialogHelper extends BaseAlertDialog {
     @Override
     protected int getLayoutWith() {
         return AutoSizeUtils.mm2px(mAppContext, 540);
+    }
+
+    public void showTitle(boolean show) {
+        tv_integral_rule_title.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
     public void setRuleData(String title, List<CommunalDetailObjectBean> ruleDataList) {

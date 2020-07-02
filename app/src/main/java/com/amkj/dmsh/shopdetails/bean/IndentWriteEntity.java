@@ -51,6 +51,8 @@ public class IndentWriteEntity extends BaseTimeEntity {
         private String realName;
         private String idCard;
         private String showIdCard;
+        private String idcardImg1;
+        private String idcardImg2;
         private int real;
         private String prompt;
         private int allProductNotBuy;
@@ -59,6 +61,22 @@ public class IndentWriteEntity extends BaseTimeEntity {
         private List<ProductsBean> products;
         private PrerogativeActivityInfo prerogativeActivityInfo;
         private List<String> showPayTypeList;
+
+        public String getIdcardImg1() {
+            return idcardImg1;
+        }
+
+        public void setIdcardImg1(String idcardImg1) {
+            this.idcardImg1 = idcardImg1;
+        }
+
+        public String getIdcardImg2() {
+            return idcardImg2;
+        }
+
+        public void setIdcardImg2(String idcardImg2) {
+            this.idcardImg2 = idcardImg2;
+        }
 
         public List<String> getShowPayTypeList() {
             return showPayTypeList;

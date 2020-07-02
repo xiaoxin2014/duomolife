@@ -335,11 +335,11 @@ public class Url {
     /**
      * 积分商城
      */
-    //积分筛选
+    //   积分筛选
     public static final String H_INTEGRAL_PRODUCT_FILTRATE = "api/hot/intergral/getGoodsListV2";
-    //积分详情
+    //    积分详情
     public static final String H_INTEGRAL_DETAILS_GOODS = "api/hot/intergral/getGoodsV2";
-    //积分列表
+    //    积分列表
     public static final String INTEGRAL_INDENT_LIST = "api/integralorder/getIntegralOrders";
     //    积分订单结算信息
     public static final String INTEGRAL_DIRECT_SETTLEMENT = "api/integralorder/getIntegralOrderSettleInfo";
@@ -347,6 +347,8 @@ public class Url {
     public static final String INDENT_INTEGRAL_DETAILS = "api/integralorder/getIntegralOrderDetail";
     //    服务承诺
     public static final String INTEGRAL_PRODUCT_SERVICE = "api/activity/getIntegralProductServicePromise";
+    //    获取提示语
+    public static final String GET_REMIN_TEXT = "api/my/remind/getReminText";
 
     /**
      * 良品

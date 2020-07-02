@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:divider="@drawable/divider_ll_10dp_gray_bg"
         android:orientation="vertical"
-        android:showDividers="end|middle">
+        android:showDividers="end">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -37,7 +37,5 @@
 
             <include layout="@layout/layout_recycler_top_address_default" />
         </RelativeLayout>
-
-        <include layout="@layout/layout_overseas_user_info" />
     </LinearLayout>
 </LinearLayout>

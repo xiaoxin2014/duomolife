@@ -6,32 +6,135 @@
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:orientation="vertical">
-    <include layout="@layout/activity_domolife_header"/>
-    <com.amkj.dmsh.views.EditTextWithClear
+
+    <include layout="@layout/activity_domolife_header" />
+
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_marginTop="@dimen/sc_mm_20"
-        android:id="@+id/et_per_real_name"
-        android:textSize="@dimen/sc_mm_30"
-        android:singleLine="true"
-        android:gravity="center_vertical"
-        android:hint="@string/personal_real_name"
-        android:textColorHint="@color/text_hint_gray_ae"
-        android:paddingLeft="@dimen/sc_mm_30"
-        android:paddingRight="@dimen/gap_right"
-        android:background="@drawable/border_bottom_line"
-        android:textColor="@color/text_black_t"
-        android:layout_height="@dimen/sc_mm_104" />
-    <com.amkj.dmsh.views.EditTextWithClear
-        android:layout_width="match_parent"
-        android:id="@+id/et_per_real_id_card"
-        android:textSize="@dimen/sc_mm_30"
-        android:gravity="center_vertical"
-        android:hint="@string/personal_real_id_card"
-        android:textColorHint="@color/text_hint_gray_ae"
-        android:paddingLeft="@dimen/sc_mm_30"
-        android:singleLine="true"
-        android:paddingRight="@dimen/gap_right"
-        android:background="@color/white"
-        android:textColor="@color/text_black_t"
-        android:layout_height="@dimen/sc_mm_104" />
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/sc_mm_24"
+                android:text="身份信息"
+                android:textColor="@color/text_black_t"
+                android:textSize="@dimen/sc_mm_28" />
+
+            <com.amkj.dmsh.views.EditTextWithClear
+                android:id="@+id/et_per_real_name"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/sc_mm_104"
+                android:background="@drawable/border_bottom_line"
+                android:gravity="center_vertical"
+                android:hint="@string/personal_real_name"
+                android:paddingLeft="@dimen/sc_mm_30"
+                android:paddingRight="@dimen/gap_right"
+                android:singleLine="true"
+                android:textColor="@color/text_black_t"
+                android:textColorHint="@color/text_hint_gray_ae"
+                android:textSize="@dimen/sc_mm_30" />
+
+            <com.amkj.dmsh.views.EditTextWithClear
+                android:id="@+id/et_per_real_id_card"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/sc_mm_104"
+                android:background="@color/white"
+                android:gravity="center_vertical"
+                android:hint="@string/personal_real_id_card"
+                android:paddingLeft="@dimen/sc_mm_30"
+                android:paddingRight="@dimen/gap_right"
+                android:singleLine="true"
+                android:textColor="@color/text_black_t"
+                android:textColorHint="@color/text_hint_gray_ae"
+                android:textSize="@dimen/sc_mm_30" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/sc_mm_24"
+                android:text="身份证照片"
+                android:textColor="@color/text_black_t"
+                android:textSize="@dimen/sc_mm_28" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="horizontal"
+                android:paddingLeft="@dimen/sc_mm_78"
+                android:paddingTop="@dimen/sc_mm_50"
+                android:paddingRight="@dimen/sc_mm_78"
+                android:paddingBottom="@dimen/sc_mm_150">
+
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/sc_mm_172"
+                    android:layout_weight="1">
+
+                    <ImageView
+                        android:id="@+id/iv_front"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/sc_mm_172"
+                        android:background="@drawable/idcard_front"
+                        android:scaleType="centerCrop" />
+
+                    <ImageView
+                        android:id="@+id/delete_front"
+                        android:layout_width="@dimen/sc_mm_35"
+                        android:layout_height="@dimen/sc_mm_35"
+                        android:layout_gravity="top|right"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/delete_btn_sel"
+                        android:visibility="gone" />
+                </FrameLayout>
+
+
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/sc_mm_172"
+                    android:layout_marginLeft="@dimen/sc_mm_35"
+                    android:layout_weight="1">
+
+                    <ImageView
+                        android:id="@+id/iv_background"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/sc_mm_172"
+                        android:background="@drawable/idcard_background"
+                        android:scaleType="centerCrop" />
+
+                    <ImageView
+                        android:id="@+id/delete_background"
+                        android:layout_width="@dimen/sc_mm_35"
+                        android:layout_height="@dimen/sc_mm_35"
+                        android:layout_gravity="top|right"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/delete_btn_sel"
+                        android:visibility="gone" />
+                </FrameLayout>
+            </LinearLayout>
+
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="center_horizontal"-->
+<!--                android:layout_margin="@dimen/sc_mm_50"-->
+<!--                android:text="为什么需要实名认证？"-->
+<!--                android:textColor="@color/text_black_t"-->
+<!--                android:textSize="@dimen/sc_mm_28" />-->
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_rule"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:background="@color/gray_bg"
+                android:nestedScrollingEnabled="false" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 </LinearLayout>

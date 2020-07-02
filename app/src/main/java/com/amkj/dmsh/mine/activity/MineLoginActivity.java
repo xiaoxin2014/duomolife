@@ -383,7 +383,6 @@ public class MineLoginActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, MINE_OTHER_NEW_ACCOUNT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-
                 LoginDataEntity loginDataEntity = GsonUtils.fromJson(result, LoginDataEntity.class);
                 if (loginDataEntity != null && loginDataEntity.getLoginDataBean() != null) {
                     LoginDataEntity.LoginDataBean loginDataBean = loginDataEntity.getLoginDataBean();

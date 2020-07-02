@@ -1,8 +1,6 @@
 package com.amkj.dmsh.dominant.fragment;
 
 import android.os.Bundle;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 
 import com.amkj.dmsh.R;
@@ -17,7 +15,6 @@ import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
-import com.chad.library.adapter.base.BaseQuickAdapter;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -26,6 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -45,7 +44,7 @@ public class GroupCustomTopicFragment extends BaseFragment {
     @BindView(R.id.communal_recycler)
     RecyclerView communal_recycler;
     private int page = 1;
-    private BaseQuickAdapter qualityCustomTopicAdapter;
+    private CatergoryGoodsAdapter qualityCustomTopicAdapter;
     private List<LikedProductBean> customProList = new ArrayList<>();
     private UserLikedProductEntity userLikedProductEntity;
     private String productType;

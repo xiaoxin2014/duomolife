@@ -310,7 +310,11 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     public Resources getResources() {
-        AutoSizeCompat.autoConvertDensityOfGlobal(super.getResources());//如果没有自定义需求用这个方法
+        try {
+            AutoSizeCompat.autoConvertDensityOfGlobal(super.getResources());//如果没有自定义需求用这个方法
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return super.getResources();
     }
 

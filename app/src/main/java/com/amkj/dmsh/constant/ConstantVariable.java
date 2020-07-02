@@ -307,6 +307,7 @@ public class ConstantVariable {
     public static final String UPDATE_INDENT_LIST = "updateIndentList";    //刷新订单列表
     public static final String UPDATE_WAIT_EVALUATE_INDENT_LIST = "updateWaitEvaluateIndentList";    //刷新订单列表
     public static final String UNION_PAY_CALLBACK = "unionPayCallback";    //h5银联支付回调
+    public static final String UPDATE_INDENT_DISCOUNTS = "updateIndentDiscounts";    //更新结算信息
 
 
     /**
