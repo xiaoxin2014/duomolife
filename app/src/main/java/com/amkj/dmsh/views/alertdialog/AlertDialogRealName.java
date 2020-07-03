@@ -68,7 +68,7 @@ public class AlertDialogRealName extends BaseAlertDialog {
     private int position;
     private String mIdcardImg1;
     private String mIdcardImg2;
-    private AlertRuleDialogHelper alertLotteryRuleDialogHelper;
+    private AlertDialogRule alertLotteryRuleDialogHelper;
     private CommitListener commitListener;
     private IndentWriteEntity.IndentWriteBean mIndentWriteBean;
 
@@ -254,7 +254,7 @@ public class AlertDialogRealName extends BaseAlertDialog {
                             if (communalRuleEntity.getCommunalRuleList() != null
                                     && communalRuleEntity.getCommunalRuleList().size() > 0) {
                                 List<CommunalDetailObjectBean> lotteryRuleList = new ArrayList<>(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(communalRuleEntity.getCommunalRuleList()));
-                                alertLotteryRuleDialogHelper = new AlertRuleDialogHelper(mContext);
+                                alertLotteryRuleDialogHelper = new AlertDialogRule(mContext);
                                 alertLotteryRuleDialogHelper.showTitle(false);
                                 alertLotteryRuleDialogHelper.setRuleData("为什么要实名认证？", lotteryRuleList);
                                 alertLotteryRuleDialogHelper.show();

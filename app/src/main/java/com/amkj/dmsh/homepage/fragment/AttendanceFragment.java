@@ -49,7 +49,7 @@ import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
-import com.amkj.dmsh.views.alertdialog.AlertRuleDialogHelper;
+import com.amkj.dmsh.views.alertdialog.AlertDialogRule;
 import com.amkj.dmsh.views.recyclerviewpager.RecyclerViewPager;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.gongwen.marqueen.MarqueeFactory;
@@ -144,8 +144,8 @@ public class AttendanceFragment extends BaseFragment {
     private List<LikedProductBean> doubleIntegrationList = new ArrayList();
     private DoubleIntegralAdpter mDoubleIntegralAdpter;
     private View hotActivityView;
-    private AlertRuleDialogHelper alertLotteryRuleDialogHelper;
-    private AlertRuleDialogHelper alertIntegralRuleDialogHelper;
+    private AlertDialogRule alertLotteryRuleDialogHelper;
+    private AlertDialogRule alertIntegralRuleDialogHelper;
     private AlertDialogHelper alertDialogHelper;
     private AttendanceDetailEntity attendanceDetailEntity;
 
@@ -272,7 +272,7 @@ public class AttendanceFragment extends BaseFragment {
                             lotteryRuleList.clear();
                             lotteryRuleList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(communalRuleEntity.getCommunalRuleList()));
                             if (alertLotteryRuleDialogHelper == null) {
-                                alertLotteryRuleDialogHelper = new AlertRuleDialogHelper(getActivity());
+                                alertLotteryRuleDialogHelper = new AlertDialogRule(getActivity());
                             }
                             alertLotteryRuleDialogHelper.setRuleData("夺宝规则", lotteryRuleList);
                         }
@@ -298,7 +298,7 @@ public class AttendanceFragment extends BaseFragment {
                             integralRuleList.clear();
                             integralRuleList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(communalRuleEntity.getCommunalRuleList()));
                             if (alertIntegralRuleDialogHelper == null) {
-                                alertIntegralRuleDialogHelper = new AlertRuleDialogHelper(getActivity());
+                                alertIntegralRuleDialogHelper = new AlertDialogRule(getActivity());
                             }
                             alertIntegralRuleDialogHelper.setRuleData("积分规则", integralRuleList);
                         }

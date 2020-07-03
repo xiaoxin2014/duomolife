@@ -28,7 +28,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
  * version 3.1.5
  * class description:规则dialog
  */
-public class AlertRuleDialogHelper extends BaseAlertDialog {
+public class AlertDialogRule extends BaseAlertDialog {
 
     @BindView(R.id.tv_integral_rule_title)
     TextView tv_integral_rule_title;
@@ -37,7 +37,7 @@ public class AlertRuleDialogHelper extends BaseAlertDialog {
     private CommunalDetailAdapter integralRuleAdapter;
     private List<CommunalDetailObjectBean> ruleList = new ArrayList<>();
 
-    public AlertRuleDialogHelper(Activity context) {
+    public AlertDialogRule(Activity context) {
         super(context);
         getAlertDialog().setCancelable(false);
         rv_communal_rule.setLayoutManager(new LinearLayoutManager(context));
