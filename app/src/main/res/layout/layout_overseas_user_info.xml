@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:id="@+id/ll_oversea_info"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:background="@color/white"
-              android:divider="@drawable/divider_ll_0_5_dp"
-              android:focusable="true"
-              android:focusableInTouchMode="true"
-              android:orientation="vertical"
-              android:showDividers="middle">
+    android:id="@+id/ll_oversea_info"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:divider="@drawable/divider_ll_0_5_dp"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical"
+    android:showDividers="middle"
+    android:visibility="gone">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -23,7 +24,7 @@
             android:layout_centerVertical="true"
             android:text="实名用户"
             android:textColor="@color/text_black_t"
-            android:textSize="@dimen/sc_mm_28"/>
+            android:textSize="@dimen/sc_mm_28" />
 
         <EditText
             android:id="@+id/et_oversea_name"
@@ -40,7 +41,7 @@
             android:singleLine="true"
             android:textColor="@color/text_black_t"
             android:textColorHint="@color/text_gray_hint_n"
-            android:textSize="@dimen/sc_mm_28"/>
+            android:textSize="@dimen/sc_mm_28" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -56,7 +57,7 @@
             android:layout_centerVertical="true"
             android:text="身份证号码"
             android:textColor="@color/text_black_t"
-            android:textSize="@dimen/sc_mm_28"/>
+            android:textSize="@dimen/sc_mm_28" />
 
         <EditText
             android:id="@+id/et_oversea_card"
@@ -73,6 +74,6 @@
             android:singleLine="true"
             android:textColor="@color/text_black_t"
             android:textColorHint="@color/text_gray_hint_n"
-            android:textSize="@dimen/sc_mm_28"/>
+            android:textSize="@dimen/sc_mm_28" />
     </RelativeLayout>
 </LinearLayout>
