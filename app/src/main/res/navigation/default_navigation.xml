@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/default_navigation"
+    app:startDestination="@+id/home">
+    <fragment
+        android:id="@+id/home"
+        android:name="com.amkj.dmsh.homepage.fragment.HomePageFragment"
+        android:label="home"
+        tools:layout="@layout/fragment_home_page_new" />
+
+    <fragment
+        android:id="@+id/quality"
+        android:name="com.amkj.dmsh.catergory.fragment.QualityFragment"
+        android:label="quality"
+        tools:layout="@layout/fragment_catergory" />
+
+    <fragment
+        android:id="@+id/time"
+        android:name="com.amkj.dmsh.homepage.fragment.TimeShowNewFragment"
+        android:label="time"
+        tools:layout="@layout/fragment_time_show_shaft_new" />
+
+    <fragment
+        android:id="@+id/find"
+        android:name="com.amkj.dmsh.find.fragment.FindFragment"
+        android:label="find"
+        tools:layout="@layout/fragment_find" />
+
+    <fragment
+        android:id="@+id/mine"
+        android:name="com.amkj.dmsh.mine.fragment.MineDataFragment"
+        android:label="mine"
+        tools:layout="@layout/fragment_mine" />
+    <fragment
+        android:id="@+id/web"
+        android:name="com.amkj.dmsh.mine.fragment.MineDataFragment"
+        android:label="mine"
+        tools:layout="@layout/fragment_mine" />
+    <fragment
+        android:id="@+id/web2"
+        android:name="com.amkj.dmsh.mine.fragment.MineDataFragment"
+        android:label="mine"
+        tools:layout="@layout/fragment_mine" />
+    <fragment
+        android:id="@+id/web3"
+        android:name="com.amkj.dmsh.mine.fragment.MineDataFragment"
+        android:label="mine"
+        tools:layout="@layout/fragment_mine" />
+    <fragment
+        android:id="@+id/web4"
+        android:name="com.amkj.dmsh.mine.fragment.MineDataFragment"
+        android:label="mine"
+        tools:layout="@layout/fragment_mine" />
+    <fragment
+        android:id="@+id/web5"
+        android:name="com.amkj.dmsh.mine.fragment.MineDataFragment"
+        android:label="mine"
+        tools:layout="@layout/fragment_mine" />
+</navigation>

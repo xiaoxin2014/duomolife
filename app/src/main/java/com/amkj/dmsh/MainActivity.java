@@ -7,12 +7,11 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -27,13 +26,10 @@ import android.widget.RadioGroup;
 import com.ali.auth.third.ui.context.CallbackContext;
 import com.alibaba.fastjson.JSON;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.BaseFragment;
-import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
 import com.amkj.dmsh.bean.CouponEntity;
-import com.amkj.dmsh.bean.MainIconBean;
 import com.amkj.dmsh.bean.MainNavEntity;
 import com.amkj.dmsh.bean.MainNavEntity.MainNavBean;
 import com.amkj.dmsh.bean.OSSConfigEntity;
@@ -49,7 +45,6 @@ import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dao.AddClickDao;
 import com.amkj.dmsh.dominant.activity.QualityNewUserActivity;
 import com.amkj.dmsh.find.fragment.FindFragment;
-import com.amkj.dmsh.homepage.activity.MainPageTabBarActivity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.homepage.fragment.AliBCFragment;
@@ -86,21 +81,19 @@ import com.umeng.socialize.UMShareAPI;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
+import androidx.navigation.NavController;
+import androidx.navigation.NavGraph;
+import androidx.navigation.NavGraphNavigator;
+import androidx.navigation.NavigatorProvider;
+import androidx.navigation.fragment.FragmentNavigator;
+import androidx.navigation.fragment.NavHostFragment;
 import butterknife.BindView;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
@@ -108,9 +101,9 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.APP_FIRST_TIMES;
 import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.APP_SAVE_VERSION;
 import static com.amkj.dmsh.constant.ConstantMethod.getDeviceAppNotificationStatus;
-import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeBoolean;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
+import static com.amkj.dmsh.constant.ConstantMethod.isWebLinkUrl;
 import static com.amkj.dmsh.constant.ConstantMethod.setDeviceInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.COUPON_POPUP;
@@ -127,7 +120,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.MARKING_POPUP;
 import static com.amkj.dmsh.constant.ConstantVariable.NOT_FORCE_UPDATE;
 import static com.amkj.dmsh.constant.ConstantVariable.OTHER_WECHAT;
 import static com.amkj.dmsh.constant.ConstantVariable.PUSH_OPEN_REMIND;
-import static com.amkj.dmsh.constant.ConstantVariable.REGEX_TEXT;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOKEN_EXPIRE_TIME;
 import static com.amkj.dmsh.constant.ConstantVariable.TOKEN_REFRESH_TIME;
@@ -142,25 +134,19 @@ import static com.amkj.dmsh.dao.UserDao.getPersonalInfo;
 import static com.amkj.dmsh.dao.UserDao.savePersonalInfoCache;
 import static com.amkj.dmsh.utils.TimeUtils.getDateFormat;
 import static com.amkj.dmsh.utils.TimeUtils.getTimeDifference;
+import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTime;
 import static com.amkj.dmsh.utils.TimeUtils.isSameTimeDay;
-import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.fileIsExist;
-import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getImageFilePath;
-import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.saveImageToFile;
 
 
 /**
  * @author Liuguipeng
  * @date 2017/10/31
  */
-public class MainActivity extends BaseActivity implements View.OnClickListener {
+public class MainActivity extends BaseActivity {
     @BindView(R.id.rp_bottom_main)
-    RadioGroup rp_bottom_main;
-    private FragmentManager fragmentManager;
-    private FragmentTransaction transaction;
+    RadioGroup radio_group;
     public static final int MINE_REQ_CODE = 13;
-    private Map<String, String> params = new HashMap<>();
     private String[] SERVER = {"正式库", "测试库", "招立", "泽鑫", "泽鑫9090", "预发布", "王凯2", "王凯1", "鸿星", "修改BaseUrl"};
-    private List<MainIconBean> iconDataList = new ArrayList<>();
     public static final String ImgKey = "ImgPath";
     public static final String TimeKey = "ShowSeconds";
     public static final String SkipUrlKey = "SkipUrl";
@@ -168,9 +154,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public static final String InvokeTimeFileName = "INVOKE_TIME_FILENAME";
     public static String OriginalImgUrl = "OriginalImgUrl";
 
-    //    地址存储路径
-    private Fragment fragment;
-    private boolean isChecked;
     private Map<String, String> pushMap;
     private AlertDialogImage alertDialogAdImage;
     private AlertDialogHelper alertDialogHelper;
@@ -182,14 +165,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private AlertDialogBottomListHelper mAlertDialogServer;
     private AlertDialogEdit mAlertDialogEdit;
     private CountDownTimer mCountDownTimer;
-
-
-    @Override
-    protected void postEventResult(@NonNull EventMessage message) {
-        if ("skipMinePage".equals(message.type)) {
-            changeAdaptivePage(MAIN_MINE);
-        }
-    }
+    private NavController navController;
+    private String[] links = {MAIN_HOME, MAIN_QUALITY, MAIN_TIME, MAIN_FIND, MAIN_MINE};
+    private int[] resIds = {R.id.home, R.id.quality, R.id.time, R.id.find, R.id.mine};
+    private int[] drawables = {R.drawable.selector_bottom_home_bar, R.drawable.selector_bottom_catergory_bar,
+            R.drawable.selector_bottom_time_bar, R.drawable.selector_bottom_find_bar, R.drawable.selector_bottom_mine_bar};
+    private int webNum;//Web链接数量
 
     @Override
     protected int getContentView() {
@@ -198,50 +179,90 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     protected void initViews() {
-        fragmentManager = getSupportFragmentManager();
-        boolean isFirstTime = setIntentBottomIconData();
-        if (isFirstTime) {
-            // 七鱼客服登录 获取用户信息 登进登出……
-            getNetDataInfo();
-            // 刷新token
-            flushToken();
-            // 启动广告
-            SaveUpdateImportDateUtils.getUpdateDataUtilsInstance().getLaunchBanner(this);
-            if (isDebugTag) {
-                getSelectedDialog();
-            }
-            // 加载OSS配置  (备注：做统计使用，保留该接口调用)
-            getOSSConfig();
-            // 获取地址版本
-            getAddressVersion();
-            // 获取图标更新
-            SaveUpdateImportDateUtils.getUpdateDataUtilsInstance().getMainIconData(this, 3);
-            // 获取push信息
-            getFirstPushInfo();
-            // 设置分享提示
-            setShareTint();
-            // 统计首次安装设备信息
-            getFirstInstallInfo();
-            //获取要显示的弹窗
-            getUnifiedPopup();
+        if (isDebugTag) {
+            getSelectedDialog();
         }
-
-        rp_bottom_main.setOnCheckedChangeListener((group, checkedId) -> {
-            isChecked = true;
-            for (int i = 0; i < group.getChildCount(); i++) {
-                RadioButton rb = (RadioButton) group.getChildAt(i);
-                MainIconBean mainIconBean = (MainIconBean) rb.getTag(R.id.main_page);
-                rb.setOnClickListener(MainActivity.this);
-                if (rb.getId() == checkedId) {
-                    rb.setChecked(true);
-                    if (mainIconBean != null) {
-                        changePage(mainIconBean);
-                    } else {
-                        skipDefaultNum(i);
+        //设置默认配置
+        setNavDataDefault();
+        //获取本地配置,如果有值覆盖默认配置
+        setNavDataLocal();
+        //获取页面容器NavHostFragment
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        if (fragment == null) return;
+        //获取导航控制器
+        navController = NavHostFragment.findNavController(fragment);
+        //创建自定义的Fragment导航器
+        FixFragmentNavigator fragmentNavigator = new FixFragmentNavigator(this, fragment.getChildFragmentManager(), fragment.getId());
+        //获取导航器提供者
+        NavigatorProvider provider = navController.getNavigatorProvider();
+        //把自定义的Fragment导航器添加进去
+        provider.addNavigator(fragmentNavigator);
+        //手动创建导航图
+        NavGraph navGraph = initNavGraph(provider, fragmentNavigator);
+        //设置导航图(添加起始导航参数)
+        Bundle startDestinationArgs = new Bundle();
+        if (isWebLinkUrl(links[0])) {
+            startDestinationArgs.putString("loadUrl", links[0]);
+            startDestinationArgs.putString("paddingStatus", "true");
+        }
+        navController.setGraph(navGraph, startDestinationArgs);
+        //底部导航设置监听
+        radio_group.setOnCheckedChangeListener((group, checkedId) -> {
+            //按钮切换时导航到对应的目的地
+            Bundle bundle = new Bundle();
+            for (int i = 0; i < radio_group.getChildCount(); i++) {
+                if (radio_group.getChildAt(i).getId() == checkedId) {
+                    //导航时添加参数（创建目的地时无法添加参数）
+                    if (isWebLinkUrl(links[i])) {
+                        bundle.putString("loadUrl", links[i]);
+                        bundle.putString("paddingStatus", "true");
                     }
+                    navController.navigate(resIds[i], bundle);
+                    break;
                 }
             }
         });
+    }
+
+
+    //初始化导航图
+    private NavGraph initNavGraph(NavigatorProvider provider, FixFragmentNavigator fragmentNavigator) {
+        NavGraph navGraph = new NavGraph(new NavGraphNavigator(provider));
+        for (int i = 0; i < links.length; i++) {
+            //导航器添加目的地
+            FragmentNavigator.Destination destination = fragmentNavigator.createDestination();
+            destination.setId(resIds[i]);
+            destination.setClassName(getFragmentName(links[i]));//绑定fragment
+            destination.setLabel(String.valueOf(i));//lable必须唯一
+            navGraph.addDestination(destination);
+        }
+        navGraph.setStartDestination(resIds[0]);
+        return navGraph;
+    }
+
+
+    @Override
+    protected void loadData() {
+        // 七鱼客服登录 获取用户信息 登进登出……
+        getNetDataInfo();
+        // 刷新token
+        flushToken();
+        // 启动广告
+        SaveUpdateImportDateUtils.getUpdateDataUtilsInstance().getLaunchBanner(this);
+        // 加载OSS配置  (备注：做统计使用，保留该接口调用)
+        getOSSConfig();
+        // 获取地址版本
+        getAddressVersion();
+        // 获取图标更新
+        SaveUpdateImportDateUtils.getUpdateDataUtilsInstance().getMainIconData(this, 3);
+        // 获取push信息
+        getFirstPushInfo();
+        // 设置分享提示
+        setShareTint();
+        // 统计首次安装设备信息
+        getFirstInstallInfo();
+        //获取要显示的弹窗
+        getUnifiedPopup();
     }
 
     //获取未读的平台客服通知
@@ -335,7 +356,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                             showAlertDialogGroup(requestStatus);
                         }
                     });
-
                 }
             }
         });
@@ -441,36 +461,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.FLUSH_LOGIN_TOKEN, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
-
                     CommunalUserInfoBean tokenExpireBean = GsonUtils.fromJson(result, CommunalUserInfoBean.class);
                     //刷新本地token过期时间
-                    SharedPreUtils.setParam(ConstantVariable.TOKEN_EXPIRE_TIME, System.currentTimeMillis() + tokenExpireBean.getTokenExpireSeconds());
+                    SharedPreUtils.setParam(TOKEN_EXPIRE_TIME, System.currentTimeMillis() + tokenExpireBean.getTokenExpireSeconds());
                 }
             });
             //记录刷新时间
             SharedPreUtils.setParam(TOKEN_REFRESH_TIME, System.currentTimeMillis());
         }
     }
-
-    /**
-     * 设置intent底部数据
-     *
-     * @return
-     */
-    private boolean setIntentBottomIconData() {
-        Intent intent = getIntent();
-        String type = intent.getStringExtra("type");
-        String firstTimeCode = intent.getStringExtra("isFirstTime");
-        boolean isFirstTime = TextUtils.isEmpty(firstTimeCode) || getStringChangeBoolean(firstTimeCode);
-        setNavData();
-        if (!TextUtils.isEmpty(type)) {
-            changeAdaptivePage(type);
-        } else {
-            initMainPage();
-        }
-        return isFirstTime;
-    }
-
 
     /**
      * 设置分享提示显示
@@ -509,7 +508,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         String pushInfoMap = sharedPreferences.getString("pushInfoMap", "");
                         if (!TextUtils.isEmpty(pushInfoMap)) {
                             try {
-
                                 pushMap = GsonUtils.fromJson(pushInfoMap, new TypeToken<Map<String, String>>() {
                                 }.getType());
                                 if (pushMap != null && !TextUtils.isEmpty(pushMap.get(String.valueOf(userId)))) {
@@ -564,250 +562,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         edit.apply();
     }
 
-    private void skipDefaultNum(int i) {
-        String iconUrl;
-        switch (i) {
-            case 0:
-                iconUrl = MAIN_HOME;
-                break;
-            case 1:
-                iconUrl = MAIN_QUALITY;
-                break;
-            case 2:
-                iconUrl = MAIN_TIME;
-                break;
-            case 3:
-                iconUrl = MAIN_FIND;
-                break;
-            case 4:
-                iconUrl = MAIN_MINE;
-                break;
-            default:
-                iconUrl = "";
-                break;
-        }
-        changePage(new MainIconBean(i, iconUrl));
-    }
-
-    private void setNavData() {
-        iconDataList.clear();
-        SharedPreferences sharedPreferences = getSharedPreferences("MainNav", MODE_PRIVATE);
-        String result = sharedPreferences.getString("NavDate", "");
-        if (!TextUtils.isEmpty(result)) {
-
-            MainNavEntity mainNavEntity = GsonUtils.fromJson(result, MainNavEntity.class);
-            if (mainNavEntity != null && mainNavEntity.getMainNavBeanList().size() == 5
-                    && !isTimeExpress(mainNavEntity)) {
-                setDynamicMal(mainNavEntity.getMainNavBeanList());
-                //设置底部导航颜色
-                if (!TextUtils.isEmpty(mainNavEntity.getBgColor())) {
-                    rp_bottom_main.setBackgroundColor(Color.parseColor(mainNavEntity.getBgColor()));
-                } else {
-                    rp_bottom_main.setBackground(getResources().getDrawable(R.drawable.border_top_line));
-                }
-            } else {
-                setNorMal();
-            }
-        } else {
-            setNorMal();
-        }
-    }
-
-    /**
-     * 时间是否过期
-     *
-     * @param mainNavEntity
-     * @return
-     */
-    private boolean isTimeExpress(MainNavEntity mainNavEntity) {
-        try {
-            //格式化开始时间
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
-            Date dateExpress = formatter.parse(mainNavEntity.getExpireTime());
-            Date dateCurrent;
-            if (!TextUtils.isEmpty(mainNavEntity.getCurrentTime())) {
-                dateCurrent = formatter.parse(mainNavEntity.getCurrentTime());
-            } else {
-                dateCurrent = new Date();
-            }
-            return dateCurrent.getTime() >= dateExpress.getTime();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return true;
-    }
-
-    /**
-     * 设置底栏Icon 设置字体颜色 icon
-     *
-     * @param mainNavBeanList
-     */
-    private void setDynamicMal(List<MainNavBean> mainNavBeanList) {
-        for (int i = 0; i < mainNavBeanList.size(); i++) {
-            RadioButton rb = (RadioButton) rp_bottom_main.getChildAt(i);
-            MainNavBean mainNavBean = mainNavBeanList.get(i);
-            if (!TextUtils.isEmpty(mainNavBean.getSecondColor()) && !TextUtils.isEmpty(mainNavBean.getMainColor())) {
-                SelectorUtil.selectorTextColor("#" + getStrings(mainNavBean.getSecondColor()), "#" + getStrings(mainNavBean.getMainColor()), rb);
-            } else {
-                rb.setTextColor(getResources().getColorStateList(R.color.sel_text_gray_light_blue));
-            }
-            initDownNavData(rb, mainNavBean, i);
-        }
-    }
-
-    /**
-     * 初始化底栏Icon
-     *
-     * @param rb
-     * @param mainNavBean
-     */
-    private void initDownNavData(RadioButton rb, MainNavBean mainNavBean, int position) {
-        String picPath = getImageFilePath(this, mainNavBean.getPicUrl());
-        String picSecondPath = getImageFilePath(this, mainNavBean.getPicUrlSecond());
-        if (fileIsExist(picPath) && fileIsExist(picSecondPath)) {
-            setDownBitmap(rb, picPath, picSecondPath);
-            setDynamicButtonData(rb, mainNavBean, position);
-            rb.setText(getStrings(mainNavBean.getTitle()));
-        } else if (fileIsExist(picPath) || fileIsExist(picSecondPath)) {
-//            设置相同Icon
-            if (fileIsExist(picPath)) {
-                setDownBitmap(rb, picPath, picPath);
-            } else {
-                setDownBitmap(rb, picSecondPath, picSecondPath);
-            }
-            setDynamicButtonData(rb, mainNavBean, position);
-            rb.setText(getStrings(mainNavBean.getTitle()));
-        } else {
-//            如果数据已存在，文件不存在，重新保存图片 下次生效
-            setNormalIcon(position, rb);
-            saveImageToFile(MainActivity.this, mainNavBean.getPicUrl());
-            saveImageToFile(MainActivity.this, mainNavBean.getPicUrlSecond());
-        }
-    }
-
-    /**
-     * 设置button动态数据
-     *
-     * @param button
-     * @param mainNavBean
-     * @param position
-     */
-    private void setDynamicButtonData(RadioButton button, MainNavBean mainNavBean, int position) {
-        MainIconBean mainIconBean = new MainIconBean(position
-                , getStrings(getNovIconUrl(mainNavBean.getAndroidLink()))
-        );
-        button.setTag(R.id.main_page, mainIconBean);
-        iconDataList.add(mainIconBean);
-    }
-
-    /**
-     * 判断是否是网页底栏
-     *
-     * @param androidLink
-     * @return
-     */
-    private String getNovIconUrl(String androidLink) {
-        Matcher matcher = Pattern.compile(REGEX_TEXT).matcher(androidLink);
-        while (matcher.find()) {
-            androidLink = matcher.group();
-        }
-        return androidLink;
-    }
-
-    /**
-     * 是否网页地址
-     *
-     * @param androidLink
-     * @return
-     */
-    private boolean isWebUrl(String androidLink) {
-        if (TextUtils.isEmpty(androidLink)) {
-            return false;
-        }
-        Matcher matcher = Pattern.compile(REGEX_TEXT).matcher(androidLink);
-        while (matcher.find()) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * 设置下载底栏Icon
-     *
-     * @param rb
-     * @param picPath
-     * @param picSecondPath
-     */
-    private void setDownBitmap(RadioButton rb, String picPath, String picSecondPath) {
-        Bitmap bitmap = BitmapFactory.decodeFile(picPath);
-        Bitmap secBitmap = BitmapFactory.decodeFile(picSecondPath);
-        StateListDrawable drawable = new StateListDrawable();
-        drawable.addState(new int[]{android.R.attr.state_checked}, new BitmapDrawable(null, secBitmap));
-        drawable.addState(new int[]{-android.R.attr.state_checked}, new BitmapDrawable(null, bitmap));
-        drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext, iconHeight / drawable.getMinimumHeight() * drawable.getMinimumWidth()), AutoSizeUtils.mm2px(mAppContext, iconHeight)); //设置边界
-        rb.setCompoundDrawables(null, drawable, null, null);
-    }
-
-    /**
-     * 初始化默认Icon
-     */
-    private void setNorMal() {
-        for (int i = 0; i < rp_bottom_main.getChildCount(); i++) {
-            RadioButton rb = (RadioButton) rp_bottom_main.getChildAt(i);
-            rb.setTextColor(getResources().getColorStateList(R.color.sel_text_gray_light_blue));
-            setNormalIcon(i, rb);
-        }
-
-        rp_bottom_main.setBackground(getResources().getDrawable(R.drawable.border_top_line));
-    }
-
-    /**
-     * 设置正常Icon
-     *
-     * @param i
-     * @param rb
-     */
-    private void setNormalIcon(int i, RadioButton rb) {
-        switch (i) {
-            case 0:
-                setDefaultButtonData(i, rb, MAIN_HOME);
-                Drawable drawable = getResources().getDrawable(R.drawable.selector_bottom_home_bar);
-                drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext, iconHeight / drawable.getMinimumHeight() * drawable.getMinimumWidth()), AutoSizeUtils.mm2px(mAppContext, iconHeight));//设置边界
-                rb.setCompoundDrawables(null, drawable, null, null);
-                break;
-            case 1:
-                setDefaultButtonData(i, rb, MAIN_QUALITY);
-                drawable = getResources().getDrawable(R.drawable.selector_bottom_catergory_bar);
-                drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext, iconHeight / drawable.getMinimumHeight() * drawable.getMinimumWidth()), AutoSizeUtils.mm2px(mAppContext, iconHeight));//设置边界
-                rb.setCompoundDrawables(null, drawable, null, null);
-                break;
-            case 2:
-                setDefaultButtonData(i, rb, MAIN_TIME);
-                drawable = getResources().getDrawable(R.drawable.selector_bottom_time_bar);
-                drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext, iconHeight / drawable.getMinimumHeight() * drawable.getMinimumWidth()), AutoSizeUtils.mm2px(mAppContext, iconHeight));//设置边界
-                rb.setCompoundDrawables(null, drawable, null, null);
-                break;
-            case 3:
-                setDefaultButtonData(i, rb, MAIN_FIND);
-                drawable = getResources().getDrawable(R.drawable.selector_bottom_find_bar);
-                drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext, iconHeight / drawable.getMinimumHeight() * drawable.getMinimumWidth()), AutoSizeUtils.mm2px(mAppContext, iconHeight));//设置边界
-                rb.setCompoundDrawables(null, drawable, null, null);
-                break;
-            case 4:
-                setDefaultButtonData(i, rb, MAIN_MINE);
-                drawable = getResources().getDrawable(R.drawable.selector_bottom_mine_bar);
-                drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext, iconHeight / drawable.getMinimumHeight() * drawable.getMinimumWidth()), AutoSizeUtils.mm2px(mAppContext, iconHeight));//设置边界
-                rb.setCompoundDrawables(null, drawable, null, null);
-                break;
-        }
-    }
-
-    private void setDefaultButtonData(int position, RadioButton rb, String mainHome) {
-        MainIconBean mainIconBean = new MainIconBean(position, mainHome);
-        rb.setTag(R.id.main_page, mainIconBean);
-        iconDataList.add(mainIconBean);
-    }
-
     /**
      * 获取最新账号信息 避免黑名单、异常账户登录
      *
@@ -832,7 +586,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.MINE_PAGE, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
-
                     CommunalUserInfoEntity minePageData = GsonUtils.fromJson(result, CommunalUserInfoEntity.class);
                     if (minePageData != null) {
                         CommunalUserInfoBean communalUserInfoBean = minePageData.getCommunalUserInfoBean();
@@ -1024,6 +777,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
 
+    //BaseUrl选择框
     private void getSelectedDialog() {
         if (mAlertDialogServer == null) {
             mAlertDialogServer = new AlertDialogBottomListHelper(getActivity());
@@ -1150,6 +904,116 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
+    private void navigate() {
+        Intent intent = getIntent();
+        String type = intent.getStringExtra("type");
+        if (!TextUtils.isEmpty(type) && Arrays.asList(links).contains(type)) {
+            //兼容多个web地址的情况
+            for (int i = 0; i < links.length; i++) {
+                if (type.equals(links[i])) {
+                    radio_group.check(radio_group.getChildAt(i).getId());
+                    break;
+                }
+            }
+        }
+    }
+
+
+    private int getResId(String link) {
+        if (isWebLinkUrl(link)) {
+            //兼容多个web地址的情况,避免指向同一个目的地
+            webNum++;
+            switch (webNum) {
+                case 2:
+                    return R.id.web2;
+                case 3:
+                    return R.id.web3;
+                case 4:
+                    return R.id.web4;
+                case 5:
+                    return R.id.web5;
+                default:
+                    return R.id.web;
+            }
+        } else if (MAIN_QUALITY.equals(link)) {
+            return R.id.quality;
+        } else if (MAIN_TIME.equals(link)) {
+            return R.id.time;
+        } else if (MAIN_FIND.equals(link)) {
+            return R.id.find;
+        } else if (MAIN_MINE.equals(link)) {
+            return R.id.mine;
+        } else {
+            return R.id.home;
+        }
+    }
+
+    private String getFragmentName(String link) {
+        if (isWebLinkUrl(link)) {
+            return AliBCFragment.class.getName();
+        } else if (MAIN_QUALITY.equals(link)) {
+            return QualityFragment.class.getName();
+        } else if (MAIN_TIME.equals(link)) {
+            return TimeShowNewFragment.class.getName();
+        } else if (MAIN_FIND.equals(link)) {
+            return FindFragment.class.getName();
+        } else if (MAIN_MINE.equals(link)) {
+            return MineDataFragment.class.getName();
+        } else {
+            return HomePageFragment.class.getName();
+        }
+    }
+
+
+    private void setNavDataDefault() {
+        //适配图标大小
+        for (int i = 0; i < radio_group.getChildCount(); i++) {
+            RadioButton radioButton = ((RadioButton) radio_group.getChildAt(i));
+            Drawable drawable = getResources().getDrawable(drawables[i]);
+            drawable.setBounds(0, 0, AutoSizeUtils.mm2px(mAppContext, iconHeight / drawable.getMinimumHeight() * drawable.getMinimumWidth()), AutoSizeUtils.mm2px(mAppContext, iconHeight));//设置边界
+            radioButton.setCompoundDrawables(null, drawable, null, null);
+        }
+    }
+
+    private void setNavDataLocal() {
+        try {
+            String result = (String) SharedPreUtils.getParam("MainNav", "NavDate", "");
+            if (!TextUtils.isEmpty(result)) {
+                MainNavEntity mainNavEntity = GsonUtils.fromJson(result, MainNavEntity.class);
+                if (mainNavEntity != null && !isEndOrStartTime(mainNavEntity.getCurrentTime(), mainNavEntity.getExpireTime())) {
+                    List<MainNavBean> mainNavBeanList = mainNavEntity.getMainNavBeanList();
+                    if (mainNavBeanList != null && mainNavBeanList.size() == 5) {
+                        webNum = 0;
+                        for (int i = 0; i < mainNavBeanList.size(); i++) {
+                            MainNavBean mainNavBean = mainNavBeanList.get(i);
+                            RadioButton radioButton = (RadioButton) radio_group.getChildAt(i);
+                            if (!isWebLinkUrl(mainNavBean.getPicUrl()) && !isWebLinkUrl(mainNavBean.getSecondColor())) {
+                                //设置底部导航链接
+                                links[i] = mainNavBean.getAndroidLink();
+                                resIds[i] = getResId(mainNavBean.getAndroidLink());
+                                //设置底部title
+                                radioButton.setText(getStrings(mainNavBean.getTitle()));
+                                //设置底部title颜色
+                                radioButton.setTextColor(SelectorUtil.getColorStateList(mainNavBean.getMainColor(), mainNavBean.getSecondColor()));
+                                //设置底部icon
+                                StateListDrawable drawable = SelectorUtil.getDrawableStateList(mainNavBean.getPicUrlSecond(), mainNavBean.getPicUrl());
+                                radioButton.setCompoundDrawables(null, drawable, null, null);
+                            }
+                        }
+                        //设置底部背景颜色
+                        if (!TextUtils.isEmpty(mainNavEntity.getBgColor())) {
+                            radio_group.setBackgroundColor(Color.parseColor(mainNavEntity.getBgColor()));
+                        }
+                    }
+                } else {
+                    SharedPreUtils.clear("MainNav", "NavDate");
+                }
+            }
+        } catch (Exception e) {
+            SharedPreUtils.clear("MainNav", "NavDate");
+        }
+    }
+
     //登陆成功返回消息
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -1157,171 +1021,40 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         if (resultCode != RESULT_OK) {
             return;
         }
-        switch (requestCode) {
-            case MINE_REQ_CODE:
-                changeAdaptivePage(MAIN_MINE);
-                break;
+        if (requestCode == MINE_REQ_CODE) {
+            if (Arrays.asList(links).contains("mine")) {
+                navController.navigate(R.id.mine);
+            }
         }
         CallbackContext.onActivityResult(requestCode, resultCode, data);
         UMShareAPI.get(getActivity()).onActivityResult(requestCode, resultCode, data);
-    }
-
-    private void initMainPage() {
-        RadioButton radioButton = (RadioButton) rp_bottom_main.getChildAt(0);
-        radioButton.setChecked(true);
-        MainIconBean mainIconBean = (MainIconBean) radioButton.getTag(R.id.main_page);
-        if (mainIconBean != null) {
-            changePage(mainIconBean);
-        } else {
-            if (iconDataList.size() > 0) {
-                changePage(iconDataList.get(0));
-            } else {
-                changePage(new MainIconBean(0, MAIN_HOME));
-            }
-        }
-    }
-
-    private Fragment lastFragment = null;
-
-    /**
-     * 适配 底部导航栏是否有此tag 如没有默认展示第一个
-     *
-     * @param tag
-     */
-    private void changeAdaptivePage(String tag) {
-        RadioButton defaultButton = (RadioButton) rp_bottom_main.getChildAt(0);
-        MainIconBean defaultIconBean = (MainIconBean) defaultButton.getTag(R.id.main_page);
-        if (TextUtils.isEmpty(tag)) {
-            changePage(defaultIconBean);
-        }
-        for (int i = 0; i < rp_bottom_main.getChildCount(); i++) {
-            RadioButton radioButton = (RadioButton) rp_bottom_main.getChildAt(i);
-            MainIconBean mainIconBean = (MainIconBean) radioButton.getTag(R.id.main_page);
-            if (getStrings(tag).equals(getStrings(mainIconBean.getIconUrl()))) {
-                changePage(mainIconBean);
-                break;
-            } else if (rp_bottom_main.getChildCount() - 1 == i) {
-                changePage(defaultIconBean);
-                skipMainPage(tag);
-            }
-        }
-    }
-
-    /**
-     * 设置页面tag
-     *
-     * @param pageTag
-     */
-    private void skipMainPage(String pageTag) {
-        if (!TextUtils.isEmpty(pageTag)) {
-            Intent intent = new Intent(this, MainPageTabBarActivity.class);
-            intent.putExtra("tabType", pageTag);
-            startActivity(intent);
-        }
-    }
-
-    private void changePage(@NonNull MainIconBean mainIconBean) {
-        try {
-            String tag = mainIconBean.getIconUrl();
-            RadioButton radioButton = (RadioButton) rp_bottom_main.getChildAt(mainIconBean.getPosition() > rp_bottom_main.getChildCount() - 1 ?
-                    rp_bottom_main.getChildCount() - 1 : mainIconBean.getPosition());
-            radioButton.setChecked(true);
-            fragment = fragmentManager.findFragmentByTag(tag + mainIconBean.getPosition());
-            transaction = fragmentManager.beginTransaction();
-            if (fragment != null && fragment.isAdded()) {
-                if (lastFragment != null) {
-                    transaction.hide(lastFragment).commitAllowingStateLoss();
-                }
-                transaction.show(fragment);
-                lastFragment = fragment;
-                fragment.onResume();
-            } else {
-                if (isWebUrl(tag)) {
-                    params.put("paddingStatus", "true");
-                    params.put("loadUrl", getStrings(mainIconBean.getIconUrl()));
-                    fragment = BaseFragment.newInstance(AliBCFragment.class, params, null);
-                } else {
-                    switch (getStrings(tag)) {
-                        case MAIN_HOME:
-                            fragment = BaseFragment.newInstance(HomePageFragment.class, null, null);
-                            break;
-                        case MAIN_QUALITY:
-                            fragment = BaseFragment.newInstance(QualityFragment.class, null, null);
-                            break;
-                        case MAIN_TIME:
-                            fragment = BaseFragment.newInstance(TimeShowNewFragment.class, null, null);
-                            break;
-                        case MAIN_FIND:
-                            fragment = BaseFragment.newInstance(FindFragment.class, null, null);
-                            break;
-                        case MAIN_MINE:
-                            fragment = BaseFragment.newInstance(MineDataFragment.class, null, null);
-                            break;
-                        default:
-                            fragment = BaseFragment.newInstance(HomePageFragment.class, null, null);
-                            break;
-                    }
-                }
-                if (lastFragment != null) {
-                    if (fragment.isAdded()) {
-                        transaction.hide(lastFragment).show(fragment).commitAllowingStateLoss();
-                    } else {
-                        transaction.hide(lastFragment).add(R.id.main_container, fragment, tag + mainIconBean.getPosition()).commitAllowingStateLoss();
-                    }
-                } else {
-                    transaction.add(R.id.main_container, fragment, tag + mainIconBean.getPosition()).commitAllowingStateLoss();
-                }
-                lastFragment = fragment;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            RestartAPPTool.restartAPP(MainActivity.this);
-        }
-    }
-
-    @Override
-    protected void loadData() {
     }
 
     private Intent onHomeIntent; // home键退出后通过intent启动程序
 
     @Override
     protected void onNewIntent(Intent intent) {
-// 拦截Intent，保存Intent，在onResume中进行处理
+        // 拦截Intent，保存Intent，在onResume中进行处理
+        super.onNewIntent(intent);
         onHomeIntent = intent;
         setIntent(intent);
-        setIntentBottomIconData();
+        navigate();
     }
 
     @Override
     public void onResume() {
         if (onHomeIntent != null) { // home键退出后通过intent启动程序
-// dosomething···
+            // dosomething···
             onHomeIntent = null;
         }
         super.onResume();
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-
-    @Override
-    public void onClick(View v) {
-        MainIconBean mainIconBean = (MainIconBean) v.getTag(R.id.main_page);
-        if (mainIconBean != null && !isChecked) {
-            changePage(mainIconBean);
-        }
-        isChecked = false;
-    }
-
-    @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (fragment instanceof AliBCFragment) {
-                boolean isGoBack = ((AliBCFragment) fragment).goBack();
+            if (getFragment() instanceof AliBCFragment) {
+                boolean isGoBack = ((AliBCFragment) getFragment()).goBack();
                 if (!isGoBack) {
                     goBack();
                 }
@@ -1402,19 +1135,21 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         return false;
     }
 
-    //获取HomePageFragment被选中的Fragment的类名
+    //获取当前选中的Fragment，如果是HomePageFragment返回类名
     public String getCheckedFragmentName() {
-        if (rp_bottom_main.getCheckedRadioButtonId() == R.id.rb_homepage) {
-            if (lastFragment instanceof HomePageFragment) {
-                return ((HomePageFragment) lastFragment).getFragmentName();
-            }
+        if (getFragment() instanceof HomePageFragment) {
+            return HomePageFragment.class.getName();
         }
-
         return "";
     }
 
+
     //获取当前被选中的fragment
     public Fragment getFragment() {
-        return fragment;
+        Fragment navFragment = getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        if (navFragment != null) {
+            return navFragment.getChildFragmentManager().getPrimaryNavigationFragment();
+        }
+        return null;
     }
 }

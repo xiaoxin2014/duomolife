@@ -25,12 +25,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import static android.content.Context.MODE_PRIVATE;
 import static com.amkj.dmsh.MainActivity.ImgKey;
 import static com.amkj.dmsh.MainActivity.LauncherAdIdKey;
 import static com.amkj.dmsh.MainActivity.OriginalImgUrl;
 import static com.amkj.dmsh.MainActivity.SkipUrlKey;
 import static com.amkj.dmsh.MainActivity.TimeKey;
+import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.FILE_IMAGE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.utils.TimeUtils.getDateMilliSecond;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.saveImageToFile;
@@ -67,51 +67,58 @@ public class SaveUpdateImportDateUtils {
      * 先请求version=3，请求成功判断过期时间，如果未过期保存数据，如果过期请求version=2（未过期保存数据，过期直接清除本地数据）
      */
     public void getMainIconData(Activity activity, int version) {
-        weakReference = new WeakReference<>(activity);
         String url = Url.H_BOTTOM_ICON;
         Map<String, Object> params = new HashMap<>();
         /**
          * 3.1.8 加入 区分以前底部导航只能加入一个web地址，首页默认为app首页 bug
          */
         params.put("version", version);
-        SharedPreferences sharedPreferences = activity.getSharedPreferences("MainNav", MODE_PRIVATE);
-        NetLoadUtils.getNetInstance().loadNetDataPost(weakReference.get(), url, params, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(activity, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                if (weakReference.get() != null) {
-
-                    MainNavEntity mainNavEntity = GsonUtils.fromJson(result, MainNavEntity.class);
-                    if (mainNavEntity != null
-                            && mainNavEntity.getCode().equals(SUCCESS_CODE)
-                            && mainNavEntity.getMainNavBeanList().size() == 5
-                            && !isTimeExpress(mainNavEntity)) {
-                        /**
-                         * v3.1.9 修改判断 当前时间是否大于过期时间
-                         */
-                        SharedPreferences.Editor edit = sharedPreferences.edit();
-                        edit.putString("NavDate", result);
-                        edit.apply();
-                        for (MainNavBean mainNavBean : mainNavEntity.getMainNavBeanList()) {
-                            saveImageToFile(activity, mainNavBean.getPicUrl());
-                            saveImageToFile(activity, mainNavBean.getPicUrlSecond());
-                        }
+                MainNavEntity mainNavEntity = GsonUtils.fromJson(result, MainNavEntity.class);
+                if (mainNavEntity != null && mainNavEntity.getCode().equals(SUCCESS_CODE)
+                        && mainNavEntity.getMainNavBeanList().size() == 5 && !isTimeExpress(mainNavEntity)) {
+                    Map<String, String> picMap = new HashMap<>();
+                    for (MainNavBean mainNavBean : mainNavEntity.getMainNavBeanList()) {
+                        downLoadIcon(mainNavEntity, picMap, mainNavBean.getPicUrl(), activity);
+                        downLoadIcon(mainNavEntity, picMap, mainNavBean.getPicUrlSecond(), activity);
+                    }
+                } else {
+                    if (version == 3) {
+                        getMainIconData(activity, 2);
                     } else {
-                        if (version == 3) {
-                            getMainIconData(activity, 2);
-                        } else {
-                            if (sharedPreferences != null) {
-                                clearData(sharedPreferences.edit());
-                            }
-                        }
+                        SharedPreUtils.clear("MainNav", "NavDate");
                     }
                 }
             }
 
             @Override
             public void onError(Throwable throwable) {
-                if (sharedPreferences != null) {
-                    clearData(sharedPreferences.edit());
+                SharedPreUtils.clear("MainNav", "NavDate");
+            }
+        });
+    }
+
+    private void downLoadIcon(MainNavEntity mainNavEntity, Map<String, String> picMap, String picUrl, Activity activity) {
+        saveImageToFile(activity, picUrl, FILE_IMAGE, new GlideImageLoaderUtil.OriginalLoaderFinishListener() {
+            @Override
+            public void onSuccess(File file) {
+                String path = file.getPath();
+                picMap.put(picUrl, path);
+                //全部下载完成，缓存数据到本地
+                if (picMap.size() == 10) {
+                    for (MainNavBean mainNavBean : mainNavEntity.getMainNavBeanList()) {
+                        mainNavBean.setPicUrl(picMap.get(mainNavBean.getPicUrl()));
+                        mainNavBean.setPicUrlSecond(picMap.get(mainNavBean.getPicUrlSecond()));
+                    }
+                    SharedPreUtils.setParam("MainNav", "NavDate", GsonUtils.toJson(mainNavEntity));
                 }
+            }
+
+            @Override
+            public void onError() {
+
             }
         });
     }

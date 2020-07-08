@@ -16,8 +16,8 @@ android {
         applicationId "com.amkj.dmsh"
         minSdkVersion versions.minSdk
         targetSdkVersion versions.targetSdk
-        versionCode 232
-        versionName '4.6.7'
+        versionCode 233
+        versionName '4.6.8'
         multiDexEnabled true
         ndk {
             //选择要添加的对应cpu类型的.so库。
@@ -135,6 +135,11 @@ dependencies {
     implementation "com.google.firebase:firebase-appindexing:$versions.firebase"
     implementation "com.google.code.gson:gson:$versions.gson"
     implementation "com.google.android:flexbox:$versions.flexbox"
+
+
+    implementation 'androidx.navigation:navigation-fragment:2.3.0'
+    implementation 'androidx.navigation:navigation-ui:2.3.0'
+
 
     implementation 'com.yanzhenjie:permission:2.0.0-rc12'
     //    渠道包 暂时有问题留意后续版本

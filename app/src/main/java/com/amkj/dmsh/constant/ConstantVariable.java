@@ -28,15 +28,16 @@ public class ConstantVariable {
     //    token过期，强制登出
     public static final String TOKEN_EXPIRE_LOG_OUT = "tokenExpireLogOut";
     //    首页
-    public static final String MAIN_HOME = "homePage";
+    public static final String MAIN_HOME = "home";
     //    发现
     public static final String MAIN_FIND = "find";
-    //    良品
+    //    分类
     public static final String MAIN_QUALITY = "quality";
     //    我
     public static final String MAIN_MINE = "mine";
-    //    限时特惠
+    //    淘好货
     public static final String MAIN_TIME = "time";
+
     //    关注回调请求码 请求登录
     public static final int IS_LOGIN_CODE = 10;
     //    子评论默认加载条数

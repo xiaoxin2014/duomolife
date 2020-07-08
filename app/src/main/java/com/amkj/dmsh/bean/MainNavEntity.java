@@ -33,10 +33,14 @@ public class MainNavEntity {
 
 
     public String getBgColor() {
-        if (TextUtils.isEmpty(bgColor)) {
+        return getcolor(bgColor);
+    }
+
+    public static String getcolor(String color) {
+        if (TextUtils.isEmpty(color)) {
             return "";
         } else {
-            return bgColor.startsWith("#") ? bgColor : "#" + bgColor;
+            return color.startsWith("#") ? color : "#" + color;
         }
     }
 
@@ -86,26 +90,18 @@ public class MainNavEntity {
 
     public static class MainNavBean {
         /**
-         * picUrl : http://image.domolife.cn/platform/RfnRzp6eFX1508988227305.png
          * androidLink : 321
+         * picUrl : http://image.domolife.cn/platform/RfnRzp6eFX1508988227305.png
          * picUrlSecond : http://image.domolife.cn/platform/H2BhjyW8sK1508988237874.png
-         * webLink : 231
          * mainColor :
-         * iosLink : app://DMLHomepageViewController
-         * rank : 1
-         * expire_time : 1509120000000
          * secondColor :
          * title : 首页
          */
 
-        private String picUrl;
         private String androidLink;
+        private String picUrl;
         private String picUrlSecond;
-        private String webLink;
         private String mainColor;
-        private String iosLink;
-        private int rank;
-        private long expire_time;
         private String secondColor;
         private String title;
 
@@ -133,48 +129,16 @@ public class MainNavEntity {
             this.picUrlSecond = picUrlSecond;
         }
 
-        public String getWebLink() {
-            return webLink;
-        }
-
-        public void setWebLink(String webLink) {
-            this.webLink = webLink;
-        }
-
         public String getMainColor() {
-            return mainColor;
+            return getcolor(mainColor);
         }
 
         public void setMainColor(String mainColor) {
             this.mainColor = mainColor;
         }
 
-        public String getIosLink() {
-            return iosLink;
-        }
-
-        public void setIosLink(String iosLink) {
-            this.iosLink = iosLink;
-        }
-
-        public int getRank() {
-            return rank;
-        }
-
-        public void setRank(int rank) {
-            this.rank = rank;
-        }
-
-        public long getExpire_time() {
-            return expire_time;
-        }
-
-        public void setExpire_time(long expire_time) {
-            this.expire_time = expire_time;
-        }
-
         public String getSecondColor() {
-            return secondColor;
+            return getcolor(secondColor);
         }
 
         public void setSecondColor(String secondColor) {

@@ -1,7 +1,5 @@
 package com.amkj.dmsh.homepage.fragment;
 
-import androidx.annotation.NonNull;
-import androidx.viewpager.widget.ViewPager;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -23,13 +21,14 @@ import com.gyf.barlibrary.ImmersionBar;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TIME_REFRESH;
 import static com.amkj.dmsh.constant.Url.TIME_SHOW_SHAFT;
 
-;
 
 
 /**

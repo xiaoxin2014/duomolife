@@ -1,10 +1,6 @@
 package com.amkj.dmsh.dominant.activity;
 
 import android.content.Intent;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +12,6 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.DMLThemeDetail;
 import com.amkj.dmsh.bean.DMLThemeDetail.ThemeDataBean;
 import com.amkj.dmsh.constant.UMShareAction;
@@ -29,27 +24,22 @@ import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
-import com.amkj.dmsh.views.CustomPopWindow;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
-import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
@@ -58,7 +48,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.H_TIME_BRAND_DETAILS;
 import static com.amkj.dmsh.constant.Url.H_TIME_BRAND_DETAILS_REC;
 
-;
 
 /**
  * @author LGuiPeng
@@ -80,11 +69,8 @@ public class TimeBrandDetailsActivity extends BaseActivity {
     private String brandId;
     private DoMoLifeTimeBrandAdapter duoMoLifeTimeBrandAdapter;
     private int page = 1;
-    private int scrollY;
-    private float screenHeight;
     private DMLThemeDetail dmlThemeDetail;
     private TimeBrandHeaderView timeBrandHeaderView;
-    private CustomPopWindow mCustomPopWindow;
     private ThemeDataBean themeBean;
 
     @Override
@@ -121,56 +107,12 @@ public class TimeBrandDetailsActivity extends BaseActivity {
             }
         });
 
-        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                loadData();
-            }
-        });
-        duoMoLifeTimeBrandAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
-            @Override
-            public void onLoadMoreRequested() {
-                page++;
-                getRecommendData();
-            }
+        smart_communal_refresh.setOnRefreshListener(refreshLayout -> loadData());
+        duoMoLifeTimeBrandAdapter.setOnLoadMoreListener(() -> {
+            page++;
+            getRecommendData();
         }, communal_recycler);
-        TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-        screenHeight = app.getScreenHeight();
-        communal_recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                scrollY += dy;
-                if (!recyclerView.canScrollVertically(-1)) {
-                    scrollY = 0;
-                }
-                if (scrollY > screenHeight * 1.5 && dy < 0) {
-                    if (download_btn_communal.getVisibility() == GONE) {
-                        download_btn_communal.setVisibility(VISIBLE);
-                        download_btn_communal.hide(false);
-                    }
-                    if (!download_btn_communal.isVisible()) {
-                        download_btn_communal.show();
-                    }
-                } else {
-                    if (download_btn_communal.isVisible()) {
-                        download_btn_communal.hide();
-                    }
-                }
-            }
-        });
-        download_btn_communal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) communal_recycler.getLayoutManager();
-                int firstVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition();
-                int mVisibleCount = linearLayoutManager.findLastVisibleItemPosition()
-                        - linearLayoutManager.findFirstVisibleItemPosition() + 1;
-                if (firstVisibleItemPosition > mVisibleCount) {
-                    communal_recycler.scrollToPosition(mVisibleCount);
-                }
-                communal_recycler.smoothScrollToPosition(0);
-            }
-        });
+       setFloatingButton(download_btn_communal, communal_recycler);
     }
 
     @OnClick(R.id.tv_life_back)
@@ -261,8 +203,6 @@ public class TimeBrandDetailsActivity extends BaseActivity {
                     @Override
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
-                        duoMoLifeTimeBrandAdapter.loadMoreComplete();
-
                         dmlThemeDetail = GsonUtils.fromJson(result, DMLThemeDetail.class);
                         if (dmlThemeDetail != null) {
                             if (dmlThemeDetail.getCode().equals(SUCCESS_CODE)) {
@@ -277,13 +217,7 @@ public class TimeBrandDetailsActivity extends BaseActivity {
                     @Override
                     public void onNotNetOrException() {
                         smart_communal_refresh.finishRefresh();
-                        duoMoLifeTimeBrandAdapter.loadMoreEnd(true);
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, themeBean, dmlThemeDetail);
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
-                        showToast(R.string.invalidData);
                     }
                 });
     }
@@ -336,16 +270,4 @@ public class TimeBrandDetailsActivity extends BaseActivity {
         @BindView(R.id.rp_time_pro_warm)
         RadioGroup rp_time_pro_warm;
     }
-
-    private String getNumber(String str) {
-        String regex = "\\d*";
-        Pattern p = Pattern.compile(regex);
-        Matcher m = p.matcher(str);
-        while (m.find()) {
-            if (!"".equals(m.group()))
-                return m.group();
-        }
-        return "3";
-    }
-
 }
