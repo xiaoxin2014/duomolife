@@ -32,6 +32,7 @@
         app:emojiconSize="14sp"/>
 
     <androidx.emoji.widget.EmojiTextView
+        android:textIsSelectable="true"
         android:id="@+id/tv_comm_comment_inner_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

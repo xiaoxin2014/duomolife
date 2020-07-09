@@ -1,9 +1,6 @@
 package com.amkj.dmsh.shopdetails.adapter;
 
 import android.content.Intent;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -26,6 +23,9 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
@@ -101,7 +101,7 @@ public class PostCommentAdapter extends BaseQuickAdapter<PostCommentBean, BaseVi
                     ConstantMethod.setTextLink(context, helper.getView(R.id.tv_comm_comment_inner_content));
                     helper.getView(R.id.civ_comm_comment_inner_avatar).setOnClickListener(v -> skipUserCenter(context, item.getUid()));
                     helper.itemView.setOnLongClickListener(v -> {
-                        mChildPostCommentPw = new PostReplyPw(context, item.getId(), 2) {
+                        mChildPostCommentPw = new PostReplyPw(context, item.getId()) {
                             @Override
                             public void onCommentClick() {
                                 EventBus.getDefault().post(new EventMessage("replyChildComment", item));

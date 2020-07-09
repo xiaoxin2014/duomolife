@@ -132,7 +132,7 @@ public class CommentDetailsActivity extends BaseActivity {
             ReplyCommListBean replyCommBean = (ReplyCommListBean) view.getTag();
             if (replyCommBean != null) {
                 //点击弹窗（回复和举报）
-                mAlphaPw = new PostReplyPw(getActivity(), replyCommBean.getObj_id(), 2) {
+                mAlphaPw = new PostReplyPw(getActivity(), replyCommBean.getObj_id()) {
                     @Override
                     public void onCommentClick() {
                         //打开评论
@@ -410,7 +410,7 @@ public class CommentDetailsActivity extends BaseActivity {
         @OnLongClick(R.id.rl_head)
         boolean ReplyAndReport(View view) {
             //点击弹窗（回复和举报）
-            mAlphaPw = new PostReplyPw(getActivity(), getStringChangeIntegers(objId), 2) {
+            mAlphaPw = new PostReplyPw(getActivity(), getStringChangeIntegers(objId)) {
                 @Override
                 public void onCommentClick() {
                     if (userId > 0) {

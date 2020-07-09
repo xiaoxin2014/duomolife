@@ -120,7 +120,7 @@ public class AllPostCommentActivity extends BaseActivity {
             PostCommentBean postCommentBean = (PostCommentBean) view.getTag();
             if (postCommentBean != null) {
                 //点击弹窗（回复和举报）
-                mAlphaPw = new PostReplyPw(getActivity(), postCommentBean.getId(), 2) {
+                mAlphaPw = new PostReplyPw(getActivity(), postCommentBean.getId()) {
                     @Override
                     public void onCommentClick() {
                         setPublishComment(postCommentBean);

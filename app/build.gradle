@@ -141,6 +141,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui:2.3.0'
 
 
+
     implementation 'com.yanzhenjie:permission:2.0.0-rc12'
     //    渠道包 暂时有问题留意后续版本
 //    api 'com.leon.channel:helper:2.0.2'

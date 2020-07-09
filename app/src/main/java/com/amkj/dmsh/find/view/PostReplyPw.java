@@ -16,15 +16,12 @@ import static com.amkj.dmsh.dao.SoftApiDao.reportIllegal;
 /**
  * Created by xiaoxin on 2019/7/15
  * Version:v4.1.0
- * ClassDescription :帖子评论/举报弹窗
+ * ClassDescription :帖子评论举报弹窗
  */
 public abstract class PostReplyPw extends PopupWindow {
 
 
-    /**
-     * @param type 举报类型 1帖子 2评论
-     */
-    public PostReplyPw(final Activity activity, int objId, int type) {
+    public PostReplyPw(final Activity activity, int objId) {
         super(LayoutInflater.from(activity).inflate(R.layout.pw_post_comment, null, false)
                 , ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
         setTouchable(true);
@@ -40,8 +37,8 @@ public abstract class PostReplyPw extends PopupWindow {
         });
         tvReport.setOnClickListener(v2 -> {
             WindowUtils.closePw(this);
-            //举报
-            reportIllegal(activity, objId, type);
+            //举报评论
+            reportIllegal(activity, objId, 2);
         });
     }
 
