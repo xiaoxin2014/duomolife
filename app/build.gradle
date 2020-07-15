@@ -131,16 +131,12 @@ dependencies {
     implementation "androidx.emoji:emoji:$versions.emoji"
     implementation "androidx.emoji:emoji-bundled:$versions.emoji"
     implementation "androidx.recyclerview:recyclerview:$versions.recyclerview"
+    implementation 'androidx.navigation:navigation-fragment:2.3.0'
+    implementation 'androidx.navigation:navigation-ui:2.3.0'
     implementation "com.google.android.material:material:$versions.material"
     implementation "com.google.firebase:firebase-appindexing:$versions.firebase"
     implementation "com.google.code.gson:gson:$versions.gson"
     implementation "com.google.android:flexbox:$versions.flexbox"
-
-
-    implementation 'androidx.navigation:navigation-fragment:2.3.0'
-    implementation 'androidx.navigation:navigation-ui:2.3.0'
-
-
 
     implementation 'com.yanzhenjie:permission:2.0.0-rc12'
     //    渠道包 暂时有问题留意后续版本

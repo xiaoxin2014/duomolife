@@ -568,6 +568,15 @@ public class DirectIndentWriteActivity extends BaseActivity {
         } else {
             pullFootView.rect_indent_number.setVisibility(GONE);
         }
+
+        //组装赠品数据
+        List<ProductInfoBean> presentInfos = indentWriteBean.getPresentInfos();
+        if (presentInfos != null) {
+            for (ProductInfoBean productInfoBean : presentInfos) {
+                productInfoBean.setIsPresent(1);
+            }
+            productInfoList.addAll(presentInfos);
+        }
     }
 
 

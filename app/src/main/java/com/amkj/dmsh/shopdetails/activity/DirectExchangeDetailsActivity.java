@@ -380,12 +380,21 @@ public class DirectExchangeDetailsActivity extends BaseActivity {
             }
         }
 
+        //组装赠品数据
+        List<OrderProductNewBean> presentProductList = mainOrderBean.getPresentProductList();
+        if (mainOrderBean.getPresentProductList() != null) {
+            for (OrderProductNewBean orderProductNewBean : presentProductList) {
+                orderProductNewBean.setIsPresent(1);
+            }
+            orderProductList.addAll(presentProductList);
+        }
+
         if (orderProductList != null && orderProductList.size() > 0) {
             goodsBeanList.addAll(orderProductList);
         }
 
-        /**
-         * 尾部
+        /*
+          尾部
          */
         if (TextUtils.isEmpty(mainOrderBean.getOrderNo())) {        //订单编号
             ll_indent_order_no.setVisibility(GONE);

@@ -31,9 +31,11 @@ public class OrderProductNewBean {
     private String orderProductId;
     @SerializedName(value = "id", alternate = "productId")
     private String id;
-    @SerializedName(value = "picUrl", alternate = "productImg")
+    @SerializedName(value = "picUrl", alternate = {"productImg", "presentPicUrl"})
     private String picUrl;
+    @SerializedName(value = "count", alternate = "presentCount")
     private String count;
+    @SerializedName(value = "productName", alternate = "presentName")
     private String productName;
     private String price;
     private String totalPrice;
@@ -59,6 +61,17 @@ public class OrderProductNewBean {
 
     //售后列表专用字段
     private String refundPrice;
+
+    //是否是赠品
+    private int isPresent;
+
+    public boolean isPresent() {
+        return isPresent == 1;
+    }
+
+    public void setIsPresent(int isPresent) {
+        this.isPresent = isPresent;
+    }
 
 
     public String getOrderNo() {

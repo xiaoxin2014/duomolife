@@ -490,28 +490,30 @@ public class ShopCarDao {
     public static String getCouponGoodsInfo(List<ProductInfoBean> products) {
         JSONArray jsonArray = new JSONArray();
         for (ProductInfoBean productInfoBean : products) {
-            ActivityInfoBean activityInfo = productInfoBean.getActivityInfoBean();
-            JSONObject jsonObject = new JSONObject();
-            try {
-                jsonObject.put("saleSkuId", productInfoBean.getSaleSkuId());
-                jsonObject.put("id", productInfoBean.getId());
-                jsonObject.put("count", productInfoBean.getCount());
-                jsonObject.put("price", productInfoBean.getPrice());
-                if (!TextUtils.isEmpty(productInfoBean.getZhPrice())) {
-                    jsonObject.put("zhPrice", productInfoBean.getZhPrice());
-                }
-
-                //组合商品或者加价购商品获取优惠券时需要传activityCode
-                if (activityInfo != null) {
-                    if (productInfoBean.getCombineMainId() != 0 || productInfoBean.getCombineMatchId() != 0 || productInfoBean.isPrerogative()){
-                        jsonObject.put("activityCode", activityInfo.getActivityCode());
+            if (!productInfoBean.isPresent()) {//排除赠品
+                ActivityInfoBean activityInfo = productInfoBean.getActivityInfoBean();
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.put("saleSkuId", productInfoBean.getSaleSkuId());
+                    jsonObject.put("id", productInfoBean.getId());
+                    jsonObject.put("count", productInfoBean.getCount());
+                    jsonObject.put("price", productInfoBean.getPrice());
+                    if (!TextUtils.isEmpty(productInfoBean.getZhPrice())) {
+                        jsonObject.put("zhPrice", productInfoBean.getZhPrice());
                     }
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
 
-            jsonArray.put(jsonObject);
+                    //组合商品或者加价购商品获取优惠券时需要传activityCode
+                    if (activityInfo != null) {
+                        if (productInfoBean.getCombineMainId() != 0 || productInfoBean.getCombineMatchId() != 0 || productInfoBean.isPrerogative()) {
+                            jsonObject.put("activityCode", activityInfo.getActivityCode());
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                jsonArray.put(jsonObject);
+            }
         }
 
         return jsonArray.length() > 0 ? jsonArray.toString() : "";

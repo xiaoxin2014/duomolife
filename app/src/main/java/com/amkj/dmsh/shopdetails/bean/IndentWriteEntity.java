@@ -61,6 +61,15 @@ public class IndentWriteEntity extends BaseTimeEntity {
         private List<ProductsBean> products;
         private PrerogativeActivityInfo prerogativeActivityInfo;
         private List<String> showPayTypeList;
+        private List<ProductsBean.ProductInfoBean> presentInfos;//赠品列表
+
+        public List<ProductsBean.ProductInfoBean> getPresentInfos() {
+            return presentInfos;
+        }
+
+        public void setPresentInfos(List<ProductsBean.ProductInfoBean> presentInfos) {
+            this.presentInfos = presentInfos;
+        }
 
         public String getIdcardImg1() {
             return idcardImg1;
@@ -325,6 +334,17 @@ public class IndentWriteEntity extends BaseTimeEntity {
 
                 //是否是加价购商品
                 private int isPrerogative;
+                //是否是赠品
+                private int isPresent;
+
+
+                public boolean isPresent() {
+                    return isPresent == 1;
+                }
+
+                public void setIsPresent(int isPresent) {
+                    this.isPresent = isPresent;
+                }
 
                 public boolean isPrerogative() {
                     return isPrerogative == 1;

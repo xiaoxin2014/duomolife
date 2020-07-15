@@ -2,16 +2,13 @@ package com.amkj.dmsh.shopdetails.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.SimpleItemAnimator;
 import android.text.TextUtils;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.bean.OrderProductNewBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.netloadpage.NetEmptyCallback;
@@ -33,6 +30,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 import butterknife.BindView;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
@@ -148,11 +149,17 @@ public class DoMoIndentNewFragment extends BaseFragment {
                     if (orderList != null) {
                         if (!TextUtils.isEmpty(mOrderListNewEntity.getCurrentTime())) {
                             for (int i = 0; i < orderList.size(); i++) {
-                                MainOrderBean orderListNewBean = orderList.get(i);
-                                orderListNewBean.setCurrentTime(mOrderListNewEntity.getCurrentTime());
+                                MainOrderBean mainOrderBean = orderList.get(i);
+                                mainOrderBean.setCurrentTime(mOrderListNewEntity.getCurrentTime());
+                                //组装赠品数据
+                                List<OrderProductNewBean> presentProductList = mainOrderBean.getPresentProductList();
+                                for (OrderProductNewBean productNewBean : presentProductList) {
+                                    productNewBean.setIsPresent(1);
+                                }
+                                mainOrderBean.getOrderProductList().addAll(presentProductList);
                             }
                         }
-                        orderListBeanList.addAll(orderList);
+                        orderListBeanList.addAll(mOrderListNewEntity.getResult());
                         doMoIndentListAdapter.notifyDataSetChanged();
                         if (orderList.size() >= TOTAL_COUNT_TEN) {
                             doMoIndentListAdapter.loadMoreComplete();
@@ -220,6 +227,13 @@ public class DoMoIndentNewFragment extends BaseFragment {
                             if (orderList != null && orderList.size() > 0) {
                                 MainOrderBean mainOrderBean = orderList.get(0);
                                 mainOrderBean.setCurrentTime(mOrderListNewEntity.getCurrentTime());
+                                //组装赠品数据
+                                List<OrderProductNewBean> presentProductList = mainOrderBean.getPresentProductList();
+                                for (OrderProductNewBean productNewBean : presentProductList) {
+                                    productNewBean.setIsPresent(1);
+                                }
+                                mainOrderBean.getOrderProductList().addAll(presentProductList);
+                                //更新单条数据
                                 if (orderListBeanList != null && orderListBeanList.size() - 1 >= position) {
                                     if (orderListBeanList.get(position).getOrderNo().equals(orderNo)) {
                                         orderListBeanList.set(position, mainOrderBean);

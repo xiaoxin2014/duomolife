@@ -47,12 +47,13 @@ public class FixFragmentNavigator extends FragmentNavigator {
             return null;
         }
         String label = (String) destination.getLabel();
-        //fix 1: 把lable作为tag，寻找已存在的Fragment
+        //fix 1: 把lable作为tag，寻找已存在的Fragment(不能使用类名作为tag,否则无法添加多个相同的fragment)
         //（如果想只针对个别fragment进行保活复用，可以在tag上做些标记比如加个前缀）
         Fragment frag = mFragmentManager.findFragmentByTag(label);
         if (null == frag) {
             //不存在，则创建
-            frag = instantiateFragment(mContext, mFragmentManager, destination.getClassName(), args);
+            frag = mFragmentManager.getFragmentFactory().instantiate(
+                    mContext.getClassLoader(), destination.getClassName());
         }
 
         frag.setArguments(args);

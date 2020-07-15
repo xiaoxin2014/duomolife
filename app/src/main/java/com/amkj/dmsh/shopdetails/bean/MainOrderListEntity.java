@@ -52,6 +52,7 @@ public class MainOrderListEntity extends BaseTimeEntity {
         private List<String> logisticsStrList;
         @SerializedName(value = "orderProductList", alternate = "refundGoodsList")
         private List<OrderProductNewBean> orderProductList;
+        private List<OrderProductNewBean> presentProductList;//赠品
         private String currentTime;
         private String refundCount; //订单含有售后数量
         private String refundSuccessCount; //订单含有退款成功数
@@ -93,8 +94,20 @@ public class MainOrderListEntity extends BaseTimeEntity {
         private Map<String, String> refundTypeMap;
 
 
+        public List<OrderProductNewBean> getPresentProductList() {
+            return presentProductList == null ? new ArrayList<>() : presentProductList;
+        }
+
+        public void setPresentProductList(List<OrderProductNewBean> presentProductList) {
+            this.presentProductList = presentProductList;
+        }
+
         public boolean isAfter() {
             return "1".equals(isAfter);
+        }
+
+        public void setIsAfter(String isAfter) {
+            this.isAfter = isAfter;
         }
 
         public Map<String, Map<String, String>> getRefundReasonMap() {
