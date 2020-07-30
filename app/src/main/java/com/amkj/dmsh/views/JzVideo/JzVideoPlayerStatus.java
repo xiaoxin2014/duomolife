@@ -267,9 +267,13 @@ public class JzVideoPlayerStatus extends JzVideoPlayerStatusDialog {
      * @param volumeOn
      */
     private void adjustVolume(boolean volumeOn) {
-        if (iv_video_volume.getVisibility() == VISIBLE) {
-            float volumeValue = volumeOn ? 1f : 0f;
-            JZMediaManager.instance().jzMediaInterface.setVolume(volumeValue, volumeValue);
+        try {
+            if (iv_video_volume.getVisibility() == VISIBLE) {
+                float volumeValue = volumeOn ? 1f : 0f;
+                JZMediaManager.instance().jzMediaInterface.setVolume(volumeValue, volumeValue);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

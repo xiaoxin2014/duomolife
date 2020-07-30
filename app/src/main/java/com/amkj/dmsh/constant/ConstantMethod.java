@@ -503,29 +503,26 @@ public class ConstantMethod {
                         }
                     }
                 } else if (link.contains(smallRoutine)) {//小程序
-                    int smallRoutineStart = link.indexOf(smallRoutine) + smallRoutine.length();
                     // 填应用AppId
                     IWXAPI api = WXAPIFactory.createWXAPI(context, APP_ID);
                     WXLaunchMiniProgram.Req req = new WXLaunchMiniProgram.Req();
                     req.userName = routineId; // 填小程序原始id
-                    String jsonData = link.substring(smallRoutineStart).trim();
                     int versionType = 0;
-                    if (!TextUtils.isEmpty(jsonData)) {
-                        try {
-                            JSONObject jsonObject = JSON.parseObject(jsonData);
-                            if (jsonObject != null) {
-                                String page = jsonObject.getString("page");
-                                if (!TextUtils.isEmpty(page)) {
-                                    req.path = page;
-                                }
-                                versionType = jsonObject.getInteger("type");
-                                if (versionType > 2) {
-                                    versionType = 0;
-                                }
+                    try {
+                        String jsonData = link.substring(link.indexOf("{"), link.lastIndexOf("}") + 1);//截取json串
+                        JSONObject jsonObject = JSON.parseObject(jsonData);
+                        if (jsonObject != null) {
+                            String page = jsonObject.getString("page");
+                            if (!TextUtils.isEmpty(page)) {
+                                req.path = page;
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                            versionType = jsonObject.getInteger("type");
+                            if (versionType > 2) {
+                                versionType = 0;
+                            }
                         }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                     req.miniprogramType = versionType;// 可选打开 开发版，体验版和正式版
                     api.sendReq(req);
@@ -1531,7 +1528,6 @@ public class ConstantMethod {
             showToast("该文件已删除，请重新下载");
         }
     }
-
 
 
     public void setOnGetPermissionsSuccess(OnGetPermissionsSuccessListener onGetPermissionsSuccessListener) {
