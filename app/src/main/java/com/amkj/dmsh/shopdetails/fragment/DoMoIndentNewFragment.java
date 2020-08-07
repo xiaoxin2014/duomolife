@@ -126,6 +126,11 @@ public class DoMoIndentNewFragment extends BaseFragment {
         return true;
     }
 
+    @Override
+    protected String getEmptyText() {
+        return "你还没有订单\n赶快买买买";
+    }
+
     //获取订单列表数据
     private void getIndentList() {
         Map<String, Object> params = new HashMap<>();

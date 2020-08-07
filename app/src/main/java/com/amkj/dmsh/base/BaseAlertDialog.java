@@ -84,8 +84,7 @@ public abstract class BaseAlertDialog implements LifecycleObserver {
      * @param gravity 显示的位置
      */
     public void show(int gravity) {
-        if (!defaultAlertDialog.isShowing()
-                && isContextExisted(context)) {
+        if (!defaultAlertDialog.isShowing() && isContextExisted(context)) {
             AutoSize.autoConvertDensityOfGlobal((Activity) context);
             defaultAlertDialog.show();
         }

@@ -46,9 +46,10 @@ import com.kingja.loadsir.core.LoadSir;
 import com.lzf.easyfloat.EasyFloat;
 import com.microquation.linkedme.android.LinkedME;
 import com.mob.MobSDK;
+import com.netease.nimlib.sdk.msg.constant.MsgDirectionEnum;
+import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum;
+import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.qiyukf.unicorn.api.Unicorn;
-import com.qiyukf.unicorn.api.UnreadCountChangeListener;
-import com.qiyukf.unicorn.api.msg.UnicornMessage;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
 import com.squareup.leakcanary.LeakCanary;
@@ -87,7 +88,6 @@ import androidx.emoji.bundled.BundledEmojiCompatConfig;
 import androidx.emoji.text.EmojiCompat;
 import androidx.multidex.MultiDex;
 import cn.jpush.android.api.JPushInterface;
-import io.reactivex.exceptions.UndeliverableException;
 import io.reactivex.plugins.RxJavaPlugins;
 import me.jessyan.autosize.AutoSize;
 import me.jessyan.autosize.AutoSizeConfig;
@@ -95,6 +95,7 @@ import me.jessyan.autosize.unit.Subunits;
 
 import static android.content.Context.MODE_PRIVATE;
 import static com.amkj.dmsh.constant.ConstantMethod.getSourceType;
+import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.OSS_BUCKET_NAME;
@@ -138,6 +139,7 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
     private LinkedList<Activity> activityLinkedList = new LinkedList<>();
     //    全局上下文
     public static Context mAppContext;
+    private static TinkerBaseApplicationLike mApplication;
     //    是否已初始化TuSdk
     private boolean isInitTuSdk;
     private Map<String, Object> ossMap;
@@ -184,6 +186,7 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
     @Override
     public void onCreate() {
         mAppContext = getApplication().getApplicationContext();
+        mApplication = this;
         getApplication().registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
             @Override
             public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
@@ -275,25 +278,25 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
         //RxJava2默认不会帮我们处理异常，为了避免app会崩溃，这里手动处理
         RxJavaPlugins.setErrorHandler(e -> {
             //异常处理
-            if (e instanceof UndeliverableException) {
-                e = e.getCause();
-            }
-            if ((e instanceof IOException)) {
-                // fine, irrelevant network problem or API that throws on cancellation
-                return;
-            }
-            if (e instanceof InterruptedException) {
-                // fine, some blocking code was interrupted by a dispose call
-                return;
-            }
-            if ((e instanceof NullPointerException) || (e instanceof IllegalArgumentException)) {
+            if (e instanceof NullPointerException || e instanceof IllegalArgumentException || e instanceof IllegalStateException) {
                 // that's likely a bug in the application
                 Thread.currentThread().getUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
-                return;
             }
-            if (e instanceof IllegalStateException) {
-                // that's a bug in RxJava or in a custom operator
-                Thread.currentThread().getUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
+        });
+        //全局悬浮弹窗初始化
+        EasyFloat.init(getApplication(), isDebugTag);
+        //七鱼初始化以及新消息监听(必须在主线程调用)
+        QyServiceUtils.getQyInstance().initQyService(getApplication().getApplicationContext());
+        QyServiceUtils.getQyInstance().getServiceCount(count -> {
+            if (userId > 0) {
+                IMMessage message = Unicorn.queryLastMessage();
+                if (message != null) {
+                    MsgTypeEnum msgType = message.getMsgType();
+                    //屏蔽机器人消息
+                    if (message.getDirect() == MsgDirectionEnum.In && !getStrings(message.getFromAccount()).toLowerCase().contains("robot") && msgType != MsgTypeEnum.robot) {
+                        EventBus.getDefault().post(new EventMessage(RECEIVED_NEW_QY_MESSAGE, message));
+                    }
+                }
             }
         });
         //初始化EasyHttp
@@ -325,19 +328,6 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
             //      jPush 初始化
             JPushInterface.setDebugMode(isDebugTag);    // 设置开启日志,发布时请关闭日志
             JPushInterface.init(mAppContext);
-            //全局悬浮弹窗初始化
-            EasyFloat.init(getApplication(), isDebugTag);
-            //七鱼初始化以及新消息监听(必须在主线程调用)
-            QyServiceUtils.getQyInstance().initQyService(getApplication().getApplicationContext());
-            QyServiceUtils.getQyInstance().getServiceCount(new UnreadCountChangeListener() {
-                @Override
-                public void onUnreadCountChange(int count) {
-                    if (userId > 0) {
-                        UnicornMessage message = Unicorn.queryLastMessage();
-                        EventBus.getDefault().post(new EventMessage(RECEIVED_NEW_QY_MESSAGE, message));
-                    }
-                }
-            });
             createExecutor().execute(new Runnable() {
                 @Override
                 public void run() {
@@ -1007,5 +997,9 @@ public class TinkerBaseApplicationLike extends DefaultApplicationLike {
     public void setImageBeanList(List<ImageBean> imageBeanList) {
         this.imageBeanList.clear();
         this.imageBeanList.addAll(imageBeanList);
+    }
+
+    public static TinkerBaseApplicationLike getInstance() {
+        return mApplication;
     }
 }

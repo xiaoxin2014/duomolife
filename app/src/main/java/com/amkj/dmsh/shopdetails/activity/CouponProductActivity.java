@@ -1,9 +1,6 @@
 package com.amkj.dmsh.shopdetails.activity;
 
 import android.content.Intent;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
@@ -24,6 +21,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -159,5 +159,10 @@ public class CouponProductActivity extends BaseActivity {
     @Override
     public View getLoadView() {
         return smart_communal_refresh;
+    }
+
+    @Override
+    protected String getEmptyText() {
+        return "暂无可用券商品";
     }
 }

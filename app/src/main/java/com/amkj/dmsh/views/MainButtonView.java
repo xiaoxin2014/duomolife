@@ -434,7 +434,9 @@ public class MainButtonView extends LinearLayout {
 
     private void goPay(String orderNo) {
         showLoadhud(context);
-        NetLoadUtils.getNetInstance().loadNetDataPost(context, Url.GET_PAYTYPE_LIST, new NetLoadListenerHelper() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("orderNo", orderNo);
+        NetLoadUtils.getNetInstance().loadNetDataPost(context, Url.GET_PAYTYPE_LIST, map, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 dismissLoadhud(context);

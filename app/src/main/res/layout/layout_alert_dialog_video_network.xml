@@ -6,42 +6,42 @@
     android:divider="@drawable/item_divider_gray_f_one_px"
     android:orientation="vertical"
     android:showDividers="middle">
+
     <TextView
         android:id="@+id/tv_alert_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:ellipsize="end"
         android:gravity="center"
         android:lineSpacingExtra="@dimen/dimen_5_dp"
         android:minHeight="@dimen/sc_mm_68"
-        android:text="提示"
-        android:singleLine="true"
-        android:ellipsize="end"
         android:paddingLeft="@dimen/sc_mm_30"
         android:paddingRight="@dimen/sc_mm_30"
+        android:singleLine="true"
+        android:text="提示"
         android:textColor="@color/text_black_t"
         android:textSize="@dimen/sc_mm_28" />
 
     <TextView
         android:id="@+id/tv_alert_message"
-        android:text="弹窗内容"
         android:layout_width="wrap_content"
-        android:layout_gravity="center"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tv_alert_title"
+        android:layout_gravity="center"
         android:layout_marginTop="@dimen/sc_mm_15"
         android:layout_marginBottom="@dimen/sc_mm_15"
         android:gravity="center"
-        android:visibility="visible"
         android:lineSpacingExtra="@dimen/sc_mm_6"
         android:minHeight="@dimen/sc_mm_68"
         android:paddingLeft="@dimen/sc_mm_30"
         android:paddingRight="@dimen/sc_mm_30"
+        android:text="弹窗内容"
         android:textColor="@color/text_login_gray_s"
-        android:textSize="@dimen/sc_mm_26" />
+        android:textSize="@dimen/sc_mm_26"
+        android:visibility="visible" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/sc_mm_60"
-        android:layout_below="@id/tv_alert_message"
         android:layout_marginTop="@dimen/sc_mm_10"
         android:divider="@drawable/item_divider_gray_f_one_px"
         android:gravity="center"
@@ -67,9 +67,9 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:visibility="visible"
             android:text="取消"
             android:textColor="@color/text_login_gray_s"
-            android:textSize="@dimen/sc_mm_28" />
+            android:textSize="@dimen/sc_mm_28"
+            android:visibility="visible" />
     </LinearLayout>
 </LinearLayout>

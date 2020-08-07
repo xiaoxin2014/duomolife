@@ -1,9 +1,6 @@
 package com.amkj.dmsh.message.activity;
 
 import android.content.Intent;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
@@ -28,6 +25,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -183,6 +183,11 @@ public class MessageHotActivity extends BaseActivity {
     @Override
     protected boolean isAddLoad() {
         return true;
+    }
+
+    @Override
+    protected String getEmptyText() {
+        return "最近20天没有活动消息哦";
     }
 
     @Override

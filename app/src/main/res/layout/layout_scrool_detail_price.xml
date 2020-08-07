@@ -1,29 +1,19 @@
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ll_scrool_detail_price"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/sc_mm_70"
+    android:layout_height="wrap_content"
     android:background="@color/white"
     android:paddingLeft="@dimen/sc_mm_30"
     android:paddingRight="@dimen/sc_mm_30"
-    android:paddingBottom="@dimen/sc_mm_20">
-
-    <!--<TextView-->
-        <!--android:id="@+id/tv_activity_price"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_centerVertical="true"-->
-        <!--android:paddingRight="@dimen/sc_mm_10"-->
-        <!--android:textColor="@color/text_normal_red"-->
-        <!--android:textSize="@dimen/sc_mm_22"/>-->
+    android:paddingBottom="@dimen/sc_mm_10">
 
     <TextView
         android:id="@+id/tv_ql_sp_pro_sc_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="-----"
+        android:text="@string/defaul"
         android:textColor="@color/text_normal_red"
-        android:textSize="@dimen/sc_mm_34"/>
+        android:textSize="@dimen/sc_mm_34" />
 
     <TextView
         android:id="@+id/tv_max_price"
@@ -31,10 +21,10 @@
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/tv_ql_sp_pro_sc_price"
         android:layout_toRightOf="@+id/tv_ql_sp_pro_sc_price"
-        android:text="--------"
+        android:text="@string/defaul"
         android:textColor="@color/text_normal_red"
         android:textSize="@dimen/sc_mm_34"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/tv_ql_sp_pro_sc_market_price"
@@ -43,10 +33,9 @@
         android:layout_alignBaseline="@+id/tv_ql_sp_pro_sc_price"
         android:layout_marginLeft="@dimen/sc_mm_36"
         android:layout_toRightOf="@id/tv_max_price"
-        android:text="---------"
+        android:text="@string/defaul"
         android:textColor="@color/text_gray_hint_n"
-        android:textSize="@dimen/sc_mm_24"/>
-
+        android:textSize="@dimen/sc_mm_24" />
 
     <ImageView
         android:id="@+id/iv_ql_shop_pro_cp_tag"
@@ -55,5 +44,5 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:src="@drawable/no_use_coupon_icon"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 </RelativeLayout>

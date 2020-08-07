@@ -244,7 +244,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity {
 
         rv_indent_details.setLayoutManager(new LinearLayoutManager(DirectExchangeDetailsActivity.this));
         rv_indent_details.setNestedScrollingEnabled(false);
-        indentDiscountAdapter = new IndentDiscountAdapter(priceInfoList);
+        indentDiscountAdapter = new IndentDiscountAdapter(this,priceInfoList);
         rv_indent_details.setAdapter(indentDiscountAdapter);
 
         //初始化自定义专区

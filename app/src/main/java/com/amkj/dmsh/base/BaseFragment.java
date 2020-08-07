@@ -134,62 +134,13 @@ public abstract class BaseFragment extends ImmersionFragment {
                     loadData();
                 }
             }, NetLoadUtils.getNetInstance().getLoadSirCover());
-            String hintText;
-            int resId = R.drawable.net_page_bg;
-            switch (getClass().getSimpleName()) {
-                case "DoMoIndentDeliveredFragment":
-                case "DoMoIndentWaitAppraiseFragment":
-                case "DoMoIndentWaitPayFragment":
-                case "DoMoIndentWaitSendFragment":
-                case "DoMoSalesReturnRecordFragment":
-                case "DoMoSalesReturnReplyFragment":
-                case "DuMoIndentAllFragment":
-                    hintText = "你还没有订单\n赶快买买买";
-                    break;
-                case "IntegralIndentFragment":
-                    hintText = "你还没有积分订单\n赶快买买买";
-                    break;
-                case "DirectMyCouponFragment":
-                    hintText = "你的优惠券空空如也";
-                    break;
-                case "CollectInvitationFragment":
-                case "CollectSpecialFragment":
-                case "CollectTopicFragment":
-                    hintText = "你还没有收藏内容\n赶快去收藏";
-                    break;
-                case "IntegralProductFragment":
-                case "SpringSaleFragment":
-                    hintText = "暂时没有商品哦";
-                    break;
-                case "SearchDetailsProductNewFragment":
-                    hintText = "没有找到相关商品\n建议您换个搜索词试试";
-                    resId = R.drawable.search_detail;
-                    break;
-                case "SearchDetailsArticleFragment":
-                    hintText = "没有找到相关种草\n建议您换个搜索词试试";
-                    resId = R.drawable.search_detail;
-                    break;
-                case "SearchDetailsTopicFragment":
-                    hintText = "没有找到相关话题\n建议您换个搜索词试试";
-                    resId = R.drawable.search_detail;
-                    break;
-                case "SearchDetailsUserFragment":
-                    hintText = "没有找到相关用户\n建议您换个搜索词试试";
-                    resId = R.drawable.search_detail;
-                    break;
-                default:
-                    hintText = "暂无数据，稍后重试";
-                    break;
-            }
-            String finalHintText = hintText;
-            int finalResId = resId;
             loadService.setCallBack(NetEmptyCallback.class, new Transport() {
                 @Override
                 public void order(Context context, View view) {
                     ImageView iv_communal_pic = view.findViewById(R.id.iv_communal_pic);
-                    iv_communal_pic.setImageResource(finalResId);
+                    iv_communal_pic.setImageResource(getEmptyResId());
                     TextView tv_communal_net_tint = view.findViewById(R.id.tv_communal_net_tint);
-                    tv_communal_net_tint.setText(finalHintText);
+                    tv_communal_net_tint.setText(getEmptyText());
                 }
             });
         }
@@ -200,6 +151,14 @@ public abstract class BaseFragment extends ImmersionFragment {
         }
         AutoSize.autoConvertDensityOfGlobal(getActivity());
         return loadService != null ? loadService.getLoadLayout() : view;
+    }
+
+    protected String getEmptyText() {
+        return "暂无数据，稍后重试";
+    }
+
+    protected int getEmptyResId() {
+        return R.drawable.net_page_bg;
     }
 
     @Override
@@ -262,27 +221,15 @@ public abstract class BaseFragment extends ImmersionFragment {
             return;
         }
         // 是否为Event消息
-        if (message instanceof EventMessage) {
-            BaseFragment.this.postEventResult((EventMessage) message);
-        }
-        // 其他类型消息
-        else {
-            BaseFragment.this.postOtherResult(message);
-        }
+        BaseFragment.this.postEventResult(message);
     }
 
     // 传递EventBus事件类型结果，子类实现逻辑
     protected void postEventResult(@NonNull EventMessage message) {
     }
 
-    // 传送其他结果，子类实现逻辑
-    protected void postOtherResult(@NonNull Object message) {
-    }
-
     /**
      * 是否默认加载
-     *
-     * @return
      */
     protected boolean isAddLoad() {
         return false;

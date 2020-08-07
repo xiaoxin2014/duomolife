@@ -51,10 +51,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.CANCEL_MULTI_COLLECT_PRO;
 import static com.amkj.dmsh.constant.Url.COLLECT_PRO;
 
-;
-;
-
-
 /**
  * @author LGuiPeng
  * @email liuguipeng163@163.com
@@ -194,6 +190,11 @@ public class MineCollectProductActivity extends BaseActivity {
     @Override
     protected boolean isAddLoad() {
         return true;
+    }
+
+    @Override
+    protected String getEmptyText() {
+        return "你还没有收藏商品\n赶快去收藏";
     }
 
     private void getCollectPro() {

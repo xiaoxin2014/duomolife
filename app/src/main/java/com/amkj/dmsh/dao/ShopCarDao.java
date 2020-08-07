@@ -180,26 +180,36 @@ public class ShopCarDao {
     }
 
     /**
-     * 获取普通结算商品
+     * 获取普通结算商品 0其他商品 1保税仓商品
      */
-    public static List<CartInfoBean> getSettlementGoods(List<MultiItemEntity> shopGoodsList) {
-        List<CartInfoBean> shopCarGoodsSkuList = new ArrayList<>();
+    public static List<CartInfoBean>[] getSettlementGoods(List<MultiItemEntity> shopGoodsList) {
+        List<CartInfoBean>[] goodsArray = new ArrayList[2];
+        List<CartInfoBean> normalGoods = new ArrayList<>();
+        List<CartInfoBean> EcmGoods = new ArrayList<>();
         for (MultiItemEntity multiItemEntity : shopGoodsList) {
             if (multiItemEntity.getItemType() == PRODUCT) {
                 CartInfoBean cartInfoBean = (CartInfoBean) multiItemEntity;
                 if (cartInfoBean.isSelected() && !cartInfoBean.isMainProduct() && !cartInfoBean.isCombineProduct()) {
-                    shopCarGoodsSkuList.add(cartInfoBean);
+                    if (cartInfoBean.isEcm()) {
+                        EcmGoods.add(cartInfoBean);
+                    } else {
+                        normalGoods.add(cartInfoBean);
+                    }
                 }
             }
         }
-        return shopCarGoodsSkuList;
+        goodsArray[0] = normalGoods;
+        goodsArray[1] = EcmGoods;
+        return goodsArray;
     }
 
     /**
-     * 获取组合结算商品
+     * 获取组合结算商品 0其他商品 1保税仓商品
      */
-    public static List<CombineGoodsBean> getCombineGoods(List<MultiItemEntity> shopGoodsList) {
-        List<CombineGoodsBean> combineGoods = new ArrayList<>();
+    public static List<CombineGoodsBean>[] getCombineGoods(List<MultiItemEntity> shopGoodsList) {
+        List<CombineGoodsBean>[] combineGoods = new ArrayList[2];
+        List<CombineGoodsBean> normalGoods = new ArrayList<>();
+        List<CombineGoodsBean> EcmGoods = new ArrayList<>();
         for (MultiItemEntity multiItemEntity : shopGoodsList) {
             if (multiItemEntity.getItemType() == TITLE) {
                 ActivityInfoBean activityInfoBean = (ActivityInfoBean) multiItemEntity;
@@ -210,6 +220,7 @@ public class ShopCarDao {
                         for (CartInfoBean cartInfoBean : subItems) {
                             if (cartInfoBean.isMainProduct()) {
                                 combineGoodsBean.setMainId(0);
+                                combineGoodsBean.setEcm(cartInfoBean.isEcm());
                                 combineGoodsBean.setCount(cartInfoBean.getCount());
                                 combineGoodsBean.setProductId(cartInfoBean.getProductId());
                                 combineGoodsBean.setCartId(cartInfoBean.getId());
@@ -226,11 +237,18 @@ public class ShopCarDao {
                                 combineGoodsBean.getMatchProducts().add(matchProductsBean);
                             }
                         }
-                        combineGoods.add(combineGoodsBean);
+
+                        if (combineGoodsBean.isEcm()) {
+                            EcmGoods.add(combineGoodsBean);
+                        } else {
+                            normalGoods.add(combineGoodsBean);
+                        }
                     }
                 }
             }
         }
+        combineGoods[0] = normalGoods;
+        combineGoods[1] = EcmGoods;
         return combineGoods;
     }
 

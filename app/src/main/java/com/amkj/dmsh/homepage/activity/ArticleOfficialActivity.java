@@ -33,10 +33,10 @@ import com.alibaba.fastjson.JSON;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
-import com.amkj.dmsh.bean.H5ShareBean;
-import com.amkj.dmsh.constant.AppUpdateUtils;
 import com.amkj.dmsh.bean.BaseAddCarProInfoBean;
 import com.amkj.dmsh.bean.CommunalComment;
+import com.amkj.dmsh.bean.H5ShareBean;
+import com.amkj.dmsh.constant.AppUpdateUtils;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
@@ -47,9 +47,10 @@ import com.amkj.dmsh.homepage.bean.JsInteractiveBean;
 import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.NetWorkUtils;
 import com.amkj.dmsh.utils.SharedPreUtils;
-import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.views.HtmlWebView;
+import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
+import com.gyf.barlibrary.ImmersionBar;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.constant.RefreshState;
@@ -156,10 +157,14 @@ public class ArticleOfficialActivity extends BaseActivity {
     private AlertDialogHelper alertDialogHelper;
     private H5ShareBean mShareBean;
 
-
     @Override
     protected int getContentView() {
         return R.layout.activity_article_details;
+    }
+
+    @Override
+    public void setStatusBar() {
+        ImmersionBar.with(this).keyboardEnable(true).navigationBarEnable(false).statusBarDarkFont(true).fullScreen(true).init();
     }
 
     @SuppressLint({"SetJavaScriptEnabled", "AddJavascriptInterface"})

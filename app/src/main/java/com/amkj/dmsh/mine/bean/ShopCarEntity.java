@@ -125,6 +125,7 @@ public class ShopCarEntity extends BaseTimeEntity {
             }
 
             public static class CartInfoBean implements Parcelable, MultiItemEntity {
+
                 /**
                  * isForSale : false
                  * productId : 17590
@@ -170,6 +171,16 @@ public class ShopCarEntity extends BaseTimeEntity {
                 private boolean isCombineProduct;
                 //针对失效商品特殊字段
                 private boolean isValid;
+                //是否是保税仓商品
+                private boolean isEcm;
+
+                public boolean isEcm() {
+                    return isEcm;
+                }
+
+                public void setEcm(boolean ecm) {
+                    isEcm = ecm;
+                }
 
                 public boolean isValid() {
                     return isValid;
@@ -458,6 +469,10 @@ public class ShopCarEntity extends BaseTimeEntity {
                     dest.writeString(this.updated);
                     dest.writeByte(this.isSelected ? (byte) 1 : (byte) 0);
                     dest.writeByte(this.isDelete ? (byte) 1 : (byte) 0);
+                    dest.writeByte(this.isMainProduct ? (byte) 1 : (byte) 0);
+                    dest.writeByte(this.isCombineProduct ? (byte) 1 : (byte) 0);
+                    dest.writeByte(this.isValid ? (byte) 1 : (byte) 0);
+                    dest.writeByte(this.isEcm ? (byte) 1 : (byte) 0);
                 }
 
                 public CartInfoBean() {
@@ -466,7 +481,7 @@ public class ShopCarEntity extends BaseTimeEntity {
                 protected CartInfoBean(Parcel in) {
                     this.isForSale = in.readByte() != 0;
                     this.productId = in.readInt();
-                    this.saleSku = in.readParcelable(SaleSkuBean.class.getClassLoader());
+                    this.saleSku = in.readParcelable(SkuSaleBean.class.getClassLoader());
                     this.saleSkuValue = in.readString();
                     this.count = in.readInt();
                     this.priceTag = in.readString();
@@ -480,9 +495,13 @@ public class ShopCarEntity extends BaseTimeEntity {
                     this.updated = in.readString();
                     this.isSelected = in.readByte() != 0;
                     this.isDelete = in.readByte() != 0;
+                    this.isMainProduct = in.readByte() != 0;
+                    this.isCombineProduct = in.readByte() != 0;
+                    this.isValid = in.readByte() != 0;
+                    this.isEcm = in.readByte() != 0;
                 }
 
-                public static final Parcelable.Creator<CartInfoBean> CREATOR = new Parcelable.Creator<CartInfoBean>() {
+                public static final Creator<CartInfoBean> CREATOR = new Creator<CartInfoBean>() {
                     @Override
                     public CartInfoBean createFromParcel(Parcel source) {
                         return new CartInfoBean(source);

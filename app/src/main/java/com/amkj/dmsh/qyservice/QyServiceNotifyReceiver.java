@@ -4,12 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
 
 import com.amkj.dmsh.MainActivity;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
-import com.qiyukf.nimlib.sdk.NimIntent;
+import com.netease.nimlib.sdk.NimIntent;
 import com.tencent.bugly.beta.tinker.TinkerManager;
+
+import androidx.annotation.Nullable;
 
 /**
  * @author LGuiPeng

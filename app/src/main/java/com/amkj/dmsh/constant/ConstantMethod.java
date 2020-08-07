@@ -1163,36 +1163,6 @@ public class ConstantMethod {
                         }
                     }
                 })
-                /*.rationale(new Rationale<List<String>>() { //如果拒绝了权限 弹窗提醒用户是否取消授权
-                    @Override
-                    public void showRationale(Context context, List<String> data, RequestExecutor executor) {
-                        if (data != null) {
-                            if (alertDialogRequestHelper == null) {
-                                alertDialogRequestHelper = new AlertDialogHelper(context);
-                                alertDialogRequestHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
-                                    @Override
-                                    public void confirm() {
-                                        // 如果用户继续：
-                                        executor.execute();
-                                    }
-
-                                    @Override
-                                    public void cancel() {
-                                        // 如果用户中断：
-                                        executor.cancel();
-                                    }
-                                });
-                            }
-                            alertDialogRequestHelper.setTitle("权限提示")
-                                    .setMsg("还缺少一些必要的权限，为了不影响使用，是否继续申请权限")
-                                    .setConfirmText("继续").setCancelText("取消")
-                                    .setCancelTextColor(context.getResources().getColor(R.color.text_gray_hint_n));
-                            alertDialogRequestHelper.show();
-                        } else {
-                            executor.cancel();
-                        }
-                    }
-                })*/
                 .start();
     }
 

@@ -1,6 +1,5 @@
 package com.amkj.dmsh.homepage.fragment;
 
-import androidx.recyclerview.widget.GridLayoutManager;
 import android.text.TextUtils;
 import android.view.View;
 
@@ -18,6 +17,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import androidx.recyclerview.widget.GridLayoutManager;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -169,4 +170,6 @@ public class SearchDetailsProductNewFragment extends BaseSearchDetailFragment {
             });
         }
     }
+
+
 }

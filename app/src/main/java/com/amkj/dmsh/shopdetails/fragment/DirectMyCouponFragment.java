@@ -2,9 +2,6 @@ package com.amkj.dmsh.shopdetails.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 
@@ -29,6 +26,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
@@ -160,6 +160,11 @@ public class DirectMyCouponFragment extends BaseFragment {
     @Override
     protected boolean isAddLoad() {
         return true;
+    }
+
+    @Override
+    protected String getEmptyText() {
+        return "你的优惠券空空如也";
     }
 
     @Override

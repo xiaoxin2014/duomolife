@@ -173,7 +173,7 @@ public class IntegExchangeDetailActivity extends BaseActivity implements View.On
         });
         rvFootView.rv_integral_indent_price.setNestedScrollingEnabled(false);
         rvFootView.rv_integral_indent_price.setLayoutManager(new LinearLayoutManager(this));
-        indentDiscountAdapter = new IndentDiscountAdapter(priceInfoList);
+        indentDiscountAdapter = new IndentDiscountAdapter(this,priceInfoList);
         rvFootView.rv_integral_indent_price.setAdapter(indentDiscountAdapter);
         ll_indent_bottom.setVisibility(View.GONE);
     }

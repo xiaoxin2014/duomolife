@@ -1,8 +1,6 @@
 package com.amkj.dmsh.shopdetails.activity;
 
 import android.content.Context;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -30,6 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -185,6 +185,15 @@ public class SearchCouponGoodsActivity extends BaseActivity {
         return fl_content;
     }
 
+    @Override
+    protected String getEmptyText() {
+        return "没有找到相关商品\n建议您换个搜索词试试";
+    }
+
+    @Override
+    protected int getEmptyResId() {
+        return R.drawable.search_detail;
+    }
 
     @Override
     protected void onResume() {

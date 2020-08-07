@@ -2,9 +2,6 @@ package com.amkj.dmsh.qyservice;
 
 import android.content.Context;
 import android.os.Build;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -26,12 +23,12 @@ import com.amkj.dmsh.utils.SharedPreUtils;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.google.gson.reflect.TypeToken;
+import com.netease.nimlib.sdk.StatusBarNotificationConfig;
 import com.qiyukf.unicorn.api.ConsultSource;
 import com.qiyukf.unicorn.api.OnMessageItemClickListener;
 import com.qiyukf.unicorn.api.ProductDetail;
 import com.qiyukf.unicorn.api.QuickEntry;
 import com.qiyukf.unicorn.api.QuickEntryListener;
-import com.qiyukf.unicorn.api.StatusBarNotificationConfig;
 import com.qiyukf.unicorn.api.UICustomization;
 import com.qiyukf.unicorn.api.Unicorn;
 import com.qiyukf.unicorn.api.UnreadCountChangeListener;
@@ -49,6 +46,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;

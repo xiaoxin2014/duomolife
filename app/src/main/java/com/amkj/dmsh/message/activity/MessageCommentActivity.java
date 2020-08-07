@@ -193,6 +193,11 @@ public class MessageCommentActivity extends BaseActivity {
         return true;
     }
 
+    @Override
+    protected String getEmptyText() {
+        return "最近20天没有评论消息哦";
+    }
+
     private void getCommentData() {
         if (userId < 1) {
             NetLoadUtils.getNetInstance().showLoadSirEmpty(loadService);

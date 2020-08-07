@@ -337,6 +337,16 @@ public class EditorCommentActivity extends BaseActivity {
     }
 
     @Override
+    protected String getEmptyText() {
+        return "快来留言吧~";
+    }
+
+    @Override
+    protected int getEmptyResId() {
+        return R.drawable.editor_message;
+    }
+
+    @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (ev.getAction() == MotionEvent.ACTION_DOWN) {
             View v = getCurrentFocus();

@@ -20,6 +20,7 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
+import com.amkj.dmsh.dao.ShopCarDao;
 import com.amkj.dmsh.dominant.activity.QualityProductActActivity;
 import com.amkj.dmsh.dominant.adapter.GoodProductAdapter;
 import com.amkj.dmsh.mine.adapter.ShopCarGoodsAdapter;
@@ -28,7 +29,6 @@ import com.amkj.dmsh.mine.bean.ShopCarEntity;
 import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean;
 import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean.CartBean;
 import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean.CartBean.CartInfoBean;
-import com.amkj.dmsh.dao.ShopCarDao;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
@@ -40,10 +40,11 @@ import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
 import com.amkj.dmsh.utils.DoubleUtil;
 import com.amkj.dmsh.utils.KeyboardUtils;
-import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.RectAddAndSubShopcarView;
+import com.amkj.dmsh.views.alertdialog.AlertDialogEcm;
+import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.views.bottomdialog.SkuDialog;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.melnykov.fab.FloatingActionButton;
@@ -156,6 +157,7 @@ public class ShopCarActivity extends BaseActivity {
     private boolean first = true;
     private int mNum;
     private int mPosition;
+    private AlertDialogEcm mAlertDialogEcm;
 
     @Override
     protected int getContentView() {
@@ -239,7 +241,7 @@ public class ShopCarActivity extends BaseActivity {
                                 changeGoods(null, newNum, ADD_NUM, cartInfoBean);
                             }
                         } else {
-                            showToast( R.string.product_sell_out);
+                            showToast(R.string.product_sell_out);
                         }
                     }
                     break;
@@ -352,6 +354,11 @@ public class ShopCarActivity extends BaseActivity {
     @Override
     protected boolean isAddLoad() {
         return true;
+    }
+
+    @Override
+    protected int getEmptyResId() {
+        return R.drawable.cart_empty_icon;
     }
 
     private void getShopCarProInfo() {
@@ -544,21 +551,23 @@ public class ShopCarActivity extends BaseActivity {
                 break;
             //结算
             case R.id.tv_communal_buy_or_count:
-                List<CartInfoBean> settlementGoods = ShopCarDao.getSettlementGoods(shopGoodsList);
-                List<CombineGoodsBean> combineGoods = ShopCarDao.getCombineGoods(shopGoodsList);
-                //结算商品 跳转订单填写
-                if (settlementGoods.size() > 0 || combineGoods.size() > 0) {
-                    Bundle bundle = new Bundle();
-                    if (settlementGoods.size() > 0) {
-                        bundle.putString("goods", GsonUtils.toJson(settlementGoods));
+                List<CartInfoBean> settlementGoods = ShopCarDao.getSettlementGoods(shopGoodsList)[0];
+                List<CartInfoBean> settlementEcmGoods = ShopCarDao.getSettlementGoods(shopGoodsList)[1];
+                List<CombineGoodsBean> combineGoods = ShopCarDao.getCombineGoods(shopGoodsList)[0];
+                List<CombineGoodsBean> combineEcmGoods = ShopCarDao.getCombineGoods(shopGoodsList)[1];
+                //包含保税仓商品以及普通商品需要分开结算
+                if (settlementGoods.size() + combineGoods.size() > 0 && settlementEcmGoods.size() + combineEcmGoods.size() > 0) {
+                    if (mAlertDialogEcm == null) {
+                        mAlertDialogEcm = new AlertDialogEcm(this);
                     }
-
-                    if (combineGoods.size() > 0) {
-                        bundle.putString("combineGoods", GsonUtils.toJson(combineGoods));
-                    }
-                    ConstantMethod.skipIndentWrite(getActivity(), INDENT_W_TYPE, bundle);
-                } else {
-                    showToast("请先选择商品");
+                    mAlertDialogEcm.setOnSettleListener(isEcm -> {
+                        skipWrite(isEcm ? settlementEcmGoods : settlementGoods, isEcm ? combineEcmGoods : combineGoods);
+                    });
+                    mAlertDialogEcm.show();
+                } else if (settlementGoods.size() + combineGoods.size() > 0) {//只有普通商品
+                    skipWrite(settlementGoods, combineGoods);
+                } else {//只有保税仓商品
+                    skipWrite(settlementEcmGoods, combineEcmGoods);
                 }
                 break;
             //点击编辑或者完成
@@ -569,6 +578,23 @@ public class ShopCarActivity extends BaseActivity {
             case R.id.tv_shop_car_del:
                 setDeleteGoodsDialog();
                 break;
+        }
+    }
+
+    //结算商品 跳转订单填写
+    private void skipWrite(List<CartInfoBean> settlementGoods, List<CombineGoodsBean> combineGoods) {
+        if (settlementGoods.size() > 0 || combineGoods.size() > 0) {
+            Bundle bundle = new Bundle();
+            if (settlementGoods.size() > 0) {
+                bundle.putString("goods", GsonUtils.toJson(settlementGoods));
+            }
+
+            if (combineGoods.size() > 0) {
+                bundle.putString("combineGoods", GsonUtils.toJson(combineGoods));
+            }
+            ConstantMethod.skipIndentWrite(getActivity(), INDENT_W_TYPE, bundle);
+        } else {
+            showToast("请先选择商品");
         }
     }
 

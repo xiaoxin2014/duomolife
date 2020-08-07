@@ -18,7 +18,6 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-import androidx.annotation.NonNull;
 import okhttp3.FormBody;
 import okhttp3.Interceptor;
 import okhttp3.Request;
@@ -40,22 +39,20 @@ public class MyInterceptor implements Interceptor {
         mDomoCommon = getCommonApiParameter(mContext);
     }
 
-    @NonNull
     @Override
-    public Response intercept(@NonNull Chain chain) {
-        Request request = chain.request();
-        Request.Builder builder = request.newBuilder();
-        Map<String, Object> newMap = new HashMap<>(mDomoCommon);
-        if (ConstantMethod.userId > 0) {
-            //登录情况下传uid和token
-            newMap.put("uid", ConstantMethod.userId);
-            String token = (String) SharedPreUtils.getParam(TOKEN, "");
-            newMap.put("token", token);
-        }
-
+    public Response intercept(Chain chain) {
         Response response = null;
-        String responseInfo = "";
         try {
+            Request request = chain.request();
+            Request.Builder builder = request.newBuilder();
+            Map<String, Object> newMap = new HashMap<>(mDomoCommon);
+            if (ConstantMethod.userId > 0) {
+                //登录情况下传uid和token
+                newMap.put("uid", ConstantMethod.userId);
+                String token = (String) SharedPreUtils.getParam(TOKEN, "");
+                newMap.put("token", token);
+            }
+
             String DomoJson = new JSONObject(newMap).toString();
             //添加公共请求参数
             String base64 = getBase64(newMap);
@@ -73,7 +70,7 @@ public class MyInterceptor implements Interceptor {
             }
 
             response = chain.proceed(builder.build());
-            responseInfo = response.peekBody(1024 * 1024).string();
+            String responseInfo = response.peekBody(1024 * 1024).string();
             //打印响应结果
             httpLog(request, DomoJson, responseInfo);
         } catch (Exception e) {

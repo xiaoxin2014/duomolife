@@ -339,6 +339,11 @@ public class IntegralIndentFragment extends BaseFragment {
         return true;
     }
 
+    @Override
+    protected String getEmptyText() {
+        return "你还没有积分订单\n赶快买买买";
+    }
+
     private void getIntegralIndentList() {
         if (userId > 0) {
             String url = Url.INTEGRAL_INDENT_LIST;

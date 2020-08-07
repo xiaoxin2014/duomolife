@@ -74,7 +74,7 @@ import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.views.alertdialog.AlertDialogImage;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
-import com.qiyukf.unicorn.api.msg.MsgTypeEnum;
+import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.umeng.socialize.UMShareAPI;
 

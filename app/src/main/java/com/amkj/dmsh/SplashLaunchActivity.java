@@ -57,10 +57,10 @@ public class SplashLaunchActivity extends AppCompatActivity {
         if (isFirstRun()) {
             //保存新用户标志
             SharedPreUtils.setParam(ConstantVariable.DEMO_LIFE_FILE, IS_NEW_USER, true);
-            localImages.add(R.mipmap.guide1);
-            localImages.add(R.mipmap.guide2);
-            localImages.add(R.mipmap.guide3);
-            localImages.add(R.mipmap.guide4);
+            localImages.add(R.drawable.guide1);
+            localImages.add(R.drawable.guide2);
+            localImages.add(R.drawable.guide3);
+            localImages.add(R.drawable.guide4);
             vp_guide_images.setAdapter(new GuideImagesPagerAdapter(SplashLaunchActivity.this, localImages));
             vp_guide_images.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                 @Override

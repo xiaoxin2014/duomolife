@@ -179,7 +179,7 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
         }
         setIntegralData();
         rvIntegralWriteInfo.setLayoutManager(new LinearLayoutManager(this));
-        indentDiscountAdapter = new IndentDiscountAdapter(priceInfoList);
+        indentDiscountAdapter = new IndentDiscountAdapter(this, priceInfoList);
         rvIntegralWriteInfo.setAdapter(indentDiscountAdapter);
         KeyboardUtils.registerSoftInputChangedListener(this, new KeyboardUtils.OnSoftInputChangedListener() {
             @Override

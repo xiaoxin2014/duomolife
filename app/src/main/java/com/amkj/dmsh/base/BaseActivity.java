@@ -3,7 +3,6 @@ package com.amkj.dmsh.base;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,13 +14,9 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.BuildConfig;
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.dominant.activity.QualityGroupShopDetailActivity;
-import com.amkj.dmsh.find.activity.TopicDetailActivity;
-import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
 import com.amkj.dmsh.netloadpage.NetEmptyCallback;
 import com.amkj.dmsh.netloadpage.NetLoadCallback;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.utils.TimeUtils;
 import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.gyf.barlibrary.ImmersionBar;
@@ -35,8 +30,8 @@ import com.lzf.easyfloat.EasyFloat;
 import com.lzf.easyfloat.enums.ShowPattern;
 import com.lzf.easyfloat.permission.PermissionUtils;
 import com.melnykov.fab.FloatingActionButton;
-import com.qiyukf.unicorn.api.msg.MsgTypeEnum;
-import com.qiyukf.unicorn.api.msg.UnicornMessage;
+import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum;
+import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.qiyukf.unicorn.ui.activity.ServiceMessageActivity;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.tencent.stat.StatService;
@@ -86,13 +81,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         mBind = ButterKnife.bind(this);
         if (BuildConfig.DEBUG) Log.d("className", getSimpleName());
         // 注册当前Activity为订阅者
-        EventBus eventBus = EventBus.getDefault();
-        eventBus.register(this);
+        EventBus.getDefault().register(this);
         loadHud = KProgressHUD.create(this)
                 .setCancellable(true)
                 .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
                 .setSize(AutoSizeUtils.mm2px(mAppContext, 50), AutoSizeUtils.mm2px(mAppContext, 50));
-//                .setDimAmount(0.5f)
         //Api通用参数初始化
         commonMap.put("reqId", UUID.randomUUID().toString().replaceAll("-", ""));
         //获取从广告位进入埋点参数
@@ -111,69 +104,13 @@ public abstract class BaseActivity extends AppCompatActivity {
                     loadData();
                 }
             }, NetLoadUtils.getNetInstance().getLoadSirCover());
-            String hintText = "";
-            int resId = R.drawable.net_page_bg;
-            switch (getSimpleName()) {
-                case "ShopScrollDetailsActivity":
-                case "IntegralScrollDetailsActivity":
-                case "ShopTimeScrollDetailsActivity":
-                case "QualityGroupShopDetailActivity":
-                    hintText = "暂时没有商品哦";
-                    break;
-                case "MineInvitationListActivity":
-                    hintText = "你还没有发过帖子\n赶快去发布优质内容吧";
-                    break;
-                case "ShopTimeMyWarmActivity":
-                    hintText = "你还没有设置提醒";
-                    break;
-                case "MineCollectProductActivity":
-                    hintText = "你还没有收藏商品\n赶快去收藏";
-                    break;
-                case "MessageSysMesActivity":
-                    hintText = "最近20天没有通知消息哦";
-                    break;
-                case "MessageIndentActivity":
-                    hintText = "最近20天没有订单消息哦";
-                    break;
-                case "MessageHotActivity":
-                    hintText = "最近20天没有活动消息哦";
-                    break;
-                case "MessageCommentActivity":
-                    hintText = "最近20天没有评论消息哦";
-                    break;
-                case "MessageLikedActivity":
-                    hintText = "最近20天没有赞消息哦";
-                    break;
-                case "MineProductBrowsingHistoryActivity":
-                    hintText = "最近暂无浏览记录哦";
-                    break;
-                case "EditorCommentActivity":
-                    hintText = "快来留言吧~";
-                    resId = R.drawable.editor_message;
-                    break;
-                case "CouponProductActivity":
-                    hintText = "暂无可用券商品";
-                    break;
-                case "ShopCarActivity":
-                    resId = R.drawable.cart_empty_icon;
-                    break;
-                case "SearchCouponGoodsActivity":
-                    hintText = "没有找到相关商品\n建议您换个搜索词试试";
-                    resId = R.drawable.search_detail;
-                    break;
-                default:
-                    hintText = "暂无数据，稍后重试";
-                    break;
-            }
-            String finalHintText = hintText;
-            int finalResId = resId;
             loadService.setCallBack(NetEmptyCallback.class, new Transport() {
                 @Override
                 public void order(Context context, View view) {
                     ImageView iv_communal_pic = view.findViewById(R.id.iv_communal_pic);
-                    iv_communal_pic.setImageResource(finalResId);
+                    iv_communal_pic.setImageResource(getEmptyResId());
                     TextView tv_communal_net_tint = view.findViewById(R.id.tv_communal_net_tint);
-                    tv_communal_net_tint.setText(finalHintText);
+                    tv_communal_net_tint.setText(getEmptyText());
                 }
             });
         }
@@ -182,16 +119,20 @@ public abstract class BaseActivity extends AppCompatActivity {
         loadData();
     }
 
+    protected String getEmptyText() {
+        return "暂无数据，稍后重试";
+    }
+
+    protected int getEmptyResId() {
+        return R.drawable.net_page_bg;
+    }
+
     /**
-     * 设置状态栏颜色
+     * 配置状态栏属性
      */
     public void setStatusBar() {
-        if (this instanceof ShopScrollDetailsActivity || this instanceof TopicDetailActivity || this instanceof ArticleOfficialActivity || this instanceof QualityGroupShopDetailActivity) {
-            ImmersionBar.with(this).keyboardEnable(true).navigationBarEnable(false).statusBarDarkFont(true).fullScreen(true).init();
-        } else {
-            //设置共同沉浸式样式
-            ImmersionBar.with(this).statusBarColor(R.color.colorPrimary).keyboardEnable(true).navigationBarEnable(false).statusBarDarkFont(true).fitsSystemWindows(true).init();
-        }
+        //状态栏白底黑字
+        ImmersionBar.with(this).statusBarColor(R.color.colorPrimary).keyboardEnable(true).navigationBarEnable(false).statusBarDarkFont(true).fitsSystemWindows(true).init();
     }
 
     @Override
@@ -215,7 +156,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         MobclickAgent.onPause(this);
 //        腾讯移动分析
         StatService.onPause(this);
-
         JzvdStd.releaseAllVideos();
     }
 
@@ -242,7 +182,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         try {
             //收到新的七鱼客服消息
             if (message.type.equals(RECEIVED_NEW_QY_MESSAGE) && message.result != null) {
-                UnicornMessage unicornMessage = (UnicornMessage) message.result;
+                IMMessage unicornMessage = (IMMessage)  message.result;
                 //MsgTypeEnum.text
                 MsgTypeEnum msgType = unicornMessage.getMsgType();
                 long msgTime = System.currentTimeMillis() - unicornMessage.getTime();
@@ -295,17 +235,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     // 传递EventBus事件类型结果，子类实现逻辑
     protected void postEventResult(@NonNull EventMessage message) {
-    }
-
-    // 传送其他结果，子类实现逻辑
-    protected void postOtherResult(@NonNull Object message) {
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        // 如果你的app可以横竖屏切换，并且适配4.4或者emui3手机请务必在onConfigurationChanged方法里添加这句话
-//        setStatusBar();
     }
 
     @Override
@@ -416,10 +345,12 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        // 如果通知栏的权限被手动关闭了
+        /**
+         * 华为荣耀，三星等关闭通知栏权限后原生Toast无法弹出，ToastUtils在Application初始化时会对没有通知栏权限的情况进行判断和兼容
+         * 但是进入app之后，手动关闭通知权限，无法弹出Toast，重启应用才能后生效
+         */
         if (!NotificationManagerCompat.from(this).areNotificationsEnabled() &&
                 !"SupportToast".equals(ToastUtils.getToast().getClass().getSimpleName())) {
-            // 因为吐司只有初始化的时候才会判断通知权限有没有开启，根据这个通知开关来显示原生的吐司还是兼容的吐司
             ToastUtils.init(TinkerManager.getApplication());
             recreate();
         }

@@ -74,6 +74,7 @@ import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.amkj.dmsh.utils.webformatdata.ShareDataBean;
+import com.amkj.dmsh.views.alertdialog.AlertDialogTax;
 import com.amkj.dmsh.views.bottomdialog.SkuDialog;
 import com.amkj.dmsh.views.flycoTablayout.CommonTabLayout;
 import com.amkj.dmsh.views.flycoTablayout.listener.CustomTabEntity;
@@ -321,6 +322,10 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     TextView mTvPreSaleDeliveryTime;
     @BindView(R.id.ll_market_and_province)
     LinearLayout mllMarketAndProvince;
+    @BindView(R.id.tv_tax_text)
+    TextView mTvTaxText;
+    @BindView(R.id.ll_tax_txt)
+    LinearLayout mLlTaxText;
 
 
     //    赠品信息
@@ -368,11 +373,16 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     private CountDownTimer mCountDownEndTimer;
     private CountDownTimer mCountDownStartTimer;
     private CountDownTimer mCountDownForSale;
-
+    private AlertDialogTax mAlertDialogTax;
 
     @Override
     protected int getContentView() {
         return R.layout.activity_ql_shop_pro_details;
+    }
+
+    @Override
+    public void setStatusBar() {
+        ImmersionBar.with(this).keyboardEnable(true).navigationBarEnable(false).statusBarDarkFont(true).fullScreen(true).init();
     }
 
     @Override
@@ -1127,6 +1137,9 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             fbl_details_market_label.setVisibility(View.INVISIBLE);
         }
 
+        //进口税
+        mTvTaxText.setText(getStringsFormat(this, R.string.tax_text, shopProperty.getTaxText()));
+        mLlTaxText.setVisibility(!TextUtils.isEmpty(shopProperty.getTaxText()) ? VISIBLE : GONE);
 
         //发货地以及发货时间
         mLlShippingProvince.setVisibility(!TextUtils.isEmpty(shopProperty.getShippingProvince()) ? VISIBLE : GONE);
@@ -1140,7 +1153,24 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
         //设置商品标题
         String productName = TextUtils.isEmpty(shopProperty.getSubtitle()) ? shopProperty.getName() : (shopProperty.getSubtitle() + "•" + shopProperty.getName());
-        tv_ql_sp_pro_sc_name.setText(getStrings(productName));
+        String ecmTag = shopProperty.getEcmTag();
+        //跨境标识
+        if (!TextUtils.isEmpty(ecmTag)) {
+            Link link = new Link("\t" + ecmTag + "\t");
+            link.setTextColor(Color.parseColor("#ffffff"));
+            link.setTextSize(AutoSizeUtils.mm2px(mAppContext, 24));
+            link.setBgColor(Color.parseColor("#ffb20b"));
+            link.setBgRadius(AutoSizeUtils.mm2px(this, 5));
+            link.setUnderlined(false);
+            link.setHighlightAlpha(0f);
+            CharSequence charSequence = LinkBuilder.from(this, link.getText() + "\t" + productName)
+                    .addLink(link)
+                    .build();
+            tv_ql_sp_pro_sc_name.setText(charSequence);
+        } else {
+            tv_ql_sp_pro_sc_name.setText(productName);
+        }
+
 
         // 商品卖点
         List<String> buyReasonList = shopProperty.getBuyReason();
@@ -1667,10 +1697,9 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         }
     }
 
-    @OnClick({R.id.ll_back, R.id.ll_back2, R.id.ll_service, R.id.ll_service2, R.id.ll_share, R.id.ll_share2,
-            R.id.ll_product_activity_detail, R.id.tv_sp_details_service,
-            R.id.tv_sp_details_add_car, R.id.tv_sp_details_buy_it, R.id.tv_sp_details_collect,
-            R.id.tv_group_product, R.id.iv_ql_shop_pro_cp_tag, R.id.tv_ql_sp_pro_sku, R.id.ll_layout_pro_sc_tag, R.id.tv_shop_comment_more})
+    @OnClick({R.id.ll_back, R.id.ll_back2, R.id.ll_service, R.id.ll_service2, R.id.ll_share, R.id.ll_share2, R.id.ll_product_activity_detail, R.id.tv_sp_details_service,
+            R.id.tv_sp_details_add_car, R.id.tv_sp_details_buy_it, R.id.tv_sp_details_collect, R.id.tv_group_product, R.id.iv_ql_shop_pro_cp_tag, R.id.tv_ql_sp_pro_sku,
+            R.id.ll_layout_pro_sc_tag, R.id.tv_shop_comment_more, R.id.ll_tax_txt})
     public void onViewClicked(View view) {
         Intent intent;
         switch (view.getId()) {
@@ -1816,6 +1845,13 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                         alertDialog.show();
                     }
                 }
+                break;
+            //税费说明
+            case R.id.ll_tax_txt:
+                if (mAlertDialogTax == null) {
+                    mAlertDialogTax = new AlertDialogTax(this, shopPropertyBean);
+                }
+                mAlertDialogTax.show(Gravity.BOTTOM);
                 break;
         }
     }

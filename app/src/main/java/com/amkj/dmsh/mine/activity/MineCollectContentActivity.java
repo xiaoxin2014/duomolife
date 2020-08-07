@@ -1,7 +1,6 @@
 package com.amkj.dmsh.mine.activity;
 
 import android.content.Intent;
-import androidx.viewpager.widget.ViewPager;
 import android.view.View;
 import android.widget.TextView;
 
@@ -10,6 +9,7 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.mine.adapter.MineContentPageAdapter;
 import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
 
+import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.OnClick;
 import me.jessyan.autosize.utils.AutoSizeUtils;

@@ -22,6 +22,19 @@ public class PriceInfoBean implements Parcelable {
     private String name;
     @SerializedName(value = "totalPriceName", alternate = "priceText")
     private String totalPriceName;
+    private String flag;
+
+    public boolean isEcm() {
+        return "ecm".equals(flag);
+    }
+
+    public String getFlag() {
+        return flag;
+    }
+
+    public void setFlag(String flag) {
+        this.flag = flag;
+    }
 
     public String getColor() {
         return color;

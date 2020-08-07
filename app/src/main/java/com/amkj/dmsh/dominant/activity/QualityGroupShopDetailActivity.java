@@ -293,6 +293,11 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
     }
 
     @Override
+    public void setStatusBar() {
+        ImmersionBar.with(this).keyboardEnable(true).navigationBarEnable(false).statusBarDarkFont(true).fullScreen(true).init();
+    }
+
+    @Override
     protected void initViews() {
         //动态修改标题栏padding
         statusBarHeight = ImmersionBar.getStatusBarHeight(this);

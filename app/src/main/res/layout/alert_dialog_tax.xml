@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/sc_mm_32"
+        android:layout_marginBottom="@dimen/sc_mm_50"
+        android:gravity="center"
+        android:text="税费说明"
+        android:textColor="@color/text_black_t"
+        android:textSize="@dimen/sc_mm_28" />
+
+    <LinearLayout
+        android:layout_marginLeft="@dimen/sc_mm_26"
+        android:layout_marginRight="@dimen/sc_mm_50"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="left|top"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/shap_dot_black"
+            android:drawablePadding="@dimen/sc_mm_11"
+            android:text="商品进口税"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_24" />
+
+        <TextView
+            android:id="@+id/tv_tax_explain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/sc_mm_44"
+            android:text="@string/tv_tax_explain"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_24" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/ll_tax_point"
+        android:layout_marginLeft="@dimen/sc_mm_26"
+        android:layout_marginRight="@dimen/sc_mm_50"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/sc_mm_50"
+        android:gravity="left|top"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/shap_dot_black"
+            android:drawablePadding="@dimen/sc_mm_11"
+            android:text="进口税税率"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_24" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/sc_mm_44"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_tax_point"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/defaul"
+                android:textColor="@color/text_black_t"
+                android:textSize="@dimen/sc_mm_24" />
+
+            <TextView
+                android:id="@+id/tv_tax_point_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tax_point_desc"
+                android:textColor="@color/color_blue_reply_com"
+                android:textSize="@dimen/sc_mm_24" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginLeft="@dimen/sc_mm_26"
+        android:layout_marginRight="@dimen/sc_mm_50"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/sc_mm_50"
+        android:gravity="left|top"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/shap_dot_black"
+            android:drawablePadding="@dimen/sc_mm_11"
+            android:text="进口税计算"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_24" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/sc_mm_44"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="进口税=商家完税价格（包括运费)*税率"
+                android:textColor="@color/text_black_t"
+                android:textSize="@dimen/sc_mm_24" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="（完税价格由海关最终认定)"
+                android:textColor="@color/color_blue_reply_com"
+                android:textSize="@dimen/sc_mm_24" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_confirm"
+        android:layout_marginTop="@dimen/sc_mm_50"
+        android:background="#FFFF5B6E"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="@dimen/sc_mm_35"
+        android:text="确定"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sc_mm_30" />
+</LinearLayout>

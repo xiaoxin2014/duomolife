@@ -1,9 +1,6 @@
 package com.amkj.dmsh.mine.fragment;
 
 import android.content.Intent;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
 import com.amkj.dmsh.R;
@@ -26,6 +23,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 
 import static android.app.Activity.RESULT_OK;
@@ -39,8 +39,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.Url.COLLECT_SPECIAL;
 
-;
-;
 
 /**
  * @author LGuiPeng
@@ -148,6 +146,11 @@ public class CollectSpecialFragment extends BaseFragment {
     @Override
     protected boolean isAddLoad() {
         return true;
+    }
+
+    @Override
+    protected String getEmptyText() {
+        return "你还没有收藏内容\n赶快去收藏";
     }
 
     private void getInvitationList() {

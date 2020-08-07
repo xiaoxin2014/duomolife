@@ -1,9 +1,6 @@
 package com.amkj.dmsh.mine.fragment;
 
 import android.content.Intent;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
@@ -29,6 +26,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 
 import static android.app.Activity.RESULT_OK;
@@ -47,8 +47,6 @@ import static com.amkj.dmsh.constant.Url.COLLECT_INVITATION;
 import static com.amkj.dmsh.constant.Url.F_ARTICLE_COLLECT;
 import static com.amkj.dmsh.constant.Url.F_ARTICLE_DETAILS_FAVOR;
 
-;
-;
 
 /**
  * @author LGuiPeng
@@ -223,6 +221,11 @@ public class CollectInvitationFragment extends BaseFragment {
     @Override
     protected boolean isAddLoad() {
         return true;
+    }
+
+    @Override
+    protected String getEmptyText() {
+        return "你还没有收藏内容\n赶快去收藏";
     }
 
     private void getInvitationList() {

@@ -21,6 +21,7 @@ import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.views.JzVideo.JzVideoPlayerStatusDialog;
 import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
 import com.google.android.material.appbar.AppBarLayout;
+import com.gyf.barlibrary.ImmersionBar;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import org.greenrobot.eventbus.EventBus;
@@ -96,6 +97,11 @@ public class TopicDetailActivity extends BaseActivity {
     @Override
     protected int getContentView() {
         return R.layout.activity_topic_detail;
+    }
+
+    @Override
+    public void setStatusBar() {
+        ImmersionBar.with(this).keyboardEnable(true).navigationBarEnable(false).statusBarDarkFont(true).fullScreen(true).init();
     }
 
     @Override

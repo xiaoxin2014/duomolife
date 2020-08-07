@@ -38,8 +38,6 @@ import java.util.List;
 import java.util.Map;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -279,22 +277,6 @@ public class HomePageFragment extends BaseFragment {
     @Override
     protected boolean isLazy() {
         return false;
-    }
-
-    public String getFragmentName() {
-        if (mTablayoutHome != null && mTablayoutHome.getViewPager() != null) {
-            int currentTab = mTablayoutHome.getCurrentTab();
-            PagerAdapter adapter = mTablayoutHome.getViewPager().getAdapter();
-            if (adapter instanceof HomePageNewAdapter) {
-                Fragment item = ((HomePageNewAdapter) adapter).getItem(currentTab);
-                if (item != null) {
-                    return item.getClass().getSimpleName();
-                }
-            } else {
-                return "";
-            }
-        }
-        return "";
     }
 
     @Override

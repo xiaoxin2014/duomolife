@@ -451,6 +451,27 @@ public abstract class BaseSearchDetailFragment extends BaseFragment {
     }
 
     @Override
+    protected String getEmptyText() {
+        switch (getClass().getSimpleName()) {
+            case "SearchDetailsProductNewFragment":
+                return "没有找到相关商品\n建议您换个搜索词试试";
+            case "SearchDetailsArticleFragment":
+                return "没有找到相关种草\n建议您换个搜索词试试";
+            case "SearchDetailsTopicFragment":
+                return "没有找到相关话题\n建议您换个搜索词试试";
+            case "SearchDetailsUserFragment":
+                return "没有找到相关用户\n建议您换个搜索词试试";
+            default:
+                return "暂无数据，稍后重试";
+        }
+    }
+
+    @Override
+    protected int getEmptyResId() {
+        return R.drawable.search_detail;
+    }
+
+    @Override
     protected boolean isDataInitiated() {
         return false;
     }

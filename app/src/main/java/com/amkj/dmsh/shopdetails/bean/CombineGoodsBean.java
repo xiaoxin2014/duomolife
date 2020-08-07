@@ -26,8 +26,18 @@ public class CombineGoodsBean implements Parcelable {
     private int skuId;
     private int count;
     private int cartId;
+    //是否是保税仓商品
+    private boolean isEcm;
+
     private List<MatchProductsBean> matchProducts;
 
+    public boolean isEcm() {
+        return isEcm;
+    }
+
+    public void setEcm(boolean ecm) {
+        isEcm = ecm;
+    }
 
     public int getCartId() {
         return cartId;
@@ -156,6 +166,7 @@ public class CombineGoodsBean implements Parcelable {
         };
     }
 
+
     @Override
     public int describeContents() {
         return 0;
@@ -168,6 +179,7 @@ public class CombineGoodsBean implements Parcelable {
         dest.writeInt(this.skuId);
         dest.writeInt(this.count);
         dest.writeInt(this.cartId);
+        dest.writeByte(this.isEcm ? (byte) 1 : (byte) 0);
         dest.writeTypedList(this.matchProducts);
     }
 
@@ -180,6 +192,7 @@ public class CombineGoodsBean implements Parcelable {
         this.skuId = in.readInt();
         this.count = in.readInt();
         this.cartId = in.readInt();
+        this.isEcm = in.readByte() != 0;
         this.matchProducts = in.createTypedArrayList(MatchProductsBean.CREATOR);
     }
 
@@ -194,5 +207,4 @@ public class CombineGoodsBean implements Parcelable {
             return new CombineGoodsBean[size];
         }
     };
-
 }

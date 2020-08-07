@@ -269,6 +269,11 @@ public class SpringSaleFragment extends BaseFragment {
         return true;
     }
 
+    @Override
+    protected String getEmptyText() {
+        return "暂时没有商品哦";
+    }
+
     private void getProductData() {
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", page);

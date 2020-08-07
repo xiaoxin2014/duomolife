@@ -16,7 +16,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            <com.scwang.smartrefresh.layout.SmartRefreshLayout
                 android:id="@+id/smart_ql_sp_pro_details"
                 android:layout_width="match_parent"
                 android:layout_height="0px"
@@ -89,17 +89,48 @@
                                 android:id="@+id/tv_ql_sp_pro_sc_name"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
                                 android:ellipsize="end"
+                                android:gravity="center_vertical"
                                 android:maxLines="2"
                                 android:paddingLeft="@dimen/sc_mm_30"
                                 android:paddingTop="@dimen/sc_mm_20"
                                 android:paddingRight="@dimen/sc_mm_30"
                                 android:paddingBottom="@dimen/sc_mm_10"
+                                android:text="@string/defaul"
                                 android:textColor="@color/text_black_t"
                                 android:textSize="@dimen/sc_mm_32"
                                 android:visibility="visible" />
 
+
                             <include layout="@layout/layout_scrool_detail_price" />
+
+                            <LinearLayout
+                                android:id="@+id/ll_tax_txt"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/sc_mm_30"
+                                android:layout_marginBottom="@dimen/sc_mm_20"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal"
+                                android:visibility="gone">
+
+                                <TextView
+                                    android:id="@+id/tv_tax_text"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:text="进口税"
+                                    android:textColor="@color/text_black_t"
+                                    android:textSize="@dimen/sc_mm_24" />
+
+                                <ImageView
+                                    android:layout_width="@dimen/sc_mm_24"
+                                    android:layout_height="@dimen/sc_mm_24"
+                                    android:layout_marginLeft="@dimen/sc_mm_13"
+                                    android:src="@drawable/ql_ques_icon" />
+                            </LinearLayout>
+
 
                             <LinearLayout
                                 android:id="@+id/ll_market_and_province"

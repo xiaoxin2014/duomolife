@@ -1,7 +1,5 @@
 package com.amkj.dmsh.shopdetails.bean;
 
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.text.TextUtils;
 
 import com.amkj.dmsh.base.BaseTimeEntity;
@@ -285,7 +283,7 @@ public class IndentWriteEntity extends BaseTimeEntity {
                 this.combineMatchProducts = combineMatchProducts;
             }
 
-            public static class ProductInfoBean implements Parcelable {
+            public static class ProductInfoBean  {
 
                 /**
                  * skuName : 颜色:藏青色,尺码:39/40
@@ -337,6 +335,15 @@ public class IndentWriteEntity extends BaseTimeEntity {
                 //是否是赠品
                 private int isPresent;
 
+                private String ecmTag;
+
+                public String getEcmTag() {
+                    return ecmTag;
+                }
+
+                public void setEcmTag(String ecmTag) {
+                    this.ecmTag = ecmTag;
+                }
 
                 public boolean isPresent() {
                     return isPresent == 1;
@@ -515,7 +522,7 @@ public class IndentWriteEntity extends BaseTimeEntity {
                 }
 
 
-                public static class PresentInfo implements Parcelable {
+                public static class PresentInfo  {
 
                     /**
                      * id : 3
@@ -550,103 +557,7 @@ public class IndentWriteEntity extends BaseTimeEntity {
                     public void setPicUrl(String picUrl) {
                         this.picUrl = picUrl;
                     }
-
-                    @Override
-                    public int describeContents() {
-                        return 0;
-                    }
-
-                    @Override
-                    public void writeToParcel(Parcel dest, int flags) {
-                        dest.writeInt(this.id);
-                        dest.writeString(this.name);
-                        dest.writeString(this.picUrl);
-                    }
-
-                    public PresentInfo() {
-                    }
-
-                    protected PresentInfo(Parcel in) {
-                        this.id = in.readInt();
-                        this.name = in.readString();
-                        this.picUrl = in.readString();
-                    }
-
-                    public static final Creator<PresentInfo> CREATOR = new Creator<PresentInfo>() {
-                        @Override
-                        public PresentInfo createFromParcel(Parcel source) {
-                            return new PresentInfo(source);
-                        }
-
-                        @Override
-                        public PresentInfo[] newArray(int size) {
-                            return new PresentInfo[size];
-                        }
-                    };
                 }
-
-                @Override
-                public int describeContents() {
-                    return 0;
-                }
-
-                @Override
-                public void writeToParcel(Parcel dest, int flags) {
-                    dest.writeString(this.skuName);
-                    dest.writeString(this.picUrl);
-                    dest.writeString(this.price);
-                    dest.writeString(this.name);
-                    dest.writeInt(this.count);
-                    dest.writeInt(this.id);
-                    dest.writeInt(this.saleSkuId);
-                    dest.writeString(this.activitypriceDesc);
-                    dest.writeString(this.notBuyAreaIds);
-                    dest.writeString(this.notBuyAreaInfo);
-                    dest.writeInt(this.real);
-                    dest.writeInt(this.allowCoupon);
-                    dest.writeParcelable(this.presentInfo, flags);
-                    dest.writeInt(this.showLine);
-                    dest.writeInt(this.showActInfo);
-                    dest.writeParcelable(this.activityInfoBean, flags);
-                    dest.writeInt(this.combineMainId);
-                    dest.writeInt(this.combineMatchId);
-                }
-
-                public ProductInfoBean() {
-                }
-
-                protected ProductInfoBean(Parcel in) {
-                    this.skuName = in.readString();
-                    this.picUrl = in.readString();
-                    this.price = in.readString();
-                    this.name = in.readString();
-                    this.count = in.readInt();
-                    this.id = in.readInt();
-                    this.saleSkuId = in.readInt();
-                    this.activitypriceDesc = in.readString();
-                    this.notBuyAreaIds = in.readString();
-                    this.notBuyAreaInfo = in.readString();
-                    this.real = in.readInt();
-                    this.allowCoupon = in.readInt();
-                    this.presentInfo = in.readParcelable(PresentInfo.class.getClassLoader());
-                    this.showLine = in.readInt();
-                    this.showActInfo = in.readInt();
-                    this.activityInfoBean = in.readParcelable(ActivityInfoBean.class.getClassLoader());
-                    this.combineMainId = in.readInt();
-                    this.combineMatchId = in.readInt();
-                }
-
-                public static final Creator<ProductInfoBean> CREATOR = new Creator<ProductInfoBean>() {
-                    @Override
-                    public ProductInfoBean createFromParcel(Parcel source) {
-                        return new ProductInfoBean(source);
-                    }
-
-                    @Override
-                    public ProductInfoBean[] newArray(int size) {
-                        return new ProductInfoBean[size];
-                    }
-                };
             }
         }
 

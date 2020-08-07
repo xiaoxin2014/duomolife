@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/border_rect_10dp_bg_white"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/sc_mm_40"
+        android:text="请分开结算以下商品"
+        android:textColor="@color/text_black_t"
+        android:textSize="@dimen/sc_mm_28" />
+
+    <RadioGroup
+        android:id="@+id/radio_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/sc_mm_35"
+        android:background="@drawable/border_bottom_line"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/sc_mm_45"
+        android:paddingTop="@dimen/sc_mm_20">
+
+
+        <RadioButton
+            android:id="@+id/rb_ecm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:button="@null"
+            android:checked="true"
+            android:drawableLeft="@drawable/selector_pay_way"
+            android:drawablePadding="@dimen/sc_mm_20"
+            android:gravity="center"
+            android:text="海外购保税仓商品"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_32" />
+
+        <RadioButton
+            android:id="@+id/rb_other"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sc_mm_17"
+            android:background="@color/transparent"
+            android:button="@null"
+            android:drawableLeft="@drawable/selector_pay_way"
+            android:drawablePadding="@dimen/sc_mm_20"
+            android:gravity="center"
+            android:text="其他商品"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_32" />
+    </RadioGroup>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sc_mm_88"
+        android:divider="@drawable/item_divider_gray_f_one_px"
+        android:orientation="horizontal"
+        android:showDividers="middle">
+
+        <TextView
+            android:id="@+id/tv_back"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="返回购物车"
+            android:textColor="@color/color_blue_reply_com"
+            android:textSize="@dimen/sc_mm_34" />
+
+        <TextView
+            android:id="@+id/tv_settle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="去结算"
+            android:textColor="@color/text_login_blue_z"
+            android:textSize="@dimen/sc_mm_34" />
+    </LinearLayout>
+</LinearLayout>

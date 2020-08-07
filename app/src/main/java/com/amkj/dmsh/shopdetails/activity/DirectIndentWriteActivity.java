@@ -312,7 +312,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
             }
         });
         pullFootView.rv_indent_write_info.setLayoutManager(new LinearLayoutManager(getActivity()));
-        indentDiscountAdapter = new IndentDiscountAdapter(priceInfoList);
+        indentDiscountAdapter = new IndentDiscountAdapter(this, priceInfoList);
         pullFootView.rv_indent_write_info.setAdapter(indentDiscountAdapter);
 
         //监听软键盘

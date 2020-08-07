@@ -1,6 +1,7 @@
 package com.amkj.dmsh.shopdetails.adapter;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.text.TextUtils;
 import android.util.SparseArray;
 import android.widget.TextView;
@@ -12,9 +13,14 @@ import com.amkj.dmsh.utils.CountDownTimer;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
+import com.klinker.android.link_builder.Link;
+import com.klinker.android.link_builder.LinkBuilder;
 
 import java.util.List;
 
+import me.jessyan.autosize.utils.AutoSizeUtils;
+
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getSpannableString;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
@@ -83,7 +89,24 @@ public class WriteProductListAdapter extends BaseQuickAdapter<ProductInfoBean, B
         //主商品
         if (!productInfoBean.isPresent()) {
             GlideImageLoaderUtil.loadCenterCrop(context, helper.getView(R.id.iv_direct_indent_pro), productInfoBean.getPicUrl());
-            helper.setText(R.id.tv_direct_indent_pro_name, getStrings(productInfoBean.getName()))
+            //商品名称
+            CharSequence name = getStrings(productInfoBean.getName());
+            String ecmTag = productInfoBean.getEcmTag();
+            //跨境标识
+            if (!TextUtils.isEmpty(ecmTag)) {
+                Link link = new Link("\t" + ecmTag + "\t");
+                link.setTextColor(Color.parseColor("#ffffff"));
+                link.setTextSize(AutoSizeUtils.mm2px(mAppContext, 24));
+                link.setBgColor(Color.parseColor("#ffb20b"));
+                link.setBgRadius(AutoSizeUtils.mm2px(context, 5));
+                link.setUnderlined(false);
+                link.setHighlightAlpha(0f);
+                name = LinkBuilder.from(context, link.getText() + "\t" + name)
+                        .addLink(link)
+                        .build();
+            }
+
+            helper.setText(R.id.tv_direct_indent_pro_name, name)
                     .setText(R.id.tv_direct_indent_pro_sku, getStrings(productInfoBean.getSkuName()))
                     .setText(R.id.tv_direct_pro_count, "x" + productInfoBean.getCount())
                     .setGone(R.id.iv_indent_pro_use_cp, productInfoBean.getAllowCoupon() != 0)

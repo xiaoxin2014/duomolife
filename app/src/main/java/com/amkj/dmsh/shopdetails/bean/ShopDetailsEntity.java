@@ -95,6 +95,14 @@ public class ShopDetailsEntity extends BaseEntity {
         private String shippingProvince;
         private String preSaleDeliveryTime;
 
+
+        //保税仓商品相关
+        private String taxExplain;
+        private String taxPoint;//税率
+        private String taxText;
+        private String ecmTag;
+
+
         //自定义字段
         private long addSecond;
 
@@ -116,6 +124,38 @@ public class ShopDetailsEntity extends BaseEntity {
 
         public void setNewPreSaleInfo(List<Map<String, String>> newPreSaleInfo) {
             this.newPreSaleInfo = newPreSaleInfo;
+        }
+
+        public String getEcmTag() {
+            return ecmTag;
+        }
+
+        public void setEcmTag(String ecmTag) {
+            this.ecmTag = ecmTag;
+        }
+
+        public String getTaxExplain() {
+            return taxExplain;
+        }
+
+        public void setTaxExplain(String taxExplain) {
+            this.taxExplain = taxExplain;
+        }
+
+        public String getTaxPoint() {
+            return taxPoint;
+        }
+
+        public void setTaxPoint(String taxPoint) {
+            this.taxPoint = taxPoint;
+        }
+
+        public String getTaxText() {
+            return taxText;
+        }
+
+        public void setTaxText(String taxText) {
+            this.taxText = taxText;
         }
 
         public String getShippingProvince() {

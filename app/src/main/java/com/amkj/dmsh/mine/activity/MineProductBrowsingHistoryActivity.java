@@ -1,11 +1,6 @@
 package com.amkj.dmsh.mine.activity;
 
 import android.content.Intent;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.CheckBox;
@@ -36,6 +31,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -386,6 +386,11 @@ public class MineProductBrowsingHistoryActivity extends BaseActivity {
     @Override
     public View getLoadView() {
         return smart_communal_refresh;
+    }
+
+    @Override
+    protected String getEmptyText() {
+        return "最近暂无浏览记录哦";
     }
 
     /**

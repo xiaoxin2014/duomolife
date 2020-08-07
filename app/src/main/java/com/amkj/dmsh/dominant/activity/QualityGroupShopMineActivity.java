@@ -151,7 +151,9 @@ public class QualityGroupShopMineActivity extends BaseActivity {
 
     private void goPay(String orderNo) {
         showLoadhud(getActivity());
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.GET_PAYTYPE_LIST, new NetLoadListenerHelper() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("orderNo", orderNo);
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.GET_PAYTYPE_LIST, map,new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 dismissLoadhud(getActivity());
