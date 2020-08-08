@@ -167,7 +167,8 @@ public class QualityGroupShopActivity extends BaseActivity {
                     }
                 };
             }
-            groupShopHeaderView.ad_communal_banner.startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
+            groupShopHeaderView.ad_communal_banner.setPages(this, cbViewHolderCreator, adBeanList)
+                    .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
         } else {
             groupShopHeaderView.rel_communal_banner.setVisibility(View.GONE);
         }
@@ -199,7 +200,7 @@ public class QualityGroupShopActivity extends BaseActivity {
                             } else if (qualityGroupEntity.getCode().equals(EMPTY_CODE)) {
                                 qualityGroupShopAdapter.loadMoreEnd();
                             } else {
-                                showToast( qualityGroupEntity.getMsg());
+                                showToast(qualityGroupEntity.getMsg());
                             }
                         }
 
