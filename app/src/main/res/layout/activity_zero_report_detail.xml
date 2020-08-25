@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/activity_domolife_header" />
+
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:cube_ptr="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/smart_communal_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        cube_ptr:srlEnableOverScrollBounce="false">
+
+        <include layout="@layout/layout_refresh_header_gif" />
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:id="@+id/rl_product"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/sc_mm_180"
+                    android:layout_marginLeft="@dimen/sc_mm_28"
+                    android:layout_marginTop="@dimen/sc_mm_34"
+                    android:layout_marginRight="@dimen/sc_mm_28"
+                    android:layout_marginBottom="@dimen/sc_mm_34"
+                    android:background="@drawable/shap_zero_product_bg">
+
+                    <ImageView
+                        android:id="@+id/iv_cover"
+                        android:layout_width="@dimen/sc_mm_180"
+                        android:layout_height="@dimen/sc_mm_180"
+                        android:scaleType="centerCrop" />
+
+                    <TextView
+                        android:id="@+id/tv_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/sc_mm_29"
+                        android:layout_marginTop="@dimen/sc_mm_15"
+                        android:layout_toRightOf="@+id/iv_cover"
+                        android:ellipsize="end"
+                        android:lineSpacingMultiplier="0.8"
+                        android:maxLines="2"
+                        android:text="@string/defaul"
+                        android:textColor="@color/text_black_t"
+                        android:textSize="@dimen/sc_mm_30" />
+
+                    <TextView
+                        android:id="@+id/tv_price"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginLeft="@dimen/sc_mm_29"
+                        android:layout_marginRight="@dimen/sc_mm_30"
+                        android:layout_marginBottom="@dimen/sc_mm_10"
+                        android:layout_toRightOf="@+id/iv_cover"
+                        android:text="@string/defaul"
+                        android:textColor="@color/text_black_t"
+                        android:textSize="@dimen/sc_mm_34"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_buy"
+                        android:layout_width="@dimen/sc_mm_160"
+                        android:layout_height="@dimen/sc_mm_50"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginRight="@dimen/sc_mm_30"
+                        android:layout_marginBottom="@dimen/sc_mm_12"
+                        android:background="@drawable/shap_buy_now_orange_bg"
+                        android:gravity="center"
+                        android:text="去购买"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sc_mm_24" />
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/sc_mm_1"
+                    android:background="@color/text_color_e_s" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_report"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false" />
+
+                <TextView
+                    android:id="@+id/tv_total_num"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="@dimen/sc_mm_35"
+                    android:gravity="center"
+                    android:text="@string/total_report"
+                    android:textColor="@color/text_login_gray_s"
+                    android:textSize="@dimen/sc_mm_28" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@color/light_gray_f"
+                    android:gravity="center"
+                    android:padding="@dimen/sc_mm_34"
+                    android:text=" - 相似商品 -"
+                    android:textColor="@color/text_login_gray_s"
+                    android:textSize="@dimen/sc_mm_32" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_rcommend"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/light_gray_f"
+                    android:nestedScrollingEnabled="false" />
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+</LinearLayout>

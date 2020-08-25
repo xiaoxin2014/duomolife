@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_save"
+    android:layout_width="wrap_content"
+    android:layout_height="@dimen/sc_mm_34"
+    android:layout_centerVertical="true"
+    android:background="@drawable/shap_vip_bg"
+    android:gravity="center"
+    android:visibility="gone"
+    android:orientation="horizontal"
+    android:paddingLeft="@dimen/sc_mm_10"
+    android:paddingRight="@dimen/sc_mm_10">
+
+    <ImageView
+        android:id="@+id/iv_vip_logo"
+        android:layout_width="@dimen/sc_mm_28"
+        android:layout_height="@dimen/sc_mm_28"
+        android:src="@drawable/huiyuan" />
+
+    <TextView
+        android:id="@+id/tv_save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/sc_mm_7"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="1"
+        android:paddingRight="@dimen/sc_mm_4"
+        android:text="省多少钱"
+        android:textColor="@color/text_black_t"
+        android:textSize="@dimen/sc_mm_22" />
+</LinearLayout>

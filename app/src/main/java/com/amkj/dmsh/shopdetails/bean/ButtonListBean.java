@@ -18,6 +18,12 @@ public class ButtonListBean {
     private String clickable;//按钮是否可点击
     private String btnText;
 
+    public ButtonListBean(String id, String clickable, String btnText) {
+        this.id = id;
+        this.clickable = clickable;
+        this.btnText = btnText;
+    }
+
     public int getId() {
         return ConstantMethod.getStringChangeIntegers(id);
     }

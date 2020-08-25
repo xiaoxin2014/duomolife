@@ -69,7 +69,6 @@ import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.views.alertdialog.AlertDialogImage;
-import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.hjq.toast.ToastUtils;
 import com.kaopiz.kprogresshud.KProgressHUD;
@@ -117,6 +116,7 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.base.WeChatPayConstants.APP_ID;
 import static com.amkj.dmsh.constant.ConstantVariable.BUY_AGAIN;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_GROUP_SHOP;
+import static com.amkj.dmsh.constant.ConstantVariable.INDENT_W_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_SPACE_CHAR;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_TEXT;
@@ -309,21 +309,14 @@ public class ConstantMethod {
         return getRmbFormat(context, priceText, true);
     }
 
-
-    /**
-     * 带货币单位价格格式化
-     *
-     * @param append 是否追加货币符号
-     * @return
-     */
-    public static CharSequence getRmbFormat(Context context, String priceText, boolean append) {
+    public static CharSequence getRmbFormat(Context context, String priceText, boolean append, String color) {
         try {
             String price = getStrings(priceText);
             if (!TextUtils.isEmpty(price)) {
                 price = append ? "¥" + price : price;
                 Pattern pattern = Pattern.compile("[¥]");
                 Link link = new Link(pattern);
-                link.setTextColor(Color.parseColor("#ff5a6b"));
+                link.setTextColor(Color.parseColor(color));
                 link.setTextSize(AutoSizeUtils.mm2px(mAppContext, 22));
                 link.setUnderlined(false);
                 link.setHighlightAlpha(0f);
@@ -336,6 +329,17 @@ public class ConstantMethod {
         } catch (Exception e) {
             return getStrings("¥" + priceText);
         }
+    }
+
+    /**
+     * 带货币单位价格格式化
+     *
+     * @param append 是否追加货币符号
+     * @return
+     */
+    public static CharSequence getRmbFormat(Context context, String priceText, boolean append) {
+        return getRmbFormat(context, priceText, true, "#ff5a6b");
+
     }
 
     /**
@@ -372,7 +376,6 @@ public class ConstantMethod {
                 StyleSpan styleSpan = new StyleSpan(Typeface.BOLD);
                 spannableString.setSpan(styleSpan, start, end, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             }
-
         } catch (Exception e) {
             return text;
         }
@@ -948,24 +951,9 @@ public class ConstantMethod {
         try {
             if (BUY_AGAIN.equals(type)) {
                 params.put("orderNo", bundle.getString("orderNo"));
-            } else {
+            } else if (INDENT_W_TYPE.equals(type)) {
                 String goodsJson = bundle.getString("goods");
                 String combineGoodsJson = bundle.getString("combineGoods");
-                String gpShopInfo = bundle.getString("gpShopInfo");
-
-
-                if (INDENT_GROUP_SHOP.equals(type) && !TextUtils.isEmpty(gpShopInfo)) {
-                    GroupShopDetailsBean groupShopDetailsBean = GsonUtils.fromJson(gpShopInfo, GroupShopDetailsBean.class);
-                    params.put("gpInfoId", groupShopDetailsBean.getGpInfoId());
-                    params.put("gpRecordId", groupShopDetailsBean.getGpRecordId());
-                    IndentProDiscountBean indentProBean = new IndentProDiscountBean();
-                    indentProBean.setId(groupShopDetailsBean.getProductId());
-                    indentProBean.setSaleSkuId(groupShopDetailsBean.getGpSkuId());
-                    indentProBean.setCount(1);
-                    List<IndentProDiscountBean> discountBeanList = new ArrayList<>();
-                    discountBeanList.add(indentProBean);
-                    params.put("goods", GsonUtils.toJson(discountBeanList));
-                }
 
                 if (!TextUtils.isEmpty(goodsJson)) {
                     List<CartInfoBean> passGoods = GsonUtils.fromJson(goodsJson, new TypeToken<List<CartInfoBean>>() {
@@ -988,8 +976,22 @@ public class ConstantMethod {
                 if (!TextUtils.isEmpty(combineGoodsJson)) {
                     params.put("combineGoods", combineGoodsJson);
                 }
+            } else if (INDENT_GROUP_SHOP.equals(type)) {
+                String gpShopInfo = bundle.getString("gpShopInfo");
+                GroupShopDetailsBean groupShopDetailsBean = GsonUtils.fromJson(gpShopInfo, GroupShopDetailsBean.class);
+                if (groupShopDetailsBean != null) {
+                    params.put("gpInfoId", groupShopDetailsBean.getGpInfoId());
+                    params.put("gpRecordId", groupShopDetailsBean.getGpRecordId());
+                    IndentProDiscountBean indentProBean = new IndentProDiscountBean();
+                    indentProBean.setId(groupShopDetailsBean.getProductId());
+                    indentProBean.setSaleSkuId(groupShopDetailsBean.getGpSkuId());
+                    indentProBean.setCount(1);
+                    List<IndentProDiscountBean> discountBeanList = new ArrayList<>();
+                    discountBeanList.add(indentProBean);
+                    params.put("goods", GsonUtils.toJson(discountBeanList));
+                }
             }
-        } catch (JsonSyntaxException e) {
+        } catch (Exception e) {
             showToast("数据有误，请重试");
             return;
         }

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/sc_mm_218"
+    android:layout_height="wrap_content"
+    android:layout_marginRight="@dimen/sc_mm_20"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/sc_mm_20">
+
+    <LinearLayout
+        android:background="@color/bg_gray_f_n"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/iv_pic"
+            android:layout_width="@dimen/sc_mm_218"
+            android:layout_height="@dimen/sc_mm_218"
+            android:background="@drawable/load_loading_image"
+            android:scaleType="centerCrop" />
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/sc_mm_7"
+            android:layout_marginTop="@dimen/sc_mm_12"
+            android:layout_marginRight="@dimen/sc_mm_7"
+            android:layout_marginBottom="@dimen/sc_mm_12"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="@string/defaul"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_24" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/checkbox"
+        android:layout_width="@dimen/sc_mm_34"
+        android:layout_height="@dimen/sc_mm_34"
+        android:layout_margin="@dimen/sc_mm_22"
+        android:background="@color/transparent"
+        android:src="@drawable/selector_vip_gift" />
+</LinearLayout>

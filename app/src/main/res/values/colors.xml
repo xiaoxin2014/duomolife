@@ -126,5 +126,9 @@
     <color name="dialog_red">#ed2345</color>
     <color name="uncompleted_text_color">#6aaef4</color>
     <color name="uncompleted_color">#6aaef4</color>
+    <color name="vip_start_color">#FFDF8A</color>
+    <color name="vip_end_color">#FDC138</color>
+    <color name="vip_color">#FFB817</color>
+    <color name="vip_bg_color">#FFC645</color>
     <color name="tag_bg_color">#FFFFB20B</color>
 </resources>

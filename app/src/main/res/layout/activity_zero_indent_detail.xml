@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:cube_ptr="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/activity_domolife_header" />
+
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+        android:id="@+id/smart_communal_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        cube_ptr:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <include layout="@layout/layout_refresh_header_gif" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <androidx.core.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/bg_light_blue_e"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical"
+                        android:padding="@dimen/sc_mm_50">
+
+                        <TextView
+                            android:id="@+id/tv_indent_detail_status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/defaul"
+                            android:textColor="@color/text_blue_indent"
+                            android:textSize="@dimen/sc_mm_34" />
+
+                        <TextView
+                            android:id="@+id/tv_countdownTime"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/sc_mm_16"
+                            android:textColor="@color/text_login_gray_s"
+                            android:textSize="@dimen/sc_mm_28"
+                            android:visibility="gone" />
+                    </LinearLayout>
+
+                    <include layout="@layout/layout_indent_detail_address_info" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/sc_mm_20"
+                        android:background="@color/light_gray_f" />
+
+                    <include layout="@layout/item_new_indent_product" />
+
+                    <include layout="@layout/layout_direct_details_bottom_default" />
+                </LinearLayout>
+            </androidx.core.widget.NestedScrollView>
+
+
+            <com.amkj.dmsh.views.MainButtonView
+                android:visibility="gone"
+                android:id="@+id/main_button_view"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/sc_mm_100"
+                android:background="@drawable/border_top_line" />
+        </LinearLayout>
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+</LinearLayout>

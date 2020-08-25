@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -11,8 +10,6 @@
     android:paddingRight="@dimen/sc_mm_10">
 
     <androidx.cardview.widget.CardView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardBackgroundColor="@color/white"
@@ -40,13 +37,41 @@
                 android:textColor="@color/topic_name_color"
                 android:textSize="@dimen/sc_mm_26"
                 android:textStyle="bold"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
             <ImageView
                 android:id="@+id/iv_cover"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/sc_mm_300"
-                android:scaleType="centerCrop"/>
+                android:scaleType="centerCrop" />
+
+            <LinearLayout
+                android:visibility="gone"
+                android:id="@+id/ll_zero_product"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/sc_mm_104"
+                android:layout_marginLeft="@dimen/sc_mm_12"
+                android:layout_marginRight="@dimen/sc_mm_12"
+                android:background="@drawable/border_bottom_line"
+                android:orientation="horizontal"
+                android:paddingTop="@dimen/sc_mm_12"
+                android:paddingBottom="@dimen/sc_mm_12">
+
+                <ImageView
+                    android:id="@+id/iv_zero_cover"
+                    android:layout_width="@dimen/sc_mm_80"
+                    android:layout_height="@dimen/sc_mm_80"
+                    android:scaleType="centerCrop" />
+
+                <TextView
+                    android:id="@+id/tv_zero_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/sc_mm_12"
+                    android:gravity="top"
+                    android:textColor="@color/text_black_t"
+                    android:textSize="@dimen/sc_mm_24" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/tv_content"
@@ -59,7 +84,7 @@
                 android:paddingRight="@dimen/sc_mm_20"
                 android:text="@string/defaul"
                 android:textColor="@color/text_login_gray_s"
-                android:textSize="@dimen/sc_mm_26"/>
+                android:textSize="@dimen/sc_mm_26" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -73,7 +98,7 @@
                     android:id="@+id/iv_head_icon"
                     android:layout_width="@dimen/sc_mm_40"
                     android:layout_height="@dimen/sc_mm_40"
-                    android:src="@drawable/default_ava_img"/>
+                    android:src="@drawable/default_ava_img" />
 
                 <androidx.emoji.widget.EmojiTextView
                     android:id="@+id/tv_user_name"
@@ -86,7 +111,7 @@
                     android:text="@string/defaul"
                     android:textColor="@color/text_black_t"
                     android:textSize="@dimen/sc_mm_24"
-                    app:emojiconSize="14sp"/>
+                    app:emojiconSize="14sp" />
 
                 <TextView
                     android:id="@+id/tv_favor"
@@ -96,7 +121,7 @@
                     android:drawablePadding="@dimen/sc_mm_12"
                     android:text="@string/favor"
                     android:textColor="@color/text_black_t"
-                    android:textSize="@dimen/sc_mm_26"/>
+                    android:textSize="@dimen/sc_mm_26" />
             </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>

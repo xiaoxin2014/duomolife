@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class PostEntity extends BaseEntity {
 
-    @SerializedName("list")
+    @SerializedName(value = "postList", alternate = {"list", "result"})
     private List<PostBean> postList;
     private RelatedGoodsBean productInfo;
     /**
@@ -67,11 +67,12 @@ public class PostEntity extends BaseEntity {
         @SerializedName(value = "nickName", alternate = "nickname")
         private String nickName;
         private String digest;
-        @SerializedName(value = "cover", alternate = "path")
+        @SerializedName(value = "cover", alternate = {"path", "activityImg"})
         private String cover;
         private String createTime;
-        @SerializedName(value = "favorNum", alternate = "favorCount")
+        @SerializedName(value = "favorNum", alternate = {"favorCount", "likeCount"})
         private String favorNum;
+        @SerializedName(value = "isFavor", alternate = "isLike")
         private String isFavor;
         private int articletype;
         @SerializedName(value = "coverWidth", alternate = "coverwidth")
@@ -80,6 +81,79 @@ public class PostEntity extends BaseEntity {
         private int coverHeight;
         private String topicId;
 
+        //心得报告相关字段
+        private String activityId;
+        private String orderId;
+        private String content;
+        private String imgs;
+        private String star;
+        private String isCollect;
+        private String productName;
+        private String productImg;
+
+        public String getStar() {
+            return star;
+        }
+
+        public void setStar(String star) {
+            this.star = star;
+        }
+
+        public boolean isCollect() {
+            return "1".equals(isCollect);
+        }
+
+        public void setIsCollect(boolean isCollect) {
+            this.isCollect = isCollect ? "1" : "0";
+        }
+
+        public String getContent() {
+            return content;
+        }
+
+        public void setContent(String content) {
+            this.content = content;
+        }
+
+        public String getImgs() {
+            return imgs;
+        }
+
+        public void setImgs(String imgs) {
+            this.imgs = imgs;
+        }
+
+        public String getActivityId() {
+            return activityId;
+        }
+
+        public void setActivityId(String activityId) {
+            this.activityId = activityId;
+        }
+
+        public String getOrderId() {
+            return orderId;
+        }
+
+        public void setOrderId(String orderId) {
+            this.orderId = orderId;
+        }
+
+        public String getProductName() {
+            return productName;
+        }
+
+        public void setProductName(String productName) {
+            this.productName = productName;
+        }
+
+        public String getProductImg() {
+            return productImg;
+        }
+
+        public void setProductImg(String productImg) {
+            this.productImg = productImg;
+        }
 
         public String getTopicId() {
             return topicId;

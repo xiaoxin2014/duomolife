@@ -2,23 +2,22 @@ package com.amkj.dmsh.utils.webformatdata;
 
 import android.app.Activity;
 import android.content.Context;
-import androidx.fragment.app.Fragment;
 import android.text.TextUtils;
 import android.view.View;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.bean.CouponEntity;
-import com.amkj.dmsh.bean.CouponEntity.CouponListEntity;
 import com.amkj.dmsh.bean.BaseAddCarProInfoBean;
 import com.amkj.dmsh.bean.CommunalDetailBean;
+import com.amkj.dmsh.bean.CouponEntity;
+import com.amkj.dmsh.bean.CouponEntity.CouponListEntity;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
-import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
+import com.amkj.dmsh.user.bean.LikedProductBean;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.google.gson.reflect.TypeToken;
 import com.kaopiz.kprogresshud.KProgressHUD;
@@ -30,6 +29,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import androidx.fragment.app.Fragment;
 import cn.jzvd.Jzvd;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
@@ -444,11 +444,9 @@ public class CommunalWebDetailUtils {
                     loadHud.dismiss();
                 }
                 CouponEntity couponEntity = GsonUtils.fromJson(result, CouponEntity.class);
-
-                if (getCouponListener == null) {
-                    showToast( couponEntity == null ? "操作失败！" :
-                            couponEntity.getResult() != null ? getStrings(couponEntity.getResult().getMsg()) : getStrings(couponEntity.getMsg()));
-                } else if (couponEntity != null && couponEntity.getResult() != null) {
+                showToast(couponEntity == null ? "操作失败！" :
+                        couponEntity.getResult() != null ? getStrings(couponEntity.getResult().getMsg()) : getStrings(couponEntity.getMsg()));
+                if (getCouponListener != null && couponEntity != null && couponEntity.getResult() != null) {
                     if (SUCCESS_CODE.equals(couponEntity.getMsg()) && SUCCESS_CODE.equals(couponEntity.getResult().getMsg())) {
                         getCouponListener.onSuccess(couponEntity.getResult());
                     } else {
@@ -466,7 +464,7 @@ public class CommunalWebDetailUtils {
 
             @Override
             public void onError(Throwable throwable) {
-                showToast( R.string.Get_Coupon_Fail);
+                showToast(R.string.Get_Coupon_Fail);
             }
         });
     }
@@ -493,9 +491,8 @@ public class CommunalWebDetailUtils {
                 }
 
                 CouponListEntity couponListEntity = GsonUtils.fromJson(result, CouponListEntity.class);
-                if (getCouponListener == null) {
-                    showToast(couponListEntity.getMsg());
-                } else if (couponListEntity != null) {
+                showToast(couponListEntity == null ? "操作失败" : couponListEntity.getMsg());
+                if (getCouponListener != null && couponListEntity != null) {
                     String code = couponListEntity.getCode();
                     if (SUCCESS_CODE.equals(code)) {
                         getCouponListener.onSuccess(couponListEntity);
@@ -514,7 +511,7 @@ public class CommunalWebDetailUtils {
 
             @Override
             public void onError(Throwable throwable) {
-                showToast( R.string.Get_Coupon_Fail);
+                showToast(R.string.Get_Coupon_Fail);
             }
         });
     }

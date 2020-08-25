@@ -67,7 +67,7 @@ import com.amkj.dmsh.shopdetails.bean.ShopRecommendHotTopicEntity.ShopRecommendH
 import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
 import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
-import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean.MarketLabelBean;
+import com.amkj.dmsh.user.bean.LikedProductBean.MarketLabelBean;
 import com.amkj.dmsh.utils.CountDownTimer;
 import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
@@ -388,7 +388,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     @Override
     protected void initViews() {
         tv_product_activity_description.setSelected(true);
-        //动态修改标题栏padding
+        //动态修改标题栏paddingw
         int statusBarHeight = ImmersionBar.getStatusBarHeight(this);
         int paddingTop = statusBarHeight > 0 ? statusBarHeight : AutoSizeUtils.mm2px(this, 40);
         mRlToolbar.setPadding(0, paddingTop, 0, 0);

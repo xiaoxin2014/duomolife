@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ll_quality_product"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -18,9 +17,9 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/sc_mm_350"
             android:foregroundGravity="center"
-            android:scaleType="centerCrop"/>
+            android:scaleType="centerCrop" />
 
-        <include layout="@layout/layout_communal_pro_out_img"/>
+        <include layout="@layout/layout_communal_pro_out_img" />
     </RelativeLayout>
 
     <include
@@ -28,13 +27,12 @@
         android:layout_width="wrap_content"
         android:layout_height="@dimen/sc_mm_35"
         android:layout_marginLeft="@dimen/sc_mm_8"
-        android:layout_marginTop="@dimen/sc_mm_16"/>
+        android:layout_marginTop="@dimen/sc_mm_16" />
 
     <TextView
         android:id="@+id/tv_qt_pro_descrip"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/fbl_market_label"
         android:layout_marginLeft="@dimen/sc_mm_8"
         android:layout_marginTop="@dimen/sc_mm_16"
         android:ellipsize="end"
@@ -42,25 +40,23 @@
         android:lineSpacingExtra="@dimen/dimen_3_dp"
         android:lines="1"
         android:textColor="@color/text_black_t"
-        android:textSize="@dimen/sc_mm_24"/>
+        android:textSize="@dimen/sc_mm_24" />
 
     <TextView
         android:id="@+id/tv_qt_pro_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tv_qt_pro_descrip"
         android:layout_marginLeft="@dimen/sc_mm_8"
         android:layout_marginTop="@dimen/sc_mm_16"
         android:ellipsize="end"
         android:gravity="center_vertical|left"
         android:maxLines="2"
         android:textColor="@color/text_gray_hint_n"
-        android:textSize="@dimen/sc_mm_22"/>
+        android:textSize="@dimen/sc_mm_22" />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tv_qt_pro_name"
         android:layout_marginTop="@dimen/sc_mm_20"
         android:gravity="center_vertical"
         android:paddingLeft="@dimen/sc_mm_8"
@@ -74,7 +70,7 @@
             android:layout_centerVertical="true"
             android:gravity="center_vertical"
             android:textColor="@color/text_red_color"
-            android:textSize="@dimen/sc_mm_28"/>
+            android:textSize="@dimen/sc_mm_28" />
 
         <TextView
             android:id="@+id/tv_qt_pro_wait_buy"
@@ -91,7 +87,7 @@
             android:text="待售"
             android:textColor="@color/white"
             android:textSize="@dimen/sc_mm_22"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/tv_qt_pro_market_price"
@@ -102,17 +98,14 @@
             android:layout_toRightOf="@id/tv_qt_pro_wait_buy"
             android:textColor="@color/text_login_gray_s"
             android:textSize="@dimen/sc_mm_26"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
-        <ImageView
-            android:id="@+id/iv_pro_add_car"
+        <include
+            layout="@layout/layout_vip_save"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/sc_mm_34"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:padding="@dimen/sc_mm_5"
-            android:paddingRight="@dimen/sc_mm_12"
-            android:src="@drawable/sel_ql_shop_b_car"
-            android:visibility="visible"/>
+            android:layout_marginRight="@dimen/sc_mm_12" />
     </RelativeLayout>
 </LinearLayout>

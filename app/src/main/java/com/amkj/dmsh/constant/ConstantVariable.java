@@ -347,7 +347,7 @@ public class ConstantVariable {
      * 口令红包类型
      */
     public static final String COUPON = "1";//优惠券
-    public static final String COUPON_PACKAGE = "2";//优惠前礼包
+    public static final String COUPON_PACKAGE = "2";//优惠券礼包
     public static final String SKIP_LINK = "3";//跳转链接
 
     /**
@@ -448,4 +448,5 @@ public class ConstantVariable {
     public static final String REFUND_DETAIL_TYPE = "6";//退款详情
     public static final String INDENT_W_TYPE = "7";//普通订单填写
     public static final String INDENT_GROUP_SHOP = "8";//拼团订单填写
+    public static final String INDENT_ZERO = "9";//0元试用订单填写
 }

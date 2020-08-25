@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFF3D3"
+    android:orientation="vertical">
+
+    <include layout="@layout/activity_domolife_header" />
+
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:cube_ptr="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/smart_communal_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        cube_ptr:srlEnableOverScrollBounce="false">
+
+        <include layout="@layout/layout_refresh_header_gif" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <ImageView
+                android:visibility="gone"
+                android:id="@+id/iv_cover"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/sc_mm_200"
+                android:scaleType="centerCrop" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_week_goods"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/sc_mm_22"
+                android:layout_marginTop="@dimen/sc_mm_27"
+                android:layout_marginRight="@dimen/sc_mm_22"
+                android:layout_marginBottom="@dimen/sc_mm_54"
+                android:background="@drawable/shape_zero_list_bg"
+                android:paddingLeft="@dimen/sc_mm_26"
+                android:paddingTop="@dimen/sc_mm_14"
+                android:paddingRight="@dimen/sc_mm_26"
+                android:paddingBottom="@dimen/sc_mm_18"
+                android:scrollbars="none" />
+        </LinearLayout>
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+</LinearLayout>

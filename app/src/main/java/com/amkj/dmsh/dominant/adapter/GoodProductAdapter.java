@@ -6,12 +6,10 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.bean.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.dao.AddClickDao;
-import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
-import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean.MarketLabelBean;
+import com.amkj.dmsh.user.bean.LikedProductBean;
+import com.amkj.dmsh.user.bean.LikedProductBean.MarketLabelBean;
 import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
@@ -24,11 +22,11 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.skipGroupDetail;
 import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
 import static com.amkj.dmsh.constant.ConstantVariable.AD_COVER;
 import static com.amkj.dmsh.constant.ConstantVariable.PRODUCT;
-import static com.amkj.dmsh.dao.OrderDao.addShopCarGetSku;
 
 
 /**
@@ -72,19 +70,9 @@ public class GoodProductAdapter extends BaseMultiItemQuickAdapter<LikedProductBe
                         .setText(R.id.tv_qt_pro_name, !TextUtils.isEmpty(likedProductBean.getName()) ?
                                 getStrings(likedProductBean.getName()) : getStrings(likedProductBean.getTitle()))
                         .setText(R.id.tv_qt_pro_price, ConstantMethod.getRmbFormat(context, likedProductBean.getPrice()))
-                        .addOnClickListener(R.id.iv_pro_add_car).setTag(R.id.iv_pro_add_car, likedProductBean);
+                        .setText(R.id.tv_save, getStringsFormat(context, R.string.vip_save_money, likedProductBean.getVipReduce()))
+                        .setGone(R.id.ll_save, !TextUtils.isEmpty(likedProductBean.getVipReduce()));
 
-                //加入购物车
-                if (likedProductBean.getType_id() == 1) {//只有自营商品才能加入购物车
-                    helper.getView(R.id.iv_pro_add_car).setOnClickListener(v -> {
-                        BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
-                        baseAddCarProInfoBean.setProductId(likedProductBean.getId());
-                        baseAddCarProInfoBean.setActivityCode(getStrings(likedProductBean.getActivityCode()));
-                        baseAddCarProInfoBean.setProName(getStrings(likedProductBean.getName()));
-                        baseAddCarProInfoBean.setProPic(getStrings(likedProductBean.getPicUrl()));
-                        addShopCarGetSku(context, baseAddCarProInfoBean, ((BaseActivity) context).loadHud);
-                    });
-                }
                 FlexboxLayout fbl_market_label = helper.getView(R.id.fbl_market_label);
                 if (!TextUtils.isEmpty(likedProductBean.getActivityTag()) || (likedProductBean.getMarketLabelList() != null
                         && likedProductBean.getMarketLabelList().size() > 0)) {

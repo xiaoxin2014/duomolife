@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include layout="@layout/activity_domolife_header" />
+
+    <com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout xmlns:tl="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/sliding_tablayout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sc_mm_75"
+        android:layout_gravity="center_horizontal"
+        tl:tl_indicator_color="@color/text_black_t"
+        tl:tl_indicator_height="2dp"
+        tl:tl_indicator_margin_top="@dimen/dimen_5_dp"
+        tl:tl_indicator_width_equal_title="true"
+        tl:tl_tab_space_equal="true"
+        tl:tl_textBold="SELECT"
+        tl:tl_textSelectColor="@color/text_black_t"
+        tl:tl_textUnselectColor="@color/text_login_gray_s"
+        tl:tl_textsize="15sp" />
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/vp_vip_exclusive"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/light_gray_f"
+        android:paddingLeft="@dimen/sc_mm_10"
+        android:paddingTop="@dimen/sc_mm_10"
+        android:paddingRight="@dimen/sc_mm_10" />
+</LinearLayout>

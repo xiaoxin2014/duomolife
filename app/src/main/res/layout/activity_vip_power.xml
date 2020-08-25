@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/activity_domolife_header" />
+
+    <LinearLayout
+        android:id="@+id/ll_power"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/shap_vip_ll_bg"
+        android:orientation="vertical">
+
+        <com.amkj.dmsh.views.flycoTablayout.SlidingIconTextTabLayout xmlns:tl="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/tablayout_power"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/sc_mm_135"
+            android:layout_marginTop="@dimen/sc_mm_26"
+            tl:tl_indicator_color="@color/text_black_t"
+            tl:tl_indicator_gravity="BOTTOM"
+            tl:tl_indicator_height="@dimen/sc_mm_4"
+            tl:tl_indicator_style="NORMAL"
+            tl:tl_indicator_width_equal_title="true"
+            tl:tl_textBold="SELECT"
+            tl:tl_textSelectColor="@color/text_black_t"
+            tl:tl_textUnselectColor="@color/text_black_t"
+            tl:tl_textsize="@dimen/sc_mm_22" />
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/vp_power_info"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/sc_mm_29"
+            android:layout_marginBottom="@dimen/sc_mm_37"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/sc_mm_100"
+            android:background="#2a3364"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="@dimen/sc_mm_42"
+                android:layout_height="@dimen/sc_mm_40"
+                android:src="@drawable/vip_logo" />
+
+            <TextView
+                android:id="@+id/tv_open_vip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/sc_mm_15"
+                android:text="立即开通¥149/年"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sc_mm_32"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

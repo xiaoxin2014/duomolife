@@ -23,7 +23,7 @@ import com.amkj.dmsh.homepage.bean.HomeCommonEntity;
 import com.amkj.dmsh.homepage.bean.HomeCommonEntity.HomeCommonBean;
 import com.amkj.dmsh.homepage.bean.MarqueeTextEntity;
 import com.amkj.dmsh.homepage.bean.MarqueeTextEntity.MarqueeTextBean;
-import com.amkj.dmsh.message.activity.MessageActivity;
+import com.amkj.dmsh.mine.activity.DomolifeVipActivity;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
@@ -238,7 +238,7 @@ public class HomePageFragment extends BaseFragment {
         Intent intent;
         switch (view.getId()) {
             case R.id.iv_message:
-                intent = new Intent(getActivity(), MessageActivity.class);
+                intent = new Intent(getActivity(), DomolifeVipActivity.class);
                 startActivity(intent);
                 break;
             case R.id.tv_search:

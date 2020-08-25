@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_post_user_info" />
+
+    <TextView
+        android:id="@+id/tv_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/sc_mm_35"
+        android:layout_marginRight="@dimen/sc_mm_35"
+        android:layout_marginBottom="@dimen/sc_mm_30"
+        android:ellipsize="end"
+        android:maxLines="3"
+        android:text="@string/defaul"
+        android:textColor="@color/text_login_gray_s"
+        android:textSize="@dimen/sc_mm_28" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_imgs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/sc_mm_28"
+        android:layout_marginRight="@dimen/sc_mm_28"
+        android:nestedScrollingEnabled="false" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border_bottom_line"
+        android:gravity="center_vertical|right"
+        android:orientation="horizontal"
+        android:padding="@dimen/sc_mm_26">
+
+        <TextView
+            android:id="@+id/tv_like"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/sel_art_like_heart"
+            android:drawablePadding="@dimen/sc_mm_10"
+            android:text="赞"
+            android:textColor="@color/text_login_gray_s"
+            android:textSize="@dimen/sc_mm_22" />
+
+        <TextView
+            android:id="@+id/tv_collect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/sc_mm_60"
+            android:drawableLeft="@drawable/sel_art_collect_star"
+            android:drawablePadding="@dimen/sc_mm_10"
+            android:text="收藏"
+            android:textColor="@color/text_login_gray_s"
+            android:textSize="@dimen/sc_mm_22" />
+    </LinearLayout>
+</LinearLayout>

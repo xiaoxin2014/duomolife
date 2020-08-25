@@ -1,7 +1,6 @@
 package com.amkj.dmsh.dominant.adapter;
 
 import android.content.Context;
-import androidx.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -9,7 +8,7 @@ import android.widget.ImageView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
-import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
+import com.amkj.dmsh.user.bean.LikedProductBean;
 import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
@@ -18,6 +17,7 @@ import com.google.android.flexbox.FlexboxLayout;
 
 import java.util.List;
 
+import androidx.annotation.Nullable;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
@@ -38,7 +38,12 @@ import static com.amkj.dmsh.constant.ConstantVariable.TITLE;
 public class CatergoryGoodsAdapter extends BaseMultiItemQuickAdapter<LikedProductBean, BaseViewHolder> {
 
     private final Context context;
-    private final boolean isRichText;
+    private boolean isRichText;
+
+
+    public CatergoryGoodsAdapter(Context context, @Nullable List<LikedProductBean> data) {
+        this(context, data, false);
+    }
 
     public CatergoryGoodsAdapter(Context context, @Nullable List<LikedProductBean> data, boolean isRichText) {
         super(data);
@@ -47,10 +52,6 @@ public class CatergoryGoodsAdapter extends BaseMultiItemQuickAdapter<LikedProduc
         addItemType(AD_COVER, R.layout.item_commual_cover_pic_3x);//封面图片或者图片商品
         this.context = context;
         this.isRichText = isRichText;
-    }
-
-    public CatergoryGoodsAdapter(Context context, @Nullable List<LikedProductBean> data) {
-        this(context, data, false);
     }
 
     @Override
@@ -64,7 +65,9 @@ public class CatergoryGoodsAdapter extends BaseMultiItemQuickAdapter<LikedProduc
                         .setText(R.id.tv_price, ConstantMethod.getRmbFormat(context, likedProductBean.getPrice()))
                         .setText(R.id.tv_name, getStrings(likedProductBean.getName()))
                         .setGone(R.id.tv_economize_money, !TextUtils.isEmpty(likedProductBean.getDecreasePrice()))
-                        .setText(R.id.tv_economize_money, getSpannableString(economizeNum, 1, economizeNum.length() - 1, 0, "#ff5e6b"));
+                        .setText(R.id.tv_economize_money, getSpannableString(economizeNum, 1, economizeNum.length() - 1, 0, "#ff5e6b"))
+                        .setText(R.id.tv_save, getStringsFormat(context, R.string.vip_save_money, likedProductBean.getVipReduce()))
+                        .setGone(R.id.ll_save, !TextUtils.isEmpty(likedProductBean.getVipReduce()));
 
                 FlexboxLayout fbl_label = helper.getView(R.id.fbl_market_label);
                 if (!TextUtils.isEmpty(likedProductBean.getActivityTag()) || (likedProductBean.getMarketLabelList() != null

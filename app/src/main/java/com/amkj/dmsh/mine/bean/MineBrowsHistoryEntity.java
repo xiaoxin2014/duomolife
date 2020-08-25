@@ -2,7 +2,7 @@ package com.amkj.dmsh.mine.bean;
 
 import com.amkj.dmsh.base.BaseTimeEntity;
 import com.amkj.dmsh.mine.enumutils.SelectionStatusTypeEnum;
-import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean.MarketLabelBean;
+import com.amkj.dmsh.user.bean.LikedProductBean.MarketLabelBean;
 import com.chad.library.adapter.base.entity.AbstractExpandableItem;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.annotations.SerializedName;

@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/sc_mm_30"
+    android:background="@drawable/shap_product_evaluate_bg"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/sc_mm_23"
+    android:paddingBottom="@dimen/sc_mm_23">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/sc_mm_24"
+        android:text="试用流程"
+        android:textColor="@color/text_black_t"
+        android:textSize="@dimen/sc_mm_28"
+        android:textStyle="bold" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/sc_mm_27">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="@dimen/sc_mm_48"
+                    android:layout_height="@dimen/sc_mm_48"
+                    android:src="@drawable/step1" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sc_mm_10"
+                    android:text="申请试用"
+                    android:textColor="@color/color_blue_reply_com"
+                    android:textSize="@dimen/sc_mm_20" />
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="@dimen/sc_mm_11"
+                android:layout_height="@dimen/sc_mm_20"
+                android:layout_marginTop="@dimen/sc_mm_15"
+                android:src="@drawable/step_next" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="@dimen/sc_mm_48"
+                    android:layout_height="@dimen/sc_mm_48"
+                    android:src="@drawable/step2" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sc_mm_10"
+                    android:text="等待开奖"
+                    android:textColor="@color/color_blue_reply_com"
+                    android:textSize="@dimen/sc_mm_20" />
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="@dimen/sc_mm_11"
+                android:layout_height="@dimen/sc_mm_20"
+                android:layout_marginTop="@dimen/sc_mm_15"
+                android:src="@drawable/step_next" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="@dimen/sc_mm_48"
+                    android:layout_height="@dimen/sc_mm_48"
+                    android:src="@drawable/step3" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sc_mm_10"
+                    android:text="领取下单"
+                    android:textColor="@color/color_blue_reply_com"
+                    android:textSize="@dimen/sc_mm_20" />
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="@dimen/sc_mm_11"
+                android:layout_height="@dimen/sc_mm_20"
+                android:layout_marginTop="@dimen/sc_mm_15"
+                android:src="@drawable/step_next" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="@dimen/sc_mm_48"
+                    android:layout_height="@dimen/sc_mm_48"
+                    android:src="@drawable/step4" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sc_mm_10"
+                    android:text="商家发货"
+                    android:textColor="@color/color_blue_reply_com"
+                    android:textSize="@dimen/sc_mm_20" />
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="@dimen/sc_mm_11"
+                android:layout_height="@dimen/sc_mm_20"
+                android:layout_marginTop="@dimen/sc_mm_15"
+                android:src="@drawable/step_next" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="@dimen/sc_mm_48"
+                    android:layout_height="@dimen/sc_mm_48"
+                    android:src="@drawable/step5" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sc_mm_10"
+                    android:text="试用体验"
+                    android:textColor="@color/color_blue_reply_com"
+                    android:textSize="@dimen/sc_mm_20" />
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="@dimen/sc_mm_11"
+                android:layout_height="@dimen/sc_mm_20"
+                android:layout_marginTop="@dimen/sc_mm_15"
+                android:src="@drawable/step_next" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="@dimen/sc_mm_48"
+                    android:layout_height="@dimen/sc_mm_48"
+                    android:src="@drawable/step6" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sc_mm_10"
+                    android:text="提交报告"
+                    android:textColor="@color/color_blue_reply_com"
+                    android:textSize="@dimen/sc_mm_20" />
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="@dimen/sc_mm_11"
+                android:layout_height="@dimen/sc_mm_20"
+                android:layout_marginTop="@dimen/sc_mm_15"
+                android:src="@drawable/step_next" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="@dimen/sc_mm_48"
+                    android:layout_height="@dimen/sc_mm_48"
+                    android:src="@drawable/step7" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/sc_mm_10"
+                    android:text="退还押金"
+                    android:textColor="@color/color_blue_reply_com"
+                    android:textSize="@dimen/sc_mm_20" />
+            </LinearLayout>
+        </LinearLayout>
+    </RelativeLayout>
+</LinearLayout>

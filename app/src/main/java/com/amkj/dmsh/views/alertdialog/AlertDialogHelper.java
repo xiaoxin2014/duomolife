@@ -41,7 +41,6 @@ public class AlertDialogHelper extends BaseAlertDialog {
         super(context, layoutId);
     }
 
-
     @OnClick({R.id.tv_alert_confirm, R.id.tv_alert_cancel})
     public void onViewClicked(View view) {
         dismiss();

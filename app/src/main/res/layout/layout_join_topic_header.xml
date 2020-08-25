@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="@dimen/sc_mm_88"
     android:background="@drawable/border_bottom_line"
@@ -17,7 +16,17 @@
         android:paddingLeft="@dimen/gap_left"
         android:paddingRight="@dimen/gap_right"
         android:textColor="@color/home_text_color"
-        android:textSize="@dimen/sc_mm_32"/>
+        android:textSize="@dimen/sc_mm_32" />
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:visibility="gone"
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="试用报告"
+        android:textColor="@color/text_black_t"
+        android:textSize="@dimen/sc_mm_36" />
 
     <TextView
         android:id="@+id/tv_find_release_topic"
@@ -30,5 +39,5 @@
         android:gravity="center"
         android:text="@string/release"
         android:textColor="@color/white"
-        android:textSize="@dimen/sc_mm_28"/>
+        android:textSize="@dimen/sc_mm_28" />
 </RelativeLayout>

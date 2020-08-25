@@ -2,7 +2,7 @@ package com.amkj.dmsh.shopdetails.bean;
 
 import com.amkj.dmsh.find.bean.InvitationImgDetailEntity.InvitationImgDetailBean.TagsBean;
 import com.amkj.dmsh.homepage.bean.InvitationDetailEntity.InvitationDetailBean.RelevanceProBean;
-import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
+import com.amkj.dmsh.user.bean.LikedProductBean;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 
 import java.util.List;

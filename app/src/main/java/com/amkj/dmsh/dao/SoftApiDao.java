@@ -14,7 +14,6 @@ import com.amkj.dmsh.dominant.bean.PostCommentEntity;
 import com.amkj.dmsh.find.bean.PostEntity.PostBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.shopdetails.bean.GoodsCommentEntity;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 
@@ -23,10 +22,12 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.amkj.dmsh.constant.ConstantMethod.dismissLoadhud;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
+import static com.amkj.dmsh.constant.ConstantMethod.showLoadhud;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -36,7 +37,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_FOLLOW_STATUS;
 import static com.amkj.dmsh.constant.Url.F_ARTICLE_COLLECT;
 import static com.amkj.dmsh.constant.Url.F_ARTICLE_DETAILS_FAVOR;
 import static com.amkj.dmsh.constant.Url.F_TOPIC_COLLECT;
-import static com.amkj.dmsh.constant.Url.SHOP_EVA_LIKE;
 import static com.amkj.dmsh.constant.Url.UPDATE_ATTENTION;
 
 /**
@@ -203,7 +203,7 @@ public class SoftApiDao {
                         if (requestStatus.getCode().equals(SUCCESS_CODE)) {
                             tvCollect.setSelected(!tvCollect.isSelected());
                         } else {
-                            showToast( getStringsFormat(activity, R.string.collect_failed, "文章"));
+                            showToast(getStringsFormat(activity, R.string.collect_failed, "文章"));
                         }
                     }
                 }
@@ -211,6 +211,53 @@ public class SoftApiDao {
                 @Override
                 public void onNotNetOrException() {
                     activity.loadHud.dismiss();
+                }
+            });
+        } else {
+            getLoginStatus(activity);
+        }
+
+    }
+
+    //报告点赞
+    public static void favorReport(Activity activity, PostBean item, TextView tvLike) {
+        if (userId > 0) {
+            item.setIsFavor(!tvLike.isSelected());
+            item.setFavorNum(item.isFavor() ? item.getFavorNum() + 1 : item.getFavorNum() - 1);
+            tvLike.setSelected(item.isFavor());
+            tvLike.setText(item.getFavorNum() > 0 ? String.valueOf(item.getFavorNum()) : "赞");
+            Map<String, Object> params = new HashMap<>();
+            params.put("orderId", item.getOrderId());
+            NetLoadUtils.getNetInstance().loadNetDataPost(activity, Url.REPORT_FAVOR, params, null);
+        } else {
+            getLoginStatus(activity);
+        }
+    }
+
+    // 报告收藏
+    public static void collectReport(Activity activity, PostBean item, TextView tvCollect) {
+        if (userId > 0) {
+            showLoadhud(activity);
+            Map<String, Object> params = new HashMap<>();
+            params.put("orderId", item.getOrderId());
+            NetLoadUtils.getNetInstance().loadNetDataPost(activity, Url.REPORT_COLLECT, params, new NetLoadListenerHelper() {
+                @Override
+                public void onSuccess(String result) {
+                    dismissLoadhud(activity);
+                    RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
+                    if (requestStatus != null) {
+                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
+                            item.setIsCollect(!tvCollect.isSelected());
+                            tvCollect.setSelected(item.isCollect());
+                        } else {
+                            showToast(getStringsFormat(activity, R.string.collect_failed, "报告"));
+                        }
+                    }
+                }
+
+                @Override
+                public void onNotNetOrException() {
+                    dismissLoadhud(activity);
                 }
             });
         } else {
@@ -270,22 +317,6 @@ public class SoftApiDao {
             getLoginStatus(activity);
         }
     }
-
-    //文章评论点赞
-    public static void favorGoodsComment(Activity activity, GoodsCommentEntity.GoodsCommentBean goodsCommentBean, TextView tvLike) {
-        if (userId > 0) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("id", goodsCommentBean.getId());
-            params.put("uid", userId);
-            NetLoadUtils.getNetInstance().loadNetDataPost(activity, SHOP_EVA_LIKE, params, null);
-            goodsCommentBean.setFavor(!goodsCommentBean.isFavor());
-            tvLike.setSelected(!tvLike.isSelected());
-            tvLike.setText(ConstantMethod.getNumCount(tvLike.isSelected(), goodsCommentBean.isFavor(), goodsCommentBean.getLikeNum(), "赞"));
-        } else {
-            getLoginStatus(activity);
-        }
-    }
-
 
     //举报帖子或者评论
     public static void reportIllegal(Activity activity, int id, int type) {

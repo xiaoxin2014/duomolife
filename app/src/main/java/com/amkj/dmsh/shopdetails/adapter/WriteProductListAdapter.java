@@ -27,6 +27,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_GROUP_SHOP;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_W_TYPE;
+import static com.amkj.dmsh.constant.ConstantVariable.INDENT_ZERO;
 import static com.amkj.dmsh.utils.TimeUtils.getCoutDownTime;
 import static com.amkj.dmsh.utils.TimeUtils.getCurrentTime;
 import static com.amkj.dmsh.utils.TimeUtils.getTimeDifference;
@@ -166,6 +167,7 @@ public class WriteProductListAdapter extends BaseQuickAdapter<ProductInfoBean, B
 
                     break;
                 //拼团订单填写
+                case INDENT_ZERO:
                 case INDENT_GROUP_SHOP:
                     helper.setText(R.id.tv_direct_indent_pro_price, getStringsChNPrice(context, productInfoBean.getPrice()));
                     break;

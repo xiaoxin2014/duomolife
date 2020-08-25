@@ -27,13 +27,13 @@ public class ImgGArticleRecyclerAdapter extends BaseQuickAdapter<ImagePathBean, 
     @Override
     protected void convert(BaseViewHolder helper, ImagePathBean imagePathBean) {
         ImageView image = helper.getView(R.id.pv_image);
-        //        是否显示删除图标
-        if (imagePathBean.isShowDelIcon()&&!DEFAULT_ADD_IMG.equals(imagePathBean.getPath())){
-            helper.addOnClickListener(R.id.delete).setTag(R.id.delete, helper.getAdapterPosition());
-            GlideImageLoaderUtil.loadCenterCrop(context, image, "file://" + imagePathBean.getPath());
-        }else{
+        helper.addOnClickListener(R.id.delete).setTag(R.id.delete, helper.getAdapterPosition());
+        if (DEFAULT_ADD_IMG.equals(imagePathBean.getPath())) {
             image.setImageResource(R.drawable.plus_icon_nor);
+        } else {
+            GlideImageLoaderUtil.loadCenterCrop(context, image, imagePathBean.getPath());
         }
+        //        是否显示删除图标
         helper.setGone(R.id.delete, !DEFAULT_ADD_IMG.equals(imagePathBean.getPath()) && imagePathBean.isShowDelIcon());
     }
 }

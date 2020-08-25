@@ -4,6 +4,8 @@ apply plugin: 'channel'
 apply from: 'tinker-support.gradle'
 // 添加插件
 apply plugin: 'com.mob.sdk'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 // 加载 local.properties 资源
 Properties properties = new Properties()
@@ -16,8 +18,8 @@ android {
         applicationId "com.amkj.dmsh"
         minSdkVersion versions.minSdk
         targetSdkVersion versions.targetSdk
-        versionCode 234
-        versionName '4.6.9'
+        versionCode 236
+        versionName '4.7.0'
         multiDexEnabled true
         ndk {
             //选择要添加的对应cpu类型的.so库。

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/calculator_bg"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/sc_mm_46"
+    android:paddingRight="@dimen/sc_mm_46">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_save"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/sc_mm_130"
+        android:layout_weight="1" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawableLeft="@drawable/shap_vip_dot"
+            android:drawablePadding="@dimen/sc_mm_15"
+            android:text="会员权益一年帮省"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_28"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_save_year"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/defaul"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_32"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_open"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sc_mm_80"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/sc_mm_30"
+        android:layout_marginBottom="@dimen/sc_mm_20"
+        android:background="@drawable/shape_get_free_bg"
+        android:gravity="center"
+        android:text="立即开通"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sc_mm_34"
+        android:textStyle="bold" />
+</LinearLayout>

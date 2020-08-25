@@ -24,7 +24,8 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
  */
 public class ItemDecoration extends RecyclerView.ItemDecoration {
 
-    private final boolean isLastDraw;
+    private boolean isLastDraw;
+    private boolean isFirstDraw;
     private int mDividerId;
 
     private Drawable mDrawable;
@@ -70,6 +71,7 @@ public class ItemDecoration extends RecyclerView.ItemDecoration {
     private ItemDecoration(Builder builder) {
         mDividerId = builder.dividerId;
         isLastDraw = builder.isLastDraw;
+        isFirstDraw = builder.isFirstDraw;
     }
 
     @Override
@@ -91,14 +93,14 @@ public class ItemDecoration extends RecyclerView.ItemDecoration {
                     } else if (isFirstColumn(parent, position, spanCount)) {
 //                        是否是第一列第一行
                         if (isFirstRow(parent, position, spanCount)) {
-                            outRect.set(mDrawable.getIntrinsicWidth(), 0, mDrawable.getIntrinsicWidth(), 0);
+                            outRect.set(mDrawable.getIntrinsicWidth(), isFirstDraw ? mDrawable.getIntrinsicHeight() : 0, mDrawable.getIntrinsicWidth(), 0);
                         } else {
                             // 第一列要多画左边
                             outRect.set(mDrawable.getIntrinsicWidth(), mDrawable.getIntrinsicHeight(), mDrawable.getIntrinsicWidth(), 0);
                         }
                     } else if (isFirstRow(parent, position, spanCount)) {
                         // 第一行要只画右边
-                        outRect.set(0, 0, mDrawable.getIntrinsicWidth(), 0);
+                        outRect.set(0, isFirstDraw ? mDrawable.getIntrinsicHeight() : 0, mDrawable.getIntrinsicWidth(), 0);
                     } else {
                         outRect.set(0, mDrawable.getIntrinsicHeight(), mDrawable.getIntrinsicWidth(), 0);
                     }
@@ -557,6 +559,7 @@ public class ItemDecoration extends RecyclerView.ItemDecoration {
 
         private int dividerId;
         private boolean isLastDraw = true;
+        private boolean isFirstDraw = false;
 
         /**
          * 构造方法
@@ -583,6 +586,19 @@ public class ItemDecoration extends RecyclerView.ItemDecoration {
          */
         public Builder setLastDraw(boolean isLastDraw) {
             this.isLastDraw = isLastDraw;
+            return this;
+        }
+
+
+        /**
+         * 仅针对grid
+         * 第一行是否显示分割线
+         *
+         * @param isFirstDraw
+         * @return
+         */
+        public Builder setFirstDraw(boolean isFirstDraw) {
+            this.isFirstDraw = isFirstDraw;
             return this;
         }
 

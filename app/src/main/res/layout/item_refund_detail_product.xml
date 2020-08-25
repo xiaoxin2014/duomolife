@@ -17,7 +17,6 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-
         <RelativeLayout
             android:id="@+id/rl_cover"
             android:layout_width="@dimen/sc_mm_176"
@@ -70,12 +69,11 @@
 
                 <TextView
                     android:id="@+id/tv_direct_indent_pro_sku"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="@dimen/sc_mm_30"
                     android:layout_weight="1"
                     android:enabled="true"
-                    android:text="@string/defaul"
                     android:textColor="@color/home_text_color"
                     android:textSize="@dimen/sc_mm_22" />
 
@@ -89,9 +87,9 @@
             </LinearLayout>
 
             <RelativeLayout
-                android:layout_below="@+id/ll_sku"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/sc_mm_60">
+                android:layout_height="@dimen/sc_mm_60"
+                android:layout_below="@+id/ll_sku">
 
                 <TextView
                     android:id="@+id/tv_direct_indent_pro_price"

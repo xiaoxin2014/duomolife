@@ -99,7 +99,6 @@ public class RequestStatus extends BaseTimeEntity {
     }
 
 
-
     public String getTime() {
         return time;
     }
@@ -404,6 +403,89 @@ public class RequestStatus extends BaseTimeEntity {
         private String refundAccount;
         private String refundPrice;
 
+        /**
+         * 月消费送会员条件
+         * contentTop : 月消费满500元，免费赠送7天会员
+         * contentBelow : 本月已消费0.03元，还差499.97元即将获得
+         * percent : 0.01
+         */
+        private String contentTop;
+        private String contentBelow;
+        private String percent;
+
+
+        /**
+         * 会员相关
+         */
+        private String cardName;
+        private String nickName;
+        private String endTime;
+        private String beEconomical;
+        private String vipLevel;
+        private String predictBeEconomical;
+        private String title;
+        private String subtitle;
+        private String coverImg;
+        private String picUrl;
+        private String giftText;
+        private String zoneId;//会员专区id
+
+        /**
+         * 0元报告相关
+         */
+        private String activityId;
+        private String orderId;
+        private String content;
+        private String imgs;
+        private String star;
+
+        public String getActivityId() {
+            return activityId;
+        }
+
+        public void setActivityId(String activityId) {
+            this.activityId = activityId;
+        }
+
+        public String getOrderId() {
+            return orderId;
+        }
+
+        public void setOrderId(String orderId) {
+            this.orderId = orderId;
+        }
+
+        public String getContent() {
+            return content;
+        }
+
+        public void setContent(String content) {
+            this.content = content;
+        }
+
+        public String getImgs() {
+            return imgs;
+        }
+
+        public void setImgs(String imgs) {
+            this.imgs = imgs;
+        }
+
+        public String getStar() {
+            return star;
+        }
+
+        public void setStar(String star) {
+            this.star = star;
+        }
+
+        public String getZoneId() {
+            return zoneId;
+        }
+
+        public void setZoneId(String zoneId) {
+            this.zoneId = zoneId;
+        }
 
         public String getImgUrl() {
             return imgUrl;
@@ -531,6 +613,118 @@ public class RequestStatus extends BaseTimeEntity {
 
         public void setRefundPrice(String refundPrice) {
             this.refundPrice = refundPrice;
+        }
+
+        public String getContentTop() {
+            return contentTop;
+        }
+
+        public void setContentTop(String contentTop) {
+            this.contentTop = contentTop;
+        }
+
+        public String getContentBelow() {
+            return contentBelow;
+        }
+
+        public void setContentBelow(String contentBelow) {
+            this.contentBelow = contentBelow;
+        }
+
+        public String getPercent() {
+            return percent;
+        }
+
+        public void setPercent(String percent) {
+            this.percent = percent;
+        }
+
+        public String getCardName() {
+            return cardName;
+        }
+
+        public void setCardName(String cardName) {
+            this.cardName = cardName;
+        }
+
+        public String getNickName() {
+            return nickName;
+        }
+
+        public void setNickName(String nickName) {
+            this.nickName = nickName;
+        }
+
+        public String getEndTime() {
+            return endTime;
+        }
+
+        public void setEndTime(String endTime) {
+            this.endTime = endTime;
+        }
+
+        public String getBeEconomical() {
+            return beEconomical;
+        }
+
+        public void setBeEconomical(String beEconomical) {
+            this.beEconomical = beEconomical;
+        }
+
+        public String getVipLevel() {
+            return vipLevel;
+        }
+
+        public void setVipLevel(String vipLevel) {
+            this.vipLevel = vipLevel;
+        }
+
+        public String getPredictBeEconomical() {
+            return predictBeEconomical;
+        }
+
+        public void setPredictBeEconomical(String predictBeEconomical) {
+            this.predictBeEconomical = predictBeEconomical;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public String getSubtitle() {
+            return subtitle;
+        }
+
+        public void setSubtitle(String subtitle) {
+            this.subtitle = subtitle;
+        }
+
+        public String getCoverImg() {
+            return coverImg;
+        }
+
+        public void setCoverImg(String coverImg) {
+            this.coverImg = coverImg;
+        }
+
+        public String getPicUrl() {
+            return picUrl;
+        }
+
+        public void setPicUrl(String picUrl) {
+            this.picUrl = picUrl;
+        }
+
+        public String getGiftText() {
+            return giftText;
+        }
+
+        public void setGiftText(String giftText) {
+            this.giftText = giftText;
         }
     }
 

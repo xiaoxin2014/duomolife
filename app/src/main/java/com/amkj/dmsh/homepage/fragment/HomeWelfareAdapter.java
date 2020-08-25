@@ -11,7 +11,7 @@ import com.amkj.dmsh.base.ViewHolder;
 import com.amkj.dmsh.bean.HomeWelfareEntity.HomeWelfareBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.dominant.activity.DoMoLifeWelfareDetailsActivity;
-import com.amkj.dmsh.user.bean.UserLikedProductEntity;
+import com.amkj.dmsh.user.bean.LikedProductBean;
 import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
@@ -64,8 +64,8 @@ public class HomeWelfareAdapter extends CommonPagerAdapter<HomeWelfareBean> {
             rvTopicGoods.addItemDecoration(itemDecoration);
             rvTopicGoods.setTag(item);
         }
-        List<UserLikedProductEntity.LikedProductBean> goods = item.getGoods();
-        List<UserLikedProductEntity.LikedProductBean> newGoods = new ArrayList<>();
+        List<LikedProductBean> goods = item.getGoods();
+        List<LikedProductBean> newGoods = new ArrayList<>();
         //最多显示三个
         if (goods != null) {
             for (int i = 0; i < (goods.size() > 3 ? 3 : goods.size()); i++) {
@@ -74,9 +74,9 @@ public class HomeWelfareAdapter extends CommonPagerAdapter<HomeWelfareBean> {
         }
 
         //初始化福利社商品适配器
-        BaseQuickAdapter topicGoodsAdapter = new BaseQuickAdapter<UserLikedProductEntity.LikedProductBean, BaseViewHolder>(R.layout.item_welfear_goods, newGoods) {
+        BaseQuickAdapter topicGoodsAdapter = new BaseQuickAdapter<LikedProductBean, BaseViewHolder>(R.layout.item_welfear_goods, newGoods) {
             @Override
-            protected void convert(BaseViewHolder helper, UserLikedProductEntity.LikedProductBean likedProductBean) {
+            protected void convert(BaseViewHolder helper, LikedProductBean likedProductBean) {
                 if (likedProductBean == null) return;
                 GlideImageLoaderUtil.loadImage(mContext, helper.getView(R.id.iv_goods_pic), likedProductBean.getPicUrl());
                 helper.setText(R.id.tv_price, ConstantMethod.getRmbFormat(mContext, likedProductBean.getPrice()))
@@ -91,7 +91,7 @@ public class HomeWelfareAdapter extends CommonPagerAdapter<HomeWelfareBean> {
                     }
                     if (likedProductBean.getMarketLabelList() != null
                             && likedProductBean.getMarketLabelList().size() > 0) {
-                        for (UserLikedProductEntity.LikedProductBean.MarketLabelBean marketLabelBean : likedProductBean.getMarketLabelList()) {
+                        for (LikedProductBean.MarketLabelBean marketLabelBean : likedProductBean.getMarketLabelList()) {
                             if (!TextUtils.isEmpty(marketLabelBean.getTitle())) {
                                 fbl_label.addView(ProductLabelCreateUtils.createLabelText(mContext, marketLabelBean.getTitle(), 0));
                             }
@@ -105,7 +105,7 @@ public class HomeWelfareAdapter extends CommonPagerAdapter<HomeWelfareBean> {
             }
         };
         topicGoodsAdapter.setOnItemClickListener((adapter, view, position1) -> {
-            UserLikedProductEntity.LikedProductBean likedProductBean = (UserLikedProductEntity.LikedProductBean) view.getTag();
+            LikedProductBean likedProductBean = (LikedProductBean) view.getTag();
             String androidLink = "";
             if (likedProductBean != null) {
                 if (!TextUtils.isEmpty(likedProductBean.getGpInfoId())) {

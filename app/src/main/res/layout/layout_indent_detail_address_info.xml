@@ -49,6 +49,7 @@
     </LinearLayout>
 
     <TextView
+        android:text="@string/defaul"
         android:id="@+id/tv_indent_details_address"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -20,6 +20,7 @@ import me.jessyan.autosize.AutoSize;
 import static android.view.Gravity.CENTER;
 import static android.view.Gravity.NO_GRAVITY;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
 
 /**
@@ -43,7 +44,7 @@ public abstract class BaseAlertDialog implements LifecycleObserver {
         if (context instanceof LifecycleOwner) {
             ((LifecycleOwner) context).getLifecycle().addObserver(this);
         }
-        AlertDialog.Builder builder = new AlertDialog.Builder(context,getThemeResId());
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, getThemeResId());
         dialogView = LayoutInflater.from(context).inflate(layoutId == 0 ? getLayoutId() : layoutId, null, false);
         ButterKnife.bind(this, dialogView);
         builder.setCancelable(true);
@@ -54,6 +55,11 @@ public abstract class BaseAlertDialog implements LifecycleObserver {
 
     protected int getLayoutWith() {
         return MATCH_PARENT;
+    }
+
+
+    protected int getLayoutHeight() {
+        return WRAP_CONTENT;
     }
 
     protected int getThemeResId() {
@@ -97,6 +103,7 @@ public abstract class BaseAlertDialog implements LifecycleObserver {
             layoutParams.gravity = (gravity != NO_GRAVITY ? gravity : CENTER);
             // 设置窗体宽度全屏
             layoutParams.width = getLayoutWith();
+            layoutParams.height = getLayoutHeight();
             // 获取窗体顶层View对象，并设置内边距为0（保证顶层视图宽度全屏）
             window.getDecorView().setPadding(0, 0, 0, 0);
             // 提交窗体属性参数

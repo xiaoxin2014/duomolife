@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:minHeight="@dimen/sc_mm_400"
+    android:maxHeight="@dimen/sc_mm_700"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border_bottom_line"
+        android:gravity="center"
+        android:padding="@dimen/sc_mm_32"
+        android:text="中奖名单"
+        android:textColor="@color/black" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_lottery"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</LinearLayout>

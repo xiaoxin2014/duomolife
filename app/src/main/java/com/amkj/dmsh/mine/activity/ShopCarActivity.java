@@ -37,7 +37,7 @@ import com.amkj.dmsh.shopdetails.bean.EditGoodsSkuEntity;
 import com.amkj.dmsh.shopdetails.bean.ShopCarGoodsSku;
 import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
-import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
+import com.amkj.dmsh.user.bean.LikedProductBean;
 import com.amkj.dmsh.utils.DoubleUtil;
 import com.amkj.dmsh.utils.KeyboardUtils;
 import com.amkj.dmsh.utils.gson.GsonUtils;
@@ -862,7 +862,7 @@ public class ShopCarActivity extends BaseActivity {
                         if (cartProRecommendList.size() > 0) {
                             if (shopCarGoodsAdapter.getFooterLayoutCount() == 0) {
                                 shopCarGoodsAdapter.addFooterView(cartHeaderView);
-                                recommendHeaderView.tv_pro_title.setText("-商品推荐-");
+                                recommendHeaderView.tv_pro_title.setText("-猜你喜欢-");
                             }
                             mGoodProductAdapter.notifyDataSetChanged();
                         }

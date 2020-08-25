@@ -1113,7 +1113,6 @@
             </intent-filter>
         </activity>
 
-        <!--发现-帖子详情-->
 
         <!--发现-话题分类-->
         <activity
@@ -1364,6 +1363,183 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="IntegralApplyRefundActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!--多么会员-->
+        <activity
+            android:name=".mine.activity.DomolifeVipActivity"
+            android:exported="false"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="DomolifeVipActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!--会员权益-->
+        <activity
+            android:name=".mine.activity.VipPowerActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="VipPowerActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!--开通会员-->
+        <activity
+            android:name=".mine.activity.OpenVipActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="OpenVipActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!--0元试用详情-->
+        <activity
+            android:name=".mine.activity.ZeroDetailActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="ZeroDetailActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!--会员专享券-->
+        <activity
+            android:name=".mine.activity.VipCouponActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="VipCouponActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!--会员活动列表-->
+        <activity
+            android:name=".mine.activity.ZeroActivityListActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="ZeroActivityListActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!--每月专享券列表-->
+        <activity
+            android:name=".mine.activity.MonthCouponListActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="MonthCouponListActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!--每周会员特价商品列表-->
+        <activity
+            android:name=".mine.activity.VipZoneDetailActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="VipZoneDetailActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!--往期0元试用中奖名单列表-->
+        <activity
+            android:name=".mine.activity.ZeroLotteryListActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="ZeroLotteryListActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!--我的试用列表-->
+        <activity
+            android:name=".mine.activity.MyZeroListActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="MyZeroListActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!--会员专享价-->
+        <activity
+            android:name=".mine.activity.VipExclusiveActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="VipExclusiveActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!--0元试用心得列表-->
+        <activity
+            android:name=".mine.activity.ZeroReportListActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="ZeroReportListActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!--0元订单填写-->
+        <activity
+            android:name=".shopdetails.activity.DirectZeroWriteActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="DirectZeroWriteActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!--0元订单详情-->
+        <activity
+            android:name=".mine.activity.ZeroIndentDetailActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="ZeroIndentDetailActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!--0元订单报告详情-->
+        <activity
+            android:name=".mine.activity.ZeroReportDetailActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="ZeroReportDetailActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!--0元试用发布报告-->
+        <activity
+            android:name=".mine.activity.CommitZeroReportActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="CommitZeroReportActivity" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>

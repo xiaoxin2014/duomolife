@@ -13,7 +13,7 @@ public class Url {
         } else if (position == 1) {//测试库
             return BASE_URL = "http://ts.domolife.cn/";
         } else if (position == 2) {//钊立
-            return BASE_URL = "http://192.168.2.98:8080/";
+            return BASE_URL = "http://192.168.2.111:8080/";
         } else if (position == 3) {//泽鑫
             return BASE_URL = "http://192.168.1.51:8080/";
         } else if (position == 4) {//泽鑫2
@@ -715,4 +715,61 @@ public class Url {
     public static final String LOTTERY_URL = "https://www.domolife.cn/m/template/home/lottery.html";
     //    分享保存图片
     public static final String SHARE_SAVE_IMAGE_URL = "api/miniprogram/createMiniProductSharePic";
+
+
+    /*
+      vip相关
+     */
+    // 获取权益接口
+    public static final String GET_VIP_POWER = "api/vip/vipuser/getVipInviolableRightsList";
+    // 获取会员专享优惠券列表
+    public static final String GET_VIP_COUPON_LIST = "api/vip/vipuser/getVipCouponList";
+    // 获取会员日封面图
+    public static final String GET_VIPDAYS_INFO = "api/vip/vipuser/getVipDaysInfo";
+    // 获取月销满多少赠送会员
+    public static final String GET_CONSUME_LARGESS_INFO = "api/vip/vipuser/getConsumeLargessInfo";
+    // 获取会员信息接口
+    public static final String GET_VIP_USER_INFO = "api/vip/vipuser/getVipUserInfo";
+    // 获取会员购买结算信息
+    public static final String GET_VIP_SETTLEINFO = "api/vip/vipuser/getVipCardSettleInfo";
+    // 创建订单
+    public static final String SUBMIT_VIP_USER = "api/vip/vipuser/submitVipUser";
+    // 省钱计算器
+    public static final String GET_BEECONOMICAL = "api/vip/vipuser/getBeEconomical";
+    // 获取每周会员特价商品
+    public static final String GET_WEEK_GOODS = "api/vip/vipuser/getWeekVipGoodsList";
+    // 获取0元试用活动信息
+    public static final String GET_ZERO_ACTIVITY_INFO = "api/vip/vipuser/getZeroActivityCoverInfo";
+    // 0元试用活动详情
+    public static final String GET_ZERO_PRODUCT_DETAIL = "api/vip/zeroActivity/getZeroProductDetail";
+    // 获取0元试用活动列表
+    public static final String GET_ZERO_LIST = "api/vip/zeroActivity/getZeroActivityList";
+    // 获取0元试用活动列表
+    public static final String GET_APPLY_ZERO = "api/vip/zeroActivity/applyZeroActivity";
+    // 获取往期0元试用中奖名单
+    public static final String GET_WINNERS_INFO_LIST = "api/vip/zeroActivity/getWinnersInfoList";
+    // 获取开卡礼封面
+    public static final String GET_CARD_GIFT_INFO = "api/vip/vipuser/getBuyCardGiftInfo";
+    // 获取0元试用申请列表
+    public static final String GET_MY_APPLY_LIST = "api/vip/zeroActivity/getMyApplyList";
+    // 每周会员/会员日专区详情
+    public static final String GET_VIP_ZONE_DETAIL = "api/vip/vipuser/getVipZoneDetail";
+    // 0元试用订单结算信息
+    public static final String GET_ZERO_SETTLE_INFO = "api/vip/zeroActivity/getZeroOrderSettleInfo";
+    // 提交0元试用订单
+    public static final String CREATE_ZERO_ORDER = "api/vip/zeroActivity/createZeroOrder";
+    // 提交0元试用报告
+    public static final String SUBMIT_ZERO_REPORT = "api/vip/zeroActivity/submitReport";
+    // 获取0元试用心得列表
+    public static final String GET_REPORT_LIST = "api/vip/zeroActivity/getActivityReportList";
+    // 获取0元试用报告详情
+    public static final String GET_REPORT_DETAIL = "api/vip/zeroActivity/getActivityReportDetail";
+    // 报告点赞
+    public static final String REPORT_FAVOR = "api/vip/zeroActivity/reportFavor";
+    // 报告收藏
+    public static final String REPORT_COLLECT = "api/vip/zeroActivity/reportCollect";
+    // 获取我的报告
+    public static final String GET_MY_REPORT = "api/vip/zeroActivity/getMyReport";
+    // 0元试用订单详情
+    public static final String GET_ZERO_INDENT_DETAIL = "api/vip/zeroActivity/getZeroOrderDetail";
 }

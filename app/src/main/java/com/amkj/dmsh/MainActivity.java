@@ -791,14 +791,12 @@ public class MainActivity extends BaseActivity {
                                 mAlertDialogEdit.setCancleVisible(View.VISIBLE)
                                         .setEditHint(text)
                                         .setEditText("http://192.168.2.98:8080/")
-                                        .setOnAlertListener(text1 -> {
-                                            changeBaseUrl(position);
-                                        });
+                                        .setOnAlertListener(this::changeBaseUrl);
                             }
 
                             mAlertDialogEdit.show();
                         } else {
-                            changeBaseUrl(position);
+                            changeBaseUrl(Url.getUrl(position));
                         }
                     });
         }
@@ -806,8 +804,8 @@ public class MainActivity extends BaseActivity {
     }
 
     //切换BaseUrl
-    private void changeBaseUrl(int position) {
-        SharedPreUtils.setParam("selectedServer", "selectServerUrl", Url.getUrl(position));
+    private void changeBaseUrl(String baseUrl) {
+        SharedPreUtils.setParam("selectedServer", "selectServerUrl",baseUrl );
         SharedPreUtils.setParam("isLogin", false);
         RestartAPPTool.restartAPP(MainActivity.this);
     }

@@ -5,7 +5,7 @@ import com.amkj.dmsh.bean.UserSearchEntity.UserSearchBean;
 import com.amkj.dmsh.find.bean.HotTopicEntity.HotTopicBean;
 import com.amkj.dmsh.find.bean.PostEntity.PostBean;
 import com.amkj.dmsh.homepage.bean.TopicSpecialEntity.TopicSpecialBean;
-import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean;
+import com.amkj.dmsh.user.bean.LikedProductBean;
 
 import java.util.List;
 

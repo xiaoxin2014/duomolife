@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_marginTop="@dimen/sc_mm_7"
+        android:text="距截止试用报名： --天--:--:--"
+        android:id="@+id/tv_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/text_black_t"
+        android:textSize="@dimen/sc_mm_28" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:background="@drawable/shape_zero_list_bg"
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/sc_mm_28"
+        android:nestedScrollingEnabled="false" />
+</LinearLayout>
+

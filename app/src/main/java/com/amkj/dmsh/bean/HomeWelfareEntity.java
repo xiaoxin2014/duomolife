@@ -1,7 +1,7 @@
 package com.amkj.dmsh.bean;
 
 import com.amkj.dmsh.base.BaseEntity;
-import com.amkj.dmsh.user.bean.UserLikedProductEntity;
+import com.amkj.dmsh.user.bean.LikedProductBean;
 
 import java.util.List;
 
@@ -44,7 +44,7 @@ public class HomeWelfareEntity extends BaseEntity {
         private String picUrl;
         private String id;
         private String title;
-        private List<UserLikedProductEntity.LikedProductBean> goods;
+        private List<LikedProductBean> goods;
 
         public String getPicUrl() {
             return picUrl;
@@ -70,11 +70,11 @@ public class HomeWelfareEntity extends BaseEntity {
             this.title = title;
         }
 
-        public List<UserLikedProductEntity.LikedProductBean> getGoods() {
+        public List<LikedProductBean> getGoods() {
             return goods;
         }
 
-        public void setGoods(List<UserLikedProductEntity.LikedProductBean> goods) {
+        public void setGoods(List<LikedProductBean> goods) {
             this.goods = goods;
         }
     }

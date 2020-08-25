@@ -49,7 +49,6 @@ import com.amkj.dmsh.shopdetails.bean.PriceInfoBean;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateAliPayIndentBean;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateUnionPayIndentEntity;
 import com.amkj.dmsh.shopdetails.bean.QualityCreateWeChatPayIndentBean;
-import com.amkj.dmsh.shopdetails.bean.ShopCarGoodsSkuTransmit;
 import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
 import com.amkj.dmsh.shopdetails.integration.bean.AddressListEntity;
 import com.amkj.dmsh.shopdetails.payutils.AliPay;
@@ -197,21 +196,14 @@ public class DirectIndentWriteActivity extends BaseActivity {
         header_shared.setVisibility(View.INVISIBLE);
         Intent intent = getIntent();
         try {
-
             String goodsJson = intent.getStringExtra("goods");
             String combineGoodsJson = intent.getStringExtra("combineGoods");
             String gpShopInfo = intent.getStringExtra("gpShopInfo");
-            if (!TextUtils.isEmpty(goodsJson)) {
-                passGoods = GsonUtils.fromJson(goodsJson, new TypeToken<List<CartInfoBean>>() {
-                }.getType());
-            }
-            if (!TextUtils.isEmpty(combineGoodsJson)) {
-                combineGoods = GsonUtils.fromJson(combineGoodsJson, new TypeToken<List<CombineGoodsBean>>() {
-                }.getType());
-            }
-            if (!TextUtils.isEmpty(gpShopInfo)) {
-                groupShopDetailsBean = GsonUtils.fromJson(gpShopInfo, GroupShopDetailsBean.class);
-            }
+            passGoods = GsonUtils.fromJson(goodsJson, new TypeToken<List<CartInfoBean>>() {
+            }.getType());
+            combineGoods = GsonUtils.fromJson(combineGoodsJson, new TypeToken<List<CombineGoodsBean>>() {
+            }.getType());
+            groupShopDetailsBean = GsonUtils.fromJson(gpShopInfo, GroupShopDetailsBean.class);
             orderNo = intent.getStringExtra("orderNo");
         } catch (Exception e) {
             showToast("商品信息有误，请重试");
@@ -228,6 +220,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
         pullFootView.init();
 
         if ((passGoods != null && passGoods.size() > 0) || (combineGoods != null && combineGoods.size() > 0) || !TextUtils.isEmpty(orderNo)) {
+            type = INDENT_W_TYPE;
             if (passGoods != null) {
                 discountBeanList.clear();
                 for (int i = 0; i < passGoods.size(); i++) {
@@ -240,8 +233,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
                     discountBeanList.add(indentProBean);
                 }
             }
-            type = INDENT_W_TYPE;
-            directProductAdapter = new WriteProductListAdapter(getActivity(), productInfoList, type);
         } else if (groupShopDetailsBean != null) {
             type = INDENT_GROUP_SHOP;
             IndentProDiscountBean indentProBean = new IndentProDiscountBean();
@@ -249,11 +240,11 @@ public class DirectIndentWriteActivity extends BaseActivity {
             indentProBean.setSaleSkuId(groupShopDetailsBean.getGpSkuId());
             indentProBean.setCount(1);
             discountBeanList.add(indentProBean);
-            directProductAdapter = new WriteProductListAdapter(getActivity(), productInfoList, type);
         } else {
             showToast("商品信息有误，请重试");
             finish();
         }
+        directProductAdapter = new WriteProductListAdapter(getActivity(), productInfoList, type);
         pullFootView.rect_indent_number.setFontColor(Color.parseColor("#333333"));
         communal_recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
@@ -369,14 +360,14 @@ public class DirectIndentWriteActivity extends BaseActivity {
      * @param updatePriceInfo (是否需要修改订单结算信息,选择优惠券或者修改地址时为true)
      */
     private void getIndentDiscounts(boolean updatePriceInfo) {
-        if (discountBeanList.size() > 0 || combineGoods.size() > 0) {
+        if (!TextUtils.isEmpty(type)) {
             Map<String, Object> params = new HashMap<>();
             params.put("userId", userId);
             params.put("addressId", addressId);
             if (updatePriceInfo) {
                 params.put("userCouponId", couponId);
             }
-            if (type.equals(INDENT_GROUP_SHOP)) {
+            if (groupShopDetailsBean != null) {
                 params.put("gpInfoId", groupShopDetailsBean.getGpInfoId());
                 params.put("gpRecordId", groupShopDetailsBean.getGpRecordId());
             }
@@ -386,12 +377,11 @@ public class DirectIndentWriteActivity extends BaseActivity {
             if (combineGoods != null && combineGoods.size() > 0) {
                 params.put("combineGoods", GsonUtils.toJson(combineGoods));
             }
+
             NetLoadUtils.getNetInstance().loadNetDataPost(this, updatePriceInfo ? Url.INDENT_DISCOUNTS_UPDATE_INFO : Url.INDENT_DISCOUNTS_NEW_INFO, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
-                    if (loadHud != null) {
-                        loadHud.dismiss();
-                    }
+                    dismissLoadhud(getActivity());
                     productInfoList.clear();
                     identWriteEntity = GsonUtils.fromJson(result, IndentWriteEntity.class);
                     if (identWriteEntity != null) {
@@ -417,16 +407,12 @@ public class DirectIndentWriteActivity extends BaseActivity {
 
                 @Override
                 public void onNotNetOrException() {
-                    if (loadHud != null) {
-                        loadHud.dismiss();
-                    }
+                    dismissLoadhud(getActivity());
                     NetLoadUtils.getNetInstance().showLoadSir(loadService, identWriteEntity);
                 }
             });
         } else {
-            if (loadHud != null) {
-                loadHud.dismiss();
-            }
+            dismissLoadhud(getActivity());
             NetLoadUtils.getNetInstance().showLoadSir(loadService, identWriteEntity);
         }
     }
@@ -553,7 +539,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
         }
 
         //只有一件商品需要结算时，可修改购买数量
-        if (!INDENT_GROUP_SHOP.equals(type) && productInfoList.size() == 1) {
+        if (INDENT_W_TYPE.equals(type) && productInfoList.size() == 1) {
             ProductInfoBean productInfoBean = productInfoList.get(0);
             pullFootView.rect_indent_number.setVisibility(VISIBLE);
             pullFootView.rect_indent_number.setNum(productInfoBean.getCount());
@@ -674,7 +660,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
             pullHeaderView.ll_indent_address_null.setVisibility(VISIBLE);
         }
         //            再次购买
-        if (orderNo != null && isFirst) {
+        if (!TextUtils.isEmpty(orderNo) && isFirst) {
             getOrderData();
         } else {
             getIndentDiscounts(!isFirst);
@@ -740,9 +726,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                     showAlertDialogRealName();
                 } else if (indentWriteBean.getAllProductNotBuy() == 1) {
                     showToast("订单内含有无法购买的商品，请移除后再提交");
-                } else if (type.equals(INDENT_GROUP_SHOP) && groupShopDetailsBean != null) {
-                    createGroupIndent(payWay, groupShopDetailsBean);
-                } else if (type.equals(INDENT_W_TYPE) && productInfoList.size() > 0) {
+                } else if (!TextUtils.isEmpty(type)) {
                     createIndent();
                 } else {
                     showToast("商品数据错误");
@@ -772,9 +756,9 @@ public class DirectIndentWriteActivity extends BaseActivity {
     }
 
     /**
-     * 创建拼团订单
+     * 创建普通订单
      */
-    private void createGroupIndent(final String payWay, GroupShopDetailsBean groupShopDetailsBean) {
+    private void createIndent() {
         showLoadhud(this);
         String message = pullFootView.edt_direct_product_note.getText().toString().trim();
         Map<String, Object> params = new HashMap<>();
@@ -782,32 +766,43 @@ public class DirectIndentWriteActivity extends BaseActivity {
         params.put("userId", userId);
         //用户地址
         params.put("userAddressId", addressId);
-        //拼团订单状态 开团 1 拼团 2
-        params.put("gpStatus", groupShopDetailsBean.getGpStatus());
-//        params.put("gpProductId", groupShopDetailsBean.getGpProductId());
-        params.put("gpInfoId", groupShopDetailsBean.getGpInfoId());
-        if (groupShopDetailsBean.getGpStatus() == 2) {
-            params.put("gpRecordId", groupShopDetailsBean.getGpRecordId());
+        //普通商品(普通订单以及拼团订单都要传)
+        if (discountBeanList != null && discountBeanList.size() > 0) {
+            params.put("goods", GsonUtils.toJson(discountBeanList));
         }
-        //订单信息
-        List<ShopCarGoodsSkuTransmit> settlementGoods = new ArrayList<>();
-        ShopCarGoodsSkuTransmit shopCarGoodsSkuTransmit = new ShopCarGoodsSkuTransmit();
-        shopCarGoodsSkuTransmit.setId(groupShopDetailsBean.getProductId());
-        shopCarGoodsSkuTransmit.setSaleSkuId(groupShopDetailsBean.getGpSkuId());
-        shopCarGoodsSkuTransmit.setCount(1);
-        settlementGoods.add(shopCarGoodsSkuTransmit);
-        params.put("goods", GsonUtils.toJson(settlementGoods));
+
+        //组合商品
+        if (combineGoods != null && combineGoods.size() > 0) {
+            params.put("combineGoods", GsonUtils.toJson(combineGoods));
+        }
+
+        //拼团商品
+        if (groupShopDetailsBean != null) {
+            //拼团订单状态 开团 1 拼团 2
+            params.put("gpStatus", groupShopDetailsBean.getGpStatus());
+            params.put("gpInfoId", groupShopDetailsBean.getGpInfoId());
+            if (groupShopDetailsBean.getGpStatus() == 2) {
+                params.put("gpRecordId", groupShopDetailsBean.getGpRecordId());
+            }
+        }
+
         //用户留言
         if (!TextUtils.isEmpty(message)) {
             params.put("remark", message);
         }
-        //付款方式
+
+        //是否使用优惠券
+        if (couponId > 0) {
+            params.put("userCouponId", couponId);
+        }
+
+        //付款方式 2019.1.16 新增银联支付
         params.put("buyType", payWay);
-        //2019.1.16 新增银联支付
         if (payWay.equals(PAY_UNION_PAY)) {
             params.put("paymentLinkType", 2);
             params.put("isApp", true);
         }
+
         //实名信息
         if (isReal) {
             params.put("realName", indentWriteBean.getRealName());
@@ -815,8 +810,10 @@ public class DirectIndentWriteActivity extends BaseActivity {
             params.put("idcardImg1", indentWriteBean.getIdcardImg1());
             params.put("idcardImg2", indentWriteBean.getIdcardImg2());
         }
+        //订单来源
+        params.put("isWeb", false);
         params.put("source", 0);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_CREATE_GROUP_NEW_INDENT, params, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, getUrl(), params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 dealingIndentPayResult(result);
@@ -830,64 +827,12 @@ public class DirectIndentWriteActivity extends BaseActivity {
         });
     }
 
-    /**
-     * 创建普通订单
-     */
-    private void createIndent() {
-        showLoadhud(this);
-        String message = pullFootView.edt_direct_product_note.getText().toString().trim();
-        Map<String, Object> params = new HashMap<>();
-        //用户ID
-        params.put("userId", userId);
-        //用户地址
-        params.put("userAddressId", addressId);
-        //普通商品
-        if (discountBeanList != null && discountBeanList.size() > 0) {
-            params.put("goods", GsonUtils.toJson(discountBeanList));
+    private String getUrl() {
+        if (INDENT_GROUP_SHOP.equals(type)) {//拼团
+            return Q_CREATE_GROUP_NEW_INDENT;
+        } else {//普通订单
+            return Q_CREATE_INDENT;
         }
-
-        //组合商品
-        if (combineGoods != null && combineGoods.size() > 0) {
-            params.put("combineGoods", GsonUtils.toJson(combineGoods));
-        }
-
-        //用户留言
-        if (!TextUtils.isEmpty(message)) {
-            params.put("remark", message);
-        }
-
-        //是否使用优惠券
-        if (couponId > 0) {
-            params.put("userCouponId", couponId);
-        }
-        //付款方式 微信 wechatPay 支付宝 aliPay
-        //2019.1.16 新增银联支付
-        params.put("buyType", payWay);
-        if (payWay.equals(PAY_UNION_PAY)) {
-            params.put("paymentLinkType", 2);
-            params.put("isApp", true);
-        }
-        params.put("isWeb", false);
-        if (isReal) {
-            params.put("realName", indentWriteBean.getRealName());
-            params.put("idcard", indentWriteBean.getIdCard());
-            params.put("idcardImg1", indentWriteBean.getIdcardImg1());
-            params.put("idcardImg2", indentWriteBean.getIdcardImg2());
-        }
-        //订单来源
-        params.put("source", 0);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_CREATE_INDENT, params, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                dealingIndentPayResult(result);
-            }
-
-            @Override
-            public void onNotNetOrException() {
-                dismissLoadhud(getActivity());
-                showToast(R.string.do_failed);
-            }
-        });
     }
 
     /**

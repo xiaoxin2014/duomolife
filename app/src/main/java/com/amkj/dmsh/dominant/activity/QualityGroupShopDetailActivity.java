@@ -536,7 +536,6 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                     @Override
                     public void onSuccess(String result) {
                         smart_refresh_ql_sp_details.finishRefresh();
-
                         mGroupShopDetailsEntity = GsonUtils.fromJson(result, GroupShopDetailsEntity.class);
                         if (mGroupShopDetailsEntity != null) {
                             mGroupShopDetailsBean = mGroupShopDetailsEntity.getGroupShopDetailsBean();

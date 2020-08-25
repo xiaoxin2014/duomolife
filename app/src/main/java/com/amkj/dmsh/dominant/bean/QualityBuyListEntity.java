@@ -1,7 +1,7 @@
 package com.amkj.dmsh.dominant.bean;
 
 import com.amkj.dmsh.base.BaseEntity;
-import com.amkj.dmsh.user.bean.UserLikedProductEntity.LikedProductBean.MarketLabelBean;
+import com.amkj.dmsh.user.bean.LikedProductBean.MarketLabelBean;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;

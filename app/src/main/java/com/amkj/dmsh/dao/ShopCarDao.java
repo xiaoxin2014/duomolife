@@ -143,8 +143,8 @@ public class ShopCarDao {
      */
     public static void selectOne(List<MultiItemEntity> shopGoodsList, CartInfoBean cartInfoBean, boolean isEditStatus) {
         if (cartInfoBean != null) {
-            Boolean isSelected = !cartInfoBean.isSelected();
-            Boolean isDelete = !cartInfoBean.isDelete();
+            boolean isSelected = !cartInfoBean.isSelected();
+            boolean isDelete = !cartInfoBean.isDelete();
             for (MultiItemEntity multiItemEntity : shopGoodsList) {
                 if (multiItemEntity.getItemType() == PRODUCT) {
                     CartInfoBean bean = (CartInfoBean) multiItemEntity;
