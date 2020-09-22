@@ -170,7 +170,7 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
                             , !TextUtils.isEmpty(dmlOptimizedSelDetailBean.getTitle()) ?
                             dmlOptimizedSelDetailBean.getTitle() : "多么定制"
                             , getStrings(dmlOptimizedSelDetailBean.getSubtitle())
-                            , Url.BASE_SHARE_PAGE_TWO + "m/template/goods/optimize_detail.html?id="
+                            , Url.BASE_SHARE_PAGE_TWO + "goods/optimize_detail.html?id="
                             + dmlOptimizedSelDetailBean.getId(), dmlOptimizedSelDetailBean.getId());
 
                 }
@@ -305,7 +305,7 @@ public class DmlOptimizedSelDetailActivity extends BaseActivity {
                     , !TextUtils.isEmpty(dmlOptimizedSelDetailBean.getTitle()) ?
                     dmlOptimizedSelDetailBean.getTitle() : "多么定制"
                     , getStrings(dmlOptimizedSelDetailBean.getSubtitle())
-                    , Url.BASE_SHARE_PAGE_TWO + "m/template/goods/optimize_detail.html?id="
+                    , Url.BASE_SHARE_PAGE_TWO + "goods/optimize_detail.html?id="
                     + dmlOptimizedSelDetailBean.getId(),dmlOptimizedSelDetailBean.getId());
         }
     }

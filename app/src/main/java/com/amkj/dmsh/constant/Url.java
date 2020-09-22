@@ -5,6 +5,7 @@ package com.amkj.dmsh.constant;
  */
 public class Url {
 
+//    public static String BASE_URL = "http://dev.domolife.cn/";
     public static String BASE_URL = "https://app.domolife.cn/";
 
     public static String getUrl(int position) {
@@ -98,7 +99,8 @@ public class Url {
     //  搜索留言
     public static final String SEARCH_LEAVE_MES = "api/search/saveAdvise";
     //  新版分享
-    public static final String BASE_SHARE_PAGE_TWO = "https://www.domolife.cn/";
+    public static final String BASE_SHARE_PAGE_TWO = "https://www.domolife.cn/m/template/";
+//    public static final String BASE_SHARE_PAGE_TWO = "https://test.domolife.cn/test/template/";
     //    文章详情公共分享
     public static final String SHARE_COMMUNAL_ARTICLE = "api/reminder/getSharePrompt";
     //签到提醒
@@ -203,7 +205,7 @@ public class Url {
     //    Top栏
     public static final String GTE_HOME_TOP = "api/appindex/getAppIndexActivityZoneList";
     //    动态专区（新人专享）
-    public static final String GTE_NEW_USER_GOODS = "api/appindex/getAppIndexDynamicArea";
+    public static final String GTE_HOME_DYNAMIC_AREA = "api/appindex/getAppIndexDynamicArea";
     //    获取专区（多个）
     public static final String GTE_HOME_SPECIAL_ZONE = "api/appindex/getAppIndexSpecialZoneList";
 
@@ -353,9 +355,9 @@ public class Url {
     /**
      * 良品
      */
-    //    获取第三方支付结果
+    //     获取第三方支付结果
     public static final String Q_UPDATE_PAY_RESULT = "api/goods/order/updatePayResult";
-    //大营销中心订单创建
+    //    大营销中心订单创建
     public static final String Q_CREATE_INDENT = "api/goods/order/addOrderPayInfoNewV2";
     //    积分订单创建
     public static final String INTEGRAL_CREATE_INDENT = "api/integralorder/addIntegralOrder";
@@ -556,9 +558,9 @@ public class Url {
     public static final String Q_SP_DETAIL_PRO_COLLECT = "api/home/addGoodsCollect";
     //    服务承诺
     public static final String Q_SP_DETAIL_SERVICE_COMMITMENT = "api/goods/order/getProductPromise";
-    //   组合商品基本信息
+    //    组合商品基本信息
     public static final String Q_GROUP_GOODS_BASIC = "api/goods/getCombineBasicInfo";
-    //   组合商品详细信息
+    //    组合商品详细信息
     public static final String Q_GROUP_GOODS_DETAIL = "api/goods/getCombineDetailInfo";
 
     //    海外直邮主题列表
@@ -579,7 +581,7 @@ public class Url {
     public static final String QUALITY_HOT_SALE_AD = "api/home/getHotProductAd";
     //    热销单品时间轴
     public static final String QUALITY_HOT_SALE_SHAFT = "api/goods/getHotGoodsDay";
-    //    //    标签详情商品
+    //    标签详情商品
     public static final String QUALITY_PRODUCT_LABEL = "api/goods/getProductListByLabelId";
     //    新版热销单品 时间轴
     public static final String QUALITY_HOT_SALE_LIST_NEW = "api/goods/getHotGoodsNew";
@@ -631,7 +633,7 @@ public class Url {
     /**
      * 收货地址
      */
-//    读取默认地址
+    //    读取默认地址
     public static final String DELIVERY_ADDRESS = "api/user/address/getDefaultAddress";
     //    地址详情
     public static final String ADDRESS_DETAILS = "api/user/address/getUserAddressDetail";
@@ -661,13 +663,13 @@ public class Url {
     public static final String FIND_COUPON_PACKAGE = "api/my/coupon/sendCouponPackage";
     //  点赞
     public static final String FIND_AND_COMMENT_FAV = "api/find/addCommentFavor";
-    //      帖子标签关联列表
+    //     帖子标签关联列表
     public static final String FIND_RELEVANCE_TAG = "api/find/getPostByTag";
     //      帖子标签关联信息
     public static final String FIND_RELEVANCE_TAG_INFO = "api/find/getDocumentOtherInfoByTag";
     //    话题收藏
     public static final String F_TOPIC_COLLECT = "api/home/addFindTopic";
-    //添加文章评论帖子
+    //   添加文章评论帖子
     public static final String FIND_COMMENT = "api/find/newAddComment";
     //    添加限时特惠产品评论
     public static final String GOODS_COMMENT = "api/find/addComment";
@@ -706,7 +708,7 @@ public class Url {
     //   新增粉丝
     public static final String NEW_FANS = "api/find/post/getNewFans";
     //    奖励规则H5地址
-    public static final String REWARD_RULE = BASE_SHARE_PAGE_TWO + "m/template/find_template/rewardRule.html?hideNav=1";
+    public static final String REWARD_RULE = Url.BASE_SHARE_PAGE_TWO + "find_template/rewardRule.html?hideNav=1";
     //    已购买商品列表界面 广告位
     public static final String FIND_AD2 = "api/website/getAdByFindTopic";
     //    获取商品详情更多评论
@@ -724,6 +726,8 @@ public class Url {
     public static final String GET_VIP_POWER = "api/vip/vipuser/getVipInviolableRightsList";
     // 获取会员专享优惠券列表
     public static final String GET_VIP_COUPON_LIST = "api/vip/vipuser/getVipCouponList";
+    // 会员专享优惠券专区
+    public static final String GET_VIP_COUPON_ZONE = "api/vip/vipuser/getVipCouponZone";
     // 获取会员日封面图
     public static final String GET_VIPDAYS_INFO = "api/vip/vipuser/getVipDaysInfo";
     // 获取月销满多少赠送会员
@@ -772,4 +776,22 @@ public class Url {
     public static final String GET_MY_REPORT = "api/vip/zeroActivity/getMyReport";
     // 0元试用订单详情
     public static final String GET_ZERO_INDENT_DETAIL = "api/vip/zeroActivity/getZeroOrderDetail";
+    // 0元试用订单详情-去支付
+    public static final String GET_ZERO_GO_PAY = "api/vip/zeroActivity/goPay";
+    // 会员购买记录
+    public static final String GET_VIP_RECORD = "api/vip/vipuser/getVipRecord";
+    // 0元订单退款去向
+    public static final String GET_ZERO_REFUND_INFO = "api/vip/zeroActivity/getRefundGoInfo";
+    // 分享有礼
+    public static final String GET_VIP_SHARE_INFO = "api/vip/vipuser/getVipShareInfo";
+    // 获取邀请列表（分享有礼）
+    public static final String GET_VIP_INVITE_LIST = "api/vip/vipuser/getMyVipInviteList";
+    // 心得收藏列表
+    public static final String GET_COLLECT_REPORT_LIST = "api/vip/zeroActivity/getCollectReportList";
+    // 省钱规则/分享有礼规则
+    public static final String GET_VIP_REALTED_RULE = "api/my/remind/getReminText";
+    // 获取多么会员价商品
+    public static final String GET_VIP_PRICE_GOODS = "api/vip/vipuser/getVipPriceGoodsList";
+    // 获取会员最爱买
+    public static final String GET_VIP_LIKE_GOODS = "api/vip/vipuser/getVipLikeGoodsList";
 }

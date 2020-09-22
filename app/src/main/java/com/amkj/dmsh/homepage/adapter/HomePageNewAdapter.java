@@ -1,8 +1,5 @@
 package com.amkj.dmsh.homepage.adapter;
 
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
 import android.text.TextUtils;
 
 import com.amkj.dmsh.base.BaseFragment;
@@ -27,12 +24,17 @@ import com.amkj.dmsh.homepage.fragment.AttendanceFragment;
 import com.amkj.dmsh.homepage.fragment.EditorSelectFragment;
 import com.amkj.dmsh.homepage.fragment.HomeCouponGetFragment;
 import com.amkj.dmsh.homepage.fragment.HomeDefalutFragment;
+import com.amkj.dmsh.mine.fragment.VipZoneDetailFragment;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getUrlParams;
@@ -48,7 +50,7 @@ public class HomePageNewAdapter extends FragmentPagerAdapter {
     private final List<HomeCommonBean> mHomeCommonBeanList;
     private String[] actionArrays = {"app://HomeDefalutFragment", "app://QualityNewUserActivity", "app://QualityTypeHotSaleProActivity", "app://QualityNewProActivity", "app://HomeCouponGetActivity", "app://DmlOptimizedSelActivity",
             "app://DoMoLifeWelfareActivity", "app://EditorSelectActivity", "app://WholePointSpikeProductActivity", "app://QualityGroupShopActivity", "app://DoMoLifeWelfareDetailsActivity", "app://DuomoLifeActivity",
-            "app://QualityCustomTopicActivity", "app://QualityWeekOptimizedActivity", "app://QualityShopBuyListActivity", "app://ArticleTypeActivity", "app://CouponZoneActivity", "app://TopicDetailActivity", "app://AttendanceActivity"};
+            "app://QualityCustomTopicActivity", "app://QualityWeekOptimizedActivity", "app://QualityShopBuyListActivity", "app://ArticleTypeActivity", "app://CouponZoneActivity", "app://TopicDetailActivity", "app://AttendanceActivity", "app://VipZoneDetailActivity"};
     private String prefix = "app://";
 
     public HomePageNewAdapter(FragmentManager fm, List<HomeCommonBean> homeCommonBeanList) {
@@ -101,6 +103,8 @@ public class HomePageNewAdapter extends FragmentPagerAdapter {
                         return BaseFragment.newInstance(CouponZoneFragment.class, urlParams, null);
                     case "app://TopicDetailActivity"://话题详情
                         return BaseFragment.newInstance(TopicDetailFragment.class, urlParams, null);
+                    case "app://VipZoneDetailActivity"://会员专区
+                        return BaseFragment.newInstance(VipZoneDetailFragment.class, urlParams, null);
                     default:
                         return BaseFragment.newInstance(HomeDefalutFragment.class, null, null);
                 }

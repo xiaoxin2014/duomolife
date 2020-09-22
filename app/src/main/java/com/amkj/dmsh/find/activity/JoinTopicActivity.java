@@ -17,7 +17,6 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
-import com.amkj.dmsh.bean.ReplaceData;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
@@ -216,9 +215,7 @@ public class JoinTopicActivity extends BaseActivity {
     private void pickImage(final int position) {
         ConstantMethod constantMethod = new ConstantMethod();
         constantMethod.setOnGetPermissionsSuccess(() -> {
-            int imgLength = imagePathBeans.size() - 1;
-            if (position == imgLength && imagePathBeans.get(imgLength).getPath()
-                    .contains(DEFAULT_ADD_IMG)) {
+            if (imagePathBeans.get(position).getPath().contains(DEFAULT_ADD_IMG)) {
                 PictureSelectorUtils.getInstance()
                         .resetVariable()
                         .isCrop(false)
@@ -231,11 +228,10 @@ public class JoinTopicActivity extends BaseActivity {
                 tinkerApplicationLike.initTuSdk();
                 // 组件委托
                 TuEditMultipleComponent component = TuSdkGeeV1.editMultipleCommponent(this, (result, error, lastFragment) -> {
-                    ReplaceData path = new ReplaceData();
                     try {
-                        path.setPosition(position);
-                        path.setPath(result.imageSqlInfo.path);
-                        EventBus.getDefault().post(new EventMessage("replace", path));
+                        imagePathBeans.set(position, new ImagePathBean(result.imageSqlInfo.path, true));
+                        setSelectImageData();
+                        imgGArticleRecyclerAdapter.notifyDataSetChanged();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -257,40 +253,6 @@ public class JoinTopicActivity extends BaseActivity {
         constantMethod.getPermissions(this, Permission.Group.STORAGE);
     }
 
-    //接收图片
-    @Override
-    protected void postEventResult(@NonNull EventMessage message) {
-        switch (message.type) {
-            case "resultImg":
-                ReplaceData result = (ReplaceData) message.result;
-                imagePathBeans.clear();
-                imagePathBeans.add(new ImagePathBean(result.getPath(), true));
-                imagePathBeans.add(getImageFormatInstance().getDefaultAddImage());
-                setSelectImageData();
-                imgGArticleRecyclerAdapter.notifyDataSetChanged();
-                break;
-            case "addImg":
-                result = (ReplaceData) message.result;
-                imagePathBeans.remove(imagePathBeans.size() - 1);
-                imagePathBeans.add(new ImagePathBean(result.getPath(), true));
-                if (imagePathBeans.size() < maxSelImg) {
-                    imagePathBeans.add(getImageFormatInstance().getDefaultAddImage());
-                }
-                mSelectPath.clear();
-                mSelectPath.addAll(getImageFormatInstance().formatStringPathRemoveDefault(imagePathBeans));
-                imgGArticleRecyclerAdapter.notifyDataSetChanged();
-                break;
-            case "replace":
-                ReplaceData path = (ReplaceData) message.result;
-                imagePathBeans.set(path.getPosition(), new ImagePathBean(path.getPath(), true));
-                setSelectImageData();
-                imgGArticleRecyclerAdapter.notifyDataSetChanged();
-                break;
-        }
-        if ("closeKeyBroad".equals(message.type) && "close".equals(message.result)) {
-            CommonUtils.hideSoftInput(getActivity(), mEtInput);
-        }
-    }
 
     private void setSelectImageData() {
         mSelectPath.clear();
@@ -311,20 +273,19 @@ public class JoinTopicActivity extends BaseActivity {
                 case PictureConfigC.CHOOSE_REQUEST:
                     List<LocalMediaC> localMediaList = PictureSelector.obtainMultipleResult(data);
                     if (localMediaList != null && localMediaList.size() > 0) {
-                        int size = imagePathBeans.size();
                         imagePathBeans.clear();
                         for (LocalMediaC localMedia : localMediaList) {
                             if (!TextUtils.isEmpty(localMedia.getPath())) {
                                 imagePathBeans.add(new ImagePathBean(localMedia.getPath(), true));
                             }
                         }
+                        pickImage(imagePathBeans.size() - 1);
+
                         if (imagePathBeans.size() < maxSelImg) {
                             imagePathBeans.add(getImageFormatInstance().getDefaultAddImage());
                         }
                         setSelectImageData();
                         imgGArticleRecyclerAdapter.notifyDataSetChanged();
-
-                        pickImage(size - 1);
                     }
                     break;
             }
@@ -487,7 +448,7 @@ public class JoinTopicActivity extends BaseActivity {
                             public void finishData(@NonNull List<String> data, Handler handler) {
                                 updatedImages.clear();
                                 updatedImages.addAll(data);
-                                //                            已上传不可删除 不可更换图片
+                                //已上传不可删除 不可更换图片
                                 getImageFormatInstance().submitChangeIconStatus(imagePathBeans, false);
                                 imgGArticleRecyclerAdapter.notifyDataSetChanged();
                                 sendData(data);

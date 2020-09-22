@@ -65,29 +65,30 @@ public class CatergoryGoodsAdapter extends BaseMultiItemQuickAdapter<LikedProduc
                         .setText(R.id.tv_price, ConstantMethod.getRmbFormat(context, likedProductBean.getPrice()))
                         .setText(R.id.tv_name, getStrings(likedProductBean.getName()))
                         .setGone(R.id.tv_economize_money, !TextUtils.isEmpty(likedProductBean.getDecreasePrice()))
-                        .setText(R.id.tv_economize_money, getSpannableString(economizeNum, 1, economizeNum.length() - 1, 0, "#ff5e6b"))
-                        .setText(R.id.tv_save, getStringsFormat(context, R.string.vip_save_money, likedProductBean.getVipReduce()))
-                        .setGone(R.id.ll_save, !TextUtils.isEmpty(likedProductBean.getVipReduce()));
+                        .setText(R.id.tv_economize_money, getSpannableString(economizeNum, 1, economizeNum.length() - 1, 0, "#ff5e6b"));
 
-                FlexboxLayout fbl_label = helper.getView(R.id.fbl_market_label);
-                if (!TextUtils.isEmpty(likedProductBean.getActivityTag()) || (likedProductBean.getMarketLabelList() != null
-                        && likedProductBean.getMarketLabelList().size() > 0)) {
-                    fbl_label.setVisibility(View.VISIBLE);
-                    fbl_label.removeAllViews();
-                    if (!TextUtils.isEmpty(likedProductBean.getActivityTag())) {
-                        fbl_label.addView(ProductLabelCreateUtils.createLabelText(context, likedProductBean.getActivityTag(), 1));
-                    }
-                    if (likedProductBean.getMarketLabelList() != null
-                            && likedProductBean.getMarketLabelList().size() > 0) {
-                        for (LikedProductBean.MarketLabelBean marketLabelBean : likedProductBean.getMarketLabelList()) {
-                            if (!TextUtils.isEmpty(marketLabelBean.getTitle())) {
-                                fbl_label.addView(ProductLabelCreateUtils.createLabelText(context, marketLabelBean.getTitle(), 0));
-                            }
+                FlexboxLayout fbl_market_label = helper.getView(R.id.fbl_market_label);
+                fbl_market_label.removeAllViews();
+
+                //活动标签（仅有一个）
+                if (!TextUtils.isEmpty(likedProductBean.getActivityTag())) {
+                    fbl_market_label.addView(ProductLabelCreateUtils.createLabelText(context, likedProductBean.getActivityTag(), 1));
+                }
+
+                //会员标签
+                if (!TextUtils.isEmpty(likedProductBean.getVipTag())) {
+                    fbl_market_label.addView(ProductLabelCreateUtils.createLabelText(context, likedProductBean.getVipTag(), 0));
+                }
+
+                //营销标签(可以有多个)
+                if (likedProductBean.getMarketLabelList() != null && likedProductBean.getMarketLabelList().size() > 0) {
+                    for (LikedProductBean.MarketLabelBean marketLabelBean : likedProductBean.getMarketLabelList()) {
+                        if (!TextUtils.isEmpty(marketLabelBean.getTitle())) {
+                            fbl_market_label.addView(ProductLabelCreateUtils.createLabelText(context, marketLabelBean.getTitle(), 0));
                         }
                     }
-                } else {
-                    fbl_label.setVisibility(View.GONE);
                 }
+                fbl_market_label.setVisibility(fbl_market_label.getChildCount() > 0 ? View.VISIBLE : View.GONE);
                 helper.itemView.setTag(likedProductBean);
                 break;
             case TITLE:

@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.BaseAddCarProInfoBean;
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.user.bean.LikedProductBean;
 import com.amkj.dmsh.user.bean.LikedProductBean.MarketLabelBean;
 import com.amkj.dmsh.utils.ProductLabelCreateUtils;
@@ -34,7 +35,7 @@ public class ProNoShopCarAdapter extends BaseMultiItemQuickAdapter<LikedProductB
 
     public ProNoShopCarAdapter(Activity context, List<LikedProductBean> productSearList) {
         super(productSearList);
-        addItemType(TYPE_0, R.layout.adapter_layout_qt_pro);
+        addItemType(TYPE_0, R.layout.item_commual_goods_2x);
 //        头部标题栏
         addItemType(TYPE_1, R.layout.adapter_ql_goods_pro_header);
 //        搜索无结果
@@ -57,11 +58,23 @@ public class ProNoShopCarAdapter extends BaseMultiItemQuickAdapter<LikedProductB
                 GlideImageLoaderUtil.loadSquareImg(context, (ImageView) helper.getView(R.id.iv_qt_pro_img)
                         , likedProductBean.getPicUrl(), likedProductBean.getWaterRemark(), AutoSizeUtils.mm2px(mAppContext, 350));
                 helper.setGone(R.id.iv_com_pro_tag_out, likedProductBean.getQuantity() < 1)
+                        .setText(R.id.tv_qt_pro_descrip, getStrings(likedProductBean.getSubtitle()))
                         .setText(R.id.tv_qt_pro_name, !TextUtils.isEmpty(likedProductBean.getName()) ?
                                 getStrings(likedProductBean.getName()) : getStrings(likedProductBean.getTitle()))
-                        .setText(R.id.tv_qt_pro_price, "¥" + likedProductBean.getPrice())
-                        .setText(R.id.tv_qt_pro_descrip, getStrings(likedProductBean.getSubtitle()))
-                        .setGone(R.id.iv_pro_add_car, true);
+                        .setText(R.id.tv_qt_pro_price, ConstantMethod.getRmbFormat(context, likedProductBean.getPrice()))
+                        .addOnClickListener(R.id.iv_pro_add_car).setTag(R.id.iv_pro_add_car, likedProductBean);
+
+                //加入购物车
+                if (likedProductBean.getType_id() == 1) {//只有自营商品才能加入购物车
+                    helper.getView(R.id.iv_pro_add_car).setOnClickListener(v -> {
+                        BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
+                        baseAddCarProInfoBean.setProductId(likedProductBean.getId());
+                        baseAddCarProInfoBean.setActivityCode(getStrings(likedProductBean.getActivityCode()));
+                        baseAddCarProInfoBean.setProName(getStrings(likedProductBean.getName()));
+                        baseAddCarProInfoBean.setProPic(getStrings(likedProductBean.getPicUrl()));
+                        addShopCarGetSku(context, baseAddCarProInfoBean, ((BaseActivity) context).loadHud);
+                    });
+                }
 
                 helper.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -73,36 +86,29 @@ public class ProNoShopCarAdapter extends BaseMultiItemQuickAdapter<LikedProductB
                         }
                     }
                 });
-                //加入购物车
-                if (likedProductBean.getType_id() == 1) {
-                    helper.getView(R.id.iv_pro_add_car).setOnClickListener(v -> {
-                        BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
-                        baseAddCarProInfoBean.setProductId(likedProductBean.getId());
-                        baseAddCarProInfoBean.setActivityCode(getStrings(likedProductBean.getActivityCode()));
-                        baseAddCarProInfoBean.setProName(getStrings(likedProductBean.getName()));
-                        baseAddCarProInfoBean.setProPic(getStrings(likedProductBean.getPicUrl()));
-                        addShopCarGetSku(context, baseAddCarProInfoBean, ((BaseActivity) context).loadHud);
-                    });
-                }
                 FlexboxLayout fbl_market_label = helper.getView(R.id.fbl_market_label);
-                if (!TextUtils.isEmpty(likedProductBean.getActivityTag()) || (likedProductBean.getMarketLabelList() != null
-                        && likedProductBean.getMarketLabelList().size() > 0)) {
-                    fbl_market_label.setVisibility(View.VISIBLE);
-                    fbl_market_label.removeAllViews();
-                    if (!TextUtils.isEmpty(likedProductBean.getActivityTag())) {
-                        fbl_market_label.addView(ProductLabelCreateUtils.createLabelText(context, likedProductBean.getActivityTag(), 1));
-                    }
-                    if (likedProductBean.getMarketLabelList() != null
-                            && likedProductBean.getMarketLabelList().size() > 0) {
-                        for (MarketLabelBean marketLabelBean : likedProductBean.getMarketLabelList()) {
-                            if (!TextUtils.isEmpty(marketLabelBean.getTitle())) {
-                                fbl_market_label.addView(ProductLabelCreateUtils.createLabelText(context, marketLabelBean.getTitle(), 0));
-                            }
+                fbl_market_label.removeAllViews();
+
+                //活动标签（仅有一个）
+                if (!TextUtils.isEmpty(likedProductBean.getActivityTag())) {
+                    fbl_market_label.addView(ProductLabelCreateUtils.createLabelText(context, likedProductBean.getActivityTag(), 1));
+                }
+
+                //会员标签
+                if (!TextUtils.isEmpty(likedProductBean.getVipTag())) {
+                    fbl_market_label.addView(ProductLabelCreateUtils.createLabelText(context, likedProductBean.getVipTag(), 0));
+                }
+
+                //营销标签(可以有多个)
+                if (likedProductBean.getMarketLabelList() != null
+                        && likedProductBean.getMarketLabelList().size() > 0) {
+                    for (MarketLabelBean marketLabelBean : likedProductBean.getMarketLabelList()) {
+                        if (!TextUtils.isEmpty(marketLabelBean.getTitle())) {
+                            fbl_market_label.addView(ProductLabelCreateUtils.createLabelText(context, marketLabelBean.getTitle(), 0));
                         }
                     }
-                } else {
-                    fbl_market_label.setVisibility(View.GONE);
                 }
+                fbl_market_label.setVisibility(fbl_market_label.getChildCount() > 0 ? View.VISIBLE : View.GONE);
                 helper.itemView.setTag(likedProductBean);
                 break;
         }

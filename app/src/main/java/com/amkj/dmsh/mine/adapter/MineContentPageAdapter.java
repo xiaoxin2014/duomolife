@@ -1,13 +1,14 @@
 package com.amkj.dmsh.mine.adapter;
 
+import com.amkj.dmsh.base.BaseFragment;
+import com.amkj.dmsh.mine.fragment.CollectInvitationFragment;
+import com.amkj.dmsh.mine.fragment.CollectReportFragment;
+import com.amkj.dmsh.mine.fragment.CollectSpecialFragment;
+import com.amkj.dmsh.mine.fragment.CollectTopicFragment;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
-
-import com.amkj.dmsh.base.BaseFragment;
-import com.amkj.dmsh.mine.fragment.CollectInvitationFragment;
-import com.amkj.dmsh.mine.fragment.CollectTopicFragment;
-import com.amkj.dmsh.mine.fragment.CollectSpecialFragment;
 
 /**
  * @author LGuiPeng
@@ -17,7 +18,7 @@ import com.amkj.dmsh.mine.fragment.CollectSpecialFragment;
  */
 
 public class MineContentPageAdapter extends FragmentPagerAdapter {
-    String[] titlePage = {"帖子", "专题", "话题"};
+    String[] titlePage = {"帖子", "心得", "专题", "话题"};
 
     public MineContentPageAdapter(FragmentManager fm) {
         super(fm);
@@ -28,6 +29,8 @@ public class MineContentPageAdapter extends FragmentPagerAdapter {
         switch (titlePage[position]) {
             case "帖子":
                 return BaseFragment.newInstance(CollectInvitationFragment.class, null, null);
+            case "心得":
+                return BaseFragment.newInstance(CollectReportFragment.class, null, null);
             case "专题":
                 return BaseFragment.newInstance(CollectSpecialFragment.class, null, null);
             case "话题":

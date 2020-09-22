@@ -343,7 +343,9 @@ public class ShopCarActivity extends BaseActivity {
     @Override
     protected void loadData() {
         page = 1;
-        getShopCarProInfo();
+        if (userId > 0) {
+            getShopCarProInfo();
+        }
     }
 
     @Override

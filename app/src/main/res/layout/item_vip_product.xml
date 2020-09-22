@@ -1,21 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/bg_gray_f_n"
+    android:orientation="vertical"
     android:paddingBottom="@dimen/sc_mm_12">
 
-    <ImageView
-        android:id="@+id/iv_pic"
+    <RelativeLayout
+        android:id="@+id/rel_goods_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scaleType="centerCrop" />
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/iv_pic"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/sc_mm_218"
+            android:scaleType="centerCrop" />
+
+        <include layout="@layout/layout_communal_pro_out_img" />
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/tv_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/iv_pic"
         android:layout_marginLeft="@dimen/sc_mm_12"
         android:layout_marginTop="@dimen/sc_mm_8"
         android:ellipsize="end"
@@ -28,19 +36,16 @@
         android:id="@+id/tv_quantity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_name"
         android:layout_marginLeft="@dimen/sc_mm_12"
         android:layout_marginTop="@dimen/sc_mm_8"
         android:text="库存"
         android:textColor="@color/color_blue_reply_com"
         android:textSize="@dimen/sc_mm_22" />
 
-
     <TextView
         android:id="@+id/tv_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_quantity"
         android:layout_marginLeft="@dimen/sc_mm_12"
         android:layout_marginTop="@dimen/sc_mm_14"
         android:text="价格"
@@ -52,12 +57,11 @@
         android:id="@+id/tv_buy_now"
         android:layout_width="@dimen/sc_mm_200"
         android:layout_height="@dimen/sc_mm_34"
-        android:layout_below="@+id/tv_price"
-        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/sc_mm_10"
         android:background="@drawable/shap_buy_now_bg"
         android:gravity="center"
         android:text="立即抢购"
         android:textColor="@color/white"
         android:textSize="@dimen/sc_mm_22" />
-</RelativeLayout>
+</LinearLayout>

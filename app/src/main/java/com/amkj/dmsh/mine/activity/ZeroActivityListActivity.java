@@ -40,7 +40,7 @@ import static com.amkj.dmsh.mine.adapter.ZeroProductAdapter.ZERO_BEFORE;
 /**
  * Created by xiaoxin on 2020/8/11
  * Version:v4.7.0
- * ClassDescription :0元活动活动列表
+ * ClassDescription :0元试用活动列表
  */
 public class ZeroActivityListActivity extends BaseActivity {
     @BindView(R.id.tv_header_title)

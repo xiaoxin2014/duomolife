@@ -21,6 +21,35 @@ public class SavePersonalInfoBean {
 
     private String accessToken; //三方登录令牌
 
+    private boolean isVip;//是否是会员
+    private int vipLevel;//会员等级
+    private boolean isWhiteUser;//是否显示开通会员入口
+
+
+    public boolean isWhiteUser() {
+        return isWhiteUser;
+    }
+
+    public void setIsWhiteUser(boolean isWhiteUser) {
+        this.isWhiteUser = isWhiteUser;
+    }
+
+    public int getVipLevel() {
+        return vipLevel;
+    }
+
+    public void setVipLevel(int vipLevel) {
+        this.vipLevel = vipLevel;
+    }
+
+    public boolean isVip() {
+        return isVip;
+    }
+
+    public void setVip(boolean vip) {
+        isVip = vip;
+    }
+
     public String getAccessToken() {
         return accessToken;
     }

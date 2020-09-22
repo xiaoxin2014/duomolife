@@ -10,6 +10,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.LoginDataEntity;
 import com.amkj.dmsh.bean.LoginDataEntity.LoginDataBean;
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.TagAliasOperatorHelper;
 import com.amkj.dmsh.constant.TagAliasOperatorHelper.TagAliasBean;
@@ -37,6 +38,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showLoadhud;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.LOGIN_SUCCESS;
 import static com.amkj.dmsh.constant.ConstantVariable.TOKEN;
 import static com.amkj.dmsh.constant.ConstantVariable.TOKEN_EXPIRE_TIME;
 import static com.amkj.dmsh.constant.TagAliasOperatorHelper.ACTION_CLEAN;
@@ -67,6 +69,7 @@ public class UserDao {
         savePersonalInfo.setNickName(loginDataBean.getNickname());
         savePersonalInfo.setAvatar(loginDataBean.getAvatar());
         savePersonalInfo.setUid(loginDataBean.getUid());
+        savePersonalInfo.setVip(loginDataBean.isVip());
         savePersonalInfo.setToken(loginDataBean.getToken());
         savePersonalInfo.setTokenExpireSeconds(System.currentTimeMillis() + loginDataBean.getTokenExpireSeconds());
         if (otherAccountBindInfo != null) {
@@ -82,7 +85,7 @@ public class UserDao {
         context.setResult(RESULT_OK, data);
         context.finish();
         //登录成功关闭登录界面
-        EventBus.getDefault().post(new EventMessage("loginSuccess", ""));
+        EventBus.getDefault().post(new EventMessage(LOGIN_SUCCESS, ""));
     }
 
 
@@ -92,19 +95,11 @@ public class UserDao {
         if (savePersonalInfo != null && savePersonalInfo.isLogin()) {
             if (savePersonalInfo.getUid() == 0) return;
             userId = savePersonalInfo.getUid();//如果用微信登录，会有一个uid,绑定一个已注册手机会发生账号迁移生成一个新的uid，所以这里需要更新静态变量uid
-            //登录成功 三方账号登录
-            StatConfig.setCustomUserId(applicationContext, String.valueOf(savePersonalInfo.getUid()));
-            //友盟统计
-            MobclickAgent.onProfileSignIn(String.valueOf(savePersonalInfo.getUid()));
-            //绑定JPush
-            bindJPush(String.valueOf(savePersonalInfo.getUid()));
-            //登录七鱼
-            QyServiceUtils.getQyInstance().loginQyUserInfo(applicationContext, savePersonalInfo.getUid()
-                    , savePersonalInfo.getNickName(), savePersonalInfo.getPhoneNum(), savePersonalInfo.getAvatar());
-
+            ConstantMethod.setIsVip(savePersonalInfo.isVip());
             SharedPreferences loginStatus = applicationContext.getSharedPreferences("loginStatus", MODE_PRIVATE);
             SharedPreferences.Editor edit = loginStatus.edit();
             edit.putBoolean("isLogin", true);
+            edit.putBoolean("isVip", savePersonalInfo.isVip());
             edit.putInt("uid", savePersonalInfo.getUid());
             //先判空再存，避免token被清空
             if (!TextUtils.isEmpty(savePersonalInfo.getToken())) {
@@ -125,8 +120,18 @@ public class UserDao {
                 edit.putString("ACCESS_TOKEN", getStrings(savePersonalInfo.getAccessToken()));
             }
             edit.commit();
+            //登录成功 三方账号登录
+            StatConfig.setCustomUserId(applicationContext, String.valueOf(savePersonalInfo.getUid()));
+            //友盟统计
+            MobclickAgent.onProfileSignIn(String.valueOf(savePersonalInfo.getUid()));
+            //绑定JPush
+            bindJPush(String.valueOf(savePersonalInfo.getUid()));
+            //登录七鱼
+            QyServiceUtils.getQyInstance().loginQyUserInfo(applicationContext, savePersonalInfo.getUid()
+                    , savePersonalInfo.getNickName(), savePersonalInfo.getPhoneNum(), savePersonalInfo.getAvatar());
         } else {
             userId = 0;
+            ConstantMethod.setIsVip(false);
             //七鱼注销
             QyServiceUtils.getQyInstance().logoutQyUser(applicationContext);
             //注销账号 关闭账号统计
@@ -154,6 +159,7 @@ public class UserDao {
             savePersonalInfo.setUnionId(loginStatus.getString("UNION_ID", ""));
             savePersonalInfo.setLogin(true);
             userId = savePersonalInfo.getUid();
+            ConstantMethod.setIsVip(loginStatus.getBoolean("isVip", false));
         } else {
             userId = 0;
         }

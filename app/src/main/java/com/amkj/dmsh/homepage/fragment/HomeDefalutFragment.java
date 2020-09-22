@@ -383,7 +383,7 @@ public class HomeDefalutFragment extends BaseFragment {
     //动态专区(新人专享)
     private void getDynamic() {
         HashMap<String, Object> map = new HashMap<>();
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.GTE_NEW_USER_GOODS, map, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.GTE_HOME_DYNAMIC_AREA, map, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
 
@@ -703,11 +703,11 @@ public class HomeDefalutFragment extends BaseFragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onVisible() {
+        super.onVisible();
         if (!isFirst) {
             getDynamic();
-            isFirst = false;
         }
+        isFirst = false;
     }
 }

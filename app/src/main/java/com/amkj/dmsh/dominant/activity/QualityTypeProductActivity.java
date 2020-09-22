@@ -2,6 +2,7 @@ package com.amkj.dmsh.dominant.activity;
 
 import android.content.Intent;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -243,6 +244,7 @@ public class QualityTypeProductActivity extends BaseActivity {
         if (bottomPopWindows == null) {
             bottomPopWindows = new BottomPopWindows(QualityTypeProductActivity.this);
             bottomPopWindows.bindLifecycleOwner(this);
+            bottomPopWindows.setPopupGravity(Gravity.BOTTOM);
             bottomPopWindows.setOnDismissListener(new BasePopupWindow.OnDismissListener() {
                 @Override
                 public void onDismiss() {

@@ -12,7 +12,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
-import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeFloat;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantVariable.APPLY_REFUND_TYPE;
@@ -88,7 +88,7 @@ public class DirectProductListAdapter extends BaseQuickAdapter<OrderProductNewBe
                     //如果是积分商品
                     if (orderProductBean.getIntegralPrice() > 0) {
                         String priceName;
-                        float moneyPrice = getFloatNumber(orderProductBean.getPrice());
+                        float moneyPrice = getStringChangeFloat(orderProductBean.getPrice());
                         if (moneyPrice > 0) {
                             priceName = String.format(context.getResources().getString(R.string.integral_product_and_price)
                                     , orderProductBean.getIntegralPrice(), getStrings(orderProductBean.getPrice()));

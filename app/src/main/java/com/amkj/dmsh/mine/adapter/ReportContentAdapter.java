@@ -69,7 +69,7 @@ public class ReportContentAdapter extends BaseQuickAdapter<PostBean, BaseViewHol
                         .create());
                 rvImgs.setTag(item);
             }
-            ReportImgsAdapter reportImgsAdapter = new ReportImgsAdapter(context, Arrays.asList(item.getImgs().split(",")));
+            ImgsListAdapter reportImgsAdapter = new ImgsListAdapter(context, Arrays.asList(item.getImgs().split(",")), AutoSizeUtils.mm2px(mAppContext, 224));
             rvImgs.setAdapter(reportImgsAdapter);
         }
 
@@ -78,7 +78,7 @@ public class ReportContentAdapter extends BaseQuickAdapter<PostBean, BaseViewHol
             mTvContent.setText(getStrings(item.getContent()));
             TextViewSuffixWrapper wrapper = new TextViewSuffixWrapper(mTvContent);
             wrapper.setMainContent(item.getContent());
-            wrapper.setTargetLineCount(3);
+            wrapper.setTargetLineCount(4);
             String suffix = "...查看全文";
             wrapper.setSuffix(suffix);
             wrapper.suffixColor("...".length(), suffix.length(), R.color.text_login_blue_z, new View.OnClickListener() {

@@ -196,38 +196,41 @@ public class DeviceUtils {
     }
 
     public static String getIpAddress(Context mContext) {
-        NetworkInfo info = ((ConnectivityManager) mContext
-                .getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
-        if (info != null && info.isConnected()) {
-            // 3/4g网络
-            if (info.getType() == ConnectivityManager.TYPE_MOBILE) {
-                try {
-                    for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements(); ) {
-                        NetworkInterface intf = en.nextElement();
-                        for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
-                            InetAddress inetAddress = enumIpAddr.nextElement();
-                            if (!inetAddress.isLoopbackAddress() && inetAddress instanceof Inet4Address) {
-                                return inetAddress.getHostAddress();
+        try {
+            NetworkInfo info = ((ConnectivityManager) mContext
+                    .getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
+            if (info != null && info.isConnected()) {
+                // 3/4g网络
+                if (info.getType() == ConnectivityManager.TYPE_MOBILE) {
+                    try {
+                        for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements(); ) {
+                            NetworkInterface intf = en.nextElement();
+                            for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
+                                InetAddress inetAddress = enumIpAddr.nextElement();
+                                if (!inetAddress.isLoopbackAddress() && inetAddress instanceof Inet4Address) {
+                                    return inetAddress.getHostAddress();
+                                }
                             }
                         }
+                    } catch (SocketException e) {
+                        e.printStackTrace();
+                        return "";
                     }
-                } catch (SocketException e) {
-                    e.printStackTrace();
-                    return "";
-                }
 
-            } else if (info.getType() == ConnectivityManager.TYPE_WIFI) {
-                //  wifi网络
-                WifiManager wifiManager = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
-                WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-                String ipAddress = intIP2StringIP(wifiInfo.getIpAddress());
-                return ipAddress;
-            } else if (info.getType() == ConnectivityManager.TYPE_ETHERNET) {
-                // 有限网络
-                return getLocalIp();
+                } else if (info.getType() == ConnectivityManager.TYPE_WIFI) {
+                    //  wifi网络
+                    WifiManager wifiManager = (WifiManager) mContext.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                    WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+                    return intIP2StringIP(wifiInfo.getIpAddress());
+                } else if (info.getType() == ConnectivityManager.TYPE_ETHERNET) {
+                    // 有限网络
+                    return getLocalIp();
+                }
+            } else {
+                return "";
             }
-        } else {
-            return "";
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return "";
     }

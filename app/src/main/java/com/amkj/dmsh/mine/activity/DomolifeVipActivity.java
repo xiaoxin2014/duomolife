@@ -2,11 +2,8 @@ package com.amkj.dmsh.mine.activity;
 
 import android.content.Intent;
 import android.graphics.Paint;
-import android.text.SpannableString;
-import android.text.Spanned;
 import android.text.TextUtils;
-import android.text.style.RelativeSizeSpan;
-import android.text.style.StrikethroughSpan;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -19,15 +16,17 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.bean.TabNameBean;
-import com.amkj.dmsh.bean.WeekProductEntity;
-import com.amkj.dmsh.bean.WeekProductEntity.WeekProductBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
+import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.dominant.activity.QualityTypeHotSaleProActivity;
+import com.amkj.dmsh.dominant.adapter.GoodProductAdapter;
 import com.amkj.dmsh.dominant.adapter.QualityCustomAdapter;
+import com.amkj.dmsh.mine.adapter.MonthCouponAdapter;
 import com.amkj.dmsh.mine.adapter.PowerBottomAdapter;
 import com.amkj.dmsh.mine.adapter.PowerTopAdapter;
-import com.amkj.dmsh.mine.adapter.VipCouponAdapter;
+import com.amkj.dmsh.mine.adapter.VipFavoriteAdapter;
 import com.amkj.dmsh.mine.adapter.WeekProductAdapter;
 import com.amkj.dmsh.mine.bean.CalculatorEntity;
 import com.amkj.dmsh.mine.bean.CalculatorEntity.CalculatorBean;
@@ -36,17 +35,26 @@ import com.amkj.dmsh.mine.bean.PowerEntity.PowerBean;
 import com.amkj.dmsh.mine.bean.VipCouponEntity;
 import com.amkj.dmsh.mine.bean.VipCouponEntity.VipCouponBean;
 import com.amkj.dmsh.mine.bean.VipCouponEntity.VipCouponBean.CouponListBean;
+import com.amkj.dmsh.mine.bean.VipPriceEntity;
+import com.amkj.dmsh.mine.bean.WeekProductEntity;
+import com.amkj.dmsh.mine.bean.WeekProductEntity.WeekProductBean;
 import com.amkj.dmsh.mine.bean.ZeroInfoBean;
 import com.amkj.dmsh.mine.bean.ZeroInfoEntity;
 import com.amkj.dmsh.mine.bean.ZeroInfoEntity.ResultBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.user.bean.LikedProductBean;
+import com.amkj.dmsh.utils.SharedPreUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
+import com.amkj.dmsh.utils.itemdecoration.NewGridItemDecoration;
 import com.amkj.dmsh.views.alertdialog.AlertDialogCalculator;
+import com.amkj.dmsh.views.alertdialog.AlertDialogPower;
+import com.amkj.dmsh.views.alertdialog.VipHomeMenuPw;
 import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,15 +75,19 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.dismissLoadhud;
+import static com.amkj.dmsh.constant.ConstantMethod.getSpannableString;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeDouble;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
+import static com.amkj.dmsh.constant.ConstantMethod.isVip;
 import static com.amkj.dmsh.constant.ConstantMethod.showLoadhud;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.LOGIN_SUCCESS;
+import static com.amkj.dmsh.constant.ConstantVariable.OPEN_VIP_SUCCESS;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.mine.adapter.WeekProductAdapter.WEEK_VIP_GOODS;
 
 /**
  * Created by xiaoxin on 2020/7/21
@@ -125,6 +137,8 @@ public class DomolifeVipActivity extends BaseActivity {
     TextView mTvZeroTitle;
     @BindView(R.id.tv_zero_subtitle)
     TextView mTvZeroSubtitle;
+    @BindView(R.id.tv_zero_product_subtitle)
+    TextView mTvZeroProductSubtitle;
     @BindView(R.id.tv_zero_price)
     TextView mTvZeroPrice;
     @BindView(R.id.tv_zero_market_price)
@@ -139,10 +153,8 @@ public class DomolifeVipActivity extends BaseActivity {
     TextView mTvVipPower;
     @BindView(R.id.tv_power_num)
     TextView mTvPowerNum;
-    @BindView(R.id.rv_vip_like)
-    RecyclerView mRvVipLike;
-    @BindView(R.id.tv_open_vip)
-    TextView mTvOpenVip;
+    @BindView(R.id.ll_open_vip)
+    LinearLayout mLlOpenVip;
     @BindView(R.id.rl_free_condition)
     RelativeLayout mRlFreeCondition;
     @BindView(R.id.rl_vip_info)
@@ -177,27 +189,69 @@ public class DomolifeVipActivity extends BaseActivity {
     SlidingTabLayout mTablayoutVip;
     @BindView(R.id.vp_vip_exclusive)
     ViewPager mVpVip;
+    @BindView(R.id.rl_novip_info)
+    RelativeLayout mRlNovipInfo;
+    @BindView(R.id.ll_domolife_vip)
+    LinearLayout mLlDomolifeVip;
+    @BindView(R.id.smart_communal_refresh)
+    SmartRefreshLayout mSmartCommunalRefresh;
+    @BindView(R.id.tv_vip_price)
+    TextView mTvVipPrice;
+    @BindView(R.id.tv_vip_market_price)
+    TextView mTvVipMarketPrice;
+    @BindView(R.id.ll_novip_info)
+    LinearLayout mLlNovipInfo;
+    @BindView(R.id.ll_power_bottom)
+    LinearLayout mLlPowerBottom;
+    @BindView(R.id.iv_vip_level)
+    ImageView mIvVipLevel;
+    @BindView(R.id.tv_vip_price_title)
+    TextView mTvVipPriceTitle;
+    @BindView(R.id.tv_vip_price_subtitle)
+    TextView mTvVipPriceSubtitle;
+    @BindView(R.id.rv_vip_price)
+    RecyclerView mRvVipPrice;
+    @BindView(R.id.rl_vip_price)
+    RelativeLayout mRlVipPrice;
+    @BindView(R.id.tv_vip_favorite)
+    TextView mTvVipFavorite;
+    @BindView(R.id.rv_vip_favorite)
+    RecyclerView mRvVipFavorite;
+    @BindView(R.id.rl_vip_exclusive)
+    RelativeLayout mRlVipExclusive;
+    @BindView(R.id.iv_menu)
+    ImageView mIvMenu;
+
 
     private PowerEntity mPowerEntity;
     private VipCouponEntity mVipCouponEntity;
-    private List<PowerBean> mPowerList = new ArrayList<>();
+    private List<PowerBean> mPowerTopList = new ArrayList<>();
+    private List<PowerBean> mPowerBottomList = new ArrayList<>();
     private List<CouponListBean> mCouponList = new ArrayList<>();
-    private List<LikedProductBean> mGoodsList = new ArrayList<>();
+    private List<LikedProductBean> mWeekGoodsList = new ArrayList<>();
+    private List<LikedProductBean> mVipGoodsList = new ArrayList<>();
+    private List<LikedProductBean> mVipFavoriteList = new ArrayList<>();
     private PowerTopAdapter mPowerTopAdapter;
     private PowerBottomAdapter mPowerBottomAdapter;
-    private VipCouponAdapter mVipCouponAdapter;
+    private MonthCouponAdapter mVipCouponAdapter;
     private RequestStatus mVipInfoEntity;
     private RequestStatus.Result mVipInfoBean;
     private CalculatorEntity mCalculatorEntity;
     private AlertDialogCalculator mAlertDialogCalculator;
     private WeekProductAdapter mWeekProductAdapter;
+    private GoodProductAdapter mVipPriceAdapter;
+    private VipFavoriteAdapter mVipFavoriteAdapter;
     private ZeroInfoBean mZeroInfoBean;
     private String cardGiftCover;
     private String vipDayCover;
     private String[] titles = {"专区1", "专区2", "专区3", "专区4"};
     public final String[] CUSTOM_IDS = new String[]{"405", "406", "407", "408"};
+    public final int[] VipLevel = new int[]{R.drawable.vip1, R.drawable.vip2, R.drawable.vip3, R.drawable.vip4, R.drawable.vip5, R.drawable.vip6, R.drawable.vip7, R.drawable.vip8, R.drawable.vip9, R.drawable.vip10};
     private String mVipZoneId;
     private WeekProductBean mWeekProductBean;
+    private AlertDialogPower mAlertDialogPower;
+    private String mCouponZoneId;
+    private VipHomeMenuPw mVipHomeMenuPw;
 
     @Override
     protected int getContentView() {
@@ -209,25 +263,25 @@ public class DomolifeVipActivity extends BaseActivity {
         mTvHeaderTitle.setText("多么会员");
         mTvZeroMarketPrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
         mTvZeroMarketPrice.getPaint().setAntiAlias(true);
-        SpannableString spannableString = new SpannableString(getResources().getString(R.string.vip_year_price));
-        RelativeSizeSpan sizeSpan = new RelativeSizeSpan(1.3f);
-        spannableString.setSpan(sizeSpan, 0, 13, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-        StrikethroughSpan strikethroughSpan = new StrikethroughSpan();
-        spannableString.setSpan(strikethroughSpan, 14, 18, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-        mTvOpenVip.setText(spannableString);
+        mTvVipMarketPrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+        mTvVipMarketPrice.getPaint().setAntiAlias(true);
         //初始化权益表格列表
         GridLayoutManager powerLayoutManager = new GridLayoutManager(this, 5);
         mRvPowerTop.setLayoutManager(powerLayoutManager);
-        mPowerTopAdapter = new PowerTopAdapter(this, mPowerList);
+        mPowerTopAdapter = new PowerTopAdapter(this, mPowerTopList);
         mRvPowerTop.setAdapter(mPowerTopAdapter);
         //初始化优惠券列表
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false);
         mRvCoupon.setLayoutManager(linearLayoutManager);
-        mVipCouponAdapter = new VipCouponAdapter(mCouponList);
+        mVipCouponAdapter = new MonthCouponAdapter(mCouponList);
         mRvCoupon.setAdapter(mVipCouponAdapter);
         //初始化权益线性列表
         mRvPowerBottom.setLayoutManager(new LinearLayoutManager(this));
-        mPowerBottomAdapter = new PowerBottomAdapter(this, mPowerList);
+        mRvPowerBottom.addItemDecoration(new ItemDecoration.Builder()
+                .setDividerId(R.drawable.item_divider_29_transparent)
+                .setLastDraw(false)
+                .create());
+        mPowerBottomAdapter = new PowerBottomAdapter(this, mPowerBottomList);
         mRvPowerBottom.setAdapter(mPowerBottomAdapter);
         //初始化每周会员特价商品列表
         GridLayoutManager weekLayoutManager = new GridLayoutManager(this, 3);
@@ -235,36 +289,55 @@ public class DomolifeVipActivity extends BaseActivity {
         mRvWeekGoods.addItemDecoration(new ItemDecoration.Builder()
                 .setDividerId(R.drawable.item_divider_five_white)
                 .create());
-        mWeekProductAdapter = new WeekProductAdapter(this, mGoodsList, WEEK_VIP_GOODS);
-        mRvWeekGoods.setAdapter(mWeekProductAdapter);
-        mWeekProductAdapter.setOnItemClickListener((adapter, view, position) -> {
-            String productId = (String) view.getTag();
-            if (!TextUtils.isEmpty(productId)) {
-                skipProductUrl(this, 1, ConstantMethod.getStringChangeIntegers(productId));
+        mWeekProductAdapter = new WeekProductAdapter(this, mWeekGoodsList);
+        mWeekProductAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+            @Override
+            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                LikedProductBean likedProductBean = (LikedProductBean) view.getTag();
+                if (likedProductBean != null) {
+                    if (view.getId() == R.id.tv_buy_now)
+                        if (isVip()) {
+                            skipProductUrl(getActivity(), 1, likedProductBean.getId());
+                        } else {
+                            showAlertDialogPower("开通会员即可享受每周更新的多款商品超低价，最低3折哦~");
+                        }
+                }
             }
         });
+        mRvWeekGoods.setAdapter(mWeekProductAdapter);
+        //初始化多么会员价商品列表
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
+        mRvVipPrice.setLayoutManager(gridLayoutManager);
+        mRvVipPrice.addItemDecoration(new ItemDecoration.Builder()
+                .setDividerId(R.drawable.item_divider_ten_white)
+                .create());
+        mVipPriceAdapter = new GoodProductAdapter(this, mVipGoodsList, 2);
+        mRvVipPrice.setAdapter(mVipPriceAdapter);
+        //初始化会员最爱买商品列表
+        GridLayoutManager favoriteLayoutManager = new GridLayoutManager(this, 3);
+        mRvVipFavorite.setLayoutManager(favoriteLayoutManager);
+        mRvVipFavorite.addItemDecoration(new NewGridItemDecoration.Builder()
+                .setDividerId(R.drawable.item_divider_five_white)
+                .create());
+        mVipFavoriteAdapter = new VipFavoriteAdapter(this, mVipFavoriteList);
+        mRvVipFavorite.setAdapter(mVipFavoriteAdapter);
         //初始化自定义专区
         QualityCustomAdapter qualityCustomAdapter = new QualityCustomAdapter(getSupportFragmentManager(), Arrays.asList(CUSTOM_IDS), getSimpleName(), 1);
         mVpVip.setAdapter(qualityCustomAdapter);
         mVpVip.setOffscreenPageLimit(titles.length - 1);
         mTablayoutVip.setViewPager(mVpVip, titles);
+        mSmartCommunalRefresh.setOnRefreshListener(refreshLayout -> {
+            loadData();
+        });
     }
 
     @Override
     protected void loadData() {
         getVipInfo();
         getPowerList();
-        getGiftCover();
         getMonthCouponList();
-        getVipDayCover();
         getWeekGoods();
         getZeroActivityInfo();
-        if (userId > 0) {
-            getFreeCondition();
-            mRlFreeCondition.setVisibility(View.VISIBLE);
-        } else {
-            mRlFreeCondition.setVisibility(View.GONE);
-        }
     }
 
     //获取会员信息
@@ -272,29 +345,13 @@ public class DomolifeVipActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.GET_VIP_USER_INFO, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
+                mSmartCommunalRefresh.finishRefresh();
                 mVipInfoEntity = GsonUtils.fromJson(result, RequestStatus.class);
                 if (mVipInfoEntity != null) {
-                    String code = mVipInfoEntity.getCode();
-                    String msg = mVipInfoEntity.getMsg();
-                    if (SUCCESS_CODE.equals(code)) {
-                        mVipInfoBean = mVipInfoEntity.getResult();
-                        if (mVipInfoBean != null) {
-                            //预期可省
-                            mTvExprectSave.setText(mVipInfoBean.getPredictBeEconomical());
-                            //会员信息
-                            if (userId > 0) {
-                                mRlVipInfo.setVisibility(View.VISIBLE);
-                                GlideImageLoaderUtil.loadRoundImg(getActivity(), mIvHeadIcon, mVipInfoBean.getAvatar(), AutoSizeUtils.mm2px(mAppContext, 90));
-                                mTvUserName.setText(mVipInfoBean.getNickName());
-                                mTvVipLevel.setText(mVipInfoBean.getVipLevel());
-                                mTvExpireTime.setText(mVipInfoBean.getEndTime());
-                                mTvAlreadySave.setText(mVipInfoBean.getBeEconomical());
-                            } else {
-                                mRlVipInfo.setVisibility(View.GONE);
-                            }
-                        }
+                    if (SUCCESS_CODE.equals(mVipInfoEntity.getCode())) {
+                        setVipInfo();
                     } else {
-                        showToast(msg);
+                        showToast(mVipInfoEntity.getMsg());
                     }
                 }
                 NetLoadUtils.getNetInstance().showLoadSir(loadService, mVipInfoBean, mVipInfoEntity);
@@ -302,7 +359,109 @@ public class DomolifeVipActivity extends BaseActivity {
 
             @Override
             public void onNotNetOrException() {
+                mSmartCommunalRefresh.finishRefresh();
                 NetLoadUtils.getNetInstance().showLoadSir(loadService, mVipInfoBean, mVipInfoEntity);
+            }
+        });
+    }
+
+    private void setVipInfo() {
+        mVipInfoBean = mVipInfoEntity.getResult();
+        if (mVipInfoBean != null) {
+            //更新会员状态
+            SharedPreUtils.setParam("isVip", mVipInfoBean.isVip());
+            ConstantMethod.setIsVip(mVipInfoBean.isVip());
+            //会员信息
+            if (isVip()) {
+                getVipDayCover();
+                mRlVipInfo.setVisibility(View.VISIBLE);
+                mRlNovipInfo.setVisibility(View.GONE);
+                mLlOpenVip.setVisibility(View.GONE);
+                mTvVipPower.setVisibility(View.GONE);
+                mRlFreeCondition.setVisibility(View.GONE);
+                mIvVipGift.setVisibility(View.GONE);
+                mRlVipPrice.setVisibility(View.GONE);
+                mRlVipExclusive.setVisibility(View.VISIBLE);
+                mVpVip.setVisibility(View.VISIBLE);
+                mRvVipFavorite.setVisibility(View.GONE);
+                mTvVipFavorite.setVisibility(View.GONE);
+                mLlNovipInfo.setBackgroundResource(R.drawable.shap_domolife_info_bg);
+                GlideImageLoaderUtil.loadRoundImg(getActivity(), mIvHeadIcon, mVipInfoBean.getAvatar(), AutoSizeUtils.mm2px(mAppContext, 90));
+                mIvVipLevel.setImageResource(VipLevel[mVipInfoBean.getVipLevel() - 1]);
+                mTvUserName.setText(mVipInfoBean.getNickName());
+                mTvVipLevel.setText(mVipInfoBean.getCardName());
+                mTvExpireTime.setText(getStringsFormat(getActivity(), R.string.vip_expire, mVipInfoBean.getEndTime()));
+                if (!TextUtils.isEmpty(mVipInfoBean.getBeEconomical())) {
+                    String beEconomical = getStringsFormat(getActivity(), R.string.vip_already_save, mVipInfoBean.getBeEconomical());
+                    int start = beEconomical.indexOf(mVipInfoBean.getBeEconomical());
+                    mTvAlreadySave.setText(getSpannableString(beEconomical, start, start + mVipInfoBean.getBeEconomical().length(), 1.33f, "", true));
+                }
+            } else {
+                getGiftCover();
+                getFreeCondition();
+                getVipPriceGoods();
+                getVipFavorite();
+                mRlVipInfo.setVisibility(View.GONE);
+                mRlNovipInfo.setVisibility(View.VISIBLE);
+                mLlOpenVip.setVisibility(View.VISIBLE);
+                mTvVipPower.setVisibility(View.VISIBLE);
+                mRlVipPrice.setVisibility(View.VISIBLE);
+                mRlVipExclusive.setVisibility(View.GONE);
+                mVpVip.setVisibility(View.GONE);
+                mRvVipFavorite.setVisibility(View.VISIBLE);
+                mTvVipFavorite.setVisibility(View.VISIBLE);
+                mLlNovipInfo.setBackgroundResource(R.drawable.border_rect_10dp_bg_white);
+                mTvExprectSave.setText(mVipInfoBean.getPredictBeEconomical());//预期可省
+                mTvVipPrice.setText(getStringsFormat(getActivity(), R.string.open_vip_price, mVipInfoBean.getPriceText()));
+                mTvVipMarketPrice.setText(getStringsChNPrice(getActivity(), mVipInfoBean.getMarketPrice()));
+            }
+        }
+    }
+
+    //会员最爱买
+    private void getVipFavorite() {
+        Map<String, Object> map = new HashMap<>();
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.GET_VIP_LIKE_GOODS, map, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                mVipFavoriteList.clear();
+                VipPriceEntity vipPriceEntity = GsonUtils.fromJson(result, VipPriceEntity.class);
+                if (vipPriceEntity != null && SUCCESS_CODE.equals(vipPriceEntity.getCode())) {
+                    List<LikedProductBean> goodsList = vipPriceEntity.getResult();
+                    if (goodsList != null && goodsList.size() > 0) {
+                        mVipFavoriteList.addAll(goodsList.subList(0, Math.min(goodsList.size(), 36)));
+                    }
+                }
+                mVipFavoriteAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onNotNetOrException() {
+            }
+        });
+    }
+
+    //多么会员价商品
+    private void getVipPriceGoods() {
+        Map<String, Object> map = new HashMap<>();
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.GET_VIP_PRICE_GOODS, map, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                mVipGoodsList.clear();
+                VipPriceEntity vipPriceEntity = GsonUtils.fromJson(result, VipPriceEntity.class);
+                if (vipPriceEntity != null && SUCCESS_CODE.equals(vipPriceEntity.getCode())) {
+                    List<LikedProductBean> goodsList = vipPriceEntity.getResult();
+                    if (goodsList != null && goodsList.size() > 0) {
+                        mVipGoodsList.addAll(goodsList.subList(0, Math.min(goodsList.size(), 2)));
+                    }
+                }
+                mVipPriceAdapter.notifyDataSetChanged();
+                mRlVipPrice.setVisibility(mVipGoodsList.size() > 0 ? View.VISIBLE : View.GONE);
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                mRlVipPrice.setVisibility(mVipGoodsList.size() > 0 ? View.VISIBLE : View.GONE);
             }
         });
     }
@@ -312,13 +471,21 @@ public class DomolifeVipActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.GET_VIP_POWER, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                mPowerList.clear();
+                mPowerTopList.clear();
+                mPowerBottomList.clear();
                 mPowerEntity = GsonUtils.fromJson(result, PowerEntity.class);
                 if (mPowerEntity != null) {
                     List<PowerBean> powerList = mPowerEntity.getPowerList();
                     if (powerList != null && powerList.size() > 0) {
-                        mPowerList.addAll(powerList);
-                        String powerNum = ConstantMethod.getIntegralFormat(getActivity(), R.string.vip_power_num, mPowerList.size());
+                        for (int i = 0; i < powerList.size(); i++) {
+                            PowerBean powerBean = powerList.get(i);
+                            if (powerBean.isShow()) {
+                                powerBean.setPosition(String.valueOf(i));
+                                mPowerBottomList.add(powerBean);
+                            }
+                        }
+                        mPowerTopList.addAll(powerList);
+                        String powerNum = ConstantMethod.getIntegralFormat(getActivity(), R.string.vip_power_num, mPowerTopList.size());
                         mTvPowerNum.setText(powerNum);
                         mTvVipPowerNum.setText(powerNum);
                     }
@@ -336,8 +503,8 @@ public class DomolifeVipActivity extends BaseActivity {
     }
 
     private void showPowerVisible() {
-        mRvPowerTop.setVisibility(mPowerList.size() > 0 ? View.VISIBLE : View.GONE);
-        mRvPowerBottom.setVisibility(mPowerList.size() > 0 ? View.VISIBLE : View.GONE);
+        mRvPowerTop.setVisibility(mPowerTopList.size() > 0 ? View.VISIBLE : View.GONE);
+        mLlPowerBottom.setVisibility(mPowerBottomList.size() > 0 ? View.VISIBLE : View.GONE);
     }
 
     //获取省钱计算器
@@ -374,23 +541,25 @@ public class DomolifeVipActivity extends BaseActivity {
 
     //获取是否满足免费7天会员条件
     private void getFreeCondition() {
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.GET_CONSUME_LARGESS_INFO, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
-                if (requestStatus != null) {
-                    if (SUCCESS_CODE.equals(requestStatus.getCode())) {
-                        mRlFreeCondition.setVisibility(View.VISIBLE);
-                        RequestStatus.Result statusResult = requestStatus.getResult();
-                        mTvFreeCondition.setText(getStrings(statusResult.getContentTop()));
-                        mTvCurrentCost.setText(getStrings(statusResult.getContentBelow()));
-                        mSeekbarFreeVip.setProgress((int) (getStringChangeDouble(statusResult.getPercent()) * 100));
-                    } else {
-                        mRlFreeCondition.setVisibility(View.GONE);
+        if (userId > 0) {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.GET_CONSUME_LARGESS_INFO, new NetLoadListenerHelper() {
+                @Override
+                public void onSuccess(String result) {
+                    RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
+                    if (requestStatus != null) {
+                        if (SUCCESS_CODE.equals(requestStatus.getCode())) {
+                            mRlFreeCondition.setVisibility(View.VISIBLE);
+                            RequestStatus.Result statusResult = requestStatus.getResult();
+                            mTvFreeCondition.setText(getStrings(statusResult.getContentTop()));
+                            mTvCurrentCost.setText(getStrings(statusResult.getContentBelow()));
+                            mSeekbarFreeVip.setProgress((int) (getStringChangeDouble(statusResult.getPercent())));
+                        } else {
+                            mRlFreeCondition.setVisibility(View.GONE);
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
     }
 
     //获取开卡礼封面
@@ -446,6 +615,7 @@ public class DomolifeVipActivity extends BaseActivity {
                 if (mVipCouponEntity != null) {
                     VipCouponBean couponBean = mVipCouponEntity.getResult();
                     if (couponBean != null) {
+                        mCouponZoneId = couponBean.getZoneId();
                         if (!TextUtils.isEmpty(couponBean.getTitle())) {
                             mTvCouponTitle.setText(getStrings(couponBean.getTitle()));
                         }
@@ -475,7 +645,7 @@ public class DomolifeVipActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.GET_WEEK_GOODS, map, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                mGoodsList.clear();
+                mWeekGoodsList.clear();
                 WeekProductEntity vipProductEntity = GsonUtils.fromJson(result, WeekProductEntity.class);
                 if (vipProductEntity != null && SUCCESS_CODE.equals(vipProductEntity.getCode())) {
                     mWeekProductBean = vipProductEntity.getResult();
@@ -488,17 +658,17 @@ public class DomolifeVipActivity extends BaseActivity {
                         }
                         List<LikedProductBean> goodsList = mWeekProductBean.getGoodsList();
                         if (goodsList != null && goodsList.size() > 0) {
-                            mGoodsList.addAll(goodsList.subList(0, Math.min(goodsList.size(), 3)));
+                            mWeekGoodsList.addAll(goodsList.subList(0, Math.min(goodsList.size(), 3)));
                         }
                     }
                 }
                 mWeekProductAdapter.notifyDataSetChanged();
-                mRlWeek.setVisibility(mGoodsList.size() > 0 ? View.VISIBLE : View.GONE);
+                mRlWeek.setVisibility(mWeekGoodsList.size() > 0 ? View.VISIBLE : View.GONE);
             }
 
             @Override
             public void onNotNetOrException() {
-                mRlWeek.setVisibility(mGoodsList.size() > 0 ? View.VISIBLE : View.GONE);
+                mRlWeek.setVisibility(mWeekGoodsList.size() > 0 ? View.VISIBLE : View.GONE);
             }
         });
     }
@@ -521,8 +691,9 @@ public class DomolifeVipActivity extends BaseActivity {
                     if (mZeroInfoBean != null) {
                         GlideImageLoaderUtil.loadCenterCrop(getActivity(), mIvZeroCover, mZeroInfoBean.getProductImg());
                         mTvZeroName.setText(getStrings(mZeroInfoBean.getProductName()));
+                        mTvZeroProductSubtitle.setText(getStrings(mZeroInfoBean.getSubtitle()));
                         mTvZeroPrice.setText(ConstantMethod.getRmbFormat(getActivity(), "0"));
-                        mTvZeroMarketPrice.setText(getStrings(mZeroInfoBean.getMarketPrice()));
+                        mTvZeroMarketPrice.setText(getStringsChNPrice(getActivity(), mZeroInfoBean.getMarketPrice()));
                         mTvZeroQuantity.setText(getStringsFormat(getActivity(), R.string.limit_quantity, mZeroInfoBean.getCount()));
                     }
                 }
@@ -536,7 +707,9 @@ public class DomolifeVipActivity extends BaseActivity {
         });
     }
 
-    @OnClick({R.id.tv_life_back, R.id.iv_vip_day, R.id.tv_domolife_price_subtitle, R.id.tv_week_subtitle, R.id.tv_coupon_subtitle, R.id.tv_zero_subtitle, R.id.rl_novip_info, R.id.tv_header_shared, R.id.tv_shopping, R.id.iv_vip_gift, R.id.tv_get_coupon, R.id.rl_zero_item, R.id.tv_vip_power, R.id.tv_open_vip})
+    @OnClick({R.id.tv_life_back, R.id.iv_vip_day, R.id.tv_domolife_price_subtitle, R.id.tv_week_subtitle, R.id.tv_coupon_subtitle, R.id.tv_renewal,
+            R.id.tv_zero_subtitle, R.id.iv_calculator, R.id.tv_expect_save, R.id.tv_header_shared, R.id.tv_shopping, R.id.iv_vip_gift, R.id.tv_get_coupon, R.id.rl_zero_item,
+            R.id.tv_vip_power, R.id.ll_open_vip, R.id.tv_already_save, R.id.tv_buy_record, R.id.tv_vip_price_subtitle, R.id.tv_apply, R.id.iv_menu})
     public void onViewClicked(View view) {
         Intent intent;
         switch (view.getId()) {
@@ -544,50 +717,99 @@ public class DomolifeVipActivity extends BaseActivity {
                 finish();
                 break;
             case R.id.tv_header_shared:
+                new UMShareAction(this, "http://domolifes.oss-cn-beijing.aliyuncs.com/wechatIcon/vip_home_share_cover.jpg",
+                        "在多么生活买东西竟然省这么多钱！", "原来好友平时是这样省钱的，我也不能再浪费！",
+                        Url.BASE_SHARE_PAGE_TWO + "vip/index.html", -1);
                 break;
-            //省钱计算器
-            case R.id.rl_novip_info:
+            case R.id.iv_menu:
+                if (mVipHomeMenuPw == null) {
+                    mVipHomeMenuPw = new VipHomeMenuPw(this);
+                    mVipHomeMenuPw.setPopupGravity(Gravity.BOTTOM);
+                    mVipHomeMenuPw.bindLifecycleOwner(this);
+                    mVipHomeMenuPw.setBackgroundColor(getResources().getColor(R.color.transparent));
+                }
+                mVipHomeMenuPw.showPopupWindow(mIvMenu);
+                break;
+            //购买记录
+            case R.id.tv_buy_record:
+                intent = new Intent(this, VipRecordActivity.class);
+                startActivity(intent);
+                break;
+            //非会员省钱计算器
+            case R.id.iv_calculator:
+            case R.id.tv_expect_save:
                 getCalculator();
+                break;
+            //会员省钱账单
+            case R.id.tv_already_save:
+                intent = new Intent(this, SaveMoneyDetailActivity.class);
+                startActivity(intent);
                 break;
             //去购物
             case R.id.tv_shopping:
+                intent = new Intent(this, QualityTypeHotSaleProActivity.class);
+                startActivity(intent);
                 break;
             //立即开卡
-            case R.id.tv_open_vip:
+            case R.id.ll_open_vip:
             case R.id.iv_vip_gift:
+            case R.id.tv_renewal:
                 intent = new Intent(this, OpenVipActivity.class);
                 startActivity(intent);
                 break;
+            //每月专享券列表
+            case R.id.tv_coupon_subtitle:
+                if (isVip()) {
+                    if (!TextUtils.isEmpty(mCouponZoneId)) {
+                        intent = new Intent(this, MonthCouponListActivity.class);
+                        intent.putExtra("zoneId", mCouponZoneId);
+                        startActivity(intent);
+                    }
+                } else {
+                    intent = new Intent(this, VipPowerDetailActivity.class);
+                    startActivity(intent);
+                }
+                break;
             //领取优惠券
             case R.id.tv_get_coupon:
-            case R.id.tv_coupon_subtitle:
-                intent = new Intent(this, MonthCouponListActivity.class);
-                startActivity(intent);
+                if (isVip()) {
+                    if (!TextUtils.isEmpty(mCouponZoneId)) {
+                        intent = new Intent(this, MonthCouponListActivity.class);
+                        intent.putExtra("zoneId", mCouponZoneId);
+                        startActivity(intent);
+                    }
+                } else {
+                    showAlertDialogPower("开通立享每月价值100元的优惠券，还有神秘好券不定时发放");
+                }
                 break;
             //0元试用活动列表
             case R.id.tv_zero_subtitle:
-                intent = new Intent(this, ZeroActivityListActivity.class);
+                intent = new Intent(this, isVip() ? ZeroActivityListActivity.class : VipPowerDetailActivity.class);
                 startActivity(intent);
+                break;
+            //点击0元试用商品
+            case R.id.rl_zero_item:
+                skipZeroActivityDetail();
+                break;
+            //申请0元试用
+            case R.id.tv_apply:
+                if (isVip()) {
+                    skipZeroActivityDetail();
+                } else {
+                    showAlertDialogPower("开通即可享受0元参与试用，商品不定时更新，快来参与吧~");
+                }
                 break;
             //每周会员专区
             case R.id.tv_week_subtitle:
                 if (mWeekProductBean != null) {
-                    intent = new Intent(this, VipZoneDetailActivity.class);
+                    intent = new Intent(this, isVip() ? VipZoneDetailActivity.class : VipPowerDetailActivity.class);
                     intent.putExtra("zoneId", mWeekProductBean.getZoneId());
                     startActivity(intent);
                 }
                 break;
-            //申请0元试用
-            case R.id.rl_zero_item:
-                if (mZeroInfoBean != null && !TextUtils.isEmpty(mZeroInfoBean.getActivityId())) {
-                    intent = new Intent(this, ZeroDetailActivity.class);
-                    intent.putExtra("activityId", mZeroInfoBean.getActivityId());
-                    startActivity(intent);
-                }
-                break;
-            //会员专属特权
-            case R.id.tv_vip_power:
-                intent = new Intent(this, VipPowerActivity.class);
+            case R.id.tv_vip_price_subtitle:  //多么会员价
+            case R.id.tv_vip_power:  //会员专属特权
+                intent = new Intent(this, VipPowerDetailActivity.class);
                 startActivity(intent);
                 break;
             //会员专享价
@@ -604,6 +826,24 @@ public class DomolifeVipActivity extends BaseActivity {
         }
     }
 
+    private void skipZeroActivityDetail() {
+        Intent intent;
+        if (mZeroInfoBean != null && !TextUtils.isEmpty(mZeroInfoBean.getActivityId())) {
+            intent = new Intent(this, ZeroActivityDetailActivity.class);
+            intent.putExtra("activityId", mZeroInfoBean.getActivityId());
+            startActivity(intent);
+        }
+    }
+
+    private void showAlertDialogPower(String desc) {
+        if (mAlertDialogPower == null) {
+            mAlertDialogPower = new AlertDialogPower(this);
+        }
+
+        mAlertDialogPower.setDesc(desc);
+        mAlertDialogPower.show();
+    }
+
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
         if (message.type.equals(ConstantVariable.UPDATE_CUSTOM_NAME)) {
@@ -618,6 +858,19 @@ public class DomolifeVipActivity extends BaseActivity {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        } else if (OPEN_VIP_SUCCESS.equals(message.type) || LOGIN_SUCCESS.equals(message.type)) {
+            //登录成功和会员开通成功时更新会员首页
+            loadData();
         }
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
+
+    @Override
+    public View getLoadView() {
+        return mLlDomolifeVip;
     }
 }

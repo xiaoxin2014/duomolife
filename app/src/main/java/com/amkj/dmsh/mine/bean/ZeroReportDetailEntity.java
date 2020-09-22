@@ -2,7 +2,7 @@ package com.amkj.dmsh.mine.bean;
 
 import com.amkj.dmsh.base.BaseEntity;
 import com.amkj.dmsh.find.bean.PostEntity;
-import com.amkj.dmsh.user.bean.LikedProductBean;
+import com.amkj.dmsh.find.bean.RelatedGoodsBean;
 
 import java.util.List;
 
@@ -33,14 +33,14 @@ public class ZeroReportDetailEntity extends BaseEntity {
          * reportList : [{"activityId":"","orderId":"2","content":"sfsdf","imgs":"http://image.domolife.cn/platform/20200820/20200820184822459.png,http://image.domolife.cn/platform/20200820/20200820184832568.jpeg","star":"5","likeCount":"2","isLike":"0","isCollect":"0","avatar":"http://image.domolife.cn/iosRelease/20200714163934.jpg","nickName":"剑辉","createTime":"2020-08-07 11:44:43"}]
          */
 
-        private LikedProductBean productInfo;
+        private RelatedGoodsBean productInfo;
         private List<PostEntity.PostBean> reportList;
 
-        public LikedProductBean getProductInfo() {
+        public RelatedGoodsBean getProductInfo() {
             return productInfo;
         }
 
-        public void setProductInfo(LikedProductBean productInfo) {
+        public void setProductInfo(RelatedGoodsBean productInfo) {
             this.productInfo = productInfo;
         }
 

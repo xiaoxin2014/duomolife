@@ -66,7 +66,8 @@ public class PostEntity extends BaseEntity {
         private String avatar;
         @SerializedName(value = "nickName", alternate = "nickname")
         private String nickName;
-        private String digest;
+        @SerializedName(value = "content", alternate = "digest")
+        private String content;
         @SerializedName(value = "cover", alternate = {"path", "activityImg"})
         private String cover;
         private String createTime;
@@ -84,7 +85,6 @@ public class PostEntity extends BaseEntity {
         //心得报告相关字段
         private String activityId;
         private String orderId;
-        private String content;
         private String imgs;
         private String star;
         private String isCollect;
@@ -217,14 +217,6 @@ public class PostEntity extends BaseEntity {
 
         public void setNickName(String nickName) {
             this.nickName = nickName;
-        }
-
-        public String getDigest() {
-            return digest;
-        }
-
-        public void setDigest(String digest) {
-            this.digest = digest;
         }
 
         public String getCover() {

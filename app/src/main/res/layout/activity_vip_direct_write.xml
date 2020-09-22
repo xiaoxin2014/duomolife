@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:divider="@drawable/item_divider_gray_f_one_px"
+    android:orientation="vertical"
+    android:showDividers="middle">
+
+    <include layout="@layout/activity_domolife_header" />
+
+    <LinearLayout
+        android:id="@+id/ll_write"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="@dimen/sc_mm_26">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="应付金额："
+                android:textSize="@dimen/sc_mm_32" />
+
+            <TextView
+                android:id="@+id/tv_amout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/defaul"
+                android:textColor="@color/rmb_small"
+                android:textSize="@dimen/sc_mm_32" />
+        </LinearLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/rl_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+            <include layout="@layout/layout_address_top_null" />
+
+            <include layout="@layout/layout_recycler_top_address_default" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:divider="@drawable/divider_ll_10dp_gray_bg"
+            android:orientation="vertical"
+            android:showDividers="beginning">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/sc_mm_75"
+                android:gravity="center_vertical"
+                android:paddingLeft="@dimen/gap_left"
+                android:paddingRight="@dimen/gap_right"
+                android:text="选择支付方式"
+                android:textColor="@color/home_text_color"
+                android:textSize="@dimen/sc_mm_28" />
+
+            <include layout="@layout/layout_direct_pay_way_item" />
+
+            <TextView
+                android:id="@+id/tv_countdownTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/sc_mm_26"
+                android:layout_marginTop="@dimen/sc_mm_20"
+                android:textColor="@color/text_login_gray_s"
+                android:textSize="@dimen/sc_mm_30" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_open_vip"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/sc_mm_100"
+            android:layout_alignParentBottom="true"
+            android:background="#2a3364"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="@dimen/sc_mm_42"
+                android:layout_height="@dimen/sc_mm_40"
+                android:src="@drawable/vip_logo" />
+
+            <TextView
+                android:id="@+id/tv_open_vip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/sc_mm_15"
+                android:text="确认支付"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sc_mm_32"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

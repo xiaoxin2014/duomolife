@@ -280,7 +280,7 @@ public class MainButtonView extends LinearLayout {
                             break;
                         //去支付
                         case GO_PAY:
-                            goPay(orderNo);
+                            goPay(orderNo, simpleName);
                             break;
                         //再次购买
                         case TO_BUY:
@@ -432,7 +432,7 @@ public class MainButtonView extends LinearLayout {
         });
     }
 
-    private void goPay(String orderNo) {
+    private void goPay(String orderNo, String simpleName) {
         showLoadhud(context);
         Map<String, Object> map = new HashMap<>();
         map.put("orderNo", orderNo);
@@ -442,7 +442,7 @@ public class MainButtonView extends LinearLayout {
                 dismissLoadhud(context);
                 Map map = GsonUtils.fromJson(result, Map.class);
                 if (mAlertDialogGoPay == null) {
-                    mAlertDialogGoPay = new AlertDialogGoPay(context, map.get("result"));
+                    mAlertDialogGoPay = new AlertDialogGoPay(context, map.get("result"), simpleName);
                 }
                 mAlertDialogGoPay.show(orderNo);
             }

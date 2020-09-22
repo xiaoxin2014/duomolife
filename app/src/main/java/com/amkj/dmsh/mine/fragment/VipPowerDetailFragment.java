@@ -1,6 +1,8 @@
 package com.amkj.dmsh.mine.fragment;
 
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -43,6 +45,7 @@ public class VipPowerDetailFragment extends BaseFragment {
         GlideImageLoaderUtil.loadImage(getActivity(), mIvPic, mPicUrl);
         mTvDetail.setText(mDetail);
         mTvSkip.setText(mBtnText);
+        mTvSkip.setVisibility(!TextUtils.isEmpty(mAndroidLink) ? View.VISIBLE : View.GONE);
         mTvSkip.setOnClickListener(v -> {
             ConstantMethod.setSkipPath(getActivity(), mAndroidLink, false);
         });

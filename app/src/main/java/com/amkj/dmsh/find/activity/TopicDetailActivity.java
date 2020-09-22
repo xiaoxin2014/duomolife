@@ -11,6 +11,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.constant.UMShareAction;
+import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.find.adapter.PostPagerAdapter;
 import com.amkj.dmsh.find.bean.EventMessageBean;
 import com.amkj.dmsh.find.bean.TopicDetailEntity;
@@ -46,7 +47,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DELETE_POST;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_POST_CONTENT;
-import static com.amkj.dmsh.constant.Url.BASE_SHARE_PAGE_TWO;
 import static com.amkj.dmsh.constant.Url.GET_TOPIC_DETAIL;
 import static com.amkj.dmsh.dao.SoftApiDao.followTopic;
 
@@ -186,7 +186,7 @@ public class TopicDetailActivity extends BaseActivity {
                             , topicDetailEntity.getImgUrl()
                             , topicDetailEntity.getTitle()
                             , topicDetailEntity.getContent()
-                            , BASE_SHARE_PAGE_TWO + "m/template/find_template/themeDetails.html" + "?id=" + topicDetailEntity.getId()
+                            , Url.BASE_SHARE_PAGE_TWO + "find_template/themeDetails.html" + "?id=" + topicDetailEntity.getId()
                             , "pages/themeDetails/themeDetails?id=" + topicDetailEntity.getId(), topicDetailEntity.getId());
                 }
                 break;

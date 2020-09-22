@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import androidx.core.widget.NestedScrollView;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -51,6 +49,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import androidx.core.widget.NestedScrollView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -59,7 +58,7 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 import static android.view.View.inflate;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.formatFloatNumber;
-import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeFloat;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
@@ -270,13 +269,13 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
         skuDialogView.tv_dir_indent_pro_name.setText(this.editGoodsSkuBean.getProductName());
         skuDialogView.tv_dir_indent_pro_quality.setSelected(true);
         skuDialogView.tv_dir_indent_pro_quality.setText(editGoodsSkuBean.getQuantity() > 0 ? ("库存:" + editGoodsSkuBean.getQuantity()) : "");
-        //        获取价格排序范围
+        //获取价格排序范围
         Collections.sort(skuSaleList, new Comparator<SkuSaleBean>() {
             @Override
             public int compare(SkuSaleBean lhs, SkuSaleBean rhs) {
                 if (!TextUtils.isEmpty(lhs.getPrice()) && !TextUtils.isEmpty(rhs.getPrice())) {
-                    float p1 = getFloatNumber(lhs.getPrice());
-                    float p2 = getFloatNumber(rhs.getPrice());
+                    float p1 = getStringChangeFloat(lhs.getPrice());
+                    float p2 = getStringChangeFloat(rhs.getPrice());
                     return Float.compare(p1, p2);
                 } else {
                     return 0;
@@ -288,16 +287,44 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
         String minPrice = skuSaleList.get(0).getPrice();
         String maxPrice = skuSaleList.get(skuSaleList.size() - 1).getPrice();
         String newUserTag = getStrings(firstSaleBean.getNewUserTag());
-        skuDialogView.tv_dir_indent_pro_price.setTextColor(Color.parseColor(!TextUtils.isEmpty(firstSaleBean.getNewUserTag()) ? "#ff5e6b" : "#333000"));
-        if (skuSaleList.size() > 1) {
-            if (minPrice.equals(maxPrice)) {
-                skuDialogView.tv_dir_indent_pro_price.setText((newUserTag + "¥" + minPrice));
+        if (minPrice.equals(maxPrice)) {
+            skuDialogView.tv_dir_indent_pro_price.setText((newUserTag + "¥" + minPrice));
+        } else {
+            skuDialogView.tv_dir_indent_pro_price.setText((newUserTag + "¥" + minPrice + " - " + maxPrice));
+        }
+
+        //按照会员价排序
+        List<SkuSaleBean> newSkuSaleList = new ArrayList<>();
+        for (SkuSaleBean skuSaleBean : skuSaleList) {
+            if (!TextUtils.isEmpty(skuSaleBean.getVipPrice())) {
+                newSkuSaleList.add(skuSaleBean);
+            }
+        }
+
+        Collections.sort(newSkuSaleList, (lhs, rhs) -> {
+            if (!TextUtils.isEmpty(lhs.getPrice()) && !TextUtils.isEmpty(rhs.getPrice())) {
+                float p1 = getStringChangeFloat(lhs.getVipPrice());
+                float p2 = getStringChangeFloat(rhs.getVipPrice());
+                return Float.compare(p1, p2);
             } else {
-                skuDialogView.tv_dir_indent_pro_price.setText((newUserTag + "¥" + minPrice + " - " + maxPrice));
+                return 0;
+            }
+        });
+
+        //设置会员价
+        if (newSkuSaleList.size() > 0) {
+            skuDialogView.ll_vip_price.setVisibility(View.VISIBLE);
+            String minVipPrice = newSkuSaleList.get(0).getVipPrice();
+            String maxVipPrice = newSkuSaleList.get(newSkuSaleList.size() - 1).getVipPrice();
+            if (minVipPrice.equals(maxVipPrice)) {
+                skuDialogView.tv_vip_price.setText(("会员价¥" + minVipPrice));
+            } else {
+                skuDialogView.tv_vip_price.setText(("会员价¥" + minVipPrice + " - " + maxVipPrice));
             }
         } else {
-            skuDialogView.tv_dir_indent_pro_price.setText((newUserTag + "¥" + minPrice));
+            skuDialogView.ll_vip_price.setVisibility(View.GONE);
         }
+
         if (skuDialogView.layout_parameter_slp.getChildCount() > 0) {
             skuDialogView.layout_parameter_slp.removeAllViews();
         }
@@ -378,7 +405,7 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
             for (int i = 0; i < combineProductInfoList.size(); i++) {
                 CombineProductInfoBean combineProductInfoBean = combineProductInfoList.get(i);
                 try {
-                    discountMap.put(combineProductInfoBean.getSkuId(), getFloatNumber(combineProductInfoBean.getDiscounts()));
+                    discountMap.put(combineProductInfoBean.getSkuId(), getStringChangeFloat(combineProductInfoBean.getDiscounts()));
                 } catch (NumberFormatException e) {
                     discountMap.put(combineProductInfoBean.getSkuId(), (float) 0);
                     e.printStackTrace();
@@ -822,7 +849,7 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
                 }
             }
         } else {
-            showToast( "请选择商品属性");
+            showToast("请选择商品属性");
         }
     }
 
@@ -1254,6 +1281,8 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
                     }
                     setDiscountPrice(skuSaleBean.getId());
                     skuDialogView.tv_dir_indent_pro_price.setText((getStrings(skuSaleBean.getNewUserTag()) + "¥" + skuSaleBean.getPrice()));
+                    skuDialogView.tv_vip_price.setText("会员价" + "¥" + skuSaleBean.getVipPrice());
+                    skuDialogView.ll_vip_price.setVisibility(!TextUtils.isEmpty(skuSaleBean.getVipPrice()) ? View.VISIBLE : View.GONE);
                     break;
                 }
             }
@@ -1357,6 +1386,11 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
         Button bt_direct_attribute_car;
         @BindView(R.id.bt_direct_attribute_buy)
         Button bt_direct_attribute_buy;
+        @BindView(R.id.ll_vip_price)
+        LinearLayout ll_vip_price;
+        @BindView(R.id.tv_vip_price)
+        TextView tv_vip_price;
+
 
         //            确定
         @OnClick({R.id.bt_direct_attribute_buy, R.id.bt_direct_attribute_car})
@@ -1413,7 +1447,7 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
      * @param skuSaleBean
      */
     private void addCancelNotice(SkuSaleBean skuSaleBean) {
-        String url =  Url.Q_REPLENISHMENT_NOTICE;
+        String url = Url.Q_REPLENISHMENT_NOTICE;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
         params.put("skuId", skuSaleBean.getId());
@@ -1432,7 +1466,7 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
                         }
                         skuSaleBean.setIsNotice(requestStatus.getIsNotice());
                     } else {
-                        showToastRequestMsg( requestStatus);
+                        showToastRequestMsg(requestStatus);
                     }
                 }
             }

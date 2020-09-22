@@ -45,7 +45,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.H_MES_NOTIFY;
 import static com.amkj.dmsh.dao.AddClickDao.addNotifyMsgClick;
 
-;
 
 /**
  * @author LGuiPeng

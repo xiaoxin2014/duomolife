@@ -1111,7 +1111,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         String sourceUrl = "";
         if (groupShopDetailsBean != null) {
             qyProductIndentInfo = new QyProductIndentInfo();
-            String sharePageUrl = BASE_SHARE_PAGE_TWO + "m/template/share_template/groupDetail.html?id=";
+            String sharePageUrl = Url.BASE_SHARE_PAGE_TWO + "share_template/groupDetail.html?id=";
             sourceUrl = sharePageUrl + groupShopDetailsBean.getGpInfoId();
             sourceTitle = "我的拼团：" + groupShopDetailsBean.getProductName();
             qyProductIndentInfo.setUrl(sourceUrl);

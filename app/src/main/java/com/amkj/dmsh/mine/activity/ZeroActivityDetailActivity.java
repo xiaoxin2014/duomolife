@@ -13,15 +13,20 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.bean.TabEntity;
-import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
+import com.amkj.dmsh.constant.ConstantVariable;
+import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
+import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
+import com.amkj.dmsh.mine.adapter.ZeroLotteryAdapter;
 import com.amkj.dmsh.mine.bean.ZeroDetailEntity;
 import com.amkj.dmsh.mine.bean.ZeroDetailEntity.ZeroDetailBean;
+import com.amkj.dmsh.mine.bean.ZeroLotteryEntity.ZeroLotteryBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
@@ -29,7 +34,7 @@ import com.amkj.dmsh.utils.CountDownTimer;
 import com.amkj.dmsh.utils.TimeUtils;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
-import com.amkj.dmsh.utils.webformatdata.ShareDataBean;
+import com.amkj.dmsh.views.alertdialog.AlertDialogZeroLottery;
 import com.amkj.dmsh.views.flycoTablayout.CommonTabLayout;
 import com.amkj.dmsh.views.flycoTablayout.listener.CustomTabEntity;
 import com.amkj.dmsh.views.flycoTablayout.listener.OnTabSelectListener;
@@ -46,7 +51,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
 import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
@@ -54,18 +61,24 @@ import butterknife.OnClick;
 import cn.iwgang.countdownview.CountdownView;
 import cn.iwgang.countdownview.DynamicConfig;
 import me.jessyan.autosize.utils.AutoSizeUtils;
+import q.rorbin.badgeview.Badge;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.dismissLoadhud;
+import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
+import static com.amkj.dmsh.constant.ConstantMethod.getIntegralFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getRmbFormat;
-import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.showImageActivity;
 import static com.amkj.dmsh.constant.ConstantMethod.showLoadhud;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.dao.OrderDao.getCarCount;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODUCT_TITLE;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getSquareImgUrl;
@@ -73,9 +86,9 @@ import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getSquareImgUrl;
 /**
  * Created by xiaoxin on 2020/7/25
  * Version:v4.7.0
- * ClassDescription :0元试用详情
+ * ClassDescription :0元试用商品详情
  */
-public class ZeroDetailActivity extends BaseActivity {
+public class ZeroActivityDetailActivity extends BaseActivity {
     @BindView(R.id.banner_ql_sp_pro_details)
     ConvenientBanner mBannerQlSpProDetails;
     @BindView(R.id.tv_ql_sp_pro_sc_name)
@@ -116,12 +129,25 @@ public class ZeroDetailActivity extends BaseActivity {
     RelativeLayout mRlToolbar;
     @BindView(R.id.rl_toolbar2)
     RelativeLayout mRlToolbar2;
-    @BindView(R.id.fl_header_service)
-    RelativeLayout mFlHeaderService;
     @BindView(R.id.fl_quality_bar)
     FrameLayout mFlQualityBar;
     @BindView(R.id.tv_end)
     TextView mTvEnd;
+    @BindView(R.id.ll_lottery)
+    LinearLayout mLlLottery;
+    @BindView(R.id.ll_step)
+    LinearLayout mLlStep;
+    @BindView(R.id.ll_apply)
+    LinearLayout mLlApply;
+    @BindView(R.id.tv_buy)
+    TextView mTvBuy;
+    @BindView(R.id.tv_total)
+    TextView mTvTotal;
+    @BindView(R.id.fl_header_service)
+    RelativeLayout mFlHeaderService;
+    @BindView(R.id.rv_lottery)
+    RecyclerView mRvLottery;
+
     private String[] detailTabData = {"商品", "详情"};
     private ArrayList<CustomTabEntity> tabData = new ArrayList<>();
     private int measuredHeight;
@@ -129,13 +155,16 @@ public class ZeroDetailActivity extends BaseActivity {
     private ZeroDetailEntity mZeroDetailEntity;
     private ZeroDetailBean mZeroDetailBean;
     private List<CommunalDetailObjectBean> shopDetailBeanList = new ArrayList<>();
-    //    轮播图片视频
     private List<CommunalADActivityBean> imagesVideoList = new ArrayList<>();
+    List<ZeroLotteryBean> mLotteryBeans = new ArrayList<>();
     private CommunalDetailAdapter communalDetailAdapter;
-    private String sharePageUrl = Url.BASE_SHARE_PAGE_TWO;
+    private String sharePageUrl = Url.BASE_SHARE_PAGE_TWO + "vip/tryout_detail.html?id=";
     private CBViewHolderCreator cbViewHolderCreator;
     private CountDownTimer mCountDownTimer;
     private DynamicConfig.Builder mDynamic;
+    private Badge badge;
+    private ZeroLotteryAdapter mZeroLotteryAdapter;
+    private AlertDialogZeroLottery mAlertDialogZeroLottery;
 
     @Override
     protected int getContentView() {
@@ -155,12 +184,16 @@ public class ZeroDetailActivity extends BaseActivity {
             showToast("数据有误，请重试");
             finish();
         }
+        badge = getBadge(getActivity(), mFlHeaderService);
         mTvMarketPrice.setPaintFlags(mTvMarketPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         //动态修改标题栏padding
         int statusBarHeight = ImmersionBar.getStatusBarHeight(this);
         int paddingTop = statusBarHeight > 0 ? statusBarHeight : AutoSizeUtils.mm2px(this, 40);
         mRlToolbar.setPadding(0, paddingTop, 0, 0);
         mRlToolbar2.setPadding(0, paddingTop, 0, 0);
+        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) mFlHeaderService.getLayoutParams();
+        layoutParams.topMargin = paddingTop;
+        mFlHeaderService.setLayoutParams(layoutParams);
         //设置结束时间倒计时
         mDynamic = new DynamicConfig.Builder();
         mDynamic.setSuffixTextSize(AutoSizeUtils.mm2px(mAppContext, 30));
@@ -173,21 +206,20 @@ public class ZeroDetailActivity extends BaseActivity {
                 .setShowTimeBgBorder(true);
         mDynamic.setBackgroundInfo(backgroundInfo);
         mCvCountdownTime.dynamicShow(mDynamic.build());
+        //初始化中奖名单
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
+        mRvLottery.setLayoutManager(gridLayoutManager);
+        mZeroLotteryAdapter = new ZeroLotteryAdapter(this, mLotteryBeans, false);
+        mRvLottery.setAdapter(mZeroLotteryAdapter);
+
         //初始化商品详情
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         mRvProductDetails.setLayoutManager(linearLayoutManager);
         mRvProductDetails.setNestedScrollingEnabled(false);
         communalDetailAdapter = new CommunalDetailAdapter(getActivity(), shopDetailBeanList);
         communalDetailAdapter.setOnItemChildClickListener((adapter, view, position) -> {
-            ShareDataBean shareDataBean = null;
-            if (view.getId() == R.id.tv_communal_share && mZeroDetailBean != null) {
-                shareDataBean = new ShareDataBean(mZeroDetailBean.getProductImg()
-                        , "我在多么生活看中了" + mZeroDetailBean.getProductName()
-                        , getStrings(mZeroDetailBean.getSubtitle())
-                        , sharePageUrl + mActivityId);
-            }
             CommunalWebDetailUtils.getCommunalWebInstance()
-                    .setWebDataClick(getActivity(), shareDataBean, view, loadHud);
+                    .setWebDataClick(getActivity(), null, view, loadHud);
         });
         mRvProductDetails.setAdapter(communalDetailAdapter);
         for (String detailTabDatum : detailTabData) {
@@ -238,10 +270,16 @@ public class ZeroDetailActivity extends BaseActivity {
                 }
             }
         });
+        mSmartQlSpProDetails.setOnRefreshListener(refreshLayout -> loadData());
     }
 
     @Override
     protected void loadData() {
+        getCarCount(getActivity());
+        getZeroDetail();
+    }
+
+    private void getZeroDetail() {
         Map<String, String> map = new HashMap<>();
         map.put("activityId", mActivityId);
         NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.GET_ZERO_PRODUCT_DETAIL, map, new NetLoadListenerHelper() {
@@ -273,15 +311,21 @@ public class ZeroDetailActivity extends BaseActivity {
         String name = TextUtils.isEmpty(zeroDetailBean.getSubtitle()) ? zeroDetailBean.getProductName() : (zeroDetailBean.getSubtitle() + "•" + zeroDetailBean.getProductName());
         mTvQlSpProScName.setText(name);
         mTvPrice.setText(getRmbFormat(this, zeroDetailBean.getPrice()));
-        mTvMarketPrice.setText(getStrings(zeroDetailBean.getMarketPrice()));
+        mTvMarketPrice.setText(getStringsChNPrice(this, zeroDetailBean.getMarketPrice()));
         mTvQuantity.setText(getStringsFormat(this, R.string.limit_quantity, zeroDetailBean.getCount()));
         mTvApplyNum.setText(getStringsFormat(this, R.string.zero_apply_num, zeroDetailBean.getPartakeCount()));
+        mTvApply.setText(zeroDetailBean.isPartake() ? "已申请" : "申请试用");
+        mTvApply.setEnabled(!zeroDetailBean.isPartake());
         //报名结束倒计时
         if (TimeUtils.isEndOrStartTime(mZeroDetailEntity.getCurrentTime(), zeroDetailBean.getEndTime())) {
             zeroActivityEnd();
         } else {
-            long millisInFuture = TimeUtils.getTimeDifference(mZeroDetailEntity.getCurrentTime(), zeroDetailBean.getEndTime());
+            mLlStep.setVisibility(View.VISIBLE);
+            mLlLottery.setVisibility(View.GONE);
+            mTvBuy.setVisibility(View.GONE);
+            mLlApply.setVisibility(View.VISIBLE);
             mCvCountdownTime.setVisibility(View.VISIBLE);
+            long millisInFuture = TimeUtils.getTimeDifference(mZeroDetailEntity.getCurrentTime(), zeroDetailBean.getEndTime());
             if (mCountDownTimer == null) {
                 mCountDownTimer = new CountDownTimer(this) {
                     @Override
@@ -291,7 +335,10 @@ public class ZeroDetailActivity extends BaseActivity {
 
                     @Override
                     public void onFinish() {
-                        zeroActivityEnd();
+                        mTvEnd.setText("报名已结束");
+                        mCvCountdownTime.updateShow(0);
+                        mCvCountdownTime.setVisibility(View.GONE);
+                        loadData();
                     }
                 };
             }
@@ -334,6 +381,7 @@ public class ZeroDetailActivity extends BaseActivity {
             }
         });
         //商品详情
+        shopDetailBeanList.clear();
         List<CommunalDetailObjectBean> detailsDataList = CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(zeroDetailBean.getItemBody());
         CommunalDetailObjectBean communalDetailObjectBean = new CommunalDetailObjectBean();
         communalDetailObjectBean.setItemType(TYPE_PRODUCT_TITLE);
@@ -348,6 +396,21 @@ public class ZeroDetailActivity extends BaseActivity {
         mTvEnd.setText("报名已结束");
         mCvCountdownTime.updateShow(0);
         mCvCountdownTime.setVisibility(View.GONE);
+        mLlStep.setVisibility(View.GONE);
+        mTvBuy.setVisibility(View.VISIBLE);
+        mLlApply.setVisibility(View.GONE);
+
+        //显示中奖名单
+        List<ZeroLotteryBean> winnersInfoList = mZeroDetailBean.getWinnersInfoList();
+        if (winnersInfoList != null && winnersInfoList.size() > 0) {
+            mLlLottery.setVisibility(View.VISIBLE);
+            mTvTotal.setText(getIntegralFormat(this, R.string.total_lottery, winnersInfoList.size()));
+            mLotteryBeans.clear();
+            mLotteryBeans.addAll(winnersInfoList);
+            mZeroLotteryAdapter.notifyDataSetChanged();
+        } else {
+            mLlLottery.setVisibility(View.GONE);
+        }
     }
 
     private void scrollLocation(int position) {
@@ -365,7 +428,7 @@ public class ZeroDetailActivity extends BaseActivity {
         measuredHeight = mLlProLayout.getMeasuredHeight();
     }
 
-    @OnClick({R.id.tv_apply, R.id.ll_back2, R.id.ll_share2, R.id.ll_back, R.id.ll_share, R.id.iv_free_idea})
+    @OnClick({R.id.tv_apply, R.id.ll_back2, R.id.ll_share2, R.id.ll_back, R.id.ll_share, R.id.ll_service, R.id.ll_service2, R.id.tv_look_product, R.id.iv_free_idea, R.id.tv_buy, R.id.ll_total_lottery})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.ll_back:
@@ -374,17 +437,46 @@ public class ZeroDetailActivity extends BaseActivity {
                 break;
             case R.id.ll_share:
             case R.id.ll_share2:
+                if (mZeroDetailBean != null && !TextUtils.isEmpty(mZeroDetailBean.getProductImg())) {
+                    new UMShareAction(this, mZeroDetailBean.getProductImg().split(",")[0],
+                            getStringsFormat(this, R.string.zero_detail_share_title, mZeroDetailBean.getProductName()),
+                            getStringsFormat(this, R.string.zero_detail_share_title, mZeroDetailBean.getProductName()),
+                            sharePageUrl + mActivityId, getStringChangeIntegers(mActivityId));
+                }
                 break;
+            case R.id.tv_look_product:
+                skipProductUrl(this, 1, getStringChangeIntegers(mZeroDetailBean.getProductId()));
+                break;
+            //全部中奖名单
+            case R.id.ll_total_lottery:
+                if (mAlertDialogZeroLottery == null) {
+                    mAlertDialogZeroLottery = new AlertDialogZeroLottery(getActivity());
+                }
+                mAlertDialogZeroLottery.update(mLotteryBeans);
+                mAlertDialogZeroLottery.show(Gravity.BOTTOM);
+                break;
+            //去购买
+            case R.id.tv_buy:
+                skipProductUrl(this, 1, getStringChangeIntegers(mZeroDetailBean.getProductId()));
+                break;
+            //试用心得
             case R.id.iv_free_idea:
                 Intent intent = new Intent(this, ZeroReportListActivity.class);
                 startActivity(intent);
                 break;
+            //申请使用
             case R.id.tv_apply:
                 if (userId > 0) {
                     applyZero();
                 } else {
                     getLoginStatus(this);
                 }
+                break;
+            //跳转购物车
+            case R.id.ll_service:
+            case R.id.ll_service2:
+                intent = new Intent(getActivity(), ShopCarActivity.class);
+                startActivity(intent);
                 break;
         }
     }
@@ -402,6 +494,8 @@ public class ZeroDetailActivity extends BaseActivity {
                 if (requestStatus != null) {
                     if (SUCCESS_CODE.equals(requestStatus.getCode())) {
                         showToast("申请成功");
+                        mTvApply.setText("已申请");
+                        mTvApply.setEnabled(false);
                     } else {
                         showToast(requestStatus.getMsg());
                     }
@@ -423,5 +517,14 @@ public class ZeroDetailActivity extends BaseActivity {
     @Override
     public View getLoadView() {
         return mFlProductDetails;
+    }
+
+    @Override
+    protected void postEventResult(@NonNull EventMessage message) {
+        if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {
+            if (badge != null) {
+                badge.setBadgeNumber((int) message.result);
+            }
+        }
     }
 }

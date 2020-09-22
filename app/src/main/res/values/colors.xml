@@ -2,6 +2,7 @@
 <resources>
     <color name="colorPrimary">#ffffff</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="red">#FF0000</color>
     <color name="gray">#64665e</color>
     <color name="bg_color">#F2F2F2</color>
     <color name="home_text_color">#6a6969</color>
@@ -131,4 +132,5 @@
     <color name="vip_color">#FFB817</color>
     <color name="vip_bg_color">#FFC645</color>
     <color name="tag_bg_color">#FFFFB20B</color>
+    <color name="apply_zero_color">#FFFFBB22</color>
 </resources>

@@ -218,6 +218,10 @@ public class ConstantVariable {
     public static final String WEB_TYPE_REG_AGREEMENT = "register_agreement";
     //    隐私政策
     public static final String WEB_TYPE_PRIVACY_POLICY = "privacy_policy";
+    //    省钱规则
+    public static final String WEB_TYPE_SAVE_MONEY = "save_money";
+    //    分享有礼
+    public static final String WEB_TYPE_SHARE_GIFT = "share_gift";
     //    web数据类型
     public static final String WEB_VALUE_TYPE = "webRuleType";
 
@@ -308,7 +312,9 @@ public class ConstantVariable {
     public static final String UPDATE_INDENT_LIST = "updateIndentList";    //刷新订单列表
     public static final String UPDATE_WAIT_EVALUATE_INDENT_LIST = "updateWaitEvaluateIndentList";    //刷新订单列表
     public static final String UNION_PAY_CALLBACK = "unionPayCallback";    //h5银联支付回调
-    public static final String UPDATE_INDENT_DISCOUNTS = "updateIndentDiscounts";    //更新结算信息
+    public static final String OPEN_VIP_SUCCESS = "openVipSuccess";    //会员开通成功
+    public static final String LOGIN_SUCCESS = "loginSuccess";    //登录成功
+    public static final String UPDATE_ZERO_APPLY_LIST = "updateZeroApplyList";    //刷新0元试用申请列表
 
 
     /**
@@ -395,6 +401,7 @@ public class ConstantVariable {
     public static final int AD = 8;//广告（轮播，启动广告，浮动广告，好物广告）
     public static final int POPUP = 9;//营销弹窗
     public static final int DYNAMIC_AREA = 10;//首页动态专区
+    public static final int VIP_ZONE = 11;//会员日/每周会员特价专区
 
     /**
      * 订单列表按钮类型

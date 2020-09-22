@@ -2,13 +2,15 @@ package com.amkj.dmsh.mine.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
+import android.graphics.Bitmap;
+import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
@@ -17,14 +19,11 @@ import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.mine.bean.ZeroDetailEntity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.release.adapter.ImgGArticleRecyclerAdapter;
-import com.amkj.dmsh.release.bean.ImagePathBean;
+import com.amkj.dmsh.release.adapter.ReportImgAdapter;
 import com.amkj.dmsh.release.tutu.CustomMultipleFragment;
 import com.amkj.dmsh.utils.CommonUtils;
-import com.amkj.dmsh.utils.ImageFormatUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
 import com.amkj.dmsh.utils.TextWatchListener;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
@@ -43,12 +42,13 @@ import org.lasque.tusdk.impl.components.edit.TuEditMultipleOption;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.Toolbar;
+import androidx.annotation.Nullable;
 import androidx.core.widget.NestedScrollView;
 import androidx.emoji.widget.EmojiEditText;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -57,72 +57,50 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import me.zhanghai.android.materialratingbar.MaterialRatingBar;
 
-import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
+import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_ADD_IMG;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.release.tutu.CameraComponentSample.DEFAULT_PATH;
-import static com.amkj.dmsh.utils.ImageFormatUtils.getImageFormatInstance;
 
 /**
  * Created by xiaoxin on 2020/8/25
  * Version:v4.7.0
- * ClassDescription :提交0元试用报告
+ * ClassDescription :0元订单列表-提交/修改报告
  */
 public class CommitZeroReportActivity extends BaseActivity {
-    @BindView(R.id.tv_life_back)
-    TextView mTvLifeBack;
+
     @BindView(R.id.tv_header_title)
     TextView mTvHeaderTitle;
     @BindView(R.id.tv_header_shared)
     TextView mTvHeaderShared;
-    @BindView(R.id.tl_normal_bar)
-    Toolbar mTlNormalBar;
     @BindView(R.id.iv_cover)
     ImageView mIvCover;
     @BindView(R.id.tv_goods_name)
     TextView mTvGoodsName;
-    @BindView(R.id.tv_max_reward)
-    TextView mTvMaxReward;
-    @BindView(R.id.tv_apply_num)
-    TextView mTvApplyNum;
     @BindView(R.id.ll_score_goods)
-    LinearLayout mLlScoreGoods;
+    RelativeLayout mLlScoreGoods;
     @BindView(R.id.rating_bar)
     MaterialRatingBar mRatingBar;
-    @BindView(R.id.ll_ratingbar)
-    LinearLayout mLlRatingbar;
-    @BindView(R.id.tv_product_tips)
-    TextView mTvProductTips;
     @BindView(R.id.et_input)
     EmojiEditText mEtInput;
     @BindView(R.id.rv_img_article)
     RecyclerView mRvImgArticle;
     @BindView(R.id.ll_editor)
     LinearLayout mLlEditor;
-    @BindView(R.id.tv_commit_report)
-    TextView mTvCommitReport;
     @BindView(R.id.nested_scrollview)
     NestedScrollView mNestedScrollview;
-
-    // 获得存储图片的路径
-    private String Img_PATH = null;
-    private ImgGArticleRecyclerAdapter imgGArticleRecyclerAdapter;
-    private List<ImagePathBean> imagePathBeans = new ArrayList<>();
-
-    //已上传图片保存
-    private List<String> updatedImages = new ArrayList<>();
-    private int adapterPosition;
-    private String topicId;
+    private ReportImgAdapter mReportImgAdapter;
+    private List<String> imagePathBeans = new ArrayList<>();
     private String activityId;
     private String orderId;
+    private String mStatus;
     private int maxSelImg = 9;
     private String content = "";
-    private ZeroDetailEntity.ZeroDetailBean mZeroDetailBean;
-    private ZeroDetailEntity mZeroDetailEntity;
-    private String mStatus;
+    private RequestStatus mRequestStatus;
+    private RequestStatus.Result mResultBean;
 
     @Override
     protected int getContentView() {
@@ -130,12 +108,18 @@ public class CommitZeroReportActivity extends BaseActivity {
     }
 
     @Override
-    protected void initViews() {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        mStatus = getIntent().getStringExtra("status");
+        super.onCreate(savedInstanceState);
+    }
 
+    @Override
+    protected void initViews() {
         Intent intent = getIntent();
         activityId = intent.getStringExtra("activityId");
         orderId = intent.getStringExtra("orderId");
-        mStatus = intent.getStringExtra("status");
+        String productName = intent.getStringExtra("productName");
+        String productImg = intent.getStringExtra("productImg");
 
         if (!TextUtils.isEmpty(activityId)) {//发布0元试用报告
             mTvHeaderTitle.setText("试用报告");
@@ -143,33 +127,35 @@ public class CommitZeroReportActivity extends BaseActivity {
         } else {
             showToast("数据有误，请重试");
             finish();
-            return;
         }
 
+        GlideImageLoaderUtil.loadCenterCrop(getActivity(), mIvCover, productImg);
+        mTvGoodsName.setText(getStrings(productName));
+        //初始化图片列表
         File destDir = new File(getFilesDir().getAbsolutePath() + "/ImgArticle");
         if (!destDir.exists()) {
             destDir.mkdirs();
         }
         if (imagePathBeans.size() < 1) {
-            imagePathBeans.add(getImageFormatInstance().getDefaultAddImage());
+            imagePathBeans.add(DEFAULT_ADD_IMG);
         }
-
-        //初始化图片列表
-        imgGArticleRecyclerAdapter = new ImgGArticleRecyclerAdapter(this, imagePathBeans);
+        mReportImgAdapter = new ReportImgAdapter(this, imagePathBeans);
         mRvImgArticle.setLayoutManager(new GridLayoutManager(getActivity(), 4));
         mRvImgArticle.addItemDecoration(new ItemDecoration.Builder()
                 .setDividerId(R.drawable.item_divider_img_white)
                 .create());
-        mRvImgArticle.setAdapter(imgGArticleRecyclerAdapter);
-        imgGArticleRecyclerAdapter.setOnItemChildClickListener((adapter, view, position) -> {
+        mRvImgArticle.setAdapter(mReportImgAdapter);
+        mReportImgAdapter.setOnItemChildClickListener((adapter, view, position) -> {
             //点击删除图片
             if (view.getId() == R.id.delete) {
-                adapterPosition = (int) view.getTag();
-                getImageFormatInstance().delImageBean(imagePathBeans, adapterPosition);
-                imgGArticleRecyclerAdapter.notifyDataSetChanged();
+                imagePathBeans.remove(position);
+                if (!imagePathBeans.contains(DEFAULT_ADD_IMG)) {
+                    imagePathBeans.add(DEFAULT_ADD_IMG);
+                }
+                mReportImgAdapter.notifyDataSetChanged();
             }
         });
-        imgGArticleRecyclerAdapter.setOnItemClickListener((adapter, view, position) -> {
+        mReportImgAdapter.setOnItemClickListener((adapter, view, position) -> {
             //隐藏键盘
             if (((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).isActive()) {
                 CommonUtils.hideSoftInput(getActivity(), mEtInput);
@@ -189,109 +175,60 @@ public class CommitZeroReportActivity extends BaseActivity {
     private void pickImage(final int position) {
         ConstantMethod constantMethod = new ConstantMethod();
         constantMethod.setOnGetPermissionsSuccess(() -> {
-            int imgLength = imagePathBeans.size() - 1;
             //点击+添加图片
-            if (position == imgLength && imagePathBeans.get(imgLength).getPath().contains(DEFAULT_ADD_IMG)) {
+            if (DEFAULT_ADD_IMG.equals(imagePathBeans.get(position))) {
                 PictureSelectorUtils.getInstance()
                         .resetVariable()
                         .isCrop(false)
-                        .selImageList(ImageFormatUtils.getImageFormatInstance().formatStringPathRemoveDefault(imagePathBeans))
                         .imageMode(PictureConfigC.MULTIPLE)
                         .isShowGif(true)
+                        .setMaxNum(maxSelImg - imagePathBeans.size() + 1)
                         .openGallery(getActivity());
             } else {
-                //点击图片编辑
-                TinkerBaseApplicationLike tinkerApplicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-                tinkerApplicationLike.initTuSdk();
-                // 组件委托
-                TuEditMultipleComponent component = TuSdkGeeV1.editMultipleCommponent(this, (result, error, lastFragment) -> {
-                    imagePathBeans.set(position, new ImagePathBean(result.imageSqlInfo.path, true));
+                //点击图片编辑（可能是本地图片，也可能是网络url）
+                GlideImageLoaderUtil.setLoadImgFinishListener(this, imagePathBeans.get(position), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
+                    @Override
+                    public void onSuccess(Bitmap bitmap) {
+                        TinkerBaseApplicationLike tinkerApplicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
+                        tinkerApplicationLike.initTuSdk();
+                        // 组件委托
+                        TuEditMultipleComponent component = TuSdkGeeV1.editMultipleCommponent(getActivity(), (result, error, lastFragment) -> {
+                            imagePathBeans.set(position, result.imageSqlInfo.path);
+                            mReportImgAdapter.notifyDataSetChanged();
+                        });
+                        component.componentOption().editMultipleOption().setComponentClazz(CustomMultipleFragment.class);// 指定控制器类型
+                        component.componentOption().editMultipleOption().setRootViewLayoutId(R.layout.tusdk_impl_component_edit_multiple_fragment); // 指定根视图资源ID
+                        // 设置图片
+                        TuEditMultipleOption option = component.componentOption().editMultipleOption();
+                        option.setSaveToAlbumName(DEFAULT_PATH);
+                        option.setSaveToAlbum(true);
+                        option.setAutoRemoveTemp(true);
+                        component.setImage(bitmap)
+                                // 在组件执行完成后自动关闭组件
+                                .setAutoDismissWhenCompleted(true)
+                                // 开启组件
+                                .showComponent();
+                    }
 
-                    imgGArticleRecyclerAdapter.notifyDataSetChanged();
+                    @Override
+                    public void onError() {
+                    }
                 });
-                component.componentOption().editMultipleOption().setComponentClazz(CustomMultipleFragment.class);// 指定控制器类型
-                component.componentOption().editMultipleOption().setRootViewLayoutId(R.layout.tusdk_impl_component_edit_multiple_fragment); // 指定根视图资源ID
-                // 设置图片
-                TuEditMultipleOption option = component.componentOption().editMultipleOption();
-                option.setSaveToAlbumName(DEFAULT_PATH);
-                option.setSaveToAlbum(true);
-                option.setAutoRemoveTemp(true);
-                component.setImage(BitmapFactory.decodeFile(imagePathBeans.get(position).getPath()))
-                        // 在组件执行完成后自动关闭组件
-                        .setAutoDismissWhenCompleted(true)
-                        // 开启组件
-                        .showComponent();
             }
         });
         constantMethod.getPermissions(this, Permission.Group.STORAGE);
     }
 
-    @Override
-    protected void loadData() {
-        getProductInfo();
-        //获取原报告信息并修改
-        if ("3".equals(mStatus)) {
-            getReportContent();
+    //获取需要上传的本地图片
+    private List<String> getLocalPaths(List<String> imagePathBeans) {
+        List<String> newDatas = new ArrayList<>();
+        for (String path : imagePathBeans) {
+            if (!DEFAULT_ADD_IMG.equals(path) && !path.contains("http")) {
+                newDatas.add(path);
+            }
         }
-    }
 
-    private void getReportContent() {
-        Map<String, String> map = new HashMap<>();
-        map.put("orderId", orderId);
-        map.put("activityId", activityId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.GET_MY_REPORT, map, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
-
-                if (requestStatus != null) {
-                    if (SUCCESS_CODE.equals(requestStatus.getCode())) {
-                        RequestStatus.Result resultBean = requestStatus.getResult();
-                        if (!TextUtils.isEmpty(resultBean.getContent())) {
-                            mEtInput.setText(resultBean.getContent());
-                            mEtInput.setSelection(resultBean.getContent().length());
-                        }
-
-                        if (!TextUtils.isEmpty(resultBean.getImgs())) {
-
-                        }
-                    }
-                }
-
-            }
-
-            @Override
-            public void onNotNetOrException() {
-            }
-        });
-    }
-
-    //获取商品信息
-    private void getProductInfo() {
-        Map<String, String> map = new HashMap<>();
-        map.put("activityId", activityId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.GET_ZERO_PRODUCT_DETAIL, map, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                mZeroDetailEntity = GsonUtils.fromJson(result, ZeroDetailEntity.class);
-                if (mZeroDetailEntity != null) {
-                    if (SUCCESS_CODE.equals(mZeroDetailEntity.getCode())) {
-                        mZeroDetailBean = mZeroDetailEntity.getResult();
-                        GlideImageLoaderUtil.loadCenterCrop(getActivity(), mIvCover, mZeroDetailBean.getProductImg());
-                        mTvGoodsName.setText(mZeroDetailBean.getProductName());
-                        mTvApplyNum.setText(getStringsFormat(getActivity(), R.string.apply_num, mZeroDetailBean.getPartakeCount()));
-                    } else {
-                        showToast(mZeroDetailEntity.getMsg());
-                    }
-                }
-                NetLoadUtils.getNetInstance().showLoadSir(loadService, mZeroDetailBean, mZeroDetailEntity);
-            }
-
-            @Override
-            public void onNotNetOrException() {
-                NetLoadUtils.getNetInstance().showLoadSir(loadService, mZeroDetailBean, mZeroDetailEntity);
-            }
-        });
+        return newDatas;
     }
 
 
@@ -306,17 +243,17 @@ public class CommitZeroReportActivity extends BaseActivity {
                 case PictureConfigC.CHOOSE_REQUEST:
                     List<LocalMediaC> localMediaList = PictureSelector.obtainMultipleResult(data);
                     if (localMediaList != null && localMediaList.size() > 0) {
-                        imagePathBeans.clear();
+                        imagePathBeans.remove(DEFAULT_ADD_IMG);
                         for (LocalMediaC localMedia : localMediaList) {
                             if (!TextUtils.isEmpty(localMedia.getPath())) {
-                                imagePathBeans.add(new ImagePathBean(localMedia.getPath(), true));
+                                imagePathBeans.add(localMedia.getPath());
                             }
                         }
+                        pickImage(imagePathBeans.size() - 1);//编辑最后一张图片
                         if (imagePathBeans.size() < maxSelImg) {
-                            imagePathBeans.add(getImageFormatInstance().getDefaultAddImage());
+                            imagePathBeans.add(DEFAULT_ADD_IMG);
                         }
-                        imgGArticleRecyclerAdapter.notifyDataSetChanged();
-//                        pickImage(size - 1);
+                        mReportImgAdapter.notifyDataSetChanged();
                     }
                     break;
             }
@@ -325,10 +262,10 @@ public class CommitZeroReportActivity extends BaseActivity {
 
 
     //提交内容
-    private void publishPost(List<String> callBackPath) {
+    private void publishPost() {
         Map<String, String> params = new HashMap<>();
         //图片地址
-        params.put("imgs", getImgPath(callBackPath));
+        params.put("imgs", getImgPath(getUploadPaths()));
 
         //帖子内容
         if (!TextUtils.isEmpty(content)) {
@@ -367,6 +304,7 @@ public class CommitZeroReportActivity extends BaseActivity {
     }
 
 
+    //集合拼接字符串
     private String getImgPath(List<String> callBackPath) {
         StringBuilder imgPath = new StringBuilder();
         if (callBackPath != null) {
@@ -389,33 +327,33 @@ public class CommitZeroReportActivity extends BaseActivity {
                 finish();
                 break;
             case R.id.tv_commit_report:
-                boolean noSelectPic = ImageFormatUtils.getImageFormatInstance().formatStringPathRemoveDefault(imagePathBeans).size() == 0;
-                if (content.length() < 1 && noSelectPic) {
-                    showToast("请输入发送内容");
-                } else if (noSelectPic) {//发布报告图片必传
+                boolean noSelectPic = (imagePathBeans.size() < 1) || (imagePathBeans.size() < 2 && DEFAULT_ADD_IMG.equals(imagePathBeans.get(0)));
+                if (content.length() < 50) {
+                    showToast("请至少输入50字");
+                } else if (noSelectPic) {
                     showToast("请添加图片");
                 } else {//带图片
                     if (loadHud != null) {
                         loadHud.show();
                     }
-                    if (updatedImages.size() > 0) {
-                        publishPost(updatedImages);
+
+                    //所有图片已上传
+                    if (getLocalPaths(imagePathBeans).size() == 0) {
+                        publishPost();
                     } else {
                         ImgUrlHelp imgUrlHelp = new ImgUrlHelp();
-                        imgUrlHelp.setUrl(getActivity(), ImageFormatUtils.getImageFormatInstance().formatStringPathRemoveDefault(imagePathBeans));
+                        imgUrlHelp.setUrl(getActivity(), getLocalPaths(imagePathBeans));
                         imgUrlHelp.setOnFinishListener(new ImgUrlHelp.OnFinishDataListener() {
                             @Override
                             public void finishData(@NonNull List<String> data, Handler handler) {
-                                showToast(data.size() + "张图片上传成功");
-                                updatedImages.clear();
-                                updatedImages.addAll(data);
-                                publishPost(data);
+//                                showToast(data.size() + "张图片上传成功");
+                                replaceLocalPaths(data);
+                                publishPost();
                                 handler.removeCallbacksAndMessages(null);
                             }
 
                             @Override
                             public void finishError(String error) {
-                                updatedImages.clear();
                                 if (loadHud != null) {
                                     loadHud.dismiss();
                                 }
@@ -435,13 +373,84 @@ public class CommitZeroReportActivity extends BaseActivity {
         }
     }
 
+    //使用图片url替换本地图片
+    private void replaceLocalPaths(List<String> urls) {
+        int j = 0;
+        for (int i = 0; i < imagePathBeans.size(); i++) {
+            String path = imagePathBeans.get(i);
+            if (!path.contains("http")) {
+                imagePathBeans.set(i, urls.get(j));
+                j++;
+                if (j >= urls.size()) break;
+            }
+        }
+    }
+
+    //获取已上传的图片
+    private List<String> getUploadPaths() {
+        List<String> newDatas = new ArrayList<>();
+        for (String path : imagePathBeans) {
+            if (!DEFAULT_ADD_IMG.equals(path) && path.contains("http")) {
+                newDatas.add(path);
+            }
+        }
+
+        return newDatas;
+    }
+
+
     @Override
     protected boolean isAddLoad() {
-        return true;
+        return "3".equals(mStatus);
     }
 
     @Override
     public View getLoadView() {
         return mNestedScrollview;
+    }
+
+    @Override
+    protected void loadData() {
+        //获取原报告信息并修改
+        if ("3".equals(mStatus)) {
+            getMyReport();
+        }
+    }
+
+    private void getMyReport() {
+        Map<String, String> map = new HashMap<>();
+        map.put("orderId", orderId);
+        map.put("activityId", activityId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.GET_MY_REPORT, map, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                mRequestStatus = GsonUtils.fromJson(result, RequestStatus.class);
+                if (mRequestStatus != null) {
+                    if (SUCCESS_CODE.equals(mRequestStatus.getCode())) {
+                        mResultBean = mRequestStatus.getResult();
+                        if (!TextUtils.isEmpty(mResultBean.getContent())) {
+                            mEtInput.setText(mResultBean.getContent());
+                            mEtInput.setSelection(mResultBean.getContent().length());
+                        }
+
+                        if (!TextUtils.isEmpty(mResultBean.getImgs())) {
+                            imagePathBeans.clear();
+                            imagePathBeans.addAll(Arrays.asList(mResultBean.getImgs().split(",")));
+                            if (imagePathBeans.size() < maxSelImg) {
+                                imagePathBeans.add(DEFAULT_ADD_IMG);
+                            }
+                        }
+                    }
+                }
+
+                mReportImgAdapter.notifyDataSetChanged();
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, mResultBean, mRequestStatus);
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, mResultBean, mRequestStatus);
+            }
+        });
     }
 }

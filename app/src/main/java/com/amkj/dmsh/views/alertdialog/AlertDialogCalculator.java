@@ -2,6 +2,7 @@ package com.amkj.dmsh.views.alertdialog;
 
 import android.content.Context;
 import android.content.Intent;
+import android.view.View;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
@@ -21,6 +22,7 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.isVip;
 
 /**
  * Created by xiaoxin on 2020/7/29
@@ -32,6 +34,8 @@ public class AlertDialogCalculator extends BaseAlertDialog {
     RecyclerView mRvSave;
     @BindView(R.id.tv_save_year)
     TextView mTvSaveYear;
+    @BindView(R.id.tv_open)
+    TextView mTvOpen;
 
     public AlertDialogCalculator(Context context, CalculatorEntity.CalculatorBean calculatorBean) {
         super(context);
@@ -66,5 +70,11 @@ public class AlertDialogCalculator extends BaseAlertDialog {
     @Override
     protected int getLayoutHeight() {
         return AutoSizeUtils.mm2px(mAppContext, 776);
+    }
+
+    @Override
+    public void show() {
+        super.show();
+        mTvOpen.setVisibility(isVip() ? View.GONE : View.VISIBLE);
     }
 }

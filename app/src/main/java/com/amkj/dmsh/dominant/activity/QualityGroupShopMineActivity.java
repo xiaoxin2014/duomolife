@@ -153,13 +153,13 @@ public class QualityGroupShopMineActivity extends BaseActivity {
         showLoadhud(getActivity());
         Map<String, Object> map = new HashMap<>();
         map.put("orderNo", orderNo);
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.GET_PAYTYPE_LIST, map,new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.GET_PAYTYPE_LIST, map, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 dismissLoadhud(getActivity());
                 Map map = GsonUtils.fromJson(result, Map.class);
                 if (mAlertDialogGoPay == null) {
-                    mAlertDialogGoPay = new AlertDialogGoPay(getActivity(), map.get("result"));
+                    mAlertDialogGoPay = new AlertDialogGoPay(getActivity(), map.get("result"), getSimpleName());
                 }
                 mAlertDialogGoPay.show(orderNo);
             }

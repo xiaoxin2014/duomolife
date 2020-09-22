@@ -179,7 +179,7 @@ public class JoinSuccessActivity extends BaseActivity {
                         , mCoverPath
                         , mTopicTitle
                         , "@" + nickName + ":" + (TextUtils.isEmpty(mDigest) ? "我刚刚完成了一个分享，去看看吧" : mDigest)
-                        , BASE_SHARE_PAGE_TWO + "m/template/find_template/find_detail.html" + "?id=" + mPostId + "&isShare=1"
+                        , Url.BASE_SHARE_PAGE_TWO + "find_template/find_detail.html" + "?id=" + mPostId + "&isShare=1"
                         , "pages/findDetail/findDetail?id=" + mPostId + "&isShare=1", mPostId);
             }
         }

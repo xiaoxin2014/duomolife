@@ -4,16 +4,18 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
 
-import com.amkj.dmsh.base.TinkerBaseApplicationLike;
+import java.util.Map;
 
 import io.reactivex.annotations.NonNull;
+
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 
 /**
  * Created by Xiaoxin on 2017/10/15 0015.
  */
 
 public class SharedPreUtils {
-    private static Context mContext = TinkerBaseApplicationLike.mAppContext;
+    private static Context mContext = mAppContext;
 
     /**
      * 保存在手机里面的文件名
@@ -108,4 +110,7 @@ public class SharedPreUtils {
     /**
      * 获取某个文件所有的字段
      */
+    public static Map<String, ?> getAll(String fileName) {
+        return mContext.getSharedPreferences(fileName, Context.MODE_PRIVATE).getAll();
+    }
 }

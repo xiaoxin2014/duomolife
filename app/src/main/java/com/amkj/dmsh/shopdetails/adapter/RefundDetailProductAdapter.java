@@ -11,7 +11,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
-import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeFloat;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
@@ -37,7 +37,7 @@ public class RefundDetailProductAdapter extends BaseQuickAdapter<RefundDetailPro
         String priceName;
         int integralPrice = getStringChangeIntegers(item.getIntegralPrice());
         if (integralPrice > 0) {
-            float moneyPrice = getFloatNumber(item.getPrice());
+            float moneyPrice = getStringChangeFloat(item.getPrice());
             if (moneyPrice > 0) {
                 priceName = String.format(activity.getResources().getString(R.string.integral_product_and_price)
                         , integralPrice, getStrings(item.getPrice()));

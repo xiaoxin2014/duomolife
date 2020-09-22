@@ -570,7 +570,6 @@ public class MainActivity extends BaseActivity {
     private void getNetDataInfo() {
         final SavePersonalInfoBean personalInfo = getPersonalInfo(this);
         if (personalInfo.isLogin()) {
-            userId = personalInfo.getUid();
             Map<String, Object> params = new HashMap<>();
             params.put("userid", personalInfo.getUid());
             if (!TextUtils.isEmpty(personalInfo.getOpenId())) {
@@ -601,6 +600,9 @@ public class MainActivity extends BaseActivity {
                             savePersonalInfo.setNickName(getStrings(communalUserInfoBean.getNickname()));
                             savePersonalInfo.setPhoneNum(getStrings(communalUserInfoBean.getMobile()));
                             savePersonalInfo.setUid(communalUserInfoBean.getUid());
+                            savePersonalInfo.setVip(communalUserInfoBean.isVip());
+                            savePersonalInfo.setVipLevel(communalUserInfoBean.getVipLevel());
+                            savePersonalInfo.setIsWhiteUser(communalUserInfoBean.isWhiteUser());
                             savePersonalInfo.setLogin(true);
                             savePersonalInfoCache(MainActivity.this, savePersonalInfo);
                             doExitAccount(communalUserInfoBean);
@@ -805,7 +807,7 @@ public class MainActivity extends BaseActivity {
 
     //切换BaseUrl
     private void changeBaseUrl(String baseUrl) {
-        SharedPreUtils.setParam("selectedServer", "selectServerUrl",baseUrl );
+        SharedPreUtils.setParam("selectedServer", "selectServerUrl", baseUrl);
         SharedPreUtils.setParam("isLogin", false);
         RestartAPPTool.restartAPP(MainActivity.this);
     }
@@ -1133,10 +1135,10 @@ public class MainActivity extends BaseActivity {
         return false;
     }
 
-    //获取当前选中的Fragment，如果是HomePageFragment返回类名
+    //获取当前选中的Fragment是HomePageFragment,返回选中的fragment类名
     public String getCheckedFragmentName() {
         if (getFragment() instanceof HomePageFragment) {
-            return HomePageFragment.class.getName();
+            return ((HomePageFragment) getFragment()).getFragmentName();
         }
         return "";
     }

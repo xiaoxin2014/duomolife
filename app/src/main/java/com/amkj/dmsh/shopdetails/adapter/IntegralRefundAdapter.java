@@ -10,7 +10,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
-import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeFloat;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 
@@ -35,7 +35,7 @@ public class IntegralRefundAdapter extends BaseQuickAdapter<ProductsBean, BaseVi
                 .setText(R.id.tv_direct_pro_count, "x" + productsBean.getCount());
         String priceName;
         if (productsBean.getIntegralPrice() > 0) {
-            float moneyPrice = getFloatNumber(productsBean.getPrice());
+            float moneyPrice = getStringChangeFloat(productsBean.getPrice());
             if (moneyPrice > 0) {
                 priceName = String.format(context.getResources().getString(R.string.integral_product_and_price)
                         , productsBean.getIntegralPrice(), getStrings(productsBean.getPrice()));

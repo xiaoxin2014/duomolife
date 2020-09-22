@@ -951,7 +951,7 @@ public class AttendanceFragment extends BaseFragment {
                     , "http://image.domolife.cn/lottery_share.png"
                     , "送你100元多么生活现金券，领取了我也有奖励哈哈~"
                     , "多么生活精选全球好物，买对就是省钱~新人特价专享1折起！"
-                    , Url.BASE_SHARE_PAGE_TWO + "m/template/home/inviteNewbie.html?shareid=" + userId,
+                    , Url.BASE_SHARE_PAGE_TWO + "home/inviteNewbie.html?shareid=" + userId,
                     "pages/new_exclusive/new_exclusive?isShare=1&shareId=" + userId, 1, -1, "1");
         }
     }

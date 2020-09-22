@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/shap_save_money_bg"
+    android:orientation="vertical">
+
+    <include layout="@layout/activity_domolife_header" />
+
+    <LinearLayout
+        android:id="@+id/ll_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/sc_mm_44"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:id="@+id/tv_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="多么会员期间已为您节省"
+                android:textColor="@color/text_black_t"
+                android:textSize="@dimen/sc_mm_32" />
+
+            <TextView
+                android:id="@+id/tv_total_save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/tv_text"
+                android:layout_toRightOf="@+id/tv_text"
+                android:text="@string/defaul"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sc_mm_50"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tv_open_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sc_mm_10"
+            android:gravity="center"
+            android:text="数据自您成为多么会员时计算"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_24" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/sc_mm_22"
+            android:layout_marginTop="@dimen/sc_mm_40"
+            android:layout_marginRight="@dimen/sc_mm_22"
+            android:layout_marginBottom="@dimen/sc_mm_40"
+            android:background="@drawable/border_rect_10dp_bg_white"
+            android:orientation="vertical">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_detail"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:paddingLeft="@dimen/sc_mm_63"
+                android:paddingTop="@dimen/sc_mm_22"
+                android:paddingRight="@dimen/sc_mm_63" />
+
+            <TextView
+                android:id="@+id/tv_save_rule"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="@dimen/sc_mm_34"
+                android:text="省钱金额计算规则>"
+                android:textColor="@color/text_black_t"
+                android:textSize="@dimen/sc_mm_26" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

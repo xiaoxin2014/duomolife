@@ -331,7 +331,7 @@ public class QualityNewUserActivity extends BaseActivity {
                 , ""
                 , "新人专享"
                 , "注册有礼"
-                , Url.BASE_SHARE_PAGE_TWO + "m/template/goods/new_exclusive.html"
+                , Url.BASE_SHARE_PAGE_TWO + "goods/new_exclusive.html"
                 , "pages/new_exclusive/new_exclusive", 1);
     }
 }

@@ -5,11 +5,15 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.bean.TabNameBean;
+import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.dominant.adapter.QualityCustomAdapter;
 import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
 
 import java.util.Arrays;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
@@ -18,7 +22,7 @@ import butterknife.OnClick;
 /**
  * Created by xiaoxin on 2020/8/18
  * Version:v4.7.0
- * ClassDescription :会员专享价
+ * ClassDescription :会员专享价列表
  */
 public class VipExclusiveActivity extends BaseActivity {
     @BindView(R.id.tv_life_back)
@@ -59,5 +63,23 @@ public class VipExclusiveActivity extends BaseActivity {
     @OnClick(R.id.tv_life_back)
     public void onViewClicked() {
         finish();
+    }
+
+
+    @Override
+    protected void postEventResult(@NonNull EventMessage message) {
+        if (message.type.equals(ConstantVariable.UPDATE_CUSTOM_NAME)) {
+            try {
+                if (mSlidingTablayout != null) {
+                    TabNameBean tabNameBean = (TabNameBean) message.result;
+                    if (getSimpleName().equals(tabNameBean.getSimpleName())) {
+                        TextView titleView = mSlidingTablayout.getTitleView(tabNameBean.getPosition());
+                        titleView.setText(tabNameBean.getTabName());
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

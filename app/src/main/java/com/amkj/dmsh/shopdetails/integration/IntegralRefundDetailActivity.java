@@ -66,7 +66,7 @@ import butterknife.OnClick;
 
 import static android.widget.LinearLayout.SHOW_DIVIDER_END;
 import static android.widget.LinearLayout.SHOW_DIVIDER_NONE;
-import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeFloat;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
@@ -696,7 +696,7 @@ public class IntegralRefundDetailActivity extends BaseActivity {
                 refundTypeBeans.add(new RefundTypeBean(refundTypes[1], getStrings(refundDetailBean.getReason())));
                 String priceName;
                 if (refundDetailBean.getRefundIntegralPrice() > 0) {
-                    float moneyPrice = getFloatNumber(refundDetailBean.getRefundPrice());
+                    float moneyPrice = getStringChangeFloat(refundDetailBean.getRefundPrice());
                     if (moneyPrice > 0) {
                         priceName = String.format(getResources().getString(R.string.integral_product_and_price)
                                 , refundDetailBean.getRefundIntegralPrice(), getStrings(refundDetailBean.getRefundPrice()));
@@ -1014,7 +1014,7 @@ public class IntegralRefundDetailActivity extends BaseActivity {
             qyProductIndentInfo.setPicUrl(getStrings(refundDetailBean.getPicUrl()));
             qyProductIndentInfo.setDesc(INDENT_PRO_STATUS.get(String.valueOf(refundDetailBean.getStatus())));
             qyProductIndentInfo.setNote(String.format(getResources().getString(R.string.money_price_chn), refundDetailBean.getPrice()));
-            qyProductIndentInfo.setUrl(Url.BASE_SHARE_PAGE_TWO + "m/template/order_template/order.html?noid=" + refundDetailBean.getNo());
+            qyProductIndentInfo.setUrl(Url.BASE_SHARE_PAGE_TWO + "order_template/order.html?noid=" + refundDetailBean.getNo());
         }
         QyServiceUtils.getQyInstance().openQyServiceChat(this, "退款售后详情", "", qyProductIndentInfo);
     }

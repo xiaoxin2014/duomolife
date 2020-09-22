@@ -333,7 +333,7 @@ public class QualityCustomTopicFragment extends BaseFragment {
                         shareDataBean = new ShareDataBean(likedProductBean.getPicUrl()
                                 , getStrings(userLikedProductEntity.getZoneName())
                                 , "我在多么生活发现这几样好物，性价比不错，还包邮"
-                                , Url.BASE_SHARE_PAGE_TWO + "m/template/goods/CustomZone.html?id=" + productType);
+                                , Url.BASE_SHARE_PAGE_TWO + "goods/CustomZone.html?id=" + productType);
 
                     }
                     CommunalWebDetailUtils.getCommunalWebInstance()

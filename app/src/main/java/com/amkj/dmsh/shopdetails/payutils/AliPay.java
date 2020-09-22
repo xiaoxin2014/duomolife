@@ -90,8 +90,6 @@ public class AliPay {
     private void updatePayResult(int type, String result, String code) {
         Map<String, Object> map = new HashMap<>();
         map.put("orderNo", mOrderNo);
-
-
         if (type == 0) {
             try {
                 String keyWord = URLDecoder.decode(result, "UTF-8");

@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.graphics.Paint;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -21,15 +22,19 @@ import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
 import com.amkj.dmsh.bean.QualityTypeEntity.QualityTypeBean;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
+import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dao.AddClickDao;
 import com.amkj.dmsh.dao.UserDao;
 import com.amkj.dmsh.homepage.activity.AttendanceActivity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.message.activity.MessageActivity;
+import com.amkj.dmsh.mine.activity.DomolifeVipActivity;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
 import com.amkj.dmsh.mine.activity.MyPostActivity;
+import com.amkj.dmsh.mine.activity.OpenVipActivity;
 import com.amkj.dmsh.mine.activity.PersonalBgImgActivity;
 import com.amkj.dmsh.mine.activity.PersonalDataActivity;
 import com.amkj.dmsh.mine.adapter.MineTypeAdapter;
@@ -79,15 +84,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 import butterknife.BindView;
 import butterknife.OnClick;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 import q.rorbin.badgeview.Badge;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.CommunalSavePutValueVariable.MINE_BOTTOM_TYPE;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getMessageCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getTopBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.setDeviceInfo;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
@@ -145,9 +153,6 @@ public class MineDataFragment extends BaseFragment {
     public RelativeLayout rel_header_mine;
     @BindView(R.id.fl_msg)
     public FrameLayout fl_msg;
-    //    头部背景
-    @BindView(R.id.fl_mine_bg)
-    public FrameLayout fl_mine_bg;
     //    订单模块
     @BindView(R.id.rv_mine_indent_item)
     public RecyclerView rv_mine_indent;
@@ -169,6 +174,18 @@ public class MineDataFragment extends BaseFragment {
     public TextView tv_mine_get_score_more;
     @BindView(R.id.tv_bind_phone)
     TextView mTvBindPhone;
+    @BindView(R.id.tv_total_save)
+    TextView mTvTotalSave;
+    @BindView(R.id.tv_end_time)
+    TextView mTvEndTime;
+    @BindView(R.id.tv_renewal)
+    TextView mTvRenewal;
+    @BindView(R.id.rl_vip_info)
+    RelativeLayout mRlVipInfo;
+    @BindView(R.id.rl_no_vip_info)
+    RelativeLayout mRlNoVipInfo;
+    @BindView(R.id.fl_mine_bg)
+    FrameLayout mFlMineBg;
     private CommunalUserInfoBean communalUserInfoBean;
     private MineTypeAdapter typeMineAdapter;
     private List<MineTypeBean> mineTypeList = new ArrayList<>();
@@ -191,6 +208,8 @@ public class MineDataFragment extends BaseFragment {
     private MineTypeEntity mineTypeEntity;
     private DirectIndentCountEntity mDirectIndentCountEntity;
     private Badge badgeMsg;
+    private RequestStatus.Result mVipInfoBean;
+    private boolean isFirst = true;
 
     @Override
     protected int getContentView() {
@@ -299,20 +318,21 @@ public class MineDataFragment extends BaseFragment {
     @Override
     protected void loadData() {
         getBottomTypeNetData();
+        getMineData();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
+    private void getMineData() {
         if (userId > 0) {
             getNetDataInfo();
             getMineAd();
+            getDoMeIndentDataCount();
             getMessageCount(getActivity(), badgeMsg);
             getCarCount(getActivity());
         } else {
             setErrorUserData();
         }
     }
+
 
     //获取用户信息
     private void getNetDataInfo() {
@@ -325,7 +345,6 @@ public class MineDataFragment extends BaseFragment {
                         if (cacheResult == null || TextUtils.isEmpty(cacheResult.data)) {
                             return;
                         }
-
                         CommunalUserInfoEntity minePageData = GsonUtils.fromJson(cacheResult.data, CommunalUserInfoEntity.class);
                         communalUserInfoBean = minePageData.getCommunalUserInfoBean();
                         if (communalUserInfoBean != null && minePageData.getCode().equals(SUCCESS_CODE)) {
@@ -335,7 +354,6 @@ public class MineDataFragment extends BaseFragment {
                             setDeviceInfo(getActivity(), communalUserInfoBean.getApp_version_no()
                                     , communalUserInfoBean.getDevice_model()
                                     , communalUserInfoBean.getDevice_sys_version(), communalUserInfoBean.getSysNotice());
-                            getDoMeIndentDataCount();
                         } else {
                             setErrorUserData();
                             showToast(minePageData.getMsg());
@@ -351,6 +369,20 @@ public class MineDataFragment extends BaseFragment {
 
     //设置用户数据
     private void setData(final CommunalUserInfoBean communalUserInfoBean) {
+        SharedPreUtils.setParam("isVip", communalUserInfoBean.isVip());
+        SharedPreUtils.setParam("vipLevel", communalUserInfoBean.getVipLevel());
+        SharedPreUtils.setParam("isWhiteUser", communalUserInfoBean.isWhiteUser());
+        ConstantMethod.setIsVip(communalUserInfoBean.isVip());
+        //判断是否是会员
+        if (communalUserInfoBean.isVip()) {
+            getVipInfo();
+            mRlNoVipInfo.setVisibility(View.GONE);
+        } else {
+            mRlVipInfo.setVisibility(View.GONE);
+            mRlNoVipInfo.setVisibility(communalUserInfoBean.isWhiteUser() ? View.VISIBLE : View.GONE);
+            setBgHeight();
+        }
+
         //更新优惠券数量
         updateBottomNum("DirectMyCouponActivity", communalUserInfoBean.getCouponTotal());
         tv_mine_name.setText(getStrings(communalUserInfoBean.getNickname()));
@@ -380,6 +412,47 @@ public class MineDataFragment extends BaseFragment {
             rel_personal_data_sup.setVisibility(View.GONE);
         }
     }
+
+    private void setBgHeight() {
+        ViewGroup.LayoutParams layoutParams = mFlMineBg.getLayoutParams();
+        layoutParams.height = AutoSizeUtils.mm2px(mAppContext, mRlNoVipInfo.getVisibility() == View.VISIBLE || mRlVipInfo.getVisibility() == View.VISIBLE ? 453 : 353);
+        mFlMineBg.setLayoutParams(layoutParams);
+    }
+
+    //获取会员信息
+    private void getVipInfo() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.GET_VIP_USER_INFO, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                RequestStatus mVipInfoEntity = GsonUtils.fromJson(result, RequestStatus.class);
+                if (mVipInfoEntity != null) {
+                    String code = mVipInfoEntity.getCode();
+                    String msg = mVipInfoEntity.getMsg();
+                    if (SUCCESS_CODE.equals(code)) {
+                        mVipInfoBean = mVipInfoEntity.getResult();
+                        if (mVipInfoBean != null) {
+                            String beEconomical = mVipInfoBean.getBeEconomical();
+                            mTvTotalSave.setVisibility(!TextUtils.isEmpty(beEconomical) ? View.VISIBLE : View.GONE);
+                            mTvTotalSave.setText(getStringsFormat(getActivity(), R.string.vip_save_money_total, mVipInfoBean.getBeEconomical()));
+                            mTvEndTime.setText(getStringsFormat(getActivity(), R.string.vip_record, mVipInfoBean.getEndTime()));
+                        }
+                    } else {
+                        showToast(msg);
+                    }
+                }
+
+                mRlVipInfo.setVisibility(mVipInfoBean != null && communalUserInfoBean.isWhiteUser() ? View.VISIBLE : View.GONE);
+                setBgHeight();
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                mRlVipInfo.setVisibility(mVipInfoBean != null && communalUserInfoBean.isWhiteUser() ? View.VISIBLE : View.GONE);
+                setBgHeight();
+            }
+        });
+    }
+
 
     //设置十二宫格相关数量
     private void clearBottomTypeCount() {
@@ -562,7 +635,7 @@ public class MineDataFragment extends BaseFragment {
 
 
     @OnClick({R.id.iv_mine_header, R.id.ll_mine_fans_count, R.id.ll_mine_att_count, R.id.ll_mine_inv_count, R.id.tv_mine_all_indent, R.id.iv_mine_mes,
-            R.id.tv_no_login_show, R.id.rel_mine_info, R.id.ll_mime_no_login, R.id.rel_integral_more, R.id.tv_personal_data_sup, R.id.tv_bind_phone})
+            R.id.tv_no_login_show, R.id.rel_mine_info, R.id.ll_mime_no_login, R.id.rel_integral_more, R.id.tv_personal_data_sup, R.id.tv_bind_phone, R.id.tv_renewal, R.id.rl_no_vip_info, R.id.rl_vip_info})
     public void onViewClicked(View view) {
         if (userId < 0) {
             getLoginStatus(this);
@@ -653,7 +726,17 @@ public class MineDataFragment extends BaseFragment {
                     }
                 }
                 break;
-
+            //会员首页
+            case R.id.rl_no_vip_info:
+            case R.id.rl_vip_info:
+                intent = new Intent(getActivity(), DomolifeVipActivity.class);
+                startActivity(intent);
+                break;
+            //会员续费
+            case R.id.tv_renewal:
+                intent = new Intent(getActivity(), OpenVipActivity.class);
+                startActivity(intent);
+                break;
         }
     }
 
@@ -803,6 +886,15 @@ public class MineDataFragment extends BaseFragment {
         return false;
     }
 
+
+    @Override
+    public void onVisible() {
+        super.onVisible();
+        if (!isFirst) {
+            getMineData();
+        }
+        isFirst = false;
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

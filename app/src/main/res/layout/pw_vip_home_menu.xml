@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/sc_mm_150"
+    android:layout_height="wrap_content"
+    android:background="#af000000"
+    android:divider="@drawable/item_divider_gray_f_one_px"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:showDividers="middle">
+
+    <TextView
+        android:id="@+id/tv_home"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="@dimen/sc_mm_15"
+        android:text="首页"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sc_mm_28" />
+
+    <TextView
+        android:id="@+id/tv_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="@dimen/sc_mm_15"
+        android:text="搜索"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sc_mm_28" />
+
+    <TextView
+        android:id="@+id/tv_shopcar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="@dimen/sc_mm_15"
+        android:text="购物车"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sc_mm_28" />
+
+    <TextView
+        android:id="@+id/tv_qy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="@dimen/sc_mm_15"
+        android:text="客服"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sc_mm_28" />
+</LinearLayout>

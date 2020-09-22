@@ -54,7 +54,6 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:background="@drawable/sel_deep_red_yel_gray"
-
         android:gravity="center"
         android:text="立即购买"
         android:textColor="@color/white"

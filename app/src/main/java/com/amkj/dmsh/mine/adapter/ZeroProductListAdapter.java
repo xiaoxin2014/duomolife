@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.mine.activity.ZeroDetailActivity;
+import com.amkj.dmsh.mine.activity.ZeroActivityDetailActivity;
 import com.amkj.dmsh.mine.bean.ZeroListEntity.ZeroListBean.CurrentActivityListBean;
 import com.amkj.dmsh.utils.CountDownTimer;
 import com.amkj.dmsh.utils.TimeUtils;
@@ -93,7 +93,7 @@ public class ZeroProductListAdapter extends BaseQuickAdapter<CurrentActivityList
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
                 String activityId = (String) view.getTag();
-                Intent intent = new Intent(context, ZeroDetailActivity.class);
+                Intent intent = new Intent(context, ZeroActivityDetailActivity.class);
                 intent.putExtra("activityId", activityId);
                 context.startActivity(intent);
             }
@@ -106,6 +106,6 @@ public class ZeroProductListAdapter extends BaseQuickAdapter<CurrentActivityList
 
     private void setCountTime(TextView tvTime, String endTime) {
         tvTime.setText(!isEndOrStartTime(currentTime, endTime) ?
-                "距截止试用报名： " + getCoutDownTime(getTimeDifference(currentTime, endTime), true) : "");
+                "距截止试用报名： " + getCoutDownTime(getTimeDifference(currentTime, endTime), true) : "已结束");
     }
 }

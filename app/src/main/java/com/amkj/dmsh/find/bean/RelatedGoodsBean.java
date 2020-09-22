@@ -18,7 +18,7 @@ public class RelatedGoodsBean {
 
     private int productId;
     private String price;
-    @SerializedName(value = "pictureUrl", alternate = "cover")
+    @SerializedName(value = "pictureUrl", alternate = {"cover", "productImg"})
     private String pictureUrl;
     private int id;
     @SerializedName(value = "title", alternate = "productName")

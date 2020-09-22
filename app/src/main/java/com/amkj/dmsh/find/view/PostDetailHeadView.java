@@ -96,7 +96,7 @@ public class PostDetailHeadView extends LinearLayout {
                             , postDetailBean.getPath()
                             , "分享" + postDetailBean.getNickname() + "帖子"
                             , postDetailBean.getDigest()
-                            , Url.BASE_SHARE_PAGE_TWO + "m/template/find_template/find_detail.html?id=" + postDetailBean.getId(), postDetailBean.getId());
+                            , Url.BASE_SHARE_PAGE_TWO + "find_template/find_detail.html?id=" + postDetailBean.getId(), postDetailBean.getId());
                 }
                 break;
         }

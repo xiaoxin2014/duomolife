@@ -359,6 +359,7 @@ public abstract class BaseFragment extends ImmersionFragment {
         JzvdStd.releaseAllVideos();
     }
 
+    //onResume以及setUserVisibleHint为true时都会回调此方法
     @Override
     public void onVisible() {
         AutoSize.autoConvertDensityOfGlobal(getActivity());

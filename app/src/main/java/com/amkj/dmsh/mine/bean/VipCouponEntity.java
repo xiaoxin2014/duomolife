@@ -36,7 +36,25 @@ public class VipCouponEntity extends BaseEntity {
 
         private String title;
         private String subtitle;
+        private String coverImg;
+        private String zoneId;
         private List<CouponListBean> couponList;
+
+        public String getZoneId() {
+            return zoneId;
+        }
+
+        public void setZoneId(String zoneId) {
+            this.zoneId = zoneId;
+        }
+
+        public String getCoverImg() {
+            return coverImg;
+        }
+
+        public void setCoverImg(String coverImg) {
+            this.coverImg = coverImg;
+        }
 
         public String getTitle() {
             return title;
@@ -82,16 +100,25 @@ public class VipCouponEntity extends BaseEntity {
             private String timeText;
             private String totalCount;
             private String robCount;
+            private String startFee;
 
-            //自定义属性,领取状态(0未领取立即领取 1已领取去使用 2已抢光)
-            private int status;
-
-            public int getStatus() {
-                return getRobCount() >= getTotalCount() ? 2 : status;
+            public int getStartFee() {
+                return ConstantMethod.getStringChangeIntegers(startFee);
             }
 
-            public void setStatus(int status) {
-                this.status = status;
+            public void setStartFee(String startFee) {
+                this.startFee = startFee;
+            }
+
+            //自定义属性,是否已抢光
+            private boolean isSoldOut;
+
+            public boolean isSoldOut() {
+                return getRobCount() >= getTotalCount();
+            }
+
+            public void setSoldOut(boolean soldOut) {
+                isSoldOut = soldOut;
             }
 
             public int getCouponId() {

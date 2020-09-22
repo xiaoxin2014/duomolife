@@ -112,7 +112,7 @@ public class ItemDecoration extends RecyclerView.ItemDecoration {
         } else if (parent.getLayoutManager() instanceof LinearLayoutManager) {
             LinearLayoutManager linearLayoutManager = (LinearLayoutManager) parent.getLayoutManager();
             int position = parent.getChildAdapterPosition(view);
-            int childCount = parent.getChildCount();
+            int childCount = parent.getAdapter() != null ? parent.getAdapter().getItemCount() : parent.getChildCount();
             if (!isHeader(parent, position)) {
                 if (linearLayoutManager.getOrientation() == LinearLayoutManager.HORIZONTAL) {
                     outRect.set(0, 0, mDrawable.getIntrinsicWidth(), 0);

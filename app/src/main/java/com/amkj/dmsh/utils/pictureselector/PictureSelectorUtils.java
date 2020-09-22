@@ -1,7 +1,6 @@
 package com.amkj.dmsh.utils.pictureselector;
 
 import android.app.Activity;
-import androidx.fragment.app.Fragment;
 
 import com.amkj.dmsh.R;
 import com.luck.picture.lib.PictureSelector;
@@ -11,6 +10,8 @@ import com.luck.picture.lib.entity.LocalMediaC;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.fragment.app.Fragment;
 
 /**
  * @author LGuiPeng
@@ -218,4 +219,11 @@ public class PictureSelectorUtils {
         this.evaCurrentItem = currentItem;
         return pictureSelectorUtils;
     }
+
+    public PictureSelectorUtils setMaxNum(int selMaxNum) {
+        this.selMaxNum = selMaxNum;
+        return pictureSelectorUtils;
+    }
+
+
 }

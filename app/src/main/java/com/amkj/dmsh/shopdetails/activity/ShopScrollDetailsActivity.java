@@ -4,10 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.style.RelativeSizeSpan;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,6 +40,7 @@ import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
 import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
+import com.amkj.dmsh.mine.activity.OpenVipActivity;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
 import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean.CartBean.CartInfoBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
@@ -70,6 +73,7 @@ import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.user.bean.LikedProductBean.MarketLabelBean;
 import com.amkj.dmsh.utils.CountDownTimer;
 import com.amkj.dmsh.utils.ProductLabelCreateUtils;
+import com.amkj.dmsh.utils.SharedPreUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
@@ -122,13 +126,14 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
-import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getRmbFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getSpannableString;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeDouble;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeFloat;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
+import static com.amkj.dmsh.constant.ConstantMethod.isVip;
 import static com.amkj.dmsh.constant.ConstantMethod.showImageActivity;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
@@ -287,20 +292,18 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     ImageView mIvMoreTag;
     @BindView(R.id.flex_product_point)
     FlexboxLayout mFlexProductPoint;
-    @BindView(R.id.tv_max_price)
-    TextView mTvMaxPrice;
     @BindView(R.id.ll_product_recommend)
     LinearLayout mllProductRecommend;
     @BindView(R.id.ll_product_group)
     LinearLayout mllProductGroup;
     @BindView(R.id.ll_scrool_detail_price)
-    RelativeLayout mLlScroolDetailPrice;
+    LinearLayout mLlScroolDetailPrice;
     @BindView(R.id.rl_activity_price)
     RelativeLayout mRlActivityPrice;
     @BindView(R.id.ll_countdown_time_bottom)
     LinearLayout mLlTimeHoursBottom;
-    @BindView(R.id.tv_product_min_price)
-    TextView mTvProductMinPrice;
+    @BindView(R.id.tv_top_activity_price)
+    TextView mTvTopActivityPrice;
     @BindView(R.id.tv_product_martket_price)
     TextView mTvProductMartketPrice;
     @BindView(R.id.tv_tips)
@@ -316,16 +319,36 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     TextView tv_shop_comment_count;
     @BindView(R.id.tv_shippingProvince)
     TextView mTvShippingProvince;
+    @BindView(R.id.tv_shipping)
+    TextView mTvShipping;
     @BindView(R.id.ll_shippingProvince)
     LinearLayout mLlShippingProvince;
     @BindView(R.id.tv_preSaleDeliveryTime)
     TextView mTvPreSaleDeliveryTime;
-    @BindView(R.id.ll_market_and_province)
-    LinearLayout mllMarketAndProvince;
+    @BindView(R.id.ll_vipprice_and_province)
+    RelativeLayout mllVipPriceAndProvince;
     @BindView(R.id.tv_tax_text)
     TextView mTvTaxText;
+    @BindView(R.id.tv_vip_price)
+    TextView mTvVipPrice;
     @BindView(R.id.ll_tax_txt)
     LinearLayout mLlTaxText;
+    @BindView(R.id.ll_open_vip)
+    LinearLayout mLlOpenVip;
+    @BindView(R.id.tv_vip_save)
+    TextView mTvVipSave;
+    @BindView(R.id.ll_vip_price)
+    LinearLayout mLlVipPrice;
+    @BindView(R.id.iv_top_vip_logo)
+    ImageView mIvTopVipLogo;
+    @BindView(R.id.iv_bottom_vip_logo)
+    ImageView mIvBottomVipLogo;
+    @BindView(R.id.tv_bottom_activity_price)
+    TextView mTvBottomActivityPrice;
+    @BindView(R.id.ll_bottom_activity_price)
+    LinearLayout mLlBottomActivityPrice;
+    @BindView(R.id.iv_vip_logo)
+    ImageView mIvVipLogo;
 
 
     //    赠品信息
@@ -354,7 +377,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     private ShopCarGoodsSku shopCarGoodsSkuDif;
     private Badge badge;
     //    private View proTitleView;
-    private String sharePageUrl = Url.BASE_SHARE_PAGE_TWO + "m/template/common/proprietary.html?id=";
+    private String sharePageUrl = Url.BASE_SHARE_PAGE_TWO + "common/proprietary.html?id=";
     private boolean isWaitSellStatus;
     private ProductTextAdapter presentProAdapter;
     private CommunalDetailAdapter communalDetailAdapter;
@@ -800,7 +823,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         String url = Url.Q_SHOP_DETAILS_COMMENT;
         Map<String, Object> params = new HashMap<>();
         params.put("currentPage", 1);
-        params.put("showCount", 1);
+        params.put("showCount", 2);
         params.put("id", shopPropertyBean.getId());
         if (userId > 0) {
             params.put("uid", userId);
@@ -934,39 +957,28 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             }
         }
 
-        //sku按照价格排序
-        List<SkuSaleBean> skuSaleList = shopProperty.getSkuSale();
-        if (skuSaleList != null && skuSaleList.size() > 1) {
-            Collections.sort(skuSaleList, (lhs, rhs) -> {
-                if (!TextUtils.isEmpty(lhs.getPrice()) && !TextUtils.isEmpty(rhs.getPrice())) {
-                    float p1 = getFloatNumber(lhs.getPrice());
-                    float p2 = getFloatNumber(rhs.getPrice());
-                    return Float.compare(p1, p2);
-                } else {
-                    return 0;
-                }
-            });
-        }
 
-        String end = "";
-        if (skuSaleList != null && skuSaleList.size() > 0) {
-            end = skuSaleList.get(0).getPrice().equals(skuSaleList.get(skuSaleList.size() - 1).getPrice()) ? "" : "起";
-        }
+        //价格排序
+        List<SkuSaleBean> skuSaleList = shopProperty.getSkuSale();
+        Collections.sort(skuSaleList, (lhs, rhs) -> Float.compare(getStringChangeFloat(lhs.getPrice()), getStringChangeFloat(rhs.getPrice())));
 
         //优先显示新人专享信息
         if (!TextUtils.isEmpty(shopProperty.getNewUserTag())) {
             ll_product_activity_detail.setVisibility(VISIBLE);
             mLlScroolDetailPrice.setVisibility(GONE);
+            mLlVipPrice.setVisibility(GONE);
             ll_top_end_time.setVisibility(GONE);//上面的倒计时
             rl_product_activity_detail.setVisibility(GONE);
             mRlActivityPrice.setVisibility(VISIBLE);
             mLlTimeHoursBottom.setVisibility(GONE); //下面的倒计时
             String newUserTag = "";
-            if (skuSaleList != null && skuSaleList.size() > 0) {
+            String end = "";
+            if (skuSaleList.size() > 0) {
                 newUserTag = skuSaleList.get(0).getNewUserTag();
+                end = skuSaleList.get(0).getPrice().equals(skuSaleList.get(skuSaleList.size() - 1).getPrice()) ? "" : "起";
             }
             String price = newUserTag + getRmbFormat(this, shopProperty.getPrice()) + end;
-            mTvProductMinPrice.setText(getSpannableString(price, 1 + newUserTag.length(), price.length() - end.length(), 1.6f, null));
+            mTvTopActivityPrice.setText(getSpannableString(price, 1 + newUserTag.length(), price.length() - end.length(), 1.6f, null));
             mTvProductMartketPrice.setText(getStringsFormat(this, R.string.money_market_price_chn, shopProperty.getMarketPrice()));
             mTvProductMartketPrice.setVisibility(getStringChangeDouble(shopProperty.getMarketPrice()) > 0 ? VISIBLE : GONE);//大于0才显示
         } else {
@@ -977,29 +989,63 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     , shopPropertyBean.getActivityEndTime())) {
                 ll_product_activity_detail.setVisibility(VISIBLE);
                 if (activityCode.contains("XSG")) {
-                    setTopTimeVisible(false);
+                    setTopTimeVisible(true);
                     mRlActivityPrice.setVisibility(VISIBLE);       //限时购价格
                     rl_product_activity_detail.setVisibility(GONE);
-                    mLlScroolDetailPrice.setVisibility(GONE); //非限时购价格
+                    mLlScroolDetailPrice.setVisibility(GONE); //没有活动时的价格
+                    mLlVipPrice.setVisibility(GONE);
                     mLlTimeHoursBottom.setVisibility(GONE); //下面的倒计时
                     startActivityDownTime(cv_countdownTime_white_hours, false);//开启倒计时
-                    //限时购活动价(未开始时：activityPrice表示活动价；已开始时：price表示活动价)
-                    String price = getRmbFormat(this, isEndOrStartTime(shopDetailsEntity.getCurrentTime(), shopDetailsEntity.getShopPropertyBean().getActivityStartTime()) ? shopProperty.getPrice() : shopProperty.getActivityPrice()) + end;
-                    mTvProductMinPrice.setText(getSpannableString(price, 1, price.length() - end.length(), 1.6f, null));
-                    mTvProductMartketPrice.setVisibility(getStringChangeDouble(shopProperty.getMarketPrice()) > 0 ? VISIBLE : GONE);//大于0才显示
-                    //市场价
-                    if (isEndOrStartTime(shopDetailsEntity.getCurrentTime(), shopDetailsEntity.getShopPropertyBean().getActivityStartTime())) {
-                        //已开始时显示划线价（市场参考价）
-                        mTvProductMartketPrice.setText("¥" + getStrings(shopProperty.getMarketPrice()));
-                        mTvProductMartketPrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-                        mTvProductMartketPrice.getPaint().setAntiAlias(true);
-                    } else {
-                        //活动未开始时显示原价
-                        mTvProductMartketPrice.setText(getStringsFormat(this, R.string.xsg_market_price, shopProperty.getPrice()) + end);
-                        mTvProductMartketPrice.setPaintFlags(mTvProductMartketPrice.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+                    //价格排序
+                    List<String> oldPrices = new ArrayList<>();
+                    List<String> prices = new ArrayList<>();
+                    List<String> vipPrices = new ArrayList<>();
+                    List<String> activityPrices = new ArrayList<>();
+                    List<String> vipActivityPrices = new ArrayList<>();
+                    for (SkuSaleBean skuSaleBean : shopProperty.getSkuSale()) {
+                        if (getStringChangeFloat(skuSaleBean.getOldPrice()) > 0) {
+                            oldPrices.add(skuSaleBean.getOldPrice());
+                        }
+                        if (getStringChangeFloat(skuSaleBean.getPrice()) > 0) {
+                            prices.add(skuSaleBean.getPrice());
+                        }
+                        if (getStringChangeFloat(skuSaleBean.getVipPrice()) > 0) {
+                            vipPrices.add(skuSaleBean.getVipPrice());
+                        }
+                        if (getStringChangeFloat(skuSaleBean.getActivityPrice()) > 0) {
+                            activityPrices.add(skuSaleBean.getActivityPrice());
+                        }
+                        if (getStringChangeFloat(skuSaleBean.getVipActivityPrice()) > 0) {
+                            vipActivityPrices.add(skuSaleBean.getVipActivityPrice());
+                        }
                     }
+                    Collections.sort(oldPrices, (lhs, rhs) -> Float.compare(getStringChangeFloat(lhs), getStringChangeFloat(rhs)));
+                    Collections.sort(prices, (lhs, rhs) -> Float.compare(getStringChangeFloat(lhs), getStringChangeFloat(rhs)));
+                    Collections.sort(vipPrices, (lhs, rhs) -> Float.compare(getStringChangeFloat(lhs), getStringChangeFloat(rhs)));
+                    Collections.sort(activityPrices, (lhs, rhs) -> Float.compare(getStringChangeFloat(lhs), getStringChangeFloat(rhs)));
+                    Collections.sort(vipActivityPrices, (lhs, rhs) -> Float.compare(getStringChangeFloat(lhs), getStringChangeFloat(rhs)));
+
+                    //活动是否已开始
+                    boolean isStart = isEndOrStartTime(shopDetailsEntity.getCurrentTime(), shopDetailsEntity.getShopPropertyBean().getActivityStartTime());
+                    //会员活动价
+                    String vipActivityPrice = isStart ? getMinPrice(vipPrices) + appendEnd(vipPrices) : getMinPrice(vipActivityPrices) + appendEnd(vipActivityPrices);
+                    //非会员活动价
+                    String noVipActivityPrice = "¥" + (isStart ? getMinPrice(prices) + appendEnd(prices) : getMinPrice(activityPrices) + appendEnd(activityPrices));
+                    //左边的活动价  是会员时显示会员活动价 非会员显示非会员活动价
+                    String topActivityPrice = isVip() && !TextUtils.isEmpty(vipActivityPrice) ? "会员价¥" + vipActivityPrice : noVipActivityPrice;
+                    mTvTopActivityPrice.setText(getSpannableString(topActivityPrice, topActivityPrice.indexOf("¥") + 1, topActivityPrice.contains("起") ? topActivityPrice.length() - 1 : topActivityPrice.length(),
+                            1.6f, null));
+                    //右边的活动价  是会员时显示非会员活动价 非会员显示会员活动价
+                    String bottomActivityPrice = isVip() ? "非会员：" + noVipActivityPrice : "会员价¥" + vipActivityPrice;
+                    mTvBottomActivityPrice.setText(bottomActivityPrice);
+                    mIvVipLogo.setVisibility(!isVip() ? VISIBLE : GONE);
+                    mLlBottomActivityPrice.setVisibility(!TextUtils.isEmpty(vipActivityPrice) ? VISIBLE : GONE);
+                    //原价(活动开始 非会员或者会员专享原价为oldPrice,否则不显示原价 活动未开始，会员原价为vipPrice,非会员原价为price)
+                    String oldPrice = isStart ? ( getMinPrice(oldPrices)) : (isVip() ? getMinPrice(vipPrices) : getMinPrice(prices));
+                    mTvProductMartketPrice.setText("原价：¥" + oldPrice);
+                    mTvProductMartketPrice.setVisibility(getStringChangeFloat(oldPrice) > 0 ? VISIBLE : GONE);
                 } else if (activityCode.contains("MJ") || activityCode.contains("MM") || activityCode.contains("MZ")) {
-                    setTopTimeVisible(true);
+                    setTopTimeVisible(false);
                     mRlActivityPrice.setVisibility(GONE);
                     mIvNextIcon.setVisibility(VISIBLE);
                     tv_product_activity_description.setVisibility(VISIBLE);
@@ -1008,7 +1054,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     startActivityDownTime(mCtCountDownBottom, true);
                 } else {
                     //activityCode.contains("LJ") || activityCode.contains("ZK") || activityCode.contains("TH")|| activityCode.contains("YK")
-                    setTopTimeVisible(false);
+                    setTopTimeVisible(true);
                     mRlActivityPrice.setVisibility(GONE);
                     mIvNextIcon.setVisibility(GONE);
                     tv_product_activity_description.setVisibility(VISIBLE);
@@ -1029,6 +1075,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             } else {
                 ll_product_activity_detail.setVisibility(GONE);
                 mLlScroolDetailPrice.setVisibility(VISIBLE);
+                mLlVipPrice.setVisibility(VISIBLE);
                 mLlTimeHoursBottom.setVisibility(GONE);
             }
         }
@@ -1055,7 +1102,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         } else {
             String marketPrice = shopProperty.getMarketPrice();
             tv_ql_sp_pro_sc_market_price.setText(String.format(getString(R.string.money_market_price_chn), marketPrice));
-            tv_ql_sp_pro_sc_market_price.setVisibility(getStringChangeDouble(marketPrice) > 0 ? VISIBLE : GONE);
+            tv_ql_sp_pro_sc_market_price.setVisibility(getStringChangeDouble(marketPrice) > 0 ? VISIBLE : View.INVISIBLE);
         }
 
 
@@ -1087,9 +1134,19 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
         //营销以及活动标签
         if ((!TextUtils.isEmpty(shopProperty.getActivityTag()) && !TextUtils.isEmpty(shopProperty.getActivityCode())) ||
-                (shopPropertyBean.getMarketLabelList() != null && shopProperty.getMarketLabelList().size() > 0) || !TextUtils.isEmpty(shopProperty.getNewUserTag()) || shopProperty.isHasPresent()) {
+                (shopPropertyBean.getMarketLabelList() != null && shopProperty.getMarketLabelList().size() > 0) ||
+                !TextUtils.isEmpty(shopProperty.getNewUserTag()) || shopProperty.isHasPresent() || shopProperty.isVipActivity()) {
             fbl_details_market_label.setVisibility(VISIBLE);
             fbl_details_market_label.removeAllViews();
+            //会员专享标签
+            if (shopProperty.isVipActivity()) {
+                ImageView imageView = new ImageView(this);
+                ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(AutoSizeUtils.mm2px(this, 147), AutoSizeUtils.mm2px(this, 40));
+                imageView.setImageResource(R.drawable.vip_tag);
+                imageView.setLayoutParams(layoutParams);
+                fbl_details_market_label.addView(imageView);
+            }
+
             //新人专享活动标签
             if (!TextUtils.isEmpty(shopProperty.getNewUserTag())) {
                 MarketLabelBean marketLabelBean = new MarketLabelBean();
@@ -1144,9 +1201,10 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         //发货地以及发货时间
         mLlShippingProvince.setVisibility(!TextUtils.isEmpty(shopProperty.getShippingProvince()) ? VISIBLE : GONE);
         mTvShippingProvince.setText(getStrings(shopProperty.getShippingProvince()));
+        mTvShipping.setText("1".equals(shopProperty.getEcmFlag()) ? "保税仓商品：" : "发货：");
         mTvPreSaleDeliveryTime.setVisibility(!TextUtils.isEmpty(shopProperty.getPreSaleDeliveryTime()) ? VISIBLE : GONE);
         mTvPreSaleDeliveryTime.setText(getStringsFormat(this, R.string.preSaleDeliveryTime, shopProperty.getPreSaleDeliveryTime()));
-        mllMarketAndProvince.setVisibility(fbl_details_market_label.getVisibility() == GONE && TextUtils.isEmpty(shopProperty.getShippingProvince()) ? GONE : VISIBLE);
+        mllVipPriceAndProvince.setVisibility(TextUtils.isEmpty(shopProperty.getVipPrice()) && TextUtils.isEmpty(shopProperty.getShippingProvince()) ? GONE : VISIBLE);
 
         //设置价格以及SKU
         setSkuProp(shopProperty);
@@ -1170,7 +1228,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         } else {
             tv_ql_sp_pro_sc_name.setText(productName);
         }
-
 
         // 商品卖点
         List<String> buyReasonList = shopProperty.getBuyReason();
@@ -1230,8 +1287,17 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         scroll_pro.scrollTo(0, 0);
     }
 
-    private void setTopTimeVisible(boolean isMJ) {
-        if (isMJ) {
+    //根据价格区间判断是否要追加“起”字
+    private String appendEnd(List<String> prices) {
+        return prices != null && prices.size() > 1 && !prices.get(0).equals(prices.get(prices.size() - 1)) ? "起" : "";
+    }
+
+    private String getMinPrice(List<String> prices) {
+        return prices != null && prices.size() > 0 ? prices.get(0) : "";
+    }
+
+    private void setTopTimeVisible(boolean topTimeVisible) {
+        if (!topTimeVisible) {
             ll_top_end_time.setVisibility(GONE);//上面的结束倒计时
             ll_top_start_time.setVisibility(GONE);//上面的开始倒计时
         } else {
@@ -1294,6 +1360,9 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             //活动未开始
             if (!isEndOrStartTime(shopDetailsEntity.getCurrentTime(), shopPropertyBean.getActivityStartTime())) {
                 mTvTipsBottom.setText("距开始");
+                if (mCountDownEndTimer != null) {
+                    mCountDownEndTimer.cancel();
+                }
                 if (mCountDownStartTimer == null) {
                     mCountDownStartTimer = new CountDownTimer(this) {
                         @Override
@@ -1319,6 +1388,9 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             } else if (!isEndOrStartTime(currentTime, activityEndTime)) {
                 //活动已开始未结束
                 mTvTipsBottom.setText("距结束");
+                if (mCountDownStartTimer != null) {
+                    mCountDownStartTimer.cancel();
+                }
                 if (mCountDownEndTimer == null) {
                     mCountDownEndTimer = new CountDownTimer(this) {
                         @Override
@@ -1379,8 +1451,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
     private void setReplenishmentNotice() {
         SkuSaleBean skuSaleBean = shopPropertyBean.getSkuSale().get(0);
-        if (shopPropertyBean.getSkuSale().size() > 0 && shopPropertyBean.getSkuSale().size() < 2
-                && (skuSaleBean.getIsNotice() == 1 || skuSaleBean.getIsNotice() == 2)) {
+        if (shopPropertyBean.getSkuSale().size() == 1 && (skuSaleBean.getIsNotice() == 1 || skuSaleBean.getIsNotice() == 2)) {
             tv_sp_details_add_car.setEnabled(true);
             tv_sp_details_add_car.setSelected(true);
             skuSaleBeanId = skuSaleBean.getId();
@@ -1399,7 +1470,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-
                 mDirectGoodsServerEntity = GsonUtils.fromJson(result, DirectGoodsServerEntity.class);
                 if (mDirectGoodsServerEntity != null) {
                     if (mDirectGoodsServerEntity.getCode().equals(SUCCESS_CODE)) {
@@ -1442,7 +1512,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     , getStrings(shopProperty.getProps().get(0).getPropName())));
             List<SkuSaleBean> skuSaleList = shopProperty.getSkuSale();
             //有多个SKU
-            if (shopProperty.getSkuSale().size() > 1) {
+            if (skuSaleList.size() > 1) {
                 ll_sp_pro_sku_value.setVisibility(VISIBLE);
                 editGoodsSkuBean = new EditGoodsSkuBean();
                 editGoodsSkuBean.setQuantity(shopProperty.getQuantity());
@@ -1491,15 +1561,68 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                 shopCarGoodsSkuDif.setPresentIds(getStrings(shopProperty.getSkuSale().get(0).getPresentSkuIds()));
             }
 
-            String minPrice = skuSaleList.get(0).getPrice();
-            String maxPrice = skuSaleList.get(skuSaleList.size() - 1).getPrice();
-            //设置下面最低价
-            tv_ql_sp_pro_sc_price.setText(getRmbFormat(this, minPrice));
-            //设置下面最高价
-            mTvMaxPrice.setVisibility(!minPrice.equals(maxPrice) ? VISIBLE : GONE);
-            mTvMaxPrice.setText(getRmbFormat(this, "~" + "¥" + maxPrice, false));
+            //开通会员入口
+            boolean isWhiteUser = (boolean) SharedPreUtils.getParam("isWhiteUser", false);
+            mLlOpenVip.setVisibility(!isVip() && userId > 0 && isWhiteUser ? VISIBLE : GONE);
+            String openVipTips = !TextUtils.isEmpty(shopProperty.getVipReduce()) ?
+                    getStringsFormat(this, R.string.open_vip_save_money, shopProperty.getVipReduce()) : "开通多么会员可享专属价格";
+            mTvVipSave.setText(openVipTips.contains("省") ? getSpannableString(openVipTips, openVipTips.indexOf("省") + 1, openVipTips.length(), -1, "#ff0015") : openVipTips);
+            String vipPrice = getVipPrice(skuSaleList);
+            String normalPrice = getNormalPrice(skuSaleList);
+            //是会员并且会员价不为空时上面显示会员价，否则显示非会员价
+            mIvTopVipLogo.setVisibility(isVip() && !TextUtils.isEmpty(vipPrice) ? VISIBLE : GONE);
+            String topPrice = isVip() && !TextUtils.isEmpty(vipPrice) ? vipPrice : normalPrice;
+            SpannableString spannableString = new SpannableString(topPrice);
+            RelativeSizeSpan minSizeSpan = new RelativeSizeSpan(0.64f);
+            spannableString.setSpan(minSizeSpan, topPrice.indexOf("¥"), topPrice.indexOf("¥") + 1, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            if (topPrice.contains("~")) {//是否有价格区间
+                RelativeSizeSpan maxSizeSpan = new RelativeSizeSpan(0.64f);
+                spannableString.setSpan(maxSizeSpan, topPrice.lastIndexOf("¥"), topPrice.lastIndexOf("¥") + 1, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            }
+            tv_ql_sp_pro_sc_price.setText(spannableString);
+            //是会员并且会员价不为空时下面显示非会员价,否则显示会员价
+            mIvBottomVipLogo.setVisibility(!isVip() && !TextUtils.isEmpty(vipPrice) ? VISIBLE : GONE);
+            String bottomPrice = isVip() && !TextUtils.isEmpty(vipPrice) ? "非会员 " + normalPrice : vipPrice;
+            mTvVipPrice.setText(bottomPrice);
         } else {
             showToast("商品数据错误");
+        }
+    }
+
+    //获取普通价
+    private String getNormalPrice(List<SkuSaleBean> skuSaleList) {
+        String minPrice = "¥" + skuSaleList.get(0).getPrice();
+        String maxPrice = "¥" + skuSaleList.get(skuSaleList.size() - 1).getPrice();
+        return minPrice + (minPrice.equals(maxPrice) ? "" : "~" + maxPrice);
+    }
+
+    //获取会员价
+    private String getVipPrice(List<SkuSaleBean> skuSaleList) {
+        //组装会员价
+        List<SkuSaleBean> newSkuSaleList = new ArrayList<>();
+        for (SkuSaleBean skuSaleBean : skuSaleList) {
+            if (!TextUtils.isEmpty(skuSaleBean.getVipPrice())) {
+                newSkuSaleList.add(skuSaleBean);
+            }
+        }
+
+        //会员价排序
+        Collections.sort(newSkuSaleList, (lhs, rhs) -> {
+            if (!TextUtils.isEmpty(lhs.getPrice()) && !TextUtils.isEmpty(rhs.getPrice())) {
+                float p1 = getStringChangeFloat(lhs.getVipPrice());
+                float p2 = getStringChangeFloat(rhs.getVipPrice());
+                return Float.compare(p1, p2);
+            } else {
+                return 0;
+            }
+        });
+
+        if (newSkuSaleList.size() > 0) {
+            String minVipPrice = newSkuSaleList.get(0).getVipPrice();
+            String maxVipPrice = newSkuSaleList.get(newSkuSaleList.size() - 1).getVipPrice();
+            return "会员价 " + getRmbFormat(this, minVipPrice) + (!minVipPrice.equals(maxVipPrice) ? ("~¥" + maxVipPrice) : "");
+        } else {
+            return "";
         }
     }
 
@@ -1699,13 +1822,17 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
     @OnClick({R.id.ll_back, R.id.ll_back2, R.id.ll_service, R.id.ll_service2, R.id.ll_share, R.id.ll_share2, R.id.ll_product_activity_detail, R.id.tv_sp_details_service,
             R.id.tv_sp_details_add_car, R.id.tv_sp_details_buy_it, R.id.tv_sp_details_collect, R.id.tv_group_product, R.id.iv_ql_shop_pro_cp_tag, R.id.tv_ql_sp_pro_sku,
-            R.id.ll_layout_pro_sc_tag, R.id.tv_shop_comment_more, R.id.ll_tax_txt})
+            R.id.ll_layout_pro_sc_tag, R.id.tv_shop_comment_more, R.id.ll_tax_txt, R.id.ll_open_vip})
     public void onViewClicked(View view) {
         Intent intent;
         switch (view.getId()) {
             case R.id.ll_back:
             case R.id.ll_back2:
                 finish();
+                break;
+            case R.id.ll_open_vip:
+                intent = new Intent(this, OpenVipActivity.class);
+                startActivity(intent);
                 break;
             //打开活动专区
             case R.id.ll_product_activity_detail:
@@ -1894,7 +2021,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-
                 RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {
@@ -1920,6 +2046,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        mLlOpenVip.setVisibility(!isVip() ? VISIBLE : GONE);
         tv_product_share_tint.postDelayed(new Runnable() {
             @Override
             public void run() {

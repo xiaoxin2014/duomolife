@@ -17,6 +17,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/sc_mm_30"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
@@ -46,7 +47,6 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/sc_mm_80"
         android:layout_gravity="center"
-        android:layout_marginTop="@dimen/sc_mm_30"
         android:layout_marginBottom="@dimen/sc_mm_20"
         android:background="@drawable/shape_get_free_bg"
         android:gravity="center"

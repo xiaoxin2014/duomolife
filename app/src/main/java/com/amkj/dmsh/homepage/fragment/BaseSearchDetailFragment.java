@@ -181,7 +181,6 @@ public abstract class BaseSearchDetailFragment extends BaseFragment {
             NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), QUALITY_SHOP_TYPE, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
-
                     QualityTypeEntity qualityTypeEntity = GsonUtils.fromJson(result, QualityTypeEntity.class);
                     if (qualityTypeEntity != null && qualityTypeEntity.getCode().equals(SUCCESS_CODE)
                             && qualityTypeEntity.getQualityTypeBeanList() != null && qualityTypeEntity.getQualityTypeBeanList().size() > 0) {

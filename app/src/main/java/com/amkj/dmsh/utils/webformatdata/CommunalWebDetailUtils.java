@@ -447,7 +447,7 @@ public class CommunalWebDetailUtils {
                 showToast(couponEntity == null ? "操作失败！" :
                         couponEntity.getResult() != null ? getStrings(couponEntity.getResult().getMsg()) : getStrings(couponEntity.getMsg()));
                 if (getCouponListener != null && couponEntity != null && couponEntity.getResult() != null) {
-                    if (SUCCESS_CODE.equals(couponEntity.getMsg()) && SUCCESS_CODE.equals(couponEntity.getResult().getMsg())) {
+                    if (SUCCESS_CODE.equals(couponEntity.getCode()) && SUCCESS_CODE.equals(couponEntity.getResult().getCode())) {
                         getCouponListener.onSuccess(couponEntity.getResult());
                     } else {
                         getCouponListener.onFailure(couponEntity.getResult());

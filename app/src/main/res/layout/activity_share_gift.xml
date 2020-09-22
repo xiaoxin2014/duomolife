@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/activity_domolife_header" />
+
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+        android:id="@+id/smart_communal_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include layout="@layout/layout_refresh_header_gif" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/ll_share_gift"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/share_gift_bg"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/sc_mm_24"
+                        android:layout_marginTop="@dimen/sc_mm_48"
+                        android:layout_marginRight="@dimen/sc_mm_24"
+                        android:adjustViewBounds="true"
+                        android:src="@drawable/share_gift_cover" />
+
+                    <TextView
+                        android:layout_marginTop="@dimen/sc_mm_30"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="分享好友专属链接"
+                        android:textColor="@color/text_black_t"
+                        android:textSize="@dimen/sc_mm_28" />
+
+                    <TextView
+                        android:id="@+id/tv_invitee_day"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/sc_mm_5"
+                        android:gravity="center"
+                        android:text="@string/share_gift_get_day"
+                        android:textColor="@color/text_black_t"
+                        android:textSize="@dimen/sc_mm_28" />
+
+                    <TextView
+                        android:visibility="gone"
+                        android:id="@+id/tv_vip_invite"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/sc_mm_5"
+                        android:layout_marginBottom="@dimen/sc_mm_22"
+                        android:gravity="center_horizontal"
+                        android:text="(会员用户邀请可增加30天会员时间，并享有20元购卡优惠）"
+                        android:textColor="@color/text_black_t"
+                        android:textSize="@dimen/sc_mm_22" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/sc_mm_22"
+                        android:background="@drawable/share_invite_bg"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="@dimen/sc_mm_40"
+                            android:text="邀请好友成为会员"
+                            android:textColor="@color/text_black_t"
+                            android:textSize="@dimen/sc_mm_34"
+                            android:textStyle="bold" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/sc_mm_36"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="@dimen/sc_mm_75"
+                                android:layout_height="@dimen/sc_mm_68"
+                                android:src="@drawable/vip_coupon" />
+
+                            <ImageView
+                                android:layout_width="@dimen/sc_mm_52"
+                                android:layout_height="@dimen/sc_mm_50"
+                                android:layout_marginLeft="@dimen/sc_mm_104"
+                                android:layout_marginRight="@dimen/sc_mm_104"
+                                android:src="@drawable/add_gray" />
+
+                            <ImageView
+                                android:layout_width="@dimen/sc_mm_66"
+                                android:layout_height="@dimen/sc_mm_62"
+                                android:src="@drawable/vip_logo" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/tv_inviter_coupon_amount"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:text="赠5元无门槛优惠券"
+                                android:textColor="@color/text_black_t"
+                                android:textSize="@dimen/sc_mm_28" />
+
+                            <TextView
+                                android:id="@+id/tv_inviter_day"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:text="延长15天会员时间"
+                                android:textColor="@color/text_black_t"
+                                android:textSize="@dimen/sc_mm_28" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/sc_mm_8"
+                            android:layout_marginBottom="@dimen/sc_mm_80"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/tv_vip_inviter_coupon_amount"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:text="(会员可获得10元无门槛券)"
+                                android:textColor="@color/text_login_gray_s"
+                                android:textSize="@dimen/sc_mm_22" />
+
+                            <TextView
+                                android:id="@+id/tv_vip_inviter_day"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:text="(会员可额外增加15天会员时间)"
+                                android:textColor="@color/text_login_gray_s"
+                                android:textSize="@dimen/sc_mm_22" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tv_open_vip"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/sc_mm_80"
+                            android:layout_marginLeft="@dimen/sc_mm_74"
+                            android:layout_marginRight="@dimen/sc_mm_74"
+                            android:layout_marginBottom="@dimen/sc_mm_22"
+                            android:background="@drawable/share_be_vip_bg"
+                            android:gravity="center"
+                            android:text="不是会员，立刻成为会员"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/sc_mm_32" />
+
+                        <TextView
+                            android:id="@+id/tv_share"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/sc_mm_80"
+                            android:layout_marginLeft="@dimen/sc_mm_74"
+                            android:layout_marginRight="@dimen/sc_mm_74"
+                            android:background="@drawable/yellow_bg"
+                            android:gravity="center"
+                            android:text="分享给好友"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/sc_mm_32" />
+
+                        <TextView
+                            android:id="@+id/tv_rule"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="@dimen/sc_mm_10"
+                            android:layout_marginBottom="@dimen/sc_mm_30"
+                            android:text="更多规则说明>"
+                            android:textColor="@color/text_login_gray_s"
+                            android:textSize="@dimen/sc_mm_28" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_invite"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/sc_mm_22"
+                    android:layout_marginTop="@dimen/sc_mm_45"
+                    android:layout_marginRight="@dimen/sc_mm_22"
+                    android:layout_marginBottom="@dimen/sc_mm_45"
+                    android:background="@drawable/shape_exclusive_coupon_bg"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/tv_invite_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="@dimen/sc_mm_28"
+                        android:layout_marginBottom="@dimen/sc_mm_28"
+                        android:text="@string/vip_invite_num"
+                        android:textColor="@color/text_black_t"
+                        android:textSize="@dimen/sc_mm_32"
+                        android:textStyle="bold" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_invite"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/sc_mm_47"
+                        android:layout_marginLeft="@dimen/sc_mm_52"
+                        android:layout_marginTop="@dimen/sc_mm_42"
+                        android:layout_marginRight="@dimen/sc_mm_40"
+                        android:layout_marginBottom="@dimen/sc_mm_20"
+                        android:nestedScrollingEnabled="false" />
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+</LinearLayout>

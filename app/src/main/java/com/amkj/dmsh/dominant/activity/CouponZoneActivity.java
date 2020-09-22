@@ -184,7 +184,7 @@ public class CouponZoneActivity extends BaseActivity {
                     new UMShareAction(this, mCouponZoneEntity.getCover(),
                             "有钱任性，优惠券免费领",
                             "先领券后下单，部分活动商品可叠加使用，真正折上折。",
-                            BASE_SHARE_PAGE_TWO + "m/template/20191111/couponZone.html?id=" + mCouponZoneEntity.getId(),
+                            Url.BASE_SHARE_PAGE_TWO + "20191111/couponZone.html?id=" + mCouponZoneEntity.getId(),
                             mCouponZoneEntity.getId());
 
                 }

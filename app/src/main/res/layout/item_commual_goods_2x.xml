@@ -26,14 +26,14 @@
         layout="@layout/layout_activity_label"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/sc_mm_35"
-        android:layout_marginLeft="@dimen/sc_mm_8"
+        android:layout_marginLeft="@dimen/sc_mm_12"
         android:layout_marginTop="@dimen/sc_mm_16" />
 
     <TextView
         android:id="@+id/tv_qt_pro_descrip"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/sc_mm_8"
+        android:layout_marginLeft="@dimen/sc_mm_12"
         android:layout_marginTop="@dimen/sc_mm_16"
         android:ellipsize="end"
         android:gravity="center_vertical|left"
@@ -46,7 +46,7 @@
         android:id="@+id/tv_qt_pro_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/sc_mm_8"
+        android:layout_marginLeft="@dimen/sc_mm_12"
         android:layout_marginTop="@dimen/sc_mm_16"
         android:ellipsize="end"
         android:gravity="center_vertical|left"
@@ -54,58 +54,38 @@
         android:textColor="@color/text_gray_hint_n"
         android:textSize="@dimen/sc_mm_22" />
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/sc_mm_20"
         android:gravity="center_vertical"
-        android:paddingLeft="@dimen/sc_mm_8"
-        android:paddingRight="@dimen/sc_mm_8">
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/sc_mm_12">
 
         <TextView
             android:id="@+id/tv_qt_pro_price"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/sc_mm_12"
+            android:layout_weight="1"
+            android:ellipsize="end"
             android:gravity="center_vertical"
+            android:maxLines="1"
+            android:text="@string/defaul"
             android:textColor="@color/text_red_color"
             android:textSize="@dimen/sc_mm_28" />
-
-        <TextView
-            android:id="@+id/tv_qt_pro_wait_buy"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/sc_mm_10"
-            android:layout_toRightOf="@id/tv_qt_pro_price"
-            android:background="@drawable/border_cir_2dp_yel"
-            android:paddingLeft="@dimen/sc_mm_10"
-            android:paddingTop="@dimen/sc_mm_2"
-            android:paddingRight="@dimen/sc_mm_10"
-            android:paddingBottom="@dimen/sc_mm_2"
-            android:text="待售"
-            android:textColor="@color/white"
-            android:textSize="@dimen/sc_mm_22"
-            android:visibility="gone" />
-
-        <TextView
-            android:id="@+id/tv_qt_pro_market_price"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/sc_mm_40"
-            android:layout_toRightOf="@id/tv_qt_pro_wait_buy"
-            android:textColor="@color/text_login_gray_s"
-            android:textSize="@dimen/sc_mm_26"
-            android:visibility="gone" />
 
         <include
             layout="@layout/layout_vip_save"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/sc_mm_34"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="@dimen/sc_mm_12" />
-    </RelativeLayout>
+            android:layout_height="@dimen/sc_mm_34" />
+
+        <ImageView
+            android:id="@+id/iv_pro_add_car"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/sc_mm_5"
+            android:src="@drawable/sel_ql_shop_b_car"
+            android:visibility="visible" />
+    </LinearLayout>
 </LinearLayout>

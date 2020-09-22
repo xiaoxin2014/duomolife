@@ -1,6 +1,5 @@
 package com.amkj.dmsh.shopdetails.activity;
 
-import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -19,6 +18,7 @@ import com.amkj.dmsh.utils.gson.GsonUtils;
 import java.util.HashMap;
 import java.util.Map;
 
+import androidx.appcompat.widget.Toolbar;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -52,6 +52,7 @@ public class RefundMoneyActivity extends BaseActivity {
     @BindView(R.id.tv_arrive_time)
     TextView mTvArriveTime;
     private String refundNo;
+    private String isZero;//"1"代表是0元订单
     private RequestStatus mRequestStatus;
 
     @Override
@@ -66,6 +67,7 @@ public class RefundMoneyActivity extends BaseActivity {
         mTlQualityBar.setSelected(true);
         if (getIntent() != null) {
             refundNo = getIntent().getStringExtra("refundNo");
+            isZero = getIntent().getStringExtra("isZero");
         }
     }
 
@@ -73,7 +75,7 @@ public class RefundMoneyActivity extends BaseActivity {
     protected void loadData() {
         Map<String, Object> map = new HashMap<>();
         map.put("refundNo", refundNo);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.Q_GET_REFUND_GO_INFO, map, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, "1".equals(isZero) ? Url.GET_ZERO_REFUND_INFO : Url.Q_GET_REFUND_GO_INFO, map, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String resultJson) {
 
@@ -88,7 +90,7 @@ public class RefundMoneyActivity extends BaseActivity {
                             mTvArriveTime.setText(getStrings(result.getReceiveRefundTime()));
                         }
                     } else {
-                        ConstantMethod.showToast( mRequestStatus.getMsg());
+                        ConstantMethod.showToast(mRequestStatus.getMsg());
                     }
                 }
 
@@ -110,7 +112,7 @@ public class RefundMoneyActivity extends BaseActivity {
                 finish();
                 break;
             case R.id.iv_img_service:
-                QyServiceUtils.getQyInstance().openQyServiceChat(getActivity(),"钱款去向");
+                QyServiceUtils.getQyInstance().openQyServiceChat(getActivity(), "钱款去向");
                 break;
         }
     }

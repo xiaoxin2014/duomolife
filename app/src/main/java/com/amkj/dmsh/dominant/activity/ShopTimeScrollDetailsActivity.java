@@ -86,7 +86,7 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeFloat;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
@@ -161,7 +161,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
     private String thirdUrl;
     private String thirdId;
     private CustomPopWindow mCustomPopWindow;
-    private String sharePageUrl = Url.BASE_SHARE_PAGE_TWO + "m/template/common/taoBaoGoods.html?id=";
+    private String sharePageUrl = Url.BASE_SHARE_PAGE_TWO + "common/taoBaoGoods.html?id=";
     private CBViewHolderCreator cbViewHolderCreator;
     private FragmentManager fragmentManager;
     private String[] promotionProduct = {"Top团品推荐", "即将截团"};
@@ -489,7 +489,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
         tvShopTimeProductName.setText(getStrings(productDetailBean.getName()));
 //        商品价格区间
         if (!TextUtils.isEmpty(productDetailBean.getPrice()) && !TextUtils.isEmpty(productDetailBean.getMaxPrice())) {
-            if (getFloatNumber(productDetailBean.getPrice()) < getFloatNumber(productDetailBean.getMaxPrice())) {
+            if (getStringChangeFloat(productDetailBean.getPrice()) < getStringChangeFloat(productDetailBean.getMaxPrice())) {
                 tvShopTimeProductPrice.setText(getStringsChNPrice(this, productDetailBean.getPrice() + "-" + productDetailBean.getMaxPrice()));
             } else {
                 tvShopTimeProductPrice.setText(getStringsChNPrice(this, productDetailBean.getPrice()));
@@ -775,7 +775,7 @@ public class ShopTimeScrollDetailsActivity extends BaseActivity {
      */
     private void setClickProductTotal() {
         Map<String, Object> params = new HashMap<>();
-        params.put("id", productId);
+        params.put("productId", productId);
         NetLoadUtils.getNetInstance().loadNetDataPost(this, TIME_PRODUCT_CLICK_TOTAL, params, null);
     }
 

@@ -59,22 +59,20 @@ public class PostContentAdapter extends BaseQuickAdapter<PostBean, BaseViewHolde
         ImageView ivCover = helper.getView(R.id.iv_cover);
         if (!TextUtils.isEmpty(item.getCover())) {
             ViewGroup.LayoutParams layoutParams = ivCover.getLayoutParams();
-
             int coverHeight = item.getCoverHeight();
             int coverWidth = item.getCoverWidth();
 
             if (item.getCoverHeight() == 0 || item.getCoverWidth() == 0) {
                 layoutParams.width = MATCH_PARENT;
-                layoutParams.height = AutoSizeUtils.mm2px(mAppContext, 300);
+                layoutParams.height = AutoSizeUtils.mm2px(mAppContext, 350);
             } else {
                 int screenWidth = ((TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike()).getScreenWidth();
-                int with = (screenWidth - 3 * AutoSizeUtils.mm2px(context, 20)) / 2;
+                int with = (screenWidth - 3 * AutoSizeUtils.mm2px(context, 10)) / 2;
                 int height = (int) ((coverHeight * 1.0f / coverWidth * 1.0f) * with);
 
                 if (height > 640) {
                     height = 640;
                 }
-                layoutParams.width = with + 10;//加10防止计算偏差图片留有空白
                 layoutParams.height = height;
                 Log.d(TAG, with + "");
                 Log.d(TAG, height + "");
@@ -87,8 +85,8 @@ public class PostContentAdapter extends BaseQuickAdapter<PostBean, BaseViewHolde
         GlideImageLoaderUtil.loadRoundImg(context, helper.getView(R.id.iv_head_icon), item.getAvatar(), AutoSizeUtils.mm2px(context, 40), R.drawable.default_ava_img);
         helper.setText(R.id.tv_topic_name, getStrings(item.getTopicTitle()))
                 .setGone(R.id.tv_topic_name, mShowTopictitle && !TextUtils.isEmpty(getStrings(item.getTopicTitle())))
-                .setText(R.id.tv_content, getStrings(item.getDigest()))
-                .setGone(R.id.tv_content, !TextUtils.isEmpty(item.getDigest()))
+                .setText(R.id.tv_content, getStrings(item.getContent()))
+                .setGone(R.id.tv_content, !TextUtils.isEmpty(item.getContent()))
                 .setText(R.id.tv_user_name, getStrings(item.getNickName()))
                 .setText(R.id.tv_favor, getStrings(String.valueOf(item.getFavorNum() > 0 ? item.getFavorNum() : "赞")))
                 .setGone(R.id.iv_cover, !TextUtils.isEmpty(item.getCover()));

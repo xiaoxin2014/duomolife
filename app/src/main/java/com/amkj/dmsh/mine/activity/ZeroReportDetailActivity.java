@@ -6,14 +6,15 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.mine.bean.ZeroReportDetailEntity;
-import com.amkj.dmsh.mine.bean.ZeroReportDetailEntity.ZeroReportDetailBean;
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.find.bean.PostEntity.PostBean;
+import com.amkj.dmsh.find.bean.RelatedGoodsBean;
 import com.amkj.dmsh.mine.adapter.ReportContentAdapter;
+import com.amkj.dmsh.mine.bean.ZeroReportDetailEntity;
+import com.amkj.dmsh.mine.bean.ZeroReportDetailEntity.ZeroReportDetailBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.user.bean.LikedProductBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -59,15 +60,13 @@ public class ZeroReportDetailActivity extends BaseActivity {
     TextView mTvBuy;
     @BindView(R.id.tv_total_num)
     TextView mTvTotalNum;
-    @BindView(R.id.rv_rcommend)
-    RecyclerView mRvRcommend;
     @BindView(R.id.rv_report)
     RecyclerView mRvReport;
     @BindView(R.id.smart_communal_refresh)
     SmartRefreshLayout mSmartCommunalRefresh;
     private String mActivityId;
     private String mOrderId;
-    private LikedProductBean mProductInfo;
+    private RelatedGoodsBean mProductInfo;
     private List<PostBean> reports = new ArrayList<>();
     private ReportContentAdapter mReportContentAdapter;
     private ZeroReportDetailEntity mReportDetailEntity;
@@ -97,7 +96,6 @@ public class ZeroReportDetailActivity extends BaseActivity {
     protected void loadData() {
         Map<String, String> map = new HashMap<>();
         map.put("activityId", mActivityId);
-        map.put("orderId", mOrderId);
         NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.GET_REPORT_DETAIL, map, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
@@ -126,8 +124,8 @@ public class ZeroReportDetailActivity extends BaseActivity {
         //设置商品数据
         mProductInfo = reportDetailBean.getProductInfo();
         if (mProductInfo != null) {
-            GlideImageLoaderUtil.loadCenterCrop(this, mIvCover, mProductInfo.getPicUrl());
-            mTvName.setText(getStrings(mProductInfo.getName()));
+            GlideImageLoaderUtil.loadCenterCrop(this, mIvCover, mProductInfo.getPictureUrl());
+            mTvName.setText(getStrings(mProductInfo.getTitle()));
             mTvPrice.setText(getRmbFormat(this, mProductInfo.getPrice(), true, "#333"));
         }
 
@@ -138,7 +136,8 @@ public class ZeroReportDetailActivity extends BaseActivity {
             reports.addAll(reportList);
             mReportContentAdapter.setNewData(reports.subList(0, 1));
         }
-        mTvTotalNum.setText(getIntegralFormat(this, R.string.total_report, reports.size()));
+        String total = getIntegralFormat(this, R.string.total_report, reports.size());
+        mTvTotalNum.setText(ConstantMethod.getSpannableString(total, total.indexOf("查看全部"), total.length(), -1, "#FF0A88FA", false));
         mTvTotalNum.setVisibility(reports.size() > 1 ? View.VISIBLE : View.GONE);
     }
 
@@ -151,7 +150,7 @@ public class ZeroReportDetailActivity extends BaseActivity {
                 break;
             case R.id.rl_product:
                 if (mProductInfo != null) {
-                    skipProductUrl(this, 1, mProductInfo.getId());
+                    skipProductUrl(this, 1, mProductInfo.getProductId());
                 }
                 break;
             case R.id.tv_total_num:

@@ -1,16 +1,14 @@
 package com.amkj.dmsh.mine.activity;
 
 import android.content.Intent;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.bean.CommunalDetailBean;
+import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.mine.bean.WebDataCommunalEntity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
@@ -20,12 +18,15 @@ import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -33,9 +34,9 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TYPE_PRIVACY_POLICY;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TYPE_REG_AGREEMENT;
+import static com.amkj.dmsh.constant.ConstantVariable.WEB_TYPE_SAVE_MONEY;
+import static com.amkj.dmsh.constant.ConstantVariable.WEB_TYPE_SHARE_GIFT;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_VALUE_TYPE;
-import static com.amkj.dmsh.constant.Url.USER_PRIVACY_POLICY;
-import static com.amkj.dmsh.constant.Url.USER_REGISTER_AGREEMENT;
 
 /**
  * @author LGuiPeng
@@ -44,7 +45,7 @@ import static com.amkj.dmsh.constant.Url.USER_REGISTER_AGREEMENT;
  * version 3.2.0
  * class description:web样式公用activity
  */
-public class WebRuleCommunalActivity extends BaseActivity{
+public class WebRuleCommunalActivity extends BaseActivity {
     @BindView(R.id.tv_header_shared)
     TextView header_shared;
     @BindView(R.id.tv_header_title)
@@ -68,20 +69,15 @@ public class WebRuleCommunalActivity extends BaseActivity{
     @Override
     protected void initViews() {
         Intent intent = getIntent();
-        webRuleType = intent.getStringExtra(WEB_VALUE_TYPE);
         header_shared.setVisibility(View.GONE);
-        if(TextUtils.isEmpty(webRuleType)){
-            NetLoadUtils.getNetInstance().showLoadSirEmpty(loadService);
-            return;
+        if (!TextUtils.isEmpty(getWebUrl(getIntent().getStringExtra(WEB_VALUE_TYPE)))) {
+            webRuleType = intent.getStringExtra(WEB_VALUE_TYPE);
+        } else {
+            showToast("数据有误，请重试");
+            finish();
         }
-        tv_header_title.setText(WEB_TYPE_PRIVACY_POLICY.equals(webRuleType)?"多么生活用户隐私政策":
-                WEB_TYPE_REG_AGREEMENT.equals(webRuleType)?"多么生活用户注册协议":"");
-        smart_communal_refresh_web.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(@NonNull RefreshLayout refreshLayout) {
-                loadData();
-            }
-        });
+        tv_header_title.setText(getWebTitle(webRuleType));
+        smart_communal_refresh_web.setOnRefreshListener(refreshLayout -> loadData());
         communal_recycler_wrap.setLayoutManager(new LinearLayoutManager(WebRuleCommunalActivity.this));
         communal_recycler_wrap.setNestedScrollingEnabled(false);
         communalDescriptionAdapter = new CommunalDetailAdapter(WebRuleCommunalActivity.this, descripDetailList);
@@ -108,35 +104,32 @@ public class WebRuleCommunalActivity extends BaseActivity{
 
     @Override
     protected void loadData() {
-        String url = "";
-        if(WEB_TYPE_REG_AGREEMENT.equals(webRuleType)||
-                WEB_TYPE_PRIVACY_POLICY.equals(webRuleType)){
-            url = WEB_TYPE_REG_AGREEMENT.equals(webRuleType)?USER_REGISTER_AGREEMENT:USER_PRIVACY_POLICY;
-        }else{
-            NetLoadUtils.getNetInstance().showLoadSirEmpty(loadService);
-            showToast("数据类型错误，请重试！");
-            return;
+        String webUrl = getWebUrl(webRuleType);
+        Map<String, Object> map = new HashMap<>();
+        if (Url.GET_VIP_REALTED_RULE.equals(webUrl)) {
+            map.put("reminderType", WEB_TYPE_SAVE_MONEY.equals(webRuleType) ? 30 : 31);
         }
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,url,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, getWebUrl(webRuleType), map, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
+                descripDetailList.clear();
                 smart_communal_refresh_web.finishRefresh();
                 NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
                 WebDataCommunalEntity webDataCommunalEntity = GsonUtils.fromJson(result, WebDataCommunalEntity.class);
-                if(webDataCommunalEntity!=null&&
-                        SUCCESS_CODE.equals(webDataCommunalEntity.getCode())&&
-                        webDataCommunalEntity.getWebDataCommunalList()!=null&&
-                        webDataCommunalEntity.getWebDataCommunalList().size()>0){
-                    descripDetailList.clear();
-                    descripDetailList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(webDataCommunalEntity.getWebDataCommunalList()));
+                if (webDataCommunalEntity != null && SUCCESS_CODE.equals(webDataCommunalEntity.getCode())) {
+                    List<CommunalDetailBean> webDataCommunalList = webDataCommunalEntity.getWebDataCommunalList();
+                    if (webDataCommunalList != null && webDataCommunalList.size() > 0) {
+                        descripDetailList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(webDataCommunalList));
+                    }
                 }
                 communalDescriptionAdapter.notifyDataSetChanged();
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, descripDetailList);
             }
 
             @Override
             public void onNotNetOrException() {
                 smart_communal_refresh_web.finishRefresh();
-                NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, descripDetailList);
             }
         });
     }
@@ -144,5 +137,32 @@ public class WebRuleCommunalActivity extends BaseActivity{
     @OnClick(R.id.tv_life_back)
     void goBack() {
         finish();
+    }
+
+
+    private String getWebTitle(String webRuleType) {
+        if (WEB_TYPE_PRIVACY_POLICY.equals(webRuleType)) {
+            return "多么生活用户隐私政策";
+        } else if (WEB_TYPE_REG_AGREEMENT.equals(webRuleType)) {
+            return "多么生活用户注册协议";
+        } else if (WEB_TYPE_SAVE_MONEY.equals(webRuleType)) {
+            return "省钱规则";
+        } else if (WEB_TYPE_SHARE_GIFT.equals(webRuleType)) {
+            return "分享有礼规则";
+        } else {
+            return "";
+        }
+    }
+
+    private String getWebUrl(String webRuleType) {
+        if (WEB_TYPE_PRIVACY_POLICY.equals(webRuleType)) {
+            return Url.USER_PRIVACY_POLICY;
+        } else if (WEB_TYPE_REG_AGREEMENT.equals(webRuleType)) {
+            return Url.USER_REGISTER_AGREEMENT;
+        } else if (WEB_TYPE_SAVE_MONEY.equals(webRuleType) || WEB_TYPE_SHARE_GIFT.equals(webRuleType)) {
+            return Url.GET_VIP_REALTED_RULE;
+        } else {
+            return "";
+        }
     }
 }

@@ -42,9 +42,10 @@ public class MyInterceptor implements Interceptor {
     @Override
     public Response intercept(Chain chain) {
         Response response = null;
+        Request request = chain.request();
+        Request.Builder builder = request.newBuilder();
+        String DomoJson = "";
         try {
-            Request request = chain.request();
-            Request.Builder builder = request.newBuilder();
             Map<String, Object> newMap = new HashMap<>(mDomoCommon);
             if (ConstantMethod.userId > 0) {
                 //登录情况下传uid和token
@@ -53,7 +54,7 @@ public class MyInterceptor implements Interceptor {
                 newMap.put("token", token);
             }
 
-            String DomoJson = new JSONObject(newMap).toString();
+            DomoJson = new JSONObject(newMap).toString();
             //添加公共请求参数
             String base64 = getBase64(newMap);
             builder.addHeader("domo-custom", base64);
@@ -68,7 +69,13 @@ public class MyInterceptor implements Interceptor {
             if (!TextUtils.isEmpty(userAgent)) {
                 builder.addHeader(HttpHeaders.HEAD_KEY_USER_AGENT, userAgent);
             }
+        } catch (Exception e) {
+            //上报异常
+            CrashReport.postCatchedException(new Exception(
+                    e.getMessage(), e.getCause()));
+        }
 
+        try {
             response = chain.proceed(builder.build());
             String responseInfo = response.peekBody(1024 * 1024).string();
             //打印响应结果
@@ -78,7 +85,6 @@ public class MyInterceptor implements Interceptor {
             CrashReport.postCatchedException(new Exception(
                     e.getMessage(), e.getCause()));
         }
-
 
         return response;
     }
@@ -93,7 +99,6 @@ public class MyInterceptor implements Interceptor {
             //打印请求Ulr
             Log.d("retrofitRequest", String.format("Sending request %s",
                     request.url()));
-
             Log.d("retrofitHeaderJson", domoJson);
             //打印请求参数
             String method = request.method();

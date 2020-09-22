@@ -267,7 +267,7 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
 
                 BaseQuickAdapter communalGoodListAdapter = null;
                 if (holder.getItemViewType() == TYPE_GOODS_2X) {
-                    communalGoodListAdapter = new GoodProductAdapter(context, detailObjectBean.getGoodsList(), true);
+                    communalGoodListAdapter = new GoodProductAdapter(context, detailObjectBean.getGoodsList(), 1);
                     holder.communal_recycler_wrap.setAdapter(communalGoodListAdapter);
                 } else if (holder.getItemViewType() == TYPE_GOODS_3X) {
                     communalGoodListAdapter = new CatergoryGoodsAdapter((context), detailObjectBean.getGoodsList(), true);

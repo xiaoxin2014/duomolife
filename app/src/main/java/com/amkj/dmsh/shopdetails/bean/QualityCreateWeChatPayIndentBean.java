@@ -65,8 +65,17 @@ public class QualityCreateWeChatPayIndentBean {
 
         private PayKeyBean payKey;
         private String no;
+        private String orderId;
         private String code;
         private String msg;
+
+        public String getOrderId() {
+            return orderId;
+        }
+
+        public void setOrderId(String orderId) {
+            this.orderId = orderId;
+        }
 
         public String getCode() {
             return code;

@@ -9,6 +9,7 @@ import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.UMShareAction;
+import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.adapter.PointSpikeTimeShaftAdapter;
 import com.amkj.dmsh.dominant.bean.PointSpikeTimeShaftEntity;
 import com.amkj.dmsh.dominant.bean.PointSpikeTimeShaftEntity.TimeAxisInfoListBean;
@@ -38,7 +39,6 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.constant.Url.BASE_SHARE_PAGE_TWO;
 import static com.amkj.dmsh.constant.Url.Q_POINT_SPIKE_AD;
 import static com.amkj.dmsh.constant.Url.Q_POINT_SPIKE_TIME_SHAFT;
 
@@ -256,6 +256,6 @@ public class WholePointSpikeProductActivity extends BaseActivity {
                 , picUrl
                 , title
                 , description
-                , BASE_SHARE_PAGE_TWO + "m/template/common/hours_activity.html?nav=1", 1);
+                , Url.BASE_SHARE_PAGE_TWO + "common/hours_activity.html?nav=1", 1);
     }
 }

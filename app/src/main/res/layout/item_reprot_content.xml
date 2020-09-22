@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@color/white"
     android:orientation="vertical">
 
@@ -15,7 +15,7 @@
         android:layout_marginRight="@dimen/sc_mm_35"
         android:layout_marginBottom="@dimen/sc_mm_30"
         android:ellipsize="end"
-        android:maxLines="3"
+        android:maxLines="4"
         android:text="@string/defaul"
         android:textColor="@color/text_login_gray_s"
         android:textSize="@dimen/sc_mm_28" />
@@ -42,6 +42,7 @@
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/sel_art_like_heart"
             android:drawablePadding="@dimen/sc_mm_10"
+            android:gravity="center"
             android:text="赞"
             android:textColor="@color/text_login_gray_s"
             android:textSize="@dimen/sc_mm_22" />
@@ -53,6 +54,7 @@
             android:layout_marginLeft="@dimen/sc_mm_60"
             android:drawableLeft="@drawable/sel_art_collect_star"
             android:drawablePadding="@dimen/sc_mm_10"
+            android:gravity="center"
             android:text="收藏"
             android:textColor="@color/text_login_gray_s"
             android:textSize="@dimen/sc_mm_22" />

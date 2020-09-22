@@ -1,12 +1,15 @@
 package com.amkj.dmsh.mine.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Paint;
 import android.text.TextUtils;
 import android.util.SparseArray;
+import android.view.View;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.mine.activity.ZeroActivityDetailActivity;
 import com.amkj.dmsh.mine.bean.MyZeroApplyEntity.MyZeroApplyBean;
 import com.amkj.dmsh.utils.CountDownTimer;
 import com.amkj.dmsh.utils.TimeUtils;
@@ -19,6 +22,7 @@ import java.util.List;
 import androidx.annotation.Nullable;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
 import static com.amkj.dmsh.utils.TimeUtils.getCoutDownTime;
 import static com.amkj.dmsh.utils.TimeUtils.getTimeDifference;
@@ -87,7 +91,7 @@ public class MyZeroApplyAdapter extends BaseQuickAdapter<MyZeroApplyBean, BaseVi
 
     private void setCountTime(TextView tvTime, String endTime) {
         tvTime.setText(!isEndOrStartTime(currentTime, endTime) ?
-                "距截止试用报名： " + getCoutDownTime(getTimeDifference(currentTime, endTime), false) : "");
+                "剩余" + getCoutDownTime(getTimeDifference(currentTime, endTime), false) : "");
     }
 
     @Override
@@ -99,29 +103,32 @@ public class MyZeroApplyAdapter extends BaseQuickAdapter<MyZeroApplyBean, BaseVi
         GlideImageLoaderUtil.loadCenterCrop(context, helper.getView(R.id.iv_pic), item.getProductImg());
         helper.setText(R.id.tv_apply_time, getStringsFormat(context, R.string.zero_apply_time, item.getApplyTime()))
                 .setText(R.id.tv_status, getStatus(status))
-                .setText(R.id.tv_name, getStrings(item.getProductName()))
-                .setText(R.id.tv_price, "￥" + item.getPrice())
-                .setText(R.id.tv_market_price, item.getMarketPrice())
+                .setText(R.id.tv_price, getStringsChNPrice(context, item.getPrice()))
+                .setText(R.id.tv_market_price, getStringsChNPrice(context, item.getMarketPrice()))
                 .setText(R.id.tv_msg, getStrings(item.getMsgX()))
                 .setText(R.id.tv_button, getButtonText(item.getStatus()))
-                .setGone(R.id.ll_status, "1".equals(status))//申请成功显示底部按钮
-                .setGone(R.id.tv_end_time, !"2".equals(status))
+                .setGone(R.id.tv_button, !TextUtils.isEmpty(item.getStatus()))
+                .setText(R.id.tv_name, getStrings(item.getProductName()))
+                .setGone(R.id.ll_status, !"0".equals(status))//申请中不显示底部按钮
+                .setGone(R.id.tv_end_time, "0".equals(status))//只有申请中才需要显示倒计时
                 .setGone(R.id.tv_detail, !TextUtils.isEmpty(item.getOrderId()))
                 .addOnClickListener(R.id.tv_button).setTag(R.id.tv_button, item)
                 .addOnClickListener(R.id.tv_detail).setTag(R.id.tv_detail, item);
-
+        helper.getView(R.id.rl_product).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ZeroActivityDetailActivity.class);
+                intent.putExtra("activityId", item.getActivityId());
+                context.startActivity(intent);
+            }
+        });
         //只有申请中才需要显示倒计时
         TextView tvEndTime = helper.getView(R.id.tv_end_time);
         if ("0".equals(status)) {
             setCountTime(tvEndTime, item.getEndTime());
             sparseArray.put(helper.getAdapterPosition() - getHeaderLayoutCount(), tvEndTime);
             tvEndTime.setTag(item.getEndTime());
-        } else if ("2".equals(status)) {
-            tvEndTime.setText("很遗憾，多多申请总有惊喜~");
-        } else {
-            tvEndTime.setText("");
         }
-
         helper.itemView.setTag(item);
     }
 

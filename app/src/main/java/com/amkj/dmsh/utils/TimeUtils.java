@@ -90,10 +90,16 @@ public class TimeUtils {
      * @return
      */
     public static String getMilliSecondDate(long milliSecond) {
+        return getMilliSecondDate(milliSecond, "yyyy-MM-dd HH:mm:ss");
+    }
+
+
+    //时分秒获取 时
+    public static String getMilliSecondDate(long milliSecond, String timeSwitchover) {
         if (milliSecond > 0) {
             try {
                 Date time = new Date(milliSecond);
-                SimpleDateFormat formats = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+                SimpleDateFormat formats = new SimpleDateFormat(timeSwitchover, Locale.CHINA);
                 return formats.format(time);
             } catch (Exception e) {
                 return "";
@@ -101,21 +107,6 @@ public class TimeUtils {
         } else {
             return "";
         }
-    }
-
-
-    //时分秒获取 时
-    private static int getDataFormatHour(String time) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss", Locale.CHINA);
-        try {
-            Date date = simpleDateFormat.parse(time);
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(date);
-            return calendar.get(Calendar.HOUR_OF_DAY);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return 0;
     }
 
     //获取当前星期几

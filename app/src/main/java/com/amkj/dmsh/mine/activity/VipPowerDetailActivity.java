@@ -1,11 +1,14 @@
 package com.amkj.dmsh.mine.activity;
 
+import android.content.Intent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.bean.RequestStatus;
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.mine.adapter.PowerPageAdapter;
 import com.amkj.dmsh.mine.bean.PowerEntity;
@@ -22,12 +25,16 @@ import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.OnClick;
 
+import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
+import static com.amkj.dmsh.constant.ConstantMethod.isVip;
+import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+
 /**
  * Created by xiaoxin on 2020/7/23
  * Version:v4.7.0
  * ClassDescription :会员权益
  */
-public class VipPowerActivity extends BaseActivity {
+public class VipPowerDetailActivity extends BaseActivity {
     @BindView(R.id.tv_life_back)
     TextView mTvLifeBack;
     @BindView(R.id.tv_header_title)
@@ -42,9 +49,12 @@ public class VipPowerActivity extends BaseActivity {
     TextView mTvOpenVip;
     @BindView(R.id.ll_power)
     LinearLayout mLlPower;
+    @BindView(R.id.ll_open)
+    LinearLayout mLlOpen;
     private PowerEntity mPowerEntity;
     private List<PowerBean> mPowerList = new ArrayList<>();
     private PowerPageAdapter mPowerPageAdapter;
+    private String mPosition;
 
     @Override
     protected int getContentView() {
@@ -54,11 +64,16 @@ public class VipPowerActivity extends BaseActivity {
     @Override
     protected void initViews() {
         mTvHeaderTitle.setText("多么会员权益");
+        mTvHeaderShared.setVisibility(View.GONE);
+        if (getIntent().getExtras() != null) {
+            mPosition = getIntent().getStringExtra("position");
+        }
     }
 
     @Override
     protected void loadData() {
         getPowerList();
+        getVipInfo();
     }
 
     //获取权益列表
@@ -77,6 +92,7 @@ public class VipPowerActivity extends BaseActivity {
                     mVpPowerInfo.setAdapter(mPowerPageAdapter);
                     mVpPowerInfo.setOffscreenPageLimit(mPowerList.size() - 1);
                     mTablayoutPower.setViewPager(mVpPowerInfo, mPowerList);
+                    mTablayoutPower.setCurrentTab(ConstantMethod.getStringChangeIntegers(mPosition));
                 }
                 NetLoadUtils.getNetInstance().showLoadSir(loadService, mPowerList, mPowerEntity);
             }
@@ -84,6 +100,25 @@ public class VipPowerActivity extends BaseActivity {
             @Override
             public void onNotNetOrException() {
                 NetLoadUtils.getNetInstance().showLoadSir(loadService, mPowerList, mPowerEntity);
+            }
+        });
+    }
+
+    //获取会员信息
+    private void getVipInfo() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.GET_VIP_USER_INFO, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
+                if (requestStatus != null) {
+                    if (SUCCESS_CODE.equals(requestStatus.getCode())) {
+                        mTvOpenVip.setText(getStringsFormat(getActivity(), R.string.open_vip_price, requestStatus.getResult().getPriceText()));
+                    }
+                }
+            }
+
+            @Override
+            public void onNotNetOrException() {
             }
         });
     }
@@ -96,6 +131,8 @@ public class VipPowerActivity extends BaseActivity {
                 break;
             //开通vip
             case R.id.tv_open_vip:
+                Intent intent = new Intent(this, OpenVipActivity.class);
+                startActivity(intent);
                 break;
         }
     }
@@ -108,5 +145,11 @@ public class VipPowerActivity extends BaseActivity {
     @Override
     public View getLoadView() {
         return mLlPower;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mLlOpen.setVisibility(isVip() ? View.GONE : View.VISIBLE);
     }
 }

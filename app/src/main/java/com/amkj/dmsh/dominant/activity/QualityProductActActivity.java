@@ -15,12 +15,13 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.UMShareAction;
+import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.adapter.GoodProductAdapter;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.LikedProductBean;
+import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.utils.CountDownTimer;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
@@ -57,7 +58,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
-import static com.amkj.dmsh.constant.Url.BASE_SHARE_PAGE_TWO;
 import static com.amkj.dmsh.constant.Url.Q_ACT_PRO_LIST;
 import static com.amkj.dmsh.dao.OrderDao.getCarCount;
 import static com.amkj.dmsh.utils.TimeUtils.getTimeDifferenceText;
@@ -340,7 +340,7 @@ public class QualityProductActActivity extends BaseActivity {
                     , likedProductBean.getPicUrl()
                     , getStrings(likedProductEntity.getTitle())
                     , getStrings(likedProductEntity.getActivityDesc())
-                    , BASE_SHARE_PAGE_TWO + "m/template/common/activitySpecial.html?id=" + likedProductBean.getActivityCode()
+                    , Url.BASE_SHARE_PAGE_TWO + "common/activitySpecial.html?id=" + likedProductBean.getActivityCode()
                     , "pages/activitySpecial/activitySpecial?id=" + likedProductBean.getActivityCode(), likedProductBean.getId());
         }
     }

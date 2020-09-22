@@ -41,6 +41,7 @@ public class ZeroIndentEntity extends BaseTimeEntity {
          */
 
         private String orderNo;
+        private String refundNo;
         private String createTime;
         private String payTime;
         private String payType;
@@ -53,6 +54,14 @@ public class ZeroIndentEntity extends BaseTimeEntity {
         private ZeroGoodsInfoBean zeroGoodsInfo;
         private List<PriceInfoBean> priceInfoList;
 
+
+        public String getRefundNo() {
+            return refundNo;
+        }
+
+        public void setRefundNo(String refundNo) {
+            this.refundNo = refundNo;
+        }
 
         public String getPayTime() {
             return payTime;

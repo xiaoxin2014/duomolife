@@ -9,6 +9,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.mine.activity.OpenVipActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.CouponProductActivity;
@@ -59,8 +60,6 @@ public class DirectMyCouponFragment extends BaseFragment {
     private List<DirectCouponBean> couponList = new ArrayList<>();
     private int page = 1;
     private DirectMyCouponAdapter directMyCouponAdapter;
-    private int scrollY;
-    private float screenHeight;
     private DirectCouponEntity directCouponEntity;
 
     @Override
@@ -98,6 +97,9 @@ public class DirectMyCouponFragment extends BaseFragment {
                     //全场券
                     if (directCouponBean.getUse_range() == 0) {
                         setSkipPath(getActivity(), directCouponBean.getAndroid_link(), false);
+                    } else if (directCouponBean.getUse_range() == 10) {//仅会员可用
+                        Intent intent = new Intent(getActivity(), OpenVipActivity.class);
+                        startActivity(intent);
                     } else {
                         //指定券
                         Intent intent = new Intent(getActivity(), CouponProductActivity.class);
@@ -135,7 +137,7 @@ public class DirectMyCouponFragment extends BaseFragment {
                     } else {
                         directMyCouponAdapter.loadMoreEnd();
                     }
-                }else {
+                } else {
                     directMyCouponAdapter.loadMoreEnd();
                 }
                 directMyCouponAdapter.notifyDataSetChanged();

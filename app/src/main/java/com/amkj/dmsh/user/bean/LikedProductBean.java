@@ -5,6 +5,7 @@ import android.os.Parcelable;
 import android.text.TextUtils;
 
 import com.amkj.dmsh.base.BaseRemoveExistProductBean;
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.annotations.SerializedName;
@@ -267,7 +268,7 @@ public class LikedProductBean extends BaseRemoveExistProductBean implements Mult
     }
 
     public String getPrice() {
-        return price;
+        return ConstantMethod.getStringChangeDouble(vipPrice) > 0 ? vipPrice : price;
     }
 
     public void setPrice(String price) {

@@ -3,31 +3,33 @@
     xmlns:cube_ptr="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     android:orientation="vertical">
 
     <include layout="@layout/activity_domolife_header" />
 
-    <com.scwang.smartrefresh.layout.SmartRefreshLayout
-        android:id="@+id/smart_communal_refresh"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        cube_ptr:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:layout_height="match_parent">
 
-        <include layout="@layout/layout_refresh_header_gif" />
-
-        <LinearLayout
+        <com.scwang.smartrefresh.layout.SmartRefreshLayout
+            android:id="@+id/smart_communal_refresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            cube_ptr:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <include layout="@layout/layout_refresh_header_gif" />
+
 
             <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1">
+                android:layout_height="match_parent">
 
                 <LinearLayout
+                    android:id="@+id/ll_detail"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:background="@color/white"
                     android:orientation="vertical">
 
                     <LinearLayout
@@ -56,6 +58,20 @@
                             android:visibility="gone" />
                     </LinearLayout>
 
+
+                    <TextView
+                        android:id="@+id/tv_refund_aspect"
+                        android:layout_width="@dimen/sc_mm_140"
+                        android:layout_height="@dimen/sc_mm_54"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_margin="@dimen/sc_mm_45"
+                        android:background="@drawable/border_circle_three_blue_white"
+                        android:gravity="center"
+                        android:text="钱款去向"
+                        android:textColor="@color/intent_foot_button"
+                        android:textSize="@dimen/sc_mm_26"
+                        android:visibility="gone" />
+
                     <include layout="@layout/layout_indent_detail_address_info" />
 
                     <View
@@ -65,17 +81,34 @@
 
                     <include layout="@layout/item_new_indent_product" />
 
-                    <include layout="@layout/layout_direct_details_bottom_default" />
+                    <include
+                        layout="@layout/layout_direct_details_bottom_default" />
                 </LinearLayout>
             </androidx.core.widget.NestedScrollView>
+        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
+        <LinearLayout
+            android:id="@+id/ll_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/border_top_line"
+            android:gravity="right">
 
-            <com.amkj.dmsh.views.MainButtonView
-                android:visibility="gone"
-                android:id="@+id/main_button_view"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/sc_mm_100"
-                android:background="@drawable/border_top_line" />
+            <TextView
+                android:id="@+id/tv_go_pay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/sc_mm_20"
+                android:background="@drawable/border_circle_three_blue"
+                android:gravity="center"
+                android:paddingLeft="@dimen/sc_mm_18"
+                android:paddingTop="@dimen/sc_mm_14"
+                android:paddingRight="@dimen/sc_mm_18"
+                android:paddingBottom="@dimen/sc_mm_14"
+                android:text="去支付"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sc_mm_26" />
         </LinearLayout>
-    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+    </RelativeLayout>
 </LinearLayout>

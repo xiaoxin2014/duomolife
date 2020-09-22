@@ -81,7 +81,7 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 import me.zhanghai.android.materialratingbar.MaterialRatingBar;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeFloat;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getNumCount;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -292,8 +292,6 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
                     if (productInfoEntity.getCode().equals(SUCCESS_CODE)) {
                         productInfoBean = productInfoEntity.getIntegralProductInfoBean();
                         setIntegralProductData(productInfoBean);
-                    } else if (productInfoEntity.getCode().equals(SUCCESS_CODE)) {
-                        showToast(R.string.shopOverdue);
                     } else {
                         showToast(productInfoEntity.getMsg());
                     }
@@ -526,7 +524,7 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
                     @Override
                     public void onNumChange(View view, int type, int newNum, int oldNum) {
                         if (newNum > 0) {
-                            float currentIntegralPrice = newNum * getFloatNumber(skuSaleBean.getPrice());
+                            float currentIntegralPrice = newNum * getStringChangeFloat(skuSaleBean.getPrice());
                             if (productInfoBean.getUserScore() >= currentIntegralPrice) {
                                 tv_integral_product_exchange.setEnabled(true);
                                 tv_integral_product_exchange.setText("立即兑换");
@@ -753,7 +751,7 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
         String sourceUrl = "";
         if (integralProductInfoBean != null) {
             qyProductIndentInfo = new QyProductIndentInfo();
-            sourceUrl = Url.BASE_SHARE_PAGE_TWO + "m/template/common/integralGoods.html?id=" + productInfoBean.getId();
+            sourceUrl = Url.BASE_SHARE_PAGE_TWO + "common/integralGoods.html?id=" + productInfoBean.getId();
             ;
             sourceTitle = "积分商品详情：" + productInfoBean.getName();
             qyProductIndentInfo.setUrl(sourceUrl);
@@ -778,7 +776,7 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
                     , productInfoBean.getPicUrl()
                     , "我在多么生活看中了" + productInfoBean.getName()
                     , "积分商品"
-                    , Url.BASE_SHARE_PAGE_TWO + "m/template/common/integralGoods.html?id=" + productInfoBean.getId(), productInfoBean.getId());
+                    , Url.BASE_SHARE_PAGE_TWO + "common/integralGoods.html?id=" + productInfoBean.getId(), productInfoBean.getId());
         }
     }
 

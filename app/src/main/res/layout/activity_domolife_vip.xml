@@ -6,12 +6,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include layout="@layout/activity_domolife_header" />
+    <include layout="@layout/activity_domolife_vip_header" />
 
     <LinearLayout
-        android:orientation="vertical"
+        android:id="@+id/ll_domolife_vip"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <com.scwang.smartrefresh.layout.SmartRefreshLayout
             android:id="@+id/smart_communal_refresh"
@@ -51,13 +52,13 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:background="@drawable/shap_vip_ll_bg"
-                                android:orientation="vertical">
+                                android:orientation="vertical"
+                                android:padding="@dimen/sc_mm_24">
 
                                 <RelativeLayout
                                     android:id="@+id/rl_vip_info"
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:padding="@dimen/sc_mm_24">
+                                    android:layout_height="wrap_content">
 
                                     <de.hdodenhof.circleimageview.CircleImageView
                                         android:id="@+id/iv_head_icon"
@@ -82,8 +83,8 @@
                                         android:id="@+id/tv_vip_level"
                                         android:layout_width="@dimen/sc_mm_152"
                                         android:layout_height="@dimen/sc_mm_34"
-                                        android:layout_alignBaseline="@+id/tv_user_name"
                                         android:layout_marginLeft="@dimen/sc_mm_20"
+                                        android:layout_marginTop="@dimen/sc_mm_18"
                                         android:layout_toRightOf="@+id/tv_user_name"
                                         android:background="@drawable/shap_vip_bg"
                                         android:drawableLeft="@drawable/huiyuan"
@@ -93,6 +94,15 @@
                                         android:text="@string/defaul"
                                         android:textColor="@color/text_black_t"
                                         android:textSize="@dimen/sc_mm_24" />
+
+                                    <ImageView
+                                        android:id="@+id/iv_vip_level"
+                                        android:layout_width="@dimen/sc_mm_30"
+                                        android:layout_height="@dimen/sc_mm_30"
+                                        android:layout_marginLeft="@dimen/sc_mm_5"
+                                        android:layout_marginTop="@dimen/sc_mm_20"
+                                        android:layout_toRightOf="@+id/tv_vip_level"
+                                        android:src="@drawable/vip1" />
 
                                     <TextView
                                         android:id="@+id/tv_expire_time"
@@ -106,11 +116,24 @@
                                         android:textSize="@dimen/sc_mm_24" />
 
                                     <TextView
+                                        android:id="@+id/tv_buy_record"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_below="@+id/tv_user_name"
+                                        android:layout_alignBaseline="@+id/iv_head_icon"
+                                        android:layout_marginLeft="@dimen/sc_mm_30"
+                                        android:layout_toRightOf="@+id/tv_expire_time"
+                                        android:text="购买记录 >"
+                                        android:textColor="@color/text_black_t"
+                                        android:textSize="@dimen/sc_mm_24" />
+
+                                    <TextView
                                         android:id="@+id/tv_vip_power_num"
                                         android:layout_width="@dimen/sc_mm_148"
                                         android:layout_height="@dimen/sc_mm_39"
                                         android:layout_below="@+id/iv_head_icon"
                                         android:layout_marginTop="@dimen/sc_mm_28"
+                                        android:layout_marginBottom="@dimen/sc_mm_30"
                                         android:background="@drawable/shap_circle_yellow_15dp"
                                         android:gravity="center"
                                         android:text="@string/vip_power_num"
@@ -125,7 +148,6 @@
                                         android:layout_alignBaseline="@+id/tv_vip_power_num"
                                         android:layout_marginLeft="@dimen/sc_mm_24"
                                         android:layout_toRightOf="@+id/tv_vip_power_num"
-                                        android:text="@string/defaul"
                                         android:textColor="@color/text_black_t"
                                         android:textSize="@dimen/sc_mm_24" />
 
@@ -144,13 +166,15 @@
                                 </RelativeLayout>
 
                                 <LinearLayout
+                                    android:id="@+id/ll_novip_info"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:layout_margin="@dimen/sc_mm_22"
                                     android:background="@drawable/border_rect_10dp_bg_white"
-                                    android:divider="@drawable/item_divider_fifteen_transparent"
+                                    android:divider="@drawable/item_divider_22_mm"
                                     android:orientation="vertical"
-                                    android:showDividers="end|middle">
+                                    android:paddingTop="@dimen/sc_mm_30"
+                                    android:paddingBottom="@dimen/sc_mm_30"
+                                    android:showDividers="middle">
 
                                     <RelativeLayout
                                         android:id="@+id/rl_novip_info"
@@ -165,14 +189,13 @@
                                             android:layout_width="@dimen/sc_mm_42"
                                             android:layout_height="@dimen/sc_mm_40"
                                             android:layout_marginLeft="@dimen/sc_mm_5"
-                                            android:layout_marginTop="@dimen/sc_mm_44"
+                                            android:layout_marginTop="@dimen/sc_mm_10"
                                             android:src="@drawable/vip_logo" />
 
                                         <TextView
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
                                             android:layout_marginLeft="@dimen/sc_mm_62"
-                                            android:layout_marginTop="34mm"
                                             android:text="@string/domolife_vip"
                                             android:textColor="@color/text_black_t"
                                             android:textSize="@dimen/sc_mm_38"
@@ -183,7 +206,6 @@
                                             android:layout_width="@dimen/sc_mm_190"
                                             android:layout_height="@dimen/sc_mm_50"
                                             android:layout_alignParentRight="true"
-                                            android:layout_marginTop="@dimen/sc_mm_44"
                                             android:background="@drawable/shap_circle_yellow_15dp"
                                             android:gravity="center"
                                             android:text="@string/vip_power_num"
@@ -197,19 +219,22 @@
                                             android:layout_height="wrap_content"
                                             android:layout_below="@+id/iv_vip_logo"
                                             android:layout_marginLeft="@dimen/sc_mm_62"
-                                            android:layout_marginTop="@dimen/sc_mm_8"
+                                            android:paddingTop="@dimen/sc_mm_8"
+                                            android:paddingBottom="@dimen/sc_mm_8"
                                             android:text="@string/vip_save_money_num"
                                             android:textColor="@color/text_black_t"
                                             android:textSize="@dimen/sc_mm_24"
                                             android:textStyle="bold" />
 
                                         <ImageView
-                                            android:layout_width="@dimen/sc_mm_22"
-                                            android:layout_height="@dimen/sc_mm_27"
+                                            android:layout_marginTop="@dimen/sc_mm_4"
+                                            android:id="@+id/iv_calculator"
+                                            android:layout_width="@dimen/sc_mm_38"
+                                            android:layout_height="@dimen/sc_mm_43"
                                             android:layout_below="@+id/iv_vip_logo"
-                                            android:layout_marginLeft="@dimen/sc_mm_11"
-                                            android:layout_marginTop="@dimen/sc_mm_10"
+                                            android:layout_marginLeft="@dimen/sc_mm_4"
                                             android:layout_toRightOf="@+id/tv_expect_save"
+                                            android:padding="@dimen/sc_mm_8"
                                             android:src="@drawable/calculator" />
                                     </RelativeLayout>
 
@@ -220,14 +245,14 @@
                                         android:nestedScrollingEnabled="false" />
 
                                     <RelativeLayout
-                                        android:visibility="gone"
                                         android:id="@+id/rl_free_condition"
                                         android:layout_width="match_parent"
                                         android:layout_height="@dimen/sc_mm_148"
                                         android:layout_marginLeft="@dimen/sc_mm_25"
                                         android:layout_marginRight="@dimen/sc_mm_25"
                                         android:background="@drawable/shopping_bg"
-                                        android:paddingLeft="@dimen/sc_mm_24">
+                                        android:paddingLeft="@dimen/sc_mm_24"
+                                        android:visibility="gone">
 
                                         <TextView
                                             android:id="@+id/tv_free_condition"
@@ -283,6 +308,8 @@
                                         android:id="@+id/iv_vip_gift"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
+                                        android:layout_marginLeft="@dimen/sc_mm_25"
+                                        android:layout_marginRight="@dimen/sc_mm_25"
                                         android:adjustViewBounds="true"
                                         android:src="@drawable/vip_gift"
                                         android:visibility="gone" />
@@ -292,35 +319,36 @@
                                     android:id="@+id/iv_vip_day"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginLeft="@dimen/sc_mm_22"
-                                    android:layout_marginRight="@dimen/sc_mm_22"
-                                    android:layout_marginBottom="@dimen/sc_mm_22"
-                                    android:adjustViewBounds="true" />
-
+                                    android:layout_marginTop="@dimen/sc_mm_35"
+                                    android:layout_marginBottom="@dimen/sc_mm_12"
+                                    android:adjustViewBounds="true"
+                                    android:visibility="gone" />
                             </LinearLayout>
 
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:background="@color/light_gray_f"
+                                android:divider="@drawable/item_divider_40_mm_transparent"
                                 android:orientation="vertical"
                                 android:paddingLeft="@dimen/sc_mm_22"
-                                android:paddingRight="@dimen/sc_mm_22">
+                                android:paddingRight="@dimen/sc_mm_22"
+                                android:showDividers="beginning|middle">
 
                                 <RelativeLayout
                                     android:id="@+id/rl_coupon"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginTop="@dimen/sc_mm_43"
-                                    android:background="@drawable/shape_exclusive_coupon_bg">
+                                    android:background="@drawable/shape_exclusive_coupon_bg"
+                                    android:visibility="gone">
 
                                     <TextView
                                         android:id="@+id/tv_coupon_title"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginLeft="@dimen/sc_mm_49"
-                                        android:paddingTop="@dimen/sc_mm_30"
-                                        android:paddingBottom="@dimen/sc_mm_30"
+                                        android:paddingTop="@dimen/sc_mm_27"
+                                        android:paddingBottom="@dimen/sc_mm_27"
                                         android:text="每月专享券"
                                         android:textColor="@color/text_black_t"
                                         android:textSize="@dimen/sc_mm_32"
@@ -365,15 +393,16 @@
                                     android:id="@+id/rl_vip_week"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginTop="@dimen/sc_mm_50"
-                                    android:background="@drawable/shape_exclusive_coupon_bg">
+                                    android:background="@drawable/shape_exclusive_coupon_bg"
+                                    android:visibility="gone">
 
                                     <TextView
                                         android:id="@+id/tv_week_title"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginLeft="@dimen/sc_mm_49"
-                                        android:paddingTop="@dimen/sc_mm_30"
+                                        android:paddingTop="@dimen/sc_mm_27"
+                                        android:paddingBottom="@dimen/sc_mm_27"
                                         android:text="每周会员特价"
                                         android:textColor="@color/text_black_t"
                                         android:textSize="@dimen/sc_mm_32"
@@ -407,9 +436,9 @@
                                     android:id="@+id/rl_zero_info"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginTop="@dimen/sc_mm_40"
                                     android:background="@drawable/shape_exclusive_coupon_bg"
-                                    android:orientation="vertical">
+                                    android:orientation="vertical"
+                                    android:visibility="gone">
 
                                     <LinearLayout
                                         android:id="@+id/ll_zero_title"
@@ -424,8 +453,8 @@
                                             android:layout_width="0dp"
                                             android:layout_height="wrap_content"
                                             android:layout_weight="1"
-                                            android:paddingTop="@dimen/sc_mm_30"
-                                            android:paddingBottom="@dimen/sc_mm_30"
+                                            android:paddingTop="@dimen/sc_mm_27"
+                                            android:paddingBottom="@dimen/sc_mm_27"
                                             android:text="0元试用"
                                             android:textColor="@color/text_black_t"
                                             android:textSize="@dimen/sc_mm_32"
@@ -446,142 +475,178 @@
                                     <include layout="@layout/item_zero_product" />
                                 </LinearLayout>
 
-                                <TextView
-                                    android:id="@+id/tv_vip_power"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="@dimen/sc_mm_40"
-                                    android:background="@drawable/shap_vip_ll_bg"
-                                    android:gravity="center"
-                                    android:padding="@dimen/sc_mm_30"
-                                    android:text="会员专属特权"
-                                    android:textColor="@color/text_black_t"
-                                    android:textSize="@dimen/sc_mm_32"
-                                    android:textStyle="bold" />
-
-                                <androidx.recyclerview.widget.RecyclerView
-                                    android:id="@+id/rv_power_bottom"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="@dimen/sc_mm_20"
-                                    android:nestedScrollingEnabled="false" />
-
                                 <RelativeLayout
+                                    android:id="@+id/rl_vip_price"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginTop="@dimen/sc_mm_10"
                                     android:background="@drawable/shape_exclusive_coupon_bg">
 
                                     <TextView
+                                        android:id="@+id/tv_vip_price_title"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:layout_centerHorizontal="true"
                                         android:layout_marginLeft="@dimen/sc_mm_49"
-                                        android:layout_marginTop="@dimen/sc_mm_30"
-                                        android:text="会员最爱买"
+                                        android:paddingTop="@dimen/sc_mm_30"
+                                        android:text="多么会员价"
                                         android:textColor="@color/text_black_t"
                                         android:textSize="@dimen/sc_mm_32"
                                         android:textStyle="bold" />
 
+                                    <TextView
+                                        android:id="@+id/tv_vip_price_subtitle"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_alignParentRight="true"
+                                        android:layout_marginRight="@dimen/sc_mm_25"
+                                        android:paddingTop="@dimen/sc_mm_30"
+                                        android:paddingBottom="@dimen/sc_mm_30"
+                                        android:text="9.5折起，可叠加券和红包 >>"
+                                        android:textColor="@color/text_black_t"
+                                        android:textSize="@dimen/sc_mm_26" />
 
                                     <androidx.recyclerview.widget.RecyclerView
-                                        android:id="@+id/rv_vip_like"
+                                        android:id="@+id/rv_vip_price"
                                         android:layout_width="match_parent"
-                                        android:layout_height="@dimen/sc_mm_140"
-                                        android:layout_marginLeft="@dimen/sc_mm_16"
-                                        android:layout_marginTop="@dimen/sc_mm_110"
-                                        android:layout_marginRight="@dimen/sc_mm_16"
-                                        android:nestedScrollingEnabled="false" />
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerHorizontal="true"
+                                        android:layout_marginTop="@dimen/sc_mm_112"
+                                        android:layout_marginBottom="@dimen/sc_mm_16"
+                                        android:nestedScrollingEnabled="false"
+                                        android:paddingLeft="@dimen/sc_mm_4"
+                                        android:paddingRight="@dimen/sc_mm_4" />
                                 </RelativeLayout>
 
+                                <LinearLayout
+                                    android:id="@+id/ll_power_bottom"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:visibility="gone">
 
+                                    <TextView
+                                        android:id="@+id/tv_vip_power"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginBottom="@dimen/sc_mm_20"
+                                        android:background="@drawable/shap_vip_ll_bg"
+                                        android:gravity="center"
+                                        android:padding="@dimen/sc_mm_30"
+                                        android:text="会员专属特权"
+                                        android:textColor="@color/text_black_t"
+                                        android:textSize="@dimen/sc_mm_32"
+                                        android:textStyle="bold" />
+
+                                    <androidx.recyclerview.widget.RecyclerView
+                                        android:id="@+id/rv_power_bottom"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:nestedScrollingEnabled="false" />
+                                </LinearLayout>
                             </LinearLayout>
                         </LinearLayout>
                     </com.google.android.material.appbar.CollapsingToolbarLayout>
 
-                    <RelativeLayout
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_marginLeft="@dimen/sc_mm_22"
-                        android:layout_marginTop="@dimen/sc_mm_40"
+                        android:layout_marginTop="@dimen/sc_mm_45"
                         android:layout_marginRight="@dimen/sc_mm_22"
-                        android:background="@drawable/shap_domolife_vip_bg">
+                        android:orientation="vertical">
+
+                        <RelativeLayout
+                            android:id="@+id/rl_vip_exclusive"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/shap_domolife_vip_bg"
+                            android:visibility="gone">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/sc_mm_49"
+                                android:paddingTop="@dimen/sc_mm_30"
+                                android:paddingBottom="@dimen/sc_mm_30"
+                                android:text="多么会员专享价"
+                                android:textColor="@color/text_black_t"
+                                android:textSize="@dimen/sc_mm_32"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tv_domolife_price_subtitle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:layout_marginRight="@dimen/sc_mm_25"
+                                android:paddingTop="@dimen/sc_mm_30"
+                                android:paddingBottom="@dimen/sc_mm_30"
+                                android:text="9.5折起，可叠加券和红包 >>"
+                                android:textColor="@color/text_black_t"
+                                android:textSize="@dimen/sc_mm_26" />
+
+                            <com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout xmlns:tl="http://schemas.android.com/apk/res-auto"
+                                android:id="@+id/sliding_tablayout"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/sc_mm_70"
+                                android:layout_below="@+id/tv_domolife_price_subtitle"
+                                android:layout_gravity="center_horizontal"
+                                android:layout_marginTop="@dimen/sc_mm_20"
+                                android:layout_marginBottom="@dimen/sc_mm_20"
+                                tl:tl_indicator_color="@color/text_black_t"
+                                tl:tl_indicator_height="2dp"
+                                tl:tl_indicator_width_equal_title="true"
+                                tl:tl_tab_space_equal="true"
+                                tl:tl_textBold="SELECT"
+                                tl:tl_textSelectColor="@color/text_black_t"
+                                tl:tl_textUnselectColor="@color/text_black_t"
+                                tl:tl_textsize="15sp" />
+                        </RelativeLayout>
 
                         <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/sc_mm_49"
-                            android:paddingTop="@dimen/sc_mm_30"
-                            android:paddingBottom="@dimen/sc_mm_30"
-                            android:text="多么会员专享价"
+                            android:id="@+id/tv_vip_favorite"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/sc_mm_90"
+                            android:layout_gravity="center_horizontal"
+                            android:background="@drawable/shap_vip_favorite_bg"
+                            android:gravity="center"
+                            android:text="会员最爱买"
                             android:textColor="@color/text_black_t"
                             android:textSize="@dimen/sc_mm_32"
                             android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/tv_domolife_price_subtitle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:layout_marginRight="@dimen/sc_mm_25"
-                            android:paddingTop="@dimen/sc_mm_30"
-                            android:paddingBottom="@dimen/sc_mm_30"
-                            android:text="9.5折起，可叠加券和红包 >>"
-                            android:textColor="@color/text_black_t"
-                            android:textSize="@dimen/sc_mm_26" />
-
-                        <com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout xmlns:tl="http://schemas.android.com/apk/res-auto"
-                            android:id="@+id/sliding_tablayout"
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/sc_mm_70"
-                            android:layout_below="@+id/tv_domolife_price_subtitle"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_marginTop="@dimen/sc_mm_20"
-                            android:layout_marginBottom="@dimen/sc_mm_20"
-                            tl:tl_indicator_color="@color/text_black_t"
-                            tl:tl_indicator_height="2dp"
-                            tl:tl_indicator_width_equal_title="true"
-                            tl:tl_tab_space_equal="true"
-                            tl:tl_textBold="SELECT"
-                            tl:tl_textSelectColor="@color/text_black_t"
-                            tl:tl_textUnselectColor="@color/text_black_t"
-                            tl:tl_textsize="15sp" />
-                    </RelativeLayout>
+                    </LinearLayout>
                 </com.google.android.material.appbar.AppBarLayout>
 
-                <androidx.viewpager.widget.ViewPager
-                    android:layout_marginBottom="@dimen/sc_mm_30"
-                    android:id="@+id/vp_vip_exclusive"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginLeft="@dimen/sc_mm_22"
                     android:layout_marginRight="@dimen/sc_mm_22"
-                    app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+                    android:layout_marginBottom="@dimen/sc_mm_30"
+                    android:orientation="vertical"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+                    <androidx.viewpager.widget.ViewPager
+                        android:background="@color/white"
+                        android:id="@+id/vp_vip_exclusive"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_vip_favorite"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/shap_vip_favorite_list_bg"
+                        android:minHeight="@dimen/sc_mm_500"
+                        android:paddingLeft="@dimen/sc_mm_16"
+                        android:paddingTop="@dimen/sc_mm_20"
+                        android:paddingRight="@dimen/sc_mm_16"
+                        android:paddingBottom="@dimen/sc_mm_20"
+                        android:visibility="gone" />
+                </LinearLayout>
             </androidx.coordinatorlayout.widget.CoordinatorLayout>
         </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
-        <LinearLayout
-            android:id="@+id/ll_open_vip"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/tv_open_vip"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/sc_mm_96"
-                android:layout_gravity="bottom"
-                android:layout_marginLeft="@dimen/sc_mm_25"
-                android:layout_marginTop="@dimen/sc_mm_22"
-                android:layout_marginRight="@dimen/sc_mm_25"
-                android:layout_marginBottom="@dimen/sc_mm_22"
-                android:background="@drawable/yellow_bg"
-                android:gravity="center"
-                android:textStyle="bold"
-                android:text="@string/vip_year_price"
-                android:textColor="@color/white"
-                android:textSize="@dimen/sc_mm_24" />
-        </LinearLayout>
+        <include layout="@layout/layout_open_vip" />
     </LinearLayout>
 </LinearLayout>

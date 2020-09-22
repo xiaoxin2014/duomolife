@@ -23,7 +23,7 @@ import com.amkj.dmsh.homepage.bean.HomeCommonEntity;
 import com.amkj.dmsh.homepage.bean.HomeCommonEntity.HomeCommonBean;
 import com.amkj.dmsh.homepage.bean.MarqueeTextEntity;
 import com.amkj.dmsh.homepage.bean.MarqueeTextEntity.MarqueeTextBean;
-import com.amkj.dmsh.mine.activity.DomolifeVipActivity;
+import com.amkj.dmsh.message.activity.MessageActivity;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
@@ -38,6 +38,8 @@ import java.util.List;
 import java.util.Map;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -170,7 +172,7 @@ public class HomePageFragment extends BaseFragment {
 //                            homeCommonBean.setShowType("1");
 //                            mGoodsNavbarList.add(homeCommonBean);
                             mGoodsNavbarList.addAll(goodsNavbarList);
-                            HomePageNewAdapter homePageNewAdapter = new HomePageNewAdapter(HomePageFragment.this.getChildFragmentManager(), mGoodsNavbarList);
+                            HomePageNewAdapter homePageNewAdapter = new HomePageNewAdapter(getChildFragmentManager(), mGoodsNavbarList);
                             mVpHome.setAdapter(homePageNewAdapter);
                             mVpHome.setOffscreenPageLimit(mGoodsNavbarList.size() - 1);
                             mTablayoutHome.setViewPager(mVpHome, mGoodsNavbarList, fontColor);
@@ -203,7 +205,7 @@ public class HomePageFragment extends BaseFragment {
                             String rollMsg = getRollMsg(getActivity(), marqueeTextList, ll_home_marquee);
                             if (!TextUtils.isEmpty(rollMsg)) {
                                 ll_home_marquee.setVisibility(View.VISIBLE);
-                                mTvMarqueeText.setText(rollMsg,true);
+                                mTvMarqueeText.setText(rollMsg, true);
                                 RollMsgIdDataSave.getSingleton().saveMsgId(marqueeTextList);
                             }
                         } else {
@@ -222,23 +224,12 @@ public class HomePageFragment extends BaseFragment {
         });
     }
 
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (!isFirst) {
-            getMessageCount(getActivity(), badgeMsg);
-        }
-        isFirst = false;
-    }
-
-
     @OnClick({R.id.iv_message, R.id.tv_search, R.id.iv_home_shop_car, R.id.iv_home_marquee_close})
     public void onViewClicked(View view) {
         Intent intent;
         switch (view.getId()) {
             case R.id.iv_message:
-                intent = new Intent(getActivity(), DomolifeVipActivity.class);
+                intent = new Intent(getActivity(), MessageActivity.class);
                 startActivity(intent);
                 break;
             case R.id.tv_search:
@@ -285,7 +276,7 @@ public class HomePageFragment extends BaseFragment {
             if (badgeCart != null) {
                 badgeCart.setBadgeNumber((int) message.result);
             }
-        }else if (message.type.equals(REFRESH_MESSAGE_TOTAL)) {
+        } else if (message.type.equals(REFRESH_MESSAGE_TOTAL)) {
             getMessageCount(getActivity(), badgeMsg);
         }
     }
@@ -320,5 +311,28 @@ public class HomePageFragment extends BaseFragment {
         }
 
         return msg.toString();
+    }
+
+    @Override
+    public void onVisible() {
+        super.onVisible();
+        if (!isFirst) {
+            getMessageCount(getActivity(), badgeMsg);
+        }
+        isFirst = false;
+    }
+
+    public String getFragmentName() {
+        try {
+            int currentTab = mTablayoutHome.getCurrentTab();
+            PagerAdapter adapter = mTablayoutHome.getViewPager().getAdapter();
+            if (adapter instanceof HomePageNewAdapter) {
+                Fragment item = ((HomePageNewAdapter) adapter).getItem(currentTab);
+                return item.getClass().getSimpleName();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 }

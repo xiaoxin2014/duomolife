@@ -15,10 +15,12 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.address.activity.SelectedAddressActivity;
+import com.amkj.dmsh.address.bean.AddressInfoEntity;
 import com.amkj.dmsh.address.bean.AddressInfoEntity.AddressInfoBean;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.mine.activity.ZeroIndentDetailActivity;
 import com.amkj.dmsh.mine.bean.ZeroGoodsInfoBean;
 import com.amkj.dmsh.mine.bean.ZeroWriteEntity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
@@ -59,8 +61,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.showLoadhud;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRODUCT_TYPE;
-import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PROPRIETOR_PRODUCT;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.NEW_CRE_ADDRESS_REQ;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY_ALI_PAY;
@@ -173,8 +173,7 @@ public class DirectZeroWriteActivity extends BaseActivity {
     private AlertDialogHelper payCancelDialogHelper;
     private String payWay = PAY_ALI_PAY;//默认支付宝付款
     private int addressId;
-    private boolean isFirst = true;//获取默认地址时为true,修改地址为false
-    private String orderCreateNo = "";//创建订单 未结算
+    private String orderId = "";//创建订单 未结算
     private IndentDiscountAdapter indentDiscountAdapter;
     private List<PriceInfoBean> mPriceInfoList = new ArrayList<>();
     private QualityCreateWeChatPayIndentBean qualityWeChatIndent;
@@ -200,6 +199,8 @@ public class DirectZeroWriteActivity extends BaseActivity {
             showToast("数据有误，请重试");
             finish();
         }
+        mTvHeaderTitle.setText("确认订单");
+        mTvHeaderShared.setVisibility(GONE);
         //初始化金额明细
         mRvIndentWriteInfo.setLayoutManager(new LinearLayoutManager(getActivity()));
         indentDiscountAdapter = new IndentDiscountAdapter(this, mPriceInfoList);
@@ -218,13 +219,17 @@ public class DirectZeroWriteActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
-        getPayWay();
-        getAddress();
-        getIndentDiscounts();
+        if (userId > 0) {
+            getPayWay();
+            getAddress();
+            getIndentDiscounts();
+        }
     }
 
     private void getPayWay() {
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.GET_PAYTYPE_LIST, new NetLoadListenerHelper() {
+        Map<String, String> map = new HashMap<>();
+        map.put("flag", "vip");
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.GET_PAYTYPE_LIST, map, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 Map map = GsonUtils.fromJson(result, Map.class);
@@ -374,7 +379,7 @@ public class DirectZeroWriteActivity extends BaseActivity {
                         getStrings(qualityWeChatIndent.getMsg());
                 if (qualityWeChatIndent.getCode().equals(SUCCESS_CODE)) {
                     //返回成功，调起微信支付接口
-                    orderCreateNo = qualityWeChatIndent.getResult().getNo();
+                    orderId = qualityWeChatIndent.getResult().getOrderId();
                     doWXPay(qualityWeChatIndent.getResult());
                 } else {
                     showToast(msg);
@@ -389,7 +394,7 @@ public class DirectZeroWriteActivity extends BaseActivity {
                         getStrings(qualityAliPayIndent.getMsg());
                 if (qualityAliPayIndent.getCode().equals(SUCCESS_CODE)) {
                     //返回成功，调起支付宝支付接口
-                    orderCreateNo = qualityAliPayIndent.getResult().getNo();
+                    orderId = qualityAliPayIndent.getResult().getOrderId();
                     doAliPay(qualityAliPayIndent.getResult());
                 } else {
                     showToast(msg);
@@ -404,7 +409,7 @@ public class DirectZeroWriteActivity extends BaseActivity {
                         getStrings(qualityUnionIndent.getMsg());
                 if (SUCCESS_CODE.equals(qualityUnionIndent.getCode())) {
                     //返回成功，调起银联支付接口
-                    orderCreateNo = qualityUnionIndent.getQualityCreateUnionPayIndent().getNo();
+                    orderId = qualityUnionIndent.getQualityCreateUnionPayIndent().getOrderId();
                     unionPay(qualityUnionIndent);
                 } else {
                     showToast(msg);
@@ -419,7 +424,7 @@ public class DirectZeroWriteActivity extends BaseActivity {
             @Override
             public void onSuccess() {
                 showToast("支付成功");
-                skipDirectIndent();
+                skipIndentDetail();
             }
 
             @Override
@@ -460,7 +465,7 @@ public class DirectZeroWriteActivity extends BaseActivity {
             @Override
             public void onSuccess() {
                 showToast("支付成功");
-                skipDirectIndent();
+                skipIndentDetail();
             }
 
             @Override
@@ -506,7 +511,7 @@ public class DirectZeroWriteActivity extends BaseActivity {
                                 finish();
                             } else {
                                 //                跳转订单完成页
-                                skipDirectIndent();
+                                skipIndentDetail();
                             }
                         }
 
@@ -524,40 +529,11 @@ public class DirectZeroWriteActivity extends BaseActivity {
         }
     }
 
-
-    //支付成功跳转
-    private void skipDirectIndent() {
-        Intent intent = new Intent(getActivity(), DirectPaySuccessActivity.class);
-        intent.putExtra(INDENT_PRODUCT_TYPE, INDENT_PROPRIETOR_PRODUCT);
-        if (payWay.equals(PAY_WX_PAY)) {
-            if (qualityWeChatIndent.getResult() != null && !TextUtils.isEmpty(qualityWeChatIndent.getResult().getNo())) {
-                intent.putExtra("indentNo", qualityWeChatIndent.getResult().getNo());
-            }
-        } else if (payWay.equals(PAY_ALI_PAY)) {
-            if (qualityAliPayIndent.getResult() != null && !TextUtils.isEmpty(qualityAliPayIndent.getResult().getNo())) {
-                intent.putExtra("indentNo", qualityAliPayIndent.getResult().getNo());
-            }
-        } else if (payWay.equals(PAY_UNION_PAY)) {
-            if (qualityUnionIndent.getQualityCreateUnionPayIndent() != null && !TextUtils.isEmpty(qualityUnionIndent.getQualityCreateUnionPayIndent().getNo())) {
-                intent.putExtra("indentNo", qualityUnionIndent.getQualityCreateUnionPayIndent().getNo());
-            }
-        }
-
-        //延时跳转到支付成功页面（因为线程问题，立即跳转可能会失效）
-        new LifecycleHandler(this).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                startActivity(intent);
-                finish();
-            }
-        }, 1000);
-    }
-
-    //已创建订单，取消支付，跳转到订单详情
+    //已创建订单，取消支付(或者支付完成)跳转到订单详情
     private void skipIndentDetail() {
-        if (!TextUtils.isEmpty(orderCreateNo)) {
-            Intent intent = new Intent(this, DirectExchangeDetailsActivity.class);
-            intent.putExtra("orderNo", orderCreateNo);
+        if (!TextUtils.isEmpty(orderId)) {
+            Intent intent = new Intent(this, ZeroIndentDetailActivity.class);
+            intent.putExtra("orderId", orderId);
             //延时跳转到订单详情页面（因为线程问题，立即跳转可能会失效）
             new LifecycleHandler(this).postDelayed(() -> {
                 startActivity(intent);
@@ -583,7 +559,7 @@ public class DirectZeroWriteActivity extends BaseActivity {
                 startActivityForResult(intent, NEW_CRE_ADDRESS_REQ);
                 break;
             case R.id.ll_indent_address_default:
-                if (TextUtils.isEmpty(orderCreateNo)) {
+                if (TextUtils.isEmpty(orderId)) {
                     intent = new Intent(getActivity(), SelectedAddressActivity.class);
                     intent.putExtra("addressId", String.valueOf(addressId));
                     startActivityForResult(intent, SEL_ADDRESS_REQ);
@@ -689,6 +665,7 @@ public class DirectZeroWriteActivity extends BaseActivity {
         }
     }
 
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
@@ -702,8 +679,7 @@ public class DirectZeroWriteActivity extends BaseActivity {
             case NEW_CRE_ADDRESS_REQ:
             case SEL_ADDRESS_REQ:
                 //获取地址成功
-                AddressInfoBean addressInfoBean = data.getParcelableExtra("addressInfoBean");
-                isFirst = false;
+                AddressInfoEntity.AddressInfoBean addressInfoBean = data.getParcelableExtra("addressInfoBean");
                 setAddressData(addressInfoBean);
                 break;
             case IS_LOGIN_CODE:
@@ -711,4 +687,5 @@ public class DirectZeroWriteActivity extends BaseActivity {
                 break;
         }
     }
+
 }

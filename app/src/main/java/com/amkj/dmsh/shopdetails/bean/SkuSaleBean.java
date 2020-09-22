@@ -1,8 +1,5 @@
 package com.amkj.dmsh.shopdetails.bean;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -10,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
  * Version:v4.1.0
  * ClassDescription :SKU实体类
  */
-public class SkuSaleBean implements Parcelable {
+public class SkuSaleBean  {
     /**
      * id : 81
      * productId : 4169
@@ -34,59 +31,53 @@ public class SkuSaleBean implements Parcelable {
     private int type;
     private int isNotice;
     private String presentSkuIds;
+    //活动价
     private String activityPrice;
-    //   新人专属以及拼团标志专属字段
+    //新人专属以及拼团标志专属字段
     private String newUserTag;
-    //   积分商品独有属性
+    //积分商品独有属性
     private String moneyPrice;
     private String prePrice;
     //赠品信息
     private PresentInfoBean presentInfo;
+    //会员价
+    private String vipPrice;
+    //原价
+    private String oldPrice;
+    //会员活动价
+    private String vipActivityPrice;
 
-    public static class PresentInfoBean {
-        /**
-         * id : 1
-         * quantity : 1231
-         * picUrl : http://image.domolife.cn/platform/YEYnTXn3as1560503438864.jpg
-         * activityCode : ZP1560503944
-         */
+    public String getOldPrice() {
+        return oldPrice;
+    }
 
-        private int id;
-        private int quantity;
-        private String picUrl;
-        private String activityCode;
+    public void setOldPrice(String oldPrice) {
+        this.oldPrice = oldPrice;
+    }
 
-        public int getId() {
-            return id;
-        }
+    public String getVipActivityPrice() {
+        return vipActivityPrice;
+    }
 
-        public void setId(int id) {
-            this.id = id;
-        }
+    public void setVipActivityPrice(String vipActivityPrice) {
+        this.vipActivityPrice = vipActivityPrice;
+    }
 
-        public int getQuantity() {
-            return quantity;
-        }
+    public SkuSaleBean() {
+    }
 
-        public void setQuantity(int quantity) {
-            this.quantity = quantity;
-        }
+    public SkuSaleBean(int quantity, String price, int id) {
+        this.id = id;
+        this.price = price;
+        this.quantity = quantity;
+    }
 
-        public String getPicUrl() {
-            return picUrl;
-        }
+    public String getVipPrice() {
+        return vipPrice;
+    }
 
-        public void setPicUrl(String picUrl) {
-            this.picUrl = picUrl;
-        }
-
-        public String getActivityCode() {
-            return activityCode;
-        }
-
-        public void setActivityCode(String activityCode) {
-            this.activityCode = activityCode;
-        }
+    public void setVipPrice(String vipPrice) {
+        this.vipPrice = vipPrice;
     }
 
     public void setPrePrice(String prePrice) {
@@ -193,60 +184,49 @@ public class SkuSaleBean implements Parcelable {
         this.newUserTag = newUserTag;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
+    public static class PresentInfoBean {
+        /**
+         * id : 1
+         * quantity : 1231
+         * picUrl : http://image.domolife.cn/platform/YEYnTXn3as1560503438864.jpg
+         * activityCode : ZP1560503944
+         */
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(this.id);
-        dest.writeInt(this.productId);
-        dest.writeString(this.price);
-        dest.writeString(this.prePrice);
-        dest.writeInt(this.quantity);
-        dest.writeString(this.propValues);
-        dest.writeInt(this.type);
-        dest.writeInt(this.isNotice);
-        dest.writeString(this.presentSkuIds);
-        dest.writeString(this.activityPrice);
-        dest.writeString(this.newUserTag);
-        dest.writeString(this.moneyPrice);
-    }
+        private int id;
+        private int quantity;
+        private String picUrl;
+        private String activityCode;
 
-    public SkuSaleBean() {
-    }
-
-    public SkuSaleBean(int quantity, String price, int id) {
-        this.id = id;
-        this.price = price;
-        this.quantity = quantity;
-    }
-
-    protected SkuSaleBean(Parcel in) {
-        this.id = in.readInt();
-        this.productId = in.readInt();
-        this.price = in.readString();
-        this.prePrice = in.readString();
-        this.quantity = in.readInt();
-        this.propValues = in.readString();
-        this.type = in.readInt();
-        this.isNotice = in.readInt();
-        this.presentSkuIds = in.readString();
-        this.activityPrice = in.readString();
-        this.newUserTag = in.readString();
-        this.moneyPrice = in.readString();
-    }
-
-    public static final Parcelable.Creator<SkuSaleBean> CREATOR = new Parcelable.Creator<SkuSaleBean>() {
-        @Override
-        public SkuSaleBean createFromParcel(Parcel source) {
-            return new SkuSaleBean(source);
+        public int getId() {
+            return id;
         }
 
-        @Override
-        public SkuSaleBean[] newArray(int size) {
-            return new SkuSaleBean[size];
+        public void setId(int id) {
+            this.id = id;
         }
-    };
+
+        public int getQuantity() {
+            return quantity;
+        }
+
+        public void setQuantity(int quantity) {
+            this.quantity = quantity;
+        }
+
+        public String getPicUrl() {
+            return picUrl;
+        }
+
+        public void setPicUrl(String picUrl) {
+            this.picUrl = picUrl;
+        }
+
+        public String getActivityCode() {
+            return activityCode;
+        }
+
+        public void setActivityCode(String activityCode) {
+            this.activityCode = activityCode;
+        }
+    }
 }

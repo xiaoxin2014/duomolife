@@ -54,6 +54,26 @@ public class PowerEntity extends BaseEntity {
         private String androidLink;
         private String webLink;
         private String wxLink;
+        private String isShow;
+
+        //自定义字段，记录底部权益position
+        private String position;
+
+        public boolean isShow() {
+            return "1".equals(isShow);
+        }
+
+        public void setIsShow(String isShow) {
+            this.isShow = isShow;
+        }
+
+        public String getPosition() {
+            return position;
+        }
+
+        public void setPosition(String position) {
+            this.position = position;
+        }
 
         public String getId() {
             return id;

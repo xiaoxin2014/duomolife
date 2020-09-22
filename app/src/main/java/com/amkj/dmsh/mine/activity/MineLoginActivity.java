@@ -49,6 +49,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.showLoadhud;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.toMD5;
 import static com.amkj.dmsh.constant.ConstantVariable.LOGIN;
+import static com.amkj.dmsh.constant.ConstantVariable.LOGIN_SUCCESS;
 import static com.amkj.dmsh.constant.ConstantVariable.OTHER_QQ;
 import static com.amkj.dmsh.constant.ConstantVariable.OTHER_SINA;
 import static com.amkj.dmsh.constant.ConstantVariable.OTHER_WECHAT;
@@ -169,7 +170,6 @@ public class MineLoginActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 dismissLoadhud(getActivity());
-
                 LoginDataEntity loginDataEntity = GsonUtils.fromJson(result, LoginDataEntity.class);
                 if (loginDataEntity != null) {
                     String code = loginDataEntity.getCode();
@@ -608,11 +608,10 @@ public class MineLoginActivity extends BaseActivity {
     }
 
 
-
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
         //子评论回复
-        if ("loginSuccess".equals(message.type)) {
+        if (LOGIN_SUCCESS.equals(message.type)) {
             if (ConstantMethod.isContextExisted(this)) {
                 finish();
             }

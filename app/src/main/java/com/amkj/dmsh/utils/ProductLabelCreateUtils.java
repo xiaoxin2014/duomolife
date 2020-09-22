@@ -76,11 +76,10 @@ public class ProductLabelCreateUtils {
      */
     public static TextView createLabelClickText(Context context, MarketLabelBean marketLabelBean) {
         TextView textView = new TextView(context);
-        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
+        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(WRAP_CONTENT, AutoSizeUtils.mm2px(context, 40));
         textView.setLayoutParams(layoutParams);
         int tenLeftRight = AutoSizeUtils.mm2px(context, 15);
-        int fiveTopBottom = AutoSizeUtils.mm2px(context, 7);
-        textView.setPadding(tenLeftRight, fiveTopBottom, tenLeftRight, fiveTopBottom);
+        textView.setPadding(tenLeftRight, 0, tenLeftRight, 0);
         GradientDrawable gradientDrawable = new GradientDrawable();
         gradientDrawable.setColor(context.getResources().getColor(R.color.white));
         int colorValue;
@@ -89,8 +88,8 @@ public class ProductLabelCreateUtils {
         } else {
             colorValue = context.getResources().getColor(R.color.text_yel_f_s);
         }
-        gradientDrawable.setStroke(1, colorValue);
-        gradientDrawable.setCornerRadius(AutoSizeUtils.mm2px(context, 4));
+        gradientDrawable.setStroke(2, colorValue);
+        gradientDrawable.setCornerRadius(AutoSizeUtils.mm2px(context, 8));
         textView.setTextColor(colorValue);
         textView.setGravity(Gravity.CENTER);
         textView.setBackground(gradientDrawable);

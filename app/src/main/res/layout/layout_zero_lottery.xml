@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_lottery"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/sc_mm_30"
+    android:background="@drawable/shap_product_evaluate_bg"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/sc_mm_25"
+    android:paddingTop="@dimen/sc_mm_23"
+    android:paddingRight="@dimen/sc_mm_21"
+    android:paddingBottom="@dimen/sc_mm_20">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/sc_mm_24"
+        android:text="中奖名单"
+        android:textColor="@color/text_black_t"
+        android:textSize="@dimen/sc_mm_28"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:id="@+id/ll_total_lottery"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/sc_mm_15"
+        android:layout_marginBottom="@dimen/sc_mm_20"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/sc_mm_24"
+            android:layout_weight="1"
+            android:text="恭喜以下用户获得商品试用机会"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_24" />
+
+        <TextView
+            android:id="@+id/tv_total"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="共--人>"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_24" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_lottery"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false" />
+
+        <View
+            android:layout_width="@dimen/sc_mm_2"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="@dimen/sc_mm_13"
+            android:layout_marginBottom="@dimen/sc_mm_13"
+            android:background="@color/text_color_e_s" />
+    </RelativeLayout>
+</LinearLayout>

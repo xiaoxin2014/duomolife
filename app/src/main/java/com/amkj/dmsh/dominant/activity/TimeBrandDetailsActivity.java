@@ -129,7 +129,7 @@ public class TimeBrandDetailsActivity extends BaseActivity {
                     , themeDataBean.getPicUrl()
                     , themeDataBean.getTitle()
                     , themeDataBean.getDiscription()
-                    , Url.BASE_SHARE_PAGE_TWO + "m/template/limit_time_template/brand.html?id=" + themeDataBean.getId(),themeDataBean.getId());
+                    , Url.BASE_SHARE_PAGE_TWO + "limit_time_template/brand.html?id=" + themeDataBean.getId(),themeDataBean.getId());
         }
     }
 

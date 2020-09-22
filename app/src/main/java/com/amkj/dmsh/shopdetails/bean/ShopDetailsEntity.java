@@ -95,16 +95,53 @@ public class ShopDetailsEntity extends BaseEntity {
         private String shippingProvince;
         private String preSaleDeliveryTime;
 
-
         //保税仓商品相关
         private String taxExplain;
         private String taxPoint;//税率
         private String taxText;
         private String ecmTag;
+        private String ecmFlag;
 
+        //会员相关
+        private String vipPrice;
+        private String vipReduce;
+        private String isVipActivity;
 
         //自定义字段
         private long addSecond;
+
+
+        public String getEcmFlag() {
+            return ecmFlag;
+        }
+
+        public void setEcmFlag(String ecmFlag) {
+            this.ecmFlag = ecmFlag;
+        }
+
+        public boolean isVipActivity() {
+            return "1".equals(isVipActivity);
+        }
+
+        public void setIsVipActivity(String isVipActivity) {
+            this.isVipActivity = isVipActivity;
+        }
+
+        public String getVipPrice() {
+            return vipPrice;
+        }
+
+        public void setVipPrice(String vipPrice) {
+            this.vipPrice = vipPrice;
+        }
+
+        public String getVipReduce() {
+            return vipReduce;
+        }
+
+        public void setVipReduce(String vipReduce) {
+            this.vipReduce = vipReduce;
+        }
 
         public List<Map<String, String>> getNewPreSaleInfo() {
             //兼容旧版本数据

@@ -55,6 +55,7 @@ import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getVersionName;
 import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
+import static com.amkj.dmsh.constant.ConstantMethod.isVip;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -193,7 +194,7 @@ public class QyServiceUtils {
     }
 
     public void openQyServiceChat(Context context, String sourceTitle, String sourceUrl, QyProductIndentInfo qyProductIndentInfo) {
-//            是否已初始化
+        //是否已初始化
         initQyService(context);
         ConsultSource pageSource;
         if (!TextUtils.isEmpty(sourceTitle) || !TextUtils.isEmpty(sourceUrl)) {
@@ -205,6 +206,10 @@ public class QyServiceUtils {
             pageSource = new ConsultSource(sourceUrl, sourceTitle, "");
         } else {
             pageSource = new ConsultSource(null, null, null);
+        }
+        //添加用户vip等级
+        if (userId > 0 && isVip()) {
+            pageSource.vipLevel = (int) SharedPreUtils.getParam("vipLevel", 1);
         }
 
         if (qyProductIndentInfo != null) {
@@ -239,13 +244,6 @@ public class QyServiceUtils {
                 }
             }
         }
-//        } else {
-//            pageSource.quickEntryList.add(new QuickEntry(2, "热销爆品", ""));
-//            pageSource.quickEntryList.add(new QuickEntry(3, "精选专题", ""));
-//            pageSource.quickEntryList.add(new QuickEntry(4, "优惠特价", ""));
-//            pageSource.quickEntryList.add(new QuickEntry(5, "小编推荐", ""));
-//            pageSource.quickEntryList.add(new QuickEntry(6, "新品发布", ""));
-//        }
 
         //获取快捷入口并保存到本地
         getCustomerServiceBar(context);
@@ -404,7 +402,7 @@ public class QyServiceUtils {
                     ProductDetail productDetail = new ProductDetail.Builder()
                             .setPicture(picUrl)
                             .setTitle(title)
-                            .setUrl(Url.BASE_SHARE_PAGE_TWO + "m/template/order_template/order.html?noid=" + mainOrderBean.getOrderNo())
+                            .setUrl(Url.BASE_SHARE_PAGE_TWO + "order_template/order.html?noid=" + mainOrderBean.getOrderNo())
                             .setDesc(mainOrderBean.getStatusText())
                             .setNote(String.format(context.getResources().getString(R.string.money_price_chn), mainOrderBean.getPayAmount()))
                             .setShow(1)

@@ -608,7 +608,7 @@ public class DoMoLifeWelfareDetailsFragment extends BaseFragment {
                         shareDataBean = new ShareDataBean(qualityWefBean.getPicUrl()
                                 , qualityWefBean.getTitle()
                                 , ""
-                                , Url.BASE_SHARE_PAGE_TWO + ("m/template/common/topic.html" + "?id="
+                                , Url.BASE_SHARE_PAGE_TWO + ("common/topic.html" + "?id="
                                 + qualityWefBean.getId() + (userId > 0 ? "&sid=" + userId : "")), qualityWefBean.getId());
 
                     }

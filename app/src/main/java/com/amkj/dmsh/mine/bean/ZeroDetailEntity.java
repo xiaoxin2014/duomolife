@@ -57,7 +57,7 @@ public class ZeroDetailEntity extends BaseTimeEntity {
         private String isPartake;
         private String videoUrl;
         private List<CommunalDetailBean> itemBody;
-        private List<?> winnersInfoList;
+        private List<ZeroLotteryEntity.ZeroLotteryBean> winnersInfoList;
 
         public String getPrice() {
             return price;
@@ -147,8 +147,8 @@ public class ZeroDetailEntity extends BaseTimeEntity {
             this.partakeCount = partakeCount;
         }
 
-        public String getIsPartake() {
-            return isPartake;
+        public boolean isPartake() {
+            return "1".equals(isPartake);
         }
 
         public void setIsPartake(String isPartake) {
@@ -163,11 +163,11 @@ public class ZeroDetailEntity extends BaseTimeEntity {
             this.itemBody = itemBody;
         }
 
-        public List<?> getWinnersInfoList() {
+        public List<ZeroLotteryEntity.ZeroLotteryBean> getWinnersInfoList() {
             return winnersInfoList;
         }
 
-        public void setWinnersInfoList(List<?> winnersInfoList) {
+        public void setWinnersInfoList(List<ZeroLotteryEntity.ZeroLotteryBean> winnersInfoList) {
             this.winnersInfoList = winnersInfoList;
         }
     }

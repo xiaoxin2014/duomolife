@@ -3,6 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/sc_mm_30"
+    android:visibility="gone"
+    android:id="@+id/ll_step"
     android:background="@drawable/shap_product_evaluate_bg"
     android:orientation="vertical"
     android:paddingTop="@dimen/sc_mm_23"

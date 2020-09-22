@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include layout="@layout/activity_domolife_header" />
+
+    <RelativeLayout
+        android:id="@+id/rl_detail"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.scwang.smartrefresh.layout.SmartRefreshLayout
+            android:id="@+id/smart_communal_refresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <include layout="@layout/layout_refresh_header_gif" />
+
+            <androidx.core.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:paddingLeft="@dimen/sc_mm_22"
+                    android:paddingTop="@dimen/sc_mm_36"
+                    android:paddingRight="@dimen/sc_mm_22"
+                    android:paddingBottom="@dimen/sc_mm_150">
+
+                    <TextView
+                        android:visibility="gone"
+                        android:id="@+id/tv_content"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/defaul"
+                        android:textColor="@color/text_login_gray_s"
+                        android:textSize="@dimen/sc_mm_28" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:visibility="gone"
+                        android:id="@+id/rv_imgs"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/sc_mm_34"
+                        android:nestedScrollingEnabled="false" />
+                </LinearLayout>
+            </androidx.core.widget.NestedScrollView>
+
+        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/sc_mm_100"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_more"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#FFFFF3D3"
+                android:gravity="center"
+                android:text="更多心得"
+                android:textColor="@color/text_black_t"
+                android:textSize="@dimen/sc_mm_34" />
+
+            <TextView
+                android:id="@+id/tv_buy_now"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#FFFFBB22"
+                android:gravity="center"
+                android:text="马上下单"
+                android:textColor="@color/text_black_t"
+                android:textSize="@dimen/sc_mm_34" />
+        </LinearLayout>
+    </RelativeLayout>
+</LinearLayout>

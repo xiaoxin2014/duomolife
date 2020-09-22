@@ -81,7 +81,7 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeFloat;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeBoolean;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -429,7 +429,7 @@ public class IntegralApplyRefundActivity extends BaseActivity {
         //退款金额说明
         String priceName;
         if (refundApplyBean.getRefundIntegralPrice() > 0) {
-            float moneyPrice = getFloatNumber(refundApplyBean.getRefundPrice());
+            float moneyPrice = getStringChangeFloat(refundApplyBean.getRefundPrice());
             if (moneyPrice > 0) {
                 priceName = String.format(getResources().getString(R.string.integral_product_and_price)
                         , refundApplyBean.getRefundIntegralPrice(), getStrings(refundApplyBean.getRefundPrice()));

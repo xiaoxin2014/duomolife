@@ -1,8 +1,5 @@
 package com.amkj.dmsh.mine.bean;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.amkj.dmsh.base.BaseTimeEntity;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
@@ -124,7 +121,7 @@ public class ShopCarEntity extends BaseTimeEntity {
                 this.cartInfo = cartInfoList;
             }
 
-            public static class CartInfoBean implements Parcelable, MultiItemEntity {
+            public static class CartInfoBean implements MultiItemEntity {
 
                 /**
                  * isForSale : false
@@ -358,7 +355,7 @@ public class ShopCarEntity extends BaseTimeEntity {
                     return ConstantVariable.PRODUCT;
                 }
 
-                public static class SaleSkuBean implements Parcelable {
+                public static class SaleSkuBean {
                     /**
                      * id : 9853
                      * price : 59
@@ -411,107 +408,7 @@ public class ShopCarEntity extends BaseTimeEntity {
                     public void setPrePrice(String prePrice) {
                         this.prePrice = prePrice;
                     }
-
-                    @Override
-                    public int describeContents() {
-                        return 0;
-                    }
-
-                    @Override
-                    public void writeToParcel(Parcel dest, int flags) {
-                        dest.writeInt(this.id);
-                        dest.writeString(this.price);
-                        dest.writeInt(this.quantity);
-                        dest.writeString(this.prePrice);
-                    }
-
-
-                    protected SaleSkuBean(Parcel in) {
-                        this.id = in.readInt();
-                        this.price = in.readString();
-                        this.quantity = in.readInt();
-                        this.prePrice = in.readString();
-                    }
-
-                    public static final Creator<SaleSkuBean> CREATOR = new Creator<SaleSkuBean>() {
-                        @Override
-                        public SaleSkuBean createFromParcel(Parcel source) {
-                            return new SaleSkuBean(source);
-                        }
-
-                        @Override
-                        public SaleSkuBean[] newArray(int size) {
-                            return new SaleSkuBean[size];
-                        }
-                    };
                 }
-
-                @Override
-                public int describeContents() {
-                    return 0;
-                }
-
-                @Override
-                public void writeToParcel(Parcel dest, int flags) {
-                    dest.writeByte(this.isForSale ? (byte) 1 : (byte) 0);
-                    dest.writeInt(this.productId);
-                    dest.writeParcelable(this.saleSku, flags);
-                    dest.writeString(this.saleSkuValue);
-                    dest.writeInt(this.count);
-                    dest.writeString(this.priceTag);
-                    dest.writeString(this.picUrl);
-                    dest.writeString(this.name);
-                    dest.writeByte(this.isMore ? (byte) 1 : (byte) 0);
-                    dest.writeInt(this.id);
-                    dest.writeString(this.activitypriceDesc);
-                    dest.writeInt(this.status);
-                    dest.writeByte(this.hasNewUserPrice ? (byte) 1 : (byte) 0);
-                    dest.writeString(this.updated);
-                    dest.writeByte(this.isSelected ? (byte) 1 : (byte) 0);
-                    dest.writeByte(this.isDelete ? (byte) 1 : (byte) 0);
-                    dest.writeByte(this.isMainProduct ? (byte) 1 : (byte) 0);
-                    dest.writeByte(this.isCombineProduct ? (byte) 1 : (byte) 0);
-                    dest.writeByte(this.isValid ? (byte) 1 : (byte) 0);
-                    dest.writeByte(this.isEcm ? (byte) 1 : (byte) 0);
-                }
-
-                public CartInfoBean() {
-                }
-
-                protected CartInfoBean(Parcel in) {
-                    this.isForSale = in.readByte() != 0;
-                    this.productId = in.readInt();
-                    this.saleSku = in.readParcelable(SkuSaleBean.class.getClassLoader());
-                    this.saleSkuValue = in.readString();
-                    this.count = in.readInt();
-                    this.priceTag = in.readString();
-                    this.picUrl = in.readString();
-                    this.name = in.readString();
-                    this.isMore = in.readByte() != 0;
-                    this.id = in.readInt();
-                    this.activitypriceDesc = in.readString();
-                    this.status = in.readInt();
-                    this.hasNewUserPrice = in.readByte() != 0;
-                    this.updated = in.readString();
-                    this.isSelected = in.readByte() != 0;
-                    this.isDelete = in.readByte() != 0;
-                    this.isMainProduct = in.readByte() != 0;
-                    this.isCombineProduct = in.readByte() != 0;
-                    this.isValid = in.readByte() != 0;
-                    this.isEcm = in.readByte() != 0;
-                }
-
-                public static final Creator<CartInfoBean> CREATOR = new Creator<CartInfoBean>() {
-                    @Override
-                    public CartInfoBean createFromParcel(Parcel source) {
-                        return new CartInfoBean(source);
-                    }
-
-                    @Override
-                    public CartInfoBean[] newArray(int size) {
-                        return new CartInfoBean[size];
-                    }
-                };
             }
         }
     }

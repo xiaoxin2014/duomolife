@@ -439,7 +439,7 @@ public class PostDetailActivity extends BaseActivity {
                             , mPostDetailBean.getPath()
                             , mPostDetailBean.getTopic_title()
                             , "@" + mPostDetailBean.getNickname() + ":" + (TextUtils.isEmpty(mPostDetailBean.getDigest()) ? "我刚刚完成了一个分享，去看看吧" : mPostDetailBean.getDigest())
-                            , BASE_SHARE_PAGE_TWO + "m/template/find_template/find_detail.html" + "?id=" + mPostDetailBean.getId()
+                            , Url.BASE_SHARE_PAGE_TWO + "find_template/find_detail.html" + "?id=" + mPostDetailBean.getId()
                             , "pages/findDetail/findDetail?id=" + mPostDetailBean.getId(), mPostDetailBean.getId());
                 }
                 break;

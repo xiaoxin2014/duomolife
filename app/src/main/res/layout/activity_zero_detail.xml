@@ -42,10 +42,30 @@
                             android:layout_height="wrap_content"
                             android:orientation="vertical">
 
-                            <com.bigkoo.convenientbanner.ConvenientBanner
-                                android:id="@+id/banner_ql_sp_pro_details"
+                            <RelativeLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="@dimen/sc_mm_750" />
+                                android:layout_height="@dimen/sc_mm_750">
+
+                                <com.bigkoo.convenientbanner.ConvenientBanner
+                                    android:id="@+id/banner_ql_sp_pro_details"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent" />
+
+                                <TextView
+                                    android:id="@+id/tv_look_product"
+                                    android:layout_width="@dimen/sc_mm_166"
+                                    android:layout_height="@dimen/sc_mm_52"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_alignParentBottom="true"
+                                    android:layout_marginRight="@dimen/sc_mm_20"
+                                    android:layout_marginBottom="@dimen/sc_mm_30"
+                                    android:background="@drawable/shape_look_product_bg"
+                                    android:gravity="center"
+                                    android:text="查看商品>"
+                                    android:textColor="@color/white"
+                                    android:textSize="@dimen/sc_mm_28" />
+                            </RelativeLayout>
+
 
                             <TextView
                                 android:id="@+id/tv_ql_sp_pro_sc_name"
@@ -112,6 +132,8 @@
                                     android:textSize="@dimen/sc_mm_24" />
                             </RelativeLayout>
 
+                            <include layout="@layout/layout_zero_lottery" />
+
                             <include layout="@layout/layout_free_step" />
                         </LinearLayout>
 
@@ -125,20 +147,21 @@
             </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
             <LinearLayout
+                android:id="@+id/ll_apply"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/sc_mm_98"
                 android:orientation="horizontal">
 
                 <LinearLayout
-                    android:paddingLeft="@dimen/sc_mm_29"
-                    android:paddingRight="@dimen/sc_mm_29"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:layout_weight="1"
                     android:background="#fff3d3"
                     android:gravity="center"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:paddingLeft="@dimen/sc_mm_29"
+                    android:paddingRight="@dimen/sc_mm_29">
 
                     <TextView
                         android:id="@+id/tv_end"
@@ -176,13 +199,25 @@
                     android:id="@+id/tv_apply"
                     android:layout_width="@dimen/sc_mm_240"
                     android:layout_height="match_parent"
-                    android:background="#FFBB22"
+                    android:background="@drawable/selector_apply_zero"
                     android:gravity="center"
                     android:text="申请试用"
                     android:textColor="@color/text_black_t"
                     android:textSize="@dimen/sc_mm_34"
                     android:textStyle="bold" />
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_buy"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/sc_mm_98"
+                android:background="@color/apply_zero_color"
+                android:gravity="center"
+                android:text="喜欢去购买"
+                android:textColor="@color/text_black_t"
+                android:textSize="@dimen/sc_mm_34"
+                android:textStyle="bold"
+                android:visibility="gone" />
         </LinearLayout>
 
         <ImageView

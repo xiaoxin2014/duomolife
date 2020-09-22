@@ -29,7 +29,7 @@ public class AlertDialogZeroLottery extends BaseAlertDialog {
         super(context);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 2);
         mRvLottery.setLayoutManager(gridLayoutManager);
-        mZeroLotteryAdapter = new ZeroLotteryAdapter(context, datas);
+        mZeroLotteryAdapter = new ZeroLotteryAdapter(context, datas, true);
         mRvLottery.setAdapter(mZeroLotteryAdapter);
     }
 

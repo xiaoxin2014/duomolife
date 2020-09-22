@@ -1,21 +1,19 @@
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/fl_mine_bg"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/sc_mm_353">
+    android:layout_height="@dimen/sc_mm_453">
 
     <ImageView
         android:id="@+id/iv_mine_page_bg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:src="@drawable/mine_no_login_bg"/>
+        android:src="@drawable/mine_no_login_bg" />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/translucence">
-
 
         <RelativeLayout
             android:id="@+id/rel_mine_info"
@@ -41,7 +39,7 @@
                     android:paddingRight="@dimen/sc_mm_50"
                     android:text="多么生活 您的生活美学专家\n为你提供最优质、省钱、放心的产品"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/sc_mm_28"/>
+                    android:textSize="@dimen/sc_mm_28" />
 
                 <TextView
                     android:id="@+id/tv_no_login_show"
@@ -51,7 +49,7 @@
                     android:padding="@dimen/sc_mm_40"
                     android:text="登录/注册"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/sc_mm_32"/>
+                    android:textSize="@dimen/sc_mm_32" />
             </LinearLayout>
 
             <RelativeLayout
@@ -67,7 +65,7 @@
                     android:layout_marginLeft="@dimen/sc_mm_30"
                     android:layout_marginTop="@dimen/sc_mm_128"
                     android:layout_marginRight="@dimen/sc_mm_30"
-                    android:src="@drawable/default_ava_img"/>
+                    android:src="@drawable/default_ava_img" />
 
                 <LinearLayout
                     android:id="@+id/ll_user_name"
@@ -86,7 +84,7 @@
                         android:maxLines="1"
                         android:text="@string/defaul"
                         android:textColor="@color/white"
-                        android:textSize="@dimen/sc_mm_34"/>
+                        android:textSize="@dimen/sc_mm_34" />
 
                     <TextView
                         android:id="@+id/tv_bind_phone"
@@ -101,7 +99,7 @@
                         android:text="关联手机账号"
                         android:textColor="@color/text_white_transcurent"
                         android:textSize="@dimen/sc_mm_26"
-                        android:visibility="gone"/>
+                        android:visibility="gone" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -119,7 +117,7 @@
                         android:layout_height="wrap_content"
                         android:text="积分:"
                         android:textColor="@color/text_white_transcurent"
-                        android:textSize="@dimen/sc_mm_24"/>
+                        android:textSize="@dimen/sc_mm_24" />
 
                     <TextView
                         android:id="@+id/tv_mine_score"
@@ -128,7 +126,7 @@
                         android:text="@string/defaul"
                         android:textColor="@color/white"
                         android:textSize="@dimen/sc_mm_28"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/tv_mine_get_score_more"
@@ -137,10 +135,11 @@
                         android:paddingLeft="@dimen/gap_left"
                         android:text="获取更多积分"
                         android:textColor="@color/text_white_transcurent"
-                        android:textSize="@dimen/sc_mm_22"/>
+                        android:textSize="@dimen/sc_mm_22" />
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/ll_fans"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/rel_integral_more"
@@ -162,7 +161,7 @@
                             android:layout_height="wrap_content"
                             android:text="关注"
                             android:textColor="@color/text_white_transcurent"
-                            android:textSize="@dimen/sc_mm_26"/>
+                            android:textSize="@dimen/sc_mm_26" />
 
                         <TextView
                             android:id="@+id/tv_mine_att_count"
@@ -176,7 +175,7 @@
                             android:textColor="@color/white"
                             android:textSize="@dimen/sc_mm_28"
                             android:textStyle="bold"
-                            android:visibility="visible"/>
+                            android:visibility="visible" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -191,7 +190,7 @@
                             android:layout_height="wrap_content"
                             android:text="粉丝"
                             android:textColor="@color/text_white_transcurent"
-                            android:textSize="@dimen/sc_mm_26"/>
+                            android:textSize="@dimen/sc_mm_26" />
 
                         <TextView
                             android:id="@+id/tv_mine_fans_count"
@@ -204,7 +203,7 @@
                             android:text="@string/defaul"
                             android:textColor="@color/white"
                             android:textSize="@dimen/sc_mm_28"
-                            android:textStyle="bold"/>
+                            android:textStyle="bold" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -219,7 +218,7 @@
                             android:layout_height="wrap_content"
                             android:text="帖子"
                             android:textColor="@color/text_white_transcurent"
-                            android:textSize="@dimen/sc_mm_26"/>
+                            android:textSize="@dimen/sc_mm_26" />
 
                         <TextView
                             android:id="@+id/tv_mine_inv_count"
@@ -230,9 +229,13 @@
                             android:text="@string/defaul"
                             android:textColor="@color/white"
                             android:textSize="@dimen/sc_mm_28"
-                            android:textStyle="bold"/>
+                            android:textStyle="bold" />
                     </LinearLayout>
                 </LinearLayout>
+
+                <include layout="@layout/layout_vip_info" />
+
+                <include layout="@layout/layout_no_vip_info" />
             </RelativeLayout>
         </RelativeLayout>
 
@@ -256,7 +259,7 @@
                     android:layout_height="@dimen/sc_mm_54"
                     android:paddingTop="@dimen/sc_mm_12"
                     android:paddingRight="@dimen/sc_mm_12"
-                    android:src="@drawable/new_message_light"/>
+                    android:src="@drawable/new_message_light" />
             </FrameLayout>
         </RelativeLayout>
     </RelativeLayout>

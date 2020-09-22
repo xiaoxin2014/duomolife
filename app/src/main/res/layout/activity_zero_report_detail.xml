@@ -21,7 +21,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <RelativeLayout
@@ -91,37 +91,19 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_report"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false" />
+                    android:layout_height="wrap_content" />
 
                 <TextView
                     android:id="@+id/tv_total_num"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:layout_margin="@dimen/sc_mm_35"
                     android:gravity="center"
+                    android:padding="@dimen/sc_mm_35"
                     android:text="@string/total_report"
                     android:textColor="@color/text_login_gray_s"
                     android:textSize="@dimen/sc_mm_28" />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:background="@color/light_gray_f"
-                    android:gravity="center"
-                    android:padding="@dimen/sc_mm_34"
-                    android:text=" - 相似商品 -"
-                    android:textColor="@color/text_login_gray_s"
-                    android:textSize="@dimen/sc_mm_32" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_rcommend"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/light_gray_f"
-                    android:nestedScrollingEnabled="false" />
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 

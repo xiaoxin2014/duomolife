@@ -1,8 +1,5 @@
 package com.amkj.dmsh.bean;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.amkj.dmsh.base.BaseEntity;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.homepage.bean.MarqueeTextEntity;
@@ -17,7 +14,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 /**
  * Created by atd48 on 2016/9/26.
  */
-public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
+public class CommunalUserInfoEntity extends BaseEntity {
 
     @SerializedName("result")
     private CommunalUserInfoBean communalUserInfoBean;
@@ -30,36 +27,24 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
         this.communalUserInfoBean = communalUserInfoBean;
     }
 
-    public static class CommunalUserInfoBean implements Parcelable {
+    public static class CommunalUserInfoBean {
         private String birthday;
-        private String serverTime;
-        private int is_sign;
         private int fllow;
         private String uid;
         private int sex;
         private String nickname;
-        private int last_login_time;
         private int status;
         private int fans;
         private int score;
         private int remindtime;
-        private String reg_ip;
-        private String rtime;
-        private int login;
         private boolean mobile_verification;
         private boolean flag;
-        private String signature;
         private String mobile;
-        private int is_disable;
-        private int reg_time;
-        private String device_type;
-        private boolean baby_verification;
         private String token;
         private String tokenExpireSeconds;
         private String expireTime;
         private String qq;
         private String avatar;
-        private int firstAppLogin;
         private int documentcount;
         private String bgimg_url;
         private String idcard;
@@ -71,11 +56,8 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
         private String isBindingWx;
         private int approve;
         private List<BabyBean> babys;
-        private int cartTotal;
         private int couponTotal;
-        private int jfTotal;
         private String app_version_no;
-        private String device_source;
         private String device_model;
         private String device_sys_version;
         private String idcardImg1;
@@ -86,7 +68,37 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
 
         //三方登录专属字段
         private String isNeedBinding;
-        private String openId;
+
+        //会员标志
+        private String isVip;
+        //会员等级
+        private String vipLevel;
+        //是否显示开通会员入口
+        private String isWhiteUser;
+
+        public boolean isWhiteUser() {
+            return "1".equals(isWhiteUser);
+        }
+
+        public void setIsWhiteUser(String isWhiteUser) {
+            this.isWhiteUser = isWhiteUser;
+        }
+
+        public int getVipLevel() {
+            return ConstantMethod.getStringChangeIntegers(vipLevel);
+        }
+
+        public void setVipLevel(String vipLevel) {
+            this.vipLevel = vipLevel;
+        }
+
+        public boolean isVip() {
+            return "1".equals(isVip);
+        }
+
+        public void setIsVip(String isVip) {
+            this.isVip = isVip;
+        }
 
         public String getShowIdcard() {
             return showIdcard;
@@ -198,22 +210,6 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
             this.birthday = birthday;
         }
 
-        public String getServerTime() {
-            return serverTime;
-        }
-
-        public void setServerTime(String serverTime) {
-            this.serverTime = serverTime;
-        }
-
-        public int getFirstAppLogin() {
-            return firstAppLogin;
-        }
-
-        public void setFirstAppLogin(int firstAppLogin) {
-            this.firstAppLogin = firstAppLogin;
-        }
-
         public String getAvatar() {
             return avatar;
         }
@@ -238,13 +234,6 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
             this.qq = qq;
         }
 
-        public boolean isBaby_verification() {
-            return baby_verification;
-        }
-
-        public void setBaby_verification(boolean baby_verification) {
-            this.baby_verification = baby_verification;
-        }
 
         public boolean isMobile_verification() {
             return mobile_verification;
@@ -262,13 +251,6 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
             this.flag = flag;
         }
 
-        public String getSignature() {
-            return signature;
-        }
-
-        public void setSignature(String signature) {
-            this.signature = signature;
-        }
 
         public String getMobile() {
             return mobile;
@@ -276,22 +258,6 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
 
         public void setMobile(String mobile) {
             this.mobile = mobile;
-        }
-
-        public int getIs_disable() {
-            return is_disable;
-        }
-
-        public void setIs_disable(int is_disable) {
-            this.is_disable = is_disable;
-        }
-
-        public int getIs_sign() {
-            return is_sign;
-        }
-
-        public void setIs_sign(int is_sign) {
-            this.is_sign = is_sign;
         }
 
         public int getFllow() {
@@ -326,14 +292,6 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
             this.nickname = nickname;
         }
 
-        public int getLast_login_time() {
-            return last_login_time;
-        }
-
-        public void setLast_login_time(int last_login_time) {
-            this.last_login_time = last_login_time;
-        }
-
         public int getStatus() {
             return status;
         }
@@ -350,14 +308,6 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
             this.fans = fans;
         }
 
-        public String getDevice_type() {
-            return device_type;
-        }
-
-        public void setDevice_type(String device_type) {
-            this.device_type = device_type;
-        }
-
         public int getScore() {
             return score;
         }
@@ -366,44 +316,12 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
             this.score = score;
         }
 
-        public int getReg_time() {
-            return reg_time;
-        }
-
-        public void setReg_time(int reg_time) {
-            this.reg_time = reg_time;
-        }
-
         public int getRemindtime() {
             return remindtime;
         }
 
         public void setRemindtime(int remindtime) {
             this.remindtime = remindtime;
-        }
-
-        public String getReg_ip() {
-            return reg_ip;
-        }
-
-        public void setReg_ip(String reg_ip) {
-            this.reg_ip = reg_ip;
-        }
-
-        public String getRtime() {
-            return rtime;
-        }
-
-        public void setRtime(String rtime) {
-            this.rtime = rtime;
-        }
-
-        public int getLogin() {
-            return login;
-        }
-
-        public void setLogin(int login) {
-            this.login = login;
         }
 
         public int getDocumentcount() {
@@ -430,28 +348,12 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
             this.babys = babys;
         }
 
-        public int getCartTotal() {
-            return cartTotal;
-        }
-
-        public void setCartTotal(int cartTotal) {
-            this.cartTotal = cartTotal;
-        }
-
         public int getCouponTotal() {
             return couponTotal;
         }
 
         public void setCouponTotal(int couponTotal) {
             this.couponTotal = couponTotal;
-        }
-
-        public int getJfTotal() {
-            return jfTotal;
-        }
-
-        public void setJfTotal(int jfTotal) {
-            this.jfTotal = jfTotal;
         }
 
         public CommunalUserInfoBean() {
@@ -463,14 +365,6 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
 
         public void setApp_version_no(String app_version_no) {
             this.app_version_no = app_version_no;
-        }
-
-        public String getDevice_source() {
-            return device_source;
-        }
-
-        public void setDevice_source(String device_source) {
-            this.device_source = device_source;
         }
 
         public String getDevice_model() {
@@ -505,15 +399,7 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
             this.isNeedBinding = isNeedBinding;
         }
 
-        public String getOpenId() {
-            return openId;
-        }
-
-        public void setOpenId(String openId) {
-            this.openId = openId;
-        }
-
-        public static class NoticeInfoBean implements Parcelable {
+        public static class NoticeInfoBean {
             /**
              * group_id : 4
              * ios_link : app://DMLGoodsProductsInfoViewController
@@ -582,186 +468,6 @@ public class CommunalUserInfoEntity extends BaseEntity implements Parcelable {
             public void setContent(String content) {
                 this.content = content;
             }
-
-            @Override
-            public int describeContents() {
-                return 0;
-            }
-
-            @Override
-            public void writeToParcel(Parcel dest, int flags) {
-                dest.writeString(this.group_id);
-                dest.writeString(this.ios_link);
-                dest.writeString(this.web_pc_link);
-                dest.writeString(this.android_link);
-                dest.writeString(this.web_link);
-                dest.writeString(this.content);
-            }
-
-            public NoticeInfoBean() {
-            }
-
-            protected NoticeInfoBean(Parcel in) {
-                this.group_id = in.readString();
-                this.ios_link = in.readString();
-                this.web_pc_link = in.readString();
-                this.android_link = in.readString();
-                this.web_link = in.readString();
-                this.content = in.readString();
-            }
-
-            public static final Creator<NoticeInfoBean> CREATOR = new Creator<NoticeInfoBean>() {
-                @Override
-                public NoticeInfoBean createFromParcel(Parcel source) {
-                    return new NoticeInfoBean(source);
-                }
-
-                @Override
-                public NoticeInfoBean[] newArray(int size) {
-                    return new NoticeInfoBean[size];
-                }
-            };
         }
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            dest.writeString(this.birthday);
-            dest.writeString(this.serverTime);
-            dest.writeInt(this.is_sign);
-            dest.writeInt(this.fllow);
-            dest.writeString(this.uid);
-            dest.writeInt(this.sex);
-            dest.writeString(this.nickname);
-            dest.writeInt(this.last_login_time);
-            dest.writeInt(this.status);
-            dest.writeInt(this.fans);
-            dest.writeInt(this.score);
-            dest.writeInt(this.remindtime);
-            dest.writeString(this.reg_ip);
-            dest.writeString(this.rtime);
-            dest.writeInt(this.login);
-            dest.writeByte(this.mobile_verification ? (byte) 1 : (byte) 0);
-            dest.writeByte(this.flag ? (byte) 1 : (byte) 0);
-            dest.writeString(this.signature);
-            dest.writeString(this.mobile);
-            dest.writeInt(this.is_disable);
-            dest.writeInt(this.reg_time);
-            dest.writeString(this.device_type);
-            dest.writeByte(this.baby_verification ? (byte) 1 : (byte) 0);
-            dest.writeString(this.token);
-            dest.writeString(this.tokenExpireSeconds);
-            dest.writeString(this.qq);
-            dest.writeString(this.avatar);
-            dest.writeInt(this.firstAppLogin);
-            dest.writeInt(this.documentcount);
-            dest.writeString(this.bgimg_url);
-            dest.writeString(this.idcard);
-            dest.writeString(this.real_name);
-            dest.writeString(this.interests);
-            dest.writeInt(this.approve);
-            dest.writeTypedList(this.babys);
-            dest.writeInt(this.cartTotal);
-            dest.writeInt(this.couponTotal);
-            dest.writeInt(this.jfTotal);
-            dest.writeString(this.app_version_no);
-            dest.writeString(this.device_source);
-            dest.writeString(this.device_model);
-            dest.writeString(this.device_sys_version);
-            dest.writeInt(this.sysNotice);
-            dest.writeParcelable(this.noticeInfo, flags);
-        }
-
-        protected CommunalUserInfoBean(Parcel in) {
-            this.birthday = in.readString();
-            this.serverTime = in.readString();
-            this.is_sign = in.readInt();
-            this.fllow = in.readInt();
-            this.uid = in.readString();
-            this.sex = in.readInt();
-            this.nickname = in.readString();
-            this.last_login_time = in.readInt();
-            this.status = in.readInt();
-            this.fans = in.readInt();
-            this.score = in.readInt();
-            this.remindtime = in.readInt();
-            this.reg_ip = in.readString();
-            this.rtime = in.readString();
-            this.login = in.readInt();
-            this.mobile_verification = in.readByte() != 0;
-            this.flag = in.readByte() != 0;
-            this.signature = in.readString();
-            this.mobile = in.readString();
-            this.is_disable = in.readInt();
-            this.reg_time = in.readInt();
-            this.device_type = in.readString();
-            this.baby_verification = in.readByte() != 0;
-            this.token = in.readString();
-            this.tokenExpireSeconds = in.readString();
-            this.qq = in.readString();
-            this.avatar = in.readString();
-            this.firstAppLogin = in.readInt();
-            this.documentcount = in.readInt();
-            this.bgimg_url = in.readString();
-            this.idcard = in.readString();
-            this.real_name = in.readString();
-            this.interests = in.readString();
-            this.approve = in.readInt();
-            this.babys = in.createTypedArrayList(BabyBean.CREATOR);
-            this.cartTotal = in.readInt();
-            this.couponTotal = in.readInt();
-            this.jfTotal = in.readInt();
-            this.app_version_no = in.readString();
-            this.device_source = in.readString();
-            this.device_model = in.readString();
-            this.device_sys_version = in.readString();
-            this.sysNotice = in.readInt();
-            this.noticeInfo = in.readParcelable(NoticeInfoBean.class.getClassLoader());
-        }
-
-        public static final Creator<CommunalUserInfoBean> CREATOR = new Creator<CommunalUserInfoBean>() {
-            @Override
-            public CommunalUserInfoBean createFromParcel(Parcel source) {
-                return new CommunalUserInfoBean(source);
-            }
-
-            @Override
-            public CommunalUserInfoBean[] newArray(int size) {
-                return new CommunalUserInfoBean[size];
-            }
-        };
     }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(this.communalUserInfoBean, flags);
-    }
-
-    public CommunalUserInfoEntity() {
-    }
-
-    protected CommunalUserInfoEntity(Parcel in) {
-        this.communalUserInfoBean = in.readParcelable(CommunalUserInfoBean.class.getClassLoader());
-    }
-
-    public static final Parcelable.Creator<CommunalUserInfoEntity> CREATOR = new Parcelable.Creator<CommunalUserInfoEntity>() {
-        @Override
-        public CommunalUserInfoEntity createFromParcel(Parcel source) {
-            return new CommunalUserInfoEntity(source);
-        }
-
-        @Override
-        public CommunalUserInfoEntity[] newArray(int size) {
-            return new CommunalUserInfoEntity[size];
-        }
-    };
 }

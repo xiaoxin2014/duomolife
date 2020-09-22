@@ -351,7 +351,9 @@ public class ArticleOfficialActivity extends BaseActivity {
     }
 
     private void setErrorException() {
-        mRelCommunalNetError.setVisibility(View.VISIBLE);
+        if (mRelCommunalNetError != null) {
+            mRelCommunalNetError.setVisibility(View.VISIBLE);
+        }
     }
 
     /**
@@ -897,6 +899,5 @@ public class ArticleOfficialActivity extends BaseActivity {
                 finish();
             }
         });
-
     }
 }

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rl_vip_info"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/sc_mm_84"
+    android:layout_alignParentBottom="true"
+    android:layout_marginLeft="@dimen/sc_mm_28"
+    android:layout_marginRight="@dimen/sc_mm_28"
+    android:background="@drawable/shap_vip_info_bg"
+    android:paddingLeft="@dimen/sc_mm_31"
+    android:paddingRight="@dimen/sc_mm_22"
+    android:visibility="gone">
+
+    <ImageView
+        android:layout_width="@dimen/sc_mm_42"
+        android:layout_height="@dimen/sc_mm_40"
+        android:layout_centerVertical="true"
+        android:src="@drawable/vip_logo" />
+
+    <LinearLayout
+        android:id="@+id/ll_vip_record"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/sc_mm_60"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_total_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/vip_save_money_total"
+            android:textColor="#FFF4F4F4"
+            android:textSize="@dimen/sc_mm_28"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tv_end_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/vip_record"
+            android:textColor="#FFF4F4F4"
+            android:textSize="@dimen/sc_mm_24" />
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/tv_renewal"
+        android:layout_width="@dimen/sc_mm_130"
+        android:layout_height="@dimen/sc_mm_45"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/shap_vip_renewal_bg"
+        android:gravity="center"
+        android:text="立即续费"
+        android:textColor="@color/text_black_t"
+        android:textSize="@dimen/sc_mm_26" />
+</RelativeLayout>

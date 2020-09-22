@@ -528,11 +528,11 @@ public class DirectExchangeDetailsActivity extends BaseActivity {
                 }
                 qyProductIndentInfo.setDesc(indentDetailBean.getStatusText());
                 qyProductIndentInfo.setNote(String.format(getResources().getString(R.string.money_price_chn), getStrings(indentDetailBean.getPayAmount())));
-                qyProductIndentInfo.setUrl(Url.BASE_SHARE_PAGE_TWO + "m/template/order_template/order.html?noid=" + orderNo);
+                qyProductIndentInfo.setUrl(Url.BASE_SHARE_PAGE_TWO + "order_template/order.html?noid=" + orderNo);
             }
-            QyServiceUtils.getQyInstance().openQyServiceChat(this, "订单详情", Url.BASE_SHARE_PAGE_TWO + "m/template/order_template/order.html?noid=" + orderNo, qyProductIndentInfo);
+            QyServiceUtils.getQyInstance().openQyServiceChat(this, "订单详情", Url.BASE_SHARE_PAGE_TWO + "order_template/order.html?noid=" + orderNo, qyProductIndentInfo);
         } else {
-            QyServiceUtils.getQyInstance().openQyServiceChat(this, "订单详情", Url.BASE_SHARE_PAGE_TWO + "m/template/order_template/order.html?noid=" + orderNo, null);
+            QyServiceUtils.getQyInstance().openQyServiceChat(this, "订单详情", Url.BASE_SHARE_PAGE_TWO + "order_template/order.html?noid=" + orderNo, null);
         }
     }
 

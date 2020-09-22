@@ -69,6 +69,11 @@ public class MessageNotifyAdapter extends BaseQuickAdapter<MessageNotifyBean, Ba
             case "platformnotice":
                 helper.setGone(R.id.fl_mes_sys, false);
                 break;
+            case "vip":
+                GlideImageLoaderUtil.loadCenterCrop(context, iv_mes_notify_cover_pro, messageIndentBean.getPath());
+                iv_mes_notify_cover_pro.setVisibility(View.VISIBLE);
+                iv_mes_notify_cover_icon.setVisibility(View.GONE);
+                break;
             default:
                 helper.setGone(R.id.fl_mes_sys, false);
                 break;

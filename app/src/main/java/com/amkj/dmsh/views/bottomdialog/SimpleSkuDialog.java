@@ -46,7 +46,7 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static android.view.View.inflate;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeFloat;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 
@@ -487,7 +487,7 @@ public class SimpleSkuDialog implements KeywordContainer.OnClickKeywordListener 
                         showToast("库存不足，请更改数量后再购买");
                         return;
                     }
-                    if (editGoodsSkuBean.getUserScore() < getFloatNumber(skuSaleBean.getPrice())) {
+                    if (editGoodsSkuBean.getUserScore() < getStringChangeFloat(skuSaleBean.getPrice())) {
                         showToast("积分不足，请更改数量");
                         return;
                     }

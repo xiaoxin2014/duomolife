@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.mine.activity.ZeroDetailActivity;
+import com.amkj.dmsh.mine.activity.ZeroActivityDetailActivity;
 import com.amkj.dmsh.mine.bean.ZeroInfoBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -20,6 +20,7 @@ import java.util.List;
 import androidx.annotation.Nullable;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
 
 /**
@@ -47,15 +48,15 @@ public class ZeroProductAdapter extends BaseQuickAdapter<ZeroInfoBean, BaseViewH
         view.getPaint().setAntiAlias(true);
         GlideImageLoaderUtil.loadCenterCrop(context, helper.getView(R.id.iv_zero_cover), item.getProductImg());
         helper.setText(R.id.tv_zero_name, getStrings(item.getProductName()))
-                .setText(R.id.tv_zero_subtitle, getStrings(item.getSubtitle()))
+                .setText(R.id.tv_zero_product_subtitle, getStrings(item.getSubtitle()))
                 .setText(R.id.tv_zero_price, ConstantMethod.getRmbFormat(context, "0"))
-                .setText(R.id.tv_zero_market_price, item.getMarketPrice())
-                .setText(R.id.tv_zero_quantity, getStringsFormat(context, type == 0 ? R.string.limit_quantity : R.string.total_apply_num, item.getCount()))
+                .setText(R.id.tv_zero_market_price, getStringsChNPrice(context, item.getMarketPrice()))
+                .setText(R.id.tv_zero_quantity, getStringsFormat(context, type == 0 ? R.string.limit_quantity : R.string.total_apply_num, type == 0 ? item.getCount() : item.getPartakeCount()))
                 .addOnClickListener(R.id.tv_apply).setTag(R.id.tv_apply, item.getActivityId());
         helper.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, ZeroDetailActivity.class);
+                Intent intent = new Intent(context, ZeroActivityDetailActivity.class);
                 intent.putExtra("activityId", item.getActivityId());
                 context.startActivity(intent);
             }

@@ -6,6 +6,9 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.base.BaseAlertDialog;
+import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.mine.activity.ZeroIndentDetailActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.DirectPaySuccessActivity;
@@ -16,7 +19,6 @@ import com.amkj.dmsh.shopdetails.payutils.AliPay;
 import com.amkj.dmsh.shopdetails.payutils.UnionPay;
 import com.amkj.dmsh.shopdetails.payutils.WXPay;
 import com.amkj.dmsh.utils.LifecycleHandler;
-import com.amkj.dmsh.base.BaseAlertDialog;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 
 import java.util.HashMap;
@@ -42,7 +44,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.PAY_ALI_PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY_UNION_PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.PAY_WX_PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.constant.Url.Q_PAYMENT_INDENT;
 
 /**
  * Created by xiaoxin on 2020/4/3
@@ -57,12 +58,14 @@ public class AlertDialogGoPay extends BaseAlertDialog {
     @BindView(R.id.ll_pay_union)
     LinearLayout mLlPayUnion;
     private String orderNo;
+    private boolean isZero;//是否是0元订单
     private AppCompatActivity mActicity;
 
 
-    public AlertDialogGoPay(AppCompatActivity activity, Object object) {
+    public AlertDialogGoPay(AppCompatActivity activity, Object object, String simpleName) {
         super(activity);
         mActicity = activity;
+        isZero = ZeroIndentDetailActivity.class.getSimpleName().equals(simpleName);
         if (object instanceof List && ((List) object).size() > 0) {
             List payWays = (List) object;
             //微信
@@ -117,7 +120,7 @@ public class AlertDialogGoPay extends BaseAlertDialog {
     private void paymentIndent(String payWay) {
         showLoadhud(mActicity);
         Map<String, Object> params = new HashMap<>();
-        params.put("no", orderNo);
+        params.put(isZero ? "orderNo" : "no", orderNo);
         params.put("userId", userId);
         //        2019.1.16 新增银联支付
         params.put("buyType", payWay);
@@ -125,7 +128,7 @@ public class AlertDialogGoPay extends BaseAlertDialog {
             params.put("paymentLinkType", 2);
             params.put("isApp", true);
         }
-        NetLoadUtils.getNetInstance().loadNetDataPost(context, Q_PAYMENT_INDENT, params, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(context, isZero ? Url.GET_ZERO_GO_PAY : Url.Q_PAYMENT_INDENT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 dismissLoadhud(mActicity);
@@ -209,12 +212,14 @@ public class AlertDialogGoPay extends BaseAlertDialog {
     }
 
     private void skipPaySuccess() {
-        new LifecycleHandler(mActicity).postDelayed(() -> {
-            Intent intent = new Intent(context, DirectPaySuccessActivity.class);
-            intent.putExtra("indentNo", orderNo);
-            intent.putExtra(INDENT_PRODUCT_TYPE, INDENT_PROPRIETOR_PRODUCT);
-            context.startActivity(intent);
-        }, 1000);
+        if (!isZero) {
+            new LifecycleHandler(mActicity).postDelayed(() -> {
+                Intent intent = new Intent(context, DirectPaySuccessActivity.class);
+                intent.putExtra("indentNo", orderNo);
+                intent.putExtra(INDENT_PRODUCT_TYPE, INDENT_PROPRIETOR_PRODUCT);
+                context.startActivity(intent);
+            }, 1000);
+        }
     }
 
     private void doAliPay(QualityCreateAliPayIndentBean.ResultBean resultBean) {

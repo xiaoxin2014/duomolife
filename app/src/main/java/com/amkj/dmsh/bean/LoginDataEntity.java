@@ -31,6 +31,15 @@ public class LoginDataEntity extends BaseEntity {
         private String tokenExpireSeconds;
         private String expireTime;
         private String isResetPassword;
+        private String isVip;
+
+        public boolean isVip() {
+            return "1".equals(isVip);
+        }
+
+        public void setIsVip(String isVip) {
+            this.isVip = isVip;
+        }
 
         public boolean isResetPassword() {
             return "1".equals(isResetPassword);

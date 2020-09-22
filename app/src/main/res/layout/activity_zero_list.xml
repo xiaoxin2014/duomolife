@@ -80,6 +80,7 @@
                         android:layout_marginLeft="@dimen/sc_mm_22"
                         android:layout_marginTop="@dimen/sc_mm_27"
                         android:layout_marginRight="@dimen/sc_mm_22"
+                        android:layout_marginBottom="@dimen/sc_mm_27"
                         android:background="@drawable/shape_zero_list_bg"
                         android:nestedScrollingEnabled="false" />
                 </LinearLayout>

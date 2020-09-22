@@ -37,6 +37,8 @@
             android:layout_weight="1" />
 
         <LinearLayout
+            android:visibility="gone"
+            android:id="@+id/ll_open"
             android:layout_width="match_parent"
             android:layout_height="@dimen/sc_mm_100"
             android:background="#2a3364"
@@ -53,7 +55,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/sc_mm_15"
-                android:text="立即开通¥149/年"
+                android:text="立即开通"
                 android:textColor="@color/white"
                 android:textSize="@dimen/sc_mm_32"
                 android:textStyle="bold" />

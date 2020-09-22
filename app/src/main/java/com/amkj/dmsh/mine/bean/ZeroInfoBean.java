@@ -19,6 +19,15 @@ public class ZeroInfoBean {
     private String count;
     private String activityId;
     private String marketPrice;
+    private String partakeCount;
+
+    public String getPartakeCount() {
+        return partakeCount;
+    }
+
+    public void setPartakeCount(String partakeCount) {
+        this.partakeCount = partakeCount;
+    }
 
     public String getProductId() {
         return productId;

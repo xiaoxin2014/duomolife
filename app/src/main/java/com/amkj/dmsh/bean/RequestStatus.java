@@ -429,6 +429,9 @@ public class RequestStatus extends BaseTimeEntity {
         private String picUrl;
         private String giftText;
         private String zoneId;//会员专区id
+        private String priceText;
+        private String marketPrice;
+        private String isVip;
 
         /**
          * 0元报告相关
@@ -438,6 +441,39 @@ public class RequestStatus extends BaseTimeEntity {
         private String content;
         private String imgs;
         private String star;
+        private String productId;
+
+        public boolean isVip() {
+            return "1".equals(isVip);
+        }
+
+        public void setIsVip(String isVip) {
+            this.isVip = isVip;
+        }
+
+        public String getPriceText() {
+            return priceText;
+        }
+
+        public void setPriceText(String priceText) {
+            this.priceText = priceText;
+        }
+
+        public String getMarketPrice() {
+            return marketPrice;
+        }
+
+        public void setMarketPrice(String marketPrice) {
+            this.marketPrice = marketPrice;
+        }
+
+        public String getProductId() {
+            return productId;
+        }
+
+        public void setProductId(String productId) {
+            this.productId = productId;
+        }
 
         public String getActivityId() {
             return activityId;
@@ -671,8 +707,9 @@ public class RequestStatus extends BaseTimeEntity {
             this.beEconomical = beEconomical;
         }
 
-        public String getVipLevel() {
-            return vipLevel;
+        public int getVipLevel() {
+            int level = ConstantMethod.getStringChangeIntegers(vipLevel);
+            return Math.max(level, 1);
         }
 
         public void setVipLevel(String vipLevel) {

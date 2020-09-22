@@ -2,9 +2,6 @@ package com.amkj.dmsh.user.activity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import androidx.annotation.NonNull;
-import com.google.android.material.appbar.AppBarLayout;
-import androidx.viewpager.widget.ViewPager;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -16,6 +13,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.constant.UMShareAction;
+import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dao.SoftApiDao;
 import com.amkj.dmsh.find.adapter.UserPostPagerAdapter;
 import com.amkj.dmsh.find.bean.EventMessageBean;
@@ -24,11 +22,14 @@ import com.amkj.dmsh.user.bean.UserPagerInfoEntity.UserInfoBean;
 import com.amkj.dmsh.utils.ImageConverterUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
+import com.google.android.material.appbar.AppBarLayout;
 import com.gyf.barlibrary.ImmersionBar;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import org.greenrobot.eventbus.EventBus;
 
+import androidx.annotation.NonNull;
+import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.OnClick;
 import me.jessyan.autosize.utils.AutoSizeUtils;
@@ -41,7 +42,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.DELETE_POST;
 import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_FOLLOW_STATUS;
 import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_POST_CONTENT;
 import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_USER_PAGER;
-import static com.amkj.dmsh.constant.Url.BASE_SHARE_PAGE_TWO;
 
 
 /**
@@ -177,7 +177,7 @@ public class UserPagerActivity extends BaseActivity {
                     new UMShareAction(this, userInfoBean.getAvatar(),
                             "快来多么生活看看我的分享吧~",
                             "幸福生活美美哒~",
-                            BASE_SHARE_PAGE_TWO + "m/template/mine/other_finds.html?fuid=" + userId,
+                            Url.BASE_SHARE_PAGE_TWO + "mine/other_finds.html?fuid=" + userId,
                             getStringChangeIntegers(userId));
                 }
                 break;

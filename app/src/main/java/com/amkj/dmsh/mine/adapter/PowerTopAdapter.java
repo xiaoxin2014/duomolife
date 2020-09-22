@@ -1,9 +1,10 @@
 package com.amkj.dmsh.mine.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.ConstantMethod;
+import com.amkj.dmsh.mine.activity.VipPowerDetailActivity;
 import com.amkj.dmsh.mine.bean.PowerEntity;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -34,6 +35,10 @@ public class PowerTopAdapter extends BaseQuickAdapter<PowerEntity.PowerBean, Bas
         if (item == null) return;
         GlideImageLoaderUtil.loadRoundImg(context, helper.getView(R.id.iv_pic), item.getIcon(), AutoSizeUtils.mm2px(context, 88));
         helper.setText(R.id.tv_power_name, getStrings(item.getTitle()));
-        helper.itemView.setOnClickListener(v -> ConstantMethod.setSkipPath(context, item.getAndroidLink(), false));
+        helper.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, VipPowerDetailActivity.class);
+            intent.putExtra("position", String.valueOf(helper.getAdapterPosition()));
+            context.startActivity(intent);
+        });
     }
 }

@@ -6,8 +6,11 @@ import android.view.View;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
+import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.find.activity.JoinTopicActivity;
+import com.amkj.dmsh.mine.activity.CommitZeroReportActivity;
+import com.amkj.dmsh.mine.activity.LookMyReportActivity;
 import com.amkj.dmsh.mine.activity.ZeroIndentDetailActivity;
 import com.amkj.dmsh.mine.adapter.MyZeroApplyAdapter;
 import com.amkj.dmsh.mine.bean.MyZeroApplyEntity;
@@ -33,6 +36,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
@@ -83,14 +87,19 @@ public class ZeroApplyListFragment extends BaseFragment {
                                 break;
                             case "2": //提交报告
                             case "3": //修改报告
-                                intent = new Intent(getActivity(), JoinTopicActivity.class);
+                                intent = new Intent(getActivity(), CommitZeroReportActivity.class);
                                 intent.putExtra("status", zeroApplyBean.getStatus());
                                 intent.putExtra("activityId", zeroApplyBean.getActivityId());
                                 intent.putExtra("orderId", zeroApplyBean.getOrderId());
+                                intent.putExtra("productName", zeroApplyBean.getProductName());
+                                intent.putExtra("productImg", zeroApplyBean.getProductImg());
                                 startActivity(intent);
                                 break;
                             case "4": //查看报告
-
+                                intent = new Intent(getActivity(), LookMyReportActivity.class);
+                                intent.putExtra("orderId", zeroApplyBean.getOrderId());
+                                intent.putExtra("activityId", zeroApplyBean.getActivityId());
+                                startActivity(intent);
                                 break;
                         }
                     } else if (view.getId() == R.id.tv_detail) {
@@ -112,6 +121,7 @@ public class ZeroApplyListFragment extends BaseFragment {
 
     @Override
     protected void loadData() {
+        if (userId == 0) return;
         Map<String, Object> map = new HashMap<>();
         map.put("status", mStatus);
         map.put("currentPage", page);
@@ -181,6 +191,13 @@ public class ZeroApplyListFragment extends BaseFragment {
     protected void getReqParams(Bundle bundle) {
         if (bundle != null) {
             mStatus = (String) bundle.get("status");
+        }
+    }
+
+    @Override
+    protected void postEventResult(@NonNull EventMessage message) {
+        if (ConstantVariable.UPDATE_ZERO_APPLY_LIST.equals(message.type)) {
+            loadData();
         }
     }
 }

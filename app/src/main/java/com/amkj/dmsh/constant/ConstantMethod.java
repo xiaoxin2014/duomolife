@@ -139,7 +139,17 @@ public class ConstantMethod {
 
     private OnGetPermissionsSuccessListener onGetPermissionsSuccessListener;
     public static int userId = 0;
+    private static boolean isVip = false;
     private AlertDialogHelper alertDialogHelper;
+
+    public static boolean isVip() {
+        return userId > 0 && isVip;
+//        return false;
+    }
+
+    public static void setIsVip(boolean isVip) {
+        ConstantMethod.isVip = isVip;
+    }
 
 
     //    判断变量是否为空
@@ -273,7 +283,7 @@ public class ConstantMethod {
      * @param text
      * @return
      */
-    public static float getFloatNumber(String text) {
+    public static float getStringChangeFloat(String text) {
         if (TextUtils.isEmpty(text)) {
             return 0;
         } else {
@@ -302,13 +312,23 @@ public class ConstantMethod {
     }
 
 
-    /**
-     * 带货币单位价格格式化
-     */
     public static CharSequence getRmbFormat(Context context, String priceText) {
         return getRmbFormat(context, priceText, true);
     }
 
+
+    public static CharSequence getRmbFormat(Context context, String priceText, boolean append) {
+        return getRmbFormat(context, priceText, append, "#ff5a6b");
+
+    }
+
+    /**
+     * 带货币单位价格格式化
+     *
+     * @param append 是否追加货币符号
+     * @param color  自定义¥颜色
+     * @return
+     */
     public static CharSequence getRmbFormat(Context context, String priceText, boolean append, String color) {
         try {
             String price = getStrings(priceText);
@@ -327,20 +347,10 @@ public class ConstantMethod {
                 return context.getResources().getString(R.string.defaul);
             }
         } catch (Exception e) {
-            return getStrings("¥" + priceText);
+            return getStrings(append ? "¥" + priceText : priceText);
         }
     }
 
-    /**
-     * 带货币单位价格格式化
-     *
-     * @param append 是否追加货币符号
-     * @return
-     */
-    public static CharSequence getRmbFormat(Context context, String priceText, boolean append) {
-        return getRmbFormat(context, priceText, true, "#ff5a6b");
-
-    }
 
     /**
      * 带货币单位价格格式化
@@ -1727,6 +1737,9 @@ public class ConstantMethod {
                 return ConstantVariable.WEEKLY_ZONE;
             case "PostDetailActivity"://帖子详情
                 return ConstantVariable.POST;
+            case "VipZoneDetailActivity"://会员日/每周会员特价专区
+            case "VipZoneDetailFragment"://会员日/每周会员特价专区
+                return ConstantVariable.VIP_ZONE;
             default:
                 return -1;
         }

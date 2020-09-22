@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:focusable="true"
@@ -102,8 +103,74 @@
                                 android:textSize="@dimen/sc_mm_32"
                                 android:visibility="visible" />
 
-
                             <include layout="@layout/layout_scrool_detail_price" />
+
+                            <RelativeLayout
+                                android:id="@+id/ll_vipprice_and_province"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/sc_mm_30"
+                                android:layout_marginRight="@dimen/sc_mm_30"
+                                android:layout_marginBottom="@dimen/sc_mm_20">
+
+                                <LinearLayout
+                                    android:id="@+id/ll_vip_price"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center_vertical"
+                                    android:orientation="horizontal">
+
+                                    <ImageView
+                                        android:id="@+id/iv_bottom_vip_logo"
+                                        android:layout_width="@dimen/sc_mm_29"
+                                        android:layout_height="@dimen/sc_mm_28"
+                                        android:layout_marginRight="@dimen/sc_mm_10"
+                                        android:src="@drawable/vip_logo"
+                                        android:visibility="gone" />
+
+                                    <TextView
+                                        android:id="@+id/tv_vip_price"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="center_vertical"
+                                        android:text="@string/defaul"
+                                        android:textColor="@color/text_black_t"
+                                        android:textSize="@dimen/sc_mm_24" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:id="@+id/ll_shippingProvince"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true"
+                                    android:layout_marginLeft="@dimen/sc_mm_30"
+                                    android:gravity="center_vertical"
+                                    android:orientation="horizontal"
+                                    android:visibility="gone">
+
+                                    <ImageView
+                                        android:layout_width="@dimen/sc_mm_16"
+                                        android:layout_height="@dimen/sc_mm_21"
+                                        android:src="@drawable/province" />
+
+                                    <TextView
+                                        android:id="@+id/tv_shipping"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginLeft="@dimen/sc_mm_5"
+                                        android:text="发货："
+                                        android:textColor="@color/text_login_gray_s"
+                                        android:textSize="@dimen/sc_mm_24" />
+
+                                    <TextView
+                                        android:id="@+id/tv_shippingProvince"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:drawablePadding="@dimen/sc_mm_10"
+                                        android:textColor="@color/text_black_t"
+                                        android:textSize="@dimen/sc_mm_24" />
+                                </LinearLayout>
+                            </RelativeLayout>
 
                             <LinearLayout
                                 android:id="@+id/ll_tax_txt"
@@ -131,58 +198,16 @@
                                     android:src="@drawable/ql_ques_icon" />
                             </LinearLayout>
 
-
-                            <LinearLayout
-                                android:id="@+id/ll_market_and_province"
-                                android:layout_width="match_parent"
+                            <com.google.android.flexbox.FlexboxLayout
+                                android:id="@+id/fbl_details_market_label"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="@dimen/sc_mm_30"
                                 android:layout_marginRight="@dimen/sc_mm_30"
                                 android:layout_marginBottom="@dimen/sc_mm_20"
-                                android:gravity="center_vertical"
-                                android:orientation="horizontal"
-                                android:visibility="gone">
-
-                                <com.google.android.flexbox.FlexboxLayout xmlns:app="http://schemas.android.com/apk/res-auto"
-                                    android:id="@+id/fbl_details_market_label"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_weight="1"
-                                    android:visibility="invisible"
-                                    app:dividerDrawable="@drawable/item_divider_nine_dp_white"
-                                    app:showDivider="middle" />
-
-                                <LinearLayout
-                                    android:id="@+id/ll_shippingProvince"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginLeft="@dimen/sc_mm_30"
-                                    android:gravity="center_vertical"
-                                    android:orientation="horizontal"
-                                    android:visibility="gone">
-
-                                    <ImageView
-                                        android:layout_width="@dimen/sc_mm_16"
-                                        android:layout_height="@dimen/sc_mm_21"
-                                        android:src="@drawable/province" />
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginLeft="@dimen/sc_mm_5"
-                                        android:text="发货："
-                                        android:textColor="@color/text_login_gray_s"
-                                        android:textSize="@dimen/sc_mm_24" />
-
-                                    <TextView
-                                        android:id="@+id/tv_shippingProvince"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:drawablePadding="@dimen/sc_mm_10"
-                                        android:textColor="@color/text_black_t"
-                                        android:textSize="@dimen/sc_mm_24" />
-                                </LinearLayout>
-                            </LinearLayout>
+                                android:visibility="gone"
+                                app:dividerDrawable="@drawable/item_divider_nine_dp_white"
+                                app:showDivider="middle" />
 
                             <TextView
                                 android:id="@+id/tv_preSaleDeliveryTime"
@@ -199,6 +224,39 @@
                                 android:text="@string/preSaleDeliveryTime"
                                 android:textColor="@color/text_black_t"
                                 android:textSize="@dimen/sc_mm_24" />
+
+                            <LinearLayout
+                                android:id="@+id/ll_open_vip"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/sc_mm_56"
+                                android:layout_marginLeft="@dimen/sc_mm_30"
+                                android:layout_marginRight="@dimen/sc_mm_30"
+                                android:layout_marginBottom="@dimen/sc_mm_22"
+                                android:background="@drawable/shap_vip_bg"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal"
+                                android:paddingLeft="@dimen/sc_mm_13"
+                                android:paddingRight="@dimen/sc_mm_25"
+                                android:visibility="gone">
+
+                                <TextView
+                                    android:id="@+id/tv_vip_save"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="@string/open_vip_save"
+                                    android:textColor="@color/text_black_t"
+                                    android:textSize="@dimen/sc_mm_24" />
+
+                                <TextView
+                                    android:layout_width="@dimen/sc_mm_115"
+                                    android:layout_height="@dimen/sc_mm_34"
+                                    android:background="@drawable/shap_vip_renewal_bg"
+                                    android:gravity="center"
+                                    android:text="去开通>"
+                                    android:textColor="@color/text_black_t"
+                                    android:textSize="@dimen/sc_mm_22" />
+                            </LinearLayout>
 
                             <com.google.android.flexbox.FlexboxLayout xmlns:app="http://schemas.android.com/apk/res-auto"
                                 android:id="@+id/flex_product_point"

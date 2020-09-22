@@ -16,7 +16,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
-import static com.amkj.dmsh.constant.ConstantMethod.getFloatNumber;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeFloat;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_0;
@@ -59,7 +59,7 @@ public class SpringSaleRecyclerAdapterNew extends BaseMultiItemQuickAdapter<Base
                 }
                 GlideImageLoaderUtil.loadCenterCrop(context, (ImageView) helper.getView(R.id.img_springSale_product_image), timeForeShowBean.getPicUrl());
                 if (!TextUtils.isEmpty(timeForeShowBean.getMaxPrice())
-                        && getFloatNumber(timeForeShowBean.getPrice()) < getFloatNumber(timeForeShowBean.getMaxPrice())) {
+                        && getStringChangeFloat(timeForeShowBean.getPrice()) < getStringChangeFloat(timeForeShowBean.getMaxPrice())) {
                     helper.setText(R.id.tv_product_promotion_price, getStringsChNPrice(context, timeForeShowBean.getPrice()) + "+");
                 } else {
                     helper.setText(R.id.tv_product_promotion_price, getStringsChNPrice(context, timeForeShowBean.getPrice()));

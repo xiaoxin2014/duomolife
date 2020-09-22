@@ -11,4 +11,8 @@ public class EventMessage {
         this.type = type;
         this.result = result;
     }
+
+    public EventMessage(String type) {
+        this.type = type;
+    }
 }

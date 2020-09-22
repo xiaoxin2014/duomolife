@@ -18,7 +18,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.Url.LOTTERY_URL;
 import static com.amkj.dmsh.dao.UserDao.getPersonalInfo;
 
-;
 
 
 /**

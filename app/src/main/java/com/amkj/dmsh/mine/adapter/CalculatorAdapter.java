@@ -14,7 +14,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 /**
  * Created by xiaoxin on 2020/7/29
  * Version:v4.7.0
- * ClassDescription :省钱计算器列表适配器
+ * ClassDescription :非会员-省钱计算器列表适配器
  */
 public class CalculatorAdapter extends BaseQuickAdapter<PriceDataBean, BaseViewHolder> {
     public CalculatorAdapter(@Nullable List<PriceDataBean> data) {

@@ -1,6 +1,7 @@
-package com.amkj.dmsh.bean;
+package com.amkj.dmsh.mine.bean;
 
 import com.amkj.dmsh.base.BaseEntity;
+import com.amkj.dmsh.bean.CommunalDetailBean;
 import com.amkj.dmsh.user.bean.LikedProductBean;
 import com.google.gson.annotations.SerializedName;
 
@@ -41,8 +42,17 @@ public class WeekProductEntity extends BaseEntity {
         private String title;
         private String subtitle;
         private String coverImg;
+        private List<CommunalDetailBean> description;
         @SerializedName(value = "goodsList", alternate = "productList")
         private List<LikedProductBean> goodsList;
+
+        public List<CommunalDetailBean> getDescription() {
+            return description;
+        }
+
+        public void setDescription(List<CommunalDetailBean> description) {
+            this.description = description;
+        }
 
         public String getCoverImg() {
             return coverImg;

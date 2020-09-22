@@ -1,8 +1,6 @@
 package com.amkj.dmsh.homepage.activity;
 
 import android.content.Intent;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,6 +26,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 import me.jessyan.autosize.utils.AutoSizeUtils;
@@ -205,7 +205,7 @@ public class EditorSelectActivity extends BaseActivity {
                                 , editorBean.getCoverImg()
                                 , "小编精选：内部员工淘货秘籍，跟着买就对了~"
                                 , "每一件都精挑细选，买对又省钱，过时不候哦！"
-                                , Url.BASE_SHARE_PAGE_TWO + ("m/template/find_template/handpick-article.html"), 1);
+                                , Url.BASE_SHARE_PAGE_TWO + ("find_template/handpick-article.html"), 1);
                     }
                 }
                 break;

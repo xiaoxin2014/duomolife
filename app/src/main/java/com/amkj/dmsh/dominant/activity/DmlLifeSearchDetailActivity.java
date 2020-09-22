@@ -298,7 +298,7 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
                     shareDataBean = new ShareDataBean(dmlSearchDetailBean.getPath()
                             , getStrings(dmlSearchDetailBean.getTitle())
                             , getStrings(dmlSearchDetailBean.getDigest())
-                            , Url.BASE_SHARE_PAGE_TWO + "m/template/goods/study_detail.html?id="
+                            , Url.BASE_SHARE_PAGE_TWO + "goods/study_detail.html?id="
                             + dmlSearchDetailBean.getId(), dmlSearchDetailBean.getId());
 
                 }
@@ -701,7 +701,7 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
                     , dmlSearchDetailBean.getPath()
                     , getStrings(dmlSearchDetailBean.getTitle())
                     , getStrings(dmlSearchDetailBean.getDigest())
-                    , Url.BASE_SHARE_PAGE_TWO + "m/template/goods/study_detail.html?id="
+                    , Url.BASE_SHARE_PAGE_TWO + "goods/study_detail.html?id="
                     + dmlSearchDetailBean.getId(), dmlSearchDetailBean.getId());
         }
     }

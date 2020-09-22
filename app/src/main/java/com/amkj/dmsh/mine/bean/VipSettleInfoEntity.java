@@ -54,6 +54,7 @@ public class VipSettleInfoEntity extends BaseEntity {
         }
 
         public static class CardListBean {
+
             /**
              * cardId : 1
              * cardName : 年卡
@@ -63,6 +64,7 @@ public class VipSettleInfoEntity extends BaseEntity {
              * priceMsg : 仅0.1元/天
              * maxCountGift : 1
              * giftList : [{"id":"1","productName":"纽西之谜温泉水咋弹冻膜 夜间补水保湿睡眠面膜 7粒","productImg":"http://image.domolife.cn/platform/20200716/20200716140951529.jpeg"},{"id":"2","productName":"日本Hakubaku 无盐素面 180","productImg":"http://image.domolife.cn/platform/20200605/20200605154758590.jpeg"},{"id":"3","productName":"丝滑羽毛纱可爱小鲸鱼纸抽套","productImg":"http://image.domolife.cn/platform/ry7eie4fNR1564973454461.jpg"}]
+             * couponInfo : {"userCouponId":"12877299","amount":"20"}
              */
 
             private String cardId;
@@ -71,8 +73,26 @@ public class VipSettleInfoEntity extends BaseEntity {
             private String price;
             private String marketPriceMsg;
             private String priceMsg;
+            private String payPrice;
             private String maxCountGift;
             private List<GiftListBean> giftList;
+            private CouponInfoBean couponInfo;
+
+            public CouponInfoBean getCouponInfo() {
+                return couponInfo;
+            }
+
+            public void setCouponInfo(CouponInfoBean couponInfo) {
+                this.couponInfo = couponInfo;
+            }
+
+            public String getPayPrice() {
+                return payPrice;
+            }
+
+            public void setPayPrice(String payPrice) {
+                this.payPrice = payPrice;
+            }
 
             public String getCardId() {
                 return cardId;
@@ -186,6 +206,32 @@ public class VipSettleInfoEntity extends BaseEntity {
 
                 public void setProductImg(String productImg) {
                     this.productImg = productImg;
+                }
+            }
+
+            public static class CouponInfoBean {
+                /**
+                 * userCouponId : 12877299
+                 * amount : 20
+                 */
+
+                private String userCouponId;
+                private String amount;
+
+                public String getUserCouponId() {
+                    return userCouponId;
+                }
+
+                public void setUserCouponId(String userCouponId) {
+                    this.userCouponId = userCouponId;
+                }
+
+                public String getAmount() {
+                    return amount;
+                }
+
+                public void setAmount(String amount) {
+                    this.amount = amount;
                 }
             }
         }

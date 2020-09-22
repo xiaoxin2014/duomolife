@@ -66,7 +66,15 @@ public class MessageNotifyEntity extends BaseEntity {
         private ProductPriceBean productPriceBean;
         private String title;
         private String buttonName;
+        private String path;
 
+        public String getPath() {
+            return path;
+        }
+
+        public void setPath(String path) {
+            this.path = path;
+        }
 
         public int getNotice_id() {
             return notice_id;

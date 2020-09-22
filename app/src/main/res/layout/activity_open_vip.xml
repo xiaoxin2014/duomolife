@@ -52,62 +52,6 @@
                         android:textStyle="bold" />
                 </LinearLayout>
 
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/sc_mm_44"
-                    android:layout_marginTop="@dimen/sc_mm_28"
-                    android:text="尊享特权"
-                    android:textColor="@color/text_black_t"
-                    android:textSize="@dimen/sc_mm_28"
-                    android:textStyle="bold" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_power"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/sc_mm_24"
-                    android:nestedScrollingEnabled="false" />
-
-                <LinearLayout
-                    android:id="@+id/ll_gift"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:visibility="gone">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/sc_mm_44"
-                        android:layout_marginTop="@dimen/sc_mm_60"
-                        android:layout_marginRight="@dimen/sc_mm_49"
-                        android:text="尊享特惠"
-                        android:textColor="@color/text_black_t"
-                        android:textSize="@dimen/sc_mm_28"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/sc_mm_44"
-                        android:layout_marginTop="@dimen/sc_mm_16"
-                        android:text="购买会员卡，可额外获赠以下礼品"
-                        android:textColor="@color/text_black_t"
-                        android:textSize="@dimen/sc_mm_24" />
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rv_gift"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/sc_mm_32"
-                        android:layout_marginTop="@dimen/sc_mm_24"
-                        android:layout_marginRight="@dimen/sc_mm_32"
-                        android:nestedScrollingEnabled="false" />
-                </LinearLayout>
-
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -174,15 +118,59 @@
                         android:id="@+id/tv_discount_amount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/sc_mm_28"
+                        android:layout_marginLeft="@dimen/sc_mm_47"
                         android:layout_marginTop="@dimen/sc_mm_5"
                         android:layout_marginBottom="@dimen/sc_mm_5"
-                        android:background="@drawable/shap_vip_price_bg"
+                        android:background="@drawable/discount_bg"
                         android:gravity="center"
                         android:paddingLeft="@dimen/sc_mm_16"
                         android:paddingRight="@dimen/sc_mm_16"
                         android:text="@string/defaul"
-                        android:textColor="#ff0000"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sc_mm_24" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_coupon"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/sc_mm_44"
+                    android:layout_marginTop="@dimen/sc_mm_24"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="优惠券"
+                        android:textColor="@color/text_black_t"
+                        android:textSize="@dimen/sc_mm_28" />
+
+                    <TextView
+                        android:id="@+id/tv_coupon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/sc_mm_46"
+                        android:background="@drawable/coupon_pink_bg"
+                        android:gravity="center_vertical|right"
+                        android:paddingLeft="@dimen/sc_mm_40"
+                        android:paddingRight="@dimen/sc_mm_10"
+                        android:text="@string/defaul"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sc_mm_24" />
+
+                    <TextView
+                        android:id="@+id/tv_coupon_amount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/sc_mm_47"
+                        android:layout_marginTop="@dimen/sc_mm_5"
+                        android:layout_marginBottom="@dimen/sc_mm_5"
+                        android:gravity="center"
+                        android:paddingLeft="@dimen/sc_mm_16"
+                        android:paddingRight="@dimen/sc_mm_16"
+                        android:text="@string/defaul"
+                        android:textColor="@color/text_black_t"
                         android:textSize="@dimen/sc_mm_24" />
                 </LinearLayout>
 
@@ -216,7 +204,7 @@
                         android:id="@+id/tv_quarterly_price"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/sc_mm_28"
+                        android:layout_marginLeft="@dimen/sc_mm_37"
                         android:layout_marginTop="@dimen/sc_mm_5"
                         android:layout_marginBottom="@dimen/sc_mm_5"
                         android:gravity="center"
@@ -248,7 +236,57 @@
                     android:textColor="@color/text_login_gray_s"
                     android:textSize="@dimen/sc_mm_24" />
 
-                <include layout="@layout/layout_direct_pay_way_item" />
+                <LinearLayout
+                    android:id="@+id/ll_gift"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/sc_mm_44"
+                        android:layout_marginRight="@dimen/sc_mm_49"
+                        android:text="购卡有礼"
+                        android:textColor="@color/text_black_t"
+                        android:textSize="@dimen/sc_mm_28"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/sc_mm_44"
+                        android:layout_marginTop="@dimen/sc_mm_16"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="购买会员卡，可额外获赠以下礼品"
+                            android:textColor="@color/text_black_t"
+                            android:textSize="@dimen/sc_mm_24" />
+
+                        <TextView
+                            android:id="@+id/tv_select_num"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/sc_mm_10"
+                            android:text="@string/defaul"
+                            android:textColor="@color/text_login_gray_s"
+                            android:textSize="@dimen/sc_mm_24"
+                            android:visibility="gone" />
+                    </LinearLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_gift"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/sc_mm_32"
+                        android:layout_marginTop="@dimen/sc_mm_24"
+                        android:layout_marginRight="@dimen/sc_mm_32"
+                        android:nestedScrollingEnabled="false" />
+                </LinearLayout>
             </LinearLayout>
 
         </androidx.core.widget.NestedScrollView>
@@ -285,7 +323,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/sc_mm_15"
-                android:text="立即开通¥149/年"
+                android:text="立即开通¥--/年"
                 android:textColor="@color/white"
                 android:textSize="@dimen/sc_mm_32"
                 android:textStyle="bold" />

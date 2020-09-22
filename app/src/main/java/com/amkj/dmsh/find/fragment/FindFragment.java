@@ -276,13 +276,12 @@ public class FindFragment extends BaseFragment {
     }
 
     @Override
-    public void onResume() {
+    public void onVisible() {
+        super.onVisible();
         if (!isFirst) {
             getMessageCount(getActivity(), msgBadge);
         }
-
         isFirst = false;
-        super.onResume();
     }
 
     @Override

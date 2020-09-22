@@ -732,7 +732,6 @@
                 <!-- 此处scheme值需要替换为后台设置中的scheme值 -->
                 <data android:scheme="duomolife" />
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
             </intent-filter>
@@ -741,7 +740,6 @@
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="MainActivity" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <!-- 以下pathPrefix值需要替换为后台设置中 App ID 的值-->
@@ -1371,7 +1369,7 @@
         <activity
             android:name=".mine.activity.DomolifeVipActivity"
             android:exported="false"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="DomolifeVipActivity" />
@@ -1381,11 +1379,11 @@
 
         <!--会员权益-->
         <activity
-            android:name=".mine.activity.VipPowerActivity"
+            android:name=".mine.activity.VipPowerDetailActivity"
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="VipPowerActivity" />
+                <action android:name="VipPowerDetailActivity" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -1401,29 +1399,18 @@
             </intent-filter>
         </activity>
 
-        <!--0元试用详情-->
+        <!--0元试用活动详情-->
         <activity
-            android:name=".mine.activity.ZeroDetailActivity"
+            android:name=".mine.activity.ZeroActivityDetailActivity"
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="ZeroDetailActivity" />
+                <action android:name="ZeroActivityDetailActivity" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
-        <!--会员专享券-->
-        <activity
-            android:name=".mine.activity.VipCouponActivity"
-            android:exported="false"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="VipCouponActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-
-        <!--会员活动列表-->
+        <!--0元试用活动列表-->
         <activity
             android:name=".mine.activity.ZeroActivityListActivity"
             android:exported="false"
@@ -1452,17 +1439,6 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="VipZoneDetailActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-
-        <!--往期0元试用中奖名单列表-->
-        <activity
-            android:name=".mine.activity.ZeroLotteryListActivity"
-            android:exported="false"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="ZeroLotteryListActivity" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -1540,6 +1516,61 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="CommitZeroReportActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!--查看我的报告-->
+        <activity
+            android:name=".mine.activity.LookMyReportActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="LookMyReportActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!--会员购买记录-->
+        <activity
+            android:name=".mine.activity.VipRecordActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="VipRecordActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!--开通会员结算台-->
+        <activity
+            android:name=".mine.activity.OpenVipWriteActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="OpenVipWriteActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!--分享有礼-->
+        <activity
+            android:name=".mine.activity.ShareGiftActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="ShareGiftActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!--会员省钱账单-->
+        <activity
+            android:name=".mine.activity.SaveMoneyDetailActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="SaveMoneyDetailActivity" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>

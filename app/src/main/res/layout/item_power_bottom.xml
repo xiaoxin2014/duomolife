@@ -1,40 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_power_bottom"
     android:layout_width="match_parent"
-    android:layout_marginBottom="@dimen/sc_mm_30"
     android:layout_height="wrap_content"
-    android:background="@drawable/border_rect_10dp_bg_white">
+    android:background="@drawable/shape_exclusive_coupon_bg"
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tv_power_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/sc_mm_49"
-        android:layout_marginTop="@dimen/sc_mm_30"
-        android:text="多么会员价"
-        android:textColor="@color/text_black_t"
-        android:textSize="@dimen/sc_mm_32"
-        android:textStyle="bold" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/tv_power_desc"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="@dimen/sc_mm_32"
-        android:layout_marginRight="@dimen/sc_mm_25"
-        android:text="9.5折起，可叠加券和红包 >>"
-        android:textColor="@color/text_black_t"
-        android:textSize="@dimen/sc_mm_26" />
+        <TextView
+            android:id="@+id/tv_power_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/sc_mm_49"
+            android:layout_marginTop="@dimen/sc_mm_30"
+            android:text="@string/defaul"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_32"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_power_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:paddingLeft="@dimen/sc_mm_25"
+            android:paddingTop="@dimen/sc_mm_29"
+            android:paddingRight="@dimen/sc_mm_25"
+            android:paddingBottom="@dimen/sc_mm_29"
+            android:text="@string/defaul"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_26" />
+
+    </RelativeLayout>
 
     <ImageView
+        android:minHeight="@dimen/sc_mm_100"
         android:id="@+id/iv_pic"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/sc_mm_180"
-        android:layout_marginLeft="@dimen/sc_mm_16"
-        android:layout_marginTop="@dimen/sc_mm_93"
-        android:layout_marginRight="@dimen/sc_mm_16"
-        android:layout_marginBottom="@dimen/sc_mm_21"
-        android:background="@drawable/load_loading_image"
-        android:scaleType="centerCrop" />
-</RelativeLayout>
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true" />
+</LinearLayout>
+
