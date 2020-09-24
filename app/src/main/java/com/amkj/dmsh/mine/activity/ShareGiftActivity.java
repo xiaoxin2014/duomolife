@@ -9,8 +9,6 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.ShareGiftEntity;
-import com.amkj.dmsh.bean.ShareGiftEntity.ShareGiftBean.LayfolkShareBean;
-import com.amkj.dmsh.bean.ShareGiftEntity.ShareGiftBean.VipShareBean;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.mine.adapter.VipInviteAdapter;
@@ -33,7 +31,6 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getIntegralFormat;
-import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.isVip;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
@@ -59,16 +56,10 @@ public class ShareGiftActivity extends BaseActivity {
     Toolbar mTlNormalBar;
     @BindView(R.id.tv_invitee_day)
     TextView mTvInviteeDay;
-    @BindView(R.id.tv_vip_invite)
-    TextView mTvVipInvite;
     @BindView(R.id.tv_inviter_coupon_amount)
     TextView mTvInviterCouponAmount;
     @BindView(R.id.tv_inviter_day)
     TextView mTvInviterDay;
-    @BindView(R.id.tv_vip_inviter_coupon_amount)
-    TextView mTvVipInviterCouponAmount;
-    @BindView(R.id.tv_vip_inviter_day)
-    TextView mTvVipInviterDay;
     @BindView(R.id.tv_open_vip)
     TextView mTvOpenVip;
     @BindView(R.id.tv_share)
@@ -120,22 +111,14 @@ public class ShareGiftActivity extends BaseActivity {
                 if (mShareGiftEntity != null) {
                     if (SUCCESS_CODE.equals(mShareGiftEntity.getCode())) {
                         ShareGiftEntity.ShareGiftBean shareGiftBean = mShareGiftEntity.getResult();
-                        LayfolkShareBean layfolkShare = shareGiftBean.getLayfolkShare();
-                        VipShareBean vipShare = shareGiftBean.getVipShare();
-                        //非会员邀请开卡，被邀请人奖励
-                        String inviteeDays = TextUtils.isEmpty(layfolkShare.getInviteeVipDays()) ? "" : getStringsFormat(getActivity(), R.string.share_gift_get_day, layfolkShare.getInviteeVipDays());
-                        String inviteeDecrease = TextUtils.isEmpty(layfolkShare.getInviteeVipDecrease()) ? "" : getStringsFormat(getActivity(), R.string.share_gift_get_discount, layfolkShare.getInviteeVipDecrease());
-                        mTvInviteeDay.setText((inviteeDecrease + (!TextUtils.isEmpty(inviteeDays) && !TextUtils.isEmpty(inviteeDecrease) ? "，" : "") + inviteeDays));
-                        //会员邀请开卡，被邀请人奖励
-                        String inviteeVipDays = TextUtils.isEmpty(vipShare.getInviteeVipDays()) ? "" : getStringsFormat(getActivity(), R.string.vip_share_gift_day, vipShare.getInviteeVipDays());
-                        String inviteeVipDecrease = TextUtils.isEmpty(vipShare.getInviteeVipDays()) ? "" : getStringsFormat(getActivity(), R.string.vip_share_gift_discount, vipShare.getInviteeVipDecrease());
-                        mTvVipInvite.setText("(" + inviteeVipDays + (!TextUtils.isEmpty(inviteeVipDays) && !TextUtils.isEmpty(inviteeVipDecrease) ? "，" : "") + inviteeVipDecrease + ")");
-                        mTvVipInvite.setVisibility(!TextUtils.isEmpty(inviteeVipDays) || !TextUtils.isEmpty(inviteeVipDecrease) ? View.VISIBLE : View.GONE);
-                        //邀请人奖励
-                        mTvInviterCouponAmount.setText(getStringsFormat(getActivity(), R.string.invite_get_coupon, layfolkShare.getInviterCouponAmount()));
-                        mTvInviterDay.setText(getStringsFormat(getActivity(), R.string.invite_get_day, layfolkShare.getInviterVipDays()));
-                        mTvVipInviterCouponAmount.setText(getStringsFormat(getActivity(), R.string.vip_invite_get_coupon, vipShare.getInviterCouponAmount()));
-                        mTvVipInviterDay.setText(getStringsFormat(getActivity(), R.string.vip_invite_get_day, vipShare.getInviteeVipDays()));
+                        if (shareGiftBean != null) {
+                            //邀请开卡，被邀请人奖励
+                            mTvInviteeDay.setText("分享好友专属链接\n" + shareGiftBean.getInviteeVipText());
+                            mTvInviteeDay.setVisibility(!TextUtils.isEmpty(shareGiftBean.getInviteeVipText()) ? View.VISIBLE : View.GONE);
+                            //邀请人奖励
+                            mTvInviterCouponAmount.setText(shareGiftBean.getInviterCouponText());
+                            mTvInviterDay.setText(shareGiftBean.getInviterVipDaysText());
+                        }
                     }
                 }
                 NetLoadUtils.getNetInstance().showLoadSir(loadService, mShareGiftEntity);

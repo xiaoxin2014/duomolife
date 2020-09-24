@@ -15,17 +15,15 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.bean.TabNameBean;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.activity.QualityTypeHotSaleProActivity;
 import com.amkj.dmsh.dominant.adapter.GoodProductAdapter;
-import com.amkj.dmsh.dominant.adapter.QualityCustomAdapter;
 import com.amkj.dmsh.mine.adapter.MonthCouponAdapter;
 import com.amkj.dmsh.mine.adapter.PowerBottomAdapter;
 import com.amkj.dmsh.mine.adapter.PowerTopAdapter;
+import com.amkj.dmsh.mine.adapter.VipExclusivePagerAdapter;
 import com.amkj.dmsh.mine.adapter.VipFavoriteAdapter;
 import com.amkj.dmsh.mine.adapter.WeekProductAdapter;
 import com.amkj.dmsh.mine.bean.CalculatorEntity;
@@ -35,6 +33,8 @@ import com.amkj.dmsh.mine.bean.PowerEntity.PowerBean;
 import com.amkj.dmsh.mine.bean.VipCouponEntity;
 import com.amkj.dmsh.mine.bean.VipCouponEntity.VipCouponBean;
 import com.amkj.dmsh.mine.bean.VipCouponEntity.VipCouponBean.CouponListBean;
+import com.amkj.dmsh.mine.bean.VipExclusiveInfoEntity;
+import com.amkj.dmsh.mine.bean.VipExclusiveInfoEntity.VipExclusiveInfoBean;
 import com.amkj.dmsh.mine.bean.VipPriceEntity;
 import com.amkj.dmsh.mine.bean.WeekProductEntity;
 import com.amkj.dmsh.mine.bean.WeekProductEntity.WeekProductBean;
@@ -57,7 +57,6 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -244,14 +243,14 @@ public class DomolifeVipActivity extends BaseActivity {
     private ZeroInfoBean mZeroInfoBean;
     private String cardGiftCover;
     private String vipDayCover;
-    private String[] titles = {"专区1", "专区2", "专区3", "专区4"};
-    public final String[] CUSTOM_IDS = new String[]{"405", "406", "407", "408"};
     public final int[] VipLevel = new int[]{R.drawable.vip1, R.drawable.vip2, R.drawable.vip3, R.drawable.vip4, R.drawable.vip5, R.drawable.vip6, R.drawable.vip7, R.drawable.vip8, R.drawable.vip9, R.drawable.vip10};
     private String mVipZoneId;
     private WeekProductBean mWeekProductBean;
     private AlertDialogPower mAlertDialogPower;
     private String mCouponZoneId;
     private VipHomeMenuPw mVipHomeMenuPw;
+    private List<VipExclusiveInfoBean> mInfos = new ArrayList<>();
+    private VipExclusivePagerAdapter mVipExclusivePagerAdapter;
 
     @Override
     protected int getContentView() {
@@ -321,14 +320,14 @@ public class DomolifeVipActivity extends BaseActivity {
                 .create());
         mVipFavoriteAdapter = new VipFavoriteAdapter(this, mVipFavoriteList);
         mRvVipFavorite.setAdapter(mVipFavoriteAdapter);
-        //初始化自定义专区
-        QualityCustomAdapter qualityCustomAdapter = new QualityCustomAdapter(getSupportFragmentManager(), Arrays.asList(CUSTOM_IDS), getSimpleName(), 1);
-        mVpVip.setAdapter(qualityCustomAdapter);
-        mVpVip.setOffscreenPageLimit(titles.length - 1);
-        mTablayoutVip.setViewPager(mVpVip, titles);
         mSmartCommunalRefresh.setOnRefreshListener(refreshLayout -> {
             loadData();
         });
+
+        mVipExclusivePagerAdapter = new VipExclusivePagerAdapter(getSupportFragmentManager(), mInfos, "1");
+        mVpVip.setAdapter(mVipExclusivePagerAdapter);
+        mVpVip.setOffscreenPageLimit(mInfos.size() - 1);
+        mTablayoutVip.setViewPager(mVpVip);
     }
 
     @Override
@@ -374,6 +373,7 @@ public class DomolifeVipActivity extends BaseActivity {
             //会员信息
             if (isVip()) {
                 getVipDayCover();
+                getVipExclusiveInfo();
                 mRlVipInfo.setVisibility(View.VISIBLE);
                 mRlNovipInfo.setVisibility(View.GONE);
                 mLlOpenVip.setVisibility(View.GONE);
@@ -416,6 +416,34 @@ public class DomolifeVipActivity extends BaseActivity {
                 mTvVipMarketPrice.setText(getStringsChNPrice(getActivity(), mVipInfoBean.getMarketPrice()));
             }
         }
+    }
+
+    //获取会员专享价专区id和标题
+    private void getVipExclusiveInfo() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("isHomePage", 1);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.GET_VIP_EXCLUSIVE_TITLE, map, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                mInfos.clear();
+                VipExclusiveInfoEntity vipExclusiveInfoEntity = GsonUtils.fromJson(result, VipExclusiveInfoEntity.class);
+                if (vipExclusiveInfoEntity != null) {
+                    List<VipExclusiveInfoBean> infos = vipExclusiveInfoEntity.getResult();
+                    if (infos != null && infos.size() > 0) {
+                        mInfos.addAll(infos);
+                    }
+                }
+//                //初始化自定义专区
+//                ConstantMethod.clearFragmentCache(getSupportFragmentManager());
+                mVipExclusivePagerAdapter.notifyDataSetChanged();
+                mTablayoutVip.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                super.onNotNetOrException();
+            }
+        });
     }
 
     //会员最爱买
@@ -846,19 +874,7 @@ public class DomolifeVipActivity extends BaseActivity {
 
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
-        if (message.type.equals(ConstantVariable.UPDATE_CUSTOM_NAME)) {
-            try {
-                if (mTablayoutVip != null) {
-                    TabNameBean tabNameBean = (TabNameBean) message.result;
-                    if (getSimpleName().equals(tabNameBean.getSimpleName())) {
-                        TextView titleView = mTablayoutVip.getTitleView(tabNameBean.getPosition());
-                        titleView.setText(tabNameBean.getTabName());
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else if (OPEN_VIP_SUCCESS.equals(message.type) || LOGIN_SUCCESS.equals(message.type)) {
+        if (OPEN_VIP_SUCCESS.equals(message.type) || LOGIN_SUCCESS.equals(message.type)) {
             //登录成功和会员开通成功时更新会员首页
             loadData();
         }

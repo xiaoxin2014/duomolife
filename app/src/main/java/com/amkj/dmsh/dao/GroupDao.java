@@ -3,12 +3,10 @@ package com.amkj.dmsh.dao;
 import android.app.Activity;
 import android.text.TextUtils;
 
-import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.dominant.bean.GroupShopDetailsEntity.GroupShopDetailsBean;
 
-import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
 import static com.amkj.dmsh.constant.ConstantVariable.GROUP_LOTTERY;
 
@@ -40,15 +38,5 @@ public class GroupDao {
                     , prefix + suffix
                     , qualityGroupShareBean.getGpInfoId(), -1, "1");
         }
-    }
-
-    public static void shareGroupDetail(Activity activity, GroupShopDetailsBean mGroupShopDetailsBean) {
-        new UMShareAction((BaseActivity) activity
-                , mGroupShopDetailsBean.getCoverImage()
-                , (mGroupShopDetailsBean.isProductGroup() ? getStringsFormat(activity, R.string.group_price, mGroupShopDetailsBean.getGpPrice()) : "") + (!TextUtils.isEmpty(mGroupShopDetailsBean.getGpName()) ? mGroupShopDetailsBean.getGpName() : mGroupShopDetailsBean.getProductName())
-                , ""
-                , ""
-                , (mGroupShopDetailsBean.isProductGroup() ? "pages/groupDetails/groupDetails?id=" : "pages/LotteryGroup/lotteryGroup?gpInfoId=") + mGroupShopDetailsBean.getGpInfoId(),
-                mGroupShopDetailsBean.getGpInfoId(), -1, "1");
     }
 }

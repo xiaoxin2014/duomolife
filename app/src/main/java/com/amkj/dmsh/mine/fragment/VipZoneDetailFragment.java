@@ -1,49 +1,48 @@
 package com.amkj.dmsh.mine.fragment;
 
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
-import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.CommunalDetailBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.dominant.adapter.GoodProductAdapter;
+import com.amkj.dmsh.dominant.adapter.VipSlideProAdapter;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.mine.bean.WeekProductEntity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.user.bean.LikedProductBean;
-import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
-import com.amkj.dmsh.utils.webformatdata.ShareDataBean;
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.widget.NestedScrollView;
-import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
+import butterknife.OnClick;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
 
 /**
  * Created by xiaoxin on 2020/8/13
@@ -55,95 +54,83 @@ public class VipZoneDetailFragment extends BaseFragment {
     TextView mTvLifeBack;
     @BindView(R.id.tv_header_title)
     TextView mTvHeaderTitle;
-    @BindView(R.id.tv_header_shared)
-    TextView mTvHeaderShared;
-    @BindView(R.id.tl_normal_bar)
-    Toolbar mTlNormalBar;
-    @BindView(R.id.iv_cover)
-    ImageView mIvCover;
-    @BindView(R.id.communal_recycler_wrap)
+    @BindView(R.id.fl_header_service)
+    FrameLayout mFlHeaderService;
+    @BindView(R.id.iv_img_share)
+    ImageView mIvImgShare;
+    @BindView(R.id.communal_recycler)
     RecyclerView mCommunalRecyclerWrap;
-    @BindView(R.id.rv_goods)
-    RecyclerView mRvGoods;
     @BindView(R.id.smart_communal_refresh)
     SmartRefreshLayout mSmartCommunalRefresh;
     @BindView(R.id.download_btn_communal)
     FloatingActionButton mDownloadBtnCommunal;
-    @BindView(R.id.nested_scrollview)
-    NestedScrollView mNestedScrollview;
+    @BindView(R.id.tv_communal_pro_tag)
+    TextView mTvCommunalProTag;
+    @BindView(R.id.tv_communal_pro_title)
+    TextView mTvCommunalProTitle;
+    @BindView(R.id.rv_communal_pro)
+    RecyclerView mRvCommunalPro;
+    @BindView(R.id.ll_communal_pro_list)
+    LinearLayout mLlCommunalProList;
+    @BindView(R.id.dr_communal_pro)
+    DrawerLayout mDrCommunalPro;
     private List<LikedProductBean> mGoodsList = new ArrayList<>();
     private WeekProductEntity mVipProductEntity;
-    private GoodProductAdapter mGoodProductAdapter;
     private CommunalDetailAdapter communalDetailAdapter;
     private List<CommunalDetailObjectBean> descriptionList = new ArrayList<>();
     private String mZoneId;
     private WeekProductEntity.WeekProductBean mWeekProductBean;
+    private VipSlideProAdapter vipSlideProAdapter;
 
     @Override
     protected int getContentView() {
-        return R.layout.activity_week_product_list;
+        return R.layout.activity_communal_ql_draw_refresh;
     }
 
     @Override
     protected void initViews() {
-        mTlNormalBar.setVisibility(GONE);
-        mSmartCommunalRefresh.setOnRefreshListener(refreshLayout -> loadData());
+        mIvImgShare.setVisibility(GONE);
+        mFlHeaderService.setVisibility(GONE);
+        GradientDrawable drawable = new GradientDrawable();
+        drawable.setShape(GradientDrawable.RECTANGLE);
+        int radius = AutoSizeUtils.mm2px(mAppContext, 50);
+        drawable.setCornerRadii(new float[]{radius, radius, 0, 0, 0, 0, radius, radius});
+        try {
+            drawable.setColor(0xffffffff);
+            drawable.setStroke(1, 0xffcccccc);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        mTvCommunalProTag.setBackground(drawable);
+
         //记录埋点参数sourceId
-        ConstantMethod.saveSourceId(getSimpleName(), mZoneId);
-        //一键回到顶部
-        int screenHeight = ((TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike()).getScreenHeight();
-        mNestedScrollview.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (nestedScrollView, i, newY, i2, oldY) -> {
-            if (newY > screenHeight * 1.5) {
-                if (mDownloadBtnCommunal.getVisibility() == GONE) {
-                    mDownloadBtnCommunal.setVisibility(VISIBLE);
-                    mDownloadBtnCommunal.show(false);
-                }
-                if (!mDownloadBtnCommunal.isVisible()) {
-                    mDownloadBtnCommunal.show(false);
-                }
-            } else {
-                if (mDownloadBtnCommunal.isVisible()) {
-                    mDownloadBtnCommunal.hide(false);
-                }
-            }
-        });
-        mDownloadBtnCommunal.setOnClickListener(v -> {
-            mNestedScrollview.fling(0);
-            mNestedScrollview.scrollTo(0, 0);
-            mDownloadBtnCommunal.hide(false);
-        });
+        ConstantMethod.saveSourceId(getClass().getSimpleName(), String.valueOf(mZoneId));
+        mSmartCommunalRefresh.setOnRefreshListener(refreshLayout -> loadData());
+        setFloatingButton(mDownloadBtnCommunal, mCommunalRecyclerWrap);
 
         //初始化富文本
         mCommunalRecyclerWrap.setNestedScrollingEnabled(false);
         mCommunalRecyclerWrap.setLayoutManager(new LinearLayoutManager((getActivity())));
         communalDetailAdapter = new CommunalDetailAdapter(getActivity(), descriptionList);
-        // TODO: 2020/8/26 补充h5链接
-        communalDetailAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
-            @Override
-            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                ShareDataBean shareDataBean = null;
-                if (view.getId() == R.id.tv_communal_share && mWeekProductBean != null) {
-                    shareDataBean = new ShareDataBean(mWeekProductBean.getCoverImg()
-                            , !TextUtils.isEmpty(mWeekProductBean.getTitle()) ? mWeekProductBean.getTitle() : "会员日"
-                            , "我在多么生活发现这几样好物，性价比不错，还包邮"
-                            , Url.BASE_SHARE_PAGE_TWO + "goods/CustomZone.html?id=" + mZoneId);
-
-                }
-                CommunalWebDetailUtils.getCommunalWebInstance()
-                        .setWebDataClick(getActivity(), shareDataBean, view, loadHud);
-            }
-        });
+        communalDetailAdapter.setOnItemChildClickListener((adapter, view, position) -> CommunalWebDetailUtils.getCommunalWebInstance()
+                .setWebDataClick(getActivity(), null, view, loadHud));
         mCommunalRecyclerWrap.setAdapter(communalDetailAdapter);
 
         //初始化商品列表
-        GridLayoutManager mGridLayoutManager = new GridLayoutManager(getActivity(), 2);
-        mRvGoods.setLayoutManager(mGridLayoutManager);
-        mGoodProductAdapter = new GoodProductAdapter(getActivity(), mGoodsList);
-        mRvGoods.setAdapter(mGoodProductAdapter);
-        mRvGoods.addItemDecoration(new ItemDecoration.Builder()
+        mRvCommunalPro.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRvCommunalPro.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_five_dp)
-                .create());
+                .setDividerId(R.drawable.item_divider_gray_f_one_px).create());
+        vipSlideProAdapter = new VipSlideProAdapter(getActivity(), mGoodsList);
+        vipSlideProAdapter.setEnableLoadMore(false);
+        mRvCommunalPro.setAdapter(vipSlideProAdapter);
+        vipSlideProAdapter.setOnItemClickListener((adapter, view, position) -> {
+            LikedProductBean likedProductBean = (LikedProductBean) view.getTag();
+            if (likedProductBean != null) {
+                mDrCommunalPro.closeDrawers();
+                skipProductUrl(getActivity(), likedProductBean.getType_id(), likedProductBean.getId());
+            }
+        });
     }
 
     @Override
@@ -165,10 +152,6 @@ public class VipZoneDetailFragment extends BaseFragment {
                     mWeekProductBean = mVipProductEntity.getResult();
                     if (mWeekProductBean != null) {
                         mTvHeaderTitle.setText(getStrings(mWeekProductBean.getTitle()));
-                        if (!TextUtils.isEmpty(mWeekProductBean.getCoverImg())) {
-                            mIvCover.setVisibility(VISIBLE);
-                            GlideImageLoaderUtil.loadImage(getActivity(), mIvCover, mWeekProductBean.getCoverImg());
-                        }
                         List<LikedProductBean> goodsList = mWeekProductBean.getGoodsList();
                         if (goodsList != null && goodsList.size() > 0) {
                             mGoodsList.addAll(goodsList);
@@ -185,14 +168,18 @@ public class VipZoneDetailFragment extends BaseFragment {
                         }
                     }
                 }
-                mGoodProductAdapter.notifyDataSetChanged();
+                vipSlideProAdapter.notifyDataSetChanged();
                 communalDetailAdapter.notifyDataSetChanged();
+                mTvCommunalProTag.setText(mGoodsList.size() + "商品");
+                mTvCommunalProTag.setVisibility(mGoodsList.size() > 0 ? VISIBLE : GONE);
+                mTvCommunalProTitle.setText(getStrings(mWeekProductBean.getTitle()));
                 NetLoadUtils.getNetInstance().showLoadSir(loadService, mGoodsList.size() > 0 || descriptionList.size() > 0, mVipProductEntity);
             }
 
             @Override
             public void onNotNetOrException() {
                 mSmartCommunalRefresh.finishRefresh();
+                mTvCommunalProTag.setVisibility(mGoodsList.size() > 0 ? VISIBLE : GONE);
                 NetLoadUtils.getNetInstance().showLoadSir(loadService, mGoodsList.size() > 0 || descriptionList.size() > 0, mVipProductEntity);
             }
         });
@@ -201,6 +188,20 @@ public class VipZoneDetailFragment extends BaseFragment {
     @Override
     protected boolean isAddLoad() {
         return true;
+    }
+
+
+    @OnClick({ R.id.tv_communal_pro_tag})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.tv_communal_pro_tag:
+                if (mDrCommunalPro.isDrawerOpen(mLlCommunalProList)) {
+                    mDrCommunalPro.closeDrawers();
+                } else {
+                    mDrCommunalPro.openDrawer(mLlCommunalProList);
+                }
+                break;
+        }
     }
 
     @Override

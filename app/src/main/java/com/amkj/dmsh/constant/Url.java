@@ -100,7 +100,7 @@ public class Url {
     public static final String SEARCH_LEAVE_MES = "api/search/saveAdvise";
     //  新版分享
     public static final String BASE_SHARE_PAGE_TWO = "https://www.domolife.cn/m/template/";
-//    public static final String BASE_SHARE_PAGE_TWO = "https://test.domolife.cn/test/template/";
+    //    public static final String BASE_SHARE_PAGE_TWO = "https://test.domolife.cn/test/template/";
     //    文章详情公共分享
     public static final String SHARE_COMMUNAL_ARTICLE = "api/reminder/getSharePrompt";
     //签到提醒
@@ -794,4 +794,8 @@ public class Url {
     public static final String GET_VIP_PRICE_GOODS = "api/vip/vipuser/getVipPriceGoodsList";
     // 获取会员最爱买
     public static final String GET_VIP_LIKE_GOODS = "api/vip/vipuser/getVipLikeGoodsList";
+    // 获取会员专享价专区id和标题
+    public static final String GET_VIP_EXCLUSIVE_TITLE= "api/vip/vipuser/getVipPriceExclusiveGoodsTitle";
+    // 获取会员专享价专区商品列表
+    public static final String GET_VIP_EXCLUSIVE_GOODS_LIST= "api/vip/vipuser/getVipPriceExclusiveGoodsList";
 }

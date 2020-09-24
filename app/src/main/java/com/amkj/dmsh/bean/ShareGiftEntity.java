@@ -24,120 +24,32 @@ public class ShareGiftEntity extends BaseEntity {
     }
 
     public static class ShareGiftBean {
-        /**
-         * vipShare : {"inviterCouponAmount":"10","inviterVipDays":"15","inviteeVipDays":"30","inviteeVipDecrease":"0.2"}
-         * layfolkShare : {"inviterCouponAmount":"5","inviterVipDays":"15","inviteeVipDays":"15","inviteeVipDecrease":"0.05"}
-         */
+        private String inviterCouponText;
+        private String inviterVipDaysText;
+        private String inviteeVipText;
 
-        private VipShareBean vipShare;
-        private LayfolkShareBean layfolkShare;
-
-        public VipShareBean getVipShare() {
-            return vipShare;
+        public String getInviterCouponText() {
+            return inviterCouponText;
         }
 
-        public void setVipShare(VipShareBean vipShare) {
-            this.vipShare = vipShare;
+        public void setInviterCouponText(String inviterCouponText) {
+            this.inviterCouponText = inviterCouponText;
         }
 
-        public LayfolkShareBean getLayfolkShare() {
-            return layfolkShare;
+        public String getInviterVipDaysText() {
+            return inviterVipDaysText;
         }
 
-        public void setLayfolkShare(LayfolkShareBean layfolkShare) {
-            this.layfolkShare = layfolkShare;
+        public void setInviterVipDaysText(String inviterVipDaysText) {
+            this.inviterVipDaysText = inviterVipDaysText;
         }
 
-        public static class VipShareBean {
-            /**
-             * inviterCouponAmount : 10
-             * inviterVipDays : 15
-             * inviteeVipDays : 30
-             * inviteeVipDecrease : 0.2
-             */
-
-            private String inviterCouponAmount;
-            private String inviterVipDays;
-            private String inviteeVipDays;
-            private String inviteeVipDecrease;
-
-            public String getInviterCouponAmount() {
-                return inviterCouponAmount;
-            }
-
-            public void setInviterCouponAmount(String inviterCouponAmount) {
-                this.inviterCouponAmount = inviterCouponAmount;
-            }
-
-            public String getInviterVipDays() {
-                return inviterVipDays;
-            }
-
-            public void setInviterVipDays(String inviterVipDays) {
-                this.inviterVipDays = inviterVipDays;
-            }
-
-            public String getInviteeVipDays() {
-                return inviteeVipDays;
-            }
-
-            public void setInviteeVipDays(String inviteeVipDays) {
-                this.inviteeVipDays = inviteeVipDays;
-            }
-
-            public String getInviteeVipDecrease() {
-                return inviteeVipDecrease;
-            }
-
-            public void setInviteeVipDecrease(String inviteeVipDecrease) {
-                this.inviteeVipDecrease = inviteeVipDecrease;
-            }
+        public String getInviteeVipText() {
+            return inviteeVipText;
         }
 
-        public static class LayfolkShareBean {
-            /**
-             * inviterCouponAmount : 5
-             * inviterVipDays : 15
-             * inviteeVipDays : 15
-             * inviteeVipDecrease : 0.05
-             */
-
-            private String inviterCouponAmount;
-            private String inviterVipDays;
-            private String inviteeVipDays;
-            private String inviteeVipDecrease;
-
-            public String getInviterCouponAmount() {
-                return inviterCouponAmount;
-            }
-
-            public void setInviterCouponAmount(String inviterCouponAmount) {
-                this.inviterCouponAmount = inviterCouponAmount;
-            }
-
-            public String getInviterVipDays() {
-                return inviterVipDays;
-            }
-
-            public void setInviterVipDays(String inviterVipDays) {
-                this.inviterVipDays = inviterVipDays;
-            }
-
-            public String getInviteeVipDays() {
-                return inviteeVipDays;
-            }
-
-            public void setInviteeVipDays(String inviteeVipDays) {
-                this.inviteeVipDays = inviteeVipDays;
-            }
-
-            public String getInviteeVipDecrease() {
-                return inviteeVipDecrease;
-            }
-
-            public void setInviteeVipDecrease(String inviteeVipDecrease) {
-                this.inviteeVipDecrease = inviteeVipDecrease;
-            }
+        public void setInviteeVipText(String inviteeVipText) {
+            this.inviteeVipText = inviteeVipText;
         }
     }
 }

@@ -253,6 +253,7 @@
     <string name="limited_time_preference">【限时特价¥%s起】</string>
     <string name="bracket">【%s】</string>
     <string name="group_price">【拼团只需%s元】</string>
+    <string name="group_price_end">【拼团只需%s元起】</string>
     <string name="min_price">¥%s起</string>
     <string name="xsg_market_price">原价:¥%s</string>
     <string name="economize_money">省%s元</string>
@@ -330,14 +331,6 @@
     <string name="vip_price_year">立即开通%s</string>
     <string name="vip_already_save">已为您省%s ></string>
     <string name="open_vip_price">立即开通¥%s</string>
-    <string name="share_gift_get_day">开卡后额外获得%1$s天会员时间</string>
-    <string name="share_gift_get_discount">好友购卡立减%1$s元</string>
-    <string name="vip_share_gift_day">会员用户邀请可增加%s天会员时间</string>
-    <string name="vip_share_gift_discount">并享有%s元购卡优惠</string>
-    <string name="invite_get_coupon">赠%s元无门槛优惠券</string>
-    <string name="invite_get_day">延长%s天会员时间</string>
-    <string name="vip_invite_get_coupon">(会员可获得%s元无门槛券)</string>
-    <string name="vip_invite_get_day">(会员可增加%s天会员时间)</string>
     <string name="vip_invite_num">已成功邀请%d个好友</string>
     <string name="open_vip_save">开通多么会员可享专属价格</string>
     <string name="open_vip_save_money">开通多么会员，预估再省￥%s</string>

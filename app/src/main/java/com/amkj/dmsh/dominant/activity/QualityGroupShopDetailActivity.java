@@ -110,7 +110,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.OPEN_GROUP;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TWENTY;
 import static com.amkj.dmsh.constant.ConstantVariable.TYPE_2;
-import static com.amkj.dmsh.constant.Url.BASE_SHARE_PAGE_TWO;
 import static com.amkj.dmsh.constant.Url.GROUP_SHOP_JOIN_NEW_INDEX;
 import static com.amkj.dmsh.constant.Url.GROUP_SHOP_JOIN_NRE_USER;
 import static com.amkj.dmsh.constant.Url.GROUP_SHOP_NEW_DETAILS;
@@ -951,6 +950,18 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         }
     }
 
+    //是否包含区间价
+    private boolean isStart() {
+        if (mGroupShopDetailsBean != null) {
+            List<SkuSaleBean> skuSale = mGroupShopDetailsBean.getSkuSale();
+            if (skuSale != null && skuSale.size() > 0) {
+                return !skuSale.get(0).getPrice().equals(skuSale.get(skuSale.size() - 1).getPrice());
+            }
+        }
+
+        return false;
+    }
+
     @OnClick({R.id.ll_back, R.id.ll_back2, R.id.ll_service, R.id.ll_service2, R.id.ll_share, R.id.ll_share2,
             R.id.ll_group_buy, R.id.ll_alone_buy, R.id.tv_all_lottery, R.id.iv_lottery_zone, R.id.rel_pro_comment,
             R.id.tv_group_home, R.id.tv_ql_sp_pro_sku, R.id.ll_layout_pro_sc_tag, R.id.tv_quality_all_gp_sp, R.id.tv_invate})
@@ -973,7 +984,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                 if (mGroupShopDetailsBean != null) {
                     new UMShareAction(QualityGroupShopDetailActivity.this
                             , mGroupShopDetailsBean.getCoverImage()
-                            , (mGroupShopDetailsBean.isProductGroup() ? getStringsFormat(this, R.string.group_price, mGroupShopDetailsBean.getGpPrice()) : "") + (!TextUtils.isEmpty(mGroupShopDetailsBean.getGpName()) ? mGroupShopDetailsBean.getGpName() : mGroupShopDetailsBean.getProductName())
+                            , (mGroupShopDetailsBean.isProductGroup() ? getStringsFormat(this, isStart() ? R.string.group_price_end : R.string.group_price, mGroupShopDetailsBean.getGpPrice()) : "") + (!TextUtils.isEmpty(mGroupShopDetailsBean.getGpName()) ? mGroupShopDetailsBean.getGpName() : mGroupShopDetailsBean.getProductName())
                             , ""
                             , ""
                             , (mGroupShopDetailsBean.isProductGroup() ? "pages/groupDetails/groupDetails?id=" : "pages/LotteryGroup/lotteryGroup?gpInfoId=") + mGroupShopDetailsBean.getGpInfoId(),

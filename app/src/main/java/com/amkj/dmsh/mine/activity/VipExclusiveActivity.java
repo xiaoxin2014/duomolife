@@ -1,23 +1,29 @@
 package com.amkj.dmsh.mine.activity;
 
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.bean.TabNameBean;
-import com.amkj.dmsh.constant.ConstantVariable;
-import com.amkj.dmsh.dominant.adapter.QualityCustomAdapter;
+import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.mine.adapter.VipExclusivePagerAdapter;
+import com.amkj.dmsh.mine.bean.VipExclusiveInfoEntity;
+import com.amkj.dmsh.mine.bean.VipExclusiveInfoEntity.VipExclusiveInfoBean;
+import com.amkj.dmsh.network.NetLoadListenerHelper;
+import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
 
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.OnClick;
+
 
 /**
  * Created by xiaoxin on 2020/8/18
@@ -34,11 +40,13 @@ public class VipExclusiveActivity extends BaseActivity {
     @BindView(R.id.tl_normal_bar)
     Toolbar mTlNormalBar;
     @BindView(R.id.sliding_tablayout)
-    SlidingTabLayout mSlidingTablayout;
+    SlidingTabLayout mTablayoutVip;
     @BindView(R.id.vp_vip_exclusive)
-    ViewPager mVpVipExclusive;
-    private String[] titles = {"专区1", "专区2", "专区3", "专区4"};
-    public final String[] CUSTOM_IDS = new String[]{"405", "406", "407", "408"};
+    ViewPager mVpVip;
+    @BindView(R.id.ll_content)
+    LinearLayout mLlContent;
+    private List<VipExclusiveInfoBean> mInfos;
+
 
     @Override
     protected int getContentView() {
@@ -49,15 +57,40 @@ public class VipExclusiveActivity extends BaseActivity {
     protected void initViews() {
         mTvHeaderTitle.setText("会员专享价");
         mTvHeaderShared.setVisibility(View.GONE);
-        QualityCustomAdapter qualityCustomAdapter = new QualityCustomAdapter(getSupportFragmentManager(), Arrays.asList(CUSTOM_IDS), getSimpleName(), 1);
-        mVpVipExclusive.setAdapter(qualityCustomAdapter);
-        mVpVipExclusive.setOffscreenPageLimit(titles.length - 1);
-        mSlidingTablayout.setViewPager(mVpVipExclusive, titles);
     }
 
     @Override
     protected void loadData() {
+        getVipExclusiveInfo();
+    }
 
+    //获取会员专享价专区id和标题
+    private void getVipExclusiveInfo() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("isHomePage", 0);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.GET_VIP_EXCLUSIVE_TITLE, map, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                VipExclusiveInfoEntity vipExclusiveInfoEntity = GsonUtils.fromJson(result, VipExclusiveInfoEntity.class);
+                if (vipExclusiveInfoEntity != null) {
+                    mInfos = vipExclusiveInfoEntity.getResult();
+                    if (mInfos != null && mInfos.size() > 0) {
+                        //初始化自定义专区
+                        VipExclusivePagerAdapter vipExclusivePagerAdapter = new VipExclusivePagerAdapter(getSupportFragmentManager(), mInfos, "0");
+                        mVpVip.setAdapter(vipExclusivePagerAdapter);
+                        mVpVip.setOffscreenPageLimit(mInfos.size() - 1);
+                        mTablayoutVip.setViewPager(mVpVip);
+                    }
+                }
+
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, mInfos);
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, mInfos);
+            }
+        });
     }
 
     @OnClick(R.id.tv_life_back)
@@ -65,21 +98,13 @@ public class VipExclusiveActivity extends BaseActivity {
         finish();
     }
 
+    @Override
+    protected boolean isAddLoad() {
+        return true;
+    }
 
     @Override
-    protected void postEventResult(@NonNull EventMessage message) {
-        if (message.type.equals(ConstantVariable.UPDATE_CUSTOM_NAME)) {
-            try {
-                if (mSlidingTablayout != null) {
-                    TabNameBean tabNameBean = (TabNameBean) message.result;
-                    if (getSimpleName().equals(tabNameBean.getSimpleName())) {
-                        TextView titleView = mSlidingTablayout.getTitleView(tabNameBean.getPosition());
-                        titleView.setText(tabNameBean.getTabName());
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+    public View getLoadView() {
+        return mLlContent;
     }
 }

@@ -9,7 +9,6 @@ import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.TabNameBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.dominant.adapter.CatergoryGoodsAdapter;
-import com.amkj.dmsh.dominant.adapter.GoodProductAdapter;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.user.bean.LikedProductBean;
@@ -40,7 +39,7 @@ import static com.amkj.dmsh.constant.Url.Q_CUSTOM_PRO_LIST;
 /**
  * Created by xiaoxin on 2019/12/3
  * Version:v4.4.0
- * ClassDescription :拼团详情/订单详情/物流详情/会员专享自定义专区
+ * ClassDescription :拼团详情/订单详情/物流详情
  */
 public class GroupCustomTopicFragment extends BaseFragment {
     @BindView(R.id.communal_recycler)
@@ -49,7 +48,6 @@ public class GroupCustomTopicFragment extends BaseFragment {
     private BaseQuickAdapter qualityCustomTopicAdapter;
     private List<LikedProductBean> customProList = new ArrayList<>();
     private UserLikedProductEntity userLikedProductEntity;
-    private int type;
     private String productType;
     private String position;
     private String simpleName;
@@ -62,16 +60,9 @@ public class GroupCustomTopicFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
-        if (type == 0) {
-            GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 3);
-            qualityCustomTopicAdapter = new CatergoryGoodsAdapter(getActivity(), customProList);
-            communal_recycler.setLayoutManager(gridLayoutManager);
-        } else {
-            //会员专享自定义专区
-            GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2);
-            qualityCustomTopicAdapter = new GoodProductAdapter(getActivity(), customProList);
-            communal_recycler.setLayoutManager(gridLayoutManager);
-        }
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 3);
+        qualityCustomTopicAdapter = new CatergoryGoodsAdapter(getActivity(), customProList);
+        communal_recycler.setLayoutManager(gridLayoutManager);
         communal_recycler.addItemDecoration(new NewGridItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_five_gray_f)
@@ -103,45 +94,43 @@ public class GroupCustomTopicFragment extends BaseFragment {
         if (userId > 0) {
             params.put("uid", userId);
         }
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Q_CUSTOM_PRO_LIST
-                , params, new NetLoadListenerHelper() {
-                    @Override
-                    public void onSuccess(String result) {
-                        qualityCustomTopicAdapter.loadMoreComplete();
-                        if (page == 1) {
-                            customProList.clear();
-                        }
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Q_CUSTOM_PRO_LIST, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                qualityCustomTopicAdapter.loadMoreComplete();
+                if (page == 1) {
+                    customProList.clear();
+                }
 
-                        userLikedProductEntity = GsonUtils.fromJson(result, UserLikedProductEntity.class);
-                        if (userLikedProductEntity != null) {
-                            if (userLikedProductEntity.getCode().equals(SUCCESS_CODE)) {
-                                customProList.addAll(userLikedProductEntity.getGoodsList());
-                            } else if (userLikedProductEntity.getCode().equals(EMPTY_CODE)) {
-                                qualityCustomTopicAdapter.loadMoreEnd();
-                            } else {
-                                showToast(userLikedProductEntity.getMsg());
-                            }
-
-                            if (!TextUtils.isEmpty(userLikedProductEntity.getZoneName())) {
-                                EventBus.getDefault().post(new EventMessage(UPDATE_CUSTOM_NAME, new TabNameBean(userLikedProductEntity.getZoneName(), ConstantMethod.getStringChangeIntegers(position), simpleName)));
-                            }
-                        }
-                        qualityCustomTopicAdapter.notifyDataSetChanged();
-                        NetLoadUtils.getNetInstance().showLoadSir(loadService, customProList, userLikedProductEntity);
+                userLikedProductEntity = GsonUtils.fromJson(result, UserLikedProductEntity.class);
+                if (userLikedProductEntity != null) {
+                    if (userLikedProductEntity.getCode().equals(SUCCESS_CODE)) {
+                        customProList.addAll(userLikedProductEntity.getGoodsList());
+                    } else if (userLikedProductEntity.getCode().equals(EMPTY_CODE)) {
+                        qualityCustomTopicAdapter.loadMoreEnd();
+                    } else {
+                        showToast(userLikedProductEntity.getMsg());
                     }
 
-                    @Override
-                    public void onNotNetOrException() {
-                        qualityCustomTopicAdapter.loadMoreEnd(true);
-                        NetLoadUtils.getNetInstance().showLoadSir(loadService, customProList, userLikedProductEntity);
+                    if (!TextUtils.isEmpty(userLikedProductEntity.getZoneName())) {
+                        EventBus.getDefault().post(new EventMessage(UPDATE_CUSTOM_NAME, new TabNameBean(userLikedProductEntity.getZoneName(), ConstantMethod.getStringChangeIntegers(position), simpleName)));
                     }
-                });
+                }
+                qualityCustomTopicAdapter.notifyDataSetChanged();
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, customProList, userLikedProductEntity);
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                qualityCustomTopicAdapter.loadMoreEnd(true);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, customProList, userLikedProductEntity);
+            }
+        });
     }
 
 
     @Override
     protected void getReqParams(Bundle bundle) {
-        type = bundle.getInt("type");
         productType = bundle.getString("productType");
         position = bundle.getString("position");
         simpleName = bundle.getString("simpleName");
