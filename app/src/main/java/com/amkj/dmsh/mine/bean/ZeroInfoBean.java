@@ -20,6 +20,15 @@ public class ZeroInfoBean {
     private String activityId;
     private String marketPrice;
     private String partakeCount;
+    private String isPartake;
+
+    public boolean isPartake() {
+        return "1".equals(isPartake);
+    }
+
+    public void setIsPartake(String isPartake) {
+        this.isPartake = isPartake;
+    }
 
     public String getPartakeCount() {
         return partakeCount;

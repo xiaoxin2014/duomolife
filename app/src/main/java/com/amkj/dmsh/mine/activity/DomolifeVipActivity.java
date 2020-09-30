@@ -220,6 +220,8 @@ public class DomolifeVipActivity extends BaseActivity {
     RelativeLayout mRlVipExclusive;
     @BindView(R.id.iv_menu)
     ImageView mIvMenu;
+    @BindView(R.id.tv_domolife_price_subtitle)
+    TextView mTvDomolifePriceSubtitle;
 
 
     private PowerEntity mPowerEntity;
@@ -510,6 +512,11 @@ public class DomolifeVipActivity extends BaseActivity {
                             if (powerBean.isShow()) {
                                 powerBean.setPosition(String.valueOf(i));
                                 mPowerBottomList.add(powerBean);
+                            }
+
+                            if (powerBean.getTitle().contains("专享价") && !TextUtils.isEmpty(powerBean.getSubtitle())) {
+                                mTvVipPriceSubtitle.setText(getStrings(powerBean.getSubtitle()) + " >>");
+                                mTvDomolifePriceSubtitle.setText(getStrings(powerBean.getSubtitle()) + " >>");
                             }
                         }
                         mPowerTopList.addAll(powerList);

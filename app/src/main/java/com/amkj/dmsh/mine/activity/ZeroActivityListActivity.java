@@ -1,5 +1,6 @@
 package com.amkj.dmsh.mine.activity;
 
+import android.content.Intent;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -187,5 +188,19 @@ public class ZeroActivityListActivity extends BaseActivity {
     @OnClick(R.id.tv_life_back)
     public void onViewClicked() {
         finish();
+    }
+
+
+    @OnClick({R.id.tv_life_back, R.id.tv_my_zero})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.tv_life_back:
+                finish();
+                break;
+            case R.id.tv_my_zero:
+                Intent intent = new Intent(this, MyZeroListActivity.class);
+                startActivity(intent);
+                break;
+        }
     }
 }

@@ -6,85 +6,104 @@
 
     <include layout="@layout/activity_domolife_header" />
 
-    <com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:cube_ptr="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/smart_communal_refresh"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        cube_ptr:srlEnableOverScrollBounce="false">
+        android:layout_height="match_parent">
 
-        <include layout="@layout/layout_refresh_header_gif" />
-
-        <androidx.core.widget.NestedScrollView
+        <com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:cube_ptr="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/smart_communal_refresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#fff3d3">
+            cube_ptr:srlEnableOverScrollBounce="false">
 
-            <LinearLayout
-                android:id="@+id/ll_zero_list"
+            <include layout="@layout/layout_refresh_header_gif" />
+
+            <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:background="#fff3d3">
 
                 <LinearLayout
-                    android:id="@+id/ll_zero_current"
+                    android:id="@+id/ll_zero_list"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:orientation="vertical">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="@dimen/sc_mm_32"
-                        android:text="本期试用"
-                        android:textColor="@color/text_black_t"
-                        android:textSize="@dimen/sc_mm_34" />
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rv_current"
+                    <LinearLayout
+                        android:id="@+id/ll_zero_current"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/sc_mm_22"
-                        android:layout_marginRight="@dimen/sc_mm_22"
-                        android:nestedScrollingEnabled="false" />
-                </LinearLayout>
+                        android:orientation="vertical">
 
-                <LinearLayout
-                    android:id="@+id/ll_zero_before"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="@dimen/sc_mm_32"
+                            android:text="本期试用"
+                            android:textColor="@color/text_black_t"
+                            android:textSize="@dimen/sc_mm_34" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="@dimen/sc_mm_32"
-                        android:text="往期试用"
-                        android:textColor="@color/text_black_t"
-                        android:textSize="@dimen/sc_mm_34" />
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rv_current"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/sc_mm_22"
+                            android:layout_marginRight="@dimen/sc_mm_22"
+                            android:nestedScrollingEnabled="false" />
+                    </LinearLayout>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="@dimen/sc_mm_12"
-                        android:text="经过试用考验的好物，看看大家怎么说"
-                        android:textColor="@color/text_black_t"
-                        android:textSize="@dimen/sc_mm_28" />
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rv_before"
+                    <LinearLayout
+                        android:id="@+id/ll_zero_before"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/sc_mm_22"
-                        android:layout_marginTop="@dimen/sc_mm_27"
-                        android:layout_marginRight="@dimen/sc_mm_22"
-                        android:layout_marginBottom="@dimen/sc_mm_27"
-                        android:background="@drawable/shape_zero_list_bg"
-                        android:nestedScrollingEnabled="false" />
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="@dimen/sc_mm_32"
+                            android:text="往期试用"
+                            android:textColor="@color/text_black_t"
+                            android:textSize="@dimen/sc_mm_34" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="@dimen/sc_mm_12"
+                            android:text="经过试用考验的好物，看看大家怎么说"
+                            android:textColor="@color/text_black_t"
+                            android:textSize="@dimen/sc_mm_28" />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rv_before"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/sc_mm_22"
+                            android:layout_marginTop="@dimen/sc_mm_27"
+                            android:layout_marginRight="@dimen/sc_mm_22"
+                            android:layout_marginBottom="@dimen/sc_mm_27"
+                            android:background="@drawable/shape_zero_list_bg"
+                            android:nestedScrollingEnabled="false" />
+                    </LinearLayout>
                 </LinearLayout>
-            </LinearLayout>
-        </androidx.core.widget.NestedScrollView>
-    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+            </androidx.core.widget.NestedScrollView>
+        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
+        <TextView
+            android:id="@+id/tv_my_zero"
+            android:layout_width="@dimen/sc_mm_105"
+            android:layout_height="@dimen/sc_mm_105"
+            android:layout_gravity="right|bottom"
+            android:layout_marginRight="@dimen/sc_mm_30"
+            android:layout_marginBottom="@dimen/sc_mm_162"
+            android:background="@drawable/shap_my_zero_bg"
+            android:gravity="center"
+            android:text="我的\n试用"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sc_mm_30"
+            android:textStyle="bold" />
+    </FrameLayout>
 </LinearLayout>

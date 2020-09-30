@@ -63,9 +63,9 @@ public class ZeroProductAdapter extends BaseQuickAdapter<ZeroInfoBean, BaseViewH
         });
         TextView tvApply = helper.getView(R.id.tv_apply);
         if (type == 0) {
-            tvApply.setText("立即申请");
+            tvApply.setText(item.isPartake() ? "已申请" : "立即申请");
             tvApply.setTextColor(context.getResources().getColor(R.color.white));
-            tvApply.setBackgroundResource(R.drawable.shap_apply_bg);
+            tvApply.setBackgroundResource(item.isPartake() ? R.drawable.shape_already_apply_bg : R.drawable.shap_apply_bg);
         } else {
             tvApply.setText("中奖名单");
             tvApply.setTextColor(Color.parseColor("#FFFEB101"));
