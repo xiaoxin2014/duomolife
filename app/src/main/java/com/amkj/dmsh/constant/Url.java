@@ -5,8 +5,7 @@ package com.amkj.dmsh.constant;
  */
 public class Url {
 
-    public static String BASE_URL = "http://dev.domolife.cn/";
-//    public static String BASE_URL = "https://app.domolife.cn/";
+    public static String BASE_URL = "https://app.domolife.cn/";
 
     public static String getUrl(int position) {
         if (position == 0) {//正式库
@@ -795,7 +794,7 @@ public class Url {
     // 获取会员最爱买
     public static final String GET_VIP_LIKE_GOODS = "api/vip/vipuser/getVipLikeGoodsList";
     // 获取会员专享价专区id和标题
-    public static final String GET_VIP_EXCLUSIVE_TITLE= "api/vip/vipuser/getVipPriceExclusiveGoodsTitle";
+    public static final String GET_VIP_EXCLUSIVE_TITLE = "api/vip/vipuser/getVipPriceExclusiveGoodsTitle";
     // 获取会员专享价专区商品列表
-    public static final String GET_VIP_EXCLUSIVE_GOODS_LIST= "api/vip/vipuser/getVipPriceExclusiveGoodsList";
+    public static final String GET_VIP_EXCLUSIVE_GOODS_LIST = "api/vip/vipuser/getVipPriceExclusiveGoodsList";
 }

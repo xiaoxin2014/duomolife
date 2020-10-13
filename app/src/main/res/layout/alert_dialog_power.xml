@@ -35,7 +35,7 @@
         android:layout_marginBottom="@dimen/sc_mm_20"
         android:background="@drawable/shap_commit_report_bg"
         android:gravity="center"
-        android:text="立即开通,享100元优惠券"
+        android:text="立即开通,享200元优惠券"
         android:textColor="@color/white"
         android:textSize="@dimen/sc_mm_32"
         android:textStyle="bold" />

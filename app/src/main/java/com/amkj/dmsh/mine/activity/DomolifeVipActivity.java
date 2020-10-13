@@ -814,7 +814,7 @@ public class DomolifeVipActivity extends BaseActivity {
                         startActivity(intent);
                     }
                 } else {
-                    showAlertDialogPower("开通立享每月价值100元的优惠券，还有神秘好券不定时发放");
+                    showAlertDialogPower("开通立享每月价值200元的优惠券，还有神秘好券不定时发放");
                 }
                 break;
             //0元试用活动列表
