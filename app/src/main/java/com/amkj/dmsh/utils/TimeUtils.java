@@ -4,7 +4,6 @@ import android.text.TextUtils;
 
 import com.amkj.dmsh.base.BaseTimeEntity;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -165,7 +164,7 @@ public class TimeUtils {
             long time1 = formatter.parse(t1).getTime();
             long time2 = formatter.parse(t2).getTime();
             abs = Math.abs(time1 - time2);
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

@@ -41,8 +41,6 @@ import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBe
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.qyservice.QyProductIndentInfo;
-import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.adapter.DirectEvaluationAdapter;
 import com.amkj.dmsh.shopdetails.adapter.GoodsRecommendAdapter;
@@ -55,6 +53,7 @@ import com.amkj.dmsh.shopdetails.bean.ShopRecommendHotTopicEntity;
 import com.amkj.dmsh.shopdetails.bean.ShopRecommendHotTopicEntity.ShopRecommendHotTopicBean;
 import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
+import com.amkj.dmsh.utils.CountDownTimer;
 import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.TimeUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
@@ -77,6 +76,7 @@ import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.umeng.socialize.UMShareAPI;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -96,6 +96,8 @@ import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.getSpannableString;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeFloat;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
@@ -117,6 +119,8 @@ import static com.amkj.dmsh.constant.Url.SHOP_EVA_LIKE;
 import static com.amkj.dmsh.dao.OrderDao.getCarCount;
 import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
 import static com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean.TYPE_PRODUCT_TITLE;
+import static com.amkj.dmsh.utils.TimeUtils.getTimeDifference;
+import static com.amkj.dmsh.utils.TimeUtils.getTimeDifferenceText;
 import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTime;
 import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.getSquareImgUrl;
 
@@ -137,9 +141,6 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
     //            商品名字
     @BindView(R.id.tv_ql_sp_pro_name)
     TextView tv_ql_sp_pro_name;
-    //            拼团人数
-    @BindView(R.id.tv_gp_sp_per_count)
-    TextView tv_gp_sp_per_count;
     //            拼团价格
     @BindView(R.id.tv_gp_sp_per_price)
     TextView tv_gp_sp_per_price;
@@ -246,6 +247,13 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
     View mViewDividerZone;
     @BindView(R.id.fl_header_service)
     RelativeLayout fl_header_service;
+    @BindView(R.id.tv_free_postage)
+    TextView mTvFreePostage;
+    @BindView(R.id.ll_top_start_time)
+    LinearLayout mLlStartTime;
+    @BindView(R.id.tv_start_time)
+    TextView mTvStartTime;
+
 
     //拼团列表
     private List<GroupShopJoinBean> groupShopJoinList = new ArrayList<>();
@@ -284,6 +292,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
     private ArrayList<CustomTabEntity> tabData = new ArrayList<>();
     private GoodsRecommendAdapter mGoodsRecommendAdapter;
     private Badge badge;
+    private CountDownTimer mCountDownEndTimer;
 
 
     @Override
@@ -684,8 +693,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
             }
             //选择规格
             tv_ql_sp_pro_sku.setTextColor(getResources().getColor(R.color.color_blue_reply_com));
-            tv_ql_sp_pro_sku.setText(getString(R.string.sel_pro_sku
-                    , getStrings(shopProperty.getProps().get(0).getPropName())));
+            tv_ql_sp_pro_sku.setText(getString(R.string.sel_pro_sku, getStrings(shopProperty.getProps().get(0).getPropName())));
             //有多个SKU
             if (skuSaleList.size() > 1) {
                 ll_sp_pro_sku_value.setVisibility(VISIBLE);
@@ -709,7 +717,7 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                 skuDialog.refreshView(editGoodsSkuBean);
             } else {
                 //仅有一个SKU
-                ll_sp_pro_sku_value.setVisibility(View.GONE);
+                ll_sp_pro_sku_value.setVisibility(GONE);
                 mGroupShopDetailsBean.setGpSkuId(shopProperty.getSkuSale().get(0).getId());
             }
         }
@@ -726,14 +734,17 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         String productName = groupShopDetailsBean.getProductName();
         String subTitle = groupShopDetailsBean.getSubTitle();
         tv_ql_sp_pro_name.setText(getStrings(!TextUtils.isEmpty(gpName) ? gpName : (TextUtils.isEmpty(subTitle) ? productName : (subTitle + "•" + productName))));
-        tv_gp_sp_per_count.setText(getStrings(groupShopDetailsBean.getRequireCount() + "人" + (groupShopDetailsBean.isLotteryGroup() ? "抽奖团 ¥" : "拼团价 ¥")));
-        tv_gp_sp_per_price.setText(getStrings(groupShopDetailsBean.getGpPrice()));
+        //拼团价
+        String count = groupShopDetailsBean.getRequireCount() + "人" + (groupShopDetailsBean.isLotteryGroup() ? "抽奖团 ¥" : "拼团价 ¥");
+        String price = getStrings(groupShopDetailsBean.getGpPrice());
+        String priceText = count + price + getSuffix();
+        tv_gp_sp_per_price.setText(getSpannableString(priceText, priceText.indexOf(price), priceText.indexOf(price) + price.length(), 1.6f, ""));
+        //原价
         tv_gp_sp_nor_price.setText("原价 ¥" + groupShopDetailsBean.getPrice());
-        tv_sp_details_ol_buy.setText("单独购买");
+        //单独购买价
         tv_sp_details_ol_buy_price.setText(getStringsChNPrice(this, groupShopDetailsBean.getPrice()));
 
         //参团提示
-//        tv_ql_gp_sp_new_detail.setVisibility(GROUP_LOTTERY.equals(groupShopDetailsBean.getType()) ? VISIBLE : GONE);
         tv_partner_join.setText(getStrings(groupShopDetailsBean.getTipText()));
         tv_partner_join.setVisibility(!TextUtils.isEmpty(this.gpRecordId) || groupShopDetailsBean.isLotteryGroup() ? GONE : VISIBLE);
 
@@ -752,23 +763,39 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
                 }
             }
 
+            mLlStartTime.setVisibility(GONE);
             if (isEndOrStartTime(TimeUtils.getCurrentTime(mGroupShopDetailsEntity), mGroupShopDetailsBean.getGpEndTime())) {
                 ll_group_buy.setEnabled(false);
                 tv_sp_details_join_buy_price.setText("已结束");
                 tv_sp_details_join_count.setText("逛逛其它");
+            } else if (!isEndOrStartTime(TimeUtils.getCurrentTime(mGroupShopDetailsEntity), mGroupShopDetailsBean.getGpStartTime())) {
+                ll_group_buy.setEnabled(false);
+                tv_sp_details_join_buy_price.setText("未开始");
+                tv_sp_details_join_count.setText("逛逛其它");
+                mLlStartTime.setVisibility(VISIBLE);
+                if (mCountDownEndTimer == null) {
+                    mCountDownEndTimer = new CountDownTimer(this) {
+                        @Override
+                        public void onTick(long millisUntilFinished) {
+                            mTvStartTime.setText(String.format("距开始%s", getTimeDifferenceText(millisUntilFinished)));
+                        }
+
+                        @Override
+                        public void onFinish() {
+                            //活动已开始
+                            mLlStartTime.setVisibility(GONE);
+                            groupEnable();
+                        }
+                    };
+                }
+                mCountDownEndTimer.setMillisInFuture(getTimeDifference(mGroupShopDetailsBean.getGpStartTime(), mGroupShopDetailsEntity.getCurrentTime()));
+                mCountDownEndTimer.start();
             } else if (groupShopDetailsBean.getGpQuantity() <= 0 || mGroupShopDetailsBean.getGpCreateCount() >= mGroupShopDetailsBean.getGpMaxCreateCount()) {
                 ll_group_buy.setEnabled(false);
                 tv_sp_details_join_buy_price.setText("库存不足");
                 tv_sp_details_join_count.setText("逛逛其它");
             } else {
-                ll_group_buy.setEnabled(true);
-                if (mGroupShopDetailsBean.isLotteryGroup()) {
-                    tv_sp_details_join_buy_price.setText(getStringsFormat(this, R.string.lottery_price, groupShopDetailsBean.getGpPrice()));
-                    tv_sp_details_join_count.setVisibility(GONE);
-                } else {
-                    tv_sp_details_join_buy_price.setText(getStringsChNPrice(this, groupShopDetailsBean.getGpPrice()));
-                    tv_sp_details_join_count.setVisibility(VISIBLE);
-                }
+                groupEnable();
             }
         } else {
             mLlGroupDetailBottom.setVisibility(GONE);
@@ -807,7 +834,6 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         joinGroupAdapter.setNewData(groupShopJoinList);
         ll_group_join.setVisibility(groupShopJoinList.size() > 0 ? VISIBLE : GONE);
 
-
         //获取中奖名单
         List<GroupShopJoinBean> luckUserList = groupShopDetailsBean.getLuckUserList();
         if (luckUserList != null && luckUserList.size() > 0) {
@@ -840,6 +866,26 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         }
         gpRuleDetailsAdapter.setNewData(gpRuleList);
         mLlOpenGroupInfo.setVisibility(groupShopJoinList.size() > 0 || mFlexLottery.getChildCount() > 0 ? VISIBLE : GONE);
+    }
+
+    //获取价格后缀（起）
+    private String getSuffix() {
+        List<SkuSaleBean> skuSaleList = new ArrayList<>(mGroupShopDetailsBean.getSkuSale());
+        Collections.sort(skuSaleList, (lhs, rhs) -> Float.compare(getStringChangeFloat(lhs.getPrice()), getStringChangeFloat(rhs.getPrice())));
+        return skuSaleList.get(0).getPrice().equals(skuSaleList.get(skuSaleList.size() - 1).getPrice()) ? "" : "起";
+    }
+
+    //拼团商品可购买
+    private void groupEnable() {
+        ll_group_buy.setEnabled(true);
+        tv_sp_details_join_count.setText("立即开团");
+        if (mGroupShopDetailsBean.isLotteryGroup()) {
+            tv_sp_details_join_buy_price.setText(getStringsFormat(this, R.string.lottery_price, mGroupShopDetailsBean.getGpPrice()));
+            tv_sp_details_join_count.setVisibility(GONE);
+        } else {
+            tv_sp_details_join_buy_price.setText(getStringsChNPrice(this, mGroupShopDetailsBean.getGpPrice()));
+            tv_sp_details_join_count.setVisibility(VISIBLE);
+        }
     }
 
     //获取热销单品
@@ -1113,25 +1159,6 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         } else {
             getLoginStatus(getActivity());
         }
-    }
-
-    //    七鱼客服
-    private void skipServiceDataInfo(GroupShopDetailsBean groupShopDetailsBean) {
-        QyProductIndentInfo qyProductIndentInfo = null;
-        String sourceTitle = "";
-        String sourceUrl = "";
-        if (groupShopDetailsBean != null) {
-            qyProductIndentInfo = new QyProductIndentInfo();
-            String sharePageUrl = Url.BASE_SHARE_PAGE_TWO + "share_template/groupDetail.html?id=";
-            sourceUrl = sharePageUrl + groupShopDetailsBean.getGpInfoId();
-            sourceTitle = "我的拼团：" + groupShopDetailsBean.getProductName();
-            qyProductIndentInfo.setUrl(sourceUrl);
-            qyProductIndentInfo.setTitle(getStrings(groupShopDetailsBean.getSubTitle()));
-            qyProductIndentInfo.setPicUrl(groupShopDetailsBean.getCoverImage());
-            qyProductIndentInfo.setDesc(getStrings(groupShopDetailsBean.getProductName()));
-            qyProductIndentInfo.setNote("¥" + groupShopDetailsBean.getGpPrice());
-        }
-        QyServiceUtils.getQyInstance().openQyServiceChat(this, sourceTitle, sourceUrl, qyProductIndentInfo);
     }
 
     //参团

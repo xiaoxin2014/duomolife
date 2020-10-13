@@ -38,9 +38,6 @@ public class QualityGroupShopAdapter extends BaseMultiItemQuickAdapter<QualityGr
     @Override
     protected void convert(BaseViewHolder helper, QualityGroupBean qualityGroupBean) {
         GlideImageLoaderUtil.loadCenterCrop(context, helper.getView(R.id.iv_communal_img_bg), qualityGroupBean.getCoverImage());
-//        String name = qualityGroupBean.getName();
-//        String subtitle = qualityGroupBean.getSubtitle();
-//        helper.setText(R.id.tv_gp_sp_name, getStrings(!TextUtils.isEmpty(gpName) ? gpName : (TextUtils.isEmpty(subtitle) ? name : (subtitle + "•" + name))))
         helper.setText(R.id.tv_gp_sp_name, getStrings(qualityGroupBean.getGpName()))
                 .setText(R.id.tv_gp_sp_per_count, getStrings(qualityGroupBean.getRequireCount()) + "人团")//拼团人数
                 .setText(R.id.tv_gp_sp_per_price, "¥" + qualityGroupBean.getGpPrice())//团购价
@@ -53,17 +50,19 @@ public class QualityGroupShopAdapter extends BaseMultiItemQuickAdapter<QualityGr
         String timeStatus;
         String timeDifferent = "";
         String currentTime = getCurrentTime(qualityGroupBean);
-        //未结束
-        if (!isEndOrStartTime(currentTime, qualityGroupBean.getEndTime())) {
+        //已结束
+        if (isEndOrStartTime(currentTime, qualityGroupBean.getEndTime())) {
+            timeStatus = "已结束";
+        } else if (isEndOrStartTime(currentTime, qualityGroupBean.getStartTime())) {
+            //已开始未结束
             timeStatus = "距结束:";
             timeDifferent = getTimeDifferenceText(getTimeDifference(qualityGroupBean.getEndTime(), currentTime));
         } else {
-            timeStatus = "已结束";
+            //未开始
+            timeStatus = "距开始:";
+            timeDifferent = getTimeDifferenceText(getTimeDifference(qualityGroupBean.getStartTime(), currentTime));
         }
-
         tvGroupTime.setText(getStrings(timeStatus + timeDifferent));
         helper.itemView.setTag(qualityGroupBean);
     }
-
-
 }

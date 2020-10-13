@@ -52,6 +52,7 @@ public class QualityGroupEntity extends BaseTimeEntity {
         private int itemType;
         private String productId;
         private String endTime;
+        private String startTime;
         private String coverImage;
         private String gpInfoId;
         private String gpName;
@@ -69,6 +70,14 @@ public class QualityGroupEntity extends BaseTimeEntity {
         @Override
         public int getItemType() {
             return itemType;
+        }
+
+        public String getStartTime() {
+            return startTime;
+        }
+
+        public void setStartTime(String startTime) {
+            this.startTime = startTime;
         }
 
         public String getProductId() {
