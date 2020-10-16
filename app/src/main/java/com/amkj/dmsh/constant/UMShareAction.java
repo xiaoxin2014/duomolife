@@ -137,6 +137,10 @@ public class UMShareAction {
     public UMShareAction(final BaseActivity context, String imgUrl,
                          final String title, final String description, final String urlLink, String routineUrl
             , int productId, boolean isSaveImg, int shareTpe, String h5Platform) {
+//        if (!Url.BASE_URL.equals("https://app.domolife.cn/")) {
+//            showToast("内测版不支持分享");
+//            return;
+//        }
         this.context = context;
         this.title = title;
         this.id = productId;

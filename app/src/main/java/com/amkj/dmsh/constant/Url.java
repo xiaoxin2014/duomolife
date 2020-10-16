@@ -5,6 +5,7 @@ package com.amkj.dmsh.constant;
  */
 public class Url {
 
+//    public static String BASE_URL = "http://dev.domolife.cn/";
     public static String BASE_URL = "https://app.domolife.cn/";
 
     public static String getUrl(int position) {

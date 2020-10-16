@@ -1041,7 +1041,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     mIvVipLogo.setVisibility(!isVip() ? VISIBLE : GONE);
                     mLlBottomActivityPrice.setVisibility(!TextUtils.isEmpty(vipActivityPrice) ? VISIBLE : GONE);
                     //原价(活动开始 非会员或者会员专享原价为oldPrice,否则不显示原价 活动未开始，会员原价为vipPrice,非会员原价为price)
-                    String oldPrice = isStart ? ( getMinPrice(oldPrices)) : (isVip() ? getMinPrice(vipPrices) : getMinPrice(prices));
+                    String oldPrice = isStart ? (getMinPrice(oldPrices)) : (isVip() ? getMinPrice(vipPrices) : getMinPrice(prices));
                     mTvProductMartketPrice.setText("原价：¥" + oldPrice);
                     mTvProductMartketPrice.setVisibility(getStringChangeFloat(oldPrice) > 0 ? VISIBLE : GONE);
                 } else if (activityCode.contains("MJ") || activityCode.contains("MM") || activityCode.contains("MZ")) {
@@ -1562,8 +1562,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             }
 
             //开通会员入口
-            boolean isWhiteUser = (boolean) SharedPreUtils.getParam("isWhiteUser", false);
-            mLlOpenVip.setVisibility(!isVip() && userId > 0 && isWhiteUser ? VISIBLE : GONE);
+            mLlOpenVip.setVisibility(showVipEnter() ? VISIBLE : GONE);
             String openVipTips = !TextUtils.isEmpty(shopProperty.getVipReduce()) ?
                     getStringsFormat(this, R.string.open_vip_save_money, shopProperty.getVipReduce()) : "开通多么会员可享专属价格";
             mTvVipSave.setText(openVipTips.contains("省") ? getSpannableString(openVipTips, openVipTips.indexOf("省") + 1, openVipTips.length(), -1, "#ff0015") : openVipTips);
@@ -2042,11 +2041,16 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         }
     }
 
+    //是否显示会员开通入口
+    private boolean showVipEnter() {
+        boolean isWhiteUser = (boolean) SharedPreUtils.getParam("isWhiteUser", false);
+        return !isVip() && userId > 0 && isWhiteUser;
+    }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mLlOpenVip.setVisibility(!isVip() ? VISIBLE : GONE);
+        mLlOpenVip.setVisibility(showVipEnter() ? VISIBLE : GONE);
         tv_product_share_tint.postDelayed(new Runnable() {
             @Override
             public void run() {
