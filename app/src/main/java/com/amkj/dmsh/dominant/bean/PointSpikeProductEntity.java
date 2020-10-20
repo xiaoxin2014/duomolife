@@ -1,6 +1,7 @@
 package com.amkj.dmsh.dominant.bean;
 
 import com.amkj.dmsh.base.BaseTimeEntity;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
@@ -39,6 +40,7 @@ public class PointSpikeProductEntity extends BaseTimeEntity {
         private String path;
         private String title;
         private String marketPrice;
+        @SerializedName(value = "isNotice", alternate = "isRemind")
         private int isNotice;
         private String subtitle;
         private int statusCode;

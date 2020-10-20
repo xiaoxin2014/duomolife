@@ -173,7 +173,7 @@ public class ShopTimeMyWarmAdapter extends BaseQuickAdapter<MineWarmBean, BaseVi
                 tv_mine_warm_set_status.setSelected(true);
                 tv_mine_warm_set_status.setText("去抢购");
                 tv_count_time_before_hours.setSelected(true);
-                tv_count_time_before_hours.setText("已开团");
+                tv_count_time_before_hours.setText("已开始");
                 break;
             case 3:
 //                已截团

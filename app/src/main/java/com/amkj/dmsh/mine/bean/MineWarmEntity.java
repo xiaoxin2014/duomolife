@@ -71,6 +71,15 @@ public class MineWarmEntity extends BaseEntity{
         private int backCode;
         private String currentTime;
         private long addSecond;
+        private String androidLink;
+
+        public String getAndroidLink() {
+            return androidLink;
+        }
+
+        public void setAndroidLink(String androidLink) {
+            this.androidLink = androidLink;
+        }
 
         public long getAddSecond() {
             return addSecond;

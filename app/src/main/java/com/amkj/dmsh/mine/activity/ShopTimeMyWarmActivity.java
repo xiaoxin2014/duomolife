@@ -41,6 +41,7 @@ import butterknife.OnClick;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -92,8 +93,6 @@ public class ShopTimeMyWarmActivity extends BaseActivity {
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_ten_dp)
-
-
                 .create());
         communal_recycler.setAdapter(shopTimeMyWarmAdapter);
 
@@ -117,9 +116,15 @@ public class ShopTimeMyWarmActivity extends BaseActivity {
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 MineWarmBean mineWarmBean = (MineWarmBean) view.getTag();
                 if (mineWarmBean != null && mineWarmBean.getStatus() != 3 && mineWarmBean.getStatus() != 5) {
-                    Intent intent = new Intent(ShopTimeMyWarmActivity.this, ShopTimeScrollDetailsActivity.class);
-                    intent.putExtra("productId", String.valueOf(mineWarmBean.getId()));
-                    startActivity(intent);
+                    String androidLink = mineWarmBean.getAndroidLink();
+                    if (!TextUtils.isEmpty(androidLink)) {
+                        setSkipPath(getActivity(), androidLink, false);
+                    } else {
+                        Intent intent = new Intent(ShopTimeMyWarmActivity.this, ShopTimeScrollDetailsActivity.class);
+                        intent.putExtra("productId", String.valueOf(mineWarmBean.getId()));
+                        startActivity(intent);
+                    }
+
                 } else {
                     showToast("商品已失效");
                 }
@@ -129,9 +134,14 @@ public class ShopTimeMyWarmActivity extends BaseActivity {
             MineWarmBean mineWarmBean = (MineWarmBean) view.getTag();
             if (mineWarmBean != null) {
                 if (mineWarmBean.getStatus() == 2) {
-                    Intent intent = new Intent(ShopTimeMyWarmActivity.this, ShopTimeScrollDetailsActivity.class);
-                    intent.putExtra("productId", String.valueOf(mineWarmBean.getId()));
-                    startActivity(intent);
+                    String androidLink = mineWarmBean.getAndroidLink();
+                    if (!TextUtils.isEmpty(androidLink)) {
+                        setSkipPath(getActivity(), androidLink, false);
+                    } else {
+                        Intent intent = new Intent(ShopTimeMyWarmActivity.this, ShopTimeScrollDetailsActivity.class);
+                        intent.putExtra("productId", String.valueOf(mineWarmBean.getId()));
+                        startActivity(intent);
+                    }
                 } else {
 //                    删除
                     page = 1;
@@ -177,11 +187,11 @@ public class ShopTimeMyWarmActivity extends BaseActivity {
     }
 
     private void cancelWarm(int productId) {
-        String url =  Url.CANCEL_MINE_WARM;
+        String url = Url.CANCEL_MINE_WARM;
         Map<String, Object> params = new HashMap<>();
         params.put("m_obj", productId);
         params.put("m_uid", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,url, params, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
 
@@ -246,8 +256,8 @@ public class ShopTimeMyWarmActivity extends BaseActivity {
                         }
                         tv_header_titleAll.setText("秒杀提醒(" + mineWarmEntity.getCount() + ")");
                     } else if (!mineWarmEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast( mineWarmEntity.getMsg());
-                    }else{
+                        showToast(mineWarmEntity.getMsg());
+                    } else {
                         shopTimeMyWarmAdapter.loadMoreEnd();
                     }
                     shopTimeMyWarmAdapter.notifyDataSetChanged();
@@ -267,7 +277,7 @@ public class ShopTimeMyWarmActivity extends BaseActivity {
     private void getWarmTime() {
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,TIME_SHOW_PRO_WARM,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, TIME_SHOW_PRO_WARM, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
 

@@ -51,9 +51,9 @@ import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.REQUEST_NOTIFICATION_STATUS;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.Url.ADD_MINE_WARM;
 import static com.amkj.dmsh.constant.Url.Q_POINT_SPIKE_PRODUCT;
 import static com.amkj.dmsh.constant.Url.Q_POINT_SPIKE_PRODUCT_CLICK_TOTAL;
-import static com.amkj.dmsh.constant.Url.Q_POINT_SPIKE_PRODUCT_STATUS;
 import static com.amkj.dmsh.utils.TimeUtils.getTimeDifference;
 import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTime;
 
@@ -259,7 +259,7 @@ public class PointSpikeProductFragment extends BaseFragment {
 
                 @Override
                 public void onFinish() {
-                   loadData();
+                    loadData();
                 }
             };
         }
@@ -275,9 +275,9 @@ public class PointSpikeProductFragment extends BaseFragment {
     private void setPointProductStatus(TimeAxisProductListBean axisProductListBean) {
         Map<String, Object> params = new HashMap<>();
         params.put("timeaxis_id", pointSpikeId);
-        params.put("product_id", axisProductListBean.getProductId());
-        params.put("uid", userId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(activityWeakReference.get(), Q_POINT_SPIKE_PRODUCT_STATUS
+        params.put("m_obj", axisProductListBean.getProductId());
+        params.put("m_uid", userId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(activityWeakReference.get(), ADD_MINE_WARM
                 , params, null);
     }
 
