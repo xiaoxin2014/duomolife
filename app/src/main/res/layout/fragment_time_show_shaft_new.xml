@@ -2,6 +2,98 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:orientation="vertical">
-    <include layout="@layout/layout_spring_sale_communal"/>
+
+    <include layout="@layout/activity_domolife_header" />
+
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:cube_ptr="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/smart_communal_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        cube_ptr:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <include layout="@layout/layout_refresh_header_gif" />
+
+        <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white">
+
+            <com.google.android.material.appbar.AppBarLayout
+                android:id="@+id/appBarLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                app:elevation="0dp">
+
+                <com.google.android.material.appbar.CollapsingToolbarLayout
+                    android:id="@+id/collapsing_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:contentScrim="@android:color/transparent"
+                    app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+                    <RelativeLayout
+                        android:id="@+id/rel_communal_banner"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/sc_mm_403">
+
+                        <com.bigkoo.convenientbanner.ConvenientBanner xmlns:app="http://schemas.android.com/apk/res-auto"
+                            android:id="@+id/ad_communal_banner"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            app:canLoop="true" />
+
+                        <LinearLayout
+                            android:id="@+id/ll_rule"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:paddingLeft="@dimen/sc_mm_50"
+                            android:paddingTop="@dimen/sc_mm_50"
+                            android:paddingBottom="@dimen/sc_mm_50">
+
+                            <TextView
+                                android:layout_width="@dimen/sc_mm_126"
+                                android:layout_height="@dimen/sc_mm_40"
+                                android:background="@drawable/shape_group_rule"
+                                android:gravity="center"
+                                android:text="团购规则>"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/sc_mm_24" />
+                        </LinearLayout>
+
+                    </RelativeLayout>
+                </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+
+                <com.amkj.dmsh.views.flycoTablayout.SlidingDoubleTextTabLayout xmlns:tl="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/sliding_tablayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/sc_mm_35"
+                    android:paddingBottom="@dimen/sc_mm_15"
+                    android:background="@color/light_gray_f"
+                    tl:tl_indicator_color="@color/text_black_t"
+                    tl:tl_indicator_height="@dimen/sc_mm_0"
+                    android:paddingLeft="@dimen/sc_mm_24"
+                    android:paddingRight="@dimen/sc_mm_24"
+                    tl:tl_tab_padding="@dimen/sc_mm_24"
+                    tl:tl_textSelectColor="@color/text_black_t"
+                    tl:tl_textUnselectColor="@color/text_black_t"
+                    tl:tl_textsize="@dimen/sc_mm_22" />
+            </com.google.android.material.appbar.AppBarLayout>
+
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/viewPager"
+                android:layout_width="match_parent"
+                android:background="@color/light_gray_f"
+                android:layout_height="wrap_content"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 </LinearLayout>

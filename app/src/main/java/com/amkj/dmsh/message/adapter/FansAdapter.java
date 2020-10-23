@@ -54,8 +54,8 @@ public class FansAdapter extends BaseMultiItemQuickAdapter<FansEntity.FansBean, 
                         .setGone(R.id.tv_time, !TextUtils.isEmpty(item.getCreateTime()))
                         .setText(R.id.tv_user_name, getStrings(item.getNickname()));
                 TextView tvFollow = helper.getView(R.id.tv_follow);
-                tvFollow.setSelected(item.getIsFocus());
-                tvFollow.setText(item.getIsFocus() ? "已关注" : (item.getItemType() == NEW_FANS ? "回粉" : "关注"));
+                tvFollow.setSelected(item.isFocus());
+                tvFollow.setText(item.isFocus() ? "已关注" : (item.getItemType() == NEW_FANS ? "回粉" : "关注"));
                 //点击头像
                 ivCover.setOnClickListener(v -> ConstantMethod.skipUserCenter(activity, getStringChangeIntegers(item.getUid())));
                 //关注或取消

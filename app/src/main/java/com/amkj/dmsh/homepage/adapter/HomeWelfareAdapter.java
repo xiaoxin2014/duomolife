@@ -1,4 +1,4 @@
-package com.amkj.dmsh.homepage.fragment;
+package com.amkj.dmsh.homepage.adapter;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -12,6 +12,7 @@ import com.amkj.dmsh.bean.HomeWelfareEntity.HomeWelfareBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.dominant.activity.DoMoLifeWelfareDetailsActivity;
 import com.amkj.dmsh.user.bean.LikedProductBean;
+import com.amkj.dmsh.user.bean.MarketLabelBean;
 import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
@@ -91,7 +92,7 @@ public class HomeWelfareAdapter extends CommonPagerAdapter<HomeWelfareBean> {
                     }
                     if (likedProductBean.getMarketLabelList() != null
                             && likedProductBean.getMarketLabelList().size() > 0) {
-                        for (LikedProductBean.MarketLabelBean marketLabelBean : likedProductBean.getMarketLabelList()) {
+                        for (MarketLabelBean marketLabelBean : likedProductBean.getMarketLabelList()) {
                             if (!TextUtils.isEmpty(marketLabelBean.getTitle())) {
                                 fbl_label.addView(ProductLabelCreateUtils.createLabelText(mContext, marketLabelBean.getTitle(), 0));
                             }

@@ -7,7 +7,7 @@ import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.shopdetails.bean.ShopRecommendHotTopicEntity.ShopRecommendHotTopicBean;
-import com.amkj.dmsh.user.bean.LikedProductBean.MarketLabelBean;
+import com.amkj.dmsh.user.bean.MarketLabelBean;
 import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;

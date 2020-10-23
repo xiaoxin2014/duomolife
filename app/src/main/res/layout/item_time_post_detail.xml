@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_post_user_info" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sc_mm_750">
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@+id/tv_img_num"
+            android:layout_width="@dimen/sc_mm_82"
+            android:layout_height="@dimen/sc_mm_38"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="@dimen/sc_mm_30"
+            android:background="@drawable/shap_img_num_bg"
+            android:gravity="center"
+            android:text="@string/defaul"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sc_mm_26"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="@drawable/item_divider_fifteen_transparent"
+        android:orientation="vertical"
+        android:showDividers="beginning|middle|end">
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/vp_related"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/sc_mm_160"
+            android:background="@color/white"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:paddingLeft="@dimen/sc_mm_20"
+            android:paddingRight="@dimen/sc_mm_160" />
+
+        <TextView
+            android:id="@+id/tv_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/sc_mm_30"
+            android:layout_marginRight="@dimen/sc_mm_30"
+            android:text="@string/defaul"
+            android:textColor="@color/text_login_gray_s"
+            android:textSize="@dimen/sc_mm_28" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/sc_mm_30"
+            android:layout_marginRight="@dimen/sc_mm_30"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/et_comment"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/sc_mm_68"
+                android:layout_weight="1"
+                android:background="@drawable/shap_et_comment_bg"
+                android:focusable="false"
+                android:gravity="center_vertical"
+                android:hint="快来评论吧..."
+                android:paddingLeft="@dimen/sc_mm_20"
+                android:textColor="@color/text_black_t"
+                android:textColorHint="@color/color_blue_reply_com"
+                android:textSize="@dimen/sc_mm_28" />
+
+            <TextView
+                android:id="@+id/tv_like"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/sc_mm_30"
+                android:drawableLeft="@drawable/sel_comment_like_heart"
+                android:drawablePadding="@dimen/sc_mm_12"
+                android:gravity="center"
+                android:paddingTop="@dimen/sc_mm_10"
+                android:paddingBottom="@dimen/sc_mm_10"
+                android:text="赞"
+                android:textColor="@color/text_login_gray_s"
+                android:textSize="@dimen/sc_mm_26" />
+
+            <TextView
+                android:id="@+id/tv_comment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/sc_mm_30"
+                android:drawableLeft="@drawable/mes_comment_icon"
+                android:drawablePadding="@dimen/sc_mm_12"
+                android:gravity="center"
+                android:paddingTop="@dimen/sc_mm_10"
+                android:paddingBottom="@dimen/sc_mm_10"
+                android:text="评论"
+                android:textColor="@color/text_login_gray_s"
+                android:textSize="@dimen/sc_mm_26" />
+
+            <ImageView
+                android:id="@+id/iv_share"
+                android:layout_width="@dimen/sc_mm_33"
+                android:layout_height="@dimen/sc_mm_53"
+                android:layout_marginLeft="@dimen/sc_mm_30"
+                android:paddingTop="@dimen/sc_mm_10"
+                android:paddingBottom="@dimen/sc_mm_10"
+                android:src="@drawable/common_share_btn_nor" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_comment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/sc_mm_30"
+            android:layout_marginRight="@dimen/sc_mm_30"
+            android:background="@drawable/border_cir_4dp_gray_f"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/sc_mm_15"
+            android:paddingTop="@dimen/sc_mm_15"
+            android:paddingRight="@dimen/sc_mm_15">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_comment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false" />
+
+            <TextView
+                android:id="@+id/tv_all_comment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/sc_mm_15"
+                android:text="@string/look_all_commnet"
+                android:textColor="#FF2F6A9F"
+                android:textSize="@dimen/sc_mm_28" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

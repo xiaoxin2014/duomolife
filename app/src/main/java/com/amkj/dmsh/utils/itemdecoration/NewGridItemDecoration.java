@@ -92,7 +92,7 @@ public class NewGridItemDecoration extends RecyclerView.ItemDecoration {
                         outRect.set(0, 0, 0, 0);
                     } else {
                         //除了第一列，显示左间距
-                        outRect.set(isFirstColumn(parent, position, spanCount) ? 0 : mDrawable.getIntrinsicWidth(), 0, 0,  mDrawable.getIntrinsicHeight());
+                        outRect.set(isFirstColumn(parent, position, spanCount) ? 0 : mDrawable.getIntrinsicWidth(), isFirstRow(parent, position, spanCount) ? 0 : mDrawable.getIntrinsicHeight(), 0, 0);
                     }
                 }
             } else {

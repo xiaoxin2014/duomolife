@@ -41,7 +41,7 @@ import com.amkj.dmsh.bean.ImageBean;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.dao.AddClickDao;
 import com.amkj.dmsh.dominant.activity.QualityGroupShopDetailActivity;
-import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
+import com.amkj.dmsh.time.activity.ShopTimeScrollDetailsActivity;
 import com.amkj.dmsh.dominant.bean.GroupShopDetailsEntity.GroupShopDetailsBean;
 import com.amkj.dmsh.find.activity.ImagePagerActivity;
 import com.amkj.dmsh.find.activity.JoinTopicActivity;
@@ -64,6 +64,7 @@ import com.amkj.dmsh.shopdetails.activity.RefundMoneyActivity;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.IndentProDiscountBean;
 import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
+import com.amkj.dmsh.time.activity.TimePostDetailActivity;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.gson.GsonUtils;
@@ -927,7 +928,7 @@ public class ConstantMethod {
     public static void skipProductUrl(Context context, int proTypeId, int id) {
         Intent intent = new Intent();
         switch (proTypeId) {
-            case 0://淘宝商品
+            case 0://团购商品
                 intent.setClass(context, ShopTimeScrollDetailsActivity.class);
                 intent.putExtra("productId", String.valueOf(id));
                 context.startActivity(intent);
@@ -1078,6 +1079,17 @@ public class ConstantMethod {
             Intent intent = new Intent(context, PostDetailActivity.class);
             intent.putExtra("ArtId", ArtId);
             intent.putExtra("articletype", articalType);
+            context.startActivity(intent);
+        }
+    }
+
+    /**
+     * 跳转淘好货种草帖子详情
+     */
+    public static void skipTimePostDetail(Context context, String postId) {
+        if (isContextExisted(context)) {
+            Intent intent = new Intent(context, TimePostDetailActivity.class);
+            intent.putExtra("id", postId);
             context.startActivity(intent);
         }
     }
@@ -1819,21 +1831,26 @@ public class ConstantMethod {
     //识别并设置超链接
     public static void setTextLink(Activity activity, TextView textView) {
         //识别超链接
-        Link discernUrl = new Link(Pattern.compile(REGEX_URL));
-        discernUrl.setTextColor(0xff0a88fa);
-        discernUrl.setUnderlined(false);
-        discernUrl.setHighlightAlpha(0f);
-        discernUrl.setUrlReplace(true);
-        discernUrl.setOnClickListener(clickedText -> {
-            if (!TextUtils.isEmpty(clickedText)) {
-                setSkipPath(activity, clickedText, false);
-            } else {
-                showToast("网址有误，请重试");
-            }
-        });
-        LinkBuilder.on(textView)
-                .addLink(discernUrl)
-                .build();
+        Pattern pattern = Pattern.compile(REGEX_URL);
+        Matcher matcher = pattern.matcher(textView.getText().toString());
+        //如果包含超链接
+        if (matcher.find()) {
+            Link discernUrl = new Link(pattern);
+            discernUrl.setTextColor(0xff0a88fa);
+            discernUrl.setUnderlined(false);
+            discernUrl.setHighlightAlpha(0f);
+            discernUrl.setUrlReplace(true);
+            discernUrl.setOnClickListener(clickedText -> {
+                if (!TextUtils.isEmpty(clickedText)) {
+                    setSkipPath(activity, clickedText, false);
+                } else {
+                    showToast("网址有误，请重试");
+                }
+            });
+            LinkBuilder.on(textView)
+                    .addLink(discernUrl)
+                    .build();
+        }
     }
 
     //显示loading

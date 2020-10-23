@@ -5,7 +5,7 @@ package com.amkj.dmsh.constant;
  */
 public class Url {
 
-//    public static String BASE_URL = "http://dev.domolife.cn/";
+    //    public static String BASE_URL = "http://dev.domolife.cn/";
     public static String BASE_URL = "https://app.domolife.cn/";
 
     public static String getUrl(int position) {
@@ -22,7 +22,7 @@ public class Url {
         } else if (position == 5) {//预发布
             return BASE_URL = "http://dev.domolife.cn/";
         } else if (position == 6) {//王凯2
-            return BASE_URL = "http://192.168.2.87:8080/";
+            return BASE_URL = "http://192.168.3.6:8080/";
         } else if (position == 7) {//王凯1
             return BASE_URL = "http://192.168.2.212:80/";
         } else if (position == 8) {//鸿星
@@ -798,4 +798,38 @@ public class Url {
     public static final String GET_VIP_EXCLUSIVE_TITLE = "api/vip/vipuser/getVipPriceExclusiveGoodsTitle";
     // 获取会员专享价专区商品列表
     public static final String GET_VIP_EXCLUSIVE_GOODS_LIST = "api/vip/vipuser/getVipPriceExclusiveGoodsList";
+
+    /*
+    淘好货相关
+    */
+    //获取时间轴
+    public static final String GET_TIME_AXIS = "api/groupbuy/getTimeAxisNew";
+    //获取首页广告
+    public static final String GET_TIME_HOME_AD = "api/groupbuy/getHomeTopBannerAd";
+    //获取推荐商品广告
+    public static final String GET_RECOMMNED_AD = "api/groupbuy/getHomeDomoBanner";
+    //获取团购单品列表
+    public static final String GET_SINGLE_PRODUCT = "api/groupbuy/getProductListByTime";
+    //获取品牌团信息
+    public static final String GET_TIME_BANNER = "api/groupbuy/getTopicListByTime";
+    //获取团购首页帖子
+    public static final String GET_TIME_DOCUMENT_LIST = "api/groupbuy/getGrupBuyHomePageDocumentList";
+    //获取品牌团详情
+    public static final String GET_BRAND_DETAILS = "api/groupbuy/getGorupBuyTopic";
+    //获取团购商品详情
+    public static final String GET_GROUP_PEODUCT_DETAILS = "api/groupbuy/getGorupBuyProductInfo";
+    //获取团购种草帖子分类
+    public static final String GET_GROUP_CATEGORY_LIST = "api/groupbuy/getGorupBuyCategoryList";
+    //获取团购种草帖子列表
+    public static final String GET_CATEGORY_DOCLIST_PAGE = "api/groupbuy/getCategoryDocListPage";
+    //获取团购种草帖子详情
+    public static final String GET_DOCUMENT_DETAILLIST_PAGE = "api/groupbuy/getDocumentDetailListPage";
+    //获取团购种草帖子详情
+    public static final String SAVE_DOCUMENT_DATA = "api/groupbuy/saveDocumentData";
+    //获取我的评论消息列表
+    public static final String GET_MY_COMMENT_MESSAGE_LIST = "api/message/getMyCommentMessageList";
+    //获取我的赞消息列表
+    public static final String GET_MY_FAVOR_MESSAGE_LIST = "api/message/getMyFavorMessageList";
+    //获取拼团规则
+    public static final String GET_GROUP_RULE = "api/groupbuy/getGroupBuyExplain";
 }

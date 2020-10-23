@@ -19,9 +19,9 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.bean.CommunalComment;
 import com.amkj.dmsh.bean.CommunalDetailBean;
+import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.UMShareAction;
@@ -49,11 +49,11 @@ import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.KeyboardUtils;
 import com.amkj.dmsh.utils.WindowUtils;
-import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.StaggeredDividerItemDecoration;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
+import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.google.gson.reflect.TypeToken;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -89,7 +89,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.skipUserCenter;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.COMMENT_TYPE;
+import static com.amkj.dmsh.constant.ConstantVariable.COMMENT_DOC_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_COMMENT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_URL;
@@ -98,7 +98,6 @@ import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_FORTY;
 import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_FOLLOW_STATUS;
 import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_POST_COMMENT;
 import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_POST_CONTENT;
-import static com.amkj.dmsh.constant.Url.BASE_SHARE_PAGE_TWO;
 import static com.amkj.dmsh.constant.Url.F_INVITATION_DETAIL;
 import static com.amkj.dmsh.constant.Url.MINE_INVITATION_DEL;
 import static com.amkj.dmsh.constant.Url.Q_DML_SEARCH_COMMENT;
@@ -282,7 +281,6 @@ public class PostDetailActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 mCommentList.clear();
-
                 mPostCommentEntity = GsonUtils.fromJson(result, PostCommentEntity.class);
                 postDetailView.updateComment();
             }
@@ -363,7 +361,7 @@ public class PostDetailActivity extends BaseActivity {
                 if (!TextUtils.isEmpty(comment)) {
                     comment = mEmojiEditComment.getText().toString();
                     CommunalComment communalComment = new CommunalComment();
-                    communalComment.setCommType(COMMENT_TYPE);
+                    communalComment.setCommType(COMMENT_DOC_TYPE);
                     communalComment.setContent(comment);
                     if (postCommentBean != null) {
                         communalComment.setIsReply(1);
@@ -426,11 +424,11 @@ public class PostDetailActivity extends BaseActivity {
                 break;
             //帖子点赞
             case R.id.tv_article_bottom_like:
-                SoftApiDao.favorPostDetail(this, mPostDetailBean.getId(), mTvArticleBottomLike);
+                SoftApiDao.favorPostDetail(this, String.valueOf(mPostDetailBean.getId()), mTvArticleBottomLike);
                 break;
             //帖子收藏
             case R.id.tv_article_bottom_collect:
-                SoftApiDao.CollectPost(this, mPostDetailBean.getId(), mTvArticleBottomCollect);
+                SoftApiDao.CollectPost(this, String.valueOf(mPostDetailBean.getId()), mTvArticleBottomCollect);
                 break;
             //分享帖子
             case R.id.iv_img_share:
@@ -491,7 +489,7 @@ public class PostDetailActivity extends BaseActivity {
             mRvDetail.setLayoutManager(new LinearLayoutManager(getActivity()));
             mRvDetail.setAdapter(communalDetailAdapter);
             //初始化评论列表
-            postCommentAdapter = new PostCommentAdapter(getActivity(), mCommentList, COMMENT_TYPE);
+            postCommentAdapter = new PostCommentAdapter(getActivity(), mCommentList, COMMENT_DOC_TYPE);
             mRvComment.setNestedScrollingEnabled(false);
             mRvComment.setLayoutManager(new LinearLayoutManager(getActivity()));
             mRvComment.setAdapter(postCommentAdapter);
@@ -792,7 +790,6 @@ public class PostDetailActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, MINE_INVITATION_DEL, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-
                 RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                 if (requestStatus != null) {
                     if (requestStatus.getCode().equals(SUCCESS_CODE)) {

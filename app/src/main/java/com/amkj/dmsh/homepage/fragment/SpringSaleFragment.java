@@ -15,7 +15,7 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
+import com.amkj.dmsh.time.activity.ShopTimeScrollDetailsActivity;
 import com.amkj.dmsh.dominant.activity.TimeBrandDetailsActivity;
 import com.amkj.dmsh.homepage.adapter.SpringSaleRecyclerAdapterNew;
 import com.amkj.dmsh.homepage.bean.BaseTimeProductTopicBean;

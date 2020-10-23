@@ -194,7 +194,7 @@ public class CollectInvitationFragment extends BaseFragment {
 
             @Override
             public void onError(Throwable throwable) {
-                showToast( String.format(getResources().getString(R.string.collect_failed), "文章"));
+                showToast( R.string.collect_failed);
             }
         });
     }

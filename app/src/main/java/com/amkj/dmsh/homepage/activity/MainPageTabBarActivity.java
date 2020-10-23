@@ -12,7 +12,7 @@ import com.amkj.dmsh.catergory.fragment.QualityFragment;
 import com.amkj.dmsh.find.fragment.FindFragment;
 import com.amkj.dmsh.homepage.fragment.AliBCFragment;
 import com.amkj.dmsh.homepage.fragment.HomePageFragment;
-import com.amkj.dmsh.homepage.fragment.TimeShowNewFragment;
+import com.amkj.dmsh.time.fragment.TimeShowNewFragment;
 import com.amkj.dmsh.mine.fragment.MineDataFragment;
 
 import java.util.HashMap;

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:background="@color/light_gray_f"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_single"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            android:paddingTop="@dimen/sc_mm_10"
+            android:paddingBottom="@dimen/sc_mm_10" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_brand"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false" />
+
+        <com.bigkoo.convenientbanner.ConvenientBanner xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/ad_recommend_banner"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/sc_mm_200"
+            android:visibility="gone"
+            app:canLoop="true" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_recommend"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            android:paddingTop="@dimen/sc_mm_10"
+            android:paddingBottom="@dimen/sc_mm_10" />
+
+        <TextView
+            android:id="@+id/tv_more"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/sc_mm_100"
+            android:background="@color/white"
+            android:gravity="center"
+            android:text="更多好物推荐>>"
+            android:textColor="@color/black" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

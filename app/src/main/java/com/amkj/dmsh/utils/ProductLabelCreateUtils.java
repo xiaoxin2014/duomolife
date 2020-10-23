@@ -19,7 +19,7 @@ import com.amkj.dmsh.dominant.activity.QualityProductActActivity;
 import com.amkj.dmsh.dominant.bean.GroupShopDetailsEntity.GroupShopDetailsBean.ParticipantInfoBean.GroupShopJoinBean;
 import com.amkj.dmsh.find.activity.FindTagDetailsActivity;
 import com.amkj.dmsh.find.bean.InvitationImgDetailEntity.InvitationImgDetailBean.TagsBean;
-import com.amkj.dmsh.user.bean.LikedProductBean.MarketLabelBean;
+import com.amkj.dmsh.user.bean.MarketLabelBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 
 import me.jessyan.autosize.utils.AutoSizeUtils;
@@ -42,29 +42,39 @@ public class ProductLabelCreateUtils {
      *
      * @param context
      * @param labelText
-     * @param labelCode 1 为红色 活动 0 为黄色 营销
+     * @param labelType 0为黄色 营销 1为红色 活动 2会员专享 3优惠券
      * @return
      */
-    public static TextView createLabelText(Context context, String labelText, int labelCode) {
-        TextView textView = new TextView(context);
-        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
-        textView.setLayoutParams(layoutParams);
-        int tenLeftRight = AutoSizeUtils.mm2px(context, 7);
-        int fiveTopBottom = AutoSizeUtils.mm2px(context, 3);
-        textView.setPadding(tenLeftRight, fiveTopBottom, tenLeftRight, fiveTopBottom);
-        GradientDrawable gradientDrawable = new GradientDrawable();
-        if (labelCode == 1) {
-            gradientDrawable.setColor(context.getResources().getColor(R.color.text_pink_red));
+    public static View createLabelText(Context context, String labelText, int labelType) {
+        if (labelType == 2) {
+            ImageView imageView = new ImageView(context);
+            ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(AutoSizeUtils.mm2px(context, 147), AutoSizeUtils.mm2px(context, 40));
+            imageView.setImageResource(R.drawable.vip_tag);
+            imageView.setLayoutParams(layoutParams);
+            return imageView;
         } else {
-            gradientDrawable.setColor(context.getResources().getColor(R.color.text_yel_f_s));
+            TextView textView = new TextView(context);
+            ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
+            textView.setLayoutParams(layoutParams);
+            int tenLeftRight = AutoSizeUtils.mm2px(context, 7);
+            textView.setPadding(tenLeftRight, 0, tenLeftRight, 0);
+            textView.setTextColor(context.getResources().getColor(R.color.white));
+            textView.setText(labelText);
+            textView.setGravity(Gravity.CENTER);
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(context, 22));
+
+            GradientDrawable gradientDrawable = new GradientDrawable();
+            if (labelType == 0) {
+                gradientDrawable.setColor(context.getResources().getColor(R.color.vip_color));
+            } else if (labelType==1){
+                gradientDrawable.setColor(context.getResources().getColor(R.color.text_pink_red));
+            }else if (labelType==3){
+                gradientDrawable.setColor(context.getResources().getColor(R.color.time_show_color));
+            }
+            gradientDrawable.setCornerRadius(AutoSizeUtils.mm2px(context, 4));
+            textView.setBackground(gradientDrawable);
+            return textView;
         }
-        gradientDrawable.setCornerRadius(AutoSizeUtils.mm2px(context, 4));
-        textView.setTextColor(context.getResources().getColor(R.color.white));
-        textView.setBackground(gradientDrawable);
-        textView.setText(labelText);
-        textView.setGravity(Gravity.CENTER);
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(context, 22));
-        return textView;
     }
 
     /**

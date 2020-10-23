@@ -1,10 +1,10 @@
 package com.amkj.dmsh.find.bean;
 
 import com.amkj.dmsh.base.BaseEntity;
-import com.amkj.dmsh.base.BaseRemoveExistProductBean;
 import com.amkj.dmsh.constant.ConstantMethod;
-import com.google.gson.annotations.SerializedName;
+import com.amkj.dmsh.dominant.bean.PostCommentEntity;
 import com.amkj.dmsh.user.bean.UserPagerInfoEntity.UserInfoBean;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
@@ -46,7 +46,7 @@ public class PostEntity extends BaseEntity {
         this.homeUserInfo = homeUserInfo;
     }
 
-    public static class PostBean extends BaseRemoveExistProductBean {
+    public static class PostBean extends BaseFavorBean{
 
         /**
          * id : 19893
@@ -60,18 +60,19 @@ public class PostEntity extends BaseEntity {
          * favorNum : 0
          * isFavor : 0
          */
-
+        private int id;
         private int status;
         private String topicTitle;
+        @SerializedName(value = "avatar", alternate = "authorAvatar")
         private String avatar;
-        @SerializedName(value = "nickName", alternate = "nickname")
+        @SerializedName(value = "nickName", alternate = {"nickname", "authorNickName"})
         private String nickName;
-        @SerializedName(value = "content", alternate = "digest")
+        @SerializedName(value = "content", alternate = {"digest", "description"})
         private String content;
-        @SerializedName(value = "cover", alternate = {"path", "activityImg"})
+        @SerializedName(value = "cover", alternate = {"path", "activityImg", "coverPath"})
         private String cover;
         private String createTime;
-        @SerializedName(value = "favorNum", alternate = {"favorCount", "likeCount"})
+        @SerializedName(value = "favorNum", alternate = {"favorCount", "likeCount", "favor"})
         private String favorNum;
         @SerializedName(value = "isFavor", alternate = "isLike")
         private String isFavor;
@@ -81,15 +82,80 @@ public class PostEntity extends BaseEntity {
         @SerializedName(value = "coverHeight", alternate = "coverheight")
         private int coverHeight;
         private String topicId;
+        private String tagName;
 
         //心得报告相关字段
         private String activityId;
         private String orderId;
+        @SerializedName(value = "imgs", alternate = "images")
         private String imgs;
         private String star;
         private String isCollect;
         private String productName;
         private String productImg;
+
+        //淘好货帖子相关字段
+        private int authorUid;
+        private List<RelatedGoodsBean> productList;
+        private List<PostCommentEntity.PostCommentBean> commList;
+        private String view;//帖子查看量
+        private int comment;//帖子评论量
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public int getComment() {
+            return comment;
+        }
+
+        public void setComment(int comment) {
+            this.comment = comment;
+        }
+
+        public String getView() {
+            return view;
+        }
+
+        public void setView(String view) {
+            this.view = view;
+        }
+
+        public List<RelatedGoodsBean> getProductList() {
+            return productList;
+        }
+
+        public void setProductList(List<RelatedGoodsBean> productList) {
+            this.productList = productList;
+        }
+
+        public List<PostCommentEntity.PostCommentBean> getCommList() {
+            return commList;
+        }
+
+        public void setCommList(List<PostCommentEntity.PostCommentBean> commList) {
+            this.commList = commList;
+        }
+
+        public int getAuthorUid() {
+            return authorUid;
+        }
+
+        public void setAuthorUid(int authorUid) {
+            this.authorUid = authorUid;
+        }
+
+        public String getTagName() {
+            return tagName;
+        }
+
+        public void setTagName(String tagName) {
+            this.tagName = tagName;
+        }
 
         public String getStar() {
             return star;

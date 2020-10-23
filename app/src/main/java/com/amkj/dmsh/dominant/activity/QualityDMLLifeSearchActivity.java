@@ -1,9 +1,6 @@
 package com.amkj.dmsh.dominant.activity;
 
 import android.content.Intent;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -36,6 +33,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 import q.rorbin.badgeview.Badge;
@@ -295,7 +295,7 @@ public class QualityDMLLifeSearchActivity extends BaseActivity {
             @Override
             public void onNotNetOrException() {
                 loadHud.dismiss();
-                showToast( String.format(getResources().getString(R.string.collect_failed), "文章"));
+                showToast( R.string.collect_failed);
             }
         });
     }

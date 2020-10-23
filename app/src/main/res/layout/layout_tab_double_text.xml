@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/ll_content"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/sc_mm_34"
+    android:paddingBottom="@dimen/sc_mm_18">
+
+    <TextView
+        android:id="@+id/tv_tab_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:singleLine="true"
+        android:text="@string/defaul"
+        android:textColor="@color/sel_double_text_title"
+        android:textSize="@dimen/sc_mm_28"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_tab_subtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/sc_mm_12"
+        android:background="@drawable/sel_double_text_subtitle_bg"
+        android:gravity="center"
+        android:paddingLeft="@dimen/sc_mm_13"
+        android:paddingTop="@dimen/sc_mm_2"
+        android:paddingRight="@dimen/sc_mm_13"
+        android:paddingBottom="@dimen/sc_mm_2"
+        android:singleLine="true"
+        android:text="@string/defaul"
+        android:textColor="@color/sel_double_text_subtitle"
+        android:textSize="@dimen/sc_mm_22" />
+</LinearLayout>

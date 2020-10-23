@@ -78,10 +78,12 @@
     <color name="bg_red_rule">#ffaaac</color>
     <color name="bg_red_home">#ffaeb5</color>
     <color name="mine_secretary_color">#FF91B4</color>
+    <color name="time_show_color">#FFFF9EA6</color>
     <color name="text_pink_red">#ff8593</color>
     <color name="bg_light_red">#ff8593</color>
     <color name="text_pink_red_fe">#7fff5e6b</color>
     <color name="text_light_pink_da">#ffdadb</color>
+    <color name="text_pink_da">#FFFF8688</color>
     <color name="light_blue_n">#90caff</color>
     <color name="blue_dae">#DAECFF</color>
     <color name="light_blue_e_two">#E2F1FF</color>

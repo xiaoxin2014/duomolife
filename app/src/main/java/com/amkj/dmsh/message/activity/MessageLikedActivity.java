@@ -6,13 +6,13 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.bean.ArticleCommentEntity;
-import com.amkj.dmsh.bean.ArticleCommentEntity.ArticleCommentBean;
+import com.amkj.dmsh.bean.MessageLikeEntity;
+import com.amkj.dmsh.bean.MessageLikeEntity.MessageLikeBean;
+import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dao.SoftApiDao;
 import com.amkj.dmsh.message.adapter.MessageCommunalAdapterNew;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
@@ -31,13 +31,12 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantMethod.skipPostDetail;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.constant.Url.H_MES_LIKED;
 
 
 /**
@@ -58,11 +57,11 @@ public class MessageLikedActivity extends BaseActivity {
     @BindView(R.id.tl_normal_bar)
     Toolbar mTlNormalBar;
 
-    private List<ArticleCommentBean> articleCommentList = new ArrayList<>();
+    private List<MessageLikeBean> articleCommentList = new ArrayList<>();
     public static final String TYPE = "message_liked";
     private int page = 1;
     private MessageCommunalAdapterNew messageCommunalAdapter;
-    private ArticleCommentEntity articleCommentEntity;
+    private MessageLikeEntity articleCommentEntity;
 
     @Override
     protected int getContentView() {
@@ -94,35 +93,25 @@ public class MessageLikedActivity extends BaseActivity {
                 Intent intent = new Intent();
                 switch (view.getId()) {
                     case R.id.iv_inv_user_avatar:
-                        ArticleCommentBean articleCommentBean1 = (ArticleCommentBean) view.getTag(R.id.iv_avatar_tag);
+                        MessageLikeBean messageLikeBean1 = (MessageLikeBean) view.getTag(R.id.iv_avatar_tag);
                         intent.setClass(MessageLikedActivity.this, UserPagerActivity.class);
-                        intent.putExtra("userId", String.valueOf(articleCommentBean1.getUid()));
+                        intent.putExtra("userId", String.valueOf(messageLikeBean1.getUid()));
                         startActivity(intent);
                         break;
                     case R.id.rel_adapter_message_communal:
-                        ArticleCommentBean articleCommentBean2 = (ArticleCommentBean) view.getTag();
-                        if (articleCommentBean2.getStatus() == 1) {
-                            switch (articleCommentBean2.getObj()) {
-                                case "doc":
-                                case "post":
-                                    skipPostDetail(getActivity(), String.valueOf(articleCommentBean2.getObject_id()), 2);
-                                    break;
-                                case "proEvaluate":
-                                    intent.setClass(MessageLikedActivity.this, ShopScrollDetailsActivity.class);
-                                    intent.putExtra("productId", String.valueOf(articleCommentBean2.getObject_id()));
-                                    startActivity(intent);
-                                    break;
-                            }
-                        } else {
+                        MessageLikeBean messageLikeBean2 = (MessageLikeBean) view.getTag();
+                        if (messageLikeBean2.getStatus() == -1) {
                             showToast("已删除");
+                        } else {
+                            setSkipPath(getActivity(), messageLikeBean2.getAndroidLink(), false);
                         }
                         break;
                     case R.id.tv_follow:
-                        ArticleCommentBean articleCommentBean3 = (ArticleCommentBean) view.getTag();
-                        SoftApiDao.followUser(getActivity(), articleCommentBean3.getUid(), ((TextView) view), articleCommentBean3, new SoftApiDao.FollowCompleteListener() {
+                        MessageLikeBean messageLikeBean3 = (MessageLikeBean) view.getTag();
+                        SoftApiDao.followUser(getActivity(), messageLikeBean3.getUid(), ((TextView) view), messageLikeBean3, new SoftApiDao.FollowCompleteListener() {
                             @Override
                             public void followComplete(boolean isFollow) {
-                                articleCommentBean3.setIsFocus(isFollow);
+                                messageLikeBean3.setIsFocus(isFollow);
                             }
                         });
                         break;
@@ -166,9 +155,10 @@ public class MessageLikedActivity extends BaseActivity {
             return;
         }
         Map<String, Object> params = new HashMap<>();
-        params.put("to_uid", userId);
+        params.put("uid", userId);
         params.put("currentPage", page);
-        NetLoadUtils.getNetInstance().loadNetDataPost(MessageLikedActivity.this, H_MES_LIKED
+        params.put("showCount", 10);
+        NetLoadUtils.getNetInstance().loadNetDataPost(MessageLikedActivity.this, Url.GET_MY_FAVOR_MESSAGE_LIST
                 , params, new NetLoadListenerHelper() {
                     @Override
                     public void onSuccess(String result) {
@@ -179,14 +169,14 @@ public class MessageLikedActivity extends BaseActivity {
                         }
 
                         //赞
-                        articleCommentEntity = GsonUtils.fromJson(result, ArticleCommentEntity.class);
+                        articleCommentEntity = GsonUtils.fromJson(result, MessageLikeEntity.class);
                         if (articleCommentEntity != null) {
                             if (articleCommentEntity.getCode().equals(SUCCESS_CODE)) {
-                                articleCommentList.addAll(articleCommentEntity.getArticleCommentList());
+                                articleCommentList.addAll(articleCommentEntity.getList());
                             } else if (articleCommentEntity.getCode().equals(EMPTY_CODE)) {
                                 messageCommunalAdapter.loadMoreEnd();
                             } else {
-                                showToast( articleCommentEntity.getMsg());
+                                showToast(articleCommentEntity.getMsg());
                             }
                         }
                         messageCommunalAdapter.notifyDataSetChanged();
@@ -202,7 +192,7 @@ public class MessageLikedActivity extends BaseActivity {
 
                     @Override
                     public void onError(Throwable throwable) {
-                        showToast( R.string.invalidData);
+                        showToast(R.string.invalidData);
                     }
                 });
     }

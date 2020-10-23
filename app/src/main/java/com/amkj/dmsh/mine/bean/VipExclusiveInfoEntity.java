@@ -1,6 +1,7 @@
 package com.amkj.dmsh.mine.bean;
 
 import com.amkj.dmsh.base.BaseEntity;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
@@ -26,7 +27,9 @@ public class VipExclusiveInfoEntity extends BaseEntity {
          * categoryId : 2
          */
 
+        @SerializedName(value = "title", alternate = "name")
         private String title;
+        @SerializedName(value = "categoryId", alternate = "id")
         private String categoryId;
 
         public String getTitle() {

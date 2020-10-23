@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/sc_mm_130"
+    android:layout_marginLeft="@dimen/sc_mm_20"
+    android:layout_marginRight="@dimen/sc_mm_20"
+    android:layout_marginBottom="@dimen/sc_mm_20"
+    android:background="@drawable/time_coupon_bg">
+
+    <TextView
+        android:gravity="bottom|center_horizontal"
+        android:id="@+id/tv_amount"
+        android:layout_width="@dimen/sc_mm_170"
+        android:layout_height="@dimen/sc_mm_116"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="@dimen/sc_mm_24"
+        android:text="@string/defaul"
+        android:ellipsize="end"
+        android:textColor="#FFF4575A"
+        android:textSize="@dimen/sc_mm_65"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/tv_validity"
+        android:layout_marginLeft="@dimen/sc_mm_210"
+        android:text="@string/defaul"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sc_mm_30"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_validity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="@dimen/sc_mm_210"
+        android:layout_marginBottom="@dimen/sc_mm_10"
+        android:text="@string/defaul"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sc_mm_24" />
+
+    <TextView
+        android:id="@+id/tv_get_coupon"
+        android:layout_width="@dimen/sc_mm_158"
+        android:layout_height="@dimen/sc_mm_48"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="@dimen/sc_mm_30"
+        android:background="@drawable/shap_get_time_coupon_bg"
+        android:gravity="center"
+        android:text="领券购买"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sc_mm_26" />
+</RelativeLayout>

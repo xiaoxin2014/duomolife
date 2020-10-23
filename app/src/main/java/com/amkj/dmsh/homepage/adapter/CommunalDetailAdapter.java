@@ -109,7 +109,7 @@ import static me.jessyan.autosize.utils.AutoSizeUtils.dp2px;
 /**
  * Created by atd48 on 2016/8/30.
  */
-public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDetailObjectBean, CommunalDetailAdapter.CommunalHolderHelper> implements View.OnClickListener {
+public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDetailObjectBean, CommunalDetailAdapter.CommunalHolderHelper> {
     private final Activity context;
     private final int screenWidth;
     private final KProgressHUD loadHud;
@@ -413,10 +413,12 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                 break;
             case NORTEXT:
                 String content = detailObjectBean.getContent();
-                final EmojiTextView tv_content_type = holder.getView(R.id.tv_content_type);
+                String imgUrl = "";//图片链接
+                String imgUrlLink = "";//超链接（可跳转）
+                EmojiTextView tv_content_type = holder.getView(R.id.tv_content_type);
                 tv_content_type.setPadding(0, 0, 0, 0);
-                final RelativeLayout rel_communal_image = holder.getView(R.id.rel_communal_image);
-                final ImageView iv_communal_image = holder.getView(R.id.iv_communal_image);
+                RelativeLayout rel_communal_image = holder.getView(R.id.rel_communal_image);
+                ImageView iv_communal_image = holder.getView(R.id.iv_communal_image);
                 if (!TextUtils.isEmpty(content)) {
                     //                正则匹配br样式
                     content = content.replaceAll(brStyleReg, br);
@@ -425,7 +427,6 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                     content = content.replaceAll(blankStyle, " ");
                     //richtext暂不支持transparent,使用透明色代替
                     content = content.replaceAll(transparent, "#00000000");
-
                     //                匹配图片地址
                     Matcher imgIsFind = Pattern.compile(IMG_REGEX_TAG).matcher(content);
                     isImageTag = imgIsFind.find();
@@ -435,20 +436,18 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                         boolean isImageUrl = aMatcher.find();
                         if (isImageUrl) {
                             //                    匹配网址
-                            String tbUrlImgValue = "";
                             Matcher matcher = Pattern.compile(REGEX_TEXT).matcher(content);
                             while (matcher.find()) {
-                                tbUrlImgValue = matcher.group();
+                                imgUrlLink = matcher.group();
                                 if (matcher.find()) {
-                                    content = matcher.group();
+                                    imgUrl = matcher.group();
                                 }
                             }
-                            iv_communal_image.setTag(R.id.iv_two_tag, tbUrlImgValue);
                         } else {
                             String stringContent = imgIsFind.group();
                             Matcher matcher = Pattern.compile(REGEX_TEXT).matcher(stringContent);
                             while (matcher.find()) {
-                                content = matcher.group();
+                                imgUrl = matcher.group();
                             }
                         }
 
@@ -462,14 +461,33 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                         iv_communal_image.setVisibility(View.VISIBLE);
                         tv_content_type.setVisibility(View.GONE);
                         iv_communal_image.setImageDrawable(context.getResources().getDrawable(R.drawable.load_loading_image));
-                        iv_communal_image.setTag(R.id.iv_tag, content);
-                        iv_communal_image.setOnClickListener(this);
                         //判断content是不是正确的图片地址
-                        boolean isPic = content.startsWith("http") && (content.contains("gif") || content.contains("jpg") || content.contains("jpeg") ||
-                                content.contains("png") || content.contains("GIF") || content.contains("JPG") || content.contains("PNG") || content.contains("gif"));
-                        String tag = (String) iv_communal_image.getTag(isPic ? R.id.iv_tag : R.id.iv_two_tag);
+                        boolean isPic = imgUrl.startsWith("http") && (imgUrl.contains("gif") || imgUrl.contains("jpg") || imgUrl.contains("jpeg") ||
+                                imgUrl.contains("png") || imgUrl.contains("GIF") || imgUrl.contains("JPG") || imgUrl.contains("PNG") || imgUrl.contains("gif"));
+                        String tag = isPic ? imgUrl : imgUrlLink;
+                        iv_communal_image.setTag(R.id.iv_tag, tag);
                         if (!imgList.contains(tag) && !TextUtils.isEmpty(tag)) imgList.add(tag);
                         GlideImageLoaderUtil.loadImgDynamicDrawable(context, iv_communal_image, tag, -1);
+                        //图片点击事件
+                        String finalImgUrlLink = imgUrlLink;
+                        String finalImgUrl = imgUrl;
+                        iv_communal_image.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (!TextUtils.isEmpty(finalImgUrlLink)) {
+                                    setSkipPath(context, finalImgUrlLink, false);
+                                } else {
+                                    if (imgList.contains(finalImgUrl)) {
+                                        for (int i = 0; i < imgList.size(); i++) {
+                                            if (finalImgUrl.equals(imgList.get(i))) {
+                                                showImageActivity(context, IMAGE_DEF, i, imgList);
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        });
                     } else {
                         rel_communal_image.setVisibility(View.GONE);
                         tv_content_type.setVisibility(View.VISIBLE);
@@ -693,23 +711,6 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
         return numberList;
     }
 
-    @Override
-    public void onClick(View v) {
-        String imageUrl = (String) v.getTag(R.id.iv_tag);
-        String imageUrlUrl = (String) v.getTag(R.id.iv_two_tag);
-        if (!TextUtils.isEmpty(imageUrlUrl)) {
-            setSkipPath(context, imageUrlUrl, false);
-        } else if (!TextUtils.isEmpty(imageUrl)) {
-            if (imgList.contains(imageUrl)) {
-                for (int i = 0; i < imgList.size(); i++) {
-                    if (imageUrl.equals(imgList.get(i))) {
-                        showImageActivity(context, IMAGE_DEF, i, imgList);
-                        break;
-                    }
-                }
-            }
-        }
-    }
 
     public class CommunalHolderHelper extends BaseViewHolder {
         RecyclerView communal_recycler_wrap;

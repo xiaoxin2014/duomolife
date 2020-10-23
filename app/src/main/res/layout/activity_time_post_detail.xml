@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/activity_domolife_header" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.scwang.smartrefresh.layout.SmartRefreshLayout
+            android:id="@+id/smart_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <include layout="@layout/layout_refresh_header_gif" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:background="@color/white">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_time_post"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scrollbars="none" />
+
+                    <include layout="@layout/layout_communal_floating" />
+                </FrameLayout>
+
+<!--                <RelativeLayout-->
+<!--                    android:id="@+id/rel_article_img_bottom"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content">-->
+
+<!--                    <include layout="@layout/layout_comment_edit" />-->
+
+<!--                    <include layout="@layout/layout_article_comment_bottom" />-->
+<!--                </RelativeLayout>-->
+            </LinearLayout>
+        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+    </RelativeLayout>
+</LinearLayout>

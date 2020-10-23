@@ -32,6 +32,7 @@ import butterknife.OnClick;
 
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
+import static com.amkj.dmsh.constant.ConstantVariable.WEB_TYPE_GROUP_BUY;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TYPE_PRIVACY_POLICY;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TYPE_REG_AGREEMENT;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TYPE_SAVE_MONEY;
@@ -149,6 +150,8 @@ public class WebRuleCommunalActivity extends BaseActivity {
             return "省钱规则";
         } else if (WEB_TYPE_SHARE_GIFT.equals(webRuleType)) {
             return "分享有礼规则";
+        } else if (WEB_TYPE_GROUP_BUY.equals(webRuleType)) {
+            return "团购规则";
         } else {
             return "";
         }
@@ -161,6 +164,8 @@ public class WebRuleCommunalActivity extends BaseActivity {
             return Url.USER_REGISTER_AGREEMENT;
         } else if (WEB_TYPE_SAVE_MONEY.equals(webRuleType) || WEB_TYPE_SHARE_GIFT.equals(webRuleType)) {
             return Url.GET_VIP_REALTED_RULE;
+        } else if (WEB_TYPE_GROUP_BUY.equals(webRuleType)) {
+            return Url.GET_GROUP_RULE;
         } else {
             return "";
         }

@@ -392,11 +392,12 @@ public class GlideImageLoaderUtil {
                         imgWidth = Target.SIZE_ORIGINAL;
                         imgHeight = Target.SIZE_ORIGINAL;
                     }
-
+                    //针对RecyclerView使用Glide加载图片导致错位问题,优先获取tag
+                    String tag = TextUtils.isEmpty((String) imageView.getTag(R.id.iv_tag)) ? imgUrl : (String) imageView.getTag(R.id.iv_tag);
                     if (isContextExisted(context)) {
                         if (loaderFinishListener == null) {
                             Glide.with(context)
-                                    .load(imgUrl).apply(new RequestOptions()
+                                    .load(tag).apply(new RequestOptions()
                                     .placeholder(R.drawable.load_loading_image)
                                     .error(R.drawable.load_loading_image)
                                     .diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -404,7 +405,7 @@ public class GlideImageLoaderUtil {
                                     .into(imageView);
                         } else {
                             Glide.with(context).asBitmap()
-                                    .load(imgUrl).apply(new RequestOptions()
+                                    .load(tag).apply(new RequestOptions()
                                     .placeholder(R.drawable.load_loading_image)
                                     .error(R.drawable.load_loading_image)
                                     .diskCacheStrategy(DiskCacheStrategy.NONE)

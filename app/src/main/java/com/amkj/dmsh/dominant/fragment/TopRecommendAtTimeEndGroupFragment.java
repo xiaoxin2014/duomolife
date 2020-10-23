@@ -2,22 +2,19 @@ package com.amkj.dmsh.dominant.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
 import com.amkj.dmsh.homepage.adapter.SpringSaleRecyclerAdapterNew;
 import com.amkj.dmsh.homepage.bean.BaseTimeProductTopicBean;
 import com.amkj.dmsh.homepage.bean.TimeForeShowEntity;
 import com.amkj.dmsh.homepage.bean.TimeForeShowEntity.TimeForeShowBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.time.activity.ShopTimeScrollDetailsActivity;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -27,6 +24,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 
 import static com.amkj.dmsh.constant.ConstantMethod.userId;

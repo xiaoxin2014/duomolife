@@ -9,6 +9,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.user.bean.LikedProductBean;
+import com.amkj.dmsh.user.bean.MarketLabelBean;
 import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
@@ -82,7 +83,7 @@ public class CatergoryGoodsAdapter extends BaseMultiItemQuickAdapter<LikedProduc
 
                 //营销标签(可以有多个)
                 if (likedProductBean.getMarketLabelList() != null && likedProductBean.getMarketLabelList().size() > 0) {
-                    for (LikedProductBean.MarketLabelBean marketLabelBean : likedProductBean.getMarketLabelList()) {
+                    for (MarketLabelBean marketLabelBean : likedProductBean.getMarketLabelList()) {
                         if (!TextUtils.isEmpty(marketLabelBean.getTitle())) {
                             fbl_market_label.addView(ProductLabelCreateUtils.createLabelText(context, marketLabelBean.getTitle(), 0));
                         }

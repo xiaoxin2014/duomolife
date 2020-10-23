@@ -260,8 +260,6 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
         rv_wel_details_pro.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
                 .setDividerId(R.drawable.item_divider_gray_f_one_px)
-
-
                 .create());
         welfareSlideProAdapter = new WelfareSlideProAdapter(DoMoLifeWelfareDetailsActivity.this, welfareProductList);
         welfareSlideProAdapter.setEnableLoadMore(false);
@@ -334,7 +332,6 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
                     @Override
                     public void onSuccess(String result) {
                         smart_communal_refresh.finishRefresh();
-
                         qualityWefEntity = GsonUtils.fromJson(result, QualityWefEntity.class);
                         if (qualityWefEntity != null) {
                             if (qualityWefEntity.getCode().equals(SUCCESS_CODE)) {
@@ -385,8 +382,8 @@ public class DoMoLifeWelfareDetailsActivity extends BaseActivity {
         if (descriptionList != null) {
             itemDescriptionList.clear();
             itemDescriptionList.addAll(CommunalWebDetailUtils.getCommunalWebInstance().getWebDetailsFormatDataList(descriptionList));
+            communalWelfareDetailAdapter.notifyDataSetChanged();
             getShareData();
-            communalWelfareDetailAdapter.setNewData(itemDescriptionList);
         }
     }
 

@@ -1,9 +1,6 @@
 package com.amkj.dmsh.find.activity;
 
 import android.content.Intent;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,6 +44,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -399,7 +399,7 @@ public class FindTagDetailsActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(String.format(getResources().getString(R.string.collect_failed), "文章"));
+                showToast(R.string.collect_failed);
             }
         });
     }

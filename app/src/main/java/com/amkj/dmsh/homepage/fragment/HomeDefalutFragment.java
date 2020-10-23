@@ -30,6 +30,7 @@ import com.amkj.dmsh.homepage.activity.HomeCatergoryActivity;
 import com.amkj.dmsh.homepage.activity.QualityGoodActivity;
 import com.amkj.dmsh.homepage.adapter.HomeArticleNewAdapter;
 import com.amkj.dmsh.homepage.adapter.HomeTopAdapter;
+import com.amkj.dmsh.homepage.adapter.HomeWelfareAdapter;
 import com.amkj.dmsh.homepage.adapter.HomeZoneAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;

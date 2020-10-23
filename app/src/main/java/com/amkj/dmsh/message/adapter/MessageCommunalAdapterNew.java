@@ -7,7 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.bean.ArticleCommentEntity.ArticleCommentBean;
+import com.amkj.dmsh.bean.MessageLikeEntity.MessageLikeBean;
 import com.amkj.dmsh.message.bean.MessageCommentEntity.MessageCommentBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -42,44 +42,33 @@ public class MessageCommunalAdapterNew extends BaseQuickAdapter<Object, BaseView
         TextView tvFollow = helper.getView(R.id.tv_follow);
         switch (type) {
             case MESSAGE_LIKED:
-                ArticleCommentBean articleCommentBean = (ArticleCommentBean) item;
+                MessageLikeBean articleCommentBean = (MessageLikeBean) item;
                 tv_reply.setVisibility(View.GONE);
                 tvFollow.setVisibility(View.VISIBLE);
-                tvFollow.setSelected(articleCommentBean.getIsFocus());
-                tvFollow.setText(articleCommentBean.getIsFocus() ? "已关注" : "关注");
+                tvFollow.setSelected(articleCommentBean.isFocus());
+                tvFollow.setText(articleCommentBean.isFocus() ? "已关注" : "关注");
 
-                helper.setText(R.id.tv_recommend_comment_time, getStrings(articleCommentBean.getCreate_time()))
+                //点赞时间，点赞人昵称，头像
+                helper.setText(R.id.tv_recommend_comment_time, getStrings(articleCommentBean.getCreateTime()))
                         .setText(R.id.tv_user_proName, getStrings(articleCommentBean.getNickname()));
-                //头像
                 GlideImageLoaderUtil.loadHeaderImg(context, helper.getView(R.id.iv_inv_user_avatar), articleCommentBean.getAvatar());
-                if (!TextUtils.isEmpty(articleCommentBean.getPath())) {
-                    img_user_product.setVisibility(View.VISIBLE);
-                    GlideImageLoaderUtil.loadCenterCrop(context, img_user_product, articleCommentBean.getPath());
+
+                //被点赞相关信息
+                GlideImageLoaderUtil.loadCenterCrop(context, img_user_product, articleCommentBean.getPath());
+                String description = !TextUtils.isEmpty(articleCommentBean.getDescription()) ? articleCommentBean.getDescription() : articleCommentBean.getContent();
+                helper.setText(tv_receiver_content, articleCommentBean.getFavorMsg())
+                        .setGone(R.id.img_user_product, !TextUtils.isEmpty(articleCommentBean.getPath()));
+
+                //赞了评论
+                if (getStrings(articleCommentBean.getFavorMsg()).contains("评论")) {
+                    helper.setGone(R.id.rel_adapter_message_communal, !TextUtils.isEmpty(description));
+                    helper.setText(tv_user_product_description, "@" + articleCommentBean.getCommentUserName() + ":" + getStrings(description));
                 } else {
-                    img_user_product.setVisibility(View.GONE);
+                    //赞了帖子，心得，商品评价等
+                    helper.setGone(R.id.rel_adapter_message_communal, !TextUtils.isEmpty(description) || !TextUtils.isEmpty(articleCommentBean.getPath()));
+                    helper.setText(tv_user_product_description, getStrings(description));
                 }
 
-                String description = articleCommentBean.getDescription();
-                String content = articleCommentBean.getContent();
-
-                switch (articleCommentBean.getType()) {
-                    case "comment":
-                        helper.setText(tv_receiver_content, "赞了你的评论");
-                        helper.setGone(R.id.rel_adapter_message_communal, !TextUtils.isEmpty(content));
-                        helper.setText(tv_user_product_description, "@" + articleCommentBean.getCommentUserName() + ":" + getStrings(content));
-                        img_user_product.setVisibility(View.GONE);
-                        break;
-                    case "document":
-                        helper.setText(tv_receiver_content, "赞了你的帖子");
-                        helper.setGone(R.id.rel_adapter_message_communal, !TextUtils.isEmpty(description) || !TextUtils.isEmpty(articleCommentBean.getPath()));
-                        helper.setText(tv_user_product_description, getStrings(description));
-                        break;
-                    case "proEvaluate":
-                        helper.setText(tv_receiver_content, "赞了你的评价");
-                        helper.setGone(R.id.rel_adapter_message_communal, !TextUtils.isEmpty(description) || !TextUtils.isEmpty(articleCommentBean.getPath()));
-                        helper.setText(tv_user_product_description, getStrings(description));
-                        break;
-                }
                 if (articleCommentBean.getStatus() == -1) {
                     helper.setText(R.id.tv_user_product_description, "已删除");
                 }

@@ -48,7 +48,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getIntegralFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.COMMENT_TYPE;
+import static com.amkj.dmsh.constant.ConstantVariable.COMMENT_DOC_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_COMMENT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
@@ -111,7 +111,7 @@ public class AllPostCommentActivity extends BaseActivity {
         });
 
         //初始化评论列表
-        postCommentAdapter = new PostCommentAdapter(this, mCommentList, COMMENT_TYPE);
+        postCommentAdapter = new PostCommentAdapter(this, mCommentList, COMMENT_DOC_TYPE);
         mRvComment.setNestedScrollingEnabled(false);
         mRvComment.setLayoutManager(new LinearLayoutManager(this));
         mRvComment.setAdapter(postCommentAdapter);
@@ -167,7 +167,7 @@ public class AllPostCommentActivity extends BaseActivity {
         params.put("showCount", isComment ? mCommentList.size() : TOTAL_COUNT_TEN);
         params.put("replyCurrentPage", 1);
         params.put("replyShowCount", DEFAULT_COMMENT_TOTAL_COUNT);
-        params.put("comtype", COMMENT_TYPE);
+        params.put("comtype", COMMENT_DOC_TYPE);
         NetLoadUtils.getNetInstance().loadNetDataPost(this, Q_DML_SEARCH_COMMENT, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
@@ -233,7 +233,7 @@ public class AllPostCommentActivity extends BaseActivity {
                 if (!TextUtils.isEmpty(comment)) {
                     comment = mEmojiEditComment.getText().toString();
                     CommunalComment communalComment = new CommunalComment();
-                    communalComment.setCommType(COMMENT_TYPE);
+                    communalComment.setCommType(COMMENT_DOC_TYPE);
                     communalComment.setContent(comment);
                     if (postCommentBean != null) {
                         communalComment.setIsReply(1);

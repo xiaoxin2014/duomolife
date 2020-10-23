@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#FFF1EADB"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/rl_brand"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sc_mm_107"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/iv_background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop" />
+
+        <ImageView
+            android:id="@+id/iv_brand_cover"
+            android:layout_width="@dimen/sc_mm_68"
+            android:layout_height="@dimen/sc_mm_68"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/sc_mm_26"
+            android:scaleType="centerCrop" />
+
+        <TextView
+            android:drawablePadding="@dimen/sc_mm_10"
+            android:drawableRight="@drawable/black_dot"
+            android:id="@+id/tv_brand_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/sc_mm_18"
+            android:layout_marginTop="@dimen/sc_mm_10"
+            android:layout_toRightOf="@+id/iv_brand_cover"
+            android:text="@string/defaul"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sc_mm_32"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_brand_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_brand_name"
+            android:layout_marginLeft="@dimen/sc_mm_18"
+            android:layout_toRightOf="@+id/iv_brand_cover"
+            android:text="@string/defaul"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_24"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_brand_product"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/sc_mm_10"
+        android:background="@color/light_gray_f"
+        android:nestedScrollingEnabled="false"
+        android:padding="@dimen/sc_mm_10" />
+</LinearLayout>

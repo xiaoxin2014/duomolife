@@ -9,23 +9,19 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
 import com.amkj.dmsh.mine.adapter.ShopTimeMyWarmAdapter;
 import com.amkj.dmsh.mine.bean.MineWarmEntity;
 import com.amkj.dmsh.mine.bean.MineWarmEntity.MineWarmBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.time.activity.ShopTimeScrollDetailsActivity;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
-import com.tencent.bugly.beta.tinker.TinkerManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,8 +34,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -68,11 +62,9 @@ public class ShopTimeMyWarmActivity extends BaseActivity {
     //    滚动至顶部
     @BindView(R.id.download_btn_communal)
     public FloatingActionButton download_btn_communal;
-    private List<MineWarmBean> mineWarmBeanList = new ArrayList();
+    private List<MineWarmBean> mineWarmBeanList = new ArrayList<>();
     private int page = 1;
     private ShopTimeMyWarmAdapter shopTimeMyWarmAdapter;
-    private int scrollY = 0;
-    private float screenHeight;
     private boolean isOnPause;
     private String timeWarm;
     private MineWarmEntity mineWarmEntity;
@@ -96,12 +88,9 @@ public class ShopTimeMyWarmActivity extends BaseActivity {
                 .create());
         communal_recycler.setAdapter(shopTimeMyWarmAdapter);
 
-        smart_communal_refresh.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshLayout) {
-                scrollY = 0;
-                loadData();
-            }
+        smart_communal_refresh.setOnRefreshListener(refreshLayout -> {
+            scrollY = 0;
+            loadData();
         });
         shopTimeMyWarmAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
@@ -150,40 +139,7 @@ public class ShopTimeMyWarmActivity extends BaseActivity {
             }
         });
         shopTimeMyWarmAdapter.setEmptyView(R.layout.layout_shop_time_empty, (ViewGroup) communal_recycler.getParent());
-        TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-        screenHeight = app.getScreenHeight();
-        communal_recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                scrollY += dy;
-                if (!recyclerView.canScrollVertically(-1)) {
-                    scrollY = 0;
-                }
-                if (scrollY > screenHeight * 1.5 && dy < 0) {
-                    if (download_btn_communal.getVisibility() == GONE) {
-                        download_btn_communal.setVisibility(VISIBLE);
-                        download_btn_communal.hide(false);
-                    }
-                    if (!download_btn_communal.isVisible()) {
-                        download_btn_communal.show();
-                    }
-                } else {
-                    if (download_btn_communal.isVisible()) {
-                        download_btn_communal.hide();
-                    }
-                }
-            }
-        });
-        download_btn_communal.setOnClickListener(v -> {
-            LinearLayoutManager linearLayoutManager = (LinearLayoutManager) communal_recycler.getLayoutManager();
-            int firstVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition();
-            int mVisibleCount = linearLayoutManager.findLastVisibleItemPosition()
-                    - linearLayoutManager.findFirstVisibleItemPosition() + 1;
-            if (firstVisibleItemPosition > mVisibleCount) {
-                communal_recycler.scrollToPosition(mVisibleCount);
-            }
-            communal_recycler.smoothScrollToPosition(0);
-        });
+       setFloatingButton(download_btn_communal,communal_recycler);
     }
 
     private void cancelWarm(int productId) {
@@ -194,7 +150,6 @@ public class ShopTimeMyWarmActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-
                 RequestStatus status = GsonUtils.fromJson(result, RequestStatus.class);
                 if (status != null) {
                     if (status.getCode().equals(SUCCESS_CODE)) {

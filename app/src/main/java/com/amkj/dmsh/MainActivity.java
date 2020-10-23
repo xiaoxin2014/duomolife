@@ -49,7 +49,7 @@ import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.homepage.fragment.AliBCFragment;
 import com.amkj.dmsh.homepage.fragment.HomePageFragment;
-import com.amkj.dmsh.homepage.fragment.TimeShowNewFragment;
+import com.amkj.dmsh.time.fragment.TimeShowNewFragment;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.mine.fragment.MineDataFragment;
 import com.amkj.dmsh.network.NetLoadListenerHelper;

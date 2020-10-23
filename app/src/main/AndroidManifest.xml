@@ -308,7 +308,7 @@
         </activity>
         <!--限时特惠详情-->
         <activity
-            android:name=".dominant.activity.ShopTimeScrollDetailsActivity"
+            android:name=".time.activity.ShopTimeScrollDetailsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:exported="false"
             android:screenOrientation="portrait">
@@ -732,6 +732,7 @@
                 <!-- 此处scheme值需要替换为后台设置中的scheme值 -->
                 <data android:scheme="duomolife" />
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
             </intent-filter>
@@ -740,6 +741,7 @@
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="MainActivity" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <!-- 以下pathPrefix值需要替换为后台设置中 App ID 的值-->
@@ -1571,6 +1573,28 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="SaveMoneyDetailActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!--团购商品种草帖子-->
+        <activity
+            android:name=".time.activity.TimePostCatergoryActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="TimePostCatergoryActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!--团购商品种草帖子-->
+        <activity
+            android:name=".time.activity.TimePostDetailActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="TimePostDetailActivity" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>

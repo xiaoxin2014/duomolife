@@ -95,9 +95,6 @@ public class MineLoginActivity extends BaseActivity {
     //    手机号登录
     @BindView(R.id.ll_mobile_num_way)
     public LinearLayout ll_mobile_num_way;
-    //手机号
-    @BindView(R.id.et_login_code_mobile)
-    public EditText et_login_code_mobile;
     //验证码
     @BindView(R.id.et_login_get_code)
     public EditText et_login_get_code;
@@ -439,7 +436,7 @@ public class MineLoginActivity extends BaseActivity {
             //账号密码以及验证码登录
             case R.id.tv_mine_Login:
                 if (isPhoneLogin) {
-                    String phoneNumber = et_login_code_mobile.getText().toString().trim();
+                    String phoneNumber = edit_login_mobile.getText().toString().trim();
                     String smsCode = et_login_get_code.getText().toString().trim();
                     // 账号登录
                     if (phoneNumber.length() == 11 && smsCode.length() > 0) {
@@ -550,7 +547,7 @@ public class MineLoginActivity extends BaseActivity {
                 break;
             //获取验证码
             case R.id.tv_login_send_code:
-                String phoneNumber = et_login_code_mobile.getText().toString().trim();
+                String phoneNumber = edit_login_mobile.getText().toString().trim();
                 if (phoneNumber.length() == 11) {
                     showLoadhud(getActivity());
                     reqSMSCode(phoneNumber);

@@ -32,10 +32,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tv_comm_comment_inner_name"
-        android:layout_marginTop="@dimen/sc_mm_12"
+        android:paddingTop="@dimen/sc_mm_12"
         android:text="@string/defaul"
         android:textColor="@color/text_black_t"
-        android:textIsSelectable="true"
         android:textSize="@dimen/sc_mm_28"
         app:emojiconSize="14sp" />
 </RelativeLayout>

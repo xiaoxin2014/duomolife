@@ -305,7 +305,7 @@ public class MineInvitationListActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable throwable) {
-                showToast( String.format(getResources().getString(R.string.collect_failed), "文章"));
+                showToast( R.string.collect_failed);
             }
         });
     }

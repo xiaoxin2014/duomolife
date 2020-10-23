@@ -12,14 +12,14 @@ import java.util.List;
  * class description:请输入类描述
  */
 
-public class MessageCommentEntity extends BaseEntity{
+public class MessageCommentEntity extends BaseEntity {
 
     /**
      * result : [{"obj_id":4066,"sex":0,"description":"大麦若叶大采购","content":"我从自行车自行车走","is_reply":1,"reply_uid":23327,"uid":23317,"path":"http://o81ak3dv2.bkt.clouddn.com/2016-07-18_578c85c10e133.jpg","is_at":0,"obj":"doc","to_uid":12327,"ctime":"2016-10-24 09:56:37","nickname2":"糖糖妞儿","id":2620,"nickname1":"13815430077","atList":[],"status":1},{"obj_id":4066,"sex":0,"description":"大麦若叶大采购","content":"我从自行车自行车走","is_reply":1,"reply_uid":23327,"uid":23317,"path":"http://o81ak3dv2.bkt.clouddn.com/2016-07-18_578c85c10e133.jpg","is_at":0,"obj":"doc","to_uid":12327,"ctime":"2016-10-24 09:54:55","nickname2":"糖糖妞儿","id":2619,"nickname1":"13815430077","atList":[],"status":1},{"obj_id":4066,"sex":0,"description":"大麦若叶大采购","content":"男子女子呢","is_reply":1,"reply_uid":23327,"uid":23317,"path":"http://o81ak3dv2.bkt.clouddn.com/2016-07-18_578c85c10e133.jpg","is_at":0,"obj":"doc","to_uid":12327,"ctime":"2016-10-24 09:50:40","nickname2":"糖糖妞儿","id":2617,"nickname1":"13815430077","atList":[],"status":1},{"obj_id":4055,"sex":2,"description":"皇后卸妆水","avatar":"http://wx.qlogo.cn/mmopen/ajNVdqHZLLDOJUQiaOur6JVpC2aGrMkxJ98HvGDwOSpxIQDRdM1dzVCdwEGcDy7zt09Qib82J7OvUfoBwfSxoyCg/0","content":"哇，我发现新大陆了。","is_reply":1,"reply_uid":23327,"uid":23328,"at_uid":"23328,111","path":"http://o81ak3dv2.bkt.clouddn.com/2016-07-18_578c762e49090.JPG","is_at":1,"obj":"doc","to_uid":13017,"ctime":"2016-09-14 15:16:27","nickname2":"糖糖妞儿","id":2507,"nickname1":"coco","atList":[{"uid":"23328","nickname":"coco"},{"uid":"111","nickname":"Ben"}],"status":1},{"obj_id":4055,"sex":2,"description":"皇后卸妆水","avatar":"http://wx.qlogo.cn/mmopen/Q3auHgzwzM6MiaI9898MpRnickZUtjQgHYiaQdJ2sfCHtbCTRIzoJrPIbicRzdeztQmF1YfXRNz4NtUzJtqyobjSDq2pgXRPj91kWEK58HDXia6o/0","content":"谢谢你的评论","is_reply":1,"reply_uid":23327,"uid":23326,"path":"http://o81ak3dv2.bkt.clouddn.com/2016-07-18_578c762e49090.JPG","is_at":0,"obj":"doc","to_uid":13017,"ctime":"2016-09-14 15:13:38","nickname2":"糖糖妞儿","id":2506,"nickname1":"薇伊","atList":[],"status":1}]
      * msg : 请求成功
      * code : 01
      */
-    @SerializedName("result")
+    @SerializedName(value = "result", alternate = {"list"})
     private List<MessageCommentBean> messageCommentList;
 
     public List<MessageCommentBean> getMessageCommentList() {
@@ -53,26 +53,39 @@ public class MessageCommentEntity extends BaseEntity{
          * at_uid : 23328,111
          */
 
+        private int id;
+        private int uid;
+        private String at_uid;
+        private int mainCommentId;
+        @SerializedName(value = "obj_id", alternate = "objId")
         private int obj_id;
+        @SerializedName(value = "to_uid", alternate = "toUid")
+        private int to_uid;
+        @SerializedName(value = "reply_uid", alternate = "replyUid")
+        private int reply_uid;
         private int sex;
         private String description;
         private String content;
         private int is_reply;
-        private int reply_uid;
-        private int uid;
         private String path;
         private int is_at;
         private String obj;
-        private int to_uid;
         private String ctime;
+        @SerializedName(value = "nickname2", alternate = "nickname")
         private String nickname2;
-        private int id;
+        @SerializedName(value = "nickname1", alternate = "replyNickname")
         private String nickname1;
         private int status = 1;
         private String avatar;
-        private String at_uid;
-        private List<?> atList;
-        private int mainCommentId;
+        private String androidLink;
+
+        public String getAndroidLink() {
+            return androidLink;
+        }
+
+        public void setAndroidLink(String androidLink) {
+            this.androidLink = androidLink;
+        }
 
         public int getMainCommentId() {
             return mainCommentId;
@@ -224,14 +237,6 @@ public class MessageCommentEntity extends BaseEntity{
 
         public void setAt_uid(String at_uid) {
             this.at_uid = at_uid;
-        }
-
-        public List<?> getAtList() {
-            return atList;
-        }
-
-        public void setAtList(List<?> atList) {
-            this.atList = atList;
         }
     }
 }

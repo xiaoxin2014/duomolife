@@ -18,7 +18,7 @@
 
     <fragment
         android:id="@+id/time"
-        android:name="com.amkj.dmsh.homepage.fragment.TimeShowNewFragment"
+        android:name="com.amkj.dmsh.time.fragment.TimeShowNewFragment"
         android:label="time"
         tools:layout="@layout/fragment_time_show_shaft_new" />
 

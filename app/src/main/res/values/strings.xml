@@ -66,8 +66,8 @@
 
     <string name="AddCarSuccess">成功加入购物车~</string>
     <string name="integral_hint">积分可以兑换礼品，晒单可获得更多积分</string>
-    <string name="collect_failed">收藏%1$s失败</string>
-    <string name="collect_success">收藏%1$s成功</string>
+    <string name="collect_failed">收藏失败</string>
+    <string name="collect_success">收藏成功</string>
     <!--公用取消-->
     <string name="cancel_done">已取消%1$s%2$s</string>
     <string name="search_leave_mes">给Domo留言</string>
@@ -339,4 +339,6 @@
     <string name="gift_select_num">（请选择其中%d件商品）</string>
     <string name="discount_more">再减%s元</string>
     <string name="zero_detail_share_title">#%s#多么会员0元免费试用，快来申请把！</string>
+    <string name="look_all_commnet">查看全部%d条评论</string>
+    <string name="all_comment_num">全部评论 %d</string>
 </resources>

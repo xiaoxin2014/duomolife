@@ -14,6 +14,7 @@ import java.util.Map;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.Url.SAVE_DOCUMENT_DATA;
 import static com.amkj.dmsh.constant.Url.TOTAL_ACTIVITY_MSG_COUNT;
 import static com.amkj.dmsh.constant.Url.TOTAL_AD_COUNT;
 import static com.amkj.dmsh.constant.Url.TOTAL_DYNAMIC_COUNT;
@@ -158,4 +159,22 @@ public class AddClickDao {
             NetLoadUtils.getNetInstance().loadNetDataPost(activity, TOTAL_MYDEFINEDICON_COUNT, params, null);
         }
     }
+
+    /**
+     * 统计淘好货帖子/帖子内商品点击量
+     *
+     * @param type 1帖子 2帖子内商品
+     */
+    public static void addTimePostClick(Activity activity, int id, int type) {
+        if (id > 0) {
+            Map<String, Object> params = new HashMap<>();
+            if (type == 1) {
+                params.put("docId", id);
+            } else {
+                params.put("productId", id);
+            }
+            NetLoadUtils.getNetInstance().loadNetDataPost(activity, SAVE_DOCUMENT_DATA, params, null);
+        }
+    }
+
 }

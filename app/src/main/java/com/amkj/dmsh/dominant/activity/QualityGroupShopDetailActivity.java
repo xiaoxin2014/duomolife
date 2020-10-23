@@ -873,8 +873,8 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         List<SkuSaleBean> skuSale = mGroupShopDetailsBean.getSkuSale();
         if (skuSale != null && skuSale.size() > 0) {
             List<SkuSaleBean> skuSaleList = new ArrayList<>(skuSale);
-            Collections.sort(skuSaleList, (lhs, rhs) -> Float.compare(getStringChangeFloat(lhs.getPrice()), getStringChangeFloat(rhs.getPrice())));
-            return skuSaleList.get(0).getPrice().equals(skuSaleList.get(skuSaleList.size() - 1).getPrice()) ? "" : "起";
+        Collections.sort(skuSaleList, (lhs, rhs) -> Float.compare(getStringChangeFloat(lhs.getPrice()), getStringChangeFloat(rhs.getPrice())));
+        return skuSaleList.get(0).getPrice().equals(skuSaleList.get(skuSaleList.size() - 1).getPrice()) ? "" : "起";
         } else {
             return "";
         }

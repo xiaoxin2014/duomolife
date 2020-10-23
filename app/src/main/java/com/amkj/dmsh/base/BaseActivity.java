@@ -70,7 +70,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     public Map<String, Object> commonMap = new HashMap<>();
     private String sourceType;//广告位来源sourceType
     private String sourceId;//广告位来源sourceId
-    private int scrollY;
+    protected int scrollY;
     private AlertDialogHelper mAlertDialogQyMsg;
     private Unbinder mBind;
 

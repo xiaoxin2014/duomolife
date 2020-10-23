@@ -18,11 +18,30 @@ public class RelatedGoodsBean {
 
     private int productId;
     private String price;
-    @SerializedName(value = "pictureUrl", alternate = {"cover", "productImg"})
+    private String marketPrice;
+    @SerializedName(value = "pictureUrl", alternate = {"cover", "productImg", "imgPath","imagePath"})
     private String pictureUrl;
     private int id;
     @SerializedName(value = "title", alternate = "productName")
     private String title;
+    private String thirdUrl;
+
+
+    public String getMarketPrice() {
+        return marketPrice;
+    }
+
+    public void setMarketPrice(String marketPrice) {
+        this.marketPrice = marketPrice;
+    }
+
+    public String getThirdUrl() {
+        return thirdUrl;
+    }
+
+    public void setThirdUrl(String thirdUrl) {
+        this.thirdUrl = thirdUrl;
+    }
 
     public int getProductId() {
         return productId;

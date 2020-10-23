@@ -1,38 +1,49 @@
 package com.amkj.dmsh.homepage.activity;
 
-import androidx.annotation.NonNull;
-import androidx.viewpager.widget.ViewPager;
 import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
-import com.amkj.dmsh.homepage.adapter.TimeShowPagerAdapter;
-import com.amkj.dmsh.homepage.bean.TimeShowShaftEntity;
-import com.amkj.dmsh.homepage.bean.TimeShowShaftEntity.TimeShowShaftBean;
+import com.amkj.dmsh.constant.CommunalAdHolderView;
+import com.amkj.dmsh.constant.ConstantVariable;
+import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.find.bean.PostEntity;
+import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
+import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
+import com.amkj.dmsh.network.NetCacheLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.time.adapter.TimePagerAdapter;
+import com.amkj.dmsh.time.bean.TimeAxisEntity;
+import com.amkj.dmsh.time.bean.TimeAxisEntity.TimeAxisBean;
 import com.amkj.dmsh.utils.gson.GsonUtils;
+import com.amkj.dmsh.views.flycoTablayout.SlidingDoubleTextTabLayout;
+import com.bigkoo.convenientbanner.ConvenientBanner;
+import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
+import com.bigkoo.convenientbanner.holder.Holder;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
+import androidx.appcompat.widget.Toolbar;
+import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.OnClick;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
-import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.clearFragmentCache;
+import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.TIME_REFRESH;
-import static com.amkj.dmsh.constant.Url.TIME_SHOW_SHAFT;
-
 
 
 /**
@@ -42,133 +53,190 @@ import static com.amkj.dmsh.constant.Url.TIME_SHOW_SHAFT;
  * class description:新版限时特惠
  */
 public class TimeShowNewActivity extends BaseActivity {
-    @BindView(R.id.tv_header_shared)
-    TextView tv_header_shared;
+    @BindView(R.id.tv_life_back)
+    TextView tv_life_back;
     @BindView(R.id.tv_header_title)
     TextView tv_header_title;
-    @BindView(R.id.ll_spr_sale)
-    LinearLayout ll_spr_sale;
-    @BindView(R.id.vp_show_time)
-    ViewPager vp_show_time;
-    @BindView(R.id.rp_time_spring)
-    RadioGroup rp_time_spring;
+    @BindView(R.id.tv_header_shared)
+    TextView tv_header_shared;
+    @BindView(R.id.tl_normal_bar)
+    Toolbar mTlNormalBar;
+    @BindView(R.id.ad_communal_banner)
+    ConvenientBanner mAdCommunalBanner;
+    @BindView(R.id.rel_communal_banner)
+    RelativeLayout mRelCommunalBanner;
+    @BindView(R.id.collapsing_view)
+    CollapsingToolbarLayout mCollapsingView;
+    @BindView(R.id.sliding_tablayout)
+    SlidingDoubleTextTabLayout mSlidingTablayout;
+    @BindView(R.id.appBarLayout)
+    AppBarLayout mAppBarLayout;
+    @BindView(R.id.viewPager)
+    ViewPager mViewPager;
+    @BindView(R.id.smart_communal_refresh)
+    SmartRefreshLayout mSmartCommunalRefresh;
+    private boolean isUpdateCache;
+    private CBViewHolderCreator cbViewHolderCreator;
+    private TimePagerAdapter mTimePagerAdapter;
+    private List<CommunalADActivityBean> adBeanList = new ArrayList<>();
+    private List<TimeAxisBean> mTimeAxisList = new ArrayList<>();
+    private TimeAxisEntity mTimeAxisEntity;
 
-    private List<TimeShowShaftBean> timeShowBeanList = new ArrayList();
 
     @Override
     protected int getContentView() {
-        return R.layout.activity_time_show_shaft_new;
+        return R.layout.fragment_time_show_shaft_new;
     }
+
     @Override
     protected void initViews() {
         tv_header_shared.setVisibility(View.GONE);
-        tv_header_title.setText("限时特惠");
-        rp_time_spring.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId == R.id.rb_time_spring_open_group) {
-                    vp_show_time.setCurrentItem(0);
-                } else {
-                    vp_show_time.setCurrentItem(1);
-                }
-            }
+        tv_header_title.setText("淘好货");
+        mSlidingTablayout.setTextsize(AutoSizeUtils.mm2px(mAppContext, 30));
+        mSlidingTablayout.setTextUnselectColor(getResources().getColor(R.color.text_login_gray_s));
+        mSmartCommunalRefresh.setOnRefreshListener(refreshLayout -> {
+            isUpdateCache = true;
+            loadData();
         });
     }
 
     @Override
     protected void loadData() {
+        getHomeAd();
         getTimeShaft();
     }
 
-    /**
-     * 访问网络 获取时间轴
-     */
-    private void getTimeShaft() {
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,TIME_SHOW_SHAFT,new NetLoadListenerHelper(){
+    //获取种草帖子
+    private void getRecommendGoods() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.GET_TIME_DOCUMENT_LIST, null, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                String code = "";
-                String msg = "";
-                try {
-                    JSONObject jsonObject = new JSONObject(result);
-                    code = (String) jsonObject.get("code");
-                    msg = (String) jsonObject.get("msg");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                if (code.equals(SUCCESS_CODE)) {
-
-                    TimeShowShaftEntity timeShowEntity = GsonUtils.fromJson(result, TimeShowShaftEntity.class);
-                    if (timeShowEntity != null) {
-                        setTimeShaft(timeShowEntity);
+                PostEntity postEntity = GsonUtils.fromJson(result, PostEntity.class);
+                if (postEntity != null) {
+                    if (postEntity.getCode().equals(SUCCESS_CODE)) {
+                        List<PostEntity.PostBean> postList = postEntity.getPostList();
+                        if (postList != null && postList.size() > 0) {
+                            EventBus.getDefault().post(new EventMessage(ConstantVariable.UPDATE_RECOMMEND_LIST, postList));
+                        }
                     }
-                } else if (!code.equals(EMPTY_CODE)) {
-                    showToast( msg);
                 }
+            }
+
+            @Override
+            public void onNotNetOrException() {
             }
         });
     }
 
-    private void setTimeShaft(TimeShowShaftEntity timeShowEntity) {
-        if (timeShowBeanList.size() > 0) {
-            boolean isRefresh = false;
-            if (timeShowBeanList.size() == timeShowEntity.getTimeShowShaftList().size()) {
-                for (int i = 0; i < timeShowEntity.getTimeShowShaftList().size(); i++) {
-                    TimeShowShaftBean timeShowBean = timeShowEntity.getTimeShowShaftList().get(i);
-                    TimeShowShaftBean timeShowOldBean = timeShowBeanList.get(i);
-                    if (!timeShowBean.getDate().equals(timeShowOldBean.getDate())
-                            || timeShowBean.getType() != timeShowOldBean.getType()) {
-                        isRefresh = true;
-                        break;
+    //获取推荐广告位
+    private void getRecommendAd() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.GET_RECOMMNED_AD, null, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                CommunalADActivityEntity adActivityEntity = GsonUtils.fromJson(result, CommunalADActivityEntity.class);
+                if (adActivityEntity != null) {
+                    if (adActivityEntity.getCode().equals(SUCCESS_CODE)) {
+                        List<CommunalADActivityBean> adlist = adActivityEntity.getCommunalADActivityBeanList();
+                        if (adlist != null && adlist.size() > 0) {
+                            EventBus.getDefault().post(new EventMessage(ConstantVariable.UPDATE_RECOMMEND_AD, adlist));
+                        }
                     }
                 }
             }
-            if (isRefresh) {
-                setTimeShaftIndex(timeShowEntity);
+
+            @Override
+            public void onNotNetOrException() {
             }
-        } else {
-            setTimeShaftIndex(timeShowEntity);
-        }
+        });
     }
 
-    private void setTimeShaftIndex(TimeShowShaftEntity timeShowEntity) {
-        timeShowBeanList.clear();
-        timeShowBeanList.addAll(timeShowEntity.getTimeShowShaftList());
-        int currentPosition = 0;
-        for (int i = 0; i < rp_time_spring.getChildCount(); i++) {
-            RadioButton radioButton = (RadioButton) rp_time_spring.getChildAt(i);
-            if(radioButton.isChecked()){
-                currentPosition = i;
-                break;
+    //获取团购广告位
+    private void getHomeAd() {
+        LinkedHashMap<String, Object> params = new LinkedHashMap<>();
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(getActivity(), Url.GET_TIME_HOME_AD, params, isUpdateCache, new NetCacheLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                adBeanList.clear();
+                CommunalADActivityEntity adActivityEntity = GsonUtils.fromJson(result, CommunalADActivityEntity.class);
+                if (adActivityEntity != null) {
+                    if (adActivityEntity.getCode().equals(SUCCESS_CODE)) {
+                        List<CommunalADActivityBean> adlist = adActivityEntity.getCommunalADActivityBeanList();
+                        if (adlist != null && adlist.size() > 0) {
+                            adBeanList.addAll(adlist);
+                            if (cbViewHolderCreator == null) {
+                                cbViewHolderCreator = new CBViewHolderCreator() {
+                                    @Override
+                                    public Holder createHolder(View itemView) {
+                                        return new CommunalAdHolderView(itemView, getActivity(), mAdCommunalBanner, true);
+                                    }
+
+                                    @Override
+                                    public int getLayoutId() {
+                                        return R.layout.layout_ad_image_video;
+                                    }
+                                };
+                            }
+                            mAdCommunalBanner.setPages(getActivity(), cbViewHolderCreator, adBeanList)
+                                    .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
+                        }
+                    }
+                }
+
+                mRelCommunalBanner.setVisibility(adBeanList.size() > 0 ? View.VISIBLE : View.GONE);
             }
-        }
-        if (timeShowBeanList.size() > 0) {
-            TimeShowPagerAdapter timeShowPagerAdapter = new TimeShowPagerAdapter(getSupportFragmentManager(), timeShowBeanList,timeShowEntity.getCurrentTime());
-            vp_show_time.setAdapter(timeShowPagerAdapter);
-            vp_show_time.setCurrentItem(currentPosition);
-        }
+
+            @Override
+            public void onNotNetOrException() {
+                mRelCommunalBanner.setVisibility(adBeanList.size() > 0 ? View.VISIBLE : View.GONE);
+            }
+        });
+    }
+
+    private void getTimeShaft() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.GET_TIME_AXIS, null, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                getRecommendAd();
+                getRecommendGoods();
+                mSmartCommunalRefresh.finishRefresh();
+                mTimeAxisList.clear();
+                mTimeAxisEntity = GsonUtils.fromJson(result, TimeAxisEntity.class);
+                if (mTimeAxisEntity != null) {
+                    if (SUCCESS_CODE.equals(mTimeAxisEntity.getCode())) {
+                        List<TimeAxisBean> timeAxisInfoList = mTimeAxisEntity.getTimeAxisInfoList();
+                        if (timeAxisInfoList != null) {
+                            mTimeAxisList.addAll(timeAxisInfoList);
+                        }
+                    }
+                }
+                clearFragmentCache(getSupportFragmentManager());
+                mTimePagerAdapter = new TimePagerAdapter(getSupportFragmentManager(), mTimeAxisList);
+                mViewPager.setAdapter(mTimePagerAdapter);
+                mViewPager.setOffscreenPageLimit(mTimeAxisList.size() - 1);
+                mSlidingTablayout.setViewPager(mViewPager, mTimeAxisList);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, mTimeAxisList, mTimeAxisEntity);
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                mSmartCommunalRefresh.finishRefresh();
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, mTimeAxisList, mTimeAxisEntity);
+            }
+        });
     }
 
     @Override
-    protected void postEventResult(@NonNull EventMessage message) {
-        if(message.type.equals(TIME_REFRESH)&&"timeShaft".equals(message.result)){
-            loadData();
-        }
+    protected boolean isAddLoad() {
+        return true;
+    }
+
+    @Override
+    public View getLoadView() {
+        return mSmartCommunalRefresh;
     }
 
     @OnClick(R.id.tv_life_back)
-    void goBack(View view) {
+    public void onViewClicked() {
         finish();
     }
-
-    @OnClick(R.id.ll_spr_sale)
-    public void refreshTimeShaft(){
-        if(timeShowBeanList.size()<1){
-            if(loadHud!=null){
-                loadHud.show();
-            }
-            getTimeShaft();
-        }
-    }
-
 }

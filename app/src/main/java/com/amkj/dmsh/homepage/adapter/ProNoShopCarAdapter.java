@@ -10,7 +10,7 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.user.bean.LikedProductBean;
-import com.amkj.dmsh.user.bean.LikedProductBean.MarketLabelBean;
+import com.amkj.dmsh.user.bean.MarketLabelBean;
 import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;

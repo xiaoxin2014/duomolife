@@ -105,7 +105,9 @@ public class ConstantVariable {
     //    文章
     public static final String TYPE_C_ARTICLE = "document";
     //    评论类型
-    public static final String COMMENT_TYPE = "doc";
+    public static final String COMMENT_DOC_TYPE = "doc";
+    //    淘好货帖子评论类型
+    public static final String COMMENT_GROUP_TYPE = "groupbuydoc";
     //    福利社评论
     public static final String COMMENT_TOPIC_TYPE = "topic";
     //    限时特惠评论
@@ -222,6 +224,8 @@ public class ConstantVariable {
     public static final String WEB_TYPE_SAVE_MONEY = "save_money";
     //    分享有礼
     public static final String WEB_TYPE_SHARE_GIFT = "share_gift";
+    //    团购规则
+    public static final String WEB_TYPE_GROUP_BUY = "GroupBuy";
     //    web数据类型
     public static final String WEB_VALUE_TYPE = "webRuleType";
 
@@ -315,6 +319,8 @@ public class ConstantVariable {
     public static final String OPEN_VIP_SUCCESS = "openVipSuccess";    //会员开通成功
     public static final String LOGIN_SUCCESS = "loginSuccess";    //登录成功
     public static final String UPDATE_ZERO_APPLY_LIST = "updateZeroApplyList";    //刷新0元试用申请列表
+    public static final String UPDATE_RECOMMEND_AD = "updateRecommendAd";    //刷新推荐广告位
+    public static final String UPDATE_RECOMMEND_LIST = "updateRecommendList";    //刷新推荐商品列表
 
 
     /**

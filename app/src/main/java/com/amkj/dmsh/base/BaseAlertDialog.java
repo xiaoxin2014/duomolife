@@ -57,7 +57,6 @@ public abstract class BaseAlertDialog implements LifecycleObserver {
         return MATCH_PARENT;
     }
 
-
     protected int getLayoutHeight() {
         return WRAP_CONTENT;
     }

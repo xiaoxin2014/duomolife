@@ -1,8 +1,11 @@
 package com.amkj.dmsh.message.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -11,9 +14,9 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.CommunalComment;
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dao.CommentDao;
-import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
 import com.amkj.dmsh.message.adapter.MessageCommunalAdapterNew;
 import com.amkj.dmsh.message.bean.MessageCommentEntity;
 import com.amkj.dmsh.message.bean.MessageCommentEntity.MessageCommentBean;
@@ -37,16 +40,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
+import butterknife.OnTouch;
 
 import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
-import static com.amkj.dmsh.constant.ConstantMethod.skipPostDetail;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
-import static com.amkj.dmsh.constant.ConstantVariable.MES_ADVISE;
-import static com.amkj.dmsh.constant.ConstantVariable.MES_FEEDBACK;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
 
@@ -80,6 +82,7 @@ public class MessageCommentActivity extends BaseActivity {
     private int page = 1;
     private MessageCommunalAdapterNew messageCommunalAdapter;
     private MessageCommentEntity articleCommentEntity;
+    private float locationY;
 
     @Override
     protected int getContentView() {
@@ -140,21 +143,10 @@ public class MessageCommentActivity extends BaseActivity {
     }
 
     private void skipActivity(MessageCommentBean messageCommentBean) {
-        Intent intent = new Intent();
-        if (messageCommentBean.getStatus() == 1) {
-            switch (messageCommentBean.getObj()) {
-                case "doc":
-                case "post":
-                    skipPostDetail(getActivity(), String.valueOf(messageCommentBean.getObj_id()), 2);
-                    break;
-                case "goods":
-                    intent.setClass(MessageCommentActivity.this, ShopTimeScrollDetailsActivity.class);
-                    intent.putExtra("productId", String.valueOf(messageCommentBean.getObj_id()));
-                    startActivity(intent);
-                    break;
-            }
-        } else {
+        if (messageCommentBean.getStatus() == -1) {
             showToast("已删除");
+        } else {
+            ConstantMethod.setSkipPath(getActivity(), messageCommentBean.getAndroidLink(), false);
         }
     }
 
@@ -203,46 +195,45 @@ public class MessageCommentActivity extends BaseActivity {
             NetLoadUtils.getNetInstance().showLoadSirEmpty(loadService);
             return;
         }
-        String url =  Url.H_MES_COMMENT;
         Map<String, Object> params = new HashMap<>();
         params.put("uid", userId);
+        params.put("showCount", 10);
         params.put("currentPage", page);
-        NetLoadUtils.getNetInstance().loadNetDataPost(MessageCommentActivity.this, url
-                , params, new NetLoadListenerHelper() {
-                    @Override
-                    public void onSuccess(String result) {
-                        smart_communal_refresh.finishRefresh();
-                        messageCommunalAdapter.loadMoreComplete();
-                        if (page == 1) {
-                            commentList.clear();
-                        }
+        NetLoadUtils.getNetInstance().loadNetDataPost(MessageCommentActivity.this, Url.GET_MY_COMMENT_MESSAGE_LIST, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                smart_communal_refresh.finishRefresh();
+                messageCommunalAdapter.loadMoreComplete();
+                if (page == 1) {
+                    commentList.clear();
+                }
 
-                        articleCommentEntity = GsonUtils.fromJson(result, MessageCommentEntity.class);
-                        if (articleCommentEntity != null) {
-                            if (articleCommentEntity.getCode().equals(SUCCESS_CODE)) {
-                                commentList.addAll(articleCommentEntity.getMessageCommentList());
-                            } else if (articleCommentEntity.getCode().equals(EMPTY_CODE)) {
-                                messageCommunalAdapter.loadMoreEnd();
-                            } else {
-                                showToast( articleCommentEntity.getMsg());
-                            }
-                        }
-                        messageCommunalAdapter.notifyDataSetChanged();
-                        NetLoadUtils.getNetInstance().showLoadSir(loadService, commentList, articleCommentEntity);
-                    }
-
-                    @Override
-                    public void onNotNetOrException() {
-                        smart_communal_refresh.finishRefresh();
+                articleCommentEntity = GsonUtils.fromJson(result, MessageCommentEntity.class);
+                if (articleCommentEntity != null) {
+                    if (articleCommentEntity.getCode().equals(SUCCESS_CODE)) {
+                        commentList.addAll(articleCommentEntity.getMessageCommentList());
+                    } else if (articleCommentEntity.getCode().equals(EMPTY_CODE)) {
                         messageCommunalAdapter.loadMoreEnd();
-                        NetLoadUtils.getNetInstance().showLoadSir(loadService, commentList, articleCommentEntity);
+                    } else {
+                        showToast(articleCommentEntity.getMsg());
                     }
+                }
+                messageCommunalAdapter.notifyDataSetChanged();
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, commentList, articleCommentEntity);
+            }
 
-                    @Override
-                    public void onError(Throwable throwable) {
-                        showToast( R.string.invalidData);
-                    }
-                });
+            @Override
+            public void onNotNetOrException() {
+                smart_communal_refresh.finishRefresh();
+                messageCommunalAdapter.loadMoreEnd();
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, commentList, articleCommentEntity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(R.string.invalidData);
+            }
+        });
     }
 
     public void showCommentVisible(int visibility, final MessageCommentBean messageCommentBean) {
@@ -264,25 +255,21 @@ public class MessageCommentActivity extends BaseActivity {
                     if (!TextUtils.isEmpty(comment) && messageCommentBean != null) {
                         comment = emoji_edit_comment.getText().toString();
                         CommunalComment communalComment = new CommunalComment();
+                        communalComment.setUserId(userId);
+                        communalComment.setContent(comment);
+                        communalComment.setCommType(messageCommentBean.getObj());
                         switch (messageCommentBean.getObj()) {
-                            case "doc":
                             case "post":
                                 communalComment.setCommType("doc");
                                 setCommentData(communalComment, messageCommentBean);
                                 break;
+                            case "doc":
+                            case "groupbuydoc":
                             case "goods":
-                                communalComment.setCommType("goods");
                                 setCommentData(communalComment, messageCommentBean);
                                 break;
-                            case MES_ADVISE:
-                                communalComment.setCommType(MES_ADVISE);
-                                break;
-                            case MES_FEEDBACK:
-                                communalComment.setCommType(MES_FEEDBACK);
-                                break;
                         }
-                        communalComment.setUserId(userId);
-                        communalComment.setContent(comment);
+
                         sendComment(communalComment, messageCommentBean);
                     } else {
                         showToast("请正确输入内容");
@@ -314,7 +301,7 @@ public class MessageCommentActivity extends BaseActivity {
             public void onSuccess() {
                 loadHud.dismiss();
                 //请求成功
-                showToast( R.string.comment_send_success);
+                showToast(R.string.comment_send_success);
                 showCommentVisible(GONE, null);
                 skipActivity(messageCommentBean);
                 tv_sendComment.setText("发送");
@@ -344,5 +331,62 @@ public class MessageCommentActivity extends BaseActivity {
         if (requestCode == IS_LOGIN_CODE) {
             loadData();
         }
+    }
+
+    /**
+     * 点击编辑器外区域隐藏键盘 避免点击搜索完没有隐藏键盘
+     */
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            View v = getCurrentFocus();
+            if (isShouldHideKeyboard(v, ev)) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+            }
+        }
+        try {
+            return super.dispatchTouchEvent(ev);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    // Return whether touch the view.
+    private boolean isShouldHideKeyboard(View v, MotionEvent event) {
+        if (v instanceof EditText) {
+            int[] l = {0, 0};
+            v.getLocationInWindow(l);
+            int left = l[0],
+                    top = l[1],
+                    bottom = top + v.getHeight(),
+                    right = left + v.getWidth();
+            return !(event.getX() > left && event.getX() < right
+                    && event.getY() > top && event.getY() < bottom);
+        }
+        return false;
+    }
+
+    @OnTouch(R.id.communal_recycler)
+    boolean onTouch(MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                locationY = event.getY();
+                break;
+            case MotionEvent.ACTION_MOVE:
+                float moveY = event.getY() - locationY;//y轴距离
+                if (Math.abs(moveY) > 250 && ll_input_comment.getVisibility() == VISIBLE) {
+                    ll_input_comment.setVisibility(GONE);
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                locationY = 0;
+                break;
+        }
+        return false;
     }
 }

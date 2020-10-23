@@ -36,7 +36,6 @@ import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.activity.DirectProductEvaluationActivity;
 import com.amkj.dmsh.dominant.activity.QualityGroupShopDetailActivity;
 import com.amkj.dmsh.dominant.activity.QualityProductActActivity;
-import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
 import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
@@ -68,9 +67,8 @@ import com.amkj.dmsh.shopdetails.bean.ShopDetailsEntity.ShopPropertyBean.TagsBea
 import com.amkj.dmsh.shopdetails.bean.ShopRecommendHotTopicEntity;
 import com.amkj.dmsh.shopdetails.bean.ShopRecommendHotTopicEntity.ShopRecommendHotTopicBean;
 import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
-import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
-import com.amkj.dmsh.user.bean.LikedProductBean.MarketLabelBean;
+import com.amkj.dmsh.user.bean.MarketLabelBean;
 import com.amkj.dmsh.utils.CountDownTimer;
 import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.SharedPreUtils;
@@ -137,6 +135,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.isVip;
 import static com.amkj.dmsh.constant.ConstantMethod.showImageActivity;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
+import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_W_TYPE;
@@ -645,7 +644,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         mGoodsRecommendAdapter.setOnItemClickListener((adapter, view, position) -> {
             ShopRecommendHotTopicBean shopRecommendHotTopicBean = (ShopRecommendHotTopicBean) view.getTag();
             if (shopRecommendHotTopicBean != null) {
-                skipProDetail(shopRecommendHotTopicBean);
+                skipProductUrl(getActivity(), shopRecommendHotTopicBean.getType_id(), shopRecommendHotTopicBean.getId());
             }
         });
 
@@ -1140,11 +1139,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             fbl_details_market_label.removeAllViews();
             //会员专享标签
             if (shopProperty.isVipActivity()) {
-                ImageView imageView = new ImageView(this);
-                ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(AutoSizeUtils.mm2px(this, 147), AutoSizeUtils.mm2px(this, 40));
-                imageView.setImageResource(R.drawable.vip_tag);
-                imageView.setLayoutParams(layoutParams);
-                fbl_details_market_label.addView(imageView);
+                fbl_details_market_label.addView(ProductLabelCreateUtils.createLabelText(this, "", 2));
             }
 
             //新人专享活动标签
@@ -1773,7 +1768,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(String.format(getResources().getString(R.string.collect_failed), "商品"));
+                showToast(R.string.collect_failed);
             }
         });
     }
@@ -1788,35 +1783,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             loadData();
         }
         UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
-    }
-
-    /**
-     * 点击推荐商品
-     */
-    private void skipProDetail(ShopRecommendHotTopicBean shopRecommendHotTopicBean) {
-        Intent intent = new Intent();
-        switch (shopRecommendHotTopicBean.getType_id()) {
-            case 0:
-                intent.setClass(this, ShopTimeScrollDetailsActivity.class);
-                intent.putExtra("productId", String.valueOf(shopRecommendHotTopicBean.getId()));
-                startActivity(intent);
-                break;
-            case 1:
-                intent.setClass(this, ShopScrollDetailsActivity.class);
-                intent.putExtra("productId", String.valueOf(shopRecommendHotTopicBean.getId()));
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                overridePendingTransition(0, 0);
-                startActivity(intent);
-                finish();
-                break;
-            case 2:
-                intent.setClass(this, IntegralScrollDetailsActivity.class);
-                intent.putExtra("productId", String.valueOf(shopRecommendHotTopicBean.getId()));
-                startActivity(intent);
-                break;
-            default:
-                break;
-        }
     }
 
     @OnClick({R.id.ll_back, R.id.ll_back2, R.id.ll_service, R.id.ll_service2, R.id.ll_share, R.id.ll_share2, R.id.ll_product_activity_detail, R.id.tv_sp_details_service,

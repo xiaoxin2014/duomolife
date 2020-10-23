@@ -10,7 +10,7 @@ import com.chad.library.adapter.base.entity.MultiItemEntity;
 public class BaseFavorBean implements MultiItemEntity {
     private String isFocus;
 
-    public boolean getIsFocus() {
+    public boolean isFocus() {
         return "1".equals(isFocus);
     }
 

@@ -88,7 +88,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showImportantToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.COMMENT_TYPE;
+import static com.amkj.dmsh.constant.ConstantVariable.COMMENT_DOC_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
@@ -710,7 +710,7 @@ public class ArticleOfficialActivity extends BaseActivity {
                 if (!TextUtils.isEmpty(comment)) {
                     comment = mEmojiEditComment.getText().toString();
                     CommunalComment communalComment = new CommunalComment();
-                    communalComment.setCommType(COMMENT_TYPE);
+                    communalComment.setCommType(COMMENT_DOC_TYPE);
                     communalComment.setContent(comment);
                     if (dmlSearchCommentBean != null) {
                         communalComment.setIsReply(1);
@@ -782,10 +782,10 @@ public class ArticleOfficialActivity extends BaseActivity {
                 }
                 break;
             case R.id.tv_article_bottom_like:
-                SoftApiDao.favorArtical(this, artId, mTvArticleBottomLike);
+                SoftApiDao.favorPostDetail(this, artId, mTvArticleBottomLike);
                 break;
             case R.id.tv_article_bottom_collect:
-                SoftApiDao.collectArtical(this, artId, mTvArticleBottomCollect);
+                SoftApiDao.CollectPost(this, artId, mTvArticleBottomCollect);
                 break;
             case R.id.smart_web_refresh:
                 mRelCommunalNetError.setVisibility(View.GONE);

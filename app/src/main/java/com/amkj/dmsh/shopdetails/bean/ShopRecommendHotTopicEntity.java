@@ -1,10 +1,7 @@
 package com.amkj.dmsh.shopdetails.bean;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.amkj.dmsh.base.BaseEntity;
-import com.amkj.dmsh.user.bean.LikedProductBean.MarketLabelBean;
+import com.amkj.dmsh.user.bean.MarketLabelBean;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.annotations.SerializedName;
@@ -27,7 +24,7 @@ public class ShopRecommendHotTopicEntity extends BaseEntity {
      * code : 01
      */
     private String recommendFlag;
-    @SerializedName("result")
+    @SerializedName(value = "result", alternate = {"productInfoInfoList", "ShopRecommendHotTopicList"})
     private List<ShopRecommendHotTopicBean> ShopRecommendHotTopicList;
 
     public String getRecommendFlag() {
@@ -51,7 +48,7 @@ public class ShopRecommendHotTopicEntity extends BaseEntity {
         this.ShopRecommendHotTopicList = ShopRecommendHotTopicList;
     }
 
-    public static class ShopRecommendHotTopicBean implements MultiItemEntity, Parcelable {
+    public static class ShopRecommendHotTopicBean implements MultiItemEntity {
         /**
          * path : http://image.domolife.cn/platform/20171016/20171016160412369.jpg
          * quantity : 378
@@ -71,6 +68,7 @@ public class ShopRecommendHotTopicEntity extends BaseEntity {
         private int category_id;
         private int type_id = 1;//默认类型是自营商品
         private String price;
+        @SerializedName(value = "marketPrice", alternate = "marketrice")
         private String marketPrice;
         private int favor_num;
         private String subtitle;
@@ -255,68 +253,5 @@ public class ShopRecommendHotTopicEntity extends BaseEntity {
             this.marketLabelList = marketLabelList;
         }
 
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            dest.writeString(this.picUrl);
-            dest.writeInt(this.quantity);
-            dest.writeInt(this.category_id);
-            dest.writeInt(this.type_id);
-            dest.writeString(this.price);
-            dest.writeString(this.marketPrice);
-            dest.writeInt(this.favor_num);
-            dest.writeString(this.subtitle);
-            dest.writeInt(this.id);
-            dest.writeString(this.title);
-            dest.writeString(this.description);
-            dest.writeString(this.activity_code);
-            dest.writeInt(this.itemType);
-            dest.writeString(this.save_num);
-            dest.writeString(this.androidLink);
-            dest.writeString(this.type);
-            dest.writeTypedList(this.marketLabelList);
-            dest.writeByte(this.isSelected ? (byte) 1 : (byte) 0);
-        }
-
-        public ShopRecommendHotTopicBean() {
-        }
-
-        protected ShopRecommendHotTopicBean(Parcel in) {
-            this.picUrl = in.readString();
-            this.quantity = in.readInt();
-            this.category_id = in.readInt();
-            this.type_id = in.readInt();
-            this.price = in.readString();
-            this.marketPrice = in.readString();
-            this.favor_num = in.readInt();
-            this.subtitle = in.readString();
-            this.id = in.readInt();
-            this.title = in.readString();
-            this.description = in.readString();
-            this.activity_code = in.readString();
-            this.itemType = in.readInt();
-            this.save_num = in.readString();
-            this.androidLink = in.readString();
-            this.type = in.readString();
-            this.marketLabelList = in.createTypedArrayList(MarketLabelBean.CREATOR);
-            this.isSelected = in.readByte() != 0;
-        }
-
-        public static final Parcelable.Creator<ShopRecommendHotTopicBean> CREATOR = new Parcelable.Creator<ShopRecommendHotTopicBean>() {
-            @Override
-            public ShopRecommendHotTopicBean createFromParcel(Parcel source) {
-                return new ShopRecommendHotTopicBean(source);
-            }
-
-            @Override
-            public ShopRecommendHotTopicBean[] newArray(int size) {
-                return new ShopRecommendHotTopicBean[size];
-            }
-        };
     }
 }

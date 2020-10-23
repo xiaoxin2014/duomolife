@@ -84,7 +84,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.COMMENT_TYPE;
+import static com.amkj.dmsh.constant.ConstantVariable.COMMENT_DOC_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_COMMENT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
@@ -189,7 +189,7 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
         rel_article_bottom.setVisibility(View.GONE);
         iv_img_service.setImageResource(R.drawable.shop_car_gray_icon);
         communal_recycler.setLayoutManager(new LinearLayoutManager(DmlLifeSearchDetailActivity.this));
-        adapterArticleComment = new ArticleCommentAdapter(DmlLifeSearchDetailActivity.this, articleCommentList, COMMENT_TYPE);
+        adapterArticleComment = new ArticleCommentAdapter(DmlLifeSearchDetailActivity.this, articleCommentList, COMMENT_DOC_TYPE);
         adapterArticleComment.setHeaderAndEmpty(true);
         View coverView = LayoutInflater.from(DmlLifeSearchDetailActivity.this)
                 .inflate(R.layout.layout_cover_title_descrip_header, (ViewGroup) communal_recycler.getParent(), false);
@@ -585,7 +585,7 @@ public class DmlLifeSearchDetailActivity extends BaseActivity {
 
             @Override
             public void onError(Throwable throwable) {
-                showToast(String.format(getResources().getString(R.string.collect_failed), "文章"));
+                showToast(R.string.collect_failed);
             }
         });
     }

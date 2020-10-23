@@ -51,7 +51,6 @@
             android:lineSpacingExtra="@dimen/sc_mm_10"
             android:text="@string/defaul"
             android:textColor="@color/text_black_t"
-            android:textIsSelectable="true"
             android:textSize="@dimen/sc_mm_28" />
 
         <TextView

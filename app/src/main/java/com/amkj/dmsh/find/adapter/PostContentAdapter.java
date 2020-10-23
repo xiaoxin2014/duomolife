@@ -103,10 +103,10 @@ public class PostContentAdapter extends BaseQuickAdapter<PostBean, BaseViewHolde
         TextView tvFavor = helper.getView(R.id.tv_favor);
         tvFavor.setSelected(item.isFavor());
         tvFavor.setOnClickListener(v -> {
-            if (mShowZeroProduct){
+            if (mShowZeroProduct) {
                 favorReport(context, item, tvFavor);
-            }else {
-                favorPost(context, item, tvFavor);
+            } else {
+                favorPost(context, item, tvFavor, "doc");
             }
         });
 

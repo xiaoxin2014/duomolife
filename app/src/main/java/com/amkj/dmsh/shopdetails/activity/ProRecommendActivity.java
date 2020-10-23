@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.dominant.activity.ShopTimeScrollDetailsActivity;
+import com.amkj.dmsh.time.activity.ShopTimeScrollDetailsActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.adapter.ShopRecommendHotTopicAdapter;

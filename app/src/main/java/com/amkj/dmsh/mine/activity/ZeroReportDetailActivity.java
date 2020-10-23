@@ -65,7 +65,6 @@ public class ZeroReportDetailActivity extends BaseActivity {
     @BindView(R.id.smart_communal_refresh)
     SmartRefreshLayout mSmartCommunalRefresh;
     private String mActivityId;
-    private String mOrderId;
     private RelatedGoodsBean mProductInfo;
     private List<PostBean> reports = new ArrayList<>();
     private ReportContentAdapter mReportContentAdapter;
@@ -82,7 +81,6 @@ public class ZeroReportDetailActivity extends BaseActivity {
         mTvHeaderShared.setVisibility(View.GONE);
         if (getIntent().getExtras() != null) {
             mActivityId = getIntent().getStringExtra("activityId");
-            mOrderId = getIntent().getStringExtra("orderId");
         }
 
         //初始化报告列表
