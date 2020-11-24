@@ -11,12 +11,12 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseAlertDialog;
+import com.amkj.dmsh.base.BaseRealNameEntity;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.homepage.bean.CommunalRuleEntity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
-import com.amkj.dmsh.shopdetails.bean.IndentWriteEntity;
 import com.amkj.dmsh.utils.ImgUrlHelp;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.gson.GsonUtils;
@@ -70,9 +70,9 @@ public class AlertDialogRealName extends BaseAlertDialog {
     private String mIdcardImg2;
     private AlertDialogRule alertLotteryRuleDialogHelper;
     private CommitListener commitListener;
-    private IndentWriteEntity.IndentWriteBean mIndentWriteBean;
+    private BaseRealNameEntity mIndentWriteBean;
 
-    public AlertDialogRealName(Activity context, IndentWriteEntity.IndentWriteBean indentWriteBean) {
+    public AlertDialogRealName(Activity context, BaseRealNameEntity indentWriteBean) {
         super(context);
         setEtFilter(mEtOverseaName);
         setEtFilter(mEtOverseaCard);

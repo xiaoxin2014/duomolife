@@ -37,7 +37,5 @@
 
             <include layout="@layout/layout_recycler_top_address_default" />
         </RelativeLayout>
-
-        <include layout="@layout/layout_overseas_user_info" />
     </LinearLayout>
 </LinearLayout>

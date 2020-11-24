@@ -12,6 +12,8 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.CommonPagerAdapter;
 import com.amkj.dmsh.base.MyPagerAdapter;
 import com.amkj.dmsh.base.ViewHolder;
+import com.amkj.dmsh.constant.UMShareAction;
+import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dao.BaiChuanDao;
 import com.amkj.dmsh.dao.SoftApiDao;
 import com.amkj.dmsh.dominant.bean.PostCommentEntity.PostCommentBean;
@@ -88,7 +90,11 @@ public class TimePostDetailAdapter extends BaseQuickAdapter<PostBean, BaseViewHo
         helper.getView(R.id.iv_share).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                new UMShareAction(context
+                        , item.getCover()
+                        , item.getTitle()
+                        , item.getContent()
+                        , Url.BASE_SHARE_PAGE_TWO + "limit_time_template/article_info.html?id=" + item.getId(), item.getId());
             }
         });
 

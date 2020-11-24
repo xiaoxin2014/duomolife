@@ -102,6 +102,7 @@ public class DirectLogisticsFragment extends BaseFragment {
     private boolean expand;
     private LogisticsNewEntity mLogisticsNewEntity;
     private String orderNo;
+    private String zeroOrderNo;
     private String expressNo;
     private String refundNo;
 
@@ -154,38 +155,48 @@ public class DirectLogisticsFragment extends BaseFragment {
         //判断是退款物流还是普通物流
         if (!TextUtils.isEmpty(refundNo)) {
             params.put("refundNo", refundNo);
+        } else if (!TextUtils.isEmpty(zeroOrderNo)) {
+            params.put("orderNo", zeroOrderNo);
         } else {
             params.put("orderNo", orderNo);
             params.put("expressNo", expressNo);
         }
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), !TextUtils.isEmpty(refundNo) ? Url.Q_REFUND_LOGISTICS_DETAIL : Url.Q_LOGISTICS_DETAIL,
-                params, new NetLoadListenerHelper() {
-                    @Override
-                    public void onSuccess(String result) {
-                        mSmartScrollCommunalRefresh.finishRefresh();
-
-                        mLogisticsNewEntity = GsonUtils.fromJson(result, LogisticsNewEntity.class);
-                        if (mLogisticsNewEntity != null) {
-                            if (mLogisticsNewEntity.getCode().equals(SUCCESS_CODE)) {
-                                LogisticsNewEntity.LogisticsDetailBean logisticsDetail = mLogisticsNewEntity.getLogisticsDetail();
-                                if (logisticsDetail != null) {
-                                    mLogisticsDetailBean = logisticsDetail;
-                                    setExpressData();
-                                }
-                            } else {
-                                showToast(mLogisticsNewEntity.getMsg());
-                            }
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), getUrl(), params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                mSmartScrollCommunalRefresh.finishRefresh();
+                mLogisticsNewEntity = GsonUtils.fromJson(result, LogisticsNewEntity.class);
+                if (mLogisticsNewEntity != null) {
+                    if (mLogisticsNewEntity.getCode().equals(SUCCESS_CODE)) {
+                        LogisticsNewEntity.LogisticsDetailBean logisticsDetail = mLogisticsNewEntity.getLogisticsDetail();
+                        if (logisticsDetail != null) {
+                            mLogisticsDetailBean = logisticsDetail;
+                            setExpressData();
                         }
-
-                        showLoadService();
+                    } else {
+                        showToast(mLogisticsNewEntity.getMsg());
                     }
+                }
 
-                    @Override
-                    public void onNotNetOrException() {
-                        mSmartScrollCommunalRefresh.finishRefresh();
-                        showLoadService();
-                    }
-                });
+                showLoadService();
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                mSmartScrollCommunalRefresh.finishRefresh();
+                showLoadService();
+            }
+        });
+    }
+
+    private String getUrl() {
+        if (!TextUtils.isEmpty(refundNo)) {
+            return Url.Q_REFUND_LOGISTICS_DETAIL;
+        } else if (!TextUtils.isEmpty(zeroOrderNo)) {
+            return Url.GET_ZERO_ORDER_LOGISTICS;
+        } else {
+            return Url.Q_LOGISTICS_DETAIL;
+        }
     }
 
     private void showLoadService() {
@@ -290,6 +301,7 @@ public class DirectLogisticsFragment extends BaseFragment {
     @Override
     protected void getReqParams(Bundle bundle) {
         orderNo = bundle.getString("orderNo");
+        zeroOrderNo = bundle.getString("zeroOrderNo");
         expressNo = bundle.getString("expressNo");
         refundNo = bundle.getString("refundNo");
     }

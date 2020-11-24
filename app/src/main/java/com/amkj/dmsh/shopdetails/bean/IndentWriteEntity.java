@@ -2,6 +2,7 @@ package com.amkj.dmsh.shopdetails.bean;
 
 import android.text.TextUtils;
 
+import com.amkj.dmsh.base.BaseRealNameEntity;
 import com.amkj.dmsh.base.BaseTimeEntity;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.mine.bean.ActivityInfoBean;
@@ -33,7 +34,7 @@ public class IndentWriteEntity extends BaseTimeEntity {
         this.result = result;
     }
 
-    public static class IndentWriteBean {
+    public static class IndentWriteBean extends BaseRealNameEntity {
         /**
          * realName :
          * idCard :
@@ -46,11 +47,6 @@ public class IndentWriteEntity extends BaseTimeEntity {
          * userCouponInfo : {"id":2030613,"title":"多么生活2018年终福利包","price":"100","msg":null}
          */
 
-        private String realName;
-        private String idCard;
-        private String showIdCard;
-        private String idcardImg1;
-        private String idcardImg2;
         private int real;
         private String prompt;
         private int allProductNotBuy;
@@ -69,22 +65,6 @@ public class IndentWriteEntity extends BaseTimeEntity {
             this.presentInfos = presentInfos;
         }
 
-        public String getIdcardImg1() {
-            return idcardImg1;
-        }
-
-        public void setIdcardImg1(String idcardImg1) {
-            this.idcardImg1 = idcardImg1;
-        }
-
-        public String getIdcardImg2() {
-            return idcardImg2;
-        }
-
-        public void setIdcardImg2(String idcardImg2) {
-            this.idcardImg2 = idcardImg2;
-        }
-
         public List<String> getShowPayTypeList() {
             return showPayTypeList;
         }
@@ -99,30 +79,6 @@ public class IndentWriteEntity extends BaseTimeEntity {
 
         public void setPrerogativeActivityInfo(PrerogativeActivityInfo prerogativeActivityInfo) {
             this.prerogativeActivityInfo = prerogativeActivityInfo;
-        }
-
-        public String getRealName() {
-            return realName;
-        }
-
-        public void setRealName(String realName) {
-            this.realName = realName;
-        }
-
-        public String getIdCard() {
-            return idCard;
-        }
-
-        public void setIdCard(String idCard) {
-            this.idCard = idCard;
-        }
-
-        public String getShowIdCard() {
-            return showIdCard;
-        }
-
-        public void setShowIdCard(String showIdCard) {
-            this.showIdCard = showIdCard;
         }
 
         public boolean isReal() {

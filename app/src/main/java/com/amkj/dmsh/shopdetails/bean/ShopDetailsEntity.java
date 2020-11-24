@@ -110,6 +110,76 @@ public class ShopDetailsEntity extends BaseEntity {
         //自定义字段
         private long addSecond;
 
+        //预售相关
+        private String isDepositFlag;
+        private String depositStartTime;
+        private String depositEndTime;
+        private String deposit;
+        private String depositDiscount;
+        private String depositOrderStartTime;
+        private String depositOrderEndTime;
+
+
+
+        public String getIsVipActivity() {
+            return isVipActivity;
+        }
+
+        public boolean isDepositFlag() {
+            return "1".equals(isDepositFlag);
+        }
+
+        public void setIsDepositFlag(String isDepositFlag) {
+            this.isDepositFlag = isDepositFlag;
+        }
+
+        public String getDepositStartTime() {
+            return depositStartTime;
+        }
+
+        public void setDepositStartTime(String depositStartTime) {
+            this.depositStartTime = depositStartTime;
+        }
+
+        public String getDepositEndTime() {
+            return depositEndTime;
+        }
+
+        public void setDepositEndTime(String depositEndTime) {
+            this.depositEndTime = depositEndTime;
+        }
+
+        public String getDeposit() {
+            return deposit;
+        }
+
+        public void setDeposit(String deposit) {
+            this.deposit = deposit;
+        }
+
+        public String getDepositDiscount() {
+            return depositDiscount;
+        }
+
+        public void setDepositDiscount(String depositDiscount) {
+            this.depositDiscount = depositDiscount;
+        }
+
+        public String getDepositOrderStartTime() {
+            return depositOrderStartTime;
+        }
+
+        public void setDepositOrderStartTime(String depositOrderStartTime) {
+            this.depositOrderStartTime = depositOrderStartTime;
+        }
+
+        public String getDepositOrderEndTime() {
+            return depositOrderEndTime;
+        }
+
+        public void setDepositOrderEndTime(String depositOrderEndTime) {
+            this.depositOrderEndTime = depositOrderEndTime;
+        }
 
         public String getEcmFlag() {
             return ecmFlag;

@@ -31,6 +31,7 @@ import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.activity.DirectApplyRefundActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectExchangeDetailsActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectLogisticsDetailsActivity;
+import com.amkj.dmsh.shopdetails.activity.DirectPaySuccessActivity;
 import com.amkj.dmsh.shopdetails.activity.InvoiceDetailActivity;
 import com.amkj.dmsh.shopdetails.activity.SelectRefundGoodsActivity;
 import com.amkj.dmsh.shopdetails.activity.SelectRefundTypeActivity;
@@ -38,16 +39,16 @@ import com.amkj.dmsh.shopdetails.adapter.MainOrderButtonAdapter;
 import com.amkj.dmsh.shopdetails.bean.ButtonListBean;
 import com.amkj.dmsh.shopdetails.bean.MainOrderListEntity.MainOrderBean;
 import com.amkj.dmsh.shopdetails.bean.RefundProductsEntity;
-import com.amkj.dmsh.views.alertdialog.AlertDialogGoPay;
-import com.amkj.dmsh.views.alertdialog.AlertDialogWheel;
 import com.amkj.dmsh.utils.LifecycleHandler;
 import com.amkj.dmsh.utils.SharedPreUtils;
 import com.amkj.dmsh.utils.WindowUtils;
-import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
-import com.amkj.dmsh.views.alertdialog.AlertDialogImage;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
+import com.amkj.dmsh.views.alertdialog.AlertDialogGoPay;
+import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
+import com.amkj.dmsh.views.alertdialog.AlertDialogImage;
+import com.amkj.dmsh.views.alertdialog.AlertDialogWheel;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 
 import org.greenrobot.eventbus.EventBus;
@@ -86,8 +87,11 @@ import static com.amkj.dmsh.constant.ConstantVariable.CUSTOMER_SERVICE_DETAIL;
 import static com.amkj.dmsh.constant.ConstantVariable.DELAY_TAKE;
 import static com.amkj.dmsh.constant.ConstantVariable.DELETE_ORDER;
 import static com.amkj.dmsh.constant.ConstantVariable.DEMO_LIFE_FILE;
+import static com.amkj.dmsh.constant.ConstantVariable.DEPOSIT_TO_PAY;
 import static com.amkj.dmsh.constant.ConstantVariable.EDIT_ADDRESS;
 import static com.amkj.dmsh.constant.ConstantVariable.GO_PAY;
+import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PRODUCT_TYPE;
+import static com.amkj.dmsh.constant.ConstantVariable.INDENT_PROPRIETOR_PRODUCT;
 import static com.amkj.dmsh.constant.ConstantVariable.INVITE_JOIN_GROUP;
 import static com.amkj.dmsh.constant.ConstantVariable.REFUND_ASPECT;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
@@ -116,6 +120,7 @@ public class MainButtonView extends LinearLayout {
     private AlertDialogGoPay mAlertDialogGoPay;
     private AlertDialogHelper mAlertDialogService;
     private AlertDialogImage alertDialogScore;
+    private String mOrderNo;
 
     public MainButtonView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -135,7 +140,7 @@ public class MainButtonView extends LinearLayout {
             mainOrderBean.setSort(true);
         }
         List<ButtonListBean> buttonList = mainOrderBean.getButtonList();
-        String orderNo = mainOrderBean.getOrderNo();
+        mOrderNo = mainOrderBean.getOrderNo();
         List<OrderProductNewBean> orderProductList = mainOrderBean.getOrderProductList();
         //订单详情不用展示更多按钮
         tv_more_button.setVisibility(buttonList != null && buttonList.size() > buttonLimit ? View.VISIBLE : View.GONE);
@@ -176,7 +181,7 @@ public class MainButtonView extends LinearLayout {
                             confirmOrderDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
                                 @Override
                                 public void confirm() {
-                                    confirmOrder(orderNo, simpleName);
+                                    confirmOrder(mOrderNo, simpleName);
                                 }
 
                                 @Override
@@ -188,7 +193,7 @@ public class MainButtonView extends LinearLayout {
                         //查看物流
                         case CHECK_LOGISTICS:
                             intent.setClass(context, DirectLogisticsDetailsActivity.class);
-                            intent.putExtra("orderNo", orderNo);
+                            intent.putExtra("orderNo", mOrderNo);
                             context.startActivity(intent);
                             break;
                         //退货物流
@@ -199,7 +204,7 @@ public class MainButtonView extends LinearLayout {
                             break;
                         //延迟收货
                         case DELAY_TAKE:
-                            OrderDao.delayTakeTime(context, orderNo);
+                            OrderDao.delayTakeTime(context, mOrderNo);
                             break;
                         //订单列表申请退款
                         case APPLY_REFUND:
@@ -232,11 +237,11 @@ public class MainButtonView extends LinearLayout {
                             break;
                         //提醒发货
                         case WAITDELIVERY:
-                            OrderDao.setRemindDelivery(context, orderNo);
+                            OrderDao.setRemindDelivery(context, mOrderNo);
                             break;
                         //订单商品加入购物车
                         case ADD_CART:
-                            OrderDao.addOrderCart(context, orderNo);
+                            OrderDao.addOrderCart(context, mOrderNo);
                             break;
                         //删除订单
                         case DELETE_ORDER:
@@ -249,7 +254,7 @@ public class MainButtonView extends LinearLayout {
                             delOrderDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
                                 @Override
                                 public void confirm() {
-                                    OrderDao.delOrder(context, orderNo, simpleName);
+                                    OrderDao.delOrder(context, mOrderNo, simpleName);
                                 }
 
                                 @Override
@@ -269,7 +274,7 @@ public class MainButtonView extends LinearLayout {
                             cancelOrderDialogHelper.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
                                 @Override
                                 public void confirm() {
-                                    OrderDao.cancelOrder(context, orderNo, simpleName);
+                                    OrderDao.cancelOrder(context, mOrderNo, simpleName);
                                 }
 
                                 @Override
@@ -280,12 +285,16 @@ public class MainButtonView extends LinearLayout {
                             break;
                         //去支付
                         case GO_PAY:
-                            goPay(orderNo, simpleName);
+                            goPay(mOrderNo, simpleName);
+                            break;
+                        //定金去支付
+                        case DEPOSIT_TO_PAY:
+                            goPay(mainOrderBean.getDepositNo(), simpleName);
                             break;
                         //再次购买
                         case TO_BUY:
                             Bundle bundle = new Bundle();
-                            bundle.putString("orderNo", orderNo);
+                            bundle.putString("orderNo", mOrderNo);
                             ConstantMethod.skipIndentWrite(context, BUY_AGAIN, bundle);
                             break;
                         //邀请参团
@@ -444,6 +453,12 @@ public class MainButtonView extends LinearLayout {
                 if (mAlertDialogGoPay == null) {
                     mAlertDialogGoPay = new AlertDialogGoPay(context, map.get("result"), simpleName);
                 }
+                mAlertDialogGoPay.setOnPaySuccessListener(() -> new LifecycleHandler(context).postDelayed(() -> {
+                    Intent intent = new Intent(context, DirectPaySuccessActivity.class);
+                    intent.putExtra("indentNo", mOrderNo);
+                    intent.putExtra(INDENT_PRODUCT_TYPE, INDENT_PROPRIETOR_PRODUCT);
+                    context.startActivity(intent);
+                }, 1000));
                 mAlertDialogGoPay.show(orderNo);
             }
 

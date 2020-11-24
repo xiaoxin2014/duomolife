@@ -1,28 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:id="@+id/ll_details_bottom"
-              android:layout_width="match_parent"
-              android:layout_height="@dimen/sc_mm_98"
-              android:background="@color/white"
-              android:orientation="horizontal">
+    android:id="@+id/ll_details_bottom"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/sc_mm_98"
+    android:background="@color/white"
+    android:orientation="horizontal">
 
     <TextView
         android:id="@+id/tv_sp_details_collect"
         android:layout_width="@dimen/sc_mm_125"
         android:layout_height="match_parent"
-
         android:drawableTop="@drawable/sel_goods_collect_star"
         android:gravity="center"
         android:paddingTop="@dimen/sc_mm_17"
         android:text="收藏"
         android:textColor="@color/text_login_gray_s"
-        android:textSize="@dimen/sc_mm_22"/>
+        android:textSize="@dimen/sc_mm_22" />
 
     <View
         android:layout_width="0.5dp"
         android:layout_height="@dimen/sc_mm_48"
         android:layout_gravity="center_vertical"
-        android:background="#686868"/>
+        android:background="#686868" />
 
     <TextView
         android:id="@+id/tv_sp_details_service"
@@ -30,32 +29,69 @@
         android:layout_height="match_parent"
         android:drawableTop="@drawable/service_gray"
         android:gravity="center"
-
         android:paddingTop="@dimen/sc_mm_17"
         android:text="客服"
         android:textColor="@color/home_text_color"
-        android:textSize="@dimen/sc_mm_22"/>
+        android:textSize="@dimen/sc_mm_22" />
 
-    <TextView
-        android:id="@+id/tv_sp_details_add_car"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:background="@drawable/sel_light_red_un_gray"
-        android:enabled="true"
-        android:gravity="center"
-        android:text="加入购物车"
-        android:textColor="@color/white"
-        android:textSize="@dimen/sc_mm_34"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/tv_sp_details_buy_it"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:background="@drawable/sel_deep_red_yel_gray"
-        android:gravity="center"
-        android:text="立即购买"
-        android:textColor="@color/white"
-        android:textSize="@dimen/sc_mm_34"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_sp_details_add_car"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/sel_light_red_un_gray"
+                android:enabled="true"
+                android:gravity="center"
+                android:text="加入购物车"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sc_mm_34" />
+
+            <TextView
+                android:id="@+id/tv_sp_details_buy_it"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/sel_deep_red_yel_gray"
+                android:gravity="center"
+                android:text="立即购买"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sc_mm_34" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_deposit_pay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#FFFFAE04"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="立即付定金"
+                android:textColor="@color/text_black_t"
+                android:textSize="@dimen/sc_mm_30"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_deposit_discount_detail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sc_mm_5"
+                android:text="@string/deposit_discount_detail"
+                android:textColor="@color/text_black_t"
+                android:textSize="@dimen/sc_mm_24" />
+        </LinearLayout>
+    </RelativeLayout>
 </LinearLayout>

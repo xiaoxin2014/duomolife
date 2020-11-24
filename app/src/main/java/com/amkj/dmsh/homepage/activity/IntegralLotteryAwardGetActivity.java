@@ -1,7 +1,6 @@
 package com.amkj.dmsh.homepage.activity;
 
 import android.content.Intent;
-import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -23,6 +22,7 @@ import com.amkj.dmsh.utils.gson.GsonUtils;
 import java.util.HashMap;
 import java.util.Map;
 
+import androidx.appcompat.widget.Toolbar;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -72,9 +72,6 @@ public class IntegralLotteryAwardGetActivity extends BaseActivity {
     //        海外购实名提示
     @BindView(R.id.tv_oversea_buy_tint)
     TextView tv_oversea_buy_tint;
-    //        实名填写布局
-    @BindView(R.id.ll_oversea_info)
-    LinearLayout ll_oversea_info;
     //    积分夺宝期数
     @BindView(R.id.tv_integral_lottery_award_time)
     TextView tv_integral_lottery_award_time;
@@ -110,7 +107,6 @@ public class IntegralLotteryAwardGetActivity extends BaseActivity {
         }
         tv_integral_lottery_award_time.setVisibility(View.GONE);
         tv_oversea_buy_tint.setVisibility(View.GONE);
-        ll_oversea_info.setVisibility(View.GONE);
         header_shared.setVisibility(View.GONE);
         tv_header_titleAll.setText("领取奖品");
         tl_normal_bar.setSelected(true);

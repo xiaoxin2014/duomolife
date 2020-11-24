@@ -3,9 +3,6 @@ package com.amkj.dmsh.catergory.view;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Parcelable;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,26 +15,27 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.catergory.bean.CatergoryOneLevelEntity;
 import com.amkj.dmsh.catergory.bean.CatergoryOneLevelEntity.CatergoryOneLevelBean;
+import com.amkj.dmsh.catergory.bean.CatergoryOneLevelEntity.CatergoryOneLevelBean.ChildCategoryListBean;
 import com.amkj.dmsh.catergory.bean.CatergoryOneLevelEntity.CatergoryOneLevelBean.RelateArticleBean.ArticlesBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
-import com.amkj.dmsh.homepage.activity.ArticleTypeActivity;
 import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
-import com.amkj.dmsh.homepage.activity.CatergoryTwoLevelActivity;
+import com.amkj.dmsh.homepage.activity.ArticleTypeActivity;
+import com.amkj.dmsh.homepage.activity.CatergoryTwoLevelSActivity;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_TWO_LEVEL_LIST;
 
 /**
  * Created by xiaoxin on 2019/4/22 0022
@@ -90,7 +88,7 @@ public class CatergoryHeadView extends LinearLayout {
             //初始化文章数据
             CatergoryOneLevelEntity.CatergoryOneLevelBean.RelateArticleBean relateArticleBean = CatergoryOneLevelBean.getRelateArticle();
             mTvTopicName.setText("种草特辑");
-            mIvTopCover.setOnClickListener(view -> skipCatergoryTwoLevel(CatergoryOneLevelBean, 0));
+            mIvTopCover.setOnClickListener(view -> skipCatergoryTwoLevel(CatergoryOneLevelBean.getId(), "0"));
             mRlMoreArtical.setOnClickListener(view -> {
                 try {
                     Intent intent = new Intent(mContext, ArticleTypeActivity.class);
@@ -144,21 +142,19 @@ public class CatergoryHeadView extends LinearLayout {
             };
             baseQuickAdapter.setOnItemClickListener((adapter, view, position) -> {
                 //进入二级分类页面
-                CatergoryOneLevelEntity.CatergoryOneLevelBean.ChildCategoryListBean childCategoryListBean = (CatergoryOneLevelEntity.CatergoryOneLevelBean.ChildCategoryListBean) view.getTag();
+               ChildCategoryListBean childCategoryListBean = (ChildCategoryListBean) view.getTag();
                 if (childCategoryListBean != null) {
-                    skipCatergoryTwoLevel(CatergoryOneLevelBean, position + 1);
+                    skipCatergoryTwoLevel(CatergoryOneLevelBean.getId(), childCategoryListBean.getId());
                 }
             });
             mRvChildCatergory.setAdapter(baseQuickAdapter);
         }
     }
 
-    private void skipCatergoryTwoLevel(CatergoryOneLevelBean CatergoryOneLevelBean, int position) {
-        Intent intent = new Intent(mContext, CatergoryTwoLevelActivity.class);
-        intent.putParcelableArrayListExtra(CATEGORY_TWO_LEVEL_LIST, (ArrayList<? extends Parcelable>) CatergoryOneLevelBean.getChildCategoryList());
-        intent.putExtra("position", position);
-        intent.putExtra(ConstantVariable.CATEGORY_NAME, CatergoryOneLevelBean.getName());
-        intent.putExtra(ConstantVariable.CATEGORY_PID, CatergoryOneLevelBean.getId());
+    private void skipCatergoryTwoLevel(String pid, String id) {
+        Intent intent = new Intent(mContext, CatergoryTwoLevelSActivity.class);
+        intent.putExtra(ConstantVariable.CATEGORY_PID, pid);
+        intent.putExtra(ConstantVariable.CATEGORY_ID, id);
         mContext.startActivity(intent);
     }
 }

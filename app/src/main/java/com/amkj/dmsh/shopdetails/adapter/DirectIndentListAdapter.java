@@ -36,6 +36,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantVariable.INDENT_TYPE;
 import static com.amkj.dmsh.utils.TimeUtils.getCoutDownTime;
 import static com.amkj.dmsh.utils.TimeUtils.getTimeDifference;
+import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTime;
 import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTimeAddSeconds;
 
 
@@ -135,7 +136,14 @@ public class DirectIndentListAdapter extends BaseQuickAdapter<MainOrderBean, Bas
         ButterKnife.bind(intentFView, footView);
         directProductListAdapter.addFooterView(footView);
         //主订单商品实付
-        intentFView.tv_intent_count_price.setText(ConstantMethod.getStringsFormat(context, R.string.pay_amount, mainOrderBean.getPayAmount(), mainOrderBean.isPostage() ? "包邮" : "不包邮"));
+        if (!TextUtils.isEmpty(mainOrderBean.getDeposit())) {
+            intentFView.tv_intent_deposit_price.setVisibility(View.VISIBLE);
+            intentFView.tv_intent_deposit_price.setText("订金" + (mainOrderBean.getDepositStatus() == 1 ? "已支付：¥" : "待支付：¥") + mainOrderBean.getDeposit());
+            intentFView.tv_intent_count_price.setText("尾款" + (!TextUtils.isEmpty(mainOrderBean.getPayTime()) ? "已支付：¥" : "待支付：¥") + mainOrderBean.getPayAmount());
+        } else {
+            intentFView.tv_intent_deposit_price.setVisibility(View.GONE);
+            intentFView.tv_intent_count_price.setText(ConstantMethod.getStringsFormat(context, R.string.pay_amount, mainOrderBean.getPayAmount(), mainOrderBean.isPostage() ? "包邮" : "不包邮"));
+        }
         //主订单按钮操作
         intentFView.main_button_view.updateView(context, mainOrderBean, fragment.getClass().getSimpleName(), (key, value) -> {
             fragment.setCurrentOrderNo(mainOrderBean.getOrderNo());
@@ -159,16 +167,23 @@ public class DirectIndentListAdapter extends BaseQuickAdapter<MainOrderBean, Bas
         //待支付并且倒计时未结束时
         if (0 <= mainOrderBean.getStatus() && mainOrderBean.getStatus() < 10
                 && isEndOrStartTimeAddSeconds(mainOrderBean.getCreateTime(), mainOrderBean.getCurrentTime(), mainOrderBean.getSecond())) {
-            intentHView.tv_direct_indent_create_time.setVisibility(View.GONE);
-            intentHView.tv_countdownTime_direct.setVisibility(View.VISIBLE);
-            intentHView.setTag(mainOrderBean);//绑定数据
-            sparseArray.put(helper.getAdapterPosition() - getHeaderLayoutCount(), intentHView);
-            //初始化倒计时控件
-            setCountTime(intentHView, mainOrderBean);
+            //判断是否是尾款待支付，并且尾款时间未开始
+            if (mainOrderBean.getDepositStatus() == 1 && !isEndOrStartTime(mainOrderBean.getCurrentTime(), mainOrderBean.getOrderPayStartTime())) {
+                intentHView.tv_direct_indent_create_time.setVisibility(View.VISIBLE);
+                intentHView.tv_countdownTime_direct.setVisibility(View.GONE);
+                intentHView.tv_direct_indent_create_time.setText(getStrings(mainOrderBean.getOrderPayStartTime()) + " 开始支付尾款");
+            } else {
+                intentHView.tv_direct_indent_create_time.setVisibility(View.GONE);
+                intentHView.tv_countdownTime_direct.setVisibility(View.VISIBLE);
+                intentHView.setTag(mainOrderBean);//绑定数据
+                sparseArray.put(helper.getAdapterPosition() - getHeaderLayoutCount(), intentHView);
+                //初始化倒计时控件
+                setCountTime(intentHView, mainOrderBean);
+            }
         } else {
             intentHView.tv_direct_indent_create_time.setVisibility(View.VISIBLE);
-            intentHView.tv_direct_indent_create_time.setText(getStrings(mainOrderBean.getCreateTime()));
             intentHView.tv_countdownTime_direct.setVisibility(View.GONE);
+            intentHView.tv_direct_indent_create_time.setText(getStrings(mainOrderBean.getCreateTime()));
         }
         helper.itemView.setTag(mainOrderBean);
     }
@@ -214,6 +229,8 @@ public class DirectIndentListAdapter extends BaseQuickAdapter<MainOrderBean, Bas
     static class IntentFView {
         @BindView(R.id.tv_intent_count_price)
         TextView tv_intent_count_price;
+        @BindView(R.id.tv_intent_deposit_price)
+        TextView tv_intent_deposit_price;
         @BindView(R.id.main_button_view)
         MainButtonView main_button_view;
         @BindView(R.id.tv_express_info)

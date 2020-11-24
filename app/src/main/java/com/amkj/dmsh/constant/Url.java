@@ -798,6 +798,9 @@ public class Url {
     public static final String GET_VIP_EXCLUSIVE_TITLE = "api/vip/vipuser/getVipPriceExclusiveGoodsTitle";
     // 获取会员专享价专区商品列表
     public static final String GET_VIP_EXCLUSIVE_GOODS_LIST = "api/vip/vipuser/getVipPriceExclusiveGoodsList";
+    // 0元试用订单详情-查看物流
+    public static final String GET_ZERO_ORDER_LOGISTICS= "api/vip/zeroActivity/getZeroOrderLogistics";
+
 
     /*
     淘好货相关
@@ -832,4 +835,6 @@ public class Url {
     public static final String GET_MY_FAVOR_MESSAGE_LIST = "api/message/getMyFavorMessageList";
     //获取拼团规则
     public static final String GET_GROUP_RULE = "api/groupbuy/getGroupBuyExplain";
+    //获取定金结算信息
+    public static final String GET_DEPOSIT_SETTLE_INFO = "api/goods/order/getDepositOrderSettleInfo";
 }

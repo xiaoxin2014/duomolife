@@ -56,10 +56,20 @@ public class QualityCreateUnionPayIndentEntity {
 
         private String no;
         private String orderId;
+        private String productOrder;
         private String msg;
         private String code;
         @SerializedName("payKey")
         private PayKeyBean payKeyBean;
+
+
+        public String getProductOrder() {
+            return productOrder;
+        }
+
+        public void setProductOrder(String productOrder) {
+            this.productOrder = productOrder;
+        }
 
         public String getOrderId() {
             return orderId;

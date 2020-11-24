@@ -711,6 +711,9 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
         return numberList;
     }
 
+    public List<String> getImgList() {
+        return imgList;
+    }
 
     public class CommunalHolderHelper extends BaseViewHolder {
         RecyclerView communal_recycler_wrap;

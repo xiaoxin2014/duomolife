@@ -2,10 +2,6 @@ package com.amkj.dmsh.catergory.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Parcelable;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
 import com.amkj.dmsh.R;
@@ -14,19 +10,20 @@ import com.amkj.dmsh.catergory.bean.CatergoryOneLevelEntity.CatergoryOneLevelBea
 import com.amkj.dmsh.catergory.bean.CatergoryOneLevelEntity.CatergoryOneLevelBean.RelateArticleBean;
 import com.amkj.dmsh.catergory.bean.CatergoryOneLevelEntity.CatergoryOneLevelBean.RelateArticleBean.ArticlesBean;
 import com.amkj.dmsh.constant.ConstantVariable;
-import com.amkj.dmsh.homepage.activity.CatergoryTwoLevelActivity;
+import com.amkj.dmsh.homepage.activity.CatergoryTwoLevelSActivity;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantVariable.CATEGORY_TWO_LEVEL_LIST;
 
 /**
  * Created by xiaoxin on 2019/4/12 0012
@@ -51,7 +48,7 @@ public class CatergoryOneLevelAdapter extends BaseQuickAdapter<CatergoryOneLevel
         RelateArticleBean relateArticle = item.getRelateArticle();
         helper.getView(R.id.ll_artical).setVisibility(relateArticle != null && relateArticle.getArticles() != null && relateArticle.getArticles().size() > 0 ? View.VISIBLE : View.GONE);
         helper.getView(R.id.iv_top_cover).setOnClickListener(view -> {
-            skipCatergoryTwoLevel(item, 0);
+            skipCatergoryTwoLevel(item.getId(),"0");
         });
         if (relateArticle != null) {
             List<RelateArticleBean.ArticlesBean> articlesList = relateArticle.getArticles();
@@ -86,18 +83,16 @@ public class CatergoryOneLevelAdapter extends BaseQuickAdapter<CatergoryOneLevel
             //进入二级分类页面
             ChildCategoryListBean childCategoryListBean = (ChildCategoryListBean) view.getTag();
             if (childCategoryListBean != null) {
-                skipCatergoryTwoLevel(item, position+1);
+                skipCatergoryTwoLevel(item.getId(),childCategoryListBean.getId());
             }
         });
         rvTwoCatergory.setAdapter(baseQuickAdapter);
     }
 
-    private void skipCatergoryTwoLevel(CatergoryOneLevelBean item, int i) {
-        Intent intent = new Intent(mContext, CatergoryTwoLevelActivity.class);
-        intent.putParcelableArrayListExtra(CATEGORY_TWO_LEVEL_LIST, (ArrayList<? extends Parcelable>) item.getChildCategoryList());
-        intent.putExtra("position", i);
-        intent.putExtra(ConstantVariable.CATEGORY_PID, item.getId());
-        intent.putExtra(ConstantVariable.CATEGORY_NAME, item.getName());
+    private void skipCatergoryTwoLevel(String id,String pid) {
+        Intent intent = new Intent(mContext, CatergoryTwoLevelSActivity.class);
+        intent.putExtra(ConstantVariable.CATEGORY_PID, id);
+        intent.putExtra(ConstantVariable.CATEGORY_ID,pid);
         mContext.startActivity(intent);
     }
 }

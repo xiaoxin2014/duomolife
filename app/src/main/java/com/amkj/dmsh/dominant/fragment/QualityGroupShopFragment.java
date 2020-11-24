@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseFragment;
-import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.dominant.activity.QualityGroupShopDetailActivity;
 import com.amkj.dmsh.dominant.activity.QualityGroupShopMineActivity;
@@ -34,7 +33,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -218,14 +216,6 @@ public class QualityGroupShopFragment extends BaseFragment {
                         NetLoadUtils.getNetInstance().showLoadSir(loadService, qualityGroupBeanList, qualityGroupEntity);
                     }
                 });
-    }
-
-    @Override
-    protected void postEventResult(@NonNull EventMessage message) {
-        if (message.type.equals("refreshGroupShop")) {
-            page = 1;
-            loadData();
-        }
     }
 
 

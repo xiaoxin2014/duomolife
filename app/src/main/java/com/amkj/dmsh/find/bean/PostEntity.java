@@ -100,6 +100,15 @@ public class PostEntity extends BaseEntity {
         private List<PostCommentEntity.PostCommentBean> commList;
         private String view;//帖子查看量
         private int comment;//帖子评论量
+        private String title;
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
 
         public int getId() {
             return id;

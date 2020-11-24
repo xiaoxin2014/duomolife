@@ -50,7 +50,15 @@ public class QualityCreateAliPayIndentBean {
         private String code;
         private String msg;
         private String orderId;
+        private String productOrder;
 
+        public String getProductOrder() {
+            return productOrder;
+        }
+
+        public void setProductOrder(String productOrder) {
+            this.productOrder = productOrder;
+        }
 
         public String getOrderId() {
             return orderId;

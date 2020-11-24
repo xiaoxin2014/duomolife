@@ -628,7 +628,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(this, ADDRESS_LIST, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-
                 AddressListEntity addressListEntity = GsonUtils.fromJson(result, AddressListEntity.class);
                 if (addressListEntity != null) {
                     if (addressListEntity.getCode().equals(SUCCESS_CODE)) {
@@ -659,7 +658,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
             pullHeaderView.ll_indent_address_default.setVisibility(GONE);
             pullHeaderView.ll_indent_address_null.setVisibility(VISIBLE);
         }
-        //            再次购买
+        //再次购买
         if (!TextUtils.isEmpty(orderNo) && isFirst) {
             getOrderData();
         } else {
@@ -1137,30 +1136,16 @@ public class DirectIndentWriteActivity extends BaseActivity {
 
     //支付成功跳转
     private void skipDirectIndent() {
-        Intent intent = new Intent(getActivity(), DirectPaySuccessActivity.class);
-        intent.putExtra(INDENT_PRODUCT_TYPE, INDENT_PROPRIETOR_PRODUCT);
-        if (payWay.equals(PAY_WX_PAY)) {
-            if (qualityWeChatIndent.getResult() != null && !TextUtils.isEmpty(qualityWeChatIndent.getResult().getNo())) {
-                intent.putExtra("indentNo", qualityWeChatIndent.getResult().getNo());
-            }
-        } else if (payWay.equals(PAY_ALI_PAY)) {
-            if (qualityAliPayIndent.getResult() != null && !TextUtils.isEmpty(qualityAliPayIndent.getResult().getNo())) {
-                intent.putExtra("indentNo", qualityAliPayIndent.getResult().getNo());
-            }
-        } else if (payWay.equals(PAY_UNION_PAY)) {
-            if (qualityUnionIndent.getQualityCreateUnionPayIndent() != null && !TextUtils.isEmpty(qualityUnionIndent.getQualityCreateUnionPayIndent().getNo())) {
-                intent.putExtra("indentNo", qualityUnionIndent.getQualityCreateUnionPayIndent().getNo());
-            }
-        }
-
-        //延时跳转到支付成功页面（因为线程问题，立即跳转可能会失效）
-        new LifecycleHandler(this).postDelayed(new Runnable() {
-            @Override
-            public void run() {
+        if (!TextUtils.isEmpty(orderCreateNo)) {
+            Intent intent = new Intent(getActivity(), DirectPaySuccessActivity.class);
+            intent.putExtra(INDENT_PRODUCT_TYPE, INDENT_PROPRIETOR_PRODUCT);
+            intent.putExtra("indentNo", orderCreateNo);
+            //延时跳转到支付成功页面（因为线程问题，立即跳转可能会失效）
+            new LifecycleHandler(this).postDelayed(() -> {
                 startActivity(intent);
                 finish();
-            }
-        }, 1000);
+            }, 1000);
+        }
     }
 
     //已创建订单，取消支付，跳转到订单详情
@@ -1173,7 +1158,6 @@ public class DirectIndentWriteActivity extends BaseActivity {
                 startActivity(intent);
                 finish();
             }, 500);
-
         }
     }
 
@@ -1223,8 +1207,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
 
     //跳转我的拼团订单
     private void skipMineGroupIndent() {
-        Intent intent = new Intent();
-        intent.setClass(getActivity(), QualityGroupShopMineActivity.class);
+        Intent intent = new Intent(this, QualityGroupShopMineActivity.class);
         new LifecycleHandler(this).postDelayed(() -> {
             startActivity(intent);
             finish();
@@ -1233,19 +1216,8 @@ public class DirectIndentWriteActivity extends BaseActivity {
 
     //跳转开团成功页面
     private void skipGpShareIndent() {
-        String orderNo;
         Intent intent = new Intent(this, DoMoGroupJoinShareActivity.class);
-        if (PAY_WX_PAY.equals(payWay)) {
-            orderNo = qualityWeChatIndent.getResult().getNo();
-            intent.putExtra("orderNo", orderNo);
-        } else if (PAY_ALI_PAY.equals(payWay)) {
-            orderNo = qualityAliPayIndent.getResult().getNo();
-            intent.putExtra("orderNo", orderNo);
-        } else if (PAY_UNION_PAY.equals(payWay)) {
-            orderNo = qualityUnionIndent.getQualityCreateUnionPayIndent().getNo();
-            intent.putExtra("orderNo", orderNo);
-        }
-
+        intent.putExtra("orderNo", orderCreateNo);
         new LifecycleHandler(this).postDelayed(() -> {
             startActivity(intent);
             finish();

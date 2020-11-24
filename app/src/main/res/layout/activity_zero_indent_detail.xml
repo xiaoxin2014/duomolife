@@ -81,25 +81,41 @@
 
                     <include layout="@layout/item_new_indent_product" />
 
-                    <include
-                        layout="@layout/layout_direct_details_bottom_default" />
+                    <include layout="@layout/layout_direct_details_bottom_default" />
                 </LinearLayout>
             </androidx.core.widget.NestedScrollView>
         </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
         <LinearLayout
+            android:padding="@dimen/sc_mm_20"
             android:id="@+id/ll_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:background="@drawable/border_top_line"
-            android:gravity="right">
+            android:gravity="right|center_vertical"
+            android:visibility="gone">
 
             <TextView
+                android:id="@+id/tv_logistics"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/border_circle_three_gray_white"
+                android:gravity="center"
+                android:paddingLeft="@dimen/sc_mm_18"
+                android:paddingTop="@dimen/sc_mm_14"
+                android:paddingRight="@dimen/sc_mm_18"
+                android:paddingBottom="@dimen/sc_mm_14"
+                android:text="查看物流"
+                android:textColor="@color/text_black_t"
+                android:textSize="@dimen/sc_mm_26"
+                android:visibility="gone" />
+
+            <TextView
+                android:layout_marginLeft="@dimen/sc_mm_20"
                 android:id="@+id/tv_go_pay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/sc_mm_20"
                 android:background="@drawable/border_circle_three_blue"
                 android:gravity="center"
                 android:paddingLeft="@dimen/sc_mm_18"
@@ -108,7 +124,8 @@
                 android:paddingBottom="@dimen/sc_mm_14"
                 android:text="去支付"
                 android:textColor="@color/white"
-                android:textSize="@dimen/sc_mm_26" />
+                android:textSize="@dimen/sc_mm_26"
+                android:visibility="gone" />
         </LinearLayout>
     </RelativeLayout>
 </LinearLayout>

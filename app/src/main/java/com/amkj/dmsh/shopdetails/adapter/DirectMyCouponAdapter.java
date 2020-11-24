@@ -25,7 +25,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStringFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.utils.TimeUtils.getCurrentTime;
 
-;
 
 /**
  * Created by atd48 on 2016/8/23.

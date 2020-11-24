@@ -47,9 +47,9 @@
                             android:showDividers="end">
 
                             <com.amkj.dmsh.views.LogisticsNotifyView
-                                android:background="@color/light_gray_f"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content" />
+                                android:layout_height="wrap_content"
+                                android:background="@color/light_gray_f" />
 
                             <include layout="@layout/layout_direct_details_top_default" />
 
@@ -58,6 +58,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:scrollbars="none" />
+
+                            <include layout="@layout/layout_deposit_status" />
 
                             <include layout="@layout/layout_direct_details_bottom_default" />
                         </LinearLayout>
@@ -68,9 +70,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/sc_mm_98"
                         android:layout_gravity="center_horizontal"
+                        tl:tl_indicator_color="@color/text_login_blue_z"
                         tl:tl_indicator_height="2dp"
                         tl:tl_indicator_width_equal_title="true"
-                        tl:tl_indicator_color="@color/text_login_blue_z"
                         tl:tl_tab_space_equal="true"
                         tl:tl_textBold="SELECT"
                         tl:tl_textSelectColor="@color/text_login_blue_z"

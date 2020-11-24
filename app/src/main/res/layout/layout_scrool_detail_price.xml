@@ -4,10 +4,10 @@
     android:layout_height="wrap_content"
     android:background="@color/white"
     android:gravity="center_vertical"
-    android:paddingBottom="@dimen/sc_mm_10"
     android:orientation="horizontal"
     android:paddingLeft="@dimen/sc_mm_30"
-    android:paddingRight="@dimen/sc_mm_30">
+    android:paddingRight="@dimen/sc_mm_30"
+    android:paddingBottom="@dimen/sc_mm_10">
 
     <LinearLayout
         android:id="@+id/ll_normal_price"
@@ -18,12 +18,12 @@
         android:orientation="horizontal">
 
         <ImageView
-            android:visibility="gone"
-            android:layout_marginRight="@dimen/sc_mm_10"
             android:id="@+id/iv_top_vip_logo"
             android:layout_width="@dimen/sc_mm_29"
             android:layout_height="@dimen/sc_mm_28"
-            android:src="@drawable/vip_logo" />
+            android:layout_marginRight="@dimen/sc_mm_10"
+            android:src="@drawable/vip_logo"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/tv_ql_sp_pro_sc_price"

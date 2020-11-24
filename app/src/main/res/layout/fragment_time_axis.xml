@@ -39,6 +39,7 @@
             android:paddingBottom="@dimen/sc_mm_10" />
 
         <TextView
+            android:visibility="gone"
             android:id="@+id/tv_more"
             android:layout_width="match_parent"
             android:layout_height="@dimen/sc_mm_100"

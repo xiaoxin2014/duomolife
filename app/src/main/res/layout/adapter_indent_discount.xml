@@ -24,6 +24,15 @@
             android:textColor="@color/text_black_t"
             android:textSize="@dimen/sc_mm_28" />
 
+        <TextView
+            android:id="@+id/tv_indent_discount_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/sc_mm_10"
+            android:text="@string/defaul"
+            android:textColor="@color/text_login_gray_s"
+            android:textSize="@dimen/sc_mm_26" />
+
         <ImageView
             android:id="@+id/iv_mark"
             android:layout_width="@dimen/sc_mm_28"

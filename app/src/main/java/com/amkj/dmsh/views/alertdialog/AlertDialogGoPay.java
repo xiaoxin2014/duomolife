@@ -60,6 +60,7 @@ public class AlertDialogGoPay extends BaseAlertDialog {
     private String orderNo;
     private boolean isZero;//是否是0元订单
     private AppCompatActivity mActicity;
+    private OnPaySuccessListener mOnPaySuccessListener;
 
 
     public AlertDialogGoPay(AppCompatActivity activity, Object object, String simpleName) {
@@ -82,6 +83,7 @@ public class AlertDialogGoPay extends BaseAlertDialog {
             }
         }
     }
+
 
     /**
      * 展示dialog
@@ -213,13 +215,25 @@ public class AlertDialogGoPay extends BaseAlertDialog {
 
     private void skipPaySuccess() {
         if (!isZero) {
-            new LifecycleHandler(mActicity).postDelayed(() -> {
-                Intent intent = new Intent(context, DirectPaySuccessActivity.class);
-                intent.putExtra("indentNo", orderNo);
-                intent.putExtra(INDENT_PRODUCT_TYPE, INDENT_PROPRIETOR_PRODUCT);
-                context.startActivity(intent);
-            }, 1000);
+            if (mOnPaySuccessListener == null) {
+                new LifecycleHandler(mActicity).postDelayed(() -> {
+                    Intent intent = new Intent(context, DirectPaySuccessActivity.class);
+                    intent.putExtra("indentNo", orderNo);
+                    intent.putExtra(INDENT_PRODUCT_TYPE, INDENT_PROPRIETOR_PRODUCT);
+                    context.startActivity(intent);
+                }, 1000);
+            } else {
+                mOnPaySuccessListener.paySuccess();
+            }
         }
+    }
+
+    public void setOnPaySuccessListener(OnPaySuccessListener paySuccessListener) {
+        mOnPaySuccessListener = paySuccessListener;
+    }
+
+    public interface OnPaySuccessListener {
+        void paySuccess();
     }
 
     private void doAliPay(QualityCreateAliPayIndentBean.ResultBean resultBean) {

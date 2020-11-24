@@ -1,7 +1,5 @@
 package com.amkj.dmsh.homepage.activity;
 
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -16,8 +14,8 @@ import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.adapter.CatergoryGoodsAdapter;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.LikedProductBean;
+import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.utils.RemoveExistUtils;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
@@ -28,6 +26,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -60,7 +60,7 @@ public class HomeCatergoryActivity extends BaseActivity {
     private int page = 1;
     private UserLikedProductEntity likedProductEntity;
     private RemoveExistUtils<LikedProductBean> removeExistUtils = new RemoveExistUtils<>();
-    CatergoryGoodsAdapter mCatergoryGoodsAdapter;
+    private CatergoryGoodsAdapter mCatergoryGoodsAdapter;
     private CatergoryOneLevelEntity mCatergoryEntity;
     private String mCategoryPid;
     private String mCategoryName;

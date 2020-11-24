@@ -51,9 +51,17 @@ public class ZeroIndentEntity extends BaseTimeEntity {
         private String consignee;
         private String mobile;
         private String address;
+        private String expressNo;
         private ZeroGoodsInfoBean zeroGoodsInfo;
         private List<PriceInfoBean> priceInfoList;
 
+        public String getExpressNo() {
+            return expressNo;
+        }
+
+        public void setExpressNo(String expressNo) {
+            this.expressNo = expressNo;
+        }
 
         public String getRefundNo() {
             return refundNo;

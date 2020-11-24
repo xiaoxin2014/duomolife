@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.text.TextUtils;
 import android.view.Gravity;
-import android.view.View;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
@@ -39,6 +38,8 @@ public class IndentDiscountAdapter extends BaseQuickAdapter<PriceInfoBean, BaseV
     protected void convert(BaseViewHolder helper, PriceInfoBean priceInfoBean) {
         TextView tv_indent_discount_price = helper.getView(R.id.tv_indent_discount_price);
         helper.setText(R.id.tv_indent_discount_name, getStrings(priceInfoBean.getName()))
+                .setText(R.id.tv_indent_discount_desc, getStrings(priceInfoBean.getDesc()))
+                .setGone(R.id.tv_indent_discount_desc, !TextUtils.isEmpty(priceInfoBean.getDesc()))
                 .setGone(R.id.iv_mark, priceInfoBean.isEcm());
         try {
             tv_indent_discount_price.setTextColor(Color.parseColor((!TextUtils.isEmpty(priceInfoBean.getColor()) ?

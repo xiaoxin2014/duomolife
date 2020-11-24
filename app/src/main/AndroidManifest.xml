@@ -1094,11 +1094,11 @@
 
         <!--二级分类商品列表-->
         <activity
-            android:name=".homepage.activity.CatergoryTwoLevelActivity"
+            android:name=".homepage.activity.CatergoryTwoLevelSActivity"
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="CatergoryTwoLevelActivity" />
+                <action android:name="CatergoryTwoLevelSActivity" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -1577,7 +1577,7 @@
             </intent-filter>
         </activity>
 
-        <!--团购商品种草帖子-->
+        <!--团购商品种草帖子分类-->
         <activity
             android:name=".time.activity.TimePostCatergoryActivity"
             android:exported="false"
@@ -1599,6 +1599,18 @@
             </intent-filter>
         </activity>
 
+        <!--预售定金结算-->
+        <activity
+            android:name=".shopdetails.activity.DirectDepositWriteActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="DirectDepositWriteActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!--规则相关-->
         <activity
             android:name=".mine.activity.WebRuleCommunalActivity"
             android:exported="false"

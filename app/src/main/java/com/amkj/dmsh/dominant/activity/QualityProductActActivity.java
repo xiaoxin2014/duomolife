@@ -292,8 +292,8 @@ public class QualityProductActActivity extends BaseActivity {
         TextView mTvProductActivityDescription;
         @BindView(R.id.iv_next_icon)
         ImageView mIvNextIcon;
-        @BindView(R.id.rl_product_activity_detail)
-        LinearLayout mRlProductActivityDetail;
+        @BindView(R.id.rl_product_activity_description)
+        LinearLayout mRlProductActivityDescription;
         @BindView(R.id.cv_countdownTime_white_hours)
         CountdownView mCvCountdownTimeWhiteHours;
         @BindView(R.id.ll_top_end_time)

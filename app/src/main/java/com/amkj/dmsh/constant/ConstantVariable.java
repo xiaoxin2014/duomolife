@@ -431,6 +431,7 @@ public class ConstantVariable {
     public static final int URGE_REFUND = 17;//催促退款
     public static final int EDIT_ADDRESS = 18;//修改地址
     public static final int CHECK_REFUND_LOGISTICS = 19;//查看退货物流
+    public static final int DEPOSIT_TO_PAY = 20;//定金去支付
 
 
     //Activity跳转请求码
@@ -462,4 +463,5 @@ public class ConstantVariable {
     public static final String INDENT_W_TYPE = "7";//普通订单填写
     public static final String INDENT_GROUP_SHOP = "8";//拼团订单填写
     public static final String INDENT_ZERO = "9";//0元试用订单填写
+    public static final String INDENT_DEPOSIT = "10";//预售定金订单填写
 }

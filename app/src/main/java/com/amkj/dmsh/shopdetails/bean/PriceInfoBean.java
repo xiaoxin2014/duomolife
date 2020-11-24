@@ -1,8 +1,5 @@
 package com.amkj.dmsh.shopdetails.bean;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -10,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
  * Version:v4.1.0
  * ClassDescription :订单价格明细
  */
-public class PriceInfoBean implements Parcelable {
+public class PriceInfoBean {
     /**
      * color : #000000
      * totalPrice : 725.6
@@ -20,9 +17,26 @@ public class PriceInfoBean implements Parcelable {
 
     private String color;
     private String name;
+    private String desc;
     @SerializedName(value = "totalPriceName", alternate = "priceText")
     private String totalPriceName;
     private String flag;
+
+
+    public PriceInfoBean(String name,String desc, String totalPriceName) {
+        this.name = name;
+        this.desc = desc;
+        this.totalPriceName = totalPriceName;
+    }
+
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
 
     public boolean isEcm() {
         return "ecm".equals(flag);
@@ -60,37 +74,4 @@ public class PriceInfoBean implements Parcelable {
     public void setTotalPriceName(String totalPriceName) {
         this.totalPriceName = totalPriceName;
     }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.color);
-        dest.writeString(this.name);
-        dest.writeString(this.totalPriceName);
-    }
-
-    public PriceInfoBean() {
-    }
-
-    protected PriceInfoBean(Parcel in) {
-        this.color = in.readString();
-        this.name = in.readString();
-        this.totalPriceName = in.readString();
-    }
-
-    public static final Parcelable.Creator<PriceInfoBean> CREATOR = new Parcelable.Creator<PriceInfoBean>() {
-        @Override
-        public PriceInfoBean createFromParcel(Parcel source) {
-            return new PriceInfoBean(source);
-        }
-
-        @Override
-        public PriceInfoBean[] newArray(int size) {
-            return new PriceInfoBean[size];
-        }
-    };
 }

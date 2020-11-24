@@ -142,13 +142,16 @@ public class LogisticsNewEntity extends BaseEntity {
 
         private String orderNo;
         private String expressNo;
-        private String isPresent;//是否是赠品包裹
+        private String zeroOrderNo;
         //退款物流相关
         private String refundNo;
 
+        public String getZeroOrderNo() {
+            return zeroOrderNo;
+        }
 
-        public PackageInfoBean(String refundNo) {
-            this.refundNo = refundNo;
+        public void setZeroOrderNo(String zeroOrderNo) {
+            this.zeroOrderNo = zeroOrderNo;
         }
 
         public String getRefundNo() {
@@ -175,8 +178,5 @@ public class LogisticsNewEntity extends BaseEntity {
             this.expressNo = expressNo;
         }
 
-        public boolean isPresent() {
-            return "1".equals(isPresent);
-        }
     }
 }

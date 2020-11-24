@@ -2,8 +2,6 @@ package com.amkj.dmsh.homepage.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
@@ -15,8 +13,8 @@ import com.amkj.dmsh.dominant.adapter.GoodProductAdapter;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
-import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.LikedProductBean;
+import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.utils.RemoveExistUtils;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
@@ -27,6 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -51,7 +51,7 @@ public class CatergoryGoodsFragment extends BaseFragment {
     private int page = 1;
     private UserLikedProductEntity likedProductEntity;
     private RemoveExistUtils<LikedProductBean> removeExistUtils = new RemoveExistUtils<>();
-    GoodProductAdapter mCatergoryGoodsAdapter;
+    private GoodProductAdapter mCatergoryGoodsAdapter;
     private String mId;
     private String mPid;
 
@@ -142,7 +142,7 @@ public class CatergoryGoodsFragment extends BaseFragment {
         params.put("showCount", 18);
         params.put("id", mId);
         params.put("pid", mPid);
-        params.put("orderTypeId", orderType);
+        params.put("orderTypeId", orderType);//排序方式
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Q_PRODUCT_TYPE_LIST
                 , params, new NetLoadListenerHelper() {
                     @Override
@@ -151,7 +151,6 @@ public class CatergoryGoodsFragment extends BaseFragment {
                         if (loadHud != null) {
                             loadHud.dismiss();
                         }
-
 
                         likedProductEntity = GsonUtils.fromJson(result, UserLikedProductEntity.class);
                         if (likedProductEntity != null) {

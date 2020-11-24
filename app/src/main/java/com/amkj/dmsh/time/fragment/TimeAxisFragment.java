@@ -198,6 +198,7 @@ public class TimeAxisFragment extends BaseFragment {
             }
 
             postAdapter.notifyDataSetChanged();
+            mTvMore.setVisibility(mPostList.size() > 0 ? View.VISIBLE : View.GONE);
         }
     }
 

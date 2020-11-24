@@ -33,10 +33,10 @@ import com.amkj.dmsh.shopdetails.bean.IndentDetailEntity;
 import com.amkj.dmsh.shopdetails.bean.MainOrderListEntity;
 import com.amkj.dmsh.shopdetails.bean.PriceInfoBean;
 import com.amkj.dmsh.utils.CountDownTimer;
-import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.MainButtonView;
+import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
@@ -63,6 +63,7 @@ import static android.view.View.GONE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantVariable.CHANGE_ORDER_ADDRESS;
@@ -72,6 +73,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.IS_LOGIN_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_INDENT_LIST;
 import static com.amkj.dmsh.utils.TimeUtils.getCoutDownTime;
+import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTime;
 import static com.amkj.dmsh.utils.TimeUtils.isEndOrStartTimeAddSeconds;
 
 
@@ -152,6 +154,24 @@ public class DirectExchangeDetailsActivity extends BaseActivity {
     ViewPager mVpCustom;
     @BindView(R.id.main_button_view)
     MainButtonView mMainButtonView;
+    @BindView(R.id.tv_phase1)
+    TextView mTvPhase1;
+    @BindView(R.id.tv_deposit)
+    TextView mTvDeposit;
+    @BindView(R.id.tv_phase2)
+    TextView mTvPhase2;
+    @BindView(R.id.tv_payment)
+    TextView mTvPayment;
+    @BindView(R.id.ll_deposit)
+    LinearLayout mLlDeposit;
+    @BindView(R.id.tv_start_time)
+    TextView mTvStartTime;
+    @BindView(R.id.tv_pay_amount)
+    TextView mTvPayAmount;
+    @BindView(R.id.tv_pay_amount_type)
+    TextView mTvPayAmountType;
+    @BindView(R.id.ll_pay_amount)
+    LinearLayout mLlPayAmount;
     //    订单号
     private String orderNo;
     private List<OrderProductNewBean> goodsBeanList = new ArrayList<>();
@@ -354,9 +374,13 @@ public class DirectExchangeDetailsActivity extends BaseActivity {
 
         //待支付倒计时
         mStatus = mainOrderBean.getStatus();
-        if (mStatus >= 0 && mStatus < 10) {
-            tv_countdownTime.setVisibility(View.VISIBLE);
-            setCountTime(mainOrderBean);
+        if (mStatus >= 0 && mStatus < 10 && isEndOrStartTimeAddSeconds(mainOrderBean.getCreateTime(), infoDetailEntity.getCurrentTime(), mainOrderBean.getSecond())) {
+            if (mainOrderBean.getDepositStatus() == 1 && !isEndOrStartTime(infoDetailEntity.getCurrentTime(), mainOrderBean.getOrderPayStartTime())) {
+                tv_countdownTime.setVisibility(GONE);
+            } else {
+                tv_countdownTime.setVisibility(View.VISIBLE);
+                setCountTime(mainOrderBean);
+            }
         } else {
             tv_countdownTime.setVisibility(GONE);
         }
@@ -388,9 +412,36 @@ public class DirectExchangeDetailsActivity extends BaseActivity {
             }
             orderProductList.addAll(presentProductList);
         }
-
         if (orderProductList != null && orderProductList.size() > 0) {
             goodsBeanList.addAll(orderProductList);
+        }
+
+          /*
+          预售订单
+         */
+        if (mainOrderBean.isDepositFlag()) {
+            mLlDeposit.setVisibility(View.VISIBLE);
+            rv_indent_details.setVisibility(GONE);
+            mTvPhase1.setText(("阶段1：" + mainOrderBean.getStatusOneText()));
+            mTvDeposit.setText(getStringsChNPrice(getActivity(), mainOrderBean.getDeposit()));
+            mTvPhase2.setText(("阶段2：" + mainOrderBean.getStatusTwoText()));
+            mTvPayment.setText(getStringsChNPrice(getActivity(), mainOrderBean.getPayAmount()));
+            mTvStartTime.setText(mainOrderBean.getOrderPayStartTime() + " 开始支付尾款");
+            if (mStatus >= 0 && mStatus < 10) {
+                mLlPayAmount.setVisibility(View.VISIBLE);
+                if (mainOrderBean.getDepositStatus() == 1) {
+                    mTvPayAmountType.setText("尾款需支付");
+                    mTvPayAmount.setText(getStringsChNPrice(this, mainOrderBean.getPayAmount()));
+                } else {
+                    mTvPayAmountType.setText("定金需支付");
+                    mTvPayAmount.setText(getStringsChNPrice(this, mainOrderBean.getDeposit()));
+                }
+            } else {
+                mLlPayAmount.setVisibility(GONE);
+            }
+        } else {
+            mLlDeposit.setVisibility(GONE);
+            rv_indent_details.setVisibility(View.VISIBLE);
         }
 
         /*
@@ -427,6 +478,7 @@ public class DirectExchangeDetailsActivity extends BaseActivity {
         //订单价格明细
         if (mainOrderBean.getPriceInfoList() != null && mainOrderBean.getPriceInfoList().size() > 0) {
             priceInfoList.addAll(mainOrderBean.getPriceInfoList());
+
         }
 
         //主订单按钮
@@ -436,15 +488,15 @@ public class DirectExchangeDetailsActivity extends BaseActivity {
         mVpCustom.setLayoutParams(layoutParams);
     }
 
-    private void setCountTime(MainOrderListEntity.MainOrderBean indentDetailBean) {
+    private void setCountTime(MainOrderListEntity.MainOrderBean mainOrderBean) {
         String currentTime = infoDetailEntity.getCurrentTime();
-        String createTime = indentDetailBean.getCreateTime();
+        String createTime = mainOrderBean.getCreateTime();
         try {
             //格式化开始时间
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
             Date dateCurrent = formatter.parse(currentTime);
             Date dateCreat = formatter.parse(createTime);
-            long second = indentDetailBean.getSecond();
+            long second = mainOrderBean.getSecond();
             if (isEndOrStartTimeAddSeconds(createTime, currentTime, second)) {
                 tv_countdownTime.setVisibility(View.VISIBLE);
                 long millisInFuture = dateCreat.getTime() + second * 1000 - dateCurrent.getTime();

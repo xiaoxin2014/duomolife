@@ -1,9 +1,5 @@
 package com.amkj.dmsh.shopdetails.adapter;
 
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
-
 import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.shopdetails.bean.LogisticsNewEntity.PackageInfoBean;
 import com.amkj.dmsh.shopdetails.fragment.DirectLogisticsFragment;
@@ -11,6 +7,10 @@ import com.amkj.dmsh.shopdetails.fragment.DirectLogisticsFragment;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
 
 
 /**
@@ -36,6 +36,7 @@ public class LogisticsPagerAdapter extends FragmentPagerAdapter {
         PackageInfoBean packageInfoBean = packageList.get(position);
         if (packageInfoBean != null) {
             params.put("orderNo", packageInfoBean.getOrderNo());
+            params.put("zeroOrderNo", packageInfoBean.getZeroOrderNo());
             params.put("expressNo", packageInfoBean.getExpressNo());
             params.put("refundNo", packageInfoBean.getRefundNo());
         }

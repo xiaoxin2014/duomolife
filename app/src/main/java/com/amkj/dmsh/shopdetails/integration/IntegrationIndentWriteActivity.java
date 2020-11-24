@@ -106,9 +106,6 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
     TextView tvIndentDetailsAddress;
     @BindView(R.id.ll_indent_address_default)
     LinearLayout llIndentAddressDefault;
-    //进关信息
-    @BindView(R.id.ll_oversea_info)
-    LinearLayout llOverseaInfo;
 
     @BindView(R.id.iv_integral_product_image)
     ImageView ivIntegralProductImage;
@@ -164,7 +161,6 @@ public class IntegrationIndentWriteActivity extends BaseActivity {
         tvHeaderTitle.setText("确认订单");
         tvHeaderShared.setVisibility(View.GONE);
         tvOverseaBuyTint.setVisibility(View.GONE);
-        llOverseaInfo.setVisibility(View.GONE);
         rvIntegralWriteInfo.setVisibility(View.GONE);
         ll_integral_pay_way.setVisibility(View.GONE);
         Intent intent = getIntent();

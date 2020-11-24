@@ -8,7 +8,6 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.dominant.adapter.QualityGroupShopAdapter;
@@ -32,7 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
@@ -217,14 +215,6 @@ public class QualityGroupShopActivity extends BaseActivity {
                 });
     }
 
-    @Override
-    protected void postEventResult(@NonNull EventMessage message) {
-        if (message.type.equals("refreshGroupShop")) {
-            page = 1;
-            loadData();
-        }
-    }
-
 
     @OnClick({R.id.tv_life_back, R.id.tv_header_shared})
     public void onViewClicked(View view) {
@@ -233,7 +223,8 @@ public class QualityGroupShopActivity extends BaseActivity {
                 finish();
                 break;
             case R.id.tv_header_shared:
-                new UMShareAction(this, "",
+                String imgUrl = qualityGroupBeanList.size() > 0 ? qualityGroupBeanList.get(0).getCoverImage() : "";
+                new UMShareAction(this, imgUrl,
                         "每天都有【9块9起】超值拼团购",
                         "邀请好友一起团购，团的超级实用，买对了就是省钱",
                         "https://www.domolife.cn/m/template/share_template/group.html", "pages/group/group", -1);

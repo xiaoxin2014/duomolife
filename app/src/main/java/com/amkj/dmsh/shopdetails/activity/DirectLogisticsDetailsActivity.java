@@ -1,8 +1,6 @@
 package com.amkj.dmsh.shopdetails.activity;
 
 import android.content.Intent;
-import androidx.annotation.NonNull;
-import androidx.viewpager.widget.ViewPager;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -26,6 +24,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.OnClick;
 import me.jessyan.autosize.utils.AutoSizeUtils;
@@ -55,6 +55,7 @@ public class DirectLogisticsDetailsActivity extends BaseActivity {
     LinearLayout ll_detail;
     private String orderNo;
     private String refundNo;
+    private String zeroOrderNo;
     private List<String> pageTitle = new ArrayList<>();
     private LogisticsNewEntity mLogisticsNewEntity;
     List<PackageInfoBean> mPackageInfoList = new ArrayList<>();
@@ -72,6 +73,7 @@ public class DirectLogisticsDetailsActivity extends BaseActivity {
         Intent intent = getIntent();
         orderNo = intent.getStringExtra("orderNo");
         refundNo = intent.getStringExtra("refundNo");
+        zeroOrderNo = intent.getStringExtra("zeroOrderNo");
         stl_direct_logistics_details.setTextsize(AutoSizeUtils.mm2px(mAppContext, 28));
     }
 
@@ -88,12 +90,19 @@ public class DirectLogisticsDetailsActivity extends BaseActivity {
     @Override
     protected void loadData() {
         if (!TextUtils.isEmpty(refundNo)) {//退款物流
-            PackageInfoBean packageInfoBean = new PackageInfoBean(refundNo);
+            PackageInfoBean packageInfoBean = new PackageInfoBean();
+            packageInfoBean.setRefundNo(refundNo);
             mPackageInfoList.add(packageInfoBean);
             setData();
             NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
         } else if (!TextUtils.isEmpty(orderNo)) {//普通物流
             getOrderExpressNo();
+        } else if (!TextUtils.isEmpty(zeroOrderNo)) {//0元试用订单物流
+            PackageInfoBean packageInfoBean = new PackageInfoBean();
+            packageInfoBean.setZeroOrderNo(zeroOrderNo);
+            mPackageInfoList.add(packageInfoBean);
+            setData();
+            NetLoadUtils.getNetInstance().showLoadSirSuccess(loadService);
         }
     }
 
@@ -116,7 +125,7 @@ public class DirectLogisticsDetailsActivity extends BaseActivity {
                                     setData();
                                 }
                             } else if (!mLogisticsNewEntity.getCode().equals(EMPTY_CODE)) {
-                                showToast( mLogisticsNewEntity.getMsg());
+                                showToast(mLogisticsNewEntity.getMsg());
                             }
                         }
 
@@ -134,7 +143,6 @@ public class DirectLogisticsDetailsActivity extends BaseActivity {
     private void setData() {
         for (int i = 0; i < mPackageInfoList.size(); i++) {
             pageTitle.add("包裹" + (i + 1));
-//            pageTitle.add(mPackageInfoList.get(i).isPresent() ? "赠品" : "包裹" + (i + 1));
         }
 
         LogisticsPagerAdapter logisticsPagerAdapter = new LogisticsPagerAdapter(getSupportFragmentManager(), pageTitle, mPackageInfoList);

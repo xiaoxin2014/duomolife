@@ -93,6 +93,108 @@ public class MainOrderListEntity extends BaseTimeEntity {
         private Map<String, Map<String, String>> refundReasonMap;
         private Map<String, String> refundTypeMap;
 
+        //预售相关（订单列表）
+        private String deposit;  //定金金额
+        private String depositNo;//定金单号
+        private int depositStatus;//定金支付状态   1已支付  0未支付 <0超时或者取消
+        private String orderPayStartTime;
+        private String orderPayEndTime;
+
+        //预售相关（订单详情）
+        private String isDepositFlag;
+        private String depositStartTime;
+        private String depositEndTime;
+        private String depositDiscount;
+        private String statusOneText;
+        private String statusTwoText;
+
+        public boolean isDepositFlag() {
+            return "1".equals(isDepositFlag);
+        }
+
+        public void setIsDepositFlag(String isDepositFlag) {
+            this.isDepositFlag = isDepositFlag;
+        }
+
+        public String getDepositStartTime() {
+            return depositStartTime;
+        }
+
+        public void setDepositStartTime(String depositStartTime) {
+            this.depositStartTime = depositStartTime;
+        }
+
+        public String getDepositEndTime() {
+            return depositEndTime;
+        }
+
+        public void setDepositEndTime(String depositEndTime) {
+            this.depositEndTime = depositEndTime;
+        }
+
+        public String getDepositDiscount() {
+            return depositDiscount;
+        }
+
+        public void setDepositDiscount(String depositDiscount) {
+            this.depositDiscount = depositDiscount;
+        }
+
+        public String getStatusOneText() {
+            return statusOneText;
+        }
+
+        public void setStatusOneText(String statusOneText) {
+            this.statusOneText = statusOneText;
+        }
+
+        public String getStatusTwoText() {
+            return statusTwoText;
+        }
+
+        public void setStatusTwoText(String statusTwoText) {
+            this.statusTwoText = statusTwoText;
+        }
+
+        public String getDepositNo() {
+            return depositNo;
+        }
+
+        public void setDepositNo(String depositNo) {
+            this.depositNo = depositNo;
+        }
+
+        public int getDepositStatus() {
+            return depositStatus;
+        }
+
+        public void setDepositStatus(int depositStatus) {
+            this.depositStatus = depositStatus;
+        }
+
+        public String getDeposit() {
+            return deposit;
+        }
+
+        public void setDeposit(String deposit) {
+            this.deposit = deposit;
+        }
+
+        public String getOrderPayStartTime() {
+            return orderPayStartTime;
+        }
+
+        public void setOrderPayStartTime(String orderPayStartTime) {
+            this.orderPayStartTime = orderPayStartTime;
+        }
+
+        public String getOrderPayEndTime() {
+            return orderPayEndTime;
+        }
+
+        public void setOrderPayEndTime(String orderPayEndTime) {
+            this.orderPayEndTime = orderPayEndTime;
+        }
 
         public List<OrderProductNewBean> getPresentProductList() {
             return presentProductList == null ? new ArrayList<>() : presentProductList;
@@ -449,7 +551,6 @@ public class MainOrderListEntity extends BaseTimeEntity {
         public void setPriceInfoList(List<PriceInfoBean> priceInfoList) {
             this.priceInfoList = priceInfoList;
         }
-
 
         public List<ActivityInfoListBean> getActivityInfoList() {
             return activityInfoList;

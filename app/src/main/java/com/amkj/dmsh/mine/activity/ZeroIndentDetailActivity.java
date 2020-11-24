@@ -22,6 +22,7 @@ import com.amkj.dmsh.mine.bean.ZeroIndentEntity.ZeroIndentBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
+import com.amkj.dmsh.shopdetails.activity.DirectLogisticsDetailsActivity;
 import com.amkj.dmsh.shopdetails.activity.RefundMoneyActivity;
 import com.amkj.dmsh.shopdetails.adapter.IndentDiscountAdapter;
 import com.amkj.dmsh.shopdetails.bean.PriceInfoBean;
@@ -147,6 +148,10 @@ public class ZeroIndentDetailActivity extends BaseActivity {
     LinearLayout mLlDetail;
     @BindView(R.id.tv_refund_aspect)
     TextView mTvRefundAspect;
+    @BindView(R.id.tv_logistics)
+    TextView mTvLogistics;
+    @BindView(R.id.tv_go_pay)
+    TextView mTvGoPay;
     private String mOrderId;
     private ZeroIndentEntity mZeroIndentEntity;
     private ZeroIndentBean mZeroIndentBean;
@@ -235,14 +240,23 @@ public class ZeroIndentDetailActivity extends BaseActivity {
             mTvCountdownTime.setVisibility(View.VISIBLE);
             setCountTime(mZeroIndentBean);
             //去支付按钮
-            mllButton.setVisibility(View.VISIBLE);
+            mTvGoPay.setVisibility(View.VISIBLE);
         } else {
             mTvCountdownTime.setVisibility(GONE);
-            mllButton.setVisibility(GONE);
+            mTvGoPay.setVisibility(GONE);
         }
         FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) mLlDetail.getLayoutParams();
         layoutParams.bottomMargin = AutoSizeUtils.mm2px(mAppContext, mllButton.getVisibility() == View.VISIBLE ? 100 : 0);
         mLlDetail.setLayoutParams(layoutParams);
+
+        //查看物流
+        if (!TextUtils.isEmpty(mZeroIndentBean.getExpressNo())) {
+            mTvLogistics.setVisibility(View.VISIBLE);
+        } else {
+            mTvLogistics.setVisibility(GONE);
+        }
+
+        mllButton.setVisibility(mTvGoPay.getVisibility() == GONE && mTvLogistics.getVisibility() == GONE ? GONE : View.VISIBLE);
 
         //退款去向
         mTvRefundAspect.setVisibility(!TextUtils.isEmpty(mZeroIndentBean.getRefundNo()) ? View.VISIBLE : GONE);
@@ -329,7 +343,7 @@ public class ZeroIndentDetailActivity extends BaseActivity {
     }
 
 
-    @OnClick({R.id.tv_life_back, R.id.ll_qy_service, R.id.tv_copy_text, R.id.tv_refund_aspect, R.id.tv_go_pay})
+    @OnClick({R.id.tv_life_back, R.id.ll_qy_service, R.id.tv_copy_text, R.id.tv_refund_aspect, R.id.tv_go_pay, R.id.tv_logistics})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_life_back:
@@ -360,6 +374,14 @@ public class ZeroIndentDetailActivity extends BaseActivity {
             case R.id.tv_go_pay:
                 if (mZeroIndentBean != null) {
                     goPay(mZeroIndentBean.getOrderNo());
+                }
+                break;
+            //查看物流
+            case R.id.tv_logistics:
+                if (mZeroIndentBean != null) {
+                    Intent intent = new Intent(this, DirectLogisticsDetailsActivity.class);
+                    intent.putExtra("zeroOrderNo", mZeroIndentBean.getOrderNo());
+                    startActivity(intent);
                 }
                 break;
         }

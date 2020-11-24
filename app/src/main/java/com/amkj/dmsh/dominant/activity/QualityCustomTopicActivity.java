@@ -380,10 +380,10 @@ public class QualityCustomTopicActivity extends BaseActivity {
                 @Override
                 public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
                     ShareDataBean shareDataBean = null;
-                    if (view.getId() == R.id.tv_communal_share && customProList.size() > 0) {
-                        LikedProductBean likedProductBean = customProList.get(0);
-                        shareDataBean = new ShareDataBean(likedProductBean.getPicUrl()
-                                , getStrings(userLikedProductEntity.getZoneName())
+                    if (view.getId() == R.id.tv_communal_share) {
+                        String imgUrl = communalDetailAdapter.getImgList().size() > 0 ? communalDetailAdapter.getImgList().get(0) : (customProList.size() > 0 ? customProList.get(0).getPicUrl() : "");
+                        shareDataBean = new ShareDataBean(imgUrl
+                                , userLikedProductEntity != null ? getStrings(userLikedProductEntity.getZoneName()) : ""
                                 , "我在多么生活发现这几样好物，性价比不错，还包邮"
                                 , Url.BASE_SHARE_PAGE_TWO + "goods/CustomZone.html?id=" + productType);
 
@@ -442,15 +442,13 @@ public class QualityCustomTopicActivity extends BaseActivity {
 
     @OnClick(R.id.iv_img_share)
     void toShare(View view) {
-        if (customProList.size() > 0) {
-            LikedProductBean likedProductBean = customProList.get(0);
-            new UMShareAction(QualityCustomTopicActivity.this
-                    , ""
-                    , getStrings(userLikedProductEntity.getZoneName())
-                    , "我在多么生活发现这几样好物，性价比不错，还包邮"
-                    , Url.BASE_SHARE_PAGE_TWO + "goods/CustomZone.html?id=" + productType
-                    , "pages/handpick/handpick?id=" + productType, getStringChangeIntegers(productType));
-        }
+        String imgUrl = communalDetailAdapter.getImgList().size() > 0 ? communalDetailAdapter.getImgList().get(0) : (customProList.size() > 0 ? customProList.get(0).getPicUrl() : "");
+        new UMShareAction(QualityCustomTopicActivity.this
+                , imgUrl
+                , userLikedProductEntity != null ? getStrings(userLikedProductEntity.getZoneName()) : ""
+                , "我在多么生活发现这几样好物，性价比不错，还包邮"
+                , Url.BASE_SHARE_PAGE_TWO + "goods/CustomZone.html?id=" + productType
+                , "pages/handpick/handpick?id=" + productType, getStringChangeIntegers(productType));
     }
 
 

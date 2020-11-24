@@ -128,7 +128,7 @@
     <string name="umeng_share_c_url">复制链接</string>
     <!--商品-->
     <string name="refrence_only">该金额仅供参考，具体金额以实际结算为准</string>
-    <string name="text_act_not_start">活动价 ¥%1$s（未开始）</string>
+    <string name="text_act_not_start">¥%1$s（未开始）</string>
     <string name="car_discount_price">优惠了¥%1$s元</string>
     <string name="money_price_chn">¥%1$s</string>
     <string name="shop_cart_rmb_price">%1$s  ¥%2$s</string>
@@ -341,4 +341,9 @@
     <string name="zero_detail_share_title">#%s#多么会员0元免费试用，快来申请把！</string>
     <string name="look_all_commnet">查看全部%d条评论</string>
     <string name="all_comment_num">全部评论 %d</string>
+    <string name="payment_start_time">(%s 开始支付尾款)</string>
+    <string name="deposit">定金￥%s</string>
+    <string name="deposit_discount">可抵扣￥%s</string>
+    <string name="deposit_order_time">支付尾款时间：%1$s~%2$s</string>
+    <string name="deposit_discount_detail">￥%1$s抵扣￥%2$s</string>
 </resources>

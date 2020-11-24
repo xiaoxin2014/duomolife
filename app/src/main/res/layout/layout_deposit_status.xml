@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_deposit"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_phase1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/sc_mm_30"
+        android:layout_marginTop="@dimen/sc_mm_30"
+        android:text="阶段1"
+        android:textColor="@color/text_black_t"
+        android:textSize="@dimen/sc_mm_30" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/sc_mm_30"
+        android:layout_marginTop="@dimen/sc_mm_30"
+        android:layout_marginRight="@dimen/sc_mm_30"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="商品定金"
+            android:textColor="@color/text_login_gray_s"
+            android:textSize="@dimen/sc_mm_26" />
+
+        <TextView
+            android:id="@+id/tv_deposit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/defaul"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_26" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_phase2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/sc_mm_30"
+        android:layout_marginTop="@dimen/sc_mm_40"
+        android:text="阶段2"
+        android:textColor="@color/text_black_t"
+        android:textSize="@dimen/sc_mm_30" />
+
+    <TextView
+        android:id="@+id/tv_start_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/sc_mm_30"
+        android:layout_marginTop="@dimen/sc_mm_10"
+        android:text="@string/defaul"
+        android:textColor="@color/text_login_gray_s"
+        android:textSize="@dimen/sc_mm_26" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/sc_mm_30"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="商品尾款"
+            android:textColor="@color/text_login_gray_s"
+            android:textSize="@dimen/sc_mm_26" />
+
+        <TextView
+            android:id="@+id/tv_payment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/defaul"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_26" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_pay_amount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/bg_light_blue_e"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/sc_mm_30"
+        android:paddingTop="@dimen/sc_mm_20"
+        android:paddingRight="@dimen/sc_mm_30"
+        android:paddingBottom="@dimen/sc_mm_20">
+
+        <TextView
+            android:id="@+id/tv_pay_amount_type"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="需支付"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_28" />
+
+        <TextView
+            android:id="@+id/tv_pay_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/defaul"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_28" />
+    </LinearLayout>
+</LinearLayout>

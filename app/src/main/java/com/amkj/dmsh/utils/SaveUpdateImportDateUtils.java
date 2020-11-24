@@ -171,7 +171,8 @@ public class SaveUpdateImportDateUtils {
                 CommunalADActivityBean communalADActivityBean = communalADActivityBeanList.get(communalADActivityBeanList.size() - 1);
                 if (getDateMilliSecond(communalADActivityBean.getEndTime()) > Calendar.getInstance().getTime().getTime()) {
                     String imageUrl = sharedPreferences.getString(OriginalImgUrl, "");
-                    if (!imageUrl.equals(communalADActivityBean.getPicUrl())) {
+                    String SkipUrl = sharedPreferences.getString(SkipUrlKey, "");
+                    if (!imageUrl.equals(communalADActivityBean.getPicUrl())||!SkipUrl.equals(communalADActivityBean.getAndroidLink())) {
                         setLaunchAdData(communalADActivityBean, edit);
                     }
                 } else {
@@ -213,7 +214,7 @@ public class SaveUpdateImportDateUtils {
                         edit.putInt(LauncherAdIdKey, communalADActivityBean.getId());
                         edit.putString(TimeKey, !TextUtils.isEmpty(communalADActivityBean.getShowTime()) ? communalADActivityBean.getShowTime() : "3");
                         edit.putString(SkipUrlKey, !TextUtils.isEmpty(communalADActivityBean.getAndroidLink())
-                                ? communalADActivityBean.getAndroidLink() : "app://");
+                                ? communalADActivityBean.getAndroidLink() : "");
                         edit.apply();
                     }
                 }
