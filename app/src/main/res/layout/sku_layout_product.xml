@@ -31,7 +31,7 @@
                 android:layout_height="@dimen/sc_mm_176"
                 android:scaleType="centerCrop" />
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/sc_mm_32"
@@ -41,15 +41,24 @@
                     android:id="@+id/tv_dir_indent_pro_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:lineSpacingExtra="@dimen/dimen_2dp"
                     android:maxLines="2"
                     android:textColor="@color/text_black_t"
                     android:textSize="@dimen/sc_mm_28" />
 
                 <TextView
+                    android:id="@+id/tv_delivery_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_dir_indent_pro_name"
+                    android:textColor="@color/text_login_gray_s"
+                    android:textSize="@dimen/sc_mm_24"
+                    android:visibility="gone" />
+
+                <TextView
                     android:id="@+id/tv_pro_combine_discount"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_dir_indent_pro_name"
                     android:layout_marginTop="@dimen/sc_mm_20"
                     android:lineSpacingExtra="@dimen/dimen_2dp"
                     android:maxLines="2"
@@ -57,18 +66,20 @@
                     android:textSize="@dimen/sc_mm_22"
                     android:visibility="gone" />
 
-                <RelativeLayout
+                <LinearLayout
+                    android:id="@+id/ll_price_quality"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/sc_mm_24"
+                    android:layout_below="@+id/tv_dir_indent_pro_name"
+                    android:layout_marginTop="@dimen/sc_mm_28"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/tv_dir_indent_pro_price"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
+                        android:layout_weight="1"
                         android:gravity="center_vertical"
                         android:textColor="#ff0000"
                         android:textSize="@dimen/sc_mm_28" />
@@ -77,24 +88,23 @@
                         android:id="@+id/tv_dir_indent_pro_quality"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
                         android:ellipsize="end"
                         android:lines="1"
                         android:text="@string/defaul"
                         android:textColor="@color/sel_font_gray_s_yel_fsc"
                         android:textSize="@dimen/sc_mm_26" />
-                </RelativeLayout>
+                </LinearLayout>
 
 
                 <LinearLayout
-                    android:visibility="gone"
                     android:id="@+id/ll_vip_price"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/sc_mm_24"
+                    android:layout_below="@+id/ll_price_quality"
+                    android:layout_marginTop="@dimen/sc_mm_10"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:visibility="gone">
 
                     <ImageView
                         android:layout_width="@dimen/sc_mm_29"
@@ -111,7 +121,7 @@
                         android:textColor="@color/text_black_t"
                         android:textSize="@dimen/sc_mm_24" />
                 </LinearLayout>
-            </LinearLayout>
+            </RelativeLayout>
         </LinearLayout>
 
         <androidx.core.widget.NestedScrollView

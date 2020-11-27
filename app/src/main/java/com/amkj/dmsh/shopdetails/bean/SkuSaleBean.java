@@ -46,6 +46,16 @@ public class SkuSaleBean  {
     private String oldPrice;
     //会员活动价
     private String vipActivityPrice;
+    //发货时间
+    private String deliveryTime;
+
+    public String getDeliveryTime() {
+        return deliveryTime;
+    }
+
+    public void setDeliveryTime(String deliveryTime) {
+        this.deliveryTime = deliveryTime;
+    }
 
     public String getOldPrice() {
         return oldPrice;

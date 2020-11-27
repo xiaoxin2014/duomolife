@@ -44,6 +44,8 @@ public class DirectProductListAdapter extends BaseQuickAdapter<OrderProductNewBe
             GlideImageLoaderUtil.loadCenterCrop(context, helper.getView(R.id.iv_direct_indent_pro), orderProductBean.getPicUrl());
             helper.setText(R.id.tv_direct_indent_pro_name, getStrings(orderProductBean.getProductName()))
                     .setText(R.id.tv_direct_indent_pro_sku, getStrings(orderProductBean.getSaleSkuValue()))
+                    .setText(R.id.tv_delivery_time, "预计发货时间：" + orderProductBean.getSkuDeliveryTime())
+                    .setGone(R.id.tv_delivery_time, !TextUtils.isEmpty(orderProductBean.getSkuDeliveryTime()))
                     .setText(R.id.tv_product_status, getStrings(orderProductBean.getStatusText()))
                     .setGone(R.id.tv_product_status, !TextUtils.isEmpty((orderProductBean.getStatusText())))
                     .setText(R.id.tv_predict_time, getStrings(orderProductBean.getRemindText()))

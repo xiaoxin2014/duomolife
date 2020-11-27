@@ -65,6 +65,17 @@ public class OrderProductNewBean {
     //是否是赠品
     private int isPresent;
 
+    //发货时间
+    private String skuDeliveryTime;
+
+    public String getSkuDeliveryTime() {
+        return skuDeliveryTime;
+    }
+
+    public void setSkuDeliveryTime(String skuDeliveryTime) {
+        this.skuDeliveryTime = skuDeliveryTime;
+    }
+
     public boolean isPresent() {
         return isPresent == 1;
     }

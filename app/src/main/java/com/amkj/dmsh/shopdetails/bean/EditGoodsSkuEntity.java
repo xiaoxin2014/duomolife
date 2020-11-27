@@ -85,6 +85,16 @@ public class EditGoodsSkuEntity {
         private List<CombineProductInfoBean> combineProductInfoList;
         //是否是组合搭配
         private boolean isCombine;
+        //发货时间
+        private String deliveryTime;
+
+        public String getDeliveryTime() {
+            return deliveryTime;
+        }
+
+        public void setDeliveryTime(String deliveryTime) {
+            this.deliveryTime = deliveryTime;
+        }
 
         public EditGoodsSkuBean() {
         }

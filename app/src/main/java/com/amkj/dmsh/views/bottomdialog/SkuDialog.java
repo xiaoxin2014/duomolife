@@ -55,6 +55,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static android.view.View.inflate;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.formatFloatNumber;
@@ -267,6 +269,8 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
         }
         skuDialogView.rImg_direct_attribute_product.setTag(R.id.iv_tag, getStrings(this.editGoodsSkuBean.getPicUrl()));
         skuDialogView.tv_dir_indent_pro_name.setText(this.editGoodsSkuBean.getProductName());
+        skuDialogView.tv_delivery_time.setText("预计发货时间：" + this.editGoodsSkuBean.getDeliveryTime());
+        skuDialogView.tv_delivery_time.setVisibility(!TextUtils.isEmpty(this.editGoodsSkuBean.getDeliveryTime()) ? View.VISIBLE : View.GONE);
         skuDialogView.tv_dir_indent_pro_quality.setSelected(true);
         skuDialogView.tv_dir_indent_pro_quality.setText(editGoodsSkuBean.getQuantity() > 0 ? ("库存:" + editGoodsSkuBean.getQuantity()) : "");
         //获取价格排序范围
@@ -1280,13 +1284,14 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
                         noticeType = 0;
                     }
                     setDiscountPrice(skuSaleBean.getId());
+                    skuDialogView.tv_delivery_time.setText("预计发货时间：" + skuSaleBean.getDeliveryTime());
+                    skuDialogView.tv_delivery_time.setVisibility(!TextUtils.isEmpty(skuSaleBean.getDeliveryTime()) ? VISIBLE : GONE);
                     skuDialogView.tv_dir_indent_pro_price.setText((getStrings(skuSaleBean.getNewUserTag()) + "¥" + skuSaleBean.getPrice()));
                     skuDialogView.tv_vip_price.setText("会员价" + "¥" + skuSaleBean.getVipPrice());
                     skuDialogView.ll_vip_price.setVisibility(!TextUtils.isEmpty(skuSaleBean.getVipPrice()) ? View.VISIBLE : View.GONE);
                     break;
                 }
             }
-
         }
     }
 
@@ -1374,6 +1379,8 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
         ImageView rImg_direct_attribute_product;
         @BindView(R.id.tv_dir_indent_pro_name)
         TextView tv_dir_indent_pro_name;
+        @BindView(R.id.tv_delivery_time)
+        TextView tv_delivery_time;
         @BindView(R.id.tv_pro_combine_discount)
         TextView tv_pro_combine_discount;
         @BindView(R.id.tv_dir_indent_pro_price)

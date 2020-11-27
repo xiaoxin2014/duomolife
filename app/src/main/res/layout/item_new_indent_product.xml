@@ -1,36 +1,36 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_new_product"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
     android:orientation="vertical"
-    android:id="@+id/ll_new_product"
     android:paddingLeft="@dimen/sc_mm_28"
     android:paddingRight="@dimen/sc_mm_28">
 
     <LinearLayout
-        android:paddingTop="@dimen/sc_mm_27"
-        android:paddingBottom="@dimen/sc_mm_27"
         android:id="@+id/ll_product"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/sc_mm_27"
+        android:paddingBottom="@dimen/sc_mm_27">
 
         <CheckBox
-            android:layout_gravity="center_vertical"
             android:id="@+id/checkbox_refund"
             android:layout_width="@dimen/sc_mm_72"
             android:layout_height="@dimen/sc_mm_128"
             android:layout_centerVertical="true"
+            android:layout_gravity="center_vertical"
             android:button="@null"
             android:drawableLeft="@drawable/selector_pay_way"
             android:drawablePadding="@dimen/sc_mm_24"
             android:visibility="gone" />
 
         <ImageView
-            android:layout_gravity="center_vertical"
             android:id="@+id/iv_direct_indent_pro"
             android:layout_width="@dimen/sc_mm_128"
             android:layout_height="@dimen/sc_mm_128"
+            android:layout_gravity="center_vertical"
             android:background="@drawable/home_goods_bg"
             android:padding="@dimen/sc_mm_1"
             android:scaleType="centerCrop" />
@@ -63,6 +63,15 @@
                 android:textSize="@dimen/sc_mm_22" />
 
             <TextView
+                android:id="@+id/tv_delivery_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sc_mm_8"
+                android:textColor="@color/color_blue_reply_com"
+                android:textSize="@dimen/sc_mm_24"
+                android:visibility="gone" />
+
+            <TextView
                 android:id="@+id/tv_predict_time"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -74,10 +83,10 @@
         </LinearLayout>
 
         <LinearLayout
-            android:gravity="right"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/sc_mm_30"
+            android:gravity="right"
             android:orientation="vertical">
 
             <TextView
@@ -93,19 +102,19 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:layout_marginTop="@dimen/sc_mm_8"
                 android:id="@+id/tv_direct_pro_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sc_mm_8"
                 android:text="@string/defaul"
                 android:textColor="@color/text_login_gray_s"
                 android:textSize="@dimen/sc_mm_22" />
 
             <TextView
-                android:layout_marginTop="@dimen/sc_mm_8"
                 android:id="@+id/tv_product_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sc_mm_8"
                 android:background="@drawable/shape_product_status_bg"
                 android:paddingLeft="@dimen/sc_mm_5"
                 android:paddingTop="@dimen/sc_mm_2"
