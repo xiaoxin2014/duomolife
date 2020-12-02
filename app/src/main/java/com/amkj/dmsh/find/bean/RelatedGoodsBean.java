@@ -25,7 +25,15 @@ public class RelatedGoodsBean {
     @SerializedName(value = "title", alternate = "productName")
     private String title;
     private String thirdUrl;
+    private int productStatus;
 
+    public int getProductStatus() {
+        return productStatus;
+    }
+
+    public void setProductStatus(int productStatus) {
+        this.productStatus = productStatus;
+    }
 
     public String getMarketPrice() {
         return marketPrice;

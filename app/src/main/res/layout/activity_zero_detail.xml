@@ -52,6 +52,7 @@
                                     android:layout_height="match_parent" />
 
                                 <TextView
+                                    android:visibility="gone"
                                     android:id="@+id/tv_look_product"
                                     android:layout_width="@dimen/sc_mm_166"
                                     android:layout_height="@dimen/sc_mm_52"

@@ -46,7 +46,6 @@
                 android:scaleType="centerCrop" />
 
             <LinearLayout
-                android:visibility="gone"
                 android:id="@+id/ll_zero_product"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/sc_mm_104"
@@ -55,7 +54,8 @@
                 android:background="@drawable/border_bottom_line"
                 android:orientation="horizontal"
                 android:paddingTop="@dimen/sc_mm_12"
-                android:paddingBottom="@dimen/sc_mm_12">
+                android:paddingBottom="@dimen/sc_mm_12"
+                android:visibility="gone">
 
                 <ImageView
                     android:id="@+id/iv_zero_cover"
@@ -68,7 +68,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="@dimen/sc_mm_12"
+                    android:ellipsize="end"
                     android:gravity="top"
+                    android:maxLines="2"
                     android:textColor="@color/text_black_t"
                     android:textSize="@dimen/sc_mm_24" />
             </LinearLayout>

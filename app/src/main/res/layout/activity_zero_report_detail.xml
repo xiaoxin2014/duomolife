@@ -69,6 +69,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:visibility="gone"
                         android:id="@+id/tv_buy"
                         android:layout_width="@dimen/sc_mm_160"
                         android:layout_height="@dimen/sc_mm_50"

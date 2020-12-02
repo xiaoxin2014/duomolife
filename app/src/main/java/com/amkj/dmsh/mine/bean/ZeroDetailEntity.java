@@ -58,6 +58,15 @@ public class ZeroDetailEntity extends BaseTimeEntity {
         private String videoUrl;
         private List<CommunalDetailBean> itemBody;
         private List<ZeroLotteryEntity.ZeroLotteryBean> winnersInfoList;
+        private int productStatus;
+
+        public int getProductStatus() {
+            return productStatus;
+        }
+
+        public void setProductStatus(int productStatus) {
+            this.productStatus = productStatus;
+        }
 
         public String getPrice() {
             return price;

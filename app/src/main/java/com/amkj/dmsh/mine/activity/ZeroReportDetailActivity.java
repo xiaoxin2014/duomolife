@@ -122,6 +122,7 @@ public class ZeroReportDetailActivity extends BaseActivity {
         //设置商品数据
         mProductInfo = reportDetailBean.getProductInfo();
         if (mProductInfo != null) {
+            mTvBuy.setVisibility(mProductInfo.getProductStatus() == 1 ? View.VISIBLE : View.GONE);
             GlideImageLoaderUtil.loadCenterCrop(this, mIvCover, mProductInfo.getPictureUrl());
             mTvName.setText(getStrings(mProductInfo.getTitle()));
             mTvPrice.setText(getRmbFormat(this, mProductInfo.getPrice(), true, "#333"));
@@ -140,13 +141,13 @@ public class ZeroReportDetailActivity extends BaseActivity {
     }
 
 
-    @OnClick({R.id.tv_life_back, R.id.rl_product, R.id.tv_total_num})
+    @OnClick({R.id.tv_life_back, R.id.tv_buy, R.id.tv_total_num})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_life_back:
                 finish();
                 break;
-            case R.id.rl_product:
+            case R.id.tv_buy:
                 if (mProductInfo != null) {
                     skipProductUrl(this, 1, mProductInfo.getProductId());
                 }

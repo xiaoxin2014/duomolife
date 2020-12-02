@@ -147,6 +147,9 @@ public class ZeroActivityDetailActivity extends BaseActivity {
     RelativeLayout mFlHeaderService;
     @BindView(R.id.rv_lottery)
     RecyclerView mRvLottery;
+    @BindView(R.id.tv_look_product)
+    TextView mTvLookProduct;
+
 
     private String[] detailTabData = {"商品", "详情"};
     private ArrayList<CustomTabEntity> tabData = new ArrayList<>();
@@ -316,9 +319,10 @@ public class ZeroActivityDetailActivity extends BaseActivity {
         mTvApplyNum.setText(getStringsFormat(this, R.string.zero_apply_num, zeroDetailBean.getPartakeCount()));
         mTvApply.setText(zeroDetailBean.isPartake() ? "已申请" : "申请试用");
         mTvApply.setEnabled(!zeroDetailBean.isPartake());
+        mTvLookProduct.setVisibility(zeroDetailBean.getProductStatus() == 1 ? View.VISIBLE : View.GONE);
         //报名结束倒计时
         if (TimeUtils.isEndOrStartTime(mZeroDetailEntity.getCurrentTime(), zeroDetailBean.getEndTime())) {
-            zeroActivityEnd();
+            zeroActivityEnd(zeroDetailBean);
         } else {
             mLlStep.setVisibility(View.VISIBLE);
             mLlLottery.setVisibility(View.GONE);
@@ -391,13 +395,13 @@ public class ZeroActivityDetailActivity extends BaseActivity {
         communalDetailAdapter.notifyDataSetChanged();
     }
 
-    private void zeroActivityEnd() {
+    private void zeroActivityEnd(ZeroDetailBean zeroDetailBean) {
         //活动已结束
         mTvEnd.setText("报名已结束");
         mCvCountdownTime.updateShow(0);
         mCvCountdownTime.setVisibility(View.GONE);
         mLlStep.setVisibility(View.GONE);
-        mTvBuy.setVisibility(View.VISIBLE);
+        mTvBuy.setVisibility(zeroDetailBean.getProductStatus() == 1 ? View.VISIBLE : View.GONE);
         mLlApply.setVisibility(View.GONE);
 
         //显示中奖名单
