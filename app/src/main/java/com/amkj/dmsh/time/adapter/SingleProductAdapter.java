@@ -8,10 +8,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.time.bean.BrandEntity.BrandBean.BrandProductBean;
 import com.amkj.dmsh.user.bean.MarketLabelBean;
 import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.time.bean.TimeAxisEntity.TimeAxisBean.BrandProductBean;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.google.android.flexbox.FlexboxLayout;

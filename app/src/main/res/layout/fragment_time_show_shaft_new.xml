@@ -65,35 +65,43 @@
                                 android:textColor="@color/white"
                                 android:textSize="@dimen/sc_mm_24" />
                         </LinearLayout>
-
                     </RelativeLayout>
                 </com.google.android.material.appbar.CollapsingToolbarLayout>
-
 
                 <com.amkj.dmsh.views.flycoTablayout.SlidingDoubleTextTabLayout xmlns:tl="http://schemas.android.com/apk/res-auto"
                     android:id="@+id/sliding_tablayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/sc_mm_35"
-                    android:paddingBottom="@dimen/sc_mm_15"
                     android:background="@color/light_gray_f"
+                    android:paddingLeft="@dimen/sc_mm_24"
+                    android:paddingTop="@dimen/sc_mm_35"
+                    android:paddingRight="@dimen/sc_mm_24"
+                    android:paddingBottom="@dimen/sc_mm_15"
                     tl:tl_indicator_color="@color/text_black_t"
                     tl:tl_indicator_height="@dimen/sc_mm_0"
-                    android:paddingLeft="@dimen/sc_mm_24"
-                    android:paddingRight="@dimen/sc_mm_24"
                     tl:tl_tab_padding="@dimen/sc_mm_24"
                     tl:tl_textSelectColor="@color/text_black_t"
                     tl:tl_textUnselectColor="@color/text_black_t"
                     tl:tl_textsize="@dimen/sc_mm_22" />
             </com.google.android.material.appbar.AppBarLayout>
 
-            <androidx.viewpager.widget.ViewPager
-                android:id="@+id/viewPager"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:background="@color/light_gray_f"
-                android:layout_height="wrap_content"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+                android:layout_height="match_parent"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+                <androidx.viewpager.widget.ViewPager
+                    android:id="@+id/viewPager"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/light_gray_f" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_goods"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scrollbars="none" />
+            </FrameLayout>
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
     </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 </LinearLayout>

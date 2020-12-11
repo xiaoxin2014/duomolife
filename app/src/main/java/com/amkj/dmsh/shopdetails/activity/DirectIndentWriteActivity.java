@@ -714,7 +714,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
             //订单锁定,再次支付
             if (!TextUtils.isEmpty(orderCreateNo)) {
                 paymentIndent();
-            } else {
+            } else if (indentWriteBean != null) {
                 //第一次提交订单
                 if (addressId == 0) {
                     showToast("收货地址为空");
@@ -727,9 +727,9 @@ public class DirectIndentWriteActivity extends BaseActivity {
                     showToast("订单内含有无法购买的商品，请移除后再提交");
                 } else if (!TextUtils.isEmpty(type)) {
                     createIndent();
-                } else {
-                    showToast("商品数据错误");
                 }
+            } else {
+                showToast("无效订单，请重试");
             }
         } else {
             getLoginStatus(this);

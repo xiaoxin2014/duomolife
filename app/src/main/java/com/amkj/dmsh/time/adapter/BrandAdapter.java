@@ -9,9 +9,9 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.dominant.activity.TimeBrandDetailsActivity;
-import com.amkj.dmsh.time.bean.BrandEntity.BrandBean;
-import com.amkj.dmsh.time.bean.BrandEntity.BrandBean.BrandProductBean;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.time.bean.TimeAxisEntity.TimeAxisBean.BrandBean;
+import com.amkj.dmsh.time.bean.TimeAxisEntity.TimeAxisBean.BrandProductBean;
 import com.amkj.dmsh.utils.itemdecoration.NewGridItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
