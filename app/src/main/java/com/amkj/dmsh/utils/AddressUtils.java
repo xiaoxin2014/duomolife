@@ -34,12 +34,12 @@ public class AddressUtils {
     /**
      * key - 省 value - 市
      */
-    public Map<Integer, CityModel[]> mCitiesDataMap = new HashMap<>();
+    public Map<Integer, List<CityModel>> mCitiesDataMap = new HashMap<>();
 
     /**
      * key - 市 values - 区
      */
-    public Map<Integer, DistrictModel[]> mDistrictDataMap = new HashMap<>();
+    public Map<Integer, List<DistrictModel>> mDistrictDataMap = new HashMap<>();
 
     /**
      * key - 区 values - 邮编
@@ -230,10 +230,10 @@ public class AddressUtils {
                 provinceModelList.add(provinceModel);
 // 遍历所有省的数据
                 mProvinceData[i] = provinceModelList.get(i);
-                CityModel[] cities = new CityModel[cityModelList.size()];
+                List<CityModel> cities = new ArrayList<>();
                 for (int j = 0; j < cityModelList.size(); j++) {
                     districtModelList = new ArrayList<>();
-                    cities[j] = cityModelList.get(j);
+                    cities.add(cityModelList.get(j));
 //                    获取市下面的县集合
                     for (int k = 0; k < districtAddressList.size(); k++) {
                         districtModel = new DistrictModel();
@@ -246,16 +246,16 @@ public class AddressUtils {
                         }
                     }
                     cityModelList.get(j).setDistrictList(districtModelList);
-                    DistrictModel[] districtArray = new DistrictModel[districtModelList.size()];
+                    List<DistrictModel> districtArray = new ArrayList<>();
                     for (int k = 0; k < districtModelList.size(); k++) {
                         // 遍历市下面所有区/县的数据
                         districtModel = districtModelList.get(k);
                         // 区/县对于的邮编，保存到mZipcodeDatasMap
                         mZipCodeDataMap.put(districtModelList.get(k).getId(), districtModelList.get(k).getZip());
-                        districtArray[k] = districtModel;
+                        districtArray.add(districtModel);
                     }
                     // 市-区/县的数据，保存到mDistrictDatasMap
-                    mDistrictDataMap.put(cities[j].getId(), districtArray);
+                    mDistrictDataMap.put(cities.get(j).getId(), districtArray);
                 }
                 // 省-市的数据，保存到mCitisDatasMap
                 mCitiesDataMap.put(provinceModelList.get(i).getId(), cities);
@@ -282,6 +282,18 @@ public class AddressUtils {
         return mProvinceData;
     }
 
+    //      所有省
+    public List<String> getAllProvinceName() {
+        List<String> allProviceName = new ArrayList<>();
+        if (mProvinceData != null) {
+            for (ProvinceModel provinceDatum : mProvinceData) {
+                allProviceName.add(provinceDatum.getName());
+            }
+        }
+
+        return allProviceName;
+    }
+
     //    当前市的名称
     public int getCurrentCity() {
         return mCurrentCityId;
@@ -303,12 +315,12 @@ public class AddressUtils {
     }
 
     //    市-县
-    public Map<Integer, DistrictModel[]> getCityDistrict() {
+    public Map<Integer, List<DistrictModel>> getCityDistrict() {
         return mDistrictDataMap;
     }
 
     //   省 -市
-    public Map<Integer, CityModel[]> getCitiesDataMap() {
+    public Map<Integer, List<CityModel>> getCitiesDataMap() {
         return mCitiesDataMap;
     }
 

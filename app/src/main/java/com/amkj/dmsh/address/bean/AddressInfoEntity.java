@@ -3,38 +3,16 @@ package com.amkj.dmsh.address.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.amkj.dmsh.base.BaseEntity;
 import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by atd48 on 2016/10/17.
  */
-public class AddressInfoEntity {
-
-    /**
-     * id : 1078
-     * status : 0
-     * address : 广东省深圳市福田区理想公馆2806
-     * consignee : LXQ
-     * community : 理想公馆
-     * province : 广东省
-     * user_id : 23291
-     * postcode : 621000
-     * district : 福田区
-     * address_com : 福田区
-     * city : 深圳市
-     * mobile : 18123934025
-     */
+public class AddressInfoEntity extends BaseEntity {
 
     @SerializedName("result")
     private AddressInfoBean addressInfoBean;
-    /**
-     * result : {"id":1078,"status":0,"address":"广东省深圳市福田区理想公馆2806","consignee":"LXQ","community":"理想公馆","province":"广东省","user_id":23291,"postcode":"621000","district":"福田区","address_com":"福田区","city":"深圳市","mobile":"18123934025"}
-     * code : 01
-     * msg : 请求成功
-     */
-
-    private String code;
-    private String msg;
 
     public AddressInfoBean getAddressInfoBean() {
         return addressInfoBean;
@@ -42,22 +20,6 @@ public class AddressInfoEntity {
 
     public void setAddressInfoBean(AddressInfoBean addressInfoBean) {
         this.addressInfoBean = addressInfoBean;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
     }
 
     public static class AddressInfoBean implements Parcelable {

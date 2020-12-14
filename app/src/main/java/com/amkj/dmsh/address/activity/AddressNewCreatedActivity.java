@@ -2,7 +2,6 @@ package com.amkj.dmsh.address.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,17 +20,18 @@ import com.amkj.dmsh.address.bean.DistrictModel;
 import com.amkj.dmsh.address.bean.ProvinceModel;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.constant.ConstantVariable;
+import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.AddressUtils;
 import com.amkj.dmsh.utils.KeyboardUtils;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.bigkoo.pickerview.adapter.ArrayWheelAdapter;
-import com.contrarywind.listener.OnItemSelectedListener;
 import com.contrarywind.view.WheelView;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -45,101 +45,89 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.ADDRESS_DETAILS;
-import static com.amkj.dmsh.constant.Url.ADD_ADDRESS;
-import static com.amkj.dmsh.constant.Url.EDIT_ADDRESS;
 
 
 /**
- * Created by atd48 on 2016/7/15.
+ * Created by xiaoxin on 2020/12/12
+ * Version:v4.8.2
+ * ClassDescription :新增/编辑地址（重构）
  */
-public class AddressNewCreatedActivity extends BaseActivity implements View.OnClickListener {
+public class AddressNewCreatedActivity extends BaseActivity {
     @BindView(R.id.tv_header_shared)
-    TextView tv_header_shared;
+    TextView mTvHeaderShared;
     @BindView(R.id.tv_header_title)
-    TextView tv_header_titleAll;
+    TextView mTvHeaderTitle;
     @BindView(R.id.tv_address_district)
-    TextView tv_address_district;
+    TextView mTvAddressDistrict;
     @BindView(R.id.et_address_consignee)
-    EditText et_address_consignee;
+    EditText mEtAddressConsignee;
     @BindView(R.id.et_address_mobile)
-    EditText et_address_mobile;
+    EditText mEtAddressMobile;
     @BindView(R.id.et_address_detail_district)
-    EditText et_address_detail_district;
-
+    EditText mEtAddressDetailDistrict;
     @BindView(R.id.tv_time_click_confirmed)
-    TextView tv_time_click_confirmed;
+    TextView mTvTimeClickConfirmed;
     @BindView(R.id.tv_time_click_cancel)
-    TextView tv_time_click_cancel;
-    //是否展开显示
+    TextView mTvTimeClickCancel;
     @BindView(R.id.ll_communal_multi_time)
-    LinearLayout ll_communal_multi_time;
-    //    是否展示默认地址选择
+    LinearLayout mLlCommunalMultiTime;
     @BindView(R.id.id_one_wheel)
-    WheelView id_province;
+    WheelView mProvinceWheel;
     @BindView(R.id.id_two_wheel)
-    WheelView id_city;
+    WheelView mCityWheel;
     @BindView(R.id.id_three_wheel)
-    WheelView id_district;
+    WheelView mDistrictWheel;
     @BindView(R.id.cb_address_default)
-    CheckBox cb_address_default;
+    CheckBox mCbAddressDefault;
     @BindView(R.id.rel_address_default)
-    RelativeLayout rel_address_default;
+    RelativeLayout mRelAddressDefault;
     @BindView(R.id.ll_address_create)
-    LinearLayout ll_address_create;
-    boolean isSelected = true;
-    Handler handler = new Handler();
-    private ProvinceModel[] mProvinceData;
-    private Map<Integer, DistrictModel[]> mDistrictDataMap;
-    private int mCurrentCityId;
-    private int mCurrentDistrictId;
-    private Map<Integer, String> mZipDataMap;
-    private Map<Integer, CityModel[]> mCitiesDataMap;
-    private int mCurrentProvinceId;
-    private String[] provinceName;
-    private String[] cityName;
-    private String[] districtName;
+    LinearLayout mLlAddressCreate;
 
     private int addressId;
+    private ProvinceModel[] mAllProvinces;
+    private Map<Integer, List<CityModel>> mCitiesDataMap;
+    private Map<Integer, List<DistrictModel>> mDistrictDataMap;
+    private int mCurrentProvinceId;
+    private int mCurrentCityId;
+    private int mCurrentDistrictId;
+    private List<String> provinceNameList = new ArrayList<>();
+    private List<String> cityNameList = new ArrayList<>();
+    private List<String> districtNameList = new ArrayList<>();
     private AddressInfoBean addressInfoBean;
+    private AddressInfoEntity mAddressInfoEntity;
+
+    @Override
+    protected int getContentView() {
+        return R.layout.activity_address_new;
+    }
 
     @Override
     protected void initViews() {
         getLoginStatus(this);
-        initAddress();
-        tv_header_shared.setCompoundDrawables(null, null, null, null);
-        tv_header_shared.setText("保存");
-        tv_header_titleAll.setText("新增地址");
         Intent intent = getIntent();
         addressId = getStringChangeIntegers(intent.getStringExtra("addressId"));
-        setEtFilter(et_address_consignee);
-        //手机号匹配
-        setUpListener();
-        setUpData();
-        KeyboardUtils.registerSoftInputChangedListener(this, new KeyboardUtils.OnSoftInputChangedListener() {
-            @Override
-            public void onSoftInputChanged(int height) {
-                if (height > 0) {
-                    if (ll_communal_multi_time.getVisibility() == View.VISIBLE) {
-                        ll_communal_multi_time.setVisibility(View.GONE);
-                        isSelected = true;
-                    }
-                } else {
-                    ll_address_create.requestFocus();
-                }
-            }
-        });
+        mTvHeaderShared.setText("保存");
+        mTvHeaderTitle.setText(addressId > 0 ? "编辑地址" : "新增地址");
+        mTvHeaderShared.setCompoundDrawables(null, null, null, null);
+        mProvinceWheel.setCyclic(false);
+        mCityWheel.setCyclic(false);
+        mDistrictWheel.setCyclic(false);
+        initAddress();
+        setEtFilter(mEtAddressConsignee);
+        setWheelListener();
     }
 
     private void initAddress() {
         AddressUtils addressUtils = AddressUtils.getQyInstance();
-        mProvinceData = addressUtils.getAllProvince();
+        provinceNameList = addressUtils.getAllProvinceName();
+        mAllProvinces = addressUtils.getAllProvince();
+        mCitiesDataMap = addressUtils.getCitiesDataMap();
         mDistrictDataMap = addressUtils.getCityDistrict();
+        mCurrentProvinceId = addressUtils.getCurrentProvince();
         mCurrentCityId = addressUtils.getCurrentCity();
         mCurrentDistrictId = addressUtils.getCurrentDistrict();
-        mZipDataMap = addressUtils.getZipCodeDataMap();
-        mCitiesDataMap = addressUtils.getCitiesDataMap();
-        mCurrentProvinceId = addressUtils.getCurrentProvince();
-        if (mProvinceData == null || mDistrictDataMap == null || mZipDataMap == null || mCitiesDataMap == null) {
+        if (provinceNameList == null || mDistrictDataMap == null || mCitiesDataMap == null) {
             finish();
         }
     }
@@ -148,120 +136,193 @@ public class AddressNewCreatedActivity extends BaseActivity implements View.OnCl
     protected void loadData() {
         if (addressId != 0) {
             getAddressDetails();
+        } else {
+            mProvinceWheel.setAdapter(new ArrayWheelAdapter<>(provinceNameList));
+            mProvinceWheel.setCurrentItem(0);
+            updateCities();
         }
     }
 
-    @Override
-    protected int getContentView() {
-        return R.layout.activity_address_new;
-    }
-
+    //地址详情内容
     private void getAddressDetails() {
-        //地址详情内容
         Map<String, Object> params = new HashMap<>();
         params.put("id", addressId);
         NetLoadUtils.getNetInstance().loadNetDataPost(this, ADDRESS_DETAILS, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-
-                AddressInfoEntity addressInfoEntity = GsonUtils.fromJson(result, AddressInfoEntity.class);
-                if (addressInfoEntity != null) {
-                    if (addressInfoEntity.getCode().equals(SUCCESS_CODE)) {
-                        addressInfoBean = addressInfoEntity.getAddressInfoBean();
-                        setData(addressInfoBean);
+                mAddressInfoEntity = GsonUtils.fromJson(result, AddressInfoEntity.class);
+                if (mAddressInfoEntity != null) {
+                    if (mAddressInfoEntity.getCode().equals(SUCCESS_CODE)) {
+                        addressInfoBean = mAddressInfoEntity.getAddressInfoBean();
+                        setAddressInfo(addressInfoBean);
                     } else {
-                        showToast(addressInfoEntity.getMsg());
+                        showToast(mAddressInfoEntity.getMsg());
                     }
+                }
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, mAddressInfoEntity);
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, mAddressInfoEntity);
+            }
+        });
+    }
+
+    private void setAddressInfo(AddressInfoBean addressInfoBean) {
+        mLlCommunalMultiTime.setFocusable(true);
+        mLlCommunalMultiTime.setFocusableInTouchMode(true);
+        mEtAddressConsignee.setText(getStringFilter(addressInfoBean.getConsignee()));
+        mEtAddressMobile.setText(addressInfoBean.getMobile());
+        mTvAddressDistrict.setText(addressInfoBean.getAddress_com());
+        mEtAddressDetailDistrict.setText(addressInfoBean.getAddress());
+        if (addressInfoBean.getStatus() == 1) {
+            mCbAddressDefault.setChecked(true);
+            mRelAddressDefault.setVisibility(View.GONE);
+        } else {
+            mCbAddressDefault.setChecked(false);
+        }
+        //当前省市县
+        mCurrentProvinceId = Integer.parseInt(addressInfoBean.getProvince());
+        mCurrentCityId = Integer.parseInt(addressInfoBean.getCity());
+        mCurrentDistrictId = Integer.parseInt(!TextUtils.isEmpty(addressInfoBean.getDistrict()) ? addressInfoBean.getDistrict() : "0");
+        //切换地址选择器到当前位置
+        for (int i = 0; i < mAllProvinces.length; i++) {
+            if (mAllProvinces[i].getId() == mCurrentProvinceId) {
+                mProvinceWheel.setAdapter(new ArrayWheelAdapter<>(provinceNameList));
+                mProvinceWheel.setCurrentItem(i);
+                break;
+            }
+        }
+
+        List<CityModel> cityList = mCitiesDataMap.get(mCurrentProvinceId);
+        if (cityList != null) {
+            int currentItem = 0;
+            for (int i = 0; i < cityList.size(); i++) {
+                cityNameList.add(cityList.get(i).getName());
+                if (cityList.get(i).getId() == mCurrentCityId) {
+                    currentItem = i;
+                }
+            }
+            mCityWheel.setAdapter(new ArrayWheelAdapter<>(cityNameList));
+            mCityWheel.setCurrentItem(currentItem);
+        }
+
+
+        List<DistrictModel> districtModels = mDistrictDataMap.get(mCurrentCityId);
+        if (districtModels != null) {
+            int currentItem = 0;
+            for (int i = 0; i < districtModels.size(); i++) {
+                districtNameList.add(districtModels.get(i).getName());
+                if (districtModels.get(i).getId() == mCurrentDistrictId) {
+                    currentItem = i;
+                }
+            }
+            mDistrictWheel.setAdapter(new ArrayWheelAdapter<>(districtNameList));
+            mDistrictWheel.setCurrentItem(currentItem);
+        }
+    }
+
+    private void setWheelListener() {
+        // 添加change事件
+        mProvinceWheel.setOnItemSelectedListener(index -> {
+            //修改省id,刷新城市以及区列表
+            mCurrentProvinceId = mAllProvinces[mProvinceWheel.getCurrentItem()].getId();
+            updateCities();
+        });
+        // 添加change事件
+        mCityWheel.setOnItemSelectedListener(index -> {
+            //修改市id，刷新区列表
+            List<CityModel> cityList = mCitiesDataMap.get(mCurrentProvinceId);
+            if (cityList != null) {
+                mCurrentCityId = cityList.get(mCityWheel.getCurrentItem()).getId();
+                updateAreas();
+            }
+        });
+        // 添加change事件
+        mDistrictWheel.setOnItemSelectedListener(index -> {
+            //修改区id
+            List<DistrictModel> districtModels = mDistrictDataMap.get(mCurrentCityId);
+            if (districtModels != null) {
+                mCurrentDistrictId = districtModels.get(mDistrictWheel.getCurrentItem()).getId();
+            }
+        });
+        KeyboardUtils.registerSoftInputChangedListener(this, new KeyboardUtils.OnSoftInputChangedListener() {
+            @Override
+            public void onSoftInputChanged(int height) {
+                if (height > 0) {
+                    if (mLlCommunalMultiTime.getVisibility() == View.VISIBLE) {
+                        mLlCommunalMultiTime.setVisibility(View.GONE);
+                    }
+                } else {
+                    mLlAddressCreate.requestFocus();
                 }
             }
         });
     }
 
-    private void setData(AddressInfoBean addressInfoBean) {
-        ll_communal_multi_time.setFocusable(true);
-        ll_communal_multi_time.setFocusableInTouchMode(true);
-        et_address_consignee.setText(getStringFilter(addressInfoBean.getConsignee()));
-        et_address_mobile.setText(addressInfoBean.getMobile());
-//        省市县
-        tv_address_district.setText(addressInfoBean.getAddress_com());
-//        详细街道地址
-        et_address_detail_district.setText(addressInfoBean.getAddress());
-        if (addressInfoBean.getStatus() == 1) {
-            cb_address_default.setChecked(true);
-            rel_address_default.setVisibility(View.GONE);
-        } else {
-            cb_address_default.setChecked(false);
-        }
-//        当前省市县
-        mCurrentProvinceId = Integer.parseInt(addressInfoBean.getProvince());
-        mCurrentCityId = Integer.parseInt(addressInfoBean.getCity());
-        mCurrentDistrictId = Integer.parseInt(!TextUtils.isEmpty(addressInfoBean.getDistrict()) ? addressInfoBean.getDistrict() : "0");
-    }
-
-    @OnClick(R.id.tv_header_shared)
-    void addSaved(View view) {
-        AddressInfoBean myAddress = new AddressInfoBean();
-//        收货人
-        myAddress.setConsignee(et_address_consignee.getText().toString().trim());
-//        手机
-        myAddress.setMobile(et_address_mobile.getText().toString().trim());
-//        省市县
-        myAddress.setAddress_com(tv_address_district.getText().toString().trim());
-//        详细街道地址
-        myAddress.setAddress(et_address_detail_district.getText().toString().trim());
-        if (cb_address_default.isChecked()) {
-            myAddress.setStatus(1);
-        } else {
-            myAddress.setStatus(0);
-        }
-        if (myAddress.getAddress_com().length() < 1 || myAddress.getAddress().length() < 1
-                || myAddress.getConsignee().length() < 1 || myAddress.getMobile().length() < 1) {
-            showToast("请完整填写收货人资料");
-        } else {
-            String mobilePhone = myAddress.getMobile();
-            if (mobilePhone.startsWith("1")) {            //手机号
-                editAddress(myAddress);
-            } else if (!mobilePhone.startsWith("-")) {                //固话
-                editAddress(myAddress);
-            } else {
-                showToast("联系方式有误，请重新输入");
+    /**
+     * 根据当前的省，更新市WheelView的信息
+     */
+    private void updateCities() {
+        List<CityModel> cityList = mCitiesDataMap.get(mCurrentProvinceId);
+        if (cityList != null) {
+            if (cityList.size() > 0) {
+                mCurrentCityId = cityList.get(0).getId();
             }
+            cityNameList.clear();
+            for (int i = 0; i < cityList.size(); i++) {
+                cityNameList.add(cityList.get(i).getName());
+            }
+            mCityWheel.setAdapter(new ArrayWheelAdapter<>(cityNameList));
+            mCityWheel.setCurrentItem(0);
+        }
+        updateAreas();
+    }
+
+    /**
+     * 根据当前的市，更新区WheelView的信息
+     */
+    private void updateAreas() {
+        List<DistrictModel> districtModels = mDistrictDataMap.get(mCurrentCityId);
+        if (districtModels != null) {
+            if (districtModels.size() > 0) {
+                mCurrentDistrictId = districtModels.get(0).getId();
+            }
+            districtNameList.clear();
+            for (int i = 0; i < districtModels.size(); i++) {
+                districtNameList.add(districtModels.get(i).getName());
+            }
+            mDistrictWheel.setAdapter(new ArrayWheelAdapter<>(districtNameList));
+            mDistrictWheel.setCurrentItem(0);
         }
     }
 
+    //添加,编辑地址
     private void editAddress(AddressInfoBean myAddress) {
-        if (addressId != 0) {
-//            修改地址
-            alterAddress(myAddress);
-        } else {
-//            添加地址
-            addAddress(myAddress);
-        }
-    }
-
-    //  添加地址
-    private void addAddress(AddressInfoBean myAddress) {
-        //地址详情内容
         Map<String, Object> params = new HashMap<>();
         params.put("user_id", userId);
-//        收货人
+        if (addressId > 0) {
+            params.put("id", addressInfoBean.getId());
+        }
+        //收件人
         params.put("consignee", myAddress.getConsignee());
         params.put("mobile", myAddress.getMobile());
+        //省
         params.put("province", mCurrentProvinceId);
+        //市
         params.put("city", mCurrentCityId);
+        //区
         if (mCurrentDistrictId > 0 && mCurrentDistrictId >= mCurrentCityId) {
             params.put("district", mCurrentDistrictId);
         }
-//        邮编
-//        选择地址
         params.put("address_com", myAddress.getAddress_com());
-//        纤细街道地址
+        //详细地址
         params.put("address", myAddress.getAddress());
         params.put("isDefault", myAddress.getStatus());
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, ADD_ADDRESS, params, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, addressId > 0 ? Url.EDIT_ADDRESS : Url.ADD_ADDRESS, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-
                 AddressInfoEntity addressInfoEntity = GsonUtils.fromJson(result, AddressInfoEntity.class);
                 if (addressInfoEntity != null) {
                     if (addressInfoEntity.getCode().equals(SUCCESS_CODE)) {
@@ -283,168 +344,65 @@ public class AddressNewCreatedActivity extends BaseActivity implements View.OnCl
         });
     }
 
-    //  修改地址
-    private void alterAddress(AddressInfoBean myAddress) {
-        //地址详情内容
-        Map<String, Object> params = new HashMap<>();
-        params.put("id", addressInfoBean.getId());
-        params.put("user_id", userId);
-//        收货人
-        params.put("consignee", myAddress.getConsignee());
-        params.put("mobile", myAddress.getMobile());
-        params.put("province", mCurrentProvinceId);
-        params.put("city", mCurrentCityId);
-        if (mCurrentDistrictId > 0 && mCurrentDistrictId >= mCurrentCityId) {
-            params.put("district", mCurrentDistrictId);
-        }
-//        选择地址
-        params.put("address_com", myAddress.getAddress_com());
-//        纤细街道地址
-        params.put("address", myAddress.getAddress());
-        params.put("isDefault", myAddress.getStatus());
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, EDIT_ADDRESS, params, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-
-                AddressInfoEntity addressInfoEntity = GsonUtils.fromJson(result, AddressInfoEntity.class);
-                if (addressInfoEntity != null) {
-                    if (addressInfoEntity.getCode().equals(SUCCESS_CODE)) {
-                        Intent data = new Intent();
-                        data.putExtra("addressInfoBean", addressInfoEntity.getAddressInfoBean());
-                        setResult(RESULT_OK, data);
-                        finish();
-                    } else {
-                        showToast(addressInfoEntity.getMsg());
-                    }
-                }
-            }
-        });
-    }
-
-    private void setUpListener() {
-        // 添加change事件
-        id_province.setOnItemSelectedListener(index -> updateCities());
-        // 添加change事件
-        id_city.setOnItemSelectedListener(index -> updateAreas());
-        // 添加change事件
-        id_district.setOnItemSelectedListener(new OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(int index) {
-                DistrictModel[] districtModels = mDistrictDataMap.get(mCurrentCityId);
-                if (districtModels != null && districtModels.length > 0 && districtModels.length > index) {
-                    mCurrentDistrictId = districtModels[index].getId();
-                } else {
-                    mCurrentDistrictId = 0;
-                }
-            }
-        });
-        // 添加onclick事件
-        tv_time_click_cancel.setOnClickListener(this);
-        tv_time_click_confirmed.setOnClickListener(this);
-    }
-
-    private void setUpData() {
-        if (mProvinceData != null) {
-            provinceName = new String[mProvinceData.length];
-            for (int i = 0; i < mProvinceData.length; i++) {
-                ProvinceModel mProvinceDatum = mProvinceData[i];
-                if (mProvinceDatum != null) {
-                    if (!TextUtils.isEmpty(mProvinceData[i].getName())) {
-                        provinceName[i] = mProvinceData[i].getName();
-                    }
-                }
-            }
-            id_province.setAdapter(new ArrayWheelAdapter<>(Arrays.asList(provinceName)));
-            id_province.setCyclic(false);
-            id_province.setCurrentItem(0);
-            updateCities();
-            updateAreas();
-        }
-    }
-
-    /**
-     * 根据当前的市，更新区WheelView的信息
-     */
-    private void updateAreas() {
-        int pCurrent = id_city.getCurrentItem();
-        mCurrentCityId = mCitiesDataMap.get(mCurrentProvinceId)[pCurrent].getId();
-        DistrictModel[] districtModels = mDistrictDataMap.get(mCurrentCityId);
-        districtName = new String[districtModels.length];
-        for (int i = 0; i < districtModels.length; i++) {
-            districtName[i] = districtModels[i].getName();
-        }
-        id_district.setAdapter(new ArrayWheelAdapter<>(Arrays.asList(districtName)));
-        id_district.setCyclic(false);
-        id_district.setCurrentItem(0);
-        if (districtModels.length > 0) {
-            DistrictModel districtModel = districtModels[id_district.getCurrentItem()];
-            if (districtModel != null) {
-                mCurrentDistrictId = districtModel.getId();
-            }
-        }
-    }
-
-    /**
-     * 根据当前的省，更新市WheelView的信息
-     */
-    private void updateCities() {
-        int pCurrent = id_province.getCurrentItem();
-        mCurrentProvinceId = mProvinceData[pCurrent].getId();
-        CityModel[] cityModels = mCitiesDataMap.get(mCurrentProvinceId);
-        cityName = new String[cityModels.length];
-        for (int i = 0; i < cityModels.length; i++) {
-            cityName[i] = cityModels[i].getName();
-        }
-        id_city.setAdapter(new ArrayWheelAdapter<>(Arrays.asList(cityName)));
-        id_city.setCyclic(false);
-        id_city.setCurrentItem(0);
-        updateAreas();
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
+    @OnClick({R.id.tv_life_back, R.id.tv_time_click_confirmed, R.id.tv_time_click_cancel, R.id.tv_address_district, R.id.tv_header_shared})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.tv_life_back:
+                finish();
+                break;
+            //确认
             case R.id.tv_time_click_confirmed:
-                showSelectedResult();
-                ll_communal_multi_time.setVisibility(View.GONE);
-                isSelected = true;
+                mTvAddressDistrict.setText((
+                        provinceNameList.get(mProvinceWheel.getCurrentItem())
+                                + cityNameList.get(mCityWheel.getCurrentItem())
+                                + (districtNameList.size() > 0 ? districtNameList.get(mDistrictWheel.getCurrentItem()) : "")));
+                mLlCommunalMultiTime.setVisibility(View.GONE);
                 break;
+            //取消
             case R.id.tv_time_click_cancel:
-                ll_communal_multi_time.setVisibility(View.GONE);
-                isSelected = true;
+                mLlCommunalMultiTime.setVisibility(View.GONE);
+                break;
+            //选择地址
+            case R.id.tv_address_district:
+                if (KeyboardUtils.isSoftInputVisible(this)) {
+                    KeyboardUtils.hideSoftInput(this);
+                } else {
+                    mLlCommunalMultiTime.setVisibility(mLlCommunalMultiTime.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+                }
+                break;
+            //保存地址
+            case R.id.tv_header_shared:
+                AddressInfoBean myAddress = new AddressInfoBean();
+                //收货人
+                myAddress.setConsignee(mEtAddressConsignee.getText().toString().trim());
+                //手机
+                myAddress.setMobile(mEtAddressMobile.getText().toString().trim());
+                //省市县
+                myAddress.setAddress_com(mTvAddressDistrict.getText().toString().trim());
+                //详细街道地址
+                myAddress.setAddress(mEtAddressDetailDistrict.getText().toString().trim());
+                if (mCbAddressDefault.isChecked()) {
+                    myAddress.setStatus(1);
+                } else {
+                    myAddress.setStatus(0);
+                }
+                if (myAddress.getAddress_com().length() < 1 || myAddress.getAddress().length() < 1
+                        || myAddress.getConsignee().length() < 1 || myAddress.getMobile().length() < 1) {
+                    showToast("请完整填写收货人资料");
+                } else {
+                    String mobilePhone = myAddress.getMobile();
+                    if (mobilePhone.startsWith("1")) {            //手机号
+                        editAddress(myAddress);
+                    } else if (!mobilePhone.startsWith("-")) {                //固话
+                        editAddress(myAddress);
+                    } else {
+                        showToast("联系方式有误，请重新输入");
+                    }
+                }
                 break;
         }
     }
 
-    private void showSelectedResult() {
-//        当前省市区ID
-        tv_address_district.setText((
-                provinceName[id_province.getCurrentItem()]
-                        + cityName[id_city.getCurrentItem()]
-                        + (districtName.length > 0 ? districtName[id_district.getCurrentItem()] : "")));
-    }
-
-    @OnClick(R.id.tv_address_district)
-    void selectedAddress() {
-        if (KeyboardUtils.isSoftInputVisible(this)) {
-            KeyboardUtils.hideSoftInput(this);
-        } else {
-            setAddressDialog();
-        }
-    }
-
-    /**
-     * 设置地址选择隐藏显示
-     */
-    private void setAddressDialog() {
-        if (isSelected) {
-            ll_communal_multi_time.setVisibility(View.VISIBLE);
-            isSelected = false;
-        } else {
-            ll_communal_multi_time.setVisibility(View.GONE);
-            isSelected = true;
-        }
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -464,13 +422,7 @@ public class AddressNewCreatedActivity extends BaseActivity implements View.OnCl
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        handler.removeCallbacksAndMessages(null);
         KeyboardUtils.unregisterSoftInputChangedListener(this);
-    }
-
-    @OnClick(R.id.tv_life_back)
-    void goBack(View view) {
-        finish();
     }
 
     @Override
@@ -478,8 +430,7 @@ public class AddressNewCreatedActivity extends BaseActivity implements View.OnCl
         if (ev.getAction() == MotionEvent.ACTION_DOWN) {
             View v = getCurrentFocus();
             if (isShouldHideKeyboard(v, ev)) {
-                InputMethodManager imm =
-                        (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 if (imm != null) {
                     imm.hideSoftInputFromWindow(v.getWindowToken(),
                             InputMethodManager.HIDE_NOT_ALWAYS);
@@ -508,5 +459,10 @@ public class AddressNewCreatedActivity extends BaseActivity implements View.OnCl
                     && event.getY() > top && event.getY() < bottom);
         }
         return false;
+    }
+
+    @Override
+    protected boolean isAddLoad() {
+        return getStringChangeIntegers(getIntent().getStringExtra("addressId")) > 0;
     }
 }
