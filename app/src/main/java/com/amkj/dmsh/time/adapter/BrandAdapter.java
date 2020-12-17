@@ -44,7 +44,9 @@ public class BrandAdapter extends BaseQuickAdapter<BrandBean, BaseViewHolder> {
     protected void convert(BaseViewHolder helper, BrandBean item) {
         if (item == null) return;
         GlideImageLoaderUtil.loadRoundImg(context, helper.getView(R.id.iv_brand_cover), item.getLogo(), AutoSizeUtils.mm2px(context, 68));
-        GlideImageLoaderUtil.loadCenterCrop(context, helper.getView(R.id.iv_background), item.getBackgroundUrl());
+        if (!TextUtils.isEmpty(item.getBackgroundUrl())) {
+            GlideImageLoaderUtil.loadCenterCrop(context, helper.getView(R.id.iv_background), item.getBackgroundUrl());
+        }
         helper.setText(R.id.tv_brand_name, getStrings(item.getTitle()))
                 .setText(R.id.tv_brand_desc, getStrings(item.getSubtitle()));
         helper.getView(R.id.rl_brand).setOnClickListener(new View.OnClickListener() {

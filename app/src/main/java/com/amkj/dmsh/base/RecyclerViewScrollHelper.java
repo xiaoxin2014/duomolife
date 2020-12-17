@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView;
 /**
  * Created by xiaoxin on 2019/4/20 0020
  * Version:v4.0.0
- * ClassDescription :
  */
 public class RecyclerViewScrollHelper {
 

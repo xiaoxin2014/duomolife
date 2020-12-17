@@ -115,7 +115,7 @@ public class ItemDecoration extends RecyclerView.ItemDecoration {
             int childCount = parent.getAdapter() != null ? parent.getAdapter().getItemCount() : parent.getChildCount();
             if (!isHeader(parent, position)) {
                 if (linearLayoutManager.getOrientation() == LinearLayoutManager.HORIZONTAL) {
-                    outRect.set(0, 0, mDrawable.getIntrinsicWidth(), 0);
+                    outRect.set(isFirstDraw && position == 0 ? mDrawable.getIntrinsicWidth() : 0, 0, mDrawable.getIntrinsicWidth(), 0);
                 } else {
                     if (!isLastDraw && position + 1 == childCount) {
                         outRect.set(0, 0, 0, 0);
@@ -591,7 +591,7 @@ public class ItemDecoration extends RecyclerView.ItemDecoration {
 
 
         /**
-         * 仅针对grid
+         * 仅针对grid和纵向linearLayoutManager
          * 第一行是否显示分割线
          *
          * @param isFirstDraw

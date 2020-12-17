@@ -346,4 +346,6 @@
     <string name="deposit_discount">可抵扣￥%s</string>
     <string name="deposit_order_time">支付尾款时间：%1$s~%2$s</string>
     <string name="deposit_discount_detail">￥%1$s抵扣￥%2$s</string>
+    <string name="uerr_first_start_amount">满%s元时</string>
+    <string name="new_user_first_condition">新用户首单实付满¥%s时，结算时以0元加购以下任一商品</string>
 </resources>

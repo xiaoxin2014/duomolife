@@ -1,6 +1,7 @@
 package com.amkj.dmsh.time.adapter;
 
 import android.content.Context;
+import android.view.View;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.time.bean.TimeAxisEntity.TimeAxisBean;
@@ -36,6 +37,7 @@ public class TimeAxisAdapter extends BaseQuickAdapter<TimeAxisBean, BaseViewHold
         List<TimeAxisBean.BrandProductBean> productList = item.getProductList();
         List<TimeAxisBean.BrandBean> topicList = item.getTopicList();
         if (productList != null && productList.size() > 0) {
+            mRvSingle.setVisibility(View.VISIBLE);
             ItemDecoration newGridItemDecoration = new ItemDecoration.Builder()
                     .setDividerId(R.drawable.item_divider_five_gray_f)
                     .create();
@@ -46,12 +48,18 @@ public class TimeAxisAdapter extends BaseQuickAdapter<TimeAxisBean, BaseViewHold
             }
             SingleProductAdapter singleProductAdapter = new SingleProductAdapter(mContext, productList);
             mRvSingle.setAdapter(singleProductAdapter);
+        } else {
+            mRvSingle.setVisibility(View.GONE);
         }
+
         if (topicList != null && topicList.size() > 0) {
             //初始化品牌团列表
+            mRvBrand.setVisibility(View.VISIBLE);
             mRvBrand.setLayoutManager(new LinearLayoutManager(mContext));
             BrandAdapter brandAdapter = new BrandAdapter(mContext, topicList);
             mRvBrand.setAdapter(brandAdapter);
+        } else {
+            mRvBrand.setVisibility(View.GONE);
         }
     }
 }

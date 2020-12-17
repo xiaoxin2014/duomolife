@@ -32,7 +32,7 @@ import com.amkj.dmsh.time.bean.TimeAxisEntity.TimeAxisBean;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.flycoTablayout.SlidingDoubleTextTabLayout;
-import com.amkj.dmsh.views.flycoTablayout.listener.OnTabSelectListener;
+import com.amkj.dmsh.views.flycoTablayout.listener.OnTabClickListener;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.holder.Holder;
@@ -101,7 +101,7 @@ public class TimeShowNewFragment extends BaseFragment {
     private List<CommunalADActivityBean> adBeanList = new ArrayList<>();
     private List<CommunalADActivityBean> postAdBeanList = new ArrayList<>();
     private List<TimeAxisBean> mTimeAxisList = new ArrayList<>();
-    List<PostEntity.PostBean> mPostList = new ArrayList<>();
+    private List<PostEntity.PostBean> mPostList = new ArrayList<>();
     private TimeAxisEntity mTimeAxisEntity;
     private TimeAxisAdapter mTimeAxisAdapter;
     private TimeAxisFootView mTimeAxisFootView;
@@ -126,21 +126,22 @@ public class TimeShowNewFragment extends BaseFragment {
             loadData();
         });
 
-
         //初始化团购商品列表
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         mRvGoods.setLayoutManager(linearLayoutManager);
+        mRvGoods.addItemDecoration(new ItemDecoration.Builder()
+                // 设置分隔线资源ID
+                .setDividerId(R.drawable.item_divider_time_axis)
+                .setLastDraw(false)
+                .create());
         mTimeAxisAdapter = new TimeAxisAdapter(getActivity(), mTimeAxisList);
         mRvGoods.setAdapter(mTimeAxisAdapter);
-        mSlidingTablayout.setOnTabSelectListener(new OnTabSelectListener() {
+        mSlidingTablayout.setOnTabClickListener(new OnTabClickListener() {
             @Override
-            public void onTabSelect(int position) {
+            public void onClick(int position) {
+                //手动切换tab时设置tag
+                mRvGoods.setTag(position);
                 RecyclerViewScrollHelper.scrollToPosition(mRvGoods, position);
-            }
-
-            @Override
-            public void onTabReselect(int position) {
-
             }
         });
 
@@ -148,8 +149,19 @@ public class TimeShowNewFragment extends BaseFragment {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                int position = linearLayoutManager.findFirstVisibleItemPosition();
-                mSlidingTablayout.setCurrentTab(position >= mTimeAxisList.size() ? mTimeAxisList.size() - 1 : position, false);
+                //只有手动滚动才需要监听
+                if (mRvGoods.getTag() == null) {
+                    int position = linearLayoutManager.findFirstVisibleItemPosition();
+                    mSlidingTablayout.setCurrentTab(position >= mTimeAxisList.size() ? mTimeAxisList.size() - 1 : position, true);
+                }
+            }
+
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == 0) {
+                    mRvGoods.setTag(null);
+                }
             }
         });
 

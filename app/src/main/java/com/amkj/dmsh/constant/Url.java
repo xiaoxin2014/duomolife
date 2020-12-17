@@ -577,6 +577,8 @@ public class Url {
     public static final String QUALITY_NEW_USER_COUPON_LIST = "api/goods/coupon/getCouponGoodsList";
     //    新人领取优惠券礼包
     public static final String QUALITY_NEW_USER_GET_COUPON = "api/goods/newuser/getCouponByNewUser";
+    //    新人首单0元购商品
+    public static final String QUALITY_NEW_USER_FIRST = "api/goods/newuser/getNewUserFirstActivityGoods";
     //    热销单品广告位
     public static final String QUALITY_HOT_SALE_AD = "api/home/getHotProductAd";
     //    热销单品时间轴
@@ -799,7 +801,7 @@ public class Url {
     // 获取会员专享价专区商品列表
     public static final String GET_VIP_EXCLUSIVE_GOODS_LIST = "api/vip/vipuser/getVipPriceExclusiveGoodsList";
     // 0元试用订单详情-查看物流
-    public static final String GET_ZERO_ORDER_LOGISTICS= "api/vip/zeroActivity/getZeroOrderLogistics";
+    public static final String GET_ZERO_ORDER_LOGISTICS = "api/vip/zeroActivity/getZeroOrderLogistics";
 
 
     /*

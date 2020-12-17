@@ -1,14 +1,11 @@
 package com.amkj.dmsh.dominant.activity;
 
 import android.content.Intent;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
@@ -18,11 +15,13 @@ import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.adapter.CatergoryGoodsAdapter;
+import com.amkj.dmsh.dominant.adapter.UserFirstAdapter;
 import com.amkj.dmsh.dominant.bean.NewUserCouponEntity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.user.bean.UserLikedProductEntity;
+import com.amkj.dmsh.time.bean.UserFirstEntity;
 import com.amkj.dmsh.user.bean.LikedProductBean;
+import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -36,6 +35,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -43,6 +46,7 @@ import butterknife.OnClick;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
@@ -77,7 +81,16 @@ public class QualityNewUserActivity extends BaseActivity {
     FrameLayout fl_header_service;
     @BindView(R.id.iv_img_share)
     ImageView iv_img_share;
-    private int scrollY;
+    @BindView(R.id.rv_first_goods)
+    RecyclerView mRvFirstGoods;
+    @BindView(R.id.ll_new_user_first)
+    LinearLayout mLlNewUserFirst;
+    @BindView(R.id.tv_first_amount)
+    TextView mTvFirstAmount;
+    @BindView(R.id.tv_first_condition)
+    TextView mTvFirstCondition;
+    @BindView(R.id.nested_scrollview)
+    NestedScrollView mNestedScrollview;
     private float screenHeight;
     private List<LikedProductBean> qualityNewUserShopList = new ArrayList<>();
     private CatergoryGoodsAdapter qualityNewUserShopAdapter;
@@ -85,16 +98,19 @@ public class QualityNewUserActivity extends BaseActivity {
     private View qNewUserCoverView;
     private UserLikedProductEntity qualityNewUserShopEntity;
     private int page = 1;
+    private List<UserFirstEntity.UserFirstBean> mUserFirstList = new ArrayList<>();
+    private UserFirstAdapter mUserFirstAdapter;
 
     @Override
     protected int getContentView() {
-        return R.layout.activity_communal_ql_shop_car;
+        return R.layout.activity_quality_new_user;
     }
 
     @Override
     protected void initViews() {
         tv_header_titleAll.setText("新人专享");
-        iv_img_service.setVisibility(View.GONE);
+        iv_img_service.setVisibility(GONE);
+        communal_recycler.setNestedScrollingEnabled(false);
         communal_recycler.setLayoutManager(new GridLayoutManager(QualityNewUserActivity.this, 3));
         communal_recycler.addItemDecoration(new ItemDecoration.Builder()
                 // 设置分隔线资源ID
@@ -102,41 +118,32 @@ public class QualityNewUserActivity extends BaseActivity {
                 .create());
         smart_communal_refresh.setOnRefreshListener(refreshLayout -> {
             page = 1;
-            getQualityTypePro();
+            loadData();
         });
         TinkerBaseApplicationLike app = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
         screenHeight = app.getScreenHeight();
-        communal_recycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        mNestedScrollview.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
             @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                scrollY += dy;
-                if (!recyclerView.canScrollVertically(-1)) {
-                    scrollY = 0;
-                }
-                if (scrollY > screenHeight * 1.5 && dy < 0) {
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                if (scrollY > screenHeight * 1.5) {
                     if (download_btn_communal.getVisibility() == GONE) {
                         download_btn_communal.setVisibility(VISIBLE);
-                        download_btn_communal.hide(false);
+                        download_btn_communal.show(false);
                     }
                     if (!download_btn_communal.isVisible()) {
-                        download_btn_communal.show();
+                        download_btn_communal.show(false);
                     }
                 } else {
                     if (download_btn_communal.isVisible()) {
-                        download_btn_communal.hide();
+                        download_btn_communal.hide(false);
                     }
                 }
             }
         });
         download_btn_communal.setOnClickListener(v -> {
-            LinearLayoutManager linearLayoutManager = (LinearLayoutManager) communal_recycler.getLayoutManager();
-            int firstVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition();
-            int mVisibleCount = linearLayoutManager.findLastVisibleItemPosition()
-                    - linearLayoutManager.findFirstVisibleItemPosition() + 1;
-            if (firstVisibleItemPosition > mVisibleCount) {
-                communal_recycler.scrollToPosition(mVisibleCount);
-            }
-            communal_recycler.smoothScrollToPosition(0);
+            mNestedScrollview.fling(0);
+            mNestedScrollview.scrollTo(0, 0);
+            download_btn_communal.hide(false);
         });
         qualityNewUserShopAdapter = new CatergoryGoodsAdapter(QualityNewUserActivity.this, qualityNewUserShopList);
         qualityNewUserShopAdapter.setSpanSizeLookup(new BaseQuickAdapter.SpanSizeLookup() {
@@ -154,6 +161,16 @@ public class QualityNewUserActivity extends BaseActivity {
             page++;
             getNewUserCouponProduct();
         }, communal_recycler);
+
+        //初始化新人首单0元购商品列表
+        mUserFirstAdapter = new UserFirstAdapter(this, mUserFirstList);
+        mRvFirstGoods.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
+        mRvFirstGoods.addItemDecoration(new ItemDecoration.Builder()
+                // 设置分隔线资源ID
+                .setDividerId(R.drawable.item_divider_10_mm_transparent)
+                .setFirstDraw(true)
+                .create());
+        mRvFirstGoods.setAdapter(mUserFirstAdapter);
     }
 
     @Override
@@ -177,7 +194,35 @@ public class QualityNewUserActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
+        getNewUserFirst();
         getQualityTypePro();
+    }
+
+    //获取首单0元购商品
+    private void getNewUserFirst() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.QUALITY_NEW_USER_FIRST, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                mUserFirstList.clear();
+                UserFirstEntity userFirstEntity = GsonUtils.fromJson(result, UserFirstEntity.class);
+                if (userFirstEntity != null) {
+                    String code = userFirstEntity.getCode();
+                    if (SUCCESS_CODE.equals(code)) {
+                        mTvFirstAmount.setText("满¥" + userFirstEntity.getMinStartPrice());
+                        mTvFirstCondition.setText(getStringsFormat(getActivity(), R.string.new_user_first_condition, userFirstEntity.getMinStartPrice()));
+                        List<UserFirstEntity.UserFirstBean> userFirstList = userFirstEntity.getResult();
+                        mUserFirstList.addAll(userFirstList);
+                    }
+                }
+                mUserFirstAdapter.notifyDataSetChanged();
+                mLlNewUserFirst.setVisibility(mUserFirstList.size() > 0 ? VISIBLE : GONE);
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                mLlNewUserFirst.setVisibility(mUserFirstList.size() > 0 ? VISIBLE : GONE);
+            }
+        });
     }
 
     //新人专享
@@ -210,7 +255,7 @@ public class QualityNewUserActivity extends BaseActivity {
                                 qualityNewUserShopList.addAll(goodsList);
                                 qualityNewUserShopAdapter.notifyDataSetChanged();
                             } else if (EMPTY_CODE.equals(qualityNewUserShopEntity.getCode())) {
-                                showToast( qualityNewUserShopEntity.getMsg());
+                                showToast(qualityNewUserShopEntity.getMsg());
                             }
                         }
                         getNewUserCouponProduct();
@@ -290,7 +335,7 @@ public class QualityNewUserActivity extends BaseActivity {
                     if (newUserCouponEntity.getCode().equals(SUCCESS_CODE)) {
                         qNewUserCoverHelper.tv_new_user_get_coupon.setText("已领取");
                     } else if (!newUserCouponEntity.getCode().equals(EMPTY_CODE)) {
-                        showToast( newUserCouponEntity.getMsg());
+                        showToast(newUserCouponEntity.getMsg());
                         qNewUserCoverHelper.tv_new_user_get_coupon.setText("已领取");
                     }
                 }
@@ -303,10 +348,12 @@ public class QualityNewUserActivity extends BaseActivity {
         });
     }
 
+
     public class QNewUserCoverHelper {
         @BindView(R.id.iv_new_user_cover)
         ImageView iv_new_user_cover;
         @BindView(R.id.tv_new_user_get_coupon)
+        public
         TextView tv_new_user_get_coupon;
 
         @OnClick(R.id.tv_new_user_get_coupon)

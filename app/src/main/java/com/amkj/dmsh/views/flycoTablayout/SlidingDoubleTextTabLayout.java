@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.time.bean.TimeAxisEntity;
+import com.amkj.dmsh.views.flycoTablayout.listener.OnTabClickListener;
 import com.amkj.dmsh.views.flycoTablayout.listener.OnTabSelectListener;
 
 import java.util.ArrayList;
@@ -255,6 +256,9 @@ public class SlidingDoubleTextTabLayout extends HorizontalScrollView implements 
             public void onClick(View v) {
                 int position = mTabsContainer.indexOfChild(v);
                 if (position != -1) {
+                    if (mClickListener != null) {
+                        mClickListener.onClick(position);
+                    }
                     if (mViewPager.getCurrentItem() != position) {
                         if (mSnapOnTabClick) {
                             mViewPager.setCurrentItem(position, false);
@@ -759,6 +763,12 @@ public class SlidingDoubleTextTabLayout extends HorizontalScrollView implements 
 
     public void setOnTabSelectListener(OnTabSelectListener listener) {
         this.mListener = listener;
+    }
+
+    private OnTabClickListener mClickListener;
+
+    public void setOnTabClickListener(OnTabClickListener listener) {
+        this.mClickListener = listener;
     }
 
 
