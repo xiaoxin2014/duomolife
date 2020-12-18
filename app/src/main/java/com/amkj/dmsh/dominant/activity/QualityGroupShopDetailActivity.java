@@ -1,6 +1,7 @@
 package com.amkj.dmsh.dominant.activity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -253,6 +254,11 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
     LinearLayout mLlStartTime;
     @BindView(R.id.tv_start_time)
     TextView mTvStartTime;
+    @BindView(R.id.flex_bug_before)
+    FlexboxLayout flex_buy_before;
+    @BindView(R.id.ll_pro_buy_before)
+    LinearLayout ll_pro_buy_before;
+
 
 
     //拼团列表
@@ -657,6 +663,25 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         //商品服务标签
         setSeviceTag(groupShopDetailsBean.getTagText(), ll_layout_pro_sc_tag, flex_product_tag);
 
+        //购前须知
+        List<Map<String, String>> newPreSaleInfo = groupShopDetailsBean.getPreSaleInfo();
+        if (newPreSaleInfo != null && newPreSaleInfo.size() > 0) {
+            flex_buy_before.removeAllViews();
+            for (int i = 0; i < newPreSaleInfo.size(); i++) {
+                Map<String, String> map = newPreSaleInfo.get(i);
+                String color = map.get("color");
+                String tagName = map.get("text");
+                if (!TextUtils.isEmpty(tagName)) {
+                    TextView textView = (TextView) LayoutInflater.from(getActivity()).inflate(R.layout.layout_buy_before_tag, null, false);
+                    textView.setText(getStrings(tagName));
+                    if (!TextUtils.isEmpty(color)) {
+                        textView.setTextColor(Color.parseColor(color));
+                    }
+                    flex_buy_before.addView(textView);
+                }
+            }
+        }
+        ll_pro_buy_before.setVisibility(flex_buy_before.getChildCount() > 0 ? VISIBLE : GONE);
         //图文详情
         shopDetailBeanList.clear();
         List<CommunalDetailBean> itemBody = groupShopDetailsBean.getItemBody();
@@ -873,8 +898,8 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
         List<SkuSaleBean> skuSale = mGroupShopDetailsBean.getSkuSale();
         if (skuSale != null && skuSale.size() > 0) {
             List<SkuSaleBean> skuSaleList = new ArrayList<>(skuSale);
-        Collections.sort(skuSaleList, (lhs, rhs) -> Float.compare(getStringChangeFloat(lhs.getPrice()), getStringChangeFloat(rhs.getPrice())));
-        return skuSaleList.get(0).getPrice().equals(skuSaleList.get(skuSaleList.size() - 1).getPrice()) ? "" : "起";
+            Collections.sort(skuSaleList, (lhs, rhs) -> Float.compare(getStringChangeFloat(lhs.getPrice()), getStringChangeFloat(rhs.getPrice())));
+            return skuSaleList.get(0).getPrice().equals(skuSaleList.get(skuSaleList.size() - 1).getPrice()) ? "" : "起";
         } else {
             return "";
         }

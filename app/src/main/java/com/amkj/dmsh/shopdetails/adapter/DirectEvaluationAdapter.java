@@ -69,7 +69,9 @@ public class DirectEvaluationAdapter extends BaseMultiItemQuickAdapter<GoodsComm
                                 ? goodsCommentBean.getLikeNum() + "" : "赞")
                         .addOnClickListener(R.id.tv_eva_count)
                         .setTag(R.id.tv_eva_count, goodsCommentBean)
-                        .setText(R.id.tv_eva_user_name, getStrings(goodsCommentBean.getNickname()));
+                        .setText(R.id.tv_eva_user_name, getStrings(goodsCommentBean.getNickname()))
+                        .setText(R.id.tv_sku_text, "| " + getStrings(goodsCommentBean.getSkuText()))
+                        .setGone(R.id.tv_sku_text, !TextUtils.isEmpty(goodsCommentBean.getSkuText()));
                 ratingBar.setVisibility(goodsCommentBean.getStar() < 1 ? View.GONE : View.VISIBLE);
                 ratingBar.setNumStars(goodsCommentBean.getStar());
                 ratingBar.setMax(goodsCommentBean.getStar());

@@ -2,7 +2,7 @@ package com.amkj.dmsh.find.adapter;
 
 import android.app.Activity;
 import android.content.Intent;
-import androidx.annotation.Nullable;
+import android.text.TextUtils;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.constant.ConstantMethod;
@@ -13,6 +13,8 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
+
+import androidx.annotation.Nullable;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 
@@ -31,10 +33,12 @@ public class PostRelatedAdapter extends BaseQuickAdapter<RelatedGoodsBean, BaseV
 
     @Override
     protected void convert(BaseViewHolder helper, RelatedGoodsBean item) {
-        if (item==null) return;
+        if (item == null) return;
         GlideImageLoaderUtil.loadImage(context, helper.getView(R.id.iv_cover), item.getPictureUrl());
         helper.setText(R.id.tv_title, getStrings(item.getTitle()))
-                .setText(R.id.tv_price, ("¥" + item.getPrice()));
+                .setText(R.id.tv_price, ("¥" + item.getPrice()))
+                .setText(R.id.tv_sku_text, getStrings(item.getSkutext()))
+                .setGone(R.id.tv_sku_text, !TextUtils.isEmpty(item.getSkutext()));
         helper.itemView.setOnClickListener(v -> {
             if (ConstantMethod.isContextExisted(context)) {
                 Intent intent = new Intent(context, ShopScrollDetailsActivity.class);

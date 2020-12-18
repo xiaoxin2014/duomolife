@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_pro_buy_before"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/border_top_line"
+    android:orientation="vertical"
+    android:padding="@dimen/sc_mm_30"
+    android:visibility="gone">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="购前须知"
+        android:textColor="@color/text_black_t"
+        android:textSize="@dimen/sc_mm_30" />
+
+    <com.google.android.flexbox.FlexboxLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/flex_bug_before"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/sc_mm_30"
+        android:background="@drawable/border_cir_5dp_gray_light"
+        android:padding="@dimen/sc_mm_27"
+        app:dividerDrawable="@drawable/item_divider_product_tag_transparent"
+        app:flexDirection="column"
+        app:showDivider="middle" />
+</LinearLayout>

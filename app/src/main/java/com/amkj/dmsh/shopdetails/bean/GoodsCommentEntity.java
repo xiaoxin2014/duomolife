@@ -47,6 +47,15 @@ public class GoodsCommentEntity extends BaseEntity{
         private int likeNum;
         private int id;
         private boolean isFavor;
+        private String skuText;
+
+        public String getSkuText() {
+            return skuText;
+        }
+
+        public void setSkuText(String skuText) {
+            this.skuText = skuText;
+        }
 
         public int getId() {
             return id;

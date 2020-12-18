@@ -529,7 +529,9 @@ public class SlidingDoubleTextTabLayout extends HorizontalScrollView implements 
 
     public void setCurrentTab(int currentTab, boolean smoothScroll) {
         this.mCurrentTab = currentTab;
-        mViewPager.setCurrentItem(currentTab, smoothScroll);
+        if (mViewPager != null) {
+            mViewPager.setCurrentItem(currentTab, smoothScroll);
+        }
     }
 
     public void setIndicatorStyle(int indicatorStyle) {

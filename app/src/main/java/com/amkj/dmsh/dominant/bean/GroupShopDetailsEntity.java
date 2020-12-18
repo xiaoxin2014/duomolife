@@ -15,6 +15,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author LGuiPeng
@@ -107,10 +108,18 @@ public class GroupShopDetailsEntity extends BaseTimeEntity {
         private ParticipantInfoBean participantInfo;
         private List<CommunalDetailBean> gpRule;
         private List<CommunalDetailBean> servicePromise;
-
+        private List<Map<String, String>> preSaleInfos;
 
         private int gpSkuId;
         private int gpStatus = ConstantVariable.OPEN_GROUP;//开团 1 参团 2
+
+        public List<Map<String, String>> getPreSaleInfo() {
+            return preSaleInfos;
+        }
+
+        public void setPreSaleInfo(List<Map<String, String>> preSaleInfo) {
+            this.preSaleInfos = preSaleInfo;
+        }
 
         public boolean isBtUsable() {
             return "1".equals(isBtUsable);

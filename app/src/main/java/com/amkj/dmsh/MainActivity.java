@@ -26,6 +26,7 @@ import android.widget.RadioGroup;
 import com.ali.auth.third.ui.context.CallbackContext;
 import com.alibaba.fastjson.JSON;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.base.BaseEntity;
 import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
@@ -49,13 +50,13 @@ import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.homepage.fragment.AliBCFragment;
 import com.amkj.dmsh.homepage.fragment.HomePageFragment;
-import com.amkj.dmsh.time.fragment.TimeShowNewFragment;
 import com.amkj.dmsh.mine.bean.SavePersonalInfoBean;
 import com.amkj.dmsh.mine.fragment.MineDataFragment;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.activity.DirectMyCouponActivity;
+import com.amkj.dmsh.time.fragment.TimeShowNewFragment;
 import com.amkj.dmsh.utils.AddressUtils;
 import com.amkj.dmsh.utils.CountDownTimer;
 import com.amkj.dmsh.utils.FileStreamUtils;
@@ -77,9 +78,6 @@ import com.google.gson.reflect.TypeToken;
 import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum;
 import com.tencent.bugly.beta.tinker.TinkerManager;
 import com.umeng.socialize.UMShareAPI;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -687,70 +685,40 @@ public class MainActivity extends BaseActivity {
     }
 
     private void getAddressVersion() {
-        String url = Url.H_ADDRESS_VERSION;
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, new NetLoadListenerHelper() {
+        //地址初始化
+        AddressUtils.getQyInstance().initAddress();
+        //获取最新的地址库
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.H_ADDRESS_VERSION, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-
                 RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
-                if (requestStatus != null) {
-                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        SharedPreferences preferences = getSharedPreferences("addressConfig", MODE_PRIVATE);
-                        String versionName = preferences.getString("version", "");
-                        if (!versionName.equals(requestStatus.getVersion())) {
-                            SharedPreferences.Editor edit = preferences.edit();
-                            edit.putString("version", requestStatus.getVersion());
-                            edit.apply();
-                            getAddressData();
-                        } else {
-                            //        地址初始化
-                            AddressUtils.getQyInstance().initAddress();
-                        }
-                    } else {
-                        //        地址初始化
-                        AddressUtils.getQyInstance().initAddress();
+                //如果有新版本，覆盖当前版本
+                if (requestStatus != null && SUCCESS_CODE.equals(requestStatus.getCode())) {
+                    SharedPreferences preferences = getSharedPreferences("addressConfig", MODE_PRIVATE);
+                    String versionName = preferences.getString("version", "");
+                    if (!requestStatus.getVersion().equals(versionName)) {
+                        SharedPreferences.Editor edit = preferences.edit();
+                        edit.putString("version", requestStatus.getVersion());
+                        edit.apply();
+                        getAddressData();
                     }
-                } else {
-                    //        地址初始化
-                    AddressUtils.getQyInstance().initAddress();
                 }
-            }
-
-            @Override
-            public void onNotNetOrException() {
-                //        地址初始化
-                AddressUtils.getQyInstance().initAddress();
             }
         });
     }
 
 
     private void getAddressData() {
-        String url = Url.H_ADDRESS_DATA;
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.H_ADDRESS_DATA, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                String code = "";
-                try {
-                    JSONObject jsonObject = new JSONObject(result);
-                    code = (String) jsonObject.get("code");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                if (code.equals(SUCCESS_CODE)) {
-                    //        地址初始化
+                BaseEntity baseEntity = GsonUtils.fromJson(result, BaseEntity.class);
+                if (baseEntity != null && SUCCESS_CODE.equals(baseEntity.getCode())) {
+                    //地址初始化
                     AddressUtils.getQyInstance().initAddress(result);
+                    //地址信息写入本地保存
                     FileStreamUtils.writeFileFromString(getFilesDir().getAbsolutePath() + "/adr_s/asr_s.txt", result, false);
-                } else {
-                    //        地址初始化
-                    AddressUtils.getQyInstance().initAddress();
                 }
-            }
-
-            @Override
-            public void onNotNetOrException() {
-                //        地址初始化
-                AddressUtils.getQyInstance().initAddress();
             }
         });
     }

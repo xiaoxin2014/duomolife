@@ -26,6 +26,15 @@ public class RelatedGoodsBean {
     private String title;
     private String thirdUrl;
     private int productStatus;
+    private String skutext;
+
+    public String getSkutext() {
+        return skutext;
+    }
+
+    public void setSkutext(String skutext) {
+        this.skutext = skutext;
+    }
 
     public int getProductStatus() {
         return productStatus;

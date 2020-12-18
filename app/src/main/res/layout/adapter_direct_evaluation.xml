@@ -45,7 +45,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tv_eva_user_name"
-                android:layout_gravity="center_vertical|left"
                 android:layout_marginTop="@dimen/sc_mm_16"
                 android:clickable="false"
                 android:isIndicator="true"
@@ -56,6 +55,18 @@
                 android:stepSize="1"
                 app:mrb_progressTint="@color/ratingBar_yellow"
                 app:mrb_secondaryProgressTint="@color/text_gray_c" />
+
+            <TextView
+                android:id="@+id/tv_sku_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_eva_user_name"
+                android:layout_marginLeft="@dimen/sc_mm_30"
+                android:layout_marginTop="@dimen/sc_mm_16"
+                android:layout_toRightOf="@+id/ratingBar_direct_count"
+                android:textColor="@color/color_blue_reply_com"
+                android:textSize="@dimen/sc_mm_22"
+                android:visibility="gone" />
         </RelativeLayout>
 
         <TextView
@@ -66,7 +77,6 @@
             android:drawablePadding="@dimen/dimen_5_dp"
             android:paddingLeft="@dimen/sc_mm_20"
             android:paddingTop="@dimen/sc_mm_10"
-
             android:paddingRight="@dimen/sc_mm_20"
             android:paddingBottom="@dimen/sc_mm_10"
             android:textColor="@color/text_login_gray_s"

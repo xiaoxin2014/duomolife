@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:focusable="true"
-                android:focusableInTouchMode="true">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
 
     <FrameLayout
         android:id="@+id/fl_group_product"
@@ -22,7 +22,7 @@
                 android:layout_height="0px"
                 android:layout_weight="1">
 
-                <include layout="@layout/layout_refresh_header_gif"/>
+                <include layout="@layout/layout_refresh_header_gif" />
 
                 <androidx.core.widget.NestedScrollView
                     android:id="@+id/nsv_gp_detail"
@@ -48,7 +48,7 @@
                                 <com.bigkoo.convenientbanner.ConvenientBanner
                                     android:id="@+id/banner_ql_gp_sp_details"
                                     android:layout_width="match_parent"
-                                    android:layout_height="match_parent"/>
+                                    android:layout_height="match_parent" />
 
                                 <TextView
                                     android:id="@+id/tv_ql_gp_sp_new_detail"
@@ -60,10 +60,10 @@
                                     android:text="抽奖团"
                                     android:textColor="@color/white"
                                     android:textSize="@dimen/sc_mm_28"
-                                    android:visibility="gone"/>
+                                    android:visibility="gone" />
                             </RelativeLayout>
 
-                            <include layout="@layout/layout_ql_gp_sp_price"/>
+                            <include layout="@layout/layout_ql_gp_sp_price" />
 
                             <TextView
                                 android:id="@+id/tv_ql_sp_pro_name"
@@ -78,7 +78,7 @@
                                 android:paddingBottom="@dimen/sc_mm_58"
                                 android:text="@string/defaul"
                                 android:textColor="@color/text_black_t"
-                                android:textSize="@dimen/sc_mm_32"/>
+                                android:textSize="@dimen/sc_mm_32" />
 
                             <LinearLayout
                                 android:id="@+id/ll_sp_pro_sku_value"
@@ -100,10 +100,10 @@
                                     android:paddingRight="@dimen/sc_mm_30"
                                     android:text="选择商品属性"
                                     android:textColor="@color/color_blue_reply_com"
-                                    android:textSize="@dimen/sc_mm_30"/>
+                                    android:textSize="@dimen/sc_mm_30" />
                             </LinearLayout>
 
-                            <include layout="@layout/layout_open_group_info"/>
+                            <include layout="@layout/layout_open_group_info" />
 
 
                             <LinearLayout
@@ -117,7 +117,7 @@
                                     android:id="@+id/view_divider_zone"
                                     android:layout_width="match_parent"
                                     android:layout_height="@dimen/sc_mm_20"
-                                    android:background="@color/light_gray_f"/>
+                                    android:background="@color/light_gray_f" />
 
                                 <ImageView
                                     android:id="@+id/iv_lottery_zone"
@@ -125,7 +125,7 @@
                                     android:layout_height="@dimen/sc_mm_188"
                                     android:layout_marginLeft="@dimen/sc_mm_20"
                                     android:layout_marginTop="@dimen/sc_mm_40"
-                                    android:layout_marginRight="@dimen/sc_mm_20"/>
+                                    android:layout_marginRight="@dimen/sc_mm_20" />
 
                                 <androidx.recyclerview.widget.RecyclerView
                                     android:id="@+id/rv_hot_sale"
@@ -134,14 +134,14 @@
                                     android:layout_marginLeft="@dimen/sc_mm_20"
                                     android:layout_marginTop="@dimen/sc_mm_20"
                                     android:layout_marginBottom="@dimen/sc_mm_40"
-                                    android:scrollbars="none"/>
+                                    android:scrollbars="none" />
                             </LinearLayout>
 
                             <androidx.recyclerview.widget.RecyclerView
                                 android:id="@+id/rv_group_rule"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:scrollbars="none"/>
+                                android:scrollbars="none" />
 
                             <LinearLayout
                                 android:id="@+id/ll_comment"
@@ -152,18 +152,17 @@
                                 android:showDividers="beginning"
                                 android:visibility="gone">
 
-                                <include layout="@layout/layout_product_comment_eva"/>
+                                <include layout="@layout/layout_product_comment_eva" />
 
                                 <androidx.recyclerview.widget.RecyclerView
                                     android:id="@+id/rv_comment"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:background="@color/white"
-                                    android:scrollbars="none"/>
+                                    android:scrollbars="none" />
                             </LinearLayout>
 
-                            <include
-                                layout="@layout/item_recommend_artical"/>
+                            <include layout="@layout/item_recommend_artical" />
 
                             <LinearLayout
                                 android:id="@+id/ll_product_recommend"
@@ -182,14 +181,14 @@
                                     android:paddingTop="@dimen/sc_mm_30"
                                     android:text="更多拼团商品"
                                     android:textColor="@color/text_black_t"
-                                    android:textSize="@dimen/sc_mm_30"/>
+                                    android:textSize="@dimen/sc_mm_30" />
 
                                 <androidx.recyclerview.widget.RecyclerView
                                     android:id="@+id/rv_goods_recommend"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="@dimen/sc_mm_30"
-                                    android:scrollbars="none"/>
+                                    android:scrollbars="none" />
                             </LinearLayout>
 
                             <LinearLayout
@@ -205,8 +204,7 @@
                                 android:showDividers="beginning"
                                 android:visibility="gone">
 
-                                <com.google.android.flexbox.FlexboxLayout
-                                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                                <com.google.android.flexbox.FlexboxLayout xmlns:app="http://schemas.android.com/apk/res-auto"
                                     android:id="@+id/flex_product_tag"
                                     android:layout_width="0dp"
                                     android:layout_height="@dimen/sc_mm_80"
@@ -215,7 +213,7 @@
                                     android:paddingBottom="@dimen/sc_mm_24"
                                     app:dividerDrawable="@drawable/item_divider_product_tag"
                                     app:flexWrap="wrap"
-                                    app:showDivider="middle"/>
+                                    app:showDivider="middle" />
 
                                 <ImageView
                                     android:id="@+id/iv_more_tag"
@@ -224,26 +222,27 @@
                                     android:layout_gravity="center_vertical"
                                     android:layout_marginLeft="@dimen/sc_mm_20"
                                     android:src="@drawable/right_btn_nor"
-                                    android:visibility="gone"/>
+                                    android:visibility="gone" />
                             </LinearLayout>
 
+                            <include layout="@layout/layout_pro_buy_before" />
                         </LinearLayout>
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/rv_product_details"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:scrollbars="none"/>
+                            android:scrollbars="none" />
                     </LinearLayout>
                 </androidx.core.widget.NestedScrollView>
             </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
-            <include layout="@layout/layout_ql_gp_sp_details_bottom"/>
+            <include layout="@layout/layout_ql_gp_sp_details_bottom" />
         </LinearLayout>
 
-        <include layout="@layout/layout_communal_floating"/>
+        <include layout="@layout/layout_communal_floating" />
 
     </FrameLayout>
 
-    <include layout="@layout/layout_ql_product_scroll_detail_header"/>
+    <include layout="@layout/layout_ql_product_scroll_detail_header" />
 </RelativeLayout>

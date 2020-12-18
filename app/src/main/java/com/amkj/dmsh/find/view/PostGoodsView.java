@@ -40,6 +40,9 @@ public class PostGoodsView extends LinearLayout {
     ImageView mIvAddCar;
     @BindView(R.id.rl_goods)
     RelativeLayout mRlGoods;
+    @BindView(R.id.tv_sku_text)
+    TextView mTvSkuText;
+
 
     public PostGoodsView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -49,10 +52,11 @@ public class PostGoodsView extends LinearLayout {
     }
 
     public void updateData(BaseActivity activity, RelatedGoodsBean relatedGoodsBean) {
-        if (relatedGoodsBean==null) return;
+        if (relatedGoodsBean == null) return;
         GlideImageLoaderUtil.loadImage(activity, mIvCover, relatedGoodsBean.getPictureUrl());
         mTvTitle.setText(getStrings(relatedGoodsBean.getTitle()));
         mTvPrice.setText(("¥" + relatedGoodsBean.getPrice()));
+        mTvSkuText.setText(getStrings(relatedGoodsBean.getSkutext()));
         mIvAddCar.setOnClickListener(v -> {
             BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
             baseAddCarProInfoBean.setProductId(relatedGoodsBean.getProductId());
