@@ -17,6 +17,7 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
+import com.amkj.dmsh.shopdetails.bean.PicTagBean;
 import com.amkj.dmsh.user.bean.LikedProductBean;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.google.gson.reflect.TypeToken;
@@ -171,6 +172,7 @@ public class CommunalWebDetailUtils {
                                     communalDetailObjectBean = new CommunalDetailObjectBean();
                                     communalDetailObjectBean.setContent(content);
                                     communalDetailObjectBean.setItemType(CommunalDetailObjectBean.NORTEXT);
+                                    communalDetailObjectBean.setTagList(descriptionBean.getTagList());
                                     descriptionDetailList.add(communalDetailObjectBean);
                                 } else {
                                     Matcher matcher = Pattern.compile(REGEX_TEXT).matcher(stringContent);
@@ -181,6 +183,7 @@ public class CommunalWebDetailUtils {
                                             communalDetailObjectBean = new CommunalDetailObjectBean();
                                             communalDetailObjectBean.setPicUrl(imgUrl);
                                             communalDetailObjectBean.setItemType(CommunalDetailObjectBean.TYPE_GIF_IMG);
+                                            communalDetailObjectBean.setTagList(descriptionBean.getTagList());
                                             descriptionDetailList.add(communalDetailObjectBean);
                                         } else {
                                             String imgHeightSizeTag = "_height=";
@@ -191,13 +194,13 @@ public class CommunalWebDetailUtils {
                                                     String substring = content.substring(heightStart, heightEnd);
                                                     List<String> imageCropList = getImageCrop(imgUrl, Integer.parseInt(getNumber(substring)));
                                                     for (String imageUrl : imageCropList) {
-                                                        addImagePath(descriptionDetailList, imageUrl);
+                                                        addImagePath(descriptionDetailList, imageUrl, descriptionBean.getTagList());
                                                     }
                                                 } else {
-                                                    addImagePath(descriptionDetailList, imgUrl);
+                                                    addImagePath(descriptionDetailList, imgUrl, descriptionBean.getTagList());
                                                 }
                                             } else {
-                                                addImagePath(descriptionDetailList, imgUrl);
+                                                addImagePath(descriptionDetailList, imgUrl, descriptionBean.getTagList());
                                             }
                                         }
                                         hasImgUrl = matcher.find();
@@ -209,6 +212,7 @@ public class CommunalWebDetailUtils {
                                     detailObjectBean.setFirstLinePadding(true);
                                 }
                                 detailObjectBean.setContent(content);
+                                detailObjectBean.setTagList(descriptionBean.getTagList());
                                 detailObjectBean.setItemType(CommunalDetailObjectBean.NORTEXT);
                             }
                         }
@@ -265,11 +269,12 @@ public class CommunalWebDetailUtils {
      * @param descriptionDetailList 详情信息集合
      * @param imgUrl                图片地址
      */
-    private void addImagePath(List<CommunalDetailObjectBean> descriptionDetailList, String imgUrl) {
+    private void addImagePath(List<CommunalDetailObjectBean> descriptionDetailList, String imgUrl, List<PicTagBean> tagList) {
         CommunalDetailObjectBean communalDetailObjectBean = new CommunalDetailObjectBean();
         String imgUrlContent = ("<span><img src=\"" + imgUrl + "\" /></span>");
         communalDetailObjectBean.setContent(imgUrlContent);
         communalDetailObjectBean.setItemType(CommunalDetailObjectBean.NORTEXT);
+        communalDetailObjectBean.setTagList(tagList);
         descriptionDetailList.add(communalDetailObjectBean);
     }
 

@@ -60,6 +60,8 @@ public class CommunalDetailObjectBean implements MultiItemEntity {
     private List<CommunalDetailObjectBean> moreDataList;
     //    商品图片列表
     private List<LikedProductBean> goodsList;
+    //    图片标签
+    private List<PicTagBean> tagList;
 
     //    文本
     public static final int NORTEXT = 0;
@@ -109,6 +111,15 @@ public class CommunalDetailObjectBean implements MultiItemEntity {
 
     public CommunalDetailObjectBean(String content) {
         this.content = content;
+    }
+
+
+    public List<PicTagBean> getTagList() {
+        return tagList;
+    }
+
+    public void setTagList(List<PicTagBean> tagList) {
+        this.tagList = tagList;
     }
 
     public int getQuantity() {

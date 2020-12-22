@@ -2,9 +2,11 @@ package com.amkj.dmsh.homepage.adapter;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -26,9 +28,11 @@ import com.amkj.dmsh.homepage.bean.InvitationDetailEntity;
 import com.amkj.dmsh.message.activity.OfficialNotifyDetailsActivity;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
+import com.amkj.dmsh.shopdetails.bean.PicTagBean;
 import com.amkj.dmsh.user.adapter.InvitationProAdapter;
 import com.amkj.dmsh.user.bean.LikedProductBean;
 import com.amkj.dmsh.utils.AsyncUtils;
+import com.amkj.dmsh.utils.DoubleUtil;
 import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
@@ -467,7 +471,33 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                         String tag = isPic ? imgUrl : imgUrlLink;
                         iv_communal_image.setTag(R.id.iv_tag, tag);
                         if (!imgList.contains(tag) && !TextUtils.isEmpty(tag)) imgList.add(tag);
-                        GlideImageLoaderUtil.loadImgDynamicDrawable(context, iv_communal_image, tag, -1);
+                        GlideImageLoaderUtil.setLoadDynamicFinishListener(context, iv_communal_image, tag, -1, new GlideImageLoaderUtil.ImageLoaderFinishListener() {
+                            @Override
+                            public void onSuccess(Bitmap bitmap) {
+                                int width = bitmap.getWidth();
+                                int height = bitmap.getHeight();
+                                //图片添加标签
+                                List<PicTagBean> tagList = detailObjectBean.getTagList();
+                                if (tagList != null && tagList.size() > 0) {
+                                    for (PicTagBean tagBean : tagList) {
+                                        View tagView = LayoutInflater.from(mContext).inflate(R.layout.layout_pic_tag, null, false);
+                                        TextView tvTag = tagView.findViewById(R.id.tv_tag);
+                                        tvTag.setText(tagBean.getTagName() + (!TextUtils.isEmpty(tagBean.getAndroidLink()) ? ">" : ""));
+                                        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                                        layoutParams.setMargins(((int) DoubleUtil.div(width * tagBean.getTagLeft(), 100.f)), ((int) DoubleUtil.div(height * tagBean.getTagTop(), 100.f)), 0, 0);
+                                        tagView.setLayoutParams(layoutParams);
+                                        tagView.setOnClickListener(v -> ConstantMethod.setSkipPath(mContext, tagBean.getAndroidLink(), false));
+                                        rel_communal_image.addView(tagView);
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onError() {
+
+                            }
+                        });
+
                         //图片点击事件
                         String finalImgUrlLink = imgUrlLink;
                         String finalImgUrl = imgUrl;

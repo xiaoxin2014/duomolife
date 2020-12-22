@@ -1,6 +1,9 @@
 package com.amkj.dmsh.bean;
 
+import com.amkj.dmsh.shopdetails.bean.PicTagBean;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 
 /**
  * @author LGuiPeng
@@ -29,7 +32,15 @@ public class CommunalDetailBean {
     private String androidLink;
     private String text;
     private String title;
+    private List<PicTagBean> tagList;
 
+    public List<PicTagBean> getTagList() {
+        return tagList;
+    }
+
+    public void setTagList(List<PicTagBean> tagList) {
+        this.tagList = tagList;
+    }
 
     public int getId() {
         return id;
