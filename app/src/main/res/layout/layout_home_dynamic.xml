@@ -1,25 +1,24 @@
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:id="@+id/fl_dynamic"
+    android:visibility="gone"
     android:layout_height="wrap_content"
-    android:background="@color/bg_home_topic_gray">
-
-    <include layout="@layout/view_decoration_20_gray"/>
+    android:background="@color/white">
 
     <RelativeLayout
         android:visibility="gone"
         android:id="@+id/ll_dynamic"
         android:layout_width="match_parent"
         android:layout_height="@dimen/sc_mm_416"
-        android:layout_margin="@dimen/sc_mm_29"
-        android:background="@color/white">
+        android:background="@drawable/home_dynamic_bg"
+        android:padding="@dimen/sc_mm_29">
 
         <ImageView
-            android:background="@color/white"
             android:id="@+id/iv_dynamic_cover"
             android:layout_width="@dimen/sc_mm_240"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop"/>
+            android:background="@color/white"
+            android:scaleType="centerCrop" />
 
         <TextView
             android:id="@+id/tv_dynamic_title"
@@ -30,7 +29,7 @@
             android:layout_toRightOf="@+id/iv_dynamic_cover"
             android:text="@string/defaul"
             android:textColor="@color/text_black_t"
-            android:textSize="@dimen/sc_mm_32"/>
+            android:textSize="@dimen/sc_mm_32" />
 
         <TextView
             android:id="@+id/tv_dynamic_desc"
@@ -42,7 +41,7 @@
             android:layout_toRightOf="@+id/iv_dynamic_cover"
             android:text="@string/defaul"
             android:textColor="@color/text_login_gray_s"
-            android:textSize="@dimen/sc_mm_26"/>
+            android:textSize="@dimen/sc_mm_26" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -63,7 +62,7 @@
                     android:layout_width="@dimen/sc_mm_180"
                     android:layout_height="@dimen/sc_mm_180"
                     android:background="@drawable/home_goods_bg"
-                    android:padding="@dimen/sc_mm_1"/>
+                    android:padding="@dimen/sc_mm_1" />
 
                 <TextView
                     android:id="@+id/tv_dynamic_price_left"
@@ -71,7 +70,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/sc_mm_12"
                     android:textColor="@color/text_normal_red"
-                    android:textSize="@dimen/sc_mm_28"/>
+                    android:textSize="@dimen/sc_mm_28" />
             </LinearLayout>
 
             <LinearLayout
@@ -85,7 +84,7 @@
                     android:layout_width="@dimen/sc_mm_180"
                     android:layout_height="@dimen/sc_mm_180"
                     android:background="@drawable/home_goods_bg"
-                    android:padding="@dimen/sc_mm_1"/>
+                    android:padding="@dimen/sc_mm_1" />
 
                 <TextView
                     android:id="@+id/tv_dynamic_priceright"
@@ -93,8 +92,62 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/sc_mm_12"
                     android:textColor="@color/text_normal_red"
-                    android:textSize="@dimen/sc_mm_28"/>
+                    android:textSize="@dimen/sc_mm_28" />
             </LinearLayout>
         </LinearLayout>
     </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_new_user_first"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/sc_mm_20"
+        android:background="@drawable/new_user_first_bg"
+        android:orientation="vertical"
+        android:padding="@dimen/sc_mm_2"
+        android:visibility="gone">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/sc_mm_21"
+            android:layout_marginTop="@dimen/sc_mm_51"
+            android:layout_marginRight="@dimen/sc_mm_30"
+            android:layout_marginBottom="@dimen/sc_mm_16">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="新人首单0元购"
+                android:textColor="@color/text_black_t"
+                android:textSize="@dimen/sc_mm_32"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_buy_now"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:text="立即抢购>"
+                android:textColor="@color/text_black_t"
+                android:textSize="@dimen/sc_mm_28" />
+        </RelativeLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_first_goods"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:id="@+id/iv_buy_now"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/sc_mm_26"
+            android:layout_marginTop="@dimen/sc_mm_16"
+            android:layout_marginRight="@dimen/sc_mm_26"
+            android:layout_marginBottom="@dimen/sc_mm_16"
+            android:src="@drawable/home_new_user_cover" />
+    </LinearLayout>
 </FrameLayout>

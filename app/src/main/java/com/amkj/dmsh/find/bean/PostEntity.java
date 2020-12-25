@@ -102,6 +102,17 @@ public class PostEntity extends BaseEntity {
         private int comment;//帖子评论量
         private String title;
 
+        //帖子关联其他内容
+        private String androidLink;
+
+        public String getAndroidLink() {
+            return androidLink;
+        }
+
+        public void setAndroidLink(String androidLink) {
+            this.androidLink = androidLink;
+        }
+
         public String getTitle() {
             return title;
         }

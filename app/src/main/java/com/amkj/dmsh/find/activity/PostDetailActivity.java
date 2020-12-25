@@ -298,6 +298,7 @@ public class PostDetailActivity extends BaseActivity {
         map.put("currentPage", 1);
         map.put("showCount", TOTAL_COUNT_FORTY);
         map.put("type", 6);
+        map.put("version", 1);
         if (mPostDetailBean != null) {
             map.put("topicId", mPostDetailBean.getTopic_id());
         }

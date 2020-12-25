@@ -339,7 +339,6 @@ public class TimeShowNewActivity extends BaseActivity {
                                     }
                                 };
                             }
-
                         }
                     }
                 }

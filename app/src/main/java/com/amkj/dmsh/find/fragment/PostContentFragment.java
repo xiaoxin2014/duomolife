@@ -1,9 +1,6 @@
 package com.amkj.dmsh.find.fragment;
 
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
 
 import com.amkj.dmsh.R;
@@ -24,6 +21,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import butterknife.BindView;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getPostType;
@@ -89,6 +89,7 @@ public class PostContentFragment extends BaseFragment {
         map.put("currentPage", page);
         map.put("showCount", TOTAL_COUNT_TWENTY);
         map.put("type", getPostType(title));
+        map.put("version", 1);
         //topicId不为空时，表示获取该话题相关的帖子
         if (!TextUtils.isEmpty(topicId)) {
             map.put("topicId", topicId);

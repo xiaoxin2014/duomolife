@@ -46,6 +46,15 @@ public class UserFirstEntity extends BaseEntity {
         private String productName;
         private String startAmount;
         private String picUrl;
+        private String marketPrice;
+
+        public String getMarketPrice() {
+            return marketPrice;
+        }
+
+        public void setMarketPrice(String marketPrice) {
+            this.marketPrice = marketPrice;
+        }
 
         public String getProductName() {
             return productName;

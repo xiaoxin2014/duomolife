@@ -1,9 +1,5 @@
 package com.amkj.dmsh.find.activity;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
-import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +25,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -39,7 +39,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_FORTY;
-import static com.amkj.dmsh.constant.Url.BASE_SHARE_PAGE_TWO;
 
 /**
  * Created by xiaoxin on 2019/7/22
@@ -122,6 +121,7 @@ public class JoinSuccessActivity extends BaseActivity {
         map.put("currentPage", 1);
         map.put("showCount", TOTAL_COUNT_FORTY);
         map.put("type", 7);
+        map.put("version", 1);
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.GET_POST_LIST, map, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {

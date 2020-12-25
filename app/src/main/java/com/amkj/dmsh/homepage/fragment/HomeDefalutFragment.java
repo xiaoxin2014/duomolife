@@ -3,6 +3,7 @@ package com.amkj.dmsh.homepage.fragment;
 import android.content.Intent;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -22,8 +23,10 @@ import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dao.AddClickDao;
 import com.amkj.dmsh.dominant.activity.DoMoLifeWelfareActivity;
+import com.amkj.dmsh.dominant.activity.QualityNewUserActivity;
 import com.amkj.dmsh.dominant.adapter.GoodProductAdapter;
 import com.amkj.dmsh.dominant.adapter.HomeCatergoryAdapter;
+import com.amkj.dmsh.dominant.adapter.HomeUserFirstAdapter;
 import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
 import com.amkj.dmsh.homepage.activity.ArticleTypeActivity;
 import com.amkj.dmsh.homepage.activity.HomeCatergoryActivity;
@@ -43,8 +46,10 @@ import com.amkj.dmsh.homepage.bean.HomeDynamicEntity;
 import com.amkj.dmsh.network.NetCacheLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.user.bean.UserLikedProductEntity;
+import com.amkj.dmsh.time.bean.UserFirstEntity;
+import com.amkj.dmsh.time.bean.UserFirstEntity.UserFirstBean;
 import com.amkj.dmsh.user.bean.LikedProductBean;
+import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
@@ -145,6 +150,16 @@ public class HomeDefalutFragment extends BaseFragment {
     FloatingActionButton download_btn_communal;
     @BindView(R.id.scrollview)
     NestedScrollView mScrollview;
+    @BindView(R.id.tv_buy_now)
+    TextView mTvBuyNow;
+    @BindView(R.id.rv_first_goods)
+    RecyclerView mRvFirstGoods;
+    @BindView(R.id.iv_buy_now)
+    ImageView mIvBuyNow;
+    @BindView(R.id.ll_new_user_first)
+    LinearLayout mLlNewUserFirst;
+    @BindView(R.id.fl_dynamic)
+    FrameLayout mFlDynamic;
     private CBViewHolderCreator cbViewHolderCreator;
     private HomeCommonEntity mHomeCommonEntity;
     private HomeWelfareEntity mHomeWelfareEntity;
@@ -165,12 +180,14 @@ public class HomeDefalutFragment extends BaseFragment {
     private List<CommunalArticleBean> articleTypeAllList = new ArrayList<>();
     private List<QualityTypeBean> qualityTypeList = new ArrayList<>();
     private List<UserLikedProductEntity> mProductList = new ArrayList<>();
+    private List<UserFirstBean> mUserFirstList = new ArrayList<>();
     private int articalPage = 1;
     private int mCatergoryPage = 0;
     private boolean isUpdateCache;
     private CommonPagerAdapter mHomeWelfareAdapter;
     private boolean isFirst = true;
     private GridLayoutManager mTopManager;
+    private HomeUserFirstAdapter mHomeUserFirstAdapter;
 
     @Override
     protected int getContentView() {
@@ -218,9 +235,20 @@ public class HomeDefalutFragment extends BaseFragment {
         mHomeTopAdapter.setOnItemClickListener((adapter, view, position) -> {
             HomeCommonBean homeCommonBean = (HomeCommonBean) view.getTag();
             if (homeCommonBean != null) {
-                AddClickDao.adClickTotal(getActivity(), homeCommonBean.getLink(), homeCommonBean.getId(),false);
+                AddClickDao.adClickTotal(getActivity(), homeCommonBean.getLink(), homeCommonBean.getId(), false);
             }
         });
+
+        //初始化新人首单购商品适配器
+        mRvFirstGoods.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL, false));
+        mRvFirstGoods.addItemDecoration(new ItemDecoration.Builder()
+                // 设置分隔线资源ID
+                .setDividerId(R.drawable.item_divider_10_mm_transparent)
+                .setFirstDraw(true)
+                .create());
+        mHomeUserFirstAdapter = new HomeUserFirstAdapter(getActivity(), mUserFirstList);
+        mRvFirstGoods.setAdapter(mHomeUserFirstAdapter);
+
 
         //初始化专区适配器
         GridLayoutManager speicalZoneManager = new GridLayoutManager(getActivity()
@@ -231,7 +259,7 @@ public class HomeDefalutFragment extends BaseFragment {
             HomeCommonBean homeCommonBean = (HomeCommonBean) view.getTag();
             //跳转对应专区
             if (!TextUtils.isEmpty(homeCommonBean.getLink())) {
-                AddClickDao.adClickTotal(getActivity(), homeCommonBean.getLink(), homeCommonBean.getId(),false);
+                AddClickDao.adClickTotal(getActivity(), homeCommonBean.getLink(), homeCommonBean.getId(), false);
             }
         });
         mRvSpecialZone.addItemDecoration(new ItemDecoration.Builder()
@@ -328,7 +356,7 @@ public class HomeDefalutFragment extends BaseFragment {
             if (communalAdList != null && communalAdList.size() > 0) {
                 adBeanList.clear();
                 adBeanList.addAll(qualityAdLoop.getCommunalADActivityBeanList());
-                mCbBanner.setVisibility(View.VISIBLE);
+                mCbBanner.setVisibility(VISIBLE);
                 if (cbViewHolderCreator == null) {
                     cbViewHolderCreator = new CBViewHolderCreator() {
                         @Override
@@ -345,7 +373,7 @@ public class HomeDefalutFragment extends BaseFragment {
                 mCbBanner.setPages(getActivity(), cbViewHolderCreator, adBeanList)
                         .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
             } else {
-                mCbBanner.setVisibility(View.GONE);
+                mCbBanner.setVisibility(GONE);
             }
         }
     }
@@ -371,12 +399,12 @@ public class HomeDefalutFragment extends BaseFragment {
                     }
                 }
 
-                mRvTop.setVisibility(mTopList.size() > 0 ? View.VISIBLE : View.GONE);
+                mRvTop.setVisibility(mTopList.size() > 0 ? VISIBLE : GONE);
             }
 
             @Override
             public void onNotNetOrException() {
-                mRvTop.setVisibility(mTopList.size() > 0 ? View.VISIBLE : View.GONE);
+                mRvTop.setVisibility(mTopList.size() > 0 ? VISIBLE : GONE);
             }
         });
     }
@@ -387,33 +415,62 @@ public class HomeDefalutFragment extends BaseFragment {
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.GTE_HOME_DYNAMIC_AREA, map, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-
                 mHomeDynamicEntity = GsonUtils.fromJson(result, HomeDynamicEntity.class);
                 if (mHomeDynamicEntity != null) {
-                    GlideImageLoaderUtil.loadImage(getActivity(), mIvCover, mHomeDynamicEntity.getCover());
-                    mTvDynamicTitle.setText(getStrings(mHomeDynamicEntity.getTitle()));
-                    mTvDynamicDesc.setText(getStrings(mHomeDynamicEntity.getDescription()));
-                    List<ProductInfoListBean> productInfoList = mHomeDynamicEntity.getProductInfoList();
-                    if (productInfoList != null && productInfoList.size() > 0) {
-                        ProductInfoListBean productInfoListBean = productInfoList.get(0);
-                        GlideImageLoaderUtil.loadImage(getActivity(), mIvDynamicCoverLeft, productInfoListBean.getCover());
-                        mTvDynamicPriceLeft.setText(ConstantMethod.getRmbFormat(getActivity(), productInfoListBean.getPrice()));
-                        if (productInfoList.size() > 1) {
-                            productInfoListBean = productInfoList.get(1);
-                            GlideImageLoaderUtil.loadImage(getActivity(), mIvDynamicCoverRight, productInfoListBean.getCover());
-                            mTvDynamicPriceright.setText(ConstantMethod.getRmbFormat(getActivity(), productInfoListBean.getPrice()));
-                        }
+                    if ("1".equals(mHomeDynamicEntity.getIsDisplay())) {
+                        getNewUserFirst();
                     }
 
-                    mLlDynamic.setVisibility("1".equals(mHomeDynamicEntity.getIsDisplay()) ? View.VISIBLE : View.GONE);
+                    mFlDynamic.setVisibility("1".equals(mHomeDynamicEntity.getIsDisplay()) ? VISIBLE : GONE);
                 }
             }
 
             @Override
             public void onNotNetOrException() {
                 if (mHomeDynamicEntity != null) {
-                    mLlDynamic.setVisibility("1".equals(mHomeDynamicEntity.getIsDisplay()) ? View.VISIBLE : View.GONE);
+                    mFlDynamic.setVisibility("1".equals(mHomeDynamicEntity.getIsDisplay()) ? VISIBLE : GONE);
                 }
+            }
+        });
+    }
+
+    //获取首单0元购商品
+    private void getNewUserFirst() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.QUALITY_NEW_USER_FIRST, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                mUserFirstList.clear();
+                UserFirstEntity userFirstEntity = GsonUtils.fromJson(result, UserFirstEntity.class);
+                if (userFirstEntity != null) {
+                    List<UserFirstBean> userFirstList = userFirstEntity.getResult();
+                    if (userFirstList != null && userFirstList.size() > 0) {
+                        mUserFirstList.addAll(userFirstList);
+                    } else {
+                        GlideImageLoaderUtil.loadImage(getActivity(), mIvCover, mHomeDynamicEntity.getCover());
+                        mTvDynamicTitle.setText(getStrings(mHomeDynamicEntity.getTitle()));
+                        mTvDynamicDesc.setText(getStrings(mHomeDynamicEntity.getDescription()));
+                        List<ProductInfoListBean> productInfoList = mHomeDynamicEntity.getProductInfoList();
+                        if (productInfoList != null && productInfoList.size() > 0) {
+                            ProductInfoListBean productInfoListBean = productInfoList.get(0);
+                            GlideImageLoaderUtil.loadImage(getActivity(), mIvDynamicCoverLeft, productInfoListBean.getCover());
+                            mTvDynamicPriceLeft.setText(ConstantMethod.getRmbFormat(getActivity(), productInfoListBean.getPrice()));
+                            if (productInfoList.size() > 1) {
+                                productInfoListBean = productInfoList.get(1);
+                                GlideImageLoaderUtil.loadImage(getActivity(), mIvDynamicCoverRight, productInfoListBean.getCover());
+                                mTvDynamicPriceright.setText(ConstantMethod.getRmbFormat(getActivity(), productInfoListBean.getPrice()));
+                            }
+                        }
+                    }
+                }
+                mHomeUserFirstAdapter.notifyDataSetChanged();
+                mLlNewUserFirst.setVisibility(mUserFirstList.size() > 0 ? VISIBLE : GONE);
+                mLlDynamic.setVisibility(mUserFirstList.size() > 0 ? GONE : VISIBLE);
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                mLlNewUserFirst.setVisibility(mUserFirstList.size() > 0 ? VISIBLE : GONE);
+                mLlDynamic.setVisibility(mUserFirstList.size() > 0 ? GONE : VISIBLE);
             }
         });
     }
@@ -439,12 +496,12 @@ public class HomeDefalutFragment extends BaseFragment {
                         mHomeZoneAdapter.notifyDataSetChanged();
                     }
                 }
-                mRvSpecialZone.setVisibility(mZoneList.size() > 0 ? View.VISIBLE : View.GONE);
+                mRvSpecialZone.setVisibility(mZoneList.size() > 0 ? VISIBLE : GONE);
             }
 
             @Override
             public void onNotNetOrException() {
-                mRvSpecialZone.setVisibility(mZoneList.size() > 0 ? View.VISIBLE : View.GONE);
+                mRvSpecialZone.setVisibility(mZoneList.size() > 0 ? VISIBLE : GONE);
             }
         });
     }
@@ -472,12 +529,12 @@ public class HomeDefalutFragment extends BaseFragment {
                             }
                         }
 
-                        mLlFelware.setVisibility(mThemeList.size() > 0 ? View.VISIBLE : View.GONE);
+                        mLlFelware.setVisibility(mThemeList.size() > 0 ? VISIBLE : GONE);
                     }
 
                     @Override
                     public void onNotNetOrException() {
-                        mLlFelware.setVisibility(mThemeList.size() > 0 ? View.VISIBLE : View.GONE);
+                        mLlFelware.setVisibility(mThemeList.size() > 0 ? VISIBLE : GONE);
                     }
                 });
     }
@@ -509,13 +566,13 @@ public class HomeDefalutFragment extends BaseFragment {
                             }
                         }
                         qualityGoodNewProAdapter.notifyDataSetChanged();
-                        mLlNice.setVisibility(goodsProList.size() > 0 ? View.VISIBLE : View.GONE);
+                        mLlNice.setVisibility(goodsProList.size() > 0 ? VISIBLE : GONE);
                     }
 
                     @Override
                     public void onNotNetOrException() {
                         mSmartLayout.finishRefresh();
-                        mLlNice.setVisibility(goodsProList.size() > 0 ? View.VISIBLE : View.GONE);
+                        mLlNice.setVisibility(goodsProList.size() > 0 ? VISIBLE : GONE);
                     }
                 });
     }
@@ -545,13 +602,13 @@ public class HomeDefalutFragment extends BaseFragment {
                     }
                 }
                 loadHud.dismiss();
-                mLlArtical.setVisibility(articleTypeList.size() > 0 ? View.VISIBLE : View.GONE);
+                mLlArtical.setVisibility(articleTypeList.size() > 0 ? VISIBLE : GONE);
             }
 
             @Override
             public void onNotNetOrException() {
                 loadHud.dismiss();
-                mLlArtical.setVisibility(articleTypeList.size() > 0 ? View.VISIBLE : View.GONE);
+                mLlArtical.setVisibility(articleTypeList.size() > 0 ? VISIBLE : GONE);
             }
         });
     }
@@ -578,7 +635,6 @@ public class HomeDefalutFragment extends BaseFragment {
                 }
             }
         });
-
     }
 
 
@@ -660,7 +716,7 @@ public class HomeDefalutFragment extends BaseFragment {
 
     }
 
-    @OnClick({R.id.rl_more_welfare_topic, R.id.rl_more_nice_topic, R.id.tv_more_nice_topic, R.id.rl_more_artical, R.id.tv_refresh_artical, R.id.ll_dynamic})
+    @OnClick({R.id.rl_more_welfare_topic, R.id.rl_more_nice_topic, R.id.tv_more_nice_topic, R.id.rl_more_artical, R.id.tv_refresh_artical, R.id.ll_dynamic, R.id.tv_buy_now, R.id.iv_buy_now})
     public void onViewClicked(View view) {
         Intent intent;
         if (getActivity() == null) return;
@@ -697,8 +753,14 @@ public class HomeDefalutFragment extends BaseFragment {
             //动态专区
             case R.id.ll_dynamic:
                 if (mHomeDynamicEntity != null) {
-                    addDynamicClick(getActivity(), mHomeDynamicEntity.getLink(),mHomeDynamicEntity.getId());
+                    addDynamicClick(getActivity(), mHomeDynamicEntity.getLink(), mHomeDynamicEntity.getId());
                 }
+                break;
+            //新人首单购
+            case R.id.iv_buy_now:
+            case R.id.tv_buy_now:
+                intent = new Intent(getActivity(), QualityNewUserActivity.class);
+                startActivity(intent);
                 break;
         }
     }

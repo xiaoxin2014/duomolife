@@ -26,6 +26,7 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.skipPostDetail;
 import static com.amkj.dmsh.constant.ConstantMethod.skipTopicDetail;
 import static com.amkj.dmsh.dao.SoftApiDao.favorPost;
@@ -91,6 +92,13 @@ public class PostContentAdapter extends BaseQuickAdapter<PostBean, BaseViewHolde
                 .setText(R.id.tv_favor, getStrings(String.valueOf(item.getFavorNum() > 0 ? item.getFavorNum() : "赞")))
                 .setGone(R.id.iv_cover, !TextUtils.isEmpty(item.getCover()));
 
+        //如果有关联的内容，只显示封面
+        if (!TextUtils.isEmpty(item.getAndroidLink())) {
+            helper.getView(R.id.tv_topic_name).setVisibility(View.GONE);
+            helper.getView(R.id.tv_content).setVisibility(View.GONE);
+            helper.getView(R.id.ll_autho).setVisibility(View.GONE);
+        }
+
         //显示0元试用商品
         if (mShowZeroProduct) {
             helper.getView(R.id.ll_zero_product).setVisibility(View.VISIBLE);
@@ -120,6 +128,8 @@ public class PostContentAdapter extends BaseQuickAdapter<PostBean, BaseViewHolde
                 intent.putExtra("activityId", item.getActivityId());
                 intent.putExtra("orderId", item.getOrderId());
                 context.startActivity(intent);
+            } else if (!TextUtils.isEmpty(item.getAndroidLink())) {
+                setSkipPath(mContext, item.getAndroidLink(), false);
             } else {
                 skipPostDetail(context, String.valueOf(item.getId()), item.getArticletype());
             }
