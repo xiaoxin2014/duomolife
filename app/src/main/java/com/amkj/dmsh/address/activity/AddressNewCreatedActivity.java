@@ -127,7 +127,9 @@ public class AddressNewCreatedActivity extends BaseActivity {
         mCurrentProvinceId = addressUtils.getCurrentProvince();
         mCurrentCityId = addressUtils.getCurrentCity();
         mCurrentDistrictId = addressUtils.getCurrentDistrict();
-        if (provinceNameList == null || mDistrictDataMap == null || mCitiesDataMap == null) {
+        if (mAllProvinces == null || mAllProvinces.length == 0 || mDistrictDataMap == null || mCitiesDataMap == null) {
+            addressUtils.initAddress();
+            showToast("数据有误，请重试");
             finish();
         }
     }

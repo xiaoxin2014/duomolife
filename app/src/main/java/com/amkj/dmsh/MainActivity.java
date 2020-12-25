@@ -714,8 +714,6 @@ public class MainActivity extends BaseActivity {
             public void onSuccess(String result) {
                 BaseEntity baseEntity = GsonUtils.fromJson(result, BaseEntity.class);
                 if (baseEntity != null && SUCCESS_CODE.equals(baseEntity.getCode())) {
-                    //地址初始化
-                    AddressUtils.getQyInstance().initAddress(result);
                     //地址信息写入本地保存
                     FileStreamUtils.writeFileFromString(getFilesDir().getAbsolutePath() + "/adr_s/asr_s.txt", result, false);
                 }
