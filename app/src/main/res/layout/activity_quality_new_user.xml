@@ -134,7 +134,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_horizontal"
                                 android:layout_margin="@dimen/sc_mm_20"
-                                android:text="@string/new_user_first_condition"
+                                android:text="新用户首单实付满指定金额，结算时可免费加购对应礼品"
                                 android:textColor="@color/text_black_t"
                                 android:textSize="@dimen/sc_mm_22" />
                         </LinearLayout>
