@@ -104,6 +104,7 @@ public class TimeShowNewActivity extends BaseActivity {
     private TimeShowNewActivity.TimeAxisFootView mTimeAxisFootView;
     private TimePostAdapter mTimePostAdapter;
     private View mFootview;
+    private RecyclerView.OnScrollListener mListener;
 
 
     @Override
@@ -142,12 +143,12 @@ public class TimeShowNewActivity extends BaseActivity {
             }
         });
 
-        mRvGoods.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        mListener = new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 //只有手动滚动才需要监听
-                if (mRvGoods.getTag() == null) {
+                if (mRvGoods != null && mRvGoods.getTag() == null) {
                     int position = linearLayoutManager.findFirstVisibleItemPosition();
                     mSlidingTablayout.setCurrentTab(position >= mTimeAxisList.size() ? mTimeAxisList.size() - 1 : position, true);
                 }
@@ -156,12 +157,12 @@ public class TimeShowNewActivity extends BaseActivity {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                if (newState == 0) {
+                if (newState == 0 && mRvGoods != null) {
                     mRvGoods.setTag(null);
                 }
             }
-        });
-
+        };
+        mRvGoods.addOnScrollListener(mListener);
         mFootview = LayoutInflater.from(getActivity()).inflate(R.layout.layout_time_axis_foot, null, false);
         mTimeAxisFootView = new TimeAxisFootView();
         ButterKnife.bind(mTimeAxisFootView, mFootview);
@@ -176,7 +177,6 @@ public class TimeShowNewActivity extends BaseActivity {
         mTimePostAdapter = new TimePostAdapter(getActivity(), mPostList, true);
         mTimeAxisFootView.mRvRecommend.setAdapter(mTimePostAdapter);
     }
-
 
     class TimeAxisFootView {
         @BindView(R.id.ad_recommend_banner)

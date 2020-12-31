@@ -150,7 +150,7 @@ public class TimeShowNewFragment extends BaseFragment {
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 //只有手动滚动才需要监听
-                if (mRvGoods.getTag() == null) {
+                if (mRvGoods != null && mRvGoods.getTag() == null) {
                     int position = linearLayoutManager.findFirstVisibleItemPosition();
                     mSlidingTablayout.setCurrentTab(position >= mTimeAxisList.size() ? mTimeAxisList.size() - 1 : position, true);
                 }
@@ -159,7 +159,7 @@ public class TimeShowNewFragment extends BaseFragment {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                if (newState == 0) {
+                if (mRvGoods != null && newState == 0) {
                     mRvGoods.setTag(null);
                 }
             }
