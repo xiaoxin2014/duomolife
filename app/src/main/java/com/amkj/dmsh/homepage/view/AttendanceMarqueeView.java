@@ -1,4 +1,4 @@
-package com.amkj.dmsh.homepage;
+package com.amkj.dmsh.homepage.view;
 
 import android.content.Context;
 import android.view.LayoutInflater;

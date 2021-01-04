@@ -18,7 +18,7 @@ import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dao.AddClickDao;
 import com.amkj.dmsh.dominant.activity.QualityCustomTopicActivity;
-import com.amkj.dmsh.homepage.AttendanceMarqueeView;
+import com.amkj.dmsh.homepage.view.AttendanceMarqueeView;
 import com.amkj.dmsh.homepage.adapter.AttendanceAwardAdapter;
 import com.amkj.dmsh.homepage.adapter.DoubleIntegralAdpter;
 import com.amkj.dmsh.homepage.adapter.HomeImgActivityAdapter;
