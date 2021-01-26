@@ -12,6 +12,9 @@ import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
+import me.jessyan.autosize.utils.AutoSizeUtils;
+
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeFloat;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
@@ -41,7 +44,7 @@ public class DirectProductListAdapter extends BaseQuickAdapter<OrderProductNewBe
         if (orderProductBean == null) return;
         //主商品
         if (!orderProductBean.isPresent()) {
-            GlideImageLoaderUtil.loadCenterCrop(context, helper.getView(R.id.iv_direct_indent_pro), orderProductBean.getPicUrl());
+            GlideImageLoaderUtil.loadImgDynamicDrawable(context, helper.getView(R.id.iv_direct_indent_pro), orderProductBean.getPicUrl(), AutoSizeUtils.mm2px(mAppContext, 128));
             helper.setText(R.id.tv_direct_indent_pro_name, getStrings(orderProductBean.getProductName()))
                     .setText(R.id.tv_direct_indent_pro_sku, getStrings(orderProductBean.getSaleSkuValue()))
                     .setText(R.id.tv_delivery_time, "预计发货时间：" + orderProductBean.getSkuDeliveryTime())

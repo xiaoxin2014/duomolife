@@ -22,6 +22,7 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.address.activity.SelectedAddressActivity;
 import com.amkj.dmsh.address.bean.AddressInfoEntity.AddressInfoBean;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.bean.AreaTipsEntity;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dao.ShopCarDao;
@@ -178,6 +179,9 @@ public class DirectIndentWriteActivity extends BaseActivity {
     private AlertDialogRealName mAlertDialogRealName;
     private AlertDialogHelper mAlertDialogRealNameError;
     private AlertDialogHelper mAlertDialogRealNameDiffer;
+    //结算信息参数
+    private Map<String, Object> settleMap = new HashMap<>();
+    private AlertDialogHelper mAlertDialogAreaTip;
 
 
     @Override
@@ -361,24 +365,24 @@ public class DirectIndentWriteActivity extends BaseActivity {
      */
     private void getIndentDiscounts(boolean updatePriceInfo) {
         if (!TextUtils.isEmpty(type)) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("userId", userId);
-            params.put("addressId", addressId);
+            settleMap.clear();
+            settleMap.put("userId", userId);
+            settleMap.put("addressId", addressId);
             if (updatePriceInfo) {
-                params.put("userCouponId", couponId);
+                settleMap.put("userCouponId", couponId);
             }
             if (groupShopDetailsBean != null) {
-                params.put("gpInfoId", groupShopDetailsBean.getGpInfoId());
-                params.put("gpRecordId", groupShopDetailsBean.getGpRecordId());
+                settleMap.put("gpInfoId", groupShopDetailsBean.getGpInfoId());
+                settleMap.put("gpRecordId", groupShopDetailsBean.getGpRecordId());
             }
             if (discountBeanList != null && discountBeanList.size() > 0) {
-                params.put("goods", GsonUtils.toJson(discountBeanList));
+                settleMap.put("goods", GsonUtils.toJson(discountBeanList));
             }
             if (combineGoods != null && combineGoods.size() > 0) {
-                params.put("combineGoods", GsonUtils.toJson(combineGoods));
+                settleMap.put("combineGoods", GsonUtils.toJson(combineGoods));
             }
 
-            NetLoadUtils.getNetInstance().loadNetDataPost(this, updatePriceInfo ? Url.INDENT_DISCOUNTS_UPDATE_INFO : Url.INDENT_DISCOUNTS_NEW_INFO, params, new NetLoadListenerHelper() {
+            NetLoadUtils.getNetInstance().loadNetDataPost(this, updatePriceInfo ? Url.INDENT_DISCOUNTS_UPDATE_INFO : Url.INDENT_DISCOUNTS_NEW_INFO, settleMap, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
                     dismissLoadhud(getActivity());
@@ -726,7 +730,7 @@ public class DirectIndentWriteActivity extends BaseActivity {
                 } else if (indentWriteBean.getAllProductNotBuy() == 1) {
                     showToast("订单内含有无法购买的商品，请移除后再提交");
                 } else if (!TextUtils.isEmpty(type)) {
-                    createIndent();
+                    getAreaTip();
                 }
             } else {
                 showToast("无效订单，请重试");
@@ -752,6 +756,46 @@ public class DirectIndentWriteActivity extends BaseActivity {
             }
         });
         mAlertDialogRealName.show(Gravity.BOTTOM);
+    }
+
+    //获取特殊地区提示信息
+    private void getAreaTip() {
+        showLoadhud(this);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.GET_AREA_TIP, settleMap, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                dismissLoadhud(getActivity());
+                AreaTipsEntity areaTipsEntity = GsonUtils.fromJson(result, AreaTipsEntity.class);
+                if (areaTipsEntity != null) {
+                    if (SUCCESS_CODE.equals(areaTipsEntity.getCode())) {
+                        if (mAlertDialogAreaTip == null) {
+                            mAlertDialogAreaTip = new AlertDialogHelper(getActivity());
+                            mAlertDialogAreaTip.setAlertListener(new AlertDialogHelper.AlertConfirmCancelListener() {
+                                @Override
+                                public void confirm() {
+                                    createIndent();
+                                }
+
+                                @Override
+                                public void cancel() {
+
+                                }
+                            });
+                        }
+
+                        mAlertDialogAreaTip.setMsg(areaTipsEntity.getResult());
+                        mAlertDialogAreaTip.show();
+                    } else {
+                        createIndent();
+                    }
+                }
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                createIndent();
+            }
+        });
     }
 
     /**

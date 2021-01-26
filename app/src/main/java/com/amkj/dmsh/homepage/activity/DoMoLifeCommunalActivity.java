@@ -39,6 +39,7 @@ import com.alibaba.fastjson.JSON;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.bean.BaseAddCarProInfoBean;
 import com.amkj.dmsh.bean.H5ShareBean;
 import com.amkj.dmsh.constant.AppUpdateUtils;
 import com.amkj.dmsh.constant.ConstantMethod;
@@ -86,6 +87,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getDeviceAppNotificationStat
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getMapValue;
 import static com.amkj.dmsh.constant.ConstantMethod.getOnlyUrlParams;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getVersionName;
@@ -105,6 +107,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.WEB_TAOBAO_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TB_SCHEME;
 import static com.amkj.dmsh.constant.ConstantVariable.WEB_TMALL_SCHEME;
 import static com.amkj.dmsh.dao.BaiChuanDao.skipAliBC;
+import static com.amkj.dmsh.dao.OrderDao.addShopCarGetSku;
 import static com.amkj.dmsh.rxeasyhttp.interceptor.MyInterceptor.getCommonApiParameter;
 import static com.amkj.dmsh.rxeasyhttp.utils.DeviceUtils.getDeviceId;
 import static com.amkj.dmsh.utils.TimeUtils.getDateMilliSecond;
@@ -658,6 +661,9 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                                 case "getHeaderFromApp":
                                     getHeaderFromApp(jsInteractiveBean.getOtherData());
                                     break;
+                                case "addGoodsToCart":
+                                    addGoodsToCart(jsInteractiveBean.getOtherData());
+                                    break;
                                 case "setShareButton":
                                     setShareButton(jsInteractiveBean.getOtherData());
                                     break;
@@ -711,6 +717,26 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
             } catch (Exception e) {
                 jsInteractiveException();
                 e.printStackTrace();
+            }
+        }
+    }
+
+    //加入购物车
+    private void addGoodsToCart(Map<String, Object> map) {
+        if (map != null) {
+            int productId = getStringChangeIntegers((String) map.get("productId"));
+            String title = (String) map.get("title");
+            String picUrl = (String) map.get("picUrl");
+            loadHud.show();
+            if (userId > 0) {
+                BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
+                baseAddCarProInfoBean.setProductId(productId);
+                baseAddCarProInfoBean.setProName(title);
+                baseAddCarProInfoBean.setProPic(picUrl);
+                addShopCarGetSku(getActivity(), baseAddCarProInfoBean, loadHud);
+            } else {
+                loadHud.dismiss();
+                getLoginStatus(getActivity());
             }
         }
     }
@@ -1238,5 +1264,4 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
             web_communal.loadUrl(loadUrl);
         }
     }
-
 }

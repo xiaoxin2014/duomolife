@@ -22,7 +22,7 @@ public class AddressInfoEntity extends BaseEntity {
         this.addressInfoBean = addressInfoBean;
     }
 
-    public static class AddressInfoBean implements Parcelable {
+    public static class AddressInfoBean extends BaseEntity implements Parcelable {
         private int id;
         private int status;
         private int user_id;

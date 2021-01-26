@@ -479,12 +479,14 @@ public class Url {
     public static final String Q_SELF_SHOP_DETAILS_COUPON = "api/my/coupon/choiceSelfCouponV2";
     //    优惠券专区
     public static final String Q_COUPON_ZONE = "api/activity/zone/getApiCouponZoneInfo";
-    //    订单优惠信息 大营销中心新版
+    //    订单结算信息 大营销中心新版
     public static final String INDENT_DISCOUNTS_NEW_INFO = "api/goods/order/getOrderSettleInfoNewV2";
     //    跳转订单结算前校验
     public static final String CHECK_ORDER_SETTLE_INFOV2 = "api/goods/order/checkSelfProductOrderSettleInfoV2";
     //    再次购买跳转订单结算前校验
     public static final String CHECK_BUY_AGAIN_NEWV2 = "api/goods/order/checkAgainBuyNewV2";
+    //    特殊地区提示信息
+    public static final String GET_AREA_TIP = "api/goods/order/getAreaTip";
     //    更新订单优惠信息 大营销中心新版
     public static final String INDENT_DISCOUNTS_UPDATE_INFO = "api/goods/order/getOrderSettlePriceInfo";
     //    获取可支付方式
@@ -651,6 +653,8 @@ public class Url {
     public static final String DEL_ADDRESS = "api/user/address/delUserAddress";
     //    修改订单收货地址
     public static final String CHANGE_ORDER_ADDRESS = "api/goods/order/editAddress";
+    //    收货地址智能识别
+    public static final String DISCERN_ADDRESS_INFO = "api/area/discernAddressInfo";
 
 
     //  文章 产品详情点赞取消

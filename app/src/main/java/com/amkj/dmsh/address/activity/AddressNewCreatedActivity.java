@@ -37,10 +37,12 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 
+import static com.amkj.dmsh.constant.ConstantMethod.dismissLoadhud;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringFilter;
 import static com.amkj.dmsh.constant.ConstantMethod.setEtFilter;
+import static com.amkj.dmsh.constant.ConstantMethod.showLoadhud;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
@@ -83,6 +85,16 @@ public class AddressNewCreatedActivity extends BaseActivity {
     RelativeLayout mRelAddressDefault;
     @BindView(R.id.ll_address_create)
     LinearLayout mLlAddressCreate;
+    @BindView(R.id.et_address_info)
+    EditText mEtAddressInfo;
+    @BindView(R.id.tv_clear)
+    TextView mTvClear;
+    @BindView(R.id.tv_smart)
+    TextView mTvSmart;
+    @BindView(R.id.ll_smart)
+    LinearLayout mLlSmart;
+    @BindView(R.id.rl_smart_tips)
+    RelativeLayout mRlSmartTips;
 
     private int addressId;
     private ProvinceModel[] mAllProvinces;
@@ -109,6 +121,7 @@ public class AddressNewCreatedActivity extends BaseActivity {
         addressId = getStringChangeIntegers(intent.getStringExtra("addressId"));
         mTvHeaderShared.setText("保存");
         mTvHeaderTitle.setText(addressId > 0 ? "编辑地址" : "新增地址");
+        mLlSmart.setVisibility(addressId > 0 ? View.GONE : View.VISIBLE);
         mTvHeaderShared.setCompoundDrawables(null, null, null, null);
         mProvinceWheel.setCyclic(false);
         mCityWheel.setCyclic(false);
@@ -185,9 +198,9 @@ public class AddressNewCreatedActivity extends BaseActivity {
             mCbAddressDefault.setChecked(false);
         }
         //当前省市县
-        mCurrentProvinceId = Integer.parseInt(addressInfoBean.getProvince());
-        mCurrentCityId = Integer.parseInt(addressInfoBean.getCity());
-        mCurrentDistrictId = Integer.parseInt(!TextUtils.isEmpty(addressInfoBean.getDistrict()) ? addressInfoBean.getDistrict() : "0");
+        mCurrentProvinceId = getStringChangeIntegers(addressInfoBean.getProvince());
+        mCurrentCityId = getStringChangeIntegers(addressInfoBean.getCity());
+        mCurrentDistrictId = getStringChangeIntegers(addressInfoBean.getDistrict());
         //切换地址选择器到当前位置
         for (int i = 0; i < mAllProvinces.length; i++) {
             if (mAllProvinces[i].getId() == mCurrentProvinceId) {
@@ -199,6 +212,7 @@ public class AddressNewCreatedActivity extends BaseActivity {
 
         List<CityModel> cityList = mCitiesDataMap.get(mCurrentProvinceId);
         if (cityList != null) {
+            cityNameList.clear();
             int currentItem = 0;
             for (int i = 0; i < cityList.size(); i++) {
                 cityNameList.add(cityList.get(i).getName());
@@ -213,6 +227,7 @@ public class AddressNewCreatedActivity extends BaseActivity {
 
         List<DistrictModel> districtModels = mDistrictDataMap.get(mCurrentCityId);
         if (districtModels != null) {
+            districtNameList.clear();
             int currentItem = 0;
             for (int i = 0; i < districtModels.size(); i++) {
                 districtNameList.add(districtModels.get(i).getName());
@@ -346,7 +361,7 @@ public class AddressNewCreatedActivity extends BaseActivity {
         });
     }
 
-    @OnClick({R.id.tv_life_back, R.id.tv_time_click_confirmed, R.id.tv_time_click_cancel, R.id.tv_address_district, R.id.tv_header_shared})
+    @OnClick({R.id.tv_life_back, R.id.tv_time_click_confirmed, R.id.tv_time_click_cancel, R.id.tv_address_district, R.id.tv_header_shared, R.id.tv_smart, R.id.tv_clear, R.id.rl_smart_tips})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_life_back:
@@ -402,9 +417,52 @@ public class AddressNewCreatedActivity extends BaseActivity {
                     }
                 }
                 break;
+            case R.id.tv_clear:
+                mEtAddressInfo.setText("");
+                break;
+            //关闭提示
+            case R.id.rl_smart_tips:
+                mRlSmartTips.setVisibility(View.GONE);
+                break;
+            //智能识别
+            case R.id.tv_smart:
+                String address = mEtAddressInfo.getText().toString().trim();
+                if (!TextUtils.isEmpty(address)) {
+                    DiscernAddressInfo(address);
+                } else {
+                    showToast("请输入要识别的地址");
+                }
+                break;
         }
     }
 
+    //智能识别地址
+    private void DiscernAddressInfo(String address) {
+        showLoadhud(this);
+        Map<String, String> map = new HashMap<>();
+        map.put("addressInfo", address);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.DISCERN_ADDRESS_INFO, map, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                dismissLoadhud(getActivity());
+                AddressInfoBean addressInfoBean = GsonUtils.fromJson(result, AddressInfoBean.class);
+                if (addressInfoBean != null) {
+                    if (SUCCESS_CODE.equals(addressInfoBean.getCode())) {
+                        mRlSmartTips.setVisibility(View.VISIBLE);
+                        setAddressInfo(addressInfoBean);
+                    } else {
+                        showToast(addressInfoBean.getMsg());
+                    }
+                }
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                dismissLoadhud(getActivity());
+                showToast("地址识别失败");
+            }
+        });
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
