@@ -140,7 +140,7 @@ public class AddressNewCreatedActivity extends BaseActivity {
         mCurrentProvinceId = addressUtils.getCurrentProvince();
         mCurrentCityId = addressUtils.getCurrentCity();
         mCurrentDistrictId = addressUtils.getCurrentDistrict();
-        if (mAllProvinces == null || mAllProvinces.length == 0 || mDistrictDataMap == null || mCitiesDataMap == null) {
+        if (mAllProvinces == null || mAllProvinces.length == 0 || mCitiesDataMap == null || mCitiesDataMap.size() == 0 || mDistrictDataMap == null || mDistrictDataMap.size() == 0) {
             addressUtils.initAddress();
             showToast("数据有误，请重试");
             finish();
@@ -244,15 +244,15 @@ public class AddressNewCreatedActivity extends BaseActivity {
         // 添加change事件
         mProvinceWheel.setOnItemSelectedListener(index -> {
             //修改省id,刷新城市以及区列表
-            mCurrentProvinceId = mAllProvinces[mProvinceWheel.getCurrentItem()].getId();
+            mCurrentProvinceId = mAllProvinces[index].getId();
             updateCities();
         });
         // 添加change事件
         mCityWheel.setOnItemSelectedListener(index -> {
             //修改市id，刷新区列表
             List<CityModel> cityList = mCitiesDataMap.get(mCurrentProvinceId);
-            if (cityList != null) {
-                mCurrentCityId = cityList.get(mCityWheel.getCurrentItem()).getId();
+            if (cityList != null && cityList.size() > 0) {
+                mCurrentCityId = cityList.get(index).getId();
                 updateAreas();
             }
         });
@@ -260,8 +260,8 @@ public class AddressNewCreatedActivity extends BaseActivity {
         mDistrictWheel.setOnItemSelectedListener(index -> {
             //修改区id
             List<DistrictModel> districtModels = mDistrictDataMap.get(mCurrentCityId);
-            if (districtModels != null) {
-                mCurrentDistrictId = districtModels.get(mDistrictWheel.getCurrentItem()).getId();
+            if (districtModels != null && districtModels.size() > 0) {
+                mCurrentDistrictId = districtModels.get(index).getId();
             }
         });
         KeyboardUtils.registerSoftInputChangedListener(this, new KeyboardUtils.OnSoftInputChangedListener() {
