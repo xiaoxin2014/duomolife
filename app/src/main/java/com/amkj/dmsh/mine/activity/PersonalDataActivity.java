@@ -1,6 +1,7 @@
 package com.amkj.dmsh.mine.activity;
 
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,32 +14,29 @@ import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.TinkerBaseApplicationLike;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity;
 import com.amkj.dmsh.bean.CommunalUserInfoEntity.CommunalUserInfoBean;
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.mine.bean.MineBabyEntity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.ImageConverterUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
-import com.amkj.dmsh.views.alertdialog.AlertDialogBottomListHelper;
-import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.gson.GsonUtils;
+import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
+import com.amkj.dmsh.views.alertdialog.AlertDialogBottomListHelper;
+import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
 import com.bigkoo.pickerview.builder.TimePickerBuilder;
 import com.bigkoo.pickerview.listener.CustomListener;
 import com.bigkoo.pickerview.listener.OnTimeSelectListener;
 import com.bigkoo.pickerview.view.TimePickerView;
-import com.tencent.bugly.beta.tinker.TinkerManager;
-
-import org.lasque.tusdk.TuSdkGeeV1;
-import org.lasque.tusdk.core.TuSdkResult;
-import org.lasque.tusdk.impl.activity.TuFragment;
-import org.lasque.tusdk.impl.components.TuAvatarComponent;
-import org.lasque.tusdk.modules.components.TuSdkComponent;
+import com.luck.picture.lib.PictureSelector;
+import com.luck.picture.lib.config.PictureConfigC;
+import com.luck.picture.lib.entity.LocalMediaC;
+import com.yanzhenjie.permission.Permission;
 
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -50,8 +48,10 @@ import androidx.annotation.Nullable;
 import androidx.emoji.widget.EmojiTextView;
 import butterknife.BindView;
 import butterknife.OnClick;
+import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static android.view.View.GONE;
+import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
@@ -62,8 +62,7 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.MINE_CHANGE_DATA;
 import static com.amkj.dmsh.constant.Url.MINE_PAGE;
 
-;
-;
+
 
 /**
  * @author LGuiPeng
@@ -103,6 +102,7 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
     private CommunalUserInfoEntity communalUserInfoEntity;
     private AlertDialogHelper commitBirthdayDialogHelper;
     private AlertDialogBottomListHelper sexDialogBottomListHelper;
+    private AlertDialogBottomListHelper alertDialogBottomListHelper;
 
     @Override
     protected int getContentView() {
@@ -176,7 +176,7 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
                 params.put("birthday", date);
                 break;
         }
-        NetLoadUtils.getNetInstance().loadNetDataPost(this,MINE_CHANGE_DATA,params,new NetLoadListenerHelper(){
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, MINE_CHANGE_DATA, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 if (loadHud != null) {
@@ -202,7 +202,7 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
                                 break;
                         }
                     } else {
-                        showToast( communalUserInfoEntity.getMsg());
+                        showToast(communalUserInfoEntity.getMsg());
                     }
                 }
             }
@@ -251,7 +251,7 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
-            if(requestCode==IS_LOGIN_CODE){
+            if (requestCode == IS_LOGIN_CODE) {
                 finish();
             }
             return;
@@ -267,58 +267,94 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
                 tv_per_data_name.setText(newName);
                 showToast("修改完成");
             }
+        } else if (requestCode == PictureConfigC.CHOOSE_REQUEST) {
+            try {
+                List<LocalMediaC> localMediaList = PictureSelector.obtainMultipleResult(data);
+                if (localMediaList != null && localMediaList.size() > 0) {
+                    LocalMediaC localMedia = localMediaList.get(0);
+                    if (localMedia != null && !TextUtils.isEmpty(localMedia.getPath()) && localMedia.isCut()) {
+                        String cutPath = localMedia.getCutPath();
+                        if (!TextUtils.isEmpty(cutPath)) {
+                            final ImgUrlHelp imgUrlHelp = new ImgUrlHelp();
+                            imgUrlHelp.setSingleImg(PersonalDataActivity.this, BitmapFactory.decodeFile(cutPath));
+                            if (loadHud != null) {
+                                loadHud.show();
+                            }
+                            imgUrlHelp.setOnFinishListener(new ImgUrlHelp.OnFinishDataListener() {
+                                @Override
+                                public void finishData(List<String> data, Handler handler) {
+                                }
+
+                                @Override
+                                public void finishError(String error) {
+                                    showToast("网络异常");
+                                    if (loadHud != null) {
+                                        loadHud.dismiss();
+                                    }
+                                }
+
+                                @Override
+                                public void finishSingleImg(String singleImg, Handler handler) {
+                                    if (singleImg != null) {
+                                        avatarPath = singleImg;
+                                        changePersonalData("headerImg", null);
+                                        handler.removeCallbacksAndMessages(null);
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
     //    头像设置
     @OnClick(R.id.ll_per_avatar)
     public void changAvatar(View view) {
-        TinkerBaseApplicationLike tinkerApplicationLike = (TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike();
-        tinkerApplicationLike.initTuSdk();
-        TuAvatarComponent component = TuSdkGeeV1.avatarCommponent(PersonalDataActivity.this, new TuSdkComponent.TuSdkComponentDelegate() {
-            @Override
-            public void onComponentFinished(TuSdkResult result, Error error, TuFragment lastFragment) {
-                final ImgUrlHelp imgUrlHelp = new ImgUrlHelp();
-                imgUrlHelp.setSingleImg(PersonalDataActivity.this, result.image);
-                if (loadHud != null) {
-                    loadHud.show();
+        if (alertDialogBottomListHelper == null) {
+            alertDialogBottomListHelper = new AlertDialogBottomListHelper(this);
+            alertDialogBottomListHelper.setTitleVisibility(GONE).setMsg("选择图片")
+                    .setItemData(new String[]{"从相册上传", "拍照上传"}).itemNotifyDataChange().setAlertListener(new AlertDialogBottomListHelper.AlertItemClickListener() {
+                @Override
+                public void itemClick(@Nullable String text, int itemPosition) {
+                    openImageGallery(itemPosition);
                 }
-                imgUrlHelp.setOnFinishListener(new ImgUrlHelp.OnFinishDataListener() {
-                    @Override
-                    public void finishData(List<String> data, Handler handler) {
-                    }
+            });
+        }
+        alertDialogBottomListHelper.show();
+    }
 
-                    @Override
-                    public void finishError(String error) {
-                        showToast("网络异常");
-                        if (loadHud != null) {
-                            loadHud.dismiss();
-                        }
-                    }
-
-                    @Override
-                    public void finishSingleImg(String singleImg, Handler handler) {
-                        if (singleImg != null) {
-                            avatarPath = singleImg;
-                            changePersonalData("headerImg", null);
-                            handler.removeCallbacksAndMessages(null);
-                        }
-                    }
-                });
+    /**
+     * 弹窗选择图片
+     */
+    private void openImageGallery(int itemPosition) {
+        ConstantMethod constantMethod = new ConstantMethod();
+        constantMethod.setOnGetPermissionsSuccess(new ConstantMethod.OnGetPermissionsSuccessListener() {
+            @Override
+            public void getPermissionsSuccess() {
+                if (itemPosition == 0) {
+//                从相册选择 裁剪图片
+                    PictureSelectorUtils.getInstance()
+                            .resetVariable()
+                            .isCrop(true)
+                            .imageMode(PictureConfigC.SINGLE)
+                            .withAspectRatio(AutoSizeUtils.mm2px(mAppContext, 750), AutoSizeUtils.mm2px(mAppContext, 750))
+                            .openGallery(getActivity());
+                } else if (itemPosition == 1) {
+                    PictureSelectorUtils.getInstance()
+                            .resetVariable()
+                            .isCrop(true)
+                            .withAspectRatio(AutoSizeUtils.mm2px(mAppContext, 750), AutoSizeUtils.mm2px(mAppContext, 750))
+                            .openCamera(getActivity());
+                }
             }
         });
-        String[] filters = {"SkinNature", "SkinPink", "SkinJelly", "SkinNoir", "SkinRuddy", "SkinPowder", "SkinSugar"};
-        component.componentOption().cameraOption().setFilterGroup(Arrays.asList(filters));
-        // 是否保存到相册
-        component.componentOption().editTurnAndCutOption().setSaveToAlbum(false);
-        // 是否保存到临时文件
-        component.componentOption().editTurnAndCutOption().setSaveToTemp(false);
-        component
-                // 在组件执行完成后自动关闭组件
-                .setAutoDismissWhenCompleted(true)
-                // 显示组件
-                .showComponent();
+        constantMethod.getPermissions(getActivity(), Permission.Group.STORAGE);
     }
+
 
     //    设置昵称
     @OnClick(R.id.rel_per_nickname)
@@ -338,7 +374,7 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
             sexDialogBottomListHelper.setTitleVisibility(GONE).setMsg("性别")
                     .setItemData(SEX).itemNotifyDataChange().setAlertListener(new AlertDialogBottomListHelper.AlertItemClickListener() {
                 @Override
-                public void itemClick(@Nullable String text,int itemPosition) {
+                public void itemClick(@Nullable String text, int itemPosition) {
                     sexSelector = (itemPosition == 0 ? 1 : 0);
                     changePersonalData("SexSelector", null);
                 }
@@ -438,7 +474,7 @@ public class PersonalDataActivity extends BaseActivity implements View.OnClickLi
 
     @OnClick(R.id.rel_per_bg_cover)
     public void setBgCover(View view) {
-        if(userId>0&&communalUserInfoBean!=null){
+        if (userId > 0 && communalUserInfoBean != null) {
             Intent intent = new Intent(PersonalDataActivity.this, PersonalBgImgActivity.class);
             intent.putExtra("imgUrl", getStrings(communalUserInfoBean.getBgimg_url()));
             startActivity(intent);
