@@ -4,15 +4,15 @@ import android.content.Intent;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.views.JzVideo.JzVideoPlayerFullScrren;
+import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
+import com.amkj.dmsh.views.JzVideo.JzVideoStdFullScrren;
 import com.gyf.barlibrary.BarHide;
 import com.gyf.barlibrary.ImmersionBar;
 
 import butterknife.BindView;
-import cn.jzvd.JZDataSource;
-import cn.jzvd.JZUserAction;
 
-import static cn.jzvd.Jzvd.SCREEN_WINDOW_NORMAL;
+import static cn.jzvd.Jzvd.SCREEN_FULLSCREEN;
+
 
 /**
  * Created by xiaoxin on 2020/6/11
@@ -21,7 +21,7 @@ import static cn.jzvd.Jzvd.SCREEN_WINDOW_NORMAL;
  */
 public class JzVideoFullScreenActivity extends BaseActivity {
     @BindView(R.id.jvp_find_video_play)
-    JzVideoPlayerFullScrren mJvpFindVideoPlay;
+    JzVideoStdFullScrren mJvpFindVideoPlay;
 
     @Override
     protected int getContentView() {
@@ -33,11 +33,10 @@ public class JzVideoFullScreenActivity extends BaseActivity {
         if (getIntent() == null) return;
         Intent intent = getIntent();
         String url = intent.getStringExtra("url");
-        JZDataSource jzDataSource = new JZDataSource(url);
-        mJvpFindVideoPlay.setUp(jzDataSource, SCREEN_WINDOW_NORMAL);
-        mJvpFindVideoPlay.startVideo();//开始播放
-        mJvpFindVideoPlay.onEvent(JZUserAction.ON_CLICK_START_ICON);
-        mJvpFindVideoPlay.startWindowFullscreen();//全屏播放
+        String cover = intent.getStringExtra("cover");
+        mJvpFindVideoPlay.setUp(url, "", SCREEN_FULLSCREEN);
+        GlideImageLoaderUtil.loadCenterCrop(this, mJvpFindVideoPlay.posterImageView, cover);
+        mJvpFindVideoPlay.startVideoAfterPreloading();//开始播放
     }
 
     @Override
@@ -55,5 +54,12 @@ public class JzVideoFullScreenActivity extends BaseActivity {
     public void onBackPressed() {
         super.onBackPressed();
         finish();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //释放视频资源，修复内存泄漏
+        mJvpFindVideoPlay.reset();
     }
 }
