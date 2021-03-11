@@ -4,11 +4,12 @@
     android:id="@+id/rel_rect_count"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="@dimen/gap_left"
-    android:layout_marginRight="@dimen/gap_right"
+    android:background="@drawable/border_top_line"
     android:visibility="visible">
 
     <com.amkj.dmsh.views.RectAddAndSubViewDirect
+        android:layout_marginLeft="@dimen/gap_left"
+        android:layout_marginRight="@dimen/gap_right"
         android:id="@+id/rect_number"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

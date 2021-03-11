@@ -1,9 +1,6 @@
 package com.amkj.dmsh.dominant.activity;
 
 import android.content.Intent;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,6 +46,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -153,7 +153,7 @@ public class QualityShopHistoryListActivity extends BaseActivity {
                             baseAddCarProInfoBean.setActivityCode(getStrings(qualityBuyListBean.getActivityCode()));
                             baseAddCarProInfoBean.setProName(getStrings(qualityBuyListBean.getName()));
                             baseAddCarProInfoBean.setProPic(getStrings(qualityBuyListBean.getPicUrl()));
-                            addShopCarGetSku(QualityShopHistoryListActivity.this, baseAddCarProInfoBean, loadHud);
+                            addShopCarGetSku(QualityShopHistoryListActivity.this, baseAddCarProInfoBean);
                             break;
                     }
                 }

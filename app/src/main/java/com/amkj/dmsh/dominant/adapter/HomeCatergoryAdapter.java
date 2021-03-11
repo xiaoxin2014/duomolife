@@ -11,9 +11,9 @@ import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.user.bean.LikedProductBean;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
-import com.bigkoo.convenientbanner.ConvenientBanner;
-import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
-import com.bigkoo.convenientbanner.holder.Holder;
+import com.amkj.dmsh.views.convenientbanner.ConvenientBanner;
+import com.amkj.dmsh.views.convenientbanner.holder.CBViewHolderCreator;
+import com.amkj.dmsh.views.convenientbanner.holder.Holder;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 

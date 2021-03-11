@@ -22,9 +22,12 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.bean.ImageBean;
 import com.amkj.dmsh.bean.RequestStatus;
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.find.activity.ImagePagerActivity;
+import com.amkj.dmsh.homepage.activity.VideoDetailActivity;
 import com.amkj.dmsh.mine.activity.MineLoginActivity;
+import com.amkj.dmsh.mine.activity.ShopCarActivity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.bean.EditGoodsSkuEntity.EditGoodsSkuBean;
@@ -104,7 +107,6 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
     private List<SkuSaleBean> skuSaleList;
     private List<PropvaluesBean> propValuesList;
     private List<PropsBean> propsList;
-    private RectAddAndSubViewDirect rectAddAndSubViewDirect;
     private int numCount;
     private SkuDialogView skuDialogView;
     private boolean isShowSingle;
@@ -113,7 +115,6 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
     private Map<Integer, Float> discountMap;
     private boolean isSelectNotice;
     private int noticeType;
-    private RelativeLayout rel_rect_count;
     private NestedScrollView scrollView;
 
     /**
@@ -230,9 +231,12 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
                     @Override
                     public void onGlobalLayout() {
                         scrollView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        ViewGroup.LayoutParams layoutParams = scrollView.getLayoutParams();
-                        layoutParams.height = AutoSizeUtils.mm2px(mAppContext, 600);
-                        scrollView.setLayoutParams(layoutParams);
+                        int maxHeight = AutoSizeUtils.mm2px(mAppContext, 500);
+                        if (scrollView.getHeight() > maxHeight) {
+                            ViewGroup.LayoutParams layoutParams = scrollView.getLayoutParams();
+                            layoutParams.height = AutoSizeUtils.mm2px(mAppContext, maxHeight);
+                            scrollView.setLayoutParams(layoutParams);
+                        }
                     }
                 });
             }
@@ -240,6 +244,7 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
         List<SkuSaleBean> skuSaleList = this.editGoodsSkuBean.getSkuSale();
         final ProductSkuBean productSkuBean = getSkuShow(this.editGoodsSkuBean);
         //         默认显示图片
+        skuDialogView.iv_shopcar.setVisibility(baseAct instanceof VideoDetailActivity ? VISIBLE : GONE);
         GlideImageLoaderUtil.loadCenterCrop(baseAct.getApplicationContext(), skuDialogView.rImg_direct_attribute_product, this.editGoodsSkuBean.getPicUrl());
         if (picValueList != null) {
             picValueList.clear();
@@ -508,6 +513,7 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
      * @param productParameterTypeBeanList
      */
     private void setSkuStatusViews(final ArrayList<ProductParameterTypeBean> productParameterTypeBeanList) {
+        //显示sku
         if (skuDialogView.layout_parameter_slp.getChildCount() > 0)
             skuDialogView.layout_parameter_slp.removeAllViews();
         for (int i = 0; i < productParameterTypeBeanList.size(); i++) {
@@ -532,25 +538,22 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
             kc_params_as.setOnClickKeywordListener(this);
             skuDialogView.layout_parameter_slp.addView(skuItem);
         }
-        if (rectAddAndSubViewDirect != null) {
-            numCount = rectAddAndSubViewDirect.getNum();
+        if (skuDialogView.rectAddAndSubViewDirect != null) {
+            numCount = skuDialogView.rectAddAndSubViewDirect.getNum();
         }
-        View numCountView = LayoutInflater.from(baseAct).inflate(R.layout.layout_direct_count_num, (ViewGroup) skuDialogView.layout_parameter_slp.getParent(), false);
-        rectAddAndSubViewDirect = numCountView.findViewById(R.id.rect_number);
-        rel_rect_count = numCountView.findViewById(R.id.rel_rect_count);
         if (numCount == 0) {
             numCount = editGoodsSkuBean.getOldCount();
         }
-        numCountView.setVisibility(numCount < 1 || editGoodsSkuBean.isCombine() ? View.GONE : View.VISIBLE);
-        rectAddAndSubViewDirect.tv_direct_number_layout.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(mAppContext, 28));
-        rectAddAndSubViewDirect.tv_direct_number_layout.setTextColor(baseAct.getResources().getColor(R.color.text_black_t));
-        rectAddAndSubViewDirect.setNum(numCount == 0 ? 1 : numCount);
-        rectAddAndSubViewDirect.setOnNumChangeListener(new RectAddAndSubViewDirect.OnNumChangeListener() {
+        skuDialogView.rel_rect_count.setVisibility(numCount < 1 || editGoodsSkuBean.isCombine() ? View.GONE : View.VISIBLE);
+        skuDialogView.rectAddAndSubViewDirect.tv_direct_number_layout.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(mAppContext, 28));
+        skuDialogView.rectAddAndSubViewDirect.tv_direct_number_layout.setTextColor(baseAct.getResources().getColor(R.color.text_black_t));
+        skuDialogView.rectAddAndSubViewDirect.setNum(numCount == 0 ? 1 : numCount);
+        skuDialogView.rectAddAndSubViewDirect.setOnNumChangeListener(new RectAddAndSubViewDirect.OnNumChangeListener() {
             @Override
             public void onNumChange(View view, int stype, int num) {
                 int qualityNumber = getNumber(getStrings(skuDialogView.tv_dir_indent_pro_quality.getText().toString().trim()));
                 if (num > qualityNumber) {
-                    rectAddAndSubViewDirect.setNum(qualityNumber);
+                    skuDialogView.rectAddAndSubViewDirect.setNum(qualityNumber);
                 }
             }
 
@@ -559,10 +562,6 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
                 showToast(R.string.product_sell_out);
             }
         });
-
-        if (!editGoodsSkuBean.isCombine()) {
-            skuDialogView.layout_parameter_slp.addView(numCountView);
-        }
     }
 
     //    转换成数字
@@ -771,7 +770,7 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
      * @param type
      */
     private void getCheckSelectedValue(String type) {
-        int numQuantity = rectAddAndSubViewDirect.getNum();
+        int numQuantity = skuDialogView.rectAddAndSubViewDirect.getNum();
         String[] splitSize = editGoodsSkuBean.getSkuSale().get(0).getPropValues().split(",");
         Collections.sort(selectedSkuValueId, new Comparator<ProductParameterValueBean>() {
             @Override
@@ -876,7 +875,7 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
      */
     @Override
     public void onClickKeyword(View v, ProductParameterValueBean productParameterValueBean) {
-        rel_rect_count.setVisibility(View.VISIBLE);
+        skuDialogView.rel_rect_count.setVisibility(View.VISIBLE);
         //        点击选择
         if (!productParameterValueBean.isSelected()) {
             getSelectedSku(productParameterValueBean);
@@ -1241,7 +1240,7 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
 //        选择属性完成
         if (selectedSkuValueId.size() == productParameterTypeBeanList.size()) {
             StringBuilder valuesAppend = new StringBuilder();
-            int numQuantity = rectAddAndSubViewDirect.getNum();
+            int numQuantity = skuDialogView.rectAddAndSubViewDirect.getNum();
             Collections.sort(selectedSkuValueId, new Comparator<ProductParameterValueBean>() {
                 @Override
                 public int compare(ProductParameterValueBean lhs, ProductParameterValueBean rhs) {
@@ -1261,7 +1260,7 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
                 SkuSaleBean skuSaleBean = skuSaleList.get(i);
                 if (valuesAppend.toString().equals(skuSaleBean.getPropValues())) {
                     if (numQuantity > skuSaleBean.getQuantity()) {
-                        rectAddAndSubViewDirect.setNum(skuSaleBean.getQuantity());
+                        skuDialogView.rectAddAndSubViewDirect.setNum(skuSaleBean.getQuantity());
                     }
                     getSingleDouble(isShowSingle, editGoodsSkuBean != null && editGoodsSkuBean.isSellStatus(), "确定", skuSaleBean.getIsNotice());
                     for (ProductParameterTypeBean pro : productParameterTypeBeanList) {
@@ -1276,7 +1275,7 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
                         skuDialogView.tv_dir_indent_pro_quality.setText("缺货");
                         isSelectNotice = true;
                         noticeType = skuSaleBean.getIsNotice();
-                        rel_rect_count.setVisibility(View.GONE);
+                        skuDialogView.rel_rect_count.setVisibility(View.GONE);
                     } else {
                         skuDialogView.tv_dir_indent_pro_quality.setSelected(true);
                         skuDialogView.tv_dir_indent_pro_quality.setText(skuSaleBean.getQuantity() > 0 ? ("库存：" + skuSaleBean.getQuantity()) : "");
@@ -1397,6 +1396,12 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
         LinearLayout ll_vip_price;
         @BindView(R.id.tv_vip_price)
         TextView tv_vip_price;
+        @BindView(R.id.iv_shopcar)
+        ImageView iv_shopcar;
+        @BindView(R.id.rel_rect_count)
+        RelativeLayout rel_rect_count;
+        @BindView(R.id.rect_number)
+        RectAddAndSubViewDirect rectAddAndSubViewDirect;
 
 
         //            确定
@@ -1446,6 +1451,25 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
                 }
             }
         }
+
+        //跳转商品详情
+        @OnClick(R.id.ll_product_sku_header)
+        void skipDetail(View view) {
+            if (editGoodsSkuBean != null && baseAct instanceof VideoDetailActivity) {
+                ConstantMethod.skipProductUrl(baseAct, 1, editGoodsSkuBean.getId());
+            }
+        }
+
+        //跳转购物车
+        @OnClick(R.id.iv_shopcar)
+        void skipShopcar(View view) {
+            if (baseAct instanceof VideoDetailActivity) {
+                Intent intent = new Intent(baseAct, ShopCarActivity.class);
+                baseAct.startActivity(intent);
+            }
+        }
+
+
     }
 
     /**

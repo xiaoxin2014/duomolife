@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black">
+
+    <com.amkj.dmsh.homepage.view.JzvdStdTikTok
+        android:id="@+id/videoplayer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/vp_goods"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/sc_mm_150"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/sc_mm_20"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:paddingLeft="@dimen/sc_mm_20"
+        android:paddingRight="@dimen/sc_mm_210" />
+</RelativeLayout>

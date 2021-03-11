@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <com.amkj.dmsh.views.JzVideo.JzVideoPlayerStatusDialog
+    <com.amkj.dmsh.views.JzVideo.JzVideoPlayerWifi
         android:visibility="gone"
         android:id="@+id/jvp_video_play"
         android:layout_width="match_parent"

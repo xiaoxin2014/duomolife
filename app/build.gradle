@@ -18,8 +18,8 @@ android {
         applicationId "com.amkj.dmsh"
         minSdkVersion versions.minSdk
         targetSdkVersion versions.targetSdk
-        versionCode 251
-        versionName '4.9.8'
+        versionCode 252
+        versionName '5.0.0'
         multiDexEnabled true
         ndk {
             //选择要添加的对应cpu类型的.so库。
@@ -139,10 +139,11 @@ dependencies {
     implementation "com.google.firebase:firebase-appindexing:$versions.firebase"
     implementation "com.google.code.gson:gson:$versions.gson"
     implementation "com.google.android:flexbox:$versions.flexbox"
-
     implementation 'com.yanzhenjie:permission:2.0.0-rc12'
+
     //    渠道包 暂时有问题留意后续版本
-//    api 'com.leon.channel:helper:2.0.2'
+
+    //    api 'com.leon.channel:helper:2.0.2'
 
     // 图表统计
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
@@ -152,7 +153,6 @@ dependencies {
 
     //    basePopupWindows
     implementation 'com.github.razerdp:BasePopup:2.2.7'
-
     implementation 'com.lxj:xpopup:2.1.4'
 
     //    下拉刷新
@@ -235,6 +235,7 @@ dependencies {
 
     //  腾讯热更新
     implementation 'com.tencent.bugly:crashreport_upgrade:1.4.2'
+
     // 指定tinker依赖版本（注：应用升级1.3.5版本起，不再内置tinker）
     implementation 'com.tencent.tinker:tinker-android-lib:1.9.9'
     annotationProcessor 'com.tencent.tinker:tinker-android-anno:1.9.9'
@@ -262,7 +263,6 @@ dependencies {
     //富文本
     implementation 'com.zzhoujay.richtext:richtext:3.0.8'
     implementation 'com.zzhoujay:html:1.0.2'
-
     implementation 'org.greenrobot:eventbus:3.1.1'
 
     //    加载dialog
@@ -271,8 +271,9 @@ dependencies {
     //    自定义Toast 避免关闭通知 不显示Toast
     implementation 'com.hjq:toast:8.6'
 
-    //跑马灯
-    implementation 'li.y.z:simplemarqueeviewlib:1.2.0'
+    //    //跑马灯
+
+    //    implementation 'li.y.z:simplemarqueeviewlib:1.2.0'
 
     //    gif展示
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.20'
@@ -281,11 +282,11 @@ dependencies {
     implementation 'com.contrarywind:Android-PickerView:4.1.9'
     implementation 'com.qiyukf.unicorn:unicorn:5.14.0'
     implementation 'com.github.princekin-f:EasyFloat:1.3.0'
-    implementation 'cn.jzvd:jiaozivideoplayer:6.4.1'
+    implementation 'cn.jzvd:jiaozivideoplayer:7.6.0'
     implementation project(':countdowntime')
     implementation project(':TuSDKUIDefault')
     implementation project(':TextView-LinkBuilder')
     implementation project(':picture_library')
-    implementation project(':convenientbanner')
     implementation project(':FloatingActionButton')
+    implementation(name: 'simplemarqueeviewlib-1.2.0', ext: 'aar')
 }

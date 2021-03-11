@@ -581,7 +581,7 @@ public class ArticleOfficialActivity extends BaseActivity {
                 baseAddCarProInfoBean.setProductId(productId);
                 baseAddCarProInfoBean.setProName(title);
                 baseAddCarProInfoBean.setProPic(picUrl);
-                addShopCarGetSku(getActivity(), baseAddCarProInfoBean, loadHud);
+                addShopCarGetSku(getActivity(), baseAddCarProInfoBean);
             } else {
                 loadHud.dismiss();
                 getLoginStatus(getActivity());

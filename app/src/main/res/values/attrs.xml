@@ -502,4 +502,9 @@
             <enum name="center_horizontal" value="2"/>
         </attr>
     </declare-styleable>
+
+    <declare-styleable name="ConvenientBanner">
+        <attr name="canLoop" format="boolean" />
+        <attr name="autoTurningTime" format="integer" />
+    </declare-styleable>
 </resources>

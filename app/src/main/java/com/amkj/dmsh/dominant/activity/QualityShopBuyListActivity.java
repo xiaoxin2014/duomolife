@@ -2,11 +2,13 @@ package com.amkj.dmsh.dominant.activity;
 
 import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
+
 import androidx.annotation.NonNull;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
+
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -240,7 +242,7 @@ public class QualityShopBuyListActivity extends BaseActivity {
                             baseAddCarProInfoBean.setActivityCode(getStrings(qualityBuyListBean.getActivityCode()));
                             baseAddCarProInfoBean.setProName(getStrings(qualityBuyListBean.getName()));
                             baseAddCarProInfoBean.setProPic(getStrings(qualityBuyListBean.getPicUrl()));
-                            addShopCarGetSku(QualityShopBuyListActivity.this, baseAddCarProInfoBean, loadHud);
+                            addShopCarGetSku(QualityShopBuyListActivity.this, baseAddCarProInfoBean);
                             break;
                     }
                 }
@@ -324,7 +326,7 @@ public class QualityShopBuyListActivity extends BaseActivity {
 
                     @Override
                     public void onError(Throwable throwable) {
-                        showToast( R.string.invalidData);
+                        showToast(R.string.invalidData);
                     }
                 });
     }

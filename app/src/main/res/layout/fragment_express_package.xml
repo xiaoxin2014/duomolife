@@ -53,7 +53,7 @@
                             android:layout_margin="@dimen/sc_mm_30"
                             android:orientation="horizontal">
 
-                            <com.bigkoo.convenientbanner.ConvenientBanner xmlns:app="http://schemas.android.com/apk/res-auto"
+                            <com.amkj.dmsh.views.convenientbanner.ConvenientBanner xmlns:app="http://schemas.android.com/apk/res-auto"
                                 android:id="@+id/cb_banner"
                                 android:layout_width="@dimen/sc_mm_120"
                                 android:layout_height="@dimen/sc_mm_120"

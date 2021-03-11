@@ -1,3 +1,2 @@
-include ':app', ':countdowntime', ':TuSDKUIDefault', ':TextView-LinkBuilder', ':picture_library', ':ucrop',
-        ':convenientbanner', "FloatingActionButton"
+include ':app', ':countdowntime', ':TuSDKUIDefault', ':TextView-LinkBuilder', ':picture_library', ':ucrop' , ':FloatingActionButton'
 

@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.amkj.dmsh.views.JzVideo.JzVideoPlayerFullScrren
+    <com.amkj.dmsh.views.JzVideo.JzVideoStdFullScrren
         android:id="@+id/jvp_find_video_play"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

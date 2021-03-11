@@ -62,8 +62,7 @@
         android:maxAspectRatio="2.4"
         android:networkSecurityConfig="@xml/network_security_config"
         android:resizeableActivity="true"
-        android:supportsRtl="true"
-        android:theme="@style/AppTheme"
+        android:supportsRtl="true"        android:theme="@style/AppTheme"
         tools:replace="android:allowBackup"
         tools:targetApi="n">
         <!--android 9.0 默认移除 如继续使用 Apache HTTP 客户端-->
@@ -1620,6 +1619,33 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
+        <!--视频商品列表-->
+        <activity
+            android:name=".homepage.activity.VideoListActivity"
+            android:exported="false"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="VideoListActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!--视频商品详情-->
+        <activity
+            android:name=".homepage.activity.VideoDetailActivity"
+            android:exported="false"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="VideoDetailActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!--大家都在买-->
+
+        <!--图片浏览-->
         <activity
             android:name=".find.activity.ImagePagerActivity"
             android:screenOrientation="portrait"

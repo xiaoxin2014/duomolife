@@ -58,6 +58,7 @@
             android:textSize="@dimen/sc_mm_32" />
 
         <View
+            android:id="@+id/view_divider"
             android:layout_width="match_parent"
             android:layout_height="1mm"
             android:layout_alignParentBottom="true"

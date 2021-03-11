@@ -1,9 +1,5 @@
 package com.amkj.dmsh.dominant.fragment;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -43,6 +39,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import q.rorbin.badgeview.Badge;
@@ -182,7 +182,7 @@ public class QualityWeekOptimizedFragment extends BaseFragment {
                             baseAddCarProInfoBean.setActivityCode(getStrings(qualityBuyListBean.getActivityCode()));
                             baseAddCarProInfoBean.setProName(getStrings(qualityBuyListBean.getName()));
                             baseAddCarProInfoBean.setProPic(getStrings(qualityBuyListBean.getPicUrl()));
-                            addShopCarGetSku(getActivity(), baseAddCarProInfoBean, loadHud);
+                            addShopCarGetSku(getActivity(), baseAddCarProInfoBean);
                             break;
                     }
                 }

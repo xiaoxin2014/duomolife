@@ -58,7 +58,7 @@
                 app:cardCornerRadius="@dimen/sc_mm_12"
                 app:cardElevation="0dp">
 
-                <com.bigkoo.convenientbanner.ConvenientBanner
+                <com.amkj.dmsh.views.convenientbanner.ConvenientBanner
                     android:id="@+id/ad_mine"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/sc_mm_160" />

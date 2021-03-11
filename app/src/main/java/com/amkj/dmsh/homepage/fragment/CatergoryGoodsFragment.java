@@ -123,7 +123,7 @@ public class CatergoryGoodsFragment extends BaseFragment {
                         baseAddCarProInfoBean.setActivityCode(getStrings(likedProductBean.getActivityCode()));
                         baseAddCarProInfoBean.setProName(getStrings(likedProductBean.getName()));
                         baseAddCarProInfoBean.setProPic(getStrings(likedProductBean.getPicUrl()));
-                        addShopCarGetSku(getActivity(), baseAddCarProInfoBean, loadHud);
+                        addShopCarGetSku(getActivity(), baseAddCarProInfoBean);
                         break;
                 }
             }

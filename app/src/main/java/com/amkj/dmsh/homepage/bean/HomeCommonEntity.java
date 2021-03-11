@@ -3,6 +3,7 @@ package com.amkj.dmsh.homepage.bean;
 import android.text.TextUtils;
 
 import com.amkj.dmsh.base.BaseEntity;
+import com.chad.library.adapter.base.entity.MultiItemEntity;
 
 import java.util.List;
 
@@ -64,7 +65,7 @@ public class HomeCommonEntity extends BaseEntity {
         this.guidanceInfoList = goodsNavbarList;
     }
 
-    public static class HomeCommonBean {
+    public static class HomeCommonBean implements MultiItemEntity {
         /**
          * color : string
          * icon : string
@@ -83,6 +84,7 @@ public class HomeCommonEntity extends BaseEntity {
         private String showType;//1.文本   2.图标
         private String description;
         private List<ProductInfoListBean> productInfoList;
+        private List<VideoInfoListBean> videoInfoList;
 
         public int getId() {
             return id;
@@ -154,6 +156,56 @@ public class HomeCommonEntity extends BaseEntity {
 
         public void setSubtitle(String subtitle) {
             this.subtitle = subtitle;
+        }
+
+        public List<VideoInfoListBean> getVideoInfoList() {
+            return videoInfoList;
+        }
+
+        public void setVideoInfoList(List<VideoInfoListBean> videoInfoList) {
+            this.videoInfoList = videoInfoList;
+        }
+
+        @Override
+        public int getItemType() {
+            return (videoInfoList != null && videoInfoList.size() > 0) ? 1 : 0;
+        }
+
+        public static class VideoInfoListBean {
+
+            /**
+             * id : 2
+             * title : 测试2
+             * coverPath : http://image.domolife.cn/platform/20210125/20210125174058988.jpeg
+             */
+
+            private String id;
+            private String title;
+            private String coverPath;
+
+            public String getId() {
+                return id;
+            }
+
+            public void setId(String id) {
+                this.id = id;
+            }
+
+            public String getTitle() {
+                return title;
+            }
+
+            public void setTitle(String title) {
+                this.title = title;
+            }
+
+            public String getCoverPath() {
+                return coverPath;
+            }
+
+            public void setCoverPath(String coverPath) {
+                this.coverPath = coverPath;
+            }
         }
     }
 

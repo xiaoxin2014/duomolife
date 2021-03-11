@@ -41,7 +41,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/sc_mm_403">
 
-                        <com.bigkoo.convenientbanner.ConvenientBanner xmlns:app="http://schemas.android.com/apk/res-auto"
+                        <com.amkj.dmsh.views.convenientbanner.ConvenientBanner xmlns:app="http://schemas.android.com/apk/res-auto"
                             android:id="@+id/ad_communal_banner"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"

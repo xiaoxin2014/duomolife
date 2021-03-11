@@ -1,11 +1,12 @@
 package com.amkj.dmsh.base;
 
 import android.content.Context;
-import androidx.viewpager.widget.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.List;
+
+import androidx.viewpager.widget.PagerAdapter;
 
 /**
  * Created by xiaoxin on 2016/6/8.
@@ -74,5 +75,9 @@ public abstract class CommonPagerAdapter<T> extends PagerAdapter {
 
     public void setDatas(List<T> datas) {
         mDatas = datas;
+    }
+
+    public void setOnClickListener() {
+
     }
 }

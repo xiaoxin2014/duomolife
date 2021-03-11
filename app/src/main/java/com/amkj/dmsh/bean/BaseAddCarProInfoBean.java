@@ -12,6 +12,15 @@ public class BaseAddCarProInfoBean {
     private String proPic;
     private int productId;
     private String activityCode;
+    private boolean isShowSingle = true;//默认仅展示加购按钮
+
+    public boolean isShowSingle() {
+        return isShowSingle;
+    }
+
+    public void setShowSingle(boolean showSingle) {
+        isShowSingle = showSingle;
+    }
 
     public String getProName() {
         return proName;

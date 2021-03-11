@@ -101,6 +101,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 public void onReload(View v) {
                     // 重新加载逻辑
                     loadService.showCallback(NetLoadCallback.class);
+
                     loadData();
                 }
             }, NetLoadUtils.getNetInstance().getLoadSirCover());
@@ -152,10 +153,11 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-//        友盟统计
+        //友盟统计
         MobclickAgent.onPause(this);
-//        腾讯移动分析
+        //腾讯移动分析
         StatService.onPause(this);
+        //释放视频资源
         JzvdStd.releaseAllVideos();
     }
 

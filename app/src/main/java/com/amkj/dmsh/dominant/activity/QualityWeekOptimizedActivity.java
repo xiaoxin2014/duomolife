@@ -1,9 +1,6 @@
 package com.amkj.dmsh.dominant.activity;
 
 import android.content.Intent;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -48,6 +45,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -187,7 +187,7 @@ public class QualityWeekOptimizedActivity extends BaseActivity {
                             baseAddCarProInfoBean.setActivityCode(getStrings(qualityBuyListBean.getActivityCode()));
                             baseAddCarProInfoBean.setProName(getStrings(qualityBuyListBean.getName()));
                             baseAddCarProInfoBean.setProPic(getStrings(qualityBuyListBean.getPicUrl()));
-                            addShopCarGetSku(QualityWeekOptimizedActivity.this, baseAddCarProInfoBean, loadHud);
+                            addShopCarGetSku(QualityWeekOptimizedActivity.this, baseAddCarProInfoBean);
                             break;
                     }
 

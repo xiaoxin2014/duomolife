@@ -95,7 +95,6 @@ public class AlertDialogPurchase extends BaseAlertDialog {
         goodList.addAll(purchaseBean.getGoodsList());
         mPurchaseCoverAdapter.notifyDataSetChanged();
         updateGoodInfo(goodList.get(0), 0);
-        mIvLeft.setVisibility(goodList.size() > 1 ? View.VISIBLE : View.GONE);
         mIvRight.setVisibility(goodList.size() > 1 ? View.VISIBLE : View.GONE);
     }
 
@@ -104,8 +103,8 @@ public class AlertDialogPurchase extends BaseAlertDialog {
         String priceText = "专享价¥" + getStrings(goodsListBean.getPrice());
         mTvDicountPrice.setText(getSpannableString(priceText, 3, priceText.length(), -1, "#ff5e6b"));
         mTvDiscountInfo.setText(getStrings(goodsListBean.getDiscountPrice()));
-        mIvLeft.setEnabled(currentItem != 0);
-        mIvRight.setEnabled(currentItem != goodList.size() - 1);
+        mIvLeft.setVisibility(currentItem != 0 ? View.VISIBLE : View.GONE);
+        mIvRight.setVisibility(currentItem != goodList.size() - 1 ? View.VISIBLE : View.GONE);
     }
 
     public int getCurrentItem() {

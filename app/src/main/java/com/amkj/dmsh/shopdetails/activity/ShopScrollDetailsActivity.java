@@ -33,10 +33,12 @@ import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.dao.SoftApiDao;
 import com.amkj.dmsh.dominant.activity.DirectProductEvaluationActivity;
 import com.amkj.dmsh.dominant.activity.QualityGroupShopDetailActivity;
 import com.amkj.dmsh.dominant.activity.QualityProductActActivity;
 import com.amkj.dmsh.homepage.activity.ArticleOfficialActivity;
+import com.amkj.dmsh.homepage.activity.JzVideoFullScreenActivity;
 import com.amkj.dmsh.homepage.adapter.CommunalDetailAdapter;
 import com.amkj.dmsh.homepage.bean.CommunalADActivityEntity.CommunalADActivityBean;
 import com.amkj.dmsh.mine.activity.OpenVipActivity;
@@ -83,9 +85,9 @@ import com.amkj.dmsh.views.bottomdialog.SkuDialog;
 import com.amkj.dmsh.views.flycoTablayout.CommonTabLayout;
 import com.amkj.dmsh.views.flycoTablayout.listener.CustomTabEntity;
 import com.amkj.dmsh.views.flycoTablayout.listener.OnTabSelectListener;
-import com.bigkoo.convenientbanner.ConvenientBanner;
-import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
-import com.bigkoo.convenientbanner.holder.Holder;
+import com.amkj.dmsh.views.convenientbanner.ConvenientBanner;
+import com.amkj.dmsh.views.convenientbanner.holder.CBViewHolderCreator;
+import com.amkj.dmsh.views.convenientbanner.holder.Holder;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.android.flexbox.FlexboxLayout;
 import com.gyf.barlibrary.ImmersionBar;
@@ -112,6 +114,7 @@ import java.util.regex.Pattern;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.cardview.widget.CardView;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -372,6 +375,12 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     TextView mTvDepositOrderTime;
     @BindView(R.id.rl_deposit_discount_info)
     LinearLayout mLlDepositDiscountInfo;
+    @BindView(R.id.iv_video)
+    ImageView mIvVideo;
+    @BindView(R.id.iv_close_float)
+    ImageView mIvCloseFloat;
+    @BindView(R.id.cv_video_float)
+    CardView mLlVideoFloat;
 
 
     //    赠品信息
@@ -893,12 +902,10 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         mLlDepositPay.setVisibility(shopProperty.isDepositFlag() ? VISIBLE : GONE);
         mTvDepositDiscountDetail.setText(getStringsFormat(this, R.string.deposit_discount_detail, shopProperty.getDeposit(), shopProperty.getDepositDiscount()));
         //轮播位（包含图片以及视频）
+        mLlVideoFloat.setVisibility(shopProperty.haveVideo() ? VISIBLE : GONE);
+        GlideImageLoaderUtil.loadCenterCrop(this, mIvVideo, shopProperty.getPicUrl());
         imagesVideoList.clear();
         List<String> imageList = Arrays.asList(shopProperty.getImages().split(","));
-        if (shopProperty.haveVideo()) {
-            imagesVideoList.add(new CommunalADActivityBean("", shopProperty.getVideoUrl()));
-        }
-
         for (int i = 0; i < imageList.size(); i++) {
             String imgUrl = imageList.get(i);
             imagesVideoList.add(new CommunalADActivityBean(i == 0 ? getSquareImgUrl(imgUrl, screenWith, shopProperty.getWaterRemark()) : imgUrl, ""));
@@ -920,14 +927,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         banner_ql_sp_pro_details.setPages(this, cbViewHolderCreator, imagesVideoList);
         banner_ql_sp_pro_details.setOnItemClickListener(position -> {
             if (imagesVideoList.size() > position) {
-                CommunalADActivityBean communalADActivityBean = imagesVideoList.get(position);
-                if (!TextUtils.isEmpty(communalADActivityBean.getVideoUrl())) {
-                    return;
-                }
-
-                showImageActivity(getActivity(), IMAGE_DEF,
-                        position - (shopProperty.haveVideo() ? 1 : 0),
-                        imageList);
+                showImageActivity(getActivity(), IMAGE_DEF, position, imageList);
             }
         });
 
@@ -1808,41 +1808,6 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         }
     }
 
-    //收藏商品
-    private void goCollectPro() {
-        String url = Url.Q_SP_DETAIL_PRO_COLLECT;
-        Map<String, Object> params = new HashMap<>();
-        params.put("uid", userId);
-        params.put("object_id", shopPropertyBean.getId());
-        params.put("type", "goods");
-        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                loadHud.dismiss();
-
-                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
-                if (requestStatus != null) {
-                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        tv_sp_details_collect.setSelected(requestStatus.isCollect());
-                        showToast(
-                                String.format(getResources().getString(
-                                        tv_sp_details_collect.isSelected() ? R.string.collect_success : R.string.cancel_done), "商品", "收藏"));
-                    }
-                }
-            }
-
-            @Override
-            public void onNotNetOrException() {
-                loadHud.dismiss();
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                showToast(R.string.collect_failed);
-            }
-        });
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
@@ -1857,7 +1822,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
     @OnClick({R.id.ll_back, R.id.ll_back2, R.id.ll_service, R.id.ll_service2, R.id.ll_share, R.id.ll_share2, R.id.ll_product_activity_detail, R.id.tv_sp_details_service,
             R.id.tv_sp_details_add_car, R.id.tv_sp_details_buy_it, R.id.tv_sp_details_collect, R.id.tv_group_product, R.id.iv_ql_shop_pro_cp_tag, R.id.tv_ql_sp_pro_sku,
-            R.id.ll_layout_pro_sc_tag, R.id.tv_shop_comment_more, R.id.ll_tax_txt, R.id.ll_open_vip, R.id.ll_deposit_pay})
+            R.id.ll_layout_pro_sc_tag, R.id.tv_shop_comment_more, R.id.ll_tax_txt, R.id.ll_open_vip, R.id.ll_deposit_pay, R.id.iv_close_float, R.id.cv_video_float})
     public void onViewClicked(View view) {
         Intent intent;
         switch (view.getId()) {
@@ -1894,8 +1859,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             case R.id.tv_sp_details_collect:
                 if (userId > 0) {
                     if (shopPropertyBean != null) {
-                        loadHud.show();
-                        goCollectPro();
+                        SoftApiDao.collectGoods(this, shopPropertyBean.getId(), tv_sp_details_collect);
                     }
                 } else {
                     getLoginStatus(getActivity());
@@ -2015,6 +1979,19 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     mAlertDialogTax = new AlertDialogTax(this, shopPropertyBean);
                 }
                 mAlertDialogTax.show(Gravity.BOTTOM);
+                break;
+            //关闭视频浮窗
+            case R.id.iv_close_float:
+                mLlVideoFloat.setVisibility(GONE);
+                break;
+            //点击播放视频
+            case R.id.cv_video_float:
+                if (shopPropertyBean != null) {
+                    Intent intent1 = new Intent(this, JzVideoFullScreenActivity.class);
+                    intent1.putExtra("url", shopPropertyBean.getVideoUrl());
+                    intent1.putExtra("cover", shopPropertyBean.getPicUrl());
+                    startActivity(intent1);
+                }
                 break;
         }
     }

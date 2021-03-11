@@ -62,7 +62,7 @@ public class PostGoodsView extends LinearLayout {
             baseAddCarProInfoBean.setProductId(relatedGoodsBean.getProductId());
             baseAddCarProInfoBean.setProName(getStrings(relatedGoodsBean.getTitle()));
             baseAddCarProInfoBean.setProPic(getStrings(relatedGoodsBean.getPictureUrl()));
-            addShopCarGetSku(activity, baseAddCarProInfoBean, activity.loadHud);
+            addShopCarGetSku(activity, baseAddCarProInfoBean);
         });
 
         mRlGoods.setOnClickListener(v -> {

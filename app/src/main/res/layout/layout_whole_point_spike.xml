@@ -24,7 +24,7 @@
                 app:contentScrim="@android:color/white"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-                <com.bigkoo.convenientbanner.ConvenientBanner
+                <com.amkj.dmsh.views.convenientbanner.ConvenientBanner
                     android:id="@+id/ad_point_spike"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/sc_mm_240"

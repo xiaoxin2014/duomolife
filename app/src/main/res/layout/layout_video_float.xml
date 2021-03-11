@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cv_video_float"
+    android:layout_width="@dimen/sc_mm_180"
+    android:layout_height="@dimen/sc_mm_215"
+    android:layout_alignParentRight="true"
+    android:layout_marginTop="@dimen/sc_mm_200"
+    android:layout_marginRight="@dimen/sc_mm_18"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="@dimen/sc_mm_5"
+    app:cardElevation="0dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:background="@drawable/shap_video_float_bg">
+
+        <ImageView
+            android:id="@+id/iv_video"
+            android:layout_width="@dimen/sc_mm_180"
+            android:layout_height="@dimen/sc_mm_180"
+            android:scaleType="centerCrop" />
+
+        <ImageView
+            android:layout_width="@dimen/sc_mm_60"
+            android:layout_height="@dimen/sc_mm_60"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/sc_mm_60"
+            android:src="@drawable/play" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/sc_mm_35"
+            android:layout_below="@+id/iv_video"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:text="商品讲解"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_22" />
+
+        <ImageView
+            android:id="@+id/iv_close_float"
+            android:layout_width="@dimen/sc_mm_53"
+            android:layout_height="@dimen/sc_mm_53"
+            android:layout_alignParentRight="true"
+            android:padding="@dimen/sc_mm_14"
+            android:src="@drawable/close_video_float" />
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

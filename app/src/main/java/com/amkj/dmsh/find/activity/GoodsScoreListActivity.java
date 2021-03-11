@@ -35,9 +35,9 @@ import com.amkj.dmsh.views.guideview.Component;
 import com.amkj.dmsh.views.guideview.FindComponent4;
 import com.amkj.dmsh.views.guideview.Guide;
 import com.amkj.dmsh.views.guideview.GuideBuilder;
-import com.bigkoo.convenientbanner.ConvenientBanner;
-import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
-import com.bigkoo.convenientbanner.holder.Holder;
+import com.amkj.dmsh.views.convenientbanner.ConvenientBanner;
+import com.amkj.dmsh.views.convenientbanner.holder.CBViewHolderCreator;
+import com.amkj.dmsh.views.convenientbanner.holder.Holder;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.constant.RefreshState;
 

@@ -20,9 +20,9 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.views.arclayout.ArcLayout;
-import com.bigkoo.convenientbanner.ConvenientBanner;
-import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
-import com.bigkoo.convenientbanner.holder.Holder;
+import com.amkj.dmsh.views.convenientbanner.ConvenientBanner;
+import com.amkj.dmsh.views.convenientbanner.holder.CBViewHolderCreator;
+import com.amkj.dmsh.views.convenientbanner.holder.Holder;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 

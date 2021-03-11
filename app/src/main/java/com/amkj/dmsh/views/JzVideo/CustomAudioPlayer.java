@@ -1,7 +1,6 @@
 package com.amkj.dmsh.views.JzVideo;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
@@ -13,16 +12,14 @@ import com.amkj.dmsh.R;
 
 import java.util.LinkedHashMap;
 
+import androidx.annotation.NonNull;
 import cn.jzvd.JZDataSource;
-import cn.jzvd.JZMediaManager;
-import cn.jzvd.JZUserAction;
 import cn.jzvd.JZUtils;
 import cn.jzvd.Jzvd;
 
 import static cn.jzvd.JZDataSource.URL_KEY_DEFAULT;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 
-;
 
 
 /**
@@ -33,7 +30,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
  * class description:自定义音频播放
  */
 
-public class CustomAudioPlayer extends JzVideoPlayerStatusDialog {
+public class CustomAudioPlayer extends JzVideoPlayerWifi {
 
     private ImageView ib_audio_player;
     private TextView tv_audio_player_title,tv_audio_player_source;
@@ -84,30 +81,26 @@ public class CustomAudioPlayer extends JzVideoPlayerStatusDialog {
             tv_audio_player_source.setVisibility(GONE);
         }
         JZDataSource jzDataSource = new JZDataSource(linkedHashMap,"");
-        setUp(jzDataSource, Jzvd.SCREEN_WINDOW_NORMAL);
+        setUp(jzDataSource, Jzvd.SCREEN_NORMAL);
     }
 
     @Override
     public void onClick(View v) {
         super.onClick(v);
         if(v.getId() == R.id.ib_audio_player){
-            if (currentState == CURRENT_STATE_NORMAL) {
+            if (state == STATE_NORMAL) {
                 if (!JZUtils.isWifiConnected(getContext()) && !WIFI_TIP_DIALOG_SHOWED) {
                     showWifiDialog();
                     return;
                 }
                 startVideo();
-                onEvent(JZUserAction.ON_CLICK_START_ICON);
-            } else if (currentState == CURRENT_STATE_PLAYING) {
-                onEvent(JZUserAction.ON_CLICK_PAUSE);
-                JZMediaManager.pause();
+            } else if (state == STATE_PLAYING) {
+                mediaInterface.pause();
                 onStatePause();
-            } else if (currentState == CURRENT_STATE_PAUSE) {
-                onEvent(JZUserAction.ON_CLICK_RESUME);
-                JZMediaManager.start();
+            } else if (state == STATE_PAUSE) {
+                mediaInterface.start();
                 onStatePlaying();
-            } else if (currentState == CURRENT_STATE_AUTO_COMPLETE) {
-                onEvent(JZUserAction.ON_CLICK_START_AUTO_COMPLETE);
+            } else if (state == STATE_AUTO_COMPLETE) {
                 startVideo();
             }
         }

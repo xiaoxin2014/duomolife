@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.user.bean.LikedProductBean;
@@ -72,7 +71,7 @@ public class ProNoShopCarAdapter extends BaseMultiItemQuickAdapter<LikedProductB
                         baseAddCarProInfoBean.setActivityCode(getStrings(likedProductBean.getActivityCode()));
                         baseAddCarProInfoBean.setProName(getStrings(likedProductBean.getName()));
                         baseAddCarProInfoBean.setProPic(getStrings(likedProductBean.getPicUrl()));
-                        addShopCarGetSku(context, baseAddCarProInfoBean, ((BaseActivity) context).loadHud);
+                        addShopCarGetSku(context, baseAddCarProInfoBean);
                     });
                 }
 

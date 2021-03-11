@@ -1,10 +1,14 @@
 package com.amkj.dmsh.mine.adapter;
 
 import com.amkj.dmsh.base.BaseFragment;
+import com.amkj.dmsh.homepage.fragment.VideoListFragment;
 import com.amkj.dmsh.mine.fragment.CollectInvitationFragment;
 import com.amkj.dmsh.mine.fragment.CollectReportFragment;
 import com.amkj.dmsh.mine.fragment.CollectSpecialFragment;
 import com.amkj.dmsh.mine.fragment.CollectTopicFragment;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -18,7 +22,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
  */
 
 public class MineContentPageAdapter extends FragmentPagerAdapter {
-    String[] titlePage = {"帖子", "心得", "专题", "话题"};
+    String[] titlePage = {"帖子", "心得", "专题", "话题", "视频"};
 
     public MineContentPageAdapter(FragmentManager fm) {
         super(fm);
@@ -35,6 +39,10 @@ public class MineContentPageAdapter extends FragmentPagerAdapter {
                 return BaseFragment.newInstance(CollectSpecialFragment.class, null, null);
             case "话题":
                 return BaseFragment.newInstance(CollectTopicFragment.class, null, null);
+            case "视频":
+                Map<String, Object> map = new HashMap<>();
+                map.put("isCollect", true);
+                return BaseFragment.newInstance(VideoListFragment.class, null, map);
         }
         return null;
     }

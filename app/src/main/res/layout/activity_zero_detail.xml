@@ -46,7 +46,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/sc_mm_750">
 
-                                <com.bigkoo.convenientbanner.ConvenientBanner
+                                <com.amkj.dmsh.views.convenientbanner.ConvenientBanner
                                     android:id="@+id/banner_ql_sp_pro_details"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent" />

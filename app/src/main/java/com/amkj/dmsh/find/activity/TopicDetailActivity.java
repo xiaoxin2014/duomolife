@@ -19,7 +19,7 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.gson.GsonUtils;
-import com.amkj.dmsh.views.JzVideo.JzVideoPlayerStatusDialog;
+import com.amkj.dmsh.views.JzVideo.JzVideoPlayerWifi;
 import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
 import com.google.android.material.appbar.AppBarLayout;
 import com.gyf.barlibrary.ImmersionBar;
@@ -65,7 +65,7 @@ public class TopicDetailActivity extends BaseActivity {
     @BindView(R.id.tv_topic_desc)
     EmojiTextView mTvTopicDesc;
     @BindView(R.id.jvp_find_video_play)
-    JzVideoPlayerStatusDialog mJvpFindVideoPlay;
+    JzVideoPlayerWifi mJvpFindVideoPlay;
     @BindView(R.id.tv_join_num)
     TextView mTvJoinNum;
     @BindView(R.id.tv_topic_num)
@@ -112,7 +112,7 @@ public class TopicDetailActivity extends BaseActivity {
             finish();
         }
 
-        mJvpFindVideoPlay.thumbImageView.setScaleType(ImageView.ScaleType.FIT_XY);
+        mJvpFindVideoPlay.posterImageView.setScaleType(ImageView.ScaleType.FIT_XY);
         mSmartRefreshLayout.setOnRefreshListener(refreshLayout -> {
             loadData();
             updateCurrentPostFragment();
@@ -158,8 +158,8 @@ public class TopicDetailActivity extends BaseActivity {
     private void setTopicData(TopicDetailEntity topicDetailEntity) {
         if (!TextUtils.isEmpty(topicDetailEntity.getVideoUrl())) {
             mJvpFindVideoPlay.setVisibility(View.VISIBLE);
-            mJvpFindVideoPlay.setUp(getStrings(topicDetailEntity.getVideoUrl()), "", Jzvd.SCREEN_WINDOW_NORMAL);
-            GlideImageLoaderUtil.loadCenterCrop(this, mJvpFindVideoPlay.thumbImageView
+            mJvpFindVideoPlay.setUp(getStrings(topicDetailEntity.getVideoUrl()), "", Jzvd.SCREEN_NORMAL);
+            GlideImageLoaderUtil.loadCenterCrop(this, mJvpFindVideoPlay.posterImageView
                     , getStrings(topicDetailEntity.getFirstImgUrl()));
         } else {
             mJvpFindVideoPlay.setVisibility(View.GONE);

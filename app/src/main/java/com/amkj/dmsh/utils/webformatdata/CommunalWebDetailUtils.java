@@ -402,7 +402,7 @@ public class CommunalWebDetailUtils {
                                 baseAddCarProInfoBean.setProductId(qualityWelPro.getId());
                                 baseAddCarProInfoBean.setProName(getStrings(qualityWelPro.getName()));
                                 baseAddCarProInfoBean.setProPic(getStrings(qualityWelPro.getPicUrl()));
-                                addShopCarGetSku(activity, baseAddCarProInfoBean, loadHud);
+                                addShopCarGetSku(activity, baseAddCarProInfoBean);
                             }
                             break;
                     }

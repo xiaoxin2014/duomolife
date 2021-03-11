@@ -2,14 +2,17 @@
 apply from: 'buildsystem/projectconfiguration.gradle'
 
 buildscript {
-    ext.kotlin_version="1.3.30"
+    ext.kotlin_version = "1.4.21"
     repositories {
-        maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
+        maven { url 'https://maven.aliyun.com/repository/google/' }
+        maven { url 'https://maven.aliyun.com/repository/public/' }
+        mavenLocal()
+        mavenCentral()
         jcenter()
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.1'
+        classpath 'com.android.tools.build:gradle:3.4.1'
         classpath 'com.novoda:bintray-release:0.9'
         // tinkersupport插件, 其中lastest.release指拉取最新版本，也可以指定明确版本号，例如1.0.4
         classpath "com.tencent.bugly:tinker-support:1.1.5"
@@ -25,24 +28,20 @@ buildscript {
 }
 allprojects {
     repositories {
-        maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
+        maven { url 'https://maven.aliyun.com/repository/google/' }
+        maven { url 'https://maven.aliyun.com/repository/public/' }
+        mavenLocal()
+        mavenCentral()
         jcenter()
         google()
-        mavenCentral()
         //        阿里百川
-        maven {
-            url "http://repo.baichuan-android.taobao.com/content/groups/BaichuanRepositories/"
-        }
+        maven { url "http://repo.baichuan-android.taobao.com/content/groups/BaichuanRepositories/" }
 //        打开App linked
-        maven {
-            url 'https://dl.bintray.com/linkedme2016/lkme-deeplinks'
-        }
+        maven { url 'https://dl.bintray.com/linkedme2016/lkme-deeplinks' }
 //        BaseRecyclerViewAdapter
         maven { url "https://jitpack.io" }
 //        refresh
-        maven {
-            url 'https://oss.sonatype.org/content/repositories/snapshots'
-        }
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
     }
 }
 

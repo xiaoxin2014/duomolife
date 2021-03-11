@@ -12,6 +12,7 @@ import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.bean.PostCommentEntity;
 import com.amkj.dmsh.find.bean.PostEntity.PostBean;
+import com.amkj.dmsh.homepage.bean.VideoProductEntity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.gson.GsonUtils;
@@ -197,6 +198,75 @@ public class SoftApiDao {
         } else {
             getLoginStatus(activity);
         }
+    }
+
+    //商品收藏
+    public static void collectGoods(Activity activity, int id, TextView tvCollect) {
+        showLoadhud(activity);
+        String url = Url.Q_SP_DETAIL_PRO_COLLECT;
+        Map<String, Object> params = new HashMap<>();
+        params.put("uid", userId);
+        params.put("object_id", id);
+        params.put("type", "goods");
+        NetLoadUtils.getNetInstance().loadNetDataPost(activity, url, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                dismissLoadhud(activity);
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
+                if (requestStatus != null) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
+                        tvCollect.setSelected(requestStatus.isCollect());
+                        showToast(
+                                String.format(activity.getResources().getString(
+                                        tvCollect.isSelected() ? R.string.collect_success : R.string.cancel_done), "商品", "收藏"));
+                    }
+                }
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                dismissLoadhud(activity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(R.string.collect_failed);
+            }
+        });
+    }
+
+    //视频收藏
+    public static void collectVideo(Activity activity, VideoProductEntity.VideoProductBean videoProductBean, TextView tvCollect) {
+        showLoadhud(activity);
+        String url = Url.ADD_VIDEO_COLLECT;
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", videoProductBean.getId());
+        NetLoadUtils.getNetInstance().loadNetDataPost(activity, url, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                dismissLoadhud(activity);
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
+                if (requestStatus != null) {
+                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
+                        tvCollect.setSelected(!tvCollect.isSelected());
+                        videoProductBean.setIsCollect(tvCollect.isSelected() ? "1" : "0");
+                        showToast(
+                                String.format(activity.getResources().getString(
+                                        tvCollect.isSelected() ? R.string.collect_success : R.string.cancel_done), "视频", "收藏"));
+                    }
+                }
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                dismissLoadhud(activity);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                showToast(R.string.collect_failed);
+            }
+        });
     }
 
     //文章评论点赞

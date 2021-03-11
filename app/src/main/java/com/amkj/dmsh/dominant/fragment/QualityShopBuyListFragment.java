@@ -229,7 +229,7 @@ public class QualityShopBuyListFragment extends BaseFragment {
                             baseAddCarProInfoBean.setActivityCode(getStrings(qualityBuyListBean.getActivityCode()));
                             baseAddCarProInfoBean.setProName(getStrings(qualityBuyListBean.getName()));
                             baseAddCarProInfoBean.setProPic(getStrings(qualityBuyListBean.getPicUrl()));
-                            addShopCarGetSku(getActivity(), baseAddCarProInfoBean, loadHud);
+                            addShopCarGetSku(getActivity(), baseAddCarProInfoBean);
                             break;
                     }
                 }

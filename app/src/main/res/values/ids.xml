@@ -23,4 +23,5 @@
     <item name="main_page" type="id"/>
     <!--身份证识别-->
     <item name="id_tag" type="id"/>
+    <item name="cb_item_tag" type="id" />
 </resources>

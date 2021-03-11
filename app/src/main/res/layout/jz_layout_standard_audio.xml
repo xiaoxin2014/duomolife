@@ -93,6 +93,6 @@
         android:id="@+id/rel_audio"
         android:visibility="gone"
         android:descendantFocusability="blocksDescendants">
-        <include layout="@layout/jz_layout_std"/>
+        <include layout="@layout/jz_layout_std_audio"/>
     </RelativeLayout>
 </RelativeLayout>

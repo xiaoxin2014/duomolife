@@ -37,7 +37,7 @@ import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.views.JzVideo.CustomAudioPlayer;
-import com.amkj.dmsh.views.JzVideo.JzVideoPlayerStatusDialog;
+import com.amkj.dmsh.views.JzVideo.JzVideoPlayerWifi;
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -383,7 +383,7 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                 }
                 break;
             case TYPE_VIDEO:
-                JzVideoPlayerStatusDialog jvp_video_play = holder.getView(R.id.jvp_video_play);
+                JzVideoPlayerWifi jvp_video_play = holder.getView(R.id.jvp_video_play);
                 String videoUrl = detailObjectBean.getUrl();
                 String videoSnapShot = getVideoSnapShot(videoUrl);
                 if (!TextUtils.isEmpty(videoUrl)) {
@@ -406,11 +406,11 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
                                 layoutParams.height = screenWidth * imgHeight / imgWidth;
                             }
                             jvp_video_play.setLayoutParams(layoutParams);
-                            jvp_video_play.setUp(getStrings(detailObjectBean.getUrl()), "", Jzvd.SCREEN_WINDOW_NORMAL);
+                            jvp_video_play.setUp(getStrings(detailObjectBean.getUrl()), "", Jzvd.SCREEN_NORMAL);
                             jvp_video_play.setVisibility(View.VISIBLE);
                         }
                     }.excueTask();
-                    GlideImageLoaderUtil.loadCenterCrop(context, jvp_video_play.thumbImageView, !TextUtils.isEmpty(detailObjectBean.getPicUrl()) ? detailObjectBean.getPicUrl() : videoSnapShot);
+                    GlideImageLoaderUtil.loadCenterCrop(context, jvp_video_play.posterImageView, !TextUtils.isEmpty(detailObjectBean.getPicUrl()) ? detailObjectBean.getPicUrl() : videoSnapShot);
                 } else {
                     jvp_video_play.setVisibility(View.GONE);
                 }

@@ -11,7 +11,7 @@
     app:arc_height="@dimen/sc_mm_30"
     app:arc_position="bottom">
 
-    <com.bigkoo.convenientbanner.ConvenientBanner
+    <com.amkj.dmsh.views.convenientbanner.ConvenientBanner
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/ad_communal_banner"
         android:layout_width="match_parent"

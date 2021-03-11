@@ -843,4 +843,18 @@ public class Url {
     public static final String GET_GROUP_RULE = "api/groupbuy/getGroupBuyExplain";
     //获取定金结算信息
     public static final String GET_DEPOSIT_SETTLE_INFO = "api/goods/order/getDepositOrderSettleInfo";
+
+    /*
+    视频列表相关
+    */
+    //获取视频列表
+    public static final String GET_VIDEO_LIST = "api/find/video/getApilistPage";
+    //获取视频详情
+    public static final String GET_VIDEO_DETAIl = "api/find/video/getApiVideoInfo";
+    //视频统计
+    public static final String ADD_CLICK_VIDEO = "api/find/video/addClickVideo";
+    //视频收藏
+    public static final String ADD_VIDEO_COLLECT = "api/find/video/addVideoCollect";
+    //视频收藏列表
+    public static final String GTE_VIDEO_COLLECT = "api/my/getMyCollectVideolistPage";
 }

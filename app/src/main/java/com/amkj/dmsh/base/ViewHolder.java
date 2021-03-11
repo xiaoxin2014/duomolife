@@ -1,12 +1,13 @@
 package com.amkj.dmsh.base;
 
 import android.graphics.Bitmap;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by xiaoxin on 2017/12/22 0022
@@ -41,7 +42,7 @@ public class ViewHolder extends RecyclerView.ViewHolder{
     /**
      * 为TextView设置字符串
      */
-    public void setText(int viewId, String string) {
+    public void setText(int viewId, CharSequence string) {
         TextView view =  getView(viewId);
         view.setText(string);
     }

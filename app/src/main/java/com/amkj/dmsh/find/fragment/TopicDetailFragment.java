@@ -2,12 +2,6 @@ package com.amkj.dmsh.find.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import com.google.android.material.appbar.AppBarLayout;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.emoji.widget.EmojiTextView;
-import androidx.viewpager.widget.ViewPager;
-import androidx.cardview.widget.CardView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -26,8 +20,9 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.gson.GsonUtils;
-import com.amkj.dmsh.views.JzVideo.JzVideoPlayerStatusDialog;
+import com.amkj.dmsh.views.JzVideo.JzVideoPlayerWifi;
 import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
+import com.google.android.material.appbar.AppBarLayout;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import org.greenrobot.eventbus.EventBus;
@@ -35,6 +30,11 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.HashMap;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.emoji.widget.EmojiTextView;
+import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.OnClick;
 import cn.jzvd.Jzvd;
@@ -60,7 +60,7 @@ public class TopicDetailFragment extends BaseFragment {
     @BindView(R.id.tv_topic_desc)
     EmojiTextView mTvTopicDesc;
     @BindView(R.id.jvp_find_video_play)
-    JzVideoPlayerStatusDialog mJvpFindVideoPlay;
+    JzVideoPlayerWifi mJvpFindVideoPlay;
     @BindView(R.id.tv_join_num)
     TextView mTvJoinNum;
     @BindView(R.id.tv_topic_num)
@@ -96,7 +96,7 @@ public class TopicDetailFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
-        mJvpFindVideoPlay.thumbImageView.setScaleType(ImageView.ScaleType.FIT_XY);
+        mJvpFindVideoPlay.posterImageView.setScaleType(ImageView.ScaleType.FIT_XY);
         mSmartRefreshLayout.setOnRefreshListener(refreshLayout -> {
             loadData();
             updateCurrentPostFragment();
@@ -140,8 +140,8 @@ public class TopicDetailFragment extends BaseFragment {
     private void setTopicData(TopicDetailEntity topicDetailEntity) {
         if (!TextUtils.isEmpty(topicDetailEntity.getVideoUrl())) {
             mJvpFindVideoPlay.setVisibility(View.VISIBLE);
-            mJvpFindVideoPlay.setUp(getStrings(topicDetailEntity.getVideoUrl()), "", Jzvd.SCREEN_WINDOW_NORMAL);
-            GlideImageLoaderUtil.loadCenterCrop(getActivity(), mJvpFindVideoPlay.thumbImageView
+            mJvpFindVideoPlay.setUp(getStrings(topicDetailEntity.getVideoUrl()), "", Jzvd.SCREEN_NORMAL);
+            GlideImageLoaderUtil.loadCenterCrop(getActivity(), mJvpFindVideoPlay.posterImageView
                     , getStrings(topicDetailEntity.getFirstImgUrl()));
         } else {
             mJvpFindVideoPlay.setVisibility(View.GONE);

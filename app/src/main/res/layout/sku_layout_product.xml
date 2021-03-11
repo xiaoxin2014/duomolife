@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/dialog_layout_slp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,6 +8,7 @@
     android:focusableInTouchMode="true">
 
     <LinearLayout
+        android:id="@+id/ll_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -44,15 +44,6 @@
                     android:maxLines="2"
                     android:textColor="@color/text_black_t"
                     android:textSize="@dimen/sc_mm_28" />
-
-                <TextView
-                    android:id="@+id/tv_delivery_time"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/tv_dir_indent_pro_name"
-                    android:textColor="@color/text_login_gray_s"
-                    android:textSize="@dimen/sc_mm_24"
-                    android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/tv_pro_combine_discount"
@@ -127,17 +118,30 @@
         <androidx.core.widget.NestedScrollView
             android:id="@+id/scroll_sku_values"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="@drawable/border_top_bottom_line"
-            android:minHeight="@dimen/sc_mm_350">
+            android:layout_height="wrap_content"
+            android:background="@drawable/border_top_line"
+            android:minHeight="@dimen/sc_mm_250">
 
             <LinearLayout
                 android:id="@+id/layout_parameter_slp"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical" />
+                android:layout_height="wrap_content"
+                android:divider="@drawable/item_divider_gray_f_one_px"
+                android:orientation="vertical"
+                android:showDividers="middle" />
         </androidx.core.widget.NestedScrollView>
+
+        <TextView
+            android:id="@+id/tv_delivery_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/sc_mm_30"
+            android:layout_marginBottom="@dimen/sc_mm_20"
+            android:textColor="@color/text_login_gray_s"
+            android:textSize="@dimen/sc_mm_24"
+            android:visibility="gone" />
+
+        <include layout="@layout/layout_direct_count_num" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -151,7 +155,6 @@
                 android:layout_weight="1"
                 android:background="@drawable/sel_bg_pink_yellow_gray"
                 android:gravity="center"
-
                 android:text="加入购物车"
                 android:textColor="@color/white"
                 android:textSize="@dimen/sc_mm_32"
@@ -163,11 +166,23 @@
                 android:layout_height="@dimen/sc_mm_98"
                 android:layout_weight="1"
                 android:background="@drawable/sel_deep_red_yel_gray"
-
                 android:gravity="center"
                 android:text="立即购买"
                 android:textColor="@color/white"
                 android:textSize="@dimen/sc_mm_32" />
         </LinearLayout>
     </LinearLayout>
+
+    <ImageView
+        android:id="@+id/iv_shopcar"
+        android:layout_width="@dimen/sc_mm_78"
+        android:layout_height="@dimen/sc_mm_78"
+        android:layout_above="@+id/ll_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/sc_mm_26"
+        android:layout_marginBottom="@dimen/sc_mm_13"
+        android:background="@drawable/shap_shopcar_bg"
+        android:padding="@dimen/sc_mm_19"
+        android:src="@drawable/shop_car_icon"
+        android:visibility="gone" />
 </RelativeLayout>

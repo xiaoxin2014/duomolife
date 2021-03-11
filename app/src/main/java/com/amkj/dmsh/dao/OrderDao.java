@@ -2,16 +2,19 @@ package com.amkj.dmsh.dao;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.text.TextUtils;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.EventMessage;
+import com.amkj.dmsh.bean.BaseAddCarProInfoBean;
 import com.amkj.dmsh.bean.MessageBean;
 import com.amkj.dmsh.bean.RequestStatus;
-import com.amkj.dmsh.bean.BaseAddCarProInfoBean;
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.mine.activity.ShopCarActivity;
+import com.amkj.dmsh.mine.bean.ShopCarEntity.ShopCartBean.CartBean.CartInfoBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.DirectExchangeDetailsActivity;
@@ -20,10 +23,10 @@ import com.amkj.dmsh.shopdetails.bean.ShopCarGoodsSku;
 import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.views.bottomdialog.SkuDialog;
-import com.kaopiz.kprogresshud.KProgressHUD;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +39,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.showLoadhud;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.ConstantVariable.INDENT_W_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.Url.Q_INQUIRY_DELAY_TAKE_TIME;
 import static com.amkj.dmsh.constant.Url.Q_INQUIRY_WAIT_SEND_EXPEDITING;
@@ -210,12 +214,12 @@ public class OrderDao {
     /**
      * @param baseAddCarProInfoBean 商品基本信息
      */
-    public static void addShopCarGetSku(final Activity context, final BaseAddCarProInfoBean baseAddCarProInfoBean, final KProgressHUD loadHud) {
+    public static void addShopCarGetSku(final Activity context, final BaseAddCarProInfoBean baseAddCarProInfoBean) {
         if (userId <= 0 || !isContextExisted(context)) {
             getLoginStatus(context);
             return;
         }
-        loadHud.show();
+        showLoadhud(context);
         //商品详情内容
         String url = Url.Q_SHOP_DETAILS_GET_SKU_CAR;
         Map<String, Object> params = new HashMap<>();
@@ -224,8 +228,7 @@ public class OrderDao {
         NetLoadUtils.getNetInstance().loadNetDataPost(context, url, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                loadHud.dismiss();
-
+                dismissLoadhud(context);
                 EditGoodsSkuEntity editGoodsSkuEntity = GsonUtils.fromJson(result, EditGoodsSkuEntity.class);
                 if (editGoodsSkuEntity != null) {
                     if (editGoodsSkuEntity.getCode().equals(SUCCESS_CODE)) {
@@ -234,28 +237,26 @@ public class OrderDao {
                         if (skuSaleBeanList == null) {
                             return;
                         }
-                        if (skuSaleBeanList.size() > 1) {
-                            setSkuValue(context, editGoodsSkuBean, baseAddCarProInfoBean, loadHud);
-                        } else {
-                            SkuSaleBean skuSaleBean = skuSaleBeanList.get(0);
-                            if ((skuSaleBean.getIsNotice() == 1 || skuSaleBean.getIsNotice() == 2) && skuSaleBean.getQuantity() == 0) {
-                                setSkuValue(context, editGoodsSkuBean, baseAddCarProInfoBean, loadHud);
+                        //首先判断有无库存
+                        if (editGoodsSkuBean.getQuantity() > 0) {
+                            //再判断是否是单sku,并且只显示加购按钮
+                            if (skuSaleBeanList.size() == 1 && baseAddCarProInfoBean.isShowSingle()) {
+                                //直接加购
+                                ShopCarGoodsSku shopCarGoodsSkuDif = new ShopCarGoodsSku();
+                                shopCarGoodsSkuDif.setCount(1);
+                                shopCarGoodsSkuDif.setSaleSkuId(editGoodsSkuBean.getSkuSale().get(0).getId());
+                                shopCarGoodsSkuDif.setPrice(Double.parseDouble(editGoodsSkuBean.getSkuSale().get(0).getPrice()));
+                                shopCarGoodsSkuDif.setProductId(editGoodsSkuBean.getId());
+                                shopCarGoodsSkuDif.setPicUrl(editGoodsSkuBean.getPicUrl());
+                                shopCarGoodsSkuDif.setActivityCode(getStrings(baseAddCarProInfoBean.getActivityCode()));
+                                shopCarGoodsSkuDif.setValuesName(!TextUtils.isEmpty(editGoodsSkuBean.getPropvalues().get(0).getPropValueName())
+                                        ? editGoodsSkuBean.getPropvalues().get(0).getPropValueName() : "默认");
+                                addShopCar(context, shopCarGoodsSkuDif);
                             } else {
-                                if (skuSaleBean.getQuantity() > 0) {
-                                    ShopCarGoodsSku shopCarGoodsSkuDif = new ShopCarGoodsSku();
-                                    shopCarGoodsSkuDif.setCount(1);
-                                    shopCarGoodsSkuDif.setSaleSkuId(editGoodsSkuBean.getSkuSale().get(0).getId());
-                                    shopCarGoodsSkuDif.setPrice(Double.parseDouble(editGoodsSkuBean.getSkuSale().get(0).getPrice()));
-                                    shopCarGoodsSkuDif.setProductId(editGoodsSkuBean.getId());
-                                    shopCarGoodsSkuDif.setPicUrl(editGoodsSkuBean.getPicUrl());
-                                    shopCarGoodsSkuDif.setActivityCode(getStrings(baseAddCarProInfoBean.getActivityCode()));
-                                    shopCarGoodsSkuDif.setValuesName(!TextUtils.isEmpty(editGoodsSkuBean.getPropvalues().get(0).getPropValueName())
-                                            ? editGoodsSkuBean.getPropvalues().get(0).getPropValueName() : "默认");
-                                    addShopCar(context, shopCarGoodsSkuDif, loadHud);
-                                } else {
-                                    showToast("商品已售罄，正在努力补货中~~~");
-                                }
+                                setSkuValue(context, editGoodsSkuBean, baseAddCarProInfoBean);
                             }
+                        } else {
+                            showToast("商品已售罄，正在努力补货中~~~");
                         }
                     } else {
                         showToast(editGoodsSkuEntity.getMsg());
@@ -265,12 +266,12 @@ public class OrderDao {
 
             @Override
             public void onNotNetOrException() {
-                loadHud.dismiss();
+                dismissLoadhud(context);
             }
         });
     }
 
-    private static void setSkuValue(Activity context, final EditGoodsSkuEntity.EditGoodsSkuBean editGoodsSkuBean, final BaseAddCarProInfoBean baseAddCarProInfoBean, final KProgressHUD loadHud) {
+    private static void setSkuValue(Activity context, final EditGoodsSkuEntity.EditGoodsSkuBean editGoodsSkuBean, final BaseAddCarProInfoBean baseAddCarProInfoBean) {
         //        sku 展示
         SkuDialog skuDialog = new SkuDialog(context);
         if (!TextUtils.isEmpty(baseAddCarProInfoBean.getProPic())) {
@@ -281,20 +282,45 @@ public class OrderDao {
         }
         editGoodsSkuBean.setShowBottom(true);
         skuDialog.refreshView(editGoodsSkuBean);
-        skuDialog.show();
+        skuDialog.show(baseAddCarProInfoBean.isShowSingle(), "加入购物车");
         skuDialog.getGoodsSKu(shopCarGoodsSku -> {
             if (shopCarGoodsSku != null) {
-                //加入购物车
-                loadHud.show();
-                shopCarGoodsSku.setProductId(baseAddCarProInfoBean.getProductId());
-                shopCarGoodsSku.setActivityCode(getStrings(baseAddCarProInfoBean.getActivityCode()));
-                addShopCar(context, shopCarGoodsSku, loadHud);
+                if (!TextUtils.isEmpty(shopCarGoodsSku.getProType())) {
+                    switch (shopCarGoodsSku.getProType()) {
+                        //加入购物车
+                        case "addCar":
+                            showLoadhud(context);
+                            shopCarGoodsSku.setProductId(baseAddCarProInfoBean.getProductId());
+                            shopCarGoodsSku.setActivityCode(getStrings(baseAddCarProInfoBean.getActivityCode()));
+                            addShopCar(context, shopCarGoodsSku);
+                            break;
+                        //立即购买
+                        case "buyGoIt":
+                            buyGoIt(context, shopCarGoodsSku, baseAddCarProInfoBean.getProductId());
+                            break;
+                    }
+                }
             }
         });
     }
 
+    //立即购买
+    private static void buyGoIt(Activity context, ShopCarGoodsSku shopCarGoodsSku, int productId) {
+        List<CartInfoBean> settlementGoods = new ArrayList<>();
+        CartInfoBean cartInfoBean = new CartInfoBean();
+        cartInfoBean.setProductId(productId);
+        cartInfoBean.setCount(shopCarGoodsSku.getCount());
+        cartInfoBean.setId(shopCarGoodsSku.getSaleSkuId());
+        cartInfoBean.setSaleSku(new SkuSaleBean(shopCarGoodsSku.getQuantity(), shopCarGoodsSku.getPrice() + "", shopCarGoodsSku.getSaleSkuId()));
+        settlementGoods.add(cartInfoBean);
+        //结算商品 跳转订单填写
+        Bundle bundle = new Bundle();
+        bundle.putString("goods", GsonUtils.toJson(settlementGoods));
+        ConstantMethod.skipIndentWrite(context, INDENT_W_TYPE, bundle);
+    }
+
     //加入购物车
-    private static void addShopCar(Activity activity, final ShopCarGoodsSku shopCarGoodsSku, final KProgressHUD loadHud) {
+    private static void addShopCar(Activity activity, final ShopCarGoodsSku shopCarGoodsSku) {
         if (userId != 0) {
             String url = Url.Q_SHOP_DETAILS_ADD_CAR;
             Map<String, Object> params = new HashMap<>();
@@ -309,8 +335,7 @@ public class OrderDao {
             NetLoadUtils.getNetInstance().loadNetDataPost(activity, url, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
-
-                    loadHud.dismiss();
+                    dismissLoadhud(activity);
                     RequestStatus status = GsonUtils.fromJson(result, RequestStatus.class);
                     if (status != null) {
                         if (status.getCode().equals(SUCCESS_CODE)) {
@@ -325,7 +350,7 @@ public class OrderDao {
 
                 @Override
                 public void onNotNetOrException() {
-                    loadHud.dismiss();
+                    dismissLoadhud(activity);
                 }
             });
         }

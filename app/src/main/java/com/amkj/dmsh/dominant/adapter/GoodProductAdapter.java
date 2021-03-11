@@ -86,7 +86,7 @@ public class GoodProductAdapter extends BaseMultiItemQuickAdapter<LikedProductBe
                         baseAddCarProInfoBean.setActivityCode(getStrings(likedProductBean.getActivityCode()));
                         baseAddCarProInfoBean.setProName(getStrings(likedProductBean.getName()));
                         baseAddCarProInfoBean.setProPic(getStrings(likedProductBean.getPicUrl()));
-                        addShopCarGetSku(context, baseAddCarProInfoBean, ((BaseActivity) context).loadHud);
+                        addShopCarGetSku(context, baseAddCarProInfoBean);
                     });
                 }
 

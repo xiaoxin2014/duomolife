@@ -41,6 +41,7 @@ import com.amkj.dmsh.homepage.bean.CommunalArticleEntity;
 import com.amkj.dmsh.homepage.bean.CommunalArticleEntity.CommunalArticleBean;
 import com.amkj.dmsh.homepage.bean.HomeCommonEntity;
 import com.amkj.dmsh.homepage.bean.HomeCommonEntity.HomeCommonBean;
+import com.amkj.dmsh.homepage.bean.HomeCommonEntity.HomeCommonBean.VideoInfoListBean;
 import com.amkj.dmsh.homepage.bean.HomeCommonEntity.ProductInfoListBean;
 import com.amkj.dmsh.homepage.bean.HomeDynamicEntity;
 import com.amkj.dmsh.network.NetCacheLoadListenerHelper;
@@ -53,9 +54,9 @@ import com.amkj.dmsh.user.bean.UserLikedProductEntity;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
-import com.bigkoo.convenientbanner.ConvenientBanner;
-import com.bigkoo.convenientbanner.holder.CBViewHolderCreator;
-import com.bigkoo.convenientbanner.holder.Holder;
+import com.amkj.dmsh.views.convenientbanner.ConvenientBanner;
+import com.amkj.dmsh.views.convenientbanner.holder.CBViewHolderCreator;
+import com.amkj.dmsh.views.convenientbanner.holder.Holder;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.tencent.bugly.beta.tinker.TinkerManager;
@@ -249,7 +250,6 @@ public class HomeDefalutFragment extends BaseFragment {
         mHomeUserFirstAdapter = new HomeUserFirstAdapter(getActivity(), mUserFirstList);
         mRvFirstGoods.setAdapter(mHomeUserFirstAdapter);
 
-
         //初始化专区适配器
         GridLayoutManager speicalZoneManager = new GridLayoutManager(getActivity()
                 , 2);
@@ -370,6 +370,7 @@ public class HomeDefalutFragment extends BaseFragment {
                         }
                     };
                 }
+
                 mCbBanner.setPages(getActivity(), cbViewHolderCreator, adBeanList)
                         .startTurning(getShowNumber(adBeanList.get(0).getShowTime()) * 1000);
             } else {
@@ -481,16 +482,16 @@ public class HomeDefalutFragment extends BaseFragment {
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.GTE_HOME_SPECIAL_ZONE, map, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-
                 mHomeCommonEntity = GsonUtils.fromJson(result, HomeCommonEntity.class);
-                List<HomeCommonBean> homeCommonBeanList = mHomeCommonEntity.getResult();
                 if (mHomeCommonEntity != null) {
+                    List<HomeCommonBean> homeCommonBeanList = mHomeCommonEntity.getResult();
                     if (homeCommonBeanList != null && homeCommonBeanList.size() > 0) {
                         mZoneList.clear();
-                        for (int i = 0; i < homeCommonBeanList.size(); i++) {
-                            List<ProductInfoListBean> productInfoList = homeCommonBeanList.get(i).getProductInfoList();
-                            if (productInfoList != null && productInfoList.size() > 0) {
-                                mZoneList.add(homeCommonBeanList.get(i));
+                        for (HomeCommonBean homeCommonBean : homeCommonBeanList) {
+                            List<ProductInfoListBean> productInfoList = homeCommonBean.getProductInfoList();
+                            List<VideoInfoListBean> videoInfoList = homeCommonBean.getVideoInfoList();
+                            if (productInfoList != null && productInfoList.size() > 0 || videoInfoList != null && videoInfoList.size() > 0) {
+                                mZoneList.add(homeCommonBean);
                             }
                         }
                         mHomeZoneAdapter.notifyDataSetChanged();

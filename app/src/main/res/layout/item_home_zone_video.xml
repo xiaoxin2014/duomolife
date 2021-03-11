@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/sc_mm_374"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/sc_mm_30"
+    android:paddingTop="@dimen/sc_mm_44"
+    android:paddingBottom="@dimen/sc_mm_44">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_32" />
+
+        <TextView
+            android:id="@+id/tv_subtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/tv_zone_name"
+            android:layout_marginLeft="@dimen/sc_mm_16"
+            android:layout_toRightOf="@+id/tv_title"
+            android:background="@drawable/shap_subtitle_bg"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingLeft="@dimen/sc_mm_12"
+            android:paddingTop="@dimen/sc_mm_2"
+            android:paddingRight="@dimen/sc_mm_12"
+            android:paddingBottom="@dimen/sc_mm_2"
+            android:text="@string/defaul"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sc_mm_22" />
+
+        <TextView
+            android:id="@+id/tv_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_title"
+            android:layout_marginTop="@dimen/sc_mm_15"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_22" />
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/sc_mm_30"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="left"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/iv_cover_left"
+                android:layout_width="@dimen/sc_mm_143"
+                android:layout_height="@dimen/sc_mm_143"
+                android:background="@drawable/home_goods_bg"
+                android:padding="@dimen/sc_mm_1"
+                android:scaleType="centerCrop" />
+
+            <ImageView
+                android:layout_width="@dimen/sc_mm_46"
+                android:layout_height="@dimen/sc_mm_47"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/sc_mm_48"
+                android:src="@drawable/play" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/ll_right"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="left"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/iv_cover_right"
+                android:layout_width="@dimen/sc_mm_143"
+                android:layout_height="@dimen/sc_mm_143"
+                android:background="@drawable/home_goods_bg"
+                android:padding="@dimen/sc_mm_1"
+                android:scaleType="centerCrop" />
+
+            <ImageView
+                android:layout_width="@dimen/sc_mm_46"
+                android:layout_height="@dimen/sc_mm_47"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/sc_mm_48"
+                android:src="@drawable/play" />
+        </RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <com.bigkoo.convenientbanner.ConvenientBanner
+            <com.amkj.dmsh.views.convenientbanner.ConvenientBanner
                 android:id="@+id/banner_integration_details"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/sc_mm_750"

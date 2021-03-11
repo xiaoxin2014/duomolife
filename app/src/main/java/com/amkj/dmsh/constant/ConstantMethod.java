@@ -1752,6 +1752,8 @@ public class ConstantMethod {
             case "VipZoneDetailActivity"://会员日/每周会员特价专区
             case "VipZoneDetailFragment"://会员日/每周会员特价专区
                 return ConstantVariable.VIP_ZONE;
+            case "VideoDetailActivity"://视频商品详情
+                return ConstantVariable.VIDEO;
             default:
                 return -1;
         }

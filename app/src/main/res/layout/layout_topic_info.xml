@@ -53,7 +53,7 @@
             android:textColor="@color/text_login_gray_s"
             android:textSize="@dimen/sc_mm_26"/>
 
-        <com.amkj.dmsh.views.JzVideo.JzVideoPlayerStatusDialog
+        <com.amkj.dmsh.views.JzVideo.JzVideoPlayerWifi
             android:id="@+id/jvp_find_video_play"
             android:layout_width="match_parent"
             android:layout_height="@dimen/sc_mm_280"

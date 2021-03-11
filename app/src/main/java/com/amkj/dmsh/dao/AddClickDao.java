@@ -3,6 +3,7 @@ package com.amkj.dmsh.dao;
 import android.app.Activity;
 import android.text.TextUtils;
 
+import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.message.bean.MessageNotifyEntity.MessageNotifyBean;
@@ -14,6 +15,7 @@ import java.util.Map;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
+import static com.amkj.dmsh.constant.Url.ADD_CLICK_VIDEO;
 import static com.amkj.dmsh.constant.Url.SAVE_DOCUMENT_DATA;
 import static com.amkj.dmsh.constant.Url.TOTAL_ACTIVITY_MSG_COUNT;
 import static com.amkj.dmsh.constant.Url.TOTAL_AD_COUNT;
@@ -174,6 +176,15 @@ public class AddClickDao {
                 params.put("productId", id);
             }
             NetLoadUtils.getNetInstance().loadNetDataPost(activity, SAVE_DOCUMENT_DATA, params, null);
+        }
+    }
+
+
+    public static void addVideoClick(Activity activity, String id) {
+        if (ConstantMethod.getStringChangeIntegers(id) > 0) {
+            Map<String, Object> params = new HashMap<>();
+            params.put("id", id);
+            NetLoadUtils.getNetInstance().loadNetDataPost(activity, ADD_CLICK_VIDEO, params, null);
         }
     }
 
