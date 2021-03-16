@@ -9,13 +9,13 @@ import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
+import com.amkj.dmsh.time.bean.AllGroupEntity.BrandBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
-import com.amkj.dmsh.time.bean.TimeAxisEntity.TimeAxisBean.BrandProductBean;
+import com.amkj.dmsh.time.bean.AllGroupEntity.BrandProductBean;
 import com.amkj.dmsh.time.adapter.SingleProductAdapter;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.gson.GsonUtils;
-import com.amkj.dmsh.time.bean.TimeAxisEntity.TimeAxisBean.BrandBean;
 import com.amkj.dmsh.utils.itemdecoration.NewGridItemDecoration;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 

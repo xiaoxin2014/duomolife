@@ -813,14 +813,12 @@ public class Url {
     */
     //获取时间轴
     public static final String GET_TIME_AXIS = "api/groupbuy/getTimeAxisNew";
+    //获取所有团购商品以及品牌团
+    public static final String GET_ALL_GROUP_INFO = "api/groupbuy/getAllGroupBuyInfo";
     //获取首页广告
     public static final String GET_TIME_HOME_AD = "api/groupbuy/getHomeTopBannerAd";
     //获取推荐商品广告
     public static final String GET_RECOMMNED_AD = "api/groupbuy/getHomeDomoBanner";
-    //获取团购单品列表
-    public static final String GET_SINGLE_PRODUCT = "api/groupbuy/getProductListByTime";
-    //获取品牌团信息
-    public static final String GET_TIME_BANNER = "api/groupbuy/getTopicListByTime";
     //获取团购首页帖子
     public static final String GET_TIME_DOCUMENT_LIST = "api/groupbuy/getGrupBuyHomePageDocumentList";
     //获取品牌团详情

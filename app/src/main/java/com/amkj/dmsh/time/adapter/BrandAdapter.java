@@ -10,9 +10,9 @@ import android.widget.TextView;
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.dominant.activity.TimeBrandDetailsActivity;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
-import com.amkj.dmsh.time.bean.TimeAxisEntity.TimeAxisBean.BrandBean;
-import com.amkj.dmsh.time.bean.TimeAxisEntity.TimeAxisBean.BrandProductBean;
 import com.amkj.dmsh.utils.itemdecoration.NewGridItemDecoration;
+import com.amkj.dmsh.time.bean.AllGroupEntity.BrandProductBean;
+import com.amkj.dmsh.time.bean.AllGroupEntity.BrandBean;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
@@ -44,9 +44,6 @@ public class BrandAdapter extends BaseQuickAdapter<BrandBean, BaseViewHolder> {
     protected void convert(BaseViewHolder helper, BrandBean item) {
         if (item == null) return;
         GlideImageLoaderUtil.loadRoundImg(context, helper.getView(R.id.iv_brand_cover), item.getLogo(), AutoSizeUtils.mm2px(context, 68));
-        if (!TextUtils.isEmpty(item.getBackgroundUrl())) {
-            GlideImageLoaderUtil.loadCenterCrop(context, helper.getView(R.id.iv_background), item.getBackgroundUrl());
-        }
         helper.setText(R.id.tv_brand_name, getStrings(item.getTitle()))
                 .setText(R.id.tv_brand_desc, getStrings(item.getSubtitle()));
         helper.getView(R.id.rl_brand).setOnClickListener(new View.OnClickListener() {

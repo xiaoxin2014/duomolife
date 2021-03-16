@@ -1,18 +1,13 @@
 package com.amkj.dmsh.homepage.activity;
 
 import android.content.Intent;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
-import com.amkj.dmsh.base.MyPagerAdapter;
-import com.amkj.dmsh.base.RecyclerViewScrollHelper;
 import com.amkj.dmsh.constant.CommunalAdHolderView;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
@@ -24,38 +19,28 @@ import com.amkj.dmsh.network.NetCacheLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.time.activity.TimePostCatergoryActivity;
-import com.amkj.dmsh.time.adapter.TimeAxisAdapter;
+import com.amkj.dmsh.time.adapter.BrandAdapter;
+import com.amkj.dmsh.time.adapter.SingleProductAdapter;
 import com.amkj.dmsh.time.adapter.TimePostAdapter;
-import com.amkj.dmsh.time.bean.TimeAxisEntity;
-import com.amkj.dmsh.time.bean.TimeAxisEntity.TimeAxisBean;
+import com.amkj.dmsh.time.bean.AllGroupEntity;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
-import com.amkj.dmsh.views.flycoTablayout.SlidingDoubleTextTabLayout;
-import com.amkj.dmsh.views.flycoTablayout.listener.OnTabClickListener;
 import com.amkj.dmsh.views.convenientbanner.ConvenientBanner;
 import com.amkj.dmsh.views.convenientbanner.holder.CBViewHolderCreator;
 import com.amkj.dmsh.views.convenientbanner.holder.Holder;
-import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
-import me.jessyan.autosize.utils.AutoSizeUtils;
 
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.clearFragmentCache;
 import static com.amkj.dmsh.constant.ConstantMethod.getShowNumber;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 
@@ -66,6 +51,8 @@ import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
  * ClassDescription :淘好货首页
  */
 public class TimeShowNewActivity extends BaseActivity {
+
+
     @BindView(R.id.tv_life_back)
     TextView mTvLifeBack;
     @BindView(R.id.tv_header_title)
@@ -80,32 +67,30 @@ public class TimeShowNewActivity extends BaseActivity {
     LinearLayout mLlRule;
     @BindView(R.id.rel_communal_banner)
     RelativeLayout mRelCommunalBanner;
-    @BindView(R.id.collapsing_view)
-    CollapsingToolbarLayout mCollapsingView;
-    @BindView(R.id.sliding_tablayout)
-    SlidingDoubleTextTabLayout mSlidingTablayout;
-    @BindView(R.id.appBarLayout)
-    AppBarLayout mAppBarLayout;
-    @BindView(R.id.viewPager)
-    ViewPager mViewPager;
-    @BindView(R.id.rv_goods)
-    RecyclerView mRvGoods;
     @BindView(R.id.smart_communal_refresh)
     SmartRefreshLayout mSmartCommunalRefresh;
+    @BindView(R.id.rv_single)
+    RecyclerView mRvSingle;
+    @BindView(R.id.rv_brand)
+    RecyclerView mRvBrand;
+    @BindView(R.id.ad_recommend_banner)
+    ConvenientBanner mAdRecommendBanner;
+    @BindView(R.id.rv_recommend)
+    RecyclerView mRvRecommend;
+    @BindView(R.id.tv_more)
+    TextView mTvMore;
 
     private boolean isUpdateCache;
     private CBViewHolderCreator cbViewHolderCreator;
+    private AllGroupEntity mTimeAxisEntity;
     private List<CommunalADActivityBean> adBeanList = new ArrayList<>();
     private List<CommunalADActivityBean> postAdBeanList = new ArrayList<>();
-    private List<TimeAxisBean> mTimeAxisList = new ArrayList<>();
     private List<PostEntity.PostBean> mPostList = new ArrayList<>();
-    private TimeAxisEntity mTimeAxisEntity;
-    private TimeAxisAdapter mTimeAxisAdapter;
-    private TimeShowNewActivity.TimeAxisFootView mTimeAxisFootView;
+    private List<AllGroupEntity.BrandProductBean> mProductList = new ArrayList<>();
+    private List<AllGroupEntity.BrandBean> mTopicList = new ArrayList<>();
+    private SingleProductAdapter mSingleProductAdapter;
+    private BrandAdapter mBrandAdapter;
     private TimePostAdapter mTimePostAdapter;
-    private View mFootview;
-    private RecyclerView.OnScrollListener mListener;
-
 
     @Override
     protected int getContentView() {
@@ -117,80 +102,36 @@ public class TimeShowNewActivity extends BaseActivity {
         mTvLifeBack.setVisibility(View.GONE);
         mTvHeaderShared.setVisibility(View.GONE);
         mTvHeaderTitle.setText("淘好货");
-        mSlidingTablayout.setTextsize(AutoSizeUtils.mm2px(mAppContext, 30));
-        mSlidingTablayout.setTextUnselectColor(getResources().getColor(R.color.text_login_gray_s));
+
         mSmartCommunalRefresh.setOnRefreshListener(refreshLayout -> {
             isUpdateCache = true;
             loadData();
         });
 
-        //初始化团购商品列表
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        mRvGoods.setLayoutManager(linearLayoutManager);
-        mRvGoods.addItemDecoration(new ItemDecoration.Builder()
-                // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_time_axis)
-                .setLastDraw(false)
-                .create());
-        mTimeAxisAdapter = new TimeAxisAdapter(getActivity(), mTimeAxisList);
-        mRvGoods.setAdapter(mTimeAxisAdapter);
-        mSlidingTablayout.setOnTabClickListener(new OnTabClickListener() {
-            @Override
-            public void onClick(int position) {
-                //手动切换tab时设置tag
-                mRvGoods.setTag(position);
-                RecyclerViewScrollHelper.scrollToPosition(mRvGoods, position);
-            }
-        });
+        //初始化单品列表
+        ItemDecoration itemDecoration = new ItemDecoration.Builder()
+                .setDividerId(R.drawable.item_divider_five_gray_f)
+                .create();
+        mRvSingle.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        mRvSingle.addItemDecoration(itemDecoration);
+        mSingleProductAdapter = new SingleProductAdapter(getActivity(), mProductList);
+        mRvSingle.setAdapter(mSingleProductAdapter);
 
-        mListener = new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                //只有手动滚动才需要监听
-                if (mRvGoods != null && mRvGoods.getTag() == null) {
-                    int position = linearLayoutManager.findFirstVisibleItemPosition();
-                    mSlidingTablayout.setCurrentTab(position >= mTimeAxisList.size() ? mTimeAxisList.size() - 1 : position, true);
-                }
-            }
-
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                if (newState == 0 && mRvGoods != null) {
-                    mRvGoods.setTag(null);
-                }
-            }
-        };
-        mRvGoods.addOnScrollListener(mListener);
-        mFootview = LayoutInflater.from(getActivity()).inflate(R.layout.layout_time_axis_foot, null, false);
-        mTimeAxisFootView = new TimeAxisFootView();
-        ButterKnife.bind(mTimeAxisFootView, mFootview);
+        //初始化品牌团列表
+        mRvBrand.setVisibility(View.VISIBLE);
+        mRvBrand.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mBrandAdapter = new BrandAdapter(getActivity(), mTopicList);
+        mRvBrand.setAdapter(mBrandAdapter);
 
         //初始化推荐帖子列表
         ItemDecoration newGridItemDecoration = new ItemDecoration.Builder()
                 .setDividerId(R.drawable.item_divider_five_gray_f)
                 .create();
         GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
-        mTimeAxisFootView.mRvRecommend.setLayoutManager(layoutManager);
-        mTimeAxisFootView.mRvRecommend.addItemDecoration(newGridItemDecoration);
+        mRvRecommend.setLayoutManager(layoutManager);
+        mRvRecommend.addItemDecoration(newGridItemDecoration);
         mTimePostAdapter = new TimePostAdapter(getActivity(), mPostList, true);
-        mTimeAxisFootView.mRvRecommend.setAdapter(mTimePostAdapter);
-    }
-
-    class TimeAxisFootView {
-        @BindView(R.id.ad_recommend_banner)
-        ConvenientBanner mAdRecommendBanner;
-        @BindView(R.id.rv_recommend)
-        RecyclerView mRvRecommend;
-        @BindView(R.id.tv_more)
-        TextView mTvMore;
-
-        @OnClick(R.id.tv_more)
-        public void onViewClicked() {
-            Intent intent = new Intent(getActivity(), TimePostCatergoryActivity.class);
-            startActivity(intent);
-        }
+        mRvRecommend.setAdapter(mTimePostAdapter);
     }
 
     @Override
@@ -243,38 +184,29 @@ public class TimeShowNewActivity extends BaseActivity {
 
 
     private void getTimeShaft() {
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.GET_TIME_AXIS, null, new NetLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.GET_ALL_GROUP_INFO, null, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 mSmartCommunalRefresh.finishRefresh();
-                mTimeAxisList.clear();
-                mTimeAxisEntity = GsonUtils.fromJson(result, TimeAxisEntity.class);
+                mProductList.clear();
+                mTopicList.clear();
+                mTimeAxisEntity = GsonUtils.fromJson(result, AllGroupEntity.class);
                 if (mTimeAxisEntity != null) {
                     if (SUCCESS_CODE.equals(mTimeAxisEntity.getCode())) {
-                        List<TimeAxisBean> timeAxisInfoList = mTimeAxisEntity.getTimeAxisInfoList();
-                        if (timeAxisInfoList != null) {
-                            mTimeAxisList.addAll(timeAxisInfoList);
-                            RecyclerViewScrollHelper.scrollToPosition(mRvGoods, 0);
-                            //因为SlidingTabLayout对viewpager有依赖性，所以暂时创建空数据的viewpager进行关联
-                            clearFragmentCache(getSupportFragmentManager());
-                            List<View> viewList = new ArrayList<>();
-                            for (int i = 0; i < mTimeAxisList.size(); i++) {
-                                ImageView imageView = new ImageView(getActivity());
-                                imageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-                                viewList.add(imageView);
-                            }
-                            MyPagerAdapter myPagerAdapter = new MyPagerAdapter(viewList);
-                            mViewPager.setAdapter(myPagerAdapter);
-                            mViewPager.setOffscreenPageLimit(mTimeAxisList.size() - 1);
-                            mSlidingTablayout.setViewPager(mViewPager, mTimeAxisList);
+                        List<AllGroupEntity.BrandProductBean> productList = mTimeAxisEntity.getProductList();
+                        List<AllGroupEntity.BrandBean> topicList = mTimeAxisEntity.getTopicList();
+                        if (productList != null) {
+                            mProductList.addAll(productList);
+                        }
+
+                        if (topicList != null) {
+                            mTopicList.addAll(topicList);
                         }
                     }
                 }
-                mTimeAxisAdapter.notifyDataSetChanged();
-                NetLoadUtils.getNetInstance().showLoadSir(loadService, mTimeAxisList, mTimeAxisEntity);
-                if (mTimeAxisAdapter.getFooterLayoutCount() == 0) {
-                    mTimeAxisAdapter.addFooterView(mFootview);
-                }
+                mSingleProductAdapter.notifyDataSetChanged();
+                mBrandAdapter.notifyDataSetChanged();
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, mProductList.size() > 0 || mTopicList.size() > 0, mTimeAxisEntity);
                 getRecommendAd();
                 getRecommendGoods();
             }
@@ -282,7 +214,7 @@ public class TimeShowNewActivity extends BaseActivity {
             @Override
             public void onNotNetOrException() {
                 mSmartCommunalRefresh.finishRefresh();
-                NetLoadUtils.getNetInstance().showLoadSir(loadService, mTimeAxisList, mTimeAxisEntity);
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, mProductList.size() > 0 || mTopicList.size() > 0, mTimeAxisEntity);
             }
         });
     }
@@ -304,12 +236,12 @@ public class TimeShowNewActivity extends BaseActivity {
                     }
                 }
                 mTimePostAdapter.notifyDataSetChanged();
-                mTimeAxisFootView.mTvMore.setVisibility(mPostList.size() > 0 ? View.VISIBLE : View.GONE);
+                mTvMore.setVisibility(mPostList.size() > 0 ? View.VISIBLE : View.GONE);
             }
 
             @Override
             public void onNotNetOrException() {
-                mTimeAxisFootView.mTvMore.setVisibility(mPostList.size() > 0 ? View.VISIBLE : View.GONE);
+                mTvMore.setVisibility(mPostList.size() > 0 ? View.VISIBLE : View.GONE);
             }
         });
     }
@@ -330,7 +262,7 @@ public class TimeShowNewActivity extends BaseActivity {
                                 cbViewHolderCreator = new CBViewHolderCreator() {
                                     @Override
                                     public Holder createHolder(View itemView) {
-                                        return new CommunalAdHolderView(itemView, getActivity(), mTimeAxisFootView.mAdRecommendBanner, true);
+                                        return new CommunalAdHolderView(itemView, getActivity(), mAdRecommendBanner, true);
                                     }
 
                                     @Override
@@ -339,17 +271,18 @@ public class TimeShowNewActivity extends BaseActivity {
                                     }
                                 };
                             }
+
                         }
                     }
                 }
-                mTimeAxisFootView.mAdRecommendBanner.setPages(getActivity(), cbViewHolderCreator, postAdBeanList)
+                mAdRecommendBanner.setPages(getActivity(), cbViewHolderCreator, postAdBeanList)
                         .startTurning(getShowNumber(postAdBeanList.get(0).getShowTime()) * 1000);
-                mTimeAxisFootView.mAdRecommendBanner.setVisibility(postAdBeanList.size() > 0 ? View.VISIBLE : View.GONE);
+                mAdRecommendBanner.setVisibility(postAdBeanList.size() > 0 ? View.VISIBLE : View.GONE);
             }
 
             @Override
             public void onNotNetOrException() {
-                mTimeAxisFootView.mAdRecommendBanner.setVisibility(postAdBeanList.size() > 0 ? View.VISIBLE : View.GONE);
+                mAdRecommendBanner.setVisibility(postAdBeanList.size() > 0 ? View.VISIBLE : View.GONE);
             }
         });
     }
@@ -359,15 +292,22 @@ public class TimeShowNewActivity extends BaseActivity {
         return true;
     }
 
-    @Override
-    public View getLoadView() {
-        return mSmartCommunalRefresh;
-    }
-
-    @OnClick(R.id.ll_rule)
-    public void onViewClicked() {
-        Intent intent = new Intent(getActivity(), WebRuleCommunalActivity.class);
-        intent.putExtra(ConstantVariable.WEB_VALUE_TYPE, ConstantVariable.WEB_TYPE_GROUP_BUY);
-        startActivity(intent);
+    @OnClick({R.id.tv_life_back, R.id.ll_rule, R.id.tv_more})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.tv_life_back:
+                finish();
+                break;
+            case R.id.ll_rule:
+                Intent intent = new Intent(getActivity(), WebRuleCommunalActivity.class);
+                intent.putExtra(ConstantVariable.WEB_VALUE_TYPE, ConstantVariable.WEB_TYPE_GROUP_BUY);
+                startActivity(intent);
+                break;
+            case R.id.tv_more:
+                Intent intent1 = new Intent(getActivity(), TimePostCatergoryActivity.class);
+                startActivity(intent1);
+                break;
+        }
     }
 }
+

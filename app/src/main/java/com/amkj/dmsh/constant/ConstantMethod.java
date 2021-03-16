@@ -801,7 +801,6 @@ public class ConstantMethod {
         NetLoadUtils.getNetInstance().loadNetDataPost(activity, H_Q_FLOAT_AD, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-
                 HomeQualityFloatAdEntity floatAdEntity = GsonUtils.fromJson(result, HomeQualityFloatAdEntity.class);
                 if (floatAdEntity != null) {
                     if (floatAdEntity.getCode().equals(SUCCESS_CODE)) {

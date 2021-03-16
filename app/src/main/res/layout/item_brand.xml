@@ -12,12 +12,6 @@
         android:orientation="horizontal">
 
         <ImageView
-            android:id="@+id/iv_background"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop" />
-
-        <ImageView
             android:id="@+id/iv_brand_cover"
             android:layout_width="@dimen/sc_mm_68"
             android:layout_height="@dimen/sc_mm_68"
@@ -26,14 +20,14 @@
             android:scaleType="centerCrop" />
 
         <TextView
-            android:drawablePadding="@dimen/sc_mm_10"
-            android:drawableRight="@drawable/black_dot"
             android:id="@+id/tv_brand_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/sc_mm_18"
-            android:layout_marginTop="@dimen/sc_mm_10"
+            android:layout_marginTop="@dimen/sc_mm_16"
             android:layout_toRightOf="@+id/iv_brand_cover"
+            android:drawableRight="@drawable/black_dot"
+            android:drawablePadding="@dimen/sc_mm_10"
             android:text="@string/defaul"
             android:textColor="@color/black"
             android:textSize="@dimen/sc_mm_32"

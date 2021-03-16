@@ -139,7 +139,7 @@
             android:layout_marginBottom="@dimen/sc_mm_20"
             android:textColor="@color/text_login_gray_s"
             android:textSize="@dimen/sc_mm_24"
-            android:visibility="gone" />
+            android:visibility="invisible" />
 
         <include layout="@layout/layout_direct_count_num" />
 

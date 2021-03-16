@@ -19,7 +19,6 @@ import androidx.annotation.Nullable;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.skipTimePostDetail;
 import static com.amkj.dmsh.dao.AddClickDao.addTimePostClick;
 
@@ -41,10 +40,7 @@ public class TimePostAdapter extends BaseQuickAdapter<PostBean, BaseViewHolder> 
     protected void convert(BaseViewHolder helper, PostBean item) {
         if (item == null) return;
         GlideImageLoaderUtil.loadImage(context, helper.getView(R.id.iv_cover), item.getCover());
-        GlideImageLoaderUtil.loadRoundImg(context, helper.getView(R.id.iv_head_icon), item.getAvatar(), AutoSizeUtils.mm2px(context, 40), R.drawable.default_ava_img);
         helper.setGone(R.id.tv_content, !TextUtils.isEmpty(item.getContent()))
-                .setText(R.id.tv_user_name, getStrings(item.getNickName()))
-                .setText(R.id.tv_view_num, item.getView())
                 .setGone(R.id.iv_cover, !TextUtils.isEmpty(item.getCover()));
 
         TextView tvContent = helper.getView(R.id.tv_content);

@@ -64,18 +64,9 @@ public class TimePostDetailAdapter extends BaseQuickAdapter<PostBean, BaseViewHo
     protected void convert(BaseViewHolder helper, PostBean item) {
         if (item == null) return;
         List<PostCommentBean> commList = item.getCommList();
-        GlideImageLoaderUtil.loadRoundImg(context, helper.getView(R.id.iv_head), item.getAvatar(), AutoSizeUtils.mm2px(context, 35));
-        helper.setText(R.id.tv_user_name, item.getNickName())
-                .setText(R.id.tv_publish_time, item.getCreateTime())
-                .setText(R.id.tv_like, item.getFavorNum() > 0 ? String.valueOf(item.getFavorNum()) : "赞")
+        helper.setText(R.id.tv_like, item.getFavorNum() > 0 ? String.valueOf(item.getFavorNum()) : "赞")
                 .setText(R.id.tv_comment, item.getComment() > 0 ? String.valueOf(item.getComment()) : "评论")
                 .setGone(R.id.ll_comment, commList.size() > 0);
-
-        //关注
-        TextView tvFollow = helper.getView(R.id.tv_follow);
-        tvFollow.setSelected(item.isFocus());
-        tvFollow.setText(item.isFocus() ? "已关注" : "关注");
-        helper.getView(R.id.tv_follow).setOnClickListener(v -> SoftApiDao.followUser(context, item.getAuthorUid(), tvFollow, item));
 
         //点赞
         TextView tvLike = helper.getView(R.id.tv_like);

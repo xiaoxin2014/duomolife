@@ -249,7 +249,6 @@ public class QualityTypeHotSaleProActivity extends BaseActivity {
         finish();
     }
 
-
     @Override
     protected void postEventResult(@NonNull EventMessage message) {
         if (message.type.equals(ConstantVariable.UPDATE_CAR_NUM)) {

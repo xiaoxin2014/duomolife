@@ -27,52 +27,12 @@
                 android:id="@+id/tv_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/sc_mm_20"
+                android:layout_margin="@dimen/sc_mm_20"
                 android:ellipsize="end"
                 android:lineSpacingExtra="@dimen/sc_mm_12"
-                android:paddingLeft="@dimen/sc_mm_20"
-                android:paddingRight="@dimen/sc_mm_20"
                 android:text="@string/defaul"
                 android:textColor="@color/text_login_gray_s"
                 android:textSize="@dimen/sc_mm_26" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/sc_mm_20"
-                android:layout_marginTop="@dimen/sc_mm_20"
-                android:layout_marginRight="@dimen/sc_mm_20"
-                android:layout_marginBottom="@dimen/sc_mm_26">
-
-                <ImageView
-                    android:id="@+id/iv_head_icon"
-                    android:layout_width="@dimen/sc_mm_40"
-                    android:layout_height="@dimen/sc_mm_40"
-                    android:src="@drawable/default_ava_img" />
-
-                <androidx.emoji.widget.EmojiTextView
-                    android:id="@+id/tv_user_name"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/sc_mm_8"
-                    android:layout_weight="1"
-                    android:ellipsize="end"
-                    android:lines="1"
-                    android:text="@string/defaul"
-                    android:textColor="@color/text_black_t"
-                    android:textSize="@dimen/sc_mm_24"
-                    app:emojiconSize="14sp" />
-
-                <TextView
-                    android:id="@+id/tv_view_num"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:drawableLeft="@drawable/view_btn_nor"
-                    android:drawablePadding="@dimen/sc_mm_12"
-                    android:text="1"
-                    android:textColor="@color/text_black_t"
-                    android:textSize="@dimen/sc_mm_24" />
-            </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 </LinearLayout>
