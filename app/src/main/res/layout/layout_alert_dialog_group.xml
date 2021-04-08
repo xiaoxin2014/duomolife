@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center">
+
+    <LinearLayout
+        android:background="@drawable/shap_purchase_bg"
+        android:id="@+id/ll_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/sc_mm_100"
+            android:text="扫码加入拼团群"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_36" />
+
+        <ImageView
+            android:id="@+id/iv_code"
+            android:layout_width="@dimen/sc_mm_255"
+            android:layout_height="@dimen/sc_mm_255"
+            android:layout_marginTop="@dimen/sc_mm_30"
+            android:scaleType="centerCrop" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/sc_mm_60"
+            android:layout_marginBottom="@dimen/sc_mm_100"
+            android:text="群内成功率更高，长按保存图片"
+            android:textColor="@color/text_login_gray_s"
+            android:textSize="@dimen/sc_mm_30" />
+    </LinearLayout>
+
+    <ImageView
+        android:src="@drawable/close_detail"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/iv_close"
+        android:layout_width="@dimen/sc_mm_80"
+        android:layout_height="@dimen/sc_mm_80"
+        android:layout_below="@+id/ll_content"
+        android:layout_marginTop="@dimen/sc_mm_80" />
+
+    <RelativeLayout
+        android:visibility="gone"
+        android:layout_centerInParent="true"
+        android:id="@+id/rel_share_loading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/transparent">
+
+        <ProgressBar
+            android:id="@+id/reg_req_code_gif_skip"
+            android:layout_width="@dimen/sc_mm_60"
+            android:layout_height="@dimen/sc_mm_60"
+            android:layout_centerInParent="true"
+            android:indeterminateBehavior="repeat"
+            android:indeterminateDrawable="@drawable/anim_loading_flower_rotate"/>
+    </RelativeLayout>
+</RelativeLayout>

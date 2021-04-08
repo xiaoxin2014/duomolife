@@ -58,6 +58,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getSpannableString;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.saveSourceId;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.DOUBLE_INTEGRAL_TYPE;
@@ -133,6 +134,7 @@ public class QualityCustomTopicActivity extends BaseActivity {
             showToast(R.string.invalidData);
             finish();
         }
+        saveSourceId(getSimpleName(), productType);
         tv_header_titleAll.setText("");
         tl_quality_bar.setSelected(true);
         iv_img_service.setImageResource(R.drawable.shop_car_gray_icon);

@@ -1753,6 +1753,9 @@ public class ConstantMethod {
                 return ConstantVariable.VIP_ZONE;
             case "VideoDetailActivity"://视频商品详情
                 return ConstantVariable.VIDEO;
+            case "QualityCustomTopicActivity"://自定义专区
+            case "QualityCustomTopicFragment":
+                return ConstantVariable.CUSTOM;
             default:
                 return -1;
         }

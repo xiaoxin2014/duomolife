@@ -51,6 +51,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getSpannableString;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.saveSourceId;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.EMPTY_CODE;
@@ -105,6 +106,7 @@ public class QualityCustomTopicFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
+        saveSourceId(getSimpleName(), productType);
         mTlQualityBar.setVisibility(View.GONE);
         smart_communal_refresh.setOnRefreshListener(refreshLayout -> loadData());
         setFloatingButton(download_btn_communal, communal_recycler);
@@ -348,7 +350,7 @@ public class QualityCustomTopicFragment extends BaseFragment {
     void startBrowse(View view) {
         if (userId > 0) {
             mTvBrowse.setVisibility(View.GONE);
-            if (mCountDownTimer==null){
+            if (mCountDownTimer == null) {
                 mCountDownTimer = new CountDownTimer(getActivity()) {
                     @Override
                     public void onTick(long millisUntilFinished) {

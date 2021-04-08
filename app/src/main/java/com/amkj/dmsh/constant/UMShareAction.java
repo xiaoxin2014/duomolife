@@ -156,7 +156,7 @@ public class UMShareAction {
 
                     @Override
                     public void onError() {
-                        setLoadImageShare(SHARE_MEDIA.WEIXIN, new UMImage(context, R.drawable.domolife_logo), context, urlLink, title, description);
+                        setLoadImageShare(SHARE_MEDIA.WEIXIN, new UMImage(context, getDefaultCover(context)), context, urlLink, title, description);
                     }
                 });
             } else {
@@ -304,6 +304,7 @@ public class UMShareAction {
                         .share();
                 break;
             case WEIXIN:
+                //分享小程序地址
                 if (!TextUtils.isEmpty(routineUrl)) {
                     UMMin umMin = new UMMin(!TextUtils.isEmpty(umImage.toUrl()) ? umImage.toUrl() : logoUrl);//设置一个默认值，避免报错码2000
                     //兼容低版本的网页链接
@@ -323,7 +324,7 @@ public class UMShareAction {
                         if ("http://dev.domolife.cn/".equals(baseUrl)) {
                             com.umeng.socialize.Config.setMiniPreView();
                         } else if (!"https://app.domolife.cn/".equals(baseUrl)) {
-                            // TODO: 2020/1/8  
+                            // TODO: 2020/1/8
 //                            com.umeng.socialize.Config.setMiniTest();
                             com.umeng.socialize.Config.setMiniPreView();
                         }
@@ -334,10 +335,16 @@ public class UMShareAction {
                             .withMedia(umMin)
                             .setPlatform(platformType)
                             .setCallback(umShareListener).share();
-                } else {
-                    //                        分享链接
+                } else if (!TextUtils.isEmpty(urlLink)) {
+                    //分享普通h5链接
                     new ShareAction(context).setPlatform(platformType)
                             .withMedia(web)
+                            .setCallback(umShareListener)
+                            .share();
+                } else {
+                    //分享纯图片
+                    new ShareAction(context).setPlatform(platformType)
+                            .withMedia(umImage)
                             .setCallback(umShareListener)
                             .share();
                 }
@@ -350,10 +357,18 @@ public class UMShareAction {
                 constantMethod.setOnGetPermissionsSuccess(new ConstantMethod.OnGetPermissionsSuccessListener() {
                     @Override
                     public void getPermissionsSuccess() {
-                        new ShareAction(context).setPlatform(platformType)
-                                .withMedia(web)
-                                .setCallback(umShareListener)
-                                .share();
+                        //分享链接
+                        if (!TextUtils.isEmpty(urlLink)) {
+                            new ShareAction(context).setPlatform(platformType)
+                                    .withMedia(web)
+                                    .setCallback(umShareListener)
+                                    .share();
+                        } else {//分享图片
+                            new ShareAction(context).setPlatform(platformType)
+                                    .withMedia(umImage)
+                                    .setCallback(umShareListener)
+                                    .share();
+                        }
                     }
                 });
                 alertDialogShareHelper.setLoading(1);

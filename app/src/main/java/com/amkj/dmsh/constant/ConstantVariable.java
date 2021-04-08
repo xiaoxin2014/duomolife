@@ -409,6 +409,7 @@ public class ConstantVariable {
     public static final int DYNAMIC_AREA = 10;//首页动态专区
     public static final int VIP_ZONE = 11;//会员日/每周会员特价专区
     public static final int VIDEO = 12;//视频商品
+    public static final int CUSTOM = 13;//自定义专区
 
     /**
      * 订单列表按钮类型

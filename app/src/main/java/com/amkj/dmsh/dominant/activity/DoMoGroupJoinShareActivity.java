@@ -12,8 +12,10 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.base.EventMessage;
 import com.amkj.dmsh.bean.CommunalDetailBean;
+import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.bean.TabNameBean;
 import com.amkj.dmsh.constant.ConstantVariable;
+import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dao.GroupDao;
 import com.amkj.dmsh.dominant.adapter.QualityCustomAdapter;
 import com.amkj.dmsh.dominant.bean.GroupShopDetailsEntity;
@@ -27,6 +29,7 @@ import com.amkj.dmsh.utils.TimeUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
+import com.amkj.dmsh.views.alertdialog.AlertDialogGroupSuccess;
 import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
@@ -86,6 +89,7 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
     private GroupShopDetailsEntity mGroupShopDetailsEntity;
     private GroupShopDetailsEntity.GroupShopDetailsBean mGroupShopDetailsBean;
     private CountDownTimer mCountDownTimer;
+    private AlertDialogGroupSuccess mDialogGroupSuccess;
 
     @Override
     protected int getContentView() {
@@ -133,7 +137,9 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
     @Override
     protected void loadData() {
         getGroupShopDetails();
+        getGroupAd();
     }
+
 
     @Override
     public View getLoadView() {
@@ -145,6 +151,29 @@ public class DoMoGroupJoinShareActivity extends BaseActivity {
         return true;
     }
 
+    //获取广告弹窗
+    private void getGroupAd() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.GET_GROUP_AD, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
+                if (requestStatus != null) {
+                    String imgUrl = requestStatus.getImgUrl();
+                    if (!TextUtils.isEmpty(imgUrl)) {
+                        if (mDialogGroupSuccess == null) {
+                            mDialogGroupSuccess = new AlertDialogGroupSuccess(getActivity(), imgUrl);
+                        }
+                        mDialogGroupSuccess.show();
+                    }
+                }
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                super.onNotNetOrException();
+            }
+        });
+    }
 
     private void getGroupShopDetails() {
         Map<String, Object> params = new HashMap<>();

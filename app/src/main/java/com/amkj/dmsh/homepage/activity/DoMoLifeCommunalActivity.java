@@ -703,6 +703,9 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
                                 case "skipIndentWrite":
                                     skipIndentWrite(jsInteractiveBean.getOtherData());
                                     break;
+                                case "screenshotToShare":
+                                    sharePicUrl(jsInteractiveBean.getOtherData());
+                                    break;
                                 default:
                                     jsInteractiveEmpty(null);
                                     break;
@@ -717,6 +720,20 @@ public class DoMoLifeCommunalActivity extends BaseActivity {
             } catch (Exception e) {
                 jsInteractiveException();
                 e.printStackTrace();
+            }
+        }
+    }
+
+    //分享图片
+    private void sharePicUrl(Map<String, Object> map) {
+        if (map != null && map.size() > 0) {
+            H5ShareBean shareBean = GsonUtils.fromJson(GsonUtils.toJson(map), H5ShareBean.class);
+            if (shareBean != null) {
+                UMShareAction umShareAction = new UMShareAction(this
+                        , shareBean.getImageUrl()
+                        , shareBean.getTitle()
+                        , shareBean.getDescription()
+                        , shareBean.getUrl(), shareBean.getRoutineUrl(), shareBean.getObjId(), shareBean.getShareType(), shareBean.getPlatform());
             }
         }
     }

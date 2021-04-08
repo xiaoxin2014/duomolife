@@ -68,18 +68,11 @@ public class Url {
 
     //    首页文章分类列表
     public static final String H_CATEGORY_LIST = "api/home/getNewCategoryList";
-    //    首页,良品浮窗广告
-    public static final String H_Q_FLOAT_AD = "api/home/getAdByHomeFloat";
+
     //    首页 跑马灯效果
     public static final String H_Q_MARQUEE_AD = "api/search/getRollingNotice";
     //    详情分类文章列表
     public static final String CATE_DOC_LIST = "api/home/getDocumentHomeList";
-    //    首页广告轮播图
-    public static final String H_AD_LIST = "api/home/getHomeAdList";
-    //    弹窗广告
-    public static final String H_AD_DIALOG = "api/home/getAdByPopup";
-    //    启动广告
-    public static final String H_LAUNCH_AD_DIALOG = "api/home/getAdByStart";
     //    OSS配置
     public static final String H_OSS_CONFIG = "api/oss/getDetail";
     //    地址配置版本
@@ -135,8 +128,6 @@ public class Url {
     public static final String H_ATTENDANCE_INTEGRAL_LOTTERY_RULE = "api/activity/getLotteryExplain";
     //    领券中心
     public static final String H_COUPON_CENTER_DATA = "api/reminder/getCouponCore";
-    //    限时特惠详情
-    public static final String H_TIME_GOODS_DETAILS = "api/goods/flashSale/getGoods";
     //    新版消息统计
     public static final String H_MES_STATISTICS_NEW = "api/message/getMessageInfo";
     //     app最后登录时间
@@ -171,12 +162,6 @@ public class Url {
     public static final String H_MES_OFFICIAL_DETAILS = "api/message/getOfficialCommentDetails";
     //    平台通知
     public static final String H_MES_PLATFORM_DETAILS = "api/message/getMsgDetail";
-    //     评论消息
-    public static final String H_MES_COMMENT = "api/message/commentMessageList";
-    //     消息赞
-    public static final String H_MES_LIKED = "api/message/favorMessageList";
-    //    发现广告图
-    public static final String FIND_AD = "api/website/getAdByFind";
     //    小编精选列表
     public static final String EDITOR_SELECT_LIST = "api/redactorpicked/redactorpickedList";
     //    小编精选点赞
@@ -216,8 +201,6 @@ public class Url {
     public static final String MINE_PAGE = "api/my/getPersonalData";
     //    我-底部宫格数据
     public static final String MINE_BOTTOM_DATA = "api/my/getMyDefinedIcon";
-    //    我 广告
-    public static final String MINE_PAGE_AD = "api/home/getMyBottomAdTopic";
     //我的粉丝
     public static final String MINE_FANS = "api/my/getMyFans";
     //我的关注
@@ -315,13 +298,6 @@ public class Url {
     /**
      * 限时特惠
      */
-    //限时特惠 品牌团专题
-    public static final String H_TIME_BRAND_DETAILS = "api/goods/flashSale/topic/get";
-    //限时特惠 主题详情推荐商品列表
-    public static final String H_TIME_BRAND_DETAILS_REC = "api/goods/flashSale/topic/getGoods";
-    //    限时特惠 新
-    //    限时特惠时间轴
-    public static final String TIME_SHOW_SHAFT = "api/goods/flashSale/getTimeAxisV2";
     //    限时特惠 商品列表
     public static final String TIME_SHOW_PRODUCT_TOPIC_SHAFT = "api/goods/flashSale/getNewFlashSaleGoodsV2";
     //    限时特惠top推荐
@@ -330,8 +306,6 @@ public class Url {
     public static final String TIME_SHOW_TAOBAO_PRODUCT = "api/goods/flashSale/getLongTimeTaobaoProducts";
     //    是否设置过提醒
     public static final String TIME_SHOW_PRO_WARM = "api/my/remind/getHadRemind";
-    //    设置提醒时间
-    public static final String TIME_WARM_PRO = "api/my/remind/updateMyRemind";
     //    限时特惠商品购买点击统计
     public static final String TIME_PRODUCT_CLICK_TOTAL = "api/userbehavioursts/collectFlashSaleProductBuyClick";
     /**
@@ -491,8 +465,6 @@ public class Url {
     public static final String INDENT_DISCOUNTS_UPDATE_INFO = "api/goods/order/getOrderSettlePriceInfo";
     //    获取可支付方式
     public static final String GET_PAYTYPE_LIST = "api/goods/order/getPayTypeList";
-    //    发票提示
-    public static final String INDENT_DRAW_UP_INVOICE = "api/reminder/getReminderAsInvoice";
     //    发票详情
     public static final String INVOICE_DETAIL = "api/goods/order/getInvoice";
     //    邮件发送发票
@@ -546,10 +518,6 @@ public class Url {
     public static final String Q_COUPON_PRODUCT_TYPE_LIST = "api/goods/getCategoryGoods/getCategoryProductByCoupon";
     //    优惠券类别商品
     public static final String Q_COUPON_PRODUCT_LIST = "api/my/coupon/getCouponAvailableProductList";
-    //    良品分类广告
-    public static final String Q_QUALITY_TYPE_AD = "api/goods/getAdByGoodsCategory";
-    //    新品轮播广告
-    public static final String Q_NEW_PRO_AD = "api/goods/new/release/getNewReleaseGoodAds";
     //    domo推荐
     public static final String Q_SP_DETAIL_DOMO_RECOM = "api/my/coupon/getCouponRecommendList";
     //    商品详情推荐
@@ -575,14 +543,10 @@ public class Url {
     public static final String QUALITY_OVERSEAS_DETAIL_LIST = "api/goods/overseas/getTopicGoods";
     //    新人专区商品列表
     public static final String QUALITY_NEW_USER_LIST = "api/goods/newuser/getGoods";
-    //    新人用券专区
-    public static final String QUALITY_NEW_USER_COUPON_LIST = "api/goods/coupon/getCouponGoodsList";
     //    新人领取优惠券礼包
     public static final String QUALITY_NEW_USER_GET_COUPON = "api/goods/newuser/getCouponByNewUser";
     //    新人首单0元购商品
     public static final String QUALITY_NEW_USER_FIRST = "api/goods/newuser/getNewUserFirstActivityGoods";
-    //    热销单品广告位
-    public static final String QUALITY_HOT_SALE_AD = "api/home/getHotProductAd";
     //    热销单品时间轴
     public static final String QUALITY_HOT_SALE_SHAFT = "api/goods/getHotGoodsDay";
     //    标签详情商品
@@ -609,8 +573,6 @@ public class Url {
     public static final String Q_CUSTOM_PRO_LIST = "api/goods/greate/getZoneProductList";
     //    良品自定义专区封面
     public static final String Q_CUSTOM_PRO_COVER = "api/goods/greate/getNewGreateTypeAd";
-    //    支付完成 弹窗广告
-    public static final String Q_PAY_SUCCESS_AD_DIALOG = "api/goods/order/getAdByOrderPayOver";
     //    支付完成商品推荐
     public static final String Q_PAY_SUCCESS_PRODUCT = "api/goods/paySuccessProductRecomment";
     //    整点秒时间轴
@@ -619,8 +581,6 @@ public class Url {
     public static final String Q_POINT_SPIKE_AD = "api/goods/getBannerAd";
     //    整点秒商品
     public static final String Q_POINT_SPIKE_PRODUCT = "api/goods/activity/getActivityTimeAxisPorduct";
-    //    设置整点秒商品状态
-    public static final String Q_POINT_SPIKE_PRODUCT_STATUS = "api/goods/addHoursActivityProductNotice";
     //    整点秒杀商品点击统计
     public static final String Q_POINT_SPIKE_PRODUCT_CLICK_TOTAL = "api/goods/activity/addPorductClick";
     /**
@@ -715,8 +675,6 @@ public class Url {
     public static final String NEW_FANS = "api/find/post/getNewFans";
     //    奖励规则H5地址
     public static final String REWARD_RULE = Url.BASE_SHARE_PAGE_TWO + "find_template/rewardRule.html?hideNav=1";
-    //    已购买商品列表界面 广告位
-    public static final String FIND_AD2 = "api/website/getAdByFindTopic";
     //    获取商品详情更多评论
     public static final String GET_PRODUCT_POST = "api/find/post/getProductPost";
     //    抽奖页面
@@ -811,14 +769,8 @@ public class Url {
     /*
     淘好货相关
     */
-    //获取时间轴
-    public static final String GET_TIME_AXIS = "api/groupbuy/getTimeAxisNew";
     //获取所有团购商品以及品牌团
     public static final String GET_ALL_GROUP_INFO = "api/groupbuy/getAllGroupBuyInfo";
-    //获取首页广告
-    public static final String GET_TIME_HOME_AD = "api/groupbuy/getHomeTopBannerAd";
-    //获取推荐商品广告
-    public static final String GET_RECOMMNED_AD = "api/groupbuy/getHomeDomoBanner";
     //获取团购首页帖子
     public static final String GET_TIME_DOCUMENT_LIST = "api/groupbuy/getGrupBuyHomePageDocumentList";
     //获取品牌团详情
@@ -831,7 +783,7 @@ public class Url {
     public static final String GET_CATEGORY_DOCLIST_PAGE = "api/groupbuy/getCategoryDocListPage";
     //获取团购种草帖子详情
     public static final String GET_DOCUMENT_DETAILLIST_PAGE = "api/groupbuy/getDocumentDetailListPage";
-    //获取团购种草帖子详情
+    //统计淘好货帖子/帖子内商品点击量
     public static final String SAVE_DOCUMENT_DATA = "api/groupbuy/saveDocumentData";
     //获取我的评论消息列表
     public static final String GET_MY_COMMENT_MESSAGE_LIST = "api/message/getMyCommentMessageList";
@@ -855,4 +807,37 @@ public class Url {
     public static final String ADD_VIDEO_COLLECT = "api/find/video/addVideoCollect";
     //视频收藏列表
     public static final String GTE_VIDEO_COLLECT = "api/my/getMyCollectVideolistPage";
+
+
+    /*
+    广告相关
+     */
+    //    我 广告
+    public static final String MINE_PAGE_AD = "api/home/getMyBottomAdTopic";
+    //    发现广告图
+    public static final String FIND_AD = "api/website/getAdByFind";
+    //    良品分类广告
+    public static final String Q_QUALITY_TYPE_AD = "api/goods/getAdByGoodsCategory";
+    //    新品轮播广告
+    public static final String Q_NEW_PRO_AD = "api/goods/new/release/getNewReleaseGoodAds";
+    //    热销单品广告位
+    public static final String QUALITY_HOT_SALE_AD = "api/home/getHotProductAd";
+    //    支付完成 弹窗广告
+    public static final String Q_PAY_SUCCESS_AD_DIALOG = "api/goods/order/getAdByOrderPayOver";
+    //    已购买商品列表界面 广告位
+    public static final String FIND_AD2 = "api/website/getAdByFindTopic";
+    //    获取首页广告
+    public static final String GET_TIME_HOME_AD = "api/groupbuy/getHomeTopBannerAd";
+    //    获取推荐商品广告
+    public static final String GET_RECOMMNED_AD = "api/groupbuy/getHomeDomoBanner";
+    //    首页,良品浮窗广告
+    public static final String H_Q_FLOAT_AD = "api/home/getAdByHomeFloat";
+    //    首页广告轮播图
+    public static final String H_AD_LIST = "api/home/getHomeAdList";
+    //    弹窗广告
+    public static final String H_AD_DIALOG = "api/home/getAdByPopup";
+    //    启动广告
+    public static final String H_LAUNCH_AD_DIALOG = "api/home/getAdByStart";
+    //    启动广告
+    public static final String GET_GROUP_AD = "api/goods/order/getAdByGpSharePopup";
 }

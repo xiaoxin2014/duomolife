@@ -338,8 +338,7 @@ public class MineDataFragment extends BaseFragment {
     private void getNetDataInfo() {
         LinkedHashMap<String, String> params = new LinkedHashMap<>();
         params.put("uid", String.valueOf(userId));
-        NetLoadUtils.getNetInstance().loadNetDataGetCache(getActivity(), MINE_PAGE
-                , params, false, new NetCacheLoadListenerHelper() {
+        NetLoadUtils.getNetInstance().loadNetDataGetCache(getActivity(), MINE_PAGE, params, false, new NetCacheLoadListenerHelper() {
                     @Override
                     public void onSuccessCacheResult(CacheResult<String> cacheResult) {
                         if (cacheResult == null || TextUtils.isEmpty(cacheResult.data)) {
