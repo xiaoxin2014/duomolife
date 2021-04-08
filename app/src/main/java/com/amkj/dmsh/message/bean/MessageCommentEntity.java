@@ -78,6 +78,11 @@ public class MessageCommentEntity extends BaseEntity {
         private int status = 1;
         private String avatar;
         private String androidLink;
+        private String isShowReplyBtn;
+
+        public boolean isShowReplyBtn() {
+            return "1".equals(isShowReplyBtn);
+        }
 
         public String getAndroidLink() {
             return androidLink;

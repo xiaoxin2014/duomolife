@@ -78,7 +78,7 @@ public class MessageCommunalAdapterNew extends BaseQuickAdapter<Object, BaseView
                 break;
             case MESSAGE_COMMENT:
                 MessageCommentBean messageCommentBean = (MessageCommentBean) item;
-                tv_reply.setVisibility(View.VISIBLE);
+                tv_reply.setVisibility(messageCommentBean.isShowReplyBtn() ? View.VISIBLE : View.GONE);
                 tvFollow.setVisibility(View.GONE);
                 helper.setGone(R.id.tv_receiver_content, true)
                         .setText(R.id.tv_recommend_comment_time, getStrings(messageCommentBean.getCtime()))
