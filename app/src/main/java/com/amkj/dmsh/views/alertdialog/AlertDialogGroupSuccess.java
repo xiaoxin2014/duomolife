@@ -34,7 +34,7 @@ import static com.amkj.dmsh.utils.glide.GlideImageLoaderUtil.fileIsExist;
 
 /**
  * Created by xiaoxin on 2021/3/22
- * Version:v5.0.1
+ * Version:v5.1.0
  * ClassDescription :拼团完成弹窗
  */
 public class AlertDialogGroupSuccess extends BaseAlertDialog {

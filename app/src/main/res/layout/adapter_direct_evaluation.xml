@@ -73,7 +73,7 @@
             android:id="@+id/tv_eva_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/sel_art_like_heart"
+            android:drawableLeft="@drawable/sel_topic_favor"
             android:drawablePadding="@dimen/dimen_5_dp"
             android:paddingLeft="@dimen/sc_mm_20"
             android:paddingTop="@dimen/sc_mm_10"

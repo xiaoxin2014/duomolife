@@ -15,6 +15,7 @@ import com.amkj.dmsh.find.bean.PostEntity.PostBean;
 import com.amkj.dmsh.homepage.bean.VideoProductEntity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.shopdetails.activity.QuestionsEntity.ResultBean.ReplyBean;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 
@@ -100,7 +101,7 @@ public class SoftApiDao {
     //关注话题
     public static void followTopic(BaseActivity activity, int topicId, TextView tvFollow) {
         if (userId > 0) {
-            activity.loadHud.show();
+            showLoadhud(activity);
             Map<String, Object> params = new HashMap<>();
             params.put("uid", userId);
             params.put("object_id", topicId);        //话题id
@@ -108,8 +109,7 @@ public class SoftApiDao {
             NetLoadUtils.getNetInstance().loadNetDataPost(activity, F_TOPIC_COLLECT, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
-                    activity.loadHud.dismiss();
-
+                    dismissLoadhud(activity);
                     RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
                     if (requestStatus != null) {
                         if (requestStatus.getCode().equals(SUCCESS_CODE)) {
@@ -123,7 +123,40 @@ public class SoftApiDao {
 
                 @Override
                 public void onNotNetOrException() {
-                    activity.loadHud.dismiss();
+                    dismissLoadhud(activity);
+                }
+            });
+        } else {
+            getLoginStatus(activity);
+        }
+    }
+
+    //关注问题
+    public static void followQuestion(BaseActivity activity, String questionId, TextView tvFollow) {
+        if (userId > 0) {
+            showLoadhud(activity);
+            Map<String, Object> params = new HashMap<>();
+            params.put("questionId", questionId);
+            NetLoadUtils.getNetInstance().loadNetDataPost(activity, Url.FOLLOW_QUESTION, params, new NetLoadListenerHelper() {
+                @Override
+                public void onSuccess(String result) {
+                    dismissLoadhud(activity);
+                    RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
+                    if (requestStatus != null) {
+                        if (requestStatus.getCode().equals(SUCCESS_CODE)) {
+                            tvFollow.setSelected(!tvFollow.isSelected());
+                            tvFollow.setText(tvFollow.isSelected() ? "已关注" : "关注问题");
+                            tvFollow.setTextColor(activity.getResources().getColor(tvFollow.isSelected() ? R.color.text_login_gray_s : R.color.text_normal_red));
+                            ConstantMethod.showToast(tvFollow.isSelected() ? "已关注" : "已取消关注");
+                        } else {
+                            showToastRequestMsg(requestStatus);
+                        }
+                    }
+                }
+
+                @Override
+                public void onNotNetOrException() {
+                    dismissLoadhud(activity);
                 }
             });
         } else {
@@ -192,7 +225,7 @@ public class SoftApiDao {
 
                 @Override
                 public void onNotNetOrException() {
-                    activity.loadHud.dismiss();
+                    dismissLoadhud(activity);
                 }
             });
         } else {
@@ -326,6 +359,21 @@ public class SoftApiDao {
                     dismissLoadhud(activity);
                 }
             });
+        } else {
+            getLoginStatus(activity);
+        }
+    }
+
+    //回答点赞
+    public static void favorAnswer(Activity activity, ReplyBean item, TextView tvFavor) {
+        if (userId > 0) {
+            item.setIsLike(!item.isLike());
+            item.setLikeCount(item.isLike() ? item.getLikeCount() + 1 : item.getLikeCount() - 1);
+            tvFavor.setSelected(!tvFavor.isSelected());
+            tvFavor.setText(getStrings(String.valueOf(item.getLikeCount() > 0 ? item.getLikeCount() : "有用")));
+            Map<String, Object> params = new HashMap<>();
+            params.put("replyId", item.getReplyId());
+            NetLoadUtils.getNetInstance().loadNetDataPost(activity, Url.FAVOR_ANSWER, params, null);
         } else {
             getLoginStatus(activity);
         }

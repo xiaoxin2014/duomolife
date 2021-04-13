@@ -37,19 +37,29 @@ import static com.amkj.dmsh.find.activity.ImagePagerActivity.IMAGE_DEF;
  * Created by atd48 on 2016/8/15.
  */
 public class DirectEvaluationAdapter extends BaseMultiItemQuickAdapter<GoodsCommentBean, DirectEvaluationAdapter.ProductEvaViewHolder> {
-    private final Activity context;
+    private Activity context;
+    private boolean circle;
 
     public DirectEvaluationAdapter(Activity context, List<GoodsCommentBean> goodsCommentBeanList) {
+        this(context, goodsCommentBeanList, false);
+    }
+
+    public DirectEvaluationAdapter(Activity context, List<GoodsCommentBean> goodsCommentBeanList, boolean circle) {
         super(goodsCommentBeanList);
         this.context = context;
+        this.circle = circle;
         addItemType(ConstantVariable.TYPE_0, R.layout.adapter_direct_evaluation);
         addItemType(ConstantVariable.TYPE_1, R.layout.communal_comment_not);
     }
+
 
     @Override
     protected void convert(ProductEvaViewHolder helper, GoodsCommentBean goodsCommentBean) {
         switch (helper.getItemViewType()) {
             case ConstantVariable.TYPE_0:
+                if (circle) {
+                    helper.itemView.setBackgroundResource(R.drawable.shap_comment_circle_bg);
+                }
                 LinearLayout ll_eva_comment_reply = helper.getView(R.id.ll_eva_comment_reply);
                 TextView tv_direct_evaluation = helper.getView(R.id.tv_direct_evaluation);
                 TextView tv_eva_count = helper.getView(R.id.tv_eva_count);

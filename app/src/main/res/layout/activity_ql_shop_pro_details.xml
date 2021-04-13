@@ -382,24 +382,36 @@
                                     android:scrollbars="none" />
                             </LinearLayout>
 
-
                             <LinearLayout
-                                android:id="@+id/rel_shop_details_comment"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:divider="@drawable/divider_ll_10dp_gray_bg"
                                 android:orientation="vertical"
-                                android:showDividers="beginning"
-                                android:visibility="gone">
+                                android:showDividers="beginning">
 
-                                <include layout="@layout/layout_product_comment_eva" />
-
-                                <androidx.recyclerview.widget.RecyclerView
-                                    android:id="@+id/communal_recycler_wrap"
+                                <LinearLayout
+                                    android:id="@+id/rel_shop_details_comment"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:background="@color/white"
-                                    android:scrollbars="none" />
+                                    android:orientation="vertical"
+                                    android:visibility="gone">
+
+                                    <include layout="@layout/layout_product_comment_eva" />
+
+                                    <androidx.recyclerview.widget.RecyclerView
+                                        android:id="@+id/communal_recycler_wrap"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:background="@color/white"
+                                        android:scrollbars="none" />
+
+                                    <View
+                                        android:layout_width="match_parent"
+                                        android:layout_height="@dimen/sc_mm_1"
+                                        android:background="@color/text_color_e_s"/>
+                                </LinearLayout>
+
+                                <include layout="@layout/layout_question" />
                             </LinearLayout>
 
                             <include layout="@layout/item_recommend_artical" />

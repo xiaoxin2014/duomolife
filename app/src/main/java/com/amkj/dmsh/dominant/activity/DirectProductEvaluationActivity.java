@@ -1,10 +1,6 @@
 package com.amkj.dmsh.dominant.activity;
 
 import android.content.Intent;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
-import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
@@ -12,14 +8,15 @@ import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.find.adapter.PostContentAdapter;
-import com.amkj.dmsh.find.bean.PostEntity;
-import com.amkj.dmsh.find.bean.PostEntity.PostBean;
 import com.amkj.dmsh.find.view.PostGoodsView;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.shopdetails.adapter.DirectEvaluationAdapter;
+import com.amkj.dmsh.shopdetails.bean.GoodsCommentEntity;
+import com.amkj.dmsh.shopdetails.bean.GoodsCommentEntity.GoodsCommentBean;
+import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.utils.gson.GsonUtils;
-import com.amkj.dmsh.utils.itemdecoration.StaggeredDividerItemDecoration;
+import com.luck.picture.lib.decoration.RecycleViewDivider;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 
 import java.util.ArrayList;
@@ -27,11 +24,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.OnClick;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
 
@@ -52,17 +53,18 @@ public class DirectProductEvaluationActivity extends BaseActivity {
     SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView mRvComment;
+    @BindView(R.id.post_goods_view)
+    PostGoodsView mPostGoodsView;
     private int page = 1;
     private String productId;
 
-    List<PostBean> commentList = new ArrayList<>();
-    PostContentAdapter postAdapter;
-    private PostEntity mPostEntity;
-    private PostGoodsView postGoodsView;
+    private List<GoodsCommentBean> mGoodsComments = new ArrayList<>();
+    private GoodsCommentEntity mPostEntity;
+    private DirectEvaluationAdapter directEvaluationAdapter;
 
     @Override
     protected int getContentView() {
-        return R.layout.layout_communal_refresh_recycle_header;
+        return R.layout.activity_product_evaluation;
     }
 
     @Override
@@ -72,33 +74,58 @@ public class DirectProductEvaluationActivity extends BaseActivity {
         tv_header_titleAll.setText("Ta们都在说");
         tl_normal_bar.setSelected(true);
         header_shared.setVisibility(View.INVISIBLE);
-        mRvComment.setBackgroundResource(R.color.light_gray_f);
-        //初始化推荐列表
-        postAdapter = new PostContentAdapter(getActivity(), commentList, false);
-        postGoodsView = new PostGoodsView(this, null);
-        postGoodsView.findViewById(R.id.rl_goods).setBackgroundResource(R.color.white);
-        postAdapter.addHeaderView(postGoodsView);
-        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        layoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
-        mRvComment.setItemAnimator(null);
-        mRvComment.setLayoutManager(layoutManager);
-        mRvComment.addItemDecoration(new StaggeredDividerItemDecoration(AutoSizeUtils.mm2px(mAppContext, 10), true));
-        mRvComment.setAdapter(postAdapter);
-        mRvComment.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                int[] first = new int[layoutManager.getSpanCount()];
-                layoutManager.findFirstCompletelyVisibleItemPositions(first);
-                if (newState == RecyclerView.SCROLL_STATE_IDLE && (first[0] == 1 || first[1] == 1)) {
-                    layoutManager.invalidateSpanAssignments();
-                }
+
+        //初始化评论列表
+        mPostGoodsView.findViewById(R.id.rl_goods).setBackgroundColor(getResources().getColor(R.color.white));
+        mRvComment.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRvComment.addItemDecoration(new RecycleViewDivider(
+                this, LinearLayoutManager.VERTICAL, AutoSizeUtils.mm2px(this, 10), getResources().getColor(R.color.light_gray_f)));
+        directEvaluationAdapter = new DirectEvaluationAdapter(getActivity(), mGoodsComments, true);
+        mRvComment.setNestedScrollingEnabled(false);
+        mRvComment.setAdapter(directEvaluationAdapter);
+        directEvaluationAdapter.setOnItemChildClickListener((adapter, view, position) -> {
+            switch (view.getId()) {
+                case R.id.img_direct_avatar:
+                    GoodsCommentBean goodsCommentBean = (GoodsCommentBean) view.getTag(R.id.iv_avatar_tag);
+                    if (goodsCommentBean != null) {
+                        Intent intent1 = new Intent(getActivity(), UserPagerActivity.class);
+                        intent1.putExtra("userId", String.valueOf(goodsCommentBean.getUserId()));
+                        startActivity(intent1);
+                    }
+                    break;
+                case R.id.tv_eva_count:
+                    goodsCommentBean = (GoodsCommentBean) view.getTag();
+                    if (goodsCommentBean != null && !goodsCommentBean.isFavor()) {
+                        if (userId > 0) {
+                            setProductEvaLike(view);
+                        } else {
+                            getLoginStatus(getActivity());
+                        }
+                    }
+                    break;
             }
         });
-
-        postAdapter.setOnLoadMoreListener(() -> {
+        smart_communal_refresh.setOnRefreshListener(refreshLayout -> {
+            page = 1;
+            loadData();
+        });
+        directEvaluationAdapter.setOnLoadMoreListener(() -> {
             page++;
             loadData();
         }, mRvComment);
+    }
+
+    private void setProductEvaLike(View view) {
+        GoodsCommentBean goodsCommentBean = (GoodsCommentBean) view.getTag();
+        TextView tv_eva_like = (TextView) view;
+        String url = Url.SHOP_EVA_LIKE;
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", goodsCommentBean.getId());
+        params.put("uid", userId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, null);
+        goodsCommentBean.setFavor(!goodsCommentBean.isFavor());
+        tv_eva_like.setSelected(!tv_eva_like.isSelected());
+        tv_eva_like.setText(ConstantMethod.getNumCount(tv_eva_like.isSelected(), goodsCommentBean.isFavor(), goodsCommentBean.getLikeNum(), "赞"));
     }
 
     @Override
@@ -124,40 +151,36 @@ public class DirectProductEvaluationActivity extends BaseActivity {
         NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.GET_PRODUCT_POST, map, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
-                mPostEntity = GsonUtils.fromJson(result, PostEntity.class);
+                smart_communal_refresh.finishRefresh();
+                mPostEntity = GsonUtils.fromJson(result, GoodsCommentEntity.class);
                 if (page == 1) {
-                    commentList.clear();
+                    mGoodsComments.clear();
                 }
-                int positionStart = commentList.size();
                 if (mPostEntity != null) {
-                    postGoodsView.updateData(getActivity(), mPostEntity.getProductInfo());
+                    mPostGoodsView.updateData(getActivity(), mPostEntity.getProductInfo());
                     String code = mPostEntity.getCode();
-                    List<PostBean> postList = mPostEntity.getPostList();
-                    if (postList != null && postList.size() > 0) {
-                        commentList.addAll(postList);
-                        postAdapter.loadMoreComplete();
+                    List<GoodsCommentBean> goodsComments = mPostEntity.getGoodsComments();
+                    if (goodsComments != null && goodsComments.size() > 0) {
+                        mGoodsComments.addAll(goodsComments);
+                        directEvaluationAdapter.loadMoreComplete();
                     } else if (ERROR_CODE.equals(code)) {
                         ConstantMethod.showToast(mPostEntity.getMsg());
-                        postAdapter.loadMoreFail();
+                        directEvaluationAdapter.loadMoreFail();
                     } else {
-                        postAdapter.loadMoreEnd();
+                        directEvaluationAdapter.loadMoreEnd();
                     }
                 } else {
-                    postAdapter.loadMoreEnd();
+                    directEvaluationAdapter.loadMoreEnd();
                 }
 
-                if (page == 1) {
-                    postAdapter.notifyItemRangeChanged(0, commentList.size());
-                } else {
-                    postAdapter.notifyItemRangeInserted(positionStart, commentList.size());
-                }
-
-                NetLoadUtils.getNetInstance().showLoadSir(loadService, commentList, mPostEntity);
+                directEvaluationAdapter.notifyDataSetChanged();
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, mGoodsComments, mPostEntity);
             }
 
             @Override
             public void onNotNetOrException() {
-                NetLoadUtils.getNetInstance().showLoadSir(loadService, commentList, mPostEntity);
+                smart_communal_refresh.finishRefresh();
+                NetLoadUtils.getNetInstance().showLoadSir(loadService, mGoodsComments, mPostEntity);
             }
         });
     }

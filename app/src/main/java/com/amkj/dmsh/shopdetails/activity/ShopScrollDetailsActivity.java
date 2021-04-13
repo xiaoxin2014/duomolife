@@ -48,10 +48,13 @@ import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.qyservice.QyProductIndentInfo;
 import com.amkj.dmsh.qyservice.QyServiceUtils;
+import com.amkj.dmsh.shopdetails.activity.QuestionsEntity.ResultBean;
+import com.amkj.dmsh.shopdetails.activity.QuestionsEntity.ResultBean.QuestionInfoBean;
 import com.amkj.dmsh.shopdetails.adapter.DirectEvaluationAdapter;
 import com.amkj.dmsh.shopdetails.adapter.GoodsGroupAdapter;
 import com.amkj.dmsh.shopdetails.adapter.GoodsRecommendAdapter;
 import com.amkj.dmsh.shopdetails.adapter.ProductTextAdapter;
+import com.amkj.dmsh.shopdetails.adapter.QuestionContentAdapter;
 import com.amkj.dmsh.shopdetails.bean.CommunalDetailObjectBean;
 import com.amkj.dmsh.shopdetails.bean.DirectGoodsServerEntity;
 import com.amkj.dmsh.shopdetails.bean.DirectGoodsServerEntity.DirectGoodsServerBean;
@@ -82,12 +85,12 @@ import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.amkj.dmsh.utils.webformatdata.ShareDataBean;
 import com.amkj.dmsh.views.alertdialog.AlertDialogTax;
 import com.amkj.dmsh.views.bottomdialog.SkuDialog;
-import com.amkj.dmsh.views.flycoTablayout.CommonTabLayout;
-import com.amkj.dmsh.views.flycoTablayout.listener.CustomTabEntity;
-import com.amkj.dmsh.views.flycoTablayout.listener.OnTabSelectListener;
 import com.amkj.dmsh.views.convenientbanner.ConvenientBanner;
 import com.amkj.dmsh.views.convenientbanner.holder.CBViewHolderCreator;
 import com.amkj.dmsh.views.convenientbanner.holder.Holder;
+import com.amkj.dmsh.views.flycoTablayout.CommonTabLayout;
+import com.amkj.dmsh.views.flycoTablayout.listener.CustomTabEntity;
+import com.amkj.dmsh.views.flycoTablayout.listener.OnTabSelectListener;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.android.flexbox.FlexboxLayout;
 import com.gyf.barlibrary.ImmersionBar;
@@ -129,6 +132,7 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getBadge;
+import static com.amkj.dmsh.constant.ConstantMethod.getIntegralFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getRmbFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getSpannableString;
@@ -381,6 +385,14 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     ImageView mIvCloseFloat;
     @BindView(R.id.cv_video_float)
     CardView mLlVideoFloat;
+    @BindView(R.id.tv_question_num)
+    TextView mTvQuestionNum;
+    @BindView(R.id.rv_question)
+    RecyclerView mRvQuestion;
+    @BindView(R.id.ll_question)
+    LinearLayout mLlQuestion;
+    @BindView(R.id.ll_ask)
+    LinearLayout mLlAsk;
 
 
     //    赠品信息
@@ -395,6 +407,8 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     private List<CommunalADActivityBean> imagesVideoList = new ArrayList<>();
     //    商品评论
     private List<GoodsCommentBean> goodsComments = new ArrayList<>();
+    //    问题列表
+    private List<QuestionInfoBean> questions = new ArrayList<>();
     //商品详情 服务承诺 合集
     private List<CommunalDetailObjectBean> shopDetailBeanList = new ArrayList<>();
     //    服务承诺
@@ -429,6 +443,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     private CountDownTimer mCountDownStartTimer;
     private CountDownTimer mCountDownForSale;
     private AlertDialogTax mAlertDialogTax;
+    private QuestionContentAdapter mQuestionListAdapter;
 
     @Override
     protected int getContentView() {
@@ -657,6 +672,11 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             }
         });
 
+        //初始化问答列表
+        mRvQuestion.setLayoutManager(new LinearLayoutManager(this));
+        mQuestionListAdapter = new QuestionContentAdapter(this, questions, productId);
+        mRvQuestion.setAdapter(mQuestionListAdapter);
+
         //初始化组合商品列表
         LinearLayoutManager groupManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         mRvGoodsGroup.setLayoutManager(groupManager);
@@ -752,6 +772,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                         getShopProComment(shopPropertyBean);
                         getArticalRecommend(shopPropertyBean.getId());
                         getGoodsRecommend(shopPropertyBean.getId());
+                        getQuestions();
                     } else if (!shopDetailsEntity.getCode().equals(EMPTY_CODE)) {
                         showToast(shopDetailsEntity.getMsg());
                         if ("32".equals(shopDetailsEntity.getCode())) {
@@ -766,6 +787,39 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             public void onNotNetOrException() {
                 smart_ql_sp_pro_details.finishRefresh();
                 NetLoadUtils.getNetInstance().showLoadSir(loadService, shopDetailsEntity);
+            }
+        });
+    }
+
+    private void getQuestions() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("productId", productId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.GET_QUESTION_LIST, map, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                questions.clear();
+                QuestionsEntity questionsEntity = GsonUtils.fromJson(result, QuestionsEntity.class);
+                if (questionsEntity != null) {
+                    ResultBean questionBean = questionsEntity.getResult();
+                    if (questionBean != null) {
+                        List<QuestionInfoBean> questionInfoList = questionBean.getQuestionInfoList();
+                        if (questionInfoList != null && questionInfoList.size() > 0) {
+                            mTvQuestionNum.setText(getIntegralFormat(getActivity(), R.string.question_num, questionInfoList.size()));
+                            questions.addAll(questionInfoList.subList(0, Math.min(questionInfoList.size(), 2)));
+                        } else {
+                            mTvQuestionNum.setText("暂无回答");
+                        }
+                    }
+                }
+                mQuestionListAdapter.notifyDataSetChanged();
+                mRvQuestion.setVisibility(questions.size() > 0 ? VISIBLE : GONE);
+                mLlAsk.setVisibility(questions.size() == 0 ? VISIBLE : GONE);
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                mRvQuestion.setVisibility(questions.size() > 0 ? VISIBLE : GONE);
+                mLlAsk.setVisibility(questions.size() == 0 ? VISIBLE : GONE);
             }
         });
     }
@@ -1822,7 +1876,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
 
     @OnClick({R.id.ll_back, R.id.ll_back2, R.id.ll_service, R.id.ll_service2, R.id.ll_share, R.id.ll_share2, R.id.ll_product_activity_detail, R.id.tv_sp_details_service,
             R.id.tv_sp_details_add_car, R.id.tv_sp_details_buy_it, R.id.tv_sp_details_collect, R.id.tv_group_product, R.id.iv_ql_shop_pro_cp_tag, R.id.tv_ql_sp_pro_sku,
-            R.id.ll_layout_pro_sc_tag, R.id.tv_shop_comment_more, R.id.ll_tax_txt, R.id.ll_open_vip, R.id.ll_deposit_pay, R.id.iv_close_float, R.id.cv_video_float})
+            R.id.ll_layout_pro_sc_tag, R.id.tv_shop_comment_more, R.id.ll_tax_txt, R.id.ll_open_vip, R.id.ll_deposit_pay, R.id.iv_close_float, R.id.cv_video_float, R.id.ll_ask_question, R.id.ll_ask})
     public void onViewClicked(View view) {
         Intent intent;
         switch (view.getId()) {
@@ -1992,6 +2046,13 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     intent1.putExtra("cover", shopPropertyBean.getPicUrl());
                     startActivity(intent1);
                 }
+                break;
+            //问题列表
+            case R.id.ll_ask_question:
+            case R.id.ll_ask:
+                Intent intent2 = new Intent(this, QuestionListActivity.class);
+                intent2.putExtra("productId", productId);
+                startActivity(intent2);
                 break;
         }
     }

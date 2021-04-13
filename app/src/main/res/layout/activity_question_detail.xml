@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/activity_domolife_header" />
+
+    <FrameLayout
+        android:id="@+id/fl_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:cube_ptr="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/smart_communal_refresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/sc_mm_110"
+            cube_ptr:srlEnableOverScrollBounce="false">
+
+            <include layout="@layout/layout_refresh_header_gif" />
+
+            <androidx.core.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/light_gray_f">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/sc_mm_169"
+                        android:background="@color/white">
+
+                        <ImageView
+                            android:id="@+id/iv_cover"
+                            android:layout_width="@dimen/sc_mm_116"
+                            android:layout_height="@dimen/sc_mm_116"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="@dimen/sc_mm_40"
+                            android:scaleType="centerCrop" />
+
+                        <TextView
+                            android:id="@+id/tv_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/sc_mm_19"
+                            android:layout_marginTop="@dimen/sc_mm_26"
+                            android:layout_toRightOf="@+id/iv_cover"
+                            android:ellipsize="end"
+                            android:lines="2"
+                            android:maxLines="2"
+                            android:text="@string/defaul"
+                            android:textColor="@color/text_black_t"
+                            android:textSize="@dimen/sc_mm_26" />
+
+                        <TextView
+                            android:id="@+id/tv_all_question"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/tv_name"
+                            android:layout_toRightOf="@+id/iv_cover"
+                            android:paddingLeft="@dimen/sc_mm_19"
+                            android:paddingTop="@dimen/sc_mm_10"
+                            android:text="全部提问"
+                            android:textColor="#F7586A"
+                            android:textSize="@dimen/sc_mm_24" />
+
+                        <ImageView
+                            android:id="@+id/iv_shopcar"
+                            android:layout_width="@dimen/sc_mm_123"
+                            android:layout_height="@dimen/sc_mm_87"
+                            android:layout_alignParentRight="true"
+                            android:layout_alignParentBottom="true"
+                            android:paddingLeft="@dimen/sc_mm_42"
+                            android:paddingTop="@dimen/sc_mm_26"
+                            android:paddingRight="@dimen/sc_mm_42"
+                            android:paddingBottom="@dimen/sc_mm_26"
+                            android:src="@drawable/ql_bl_shop_car_red_un_icon" />
+                    </RelativeLayout>
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cardview"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/sc_mm_20"
+                        app:cardBackgroundColor="@color/white"
+                        app:cardCornerRadius="@dimen/sc_mm_12"
+                        app:cardElevation="0dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:id="@+id/ll_follow"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/sc_mm_100"
+                                android:layout_marginLeft="@dimen/sc_mm_22"
+                                android:layout_marginRight="@dimen/sc_mm_20"
+                                android:background="@drawable/border_bottom_line"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:layout_width="@dimen/sc_mm_34"
+                                    android:layout_height="@dimen/sc_mm_34"
+                                    android:src="@drawable/question" />
+
+                                <TextView
+                                    android:id="@+id/tv_question"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginLeft="@dimen/sc_mm_18"
+                                    android:layout_weight="1"
+                                    android:text="@string/defaul"
+                                    android:textColor="@color/text_black_t"
+                                    android:textSize="@dimen/sc_mm_28" />
+
+                                <TextView
+                                    android:id="@+id/tv_follow"
+                                    android:layout_width="@dimen/sc_mm_124"
+                                    android:layout_height="@dimen/sc_mm_43"
+                                    android:background="@drawable/shap_follow_bg"
+                                    android:gravity="center"
+                                    android:text="关注问题"
+                                    android:textColor="#FF5E43"
+                                    android:textSize="@dimen/sc_mm_24" />
+                            </LinearLayout>
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/rv_answer"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@color/white"
+                                android:nestedScrollingEnabled="false"
+                                android:scrollbars="none" />
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
+                </LinearLayout>
+            </androidx.core.widget.NestedScrollView>
+        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_answer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@color/white"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="@dimen/sc_mm_20">
+
+            <EditText
+                android:id="@+id/et_answer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/shap_question_edit_bg"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:hint="只有购买过的用户才可以回答！"
+                android:maxLines="5"
+                android:paddingLeft="@dimen/sc_mm_30"
+                android:paddingTop="@dimen/sc_mm_18"
+                android:paddingRight="@dimen/sc_mm_30"
+                android:paddingBottom="@dimen/sc_mm_18"
+                android:textColor="@color/text_black_t"
+                android:textColorHint="@color/text_login_gray_s"
+                android:textSize="@dimen/sc_mm_24" />
+
+            <TextView
+                android:id="@+id/tv_answer"
+                android:layout_width="@dimen/sc_mm_121"
+                android:layout_height="@dimen/sc_mm_60"
+                android:layout_marginLeft="@dimen/sc_mm_20"
+                android:background="@drawable/shap_ask_bg"
+                android:gravity="center"
+                android:text="回答"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sc_mm_28" />
+        </LinearLayout>
+    </FrameLayout>
+</LinearLayout>

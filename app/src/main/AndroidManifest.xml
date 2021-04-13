@@ -62,7 +62,8 @@
         android:maxAspectRatio="2.4"
         android:networkSecurityConfig="@xml/network_security_config"
         android:resizeableActivity="true"
-        android:supportsRtl="true"        android:theme="@style/AppTheme"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
         tools:replace="android:allowBackup"
         tools:targetApi="n">
         <!--android 9.0 默认移除 如继续使用 Apache HTTP 客户端-->
@@ -1643,7 +1644,41 @@
             </intent-filter>
         </activity>
 
-        <!--大家都在买-->
+        <!--问题详情-->
+        <activity
+            android:name=".shopdetails.activity.QuestionDetailActivity"
+            android:exported="false"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="QuestionDetailActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!--问题列表-->
+        <activity
+            android:name=".shopdetails.activity.QuestionListActivity"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="QuestionListActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!--我的回答-->
+        <activity
+            android:name=".shopdetails.activity.MyQuestionListActivity"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="MyQuestionListActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
 
         <!--图片浏览-->
         <activity

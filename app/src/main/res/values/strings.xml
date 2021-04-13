@@ -348,4 +348,8 @@
     <string name="deposit_discount_detail">￥%1$s抵扣￥%2$s</string>
     <string name="uerr_first_start_amount">满%s元时</string>
     <string name="new_user_first_condition">新用户首单实付满¥%s时，结算时以0元加购以下任一商品</string>
+    <string name="reply_num">%d个回答</string>
+    <string name="all_reply_num">全部%d个回答 ></string>
+    <string name="question_num">问大家(%d)</string>
+    <string name="all_answer">全部%d个提问 ></string>
 </resources>

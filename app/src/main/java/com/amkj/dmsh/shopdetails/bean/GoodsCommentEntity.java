@@ -1,6 +1,7 @@
 package com.amkj.dmsh.shopdetails.bean;
 
 import com.amkj.dmsh.base.BaseEntity;
+import com.amkj.dmsh.find.bean.RelatedGoodsBean;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.annotations.SerializedName;
 
@@ -12,8 +13,17 @@ import java.util.List;
 public class GoodsCommentEntity extends BaseEntity{
 
     private int evaluateCount;
-    @SerializedName("result")
+    @SerializedName(value = "postList", alternate = {"list", "result"})
     private List<GoodsCommentBean> goodsComments;
+    private RelatedGoodsBean productInfo;
+
+    public RelatedGoodsBean getProductInfo() {
+        return productInfo;
+    }
+
+    public void setProductInfo(RelatedGoodsBean productInfo) {
+        this.productInfo = productInfo;
+    }
 
     public int getEvaluateCount() {
         return evaluateCount;
@@ -32,18 +42,21 @@ public class GoodsCommentEntity extends BaseEntity{
     }
 
     public static class GoodsCommentBean implements MultiItemEntity {
+        @SerializedName(value = "content", alternate = "replyContent")
         private String content;
         private String createTime;
         private String nickname;
         private int status;
         private int userId;
         private int star;
+        @SerializedName(value = "images", alternate = "imgsPath")
         private String images;
         private String avatar;
         private int backCode;
         private int is_reply;
         private String reply_content;
         private int itemType;
+        @SerializedName(value = "likeNum", alternate = "favorNum")
         private int likeNum;
         private int id;
         private boolean isFavor;
@@ -178,4 +191,6 @@ public class GoodsCommentEntity extends BaseEntity{
             this.itemType = itemType;
         }
     }
+
+
 }

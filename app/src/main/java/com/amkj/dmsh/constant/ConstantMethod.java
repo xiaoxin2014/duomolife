@@ -41,7 +41,6 @@ import com.amkj.dmsh.bean.ImageBean;
 import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.dao.AddClickDao;
 import com.amkj.dmsh.dominant.activity.QualityGroupShopDetailActivity;
-import com.amkj.dmsh.time.activity.ShopTimeScrollDetailsActivity;
 import com.amkj.dmsh.dominant.bean.GroupShopDetailsEntity.GroupShopDetailsBean;
 import com.amkj.dmsh.find.activity.ImagePagerActivity;
 import com.amkj.dmsh.find.activity.JoinTopicActivity;
@@ -60,10 +59,12 @@ import com.amkj.dmsh.qyservice.QyServiceUtils;
 import com.amkj.dmsh.shopdetails.activity.DirectExchangeDetailsActivity;
 import com.amkj.dmsh.shopdetails.activity.DirectIndentWriteActivity;
 import com.amkj.dmsh.shopdetails.activity.DoMoRefundDetailActivity;
+import com.amkj.dmsh.shopdetails.activity.QuestionDetailActivity;
 import com.amkj.dmsh.shopdetails.activity.RefundMoneyActivity;
 import com.amkj.dmsh.shopdetails.activity.ShopScrollDetailsActivity;
 import com.amkj.dmsh.shopdetails.bean.IndentProDiscountBean;
 import com.amkj.dmsh.shopdetails.integration.IntegralScrollDetailsActivity;
+import com.amkj.dmsh.time.activity.ShopTimeScrollDetailsActivity;
 import com.amkj.dmsh.time.activity.TimePostDetailActivity;
 import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
@@ -1120,6 +1121,17 @@ public class ConstantMethod {
             activity.startActivity(intent);
         }
     }
+
+    /**
+     * 跳转问题详情
+     */
+    public static void skipQuestionDetail(Activity context, String questionId, String productId) {
+        Intent intent = new Intent(context, QuestionDetailActivity.class);
+        intent.putExtra("questionId", questionId);
+        intent.putExtra("productId", productId);
+        context.startActivity(intent);
+    }
+
 
     /**
      * 跳转客服

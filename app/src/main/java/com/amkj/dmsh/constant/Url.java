@@ -812,32 +812,55 @@ public class Url {
     /*
     广告相关
      */
-    //    我 广告
+    //我 广告
     public static final String MINE_PAGE_AD = "api/home/getMyBottomAdTopic";
-    //    发现广告图
+    //发现广告图
     public static final String FIND_AD = "api/website/getAdByFind";
-    //    良品分类广告
+    //良品分类广告
     public static final String Q_QUALITY_TYPE_AD = "api/goods/getAdByGoodsCategory";
-    //    新品轮播广告
+    //新品轮播广告
     public static final String Q_NEW_PRO_AD = "api/goods/new/release/getNewReleaseGoodAds";
-    //    热销单品广告位
+    //热销单品广告位
     public static final String QUALITY_HOT_SALE_AD = "api/home/getHotProductAd";
-    //    支付完成 弹窗广告
+    //支付完成 弹窗广告
     public static final String Q_PAY_SUCCESS_AD_DIALOG = "api/goods/order/getAdByOrderPayOver";
-    //    已购买商品列表界面 广告位
+    //已购买商品列表界面 广告位
     public static final String FIND_AD2 = "api/website/getAdByFindTopic";
-    //    获取首页广告
+    //获取首页广告
     public static final String GET_TIME_HOME_AD = "api/groupbuy/getHomeTopBannerAd";
-    //    获取推荐商品广告
+    //获取推荐商品广告
     public static final String GET_RECOMMNED_AD = "api/groupbuy/getHomeDomoBanner";
-    //    首页,良品浮窗广告
+    //首页,良品浮窗广告
     public static final String H_Q_FLOAT_AD = "api/home/getAdByHomeFloat";
-    //    首页广告轮播图
+    //首页广告轮播图
     public static final String H_AD_LIST = "api/home/getHomeAdList";
-    //    弹窗广告
+    //弹窗广告
     public static final String H_AD_DIALOG = "api/home/getAdByPopup";
-    //    启动广告
+    //启动广告
     public static final String H_LAUNCH_AD_DIALOG = "api/home/getAdByStart";
-    //    启动广告
+    //启动广告
     public static final String GET_GROUP_AD = "api/goods/order/getAdByGpSharePopup";
+
+    /*
+    问答相关
+    */
+    //获取商品的问题列表
+    public static final String GET_QUESTION_LIST = "api/question/getProductQuestionList";
+    //获取问题详情
+    public static final String GET_QUESTION_DETAIL = "api/question/getProductQuestionDetail";
+    //关注问题
+    public static final String FOLLOW_QUESTION = "api/question/replyFollow";
+    //删除回答
+    public static final String DELETE_ANSWER = "api/question/delReply";
+    //删除问题
+    public static final String DELETE_QUESTION = "api/question/delQuestion";
+    //点赞回答
+    public static final String FAVOR_ANSWER = "api/question/replyFavor";
+    //提问问题
+    public static final String ASK_QUESTION = "api/question/submitQuestion";
+    //回答问题
+    public static final String ANSWER_QUESTION = "api/question/submitReply";
+    //获取与我相关的问题列表
+    public static final String GET_MY_QUESTION_LIST = "api/question/getMyRelatedQuestionList";
+
 }

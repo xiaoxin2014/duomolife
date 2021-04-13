@@ -19,7 +19,7 @@ android {
         minSdkVersion versions.minSdk
         targetSdkVersion versions.targetSdk
         versionCode 252
-        versionName '5.0.0'
+        versionName '5.1.0'
         multiDexEnabled true
         ndk {
             //选择要添加的对应cpu类型的.so库。
