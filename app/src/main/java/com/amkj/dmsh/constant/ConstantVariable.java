@@ -110,6 +110,8 @@ public class ConstantVariable {
     public static final String COMMENT_GROUP_TYPE = "groupbuydoc";
     //    福利社评论
     public static final String COMMENT_TOPIC_TYPE = "topic";
+    //    视频评论
+    public static final String COMMENT_VIDEO_TYPE = "video";
     //    限时特惠评论
     public static final String PRO_COMMENT = "goods";
     //    文章专题 类型 商品详情推荐

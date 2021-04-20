@@ -12,9 +12,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.OnClick;
-import me.jessyan.autosize.utils.AutoSizeUtils;
-
-import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 
 /**
  * Created by xiaoxin on 2021/2/23
@@ -47,7 +44,6 @@ public class VideoListActivity extends BaseActivity {
         mTvHeaderTitle.setText("发现好货");
         mTvHeaderShared.setVisibility(View.GONE);
         mViewDivider.setVisibility(View.GONE);
-        mCommunalStlTab.setTextsize(AutoSizeUtils.mm2px(mAppContext, 28));
         VideoListPagerAdapter videoListPagerAdapter = new VideoListPagerAdapter(getSupportFragmentManager());
         mVpContentContain.setOffscreenPageLimit(videoListPagerAdapter.getCount() - 1);
         mVpContentContain.setAdapter(videoListPagerAdapter);

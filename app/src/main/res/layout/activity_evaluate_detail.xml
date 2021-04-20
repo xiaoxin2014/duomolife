@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/activity_domolife_header" />
+
+    <LinearLayout
+        android:id="@+id/ll_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:padding="@dimen/sc_mm_30">
+
+            <ImageView
+                android:id="@+id/iv_cover"
+                android:layout_width="@dimen/sc_mm_117"
+                android:layout_height="@dimen/sc_mm_117" />
+
+            <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/sc_mm_18"
+                android:layout_toRightOf="@+id/iv_cover"
+                android:text="@string/defaul"
+                android:textColor="@color/text_black_t"
+                android:textSize="@dimen/sc_mm_26" />
+
+            <TextView
+                android:id="@+id/tv_sku"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_name"
+                android:layout_marginLeft="@dimen/sc_mm_18"
+                android:layout_marginTop="@dimen/sc_mm_16"
+                android:layout_toRightOf="@+id/iv_cover"
+                android:text="@string/defaul"
+                android:textColor="@color/text_login_gray_s"
+                android:textSize="@dimen/sc_mm_22" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_ratingbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/sc_mm_28"
+            android:layout_marginTop="@dimen/sc_mm_5"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="商品评分"
+                android:textColor="@color/text_login_gray_s"
+                android:textSize="@dimen/sc_mm_30" />
+
+            <me.zhanghai.android.materialratingbar.MaterialRatingBar
+                android:id="@+id/rating_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/sc_mm_33"
+                android:clickable="false"
+                android:maxHeight="@dimen/sc_mm_60"
+                android:minHeight="@dimen/sc_mm_50"
+                android:numStars="5"
+                android:rating="5"
+                android:stepSize="1"
+                app:mrb_progressTint="@color/ratingBar_yellow"
+                app:mrb_secondaryProgressTint="@color/text_gray_c" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/sc_mm_30"
+            android:background="#F9F9F9"
+            android:orientation="vertical"
+            android:padding="@dimen/sc_mm_20">
+
+            <TextView
+                android:id="@+id/tv_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/defaul"
+                android:textColor="@color/text_login_gray_s"
+                android:textSize="@dimen/sc_mm_24" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_imgs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/sc_mm_20" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

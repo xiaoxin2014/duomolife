@@ -803,7 +803,7 @@ public class Url {
     public static final String GET_VIDEO_DETAIl = "api/find/video/getApiVideoInfo";
     //视频统计
     public static final String ADD_CLICK_VIDEO = "api/find/video/addClickVideo";
-    //视频收藏
+    //视频点赞
     public static final String ADD_VIDEO_COLLECT = "api/find/video/addVideoCollect";
     //视频收藏列表
     public static final String GTE_VIDEO_COLLECT = "api/my/getMyCollectVideolistPage";
@@ -862,5 +862,8 @@ public class Url {
     public static final String ANSWER_QUESTION = "api/question/submitReply";
     //获取与我相关的问题列表
     public static final String GET_MY_QUESTION_LIST = "api/question/getMyRelatedQuestionList";
-
+    //评论完成抽奖
+    public static final String DRAW_EVALUATE_PRIZE = "api/find/post/drawEvaluatePrize";
+    //评论详情
+    public static final String GET_EVALUATE_DETAIL = "api/find/post/getEvaluateDetail";
 }

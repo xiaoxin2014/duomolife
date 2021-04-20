@@ -78,6 +78,26 @@ public class RequestStatus extends BaseTimeEntity {
     //评分弹窗
     private String isOpen;
 
+    //评论成功
+    private String drawRuleId;
+    private String evaluateId ;
+
+    public String getDrawRuleId() {
+        return drawRuleId;
+    }
+
+    public void setDrawRuleId(String drawRuleId) {
+        this.drawRuleId = drawRuleId;
+    }
+
+    public String getEvaluateId() {
+        return evaluateId;
+    }
+
+    public void setEvaluateId(String evaluateId) {
+        this.evaluateId = evaluateId;
+    }
+
     public boolean isOpen() {
         return "1".equals(isOpen);
     }

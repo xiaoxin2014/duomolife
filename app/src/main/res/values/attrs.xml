@@ -239,7 +239,8 @@
 
     <!-- name -->
     <!-- 设置字体大小 -->
-    <attr name="tl_textsize" format="dimension" />
+    <attr name="tl_textsize" format="dimension" />    <!-- 设置字体大小 -->
+    <attr name="tl_textSelectSize" format="dimension" /><!-- 设置选中字体大小 -->
     <!--  设置副标题字体大小-->
     <attr name="tl_sub_textsize" format="dimension" />
     <!-- 设置字体选中颜色 -->
@@ -286,6 +287,7 @@
 
         <!-- name -->
         <attr name="tl_textsize" />
+        <attr name="tl_textSelectSize" />
         <attr name="tl_textSelectColor" />
         <attr name="tl_textUnselectColor" />
         <attr name="tl_textBold" />
@@ -478,33 +480,49 @@
         <attr name="rvp_triggerOffset" format="float" />
         <attr name="rvp_flingFactor" format="float" />
         <attr name="rvp_singlePageFling" format="boolean" />
-        <attr name="rvp_inertia" format="boolean"/>
+        <attr name="rvp_inertia" format="boolean" />
         <attr name="rvp_millisecondsPerInch" format="float" />
     </declare-styleable>
 
     <declare-styleable name="SimpleMarqueeView">
-        <attr name="textSize" format="dimension"/>
-        <attr name="textColor" format="reference|color"/>
+        <attr name="textSize" format="dimension" />
+        <attr name="textColor" format="reference|color" />
         <attr name="textStyle" format="enum">
-            <enum name="normal" value="1"/>
-            <enum name="bold" value="2"/>
-            <enum name="italic" value="3"/>
-            <enum name="bold_italic" value="4"/>
+            <enum name="normal" value="1" />
+            <enum name="bold" value="2" />
+            <enum name="italic" value="3" />
+            <enum name="bold_italic" value="4" />
         </attr>
-        <attr name="left_drawable" format="reference"/>
-        <attr name="speed" format="integer"/>
-        <attr name="delay" format="integer"/>
-        <attr name="margin_txt" format="dimension"/>
-        <attr name="text" format="string"/>
-        <attr name="shadow_width" format="dimension"/>
+        <attr name="left_drawable" format="reference" />
+        <attr name="speed" format="integer" />
+        <attr name="delay" format="integer" />
+        <attr name="margin_txt" format="dimension" />
+        <attr name="text" format="string" />
+        <attr name="shadow_width" format="dimension" />
         <attr name="gravity" format="enum">
-            <enum name="start" value="1"/>
-            <enum name="center_horizontal" value="2"/>
+            <enum name="start" value="1" />
+            <enum name="center_horizontal" value="2" />
         </attr>
     </declare-styleable>
 
     <declare-styleable name="ConvenientBanner">
         <attr name="canLoop" format="boolean" />
         <attr name="autoTurningTime" format="integer" />
+    </declare-styleable>
+
+    <!--viewpager指示器-->
+    <declare-styleable name="BannerIndicator">
+        <!--指示器之间的间隙-->
+        <attr name="gap" format="dimension" />
+        <!--指示器的宽度-->
+        <attr name="slider_width" format="dimension" />
+        <!--指示器的高度-->
+        <attr name="slider_height" format="dimension" />
+        <!--指示器大小变化方向-->
+        <attr name="sleider_align">
+            <enum name="Left" value="1" />
+            <enum name="Center" value="0" />
+            <enum name="Right" value="2" />
+        </attr>
     </declare-styleable>
 </resources>

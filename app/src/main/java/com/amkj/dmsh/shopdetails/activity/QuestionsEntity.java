@@ -45,7 +45,7 @@ public class QuestionsEntity extends BaseEntity {
         private String content;
         private String count;
         private String isFollow;
-        private String isReply;
+        private String isReply;//是否可回复
         private String isShowDel;
         private int productId;
         private String productImg;
@@ -78,8 +78,8 @@ public class QuestionsEntity extends BaseEntity {
             this.isFollow = isFollow;
         }
 
-        public String getIsReply() {
-            return isReply;
+        public boolean isReply() {
+            return "1".equals(isReply);
         }
 
         public void setIsReply(String isReply) {

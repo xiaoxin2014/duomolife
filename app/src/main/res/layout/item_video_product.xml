@@ -4,6 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:cardBackgroundColor="@color/white"
+    android:layout_marginLeft="@dimen/sc_mm_5"
+    android:layout_marginTop="@dimen/sc_mm_10"
+    android:layout_marginRight="@dimen/sc_mm_5"
     app:cardCornerRadius="@dimen/sc_mm_10"
     app:cardElevation="0dp">
 
@@ -31,37 +34,43 @@
             android:textSize="@dimen/sc_mm_28" />
 
         <TextView
-            android:id="@+id/tv_price"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tv_title"
-            android:layout_marginLeft="@dimen/sc_mm_20"
-            android:text="@string/defaul"
-            android:textColor="@color/text_normal_red"
-            android:textSize="@dimen/sc_mm_30" />
-
-        <TextView
-            android:id="@+id/tv_collect"
+            android:id="@+id/tv_favor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_title"
             android:layout_alignParentRight="true"
-            android:drawableLeft="@drawable/sel_art_collect_star"
+            android:drawableLeft="@drawable/sel_art_like_heart"
             android:drawablePadding="@dimen/sc_mm_10"
             android:gravity="center"
             android:paddingLeft="@dimen/sc_mm_16"
             android:paddingRight="@dimen/sc_mm_16"
-            android:paddingBottom="@dimen/sc_mm_25"
-            android:text="收藏"
-            android:textColor="@color/text_black_t"
+            android:paddingBottom="@dimen/sc_mm_20"
+            android:text="赞"
+            android:textColor="@color/text_login_gray_s"
             android:textSize="@dimen/sc_mm_24" />
 
-        <ImageView
-            android:id="@+id/iv_play"
-            android:layout_width="@dimen/sc_mm_47"
-            android:layout_height="@dimen/sc_mm_46"
-            android:layout_alignParentRight="true"
-            android:layout_margin="@dimen/sc_mm_15"
-            android:src="@drawable/play" />
+        <LinearLayout
+            android:layout_width="@dimen/sc_mm_90"
+            android:layout_height="@dimen/sc_mm_28"
+            android:layout_margin="@dimen/sc_mm_14"
+            android:background="@drawable/shap_video_time_bg"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="@dimen/sc_mm_13"
+                android:layout_height="@dimen/sc_mm_16"
+                android:src="@drawable/play_video" />
+
+            <TextView
+                android:id="@+id/tv_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/sc_mm_6"
+                android:gravity="center"
+                android:text="00:00"
+                android:textColor="@color/white"
+                android:textSize="@dimen/sc_mm_20" />
+        </LinearLayout>
     </RelativeLayout>
 </androidx.cardview.widget.CardView>

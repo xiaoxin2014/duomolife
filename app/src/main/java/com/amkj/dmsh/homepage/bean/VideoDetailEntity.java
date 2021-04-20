@@ -47,20 +47,86 @@ public class VideoDetailEntity extends BaseEntity {
     }
 
     public static class VideoDetailBean {
-        /**
-         * id : 1
-         * coverPath : http://image.domolife.cn/platform/20210125/20210125153242257.jpeg
-         * videoPath : https://image.domolife.cn/merchant/e8SzBE1611566601274.mp4
-         * title : 测试123123
-         * productInfoList : [{"id":"18338","title":"测试同步","coverPath":"http://image.domolife.cn/platform/20201013/20201013093606631.jpeg","quantity":"0","price":"7","activityTag":"","activityName":"","marketLabelList":[{"id":16,"title":"预售"},{"id":20,"title":"前100件减20元"}]},{"id":"18301","title":"名刀司命","coverPath":"http://image.domolife.cn/platform/20200417/20200417100929215.jpeg","quantity":"1","price":"2","activityTag":"","activityName":"","marketLabelList":[{"id":16,"title":"预售"}]}]
-         */
 
         private String id;
         private String coverPath;
         private String videoPath;
         private String title;
         private List<ProductInfoListBean> productInfoList;
-        private boolean showProduct=true;
+        private String isCollect;
+        private int favorNum;
+        private String shareNum;
+        private String commentNum;
+        private String content;
+        private int width;
+        private int height;
+        private int second;
+        //自定义字段
+        private boolean showProduct = true;
+
+        public int getWidth() {
+            return width;
+        }
+
+        public void setWidth(int width) {
+            this.width = width;
+        }
+
+        public int getHeight() {
+            return height;
+        }
+
+        public void setHeight(int height) {
+            this.height = height;
+        }
+
+        public int getSecond() {
+            return second;
+        }
+
+        public void setSecond(int second) {
+            this.second = second;
+        }
+
+        public boolean isCollect() {
+            return "1".equals(isCollect);
+        }
+
+        public void setIsCollect(boolean isCollect) {
+            this.isCollect = isCollect ? "1" : "0";
+        }
+
+        public int getFavorNum() {
+            return favorNum;
+        }
+
+        public void setFavorNum(int favorNum) {
+            this.favorNum = favorNum;
+        }
+
+        public String getShareNum() {
+            return shareNum;
+        }
+
+        public void setShareNum(String shareNum) {
+            this.shareNum = shareNum;
+        }
+
+        public String getCommentNum() {
+            return commentNum;
+        }
+
+        public void setCommentNum(String commentNum) {
+            this.commentNum = commentNum;
+        }
+
+        public String getContent() {
+            return content;
+        }
+
+        public void setContent(String content) {
+            this.content = content;
+        }
 
         public boolean isShowProduct() {
             return showProduct;

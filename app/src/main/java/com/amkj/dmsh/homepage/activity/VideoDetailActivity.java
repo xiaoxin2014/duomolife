@@ -257,7 +257,6 @@ public class VideoDetailActivity extends BaseActivity {
 
     @Override
     protected void loadData() {
-
         //获取第一页数据
         Map<String, String> map = new HashMap<>();
         map.put("ids", mId);

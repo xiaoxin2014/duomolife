@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="@dimen/sc_mm_500"
-    android:layout_height="@dimen/sc_mm_150"
+    android:layout_width="@dimen/sc_mm_560"
+    android:layout_height="@dimen/sc_mm_180"
     android:background="@drawable/border_rect_10dp_bg_white">
 
     <ImageView
         android:id="@+id/iv_cover"
-        android:layout_width="@dimen/sc_mm_134"
-        android:layout_height="@dimen/sc_mm_134"
+        android:layout_width="@dimen/sc_mm_160"
+        android:layout_height="@dimen/sc_mm_160"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="@dimen/sc_mm_8"
+        android:layout_margin="@dimen/sc_mm_10"
         android:scaleType="centerCrop" />
 
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/sc_mm_19"
+        android:layout_marginLeft="@dimen/sc_mm_24"
         android:layout_marginTop="@dimen/sc_mm_6"
         android:layout_marginRight="@dimen/sc_mm_20"
         android:layout_toRightOf="@+id/iv_cover"
@@ -24,32 +24,33 @@
         android:lines="2"
         android:text="@string/defaul"
         android:textColor="@color/text_black_t"
-        android:textSize="@dimen/sc_mm_24" />
+        android:textSize="@dimen/sc_mm_30"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/tv_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginLeft="@dimen/sc_mm_19"
-        android:layout_marginBottom="@dimen/sc_mm_24"
+        android:layout_marginLeft="@dimen/sc_mm_24"
+        android:layout_marginBottom="@dimen/sc_mm_14"
         android:layout_toRightOf="@+id/iv_cover"
         android:text="@string/defaul"
-        android:textColor="@color/text_normal_red"
-        android:textSize="@dimen/sc_mm_30"
+        android:textColor="@color/red"
+        android:textSize="@dimen/sc_mm_36"
         android:textStyle="bold" />
 
     <TextView
         android:id="@+id/tv_buy"
-        android:layout_width="@dimen/sc_mm_124"
-        android:layout_height="@dimen/sc_mm_44"
+        android:layout_width="@dimen/sc_mm_152"
+        android:layout_height="@dimen/sc_mm_48"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:layout_marginRight="@dimen/sc_mm_20"
-        android:layout_marginBottom="@dimen/sc_mm_16"
+        android:layout_marginBottom="@dimen/sc_mm_14"
         android:background="@drawable/shap_buy_bg"
         android:gravity="center"
         android:text="立即购买"
-        android:textColor="@color/text_black_t"
-        android:textSize="@dimen/sc_mm_22" />
+        android:textColor="@color/white"
+        android:textSize="@dimen/sc_mm_28" />
 </RelativeLayout>

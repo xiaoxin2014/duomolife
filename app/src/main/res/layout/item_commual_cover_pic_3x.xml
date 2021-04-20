@@ -3,6 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/iv_quality_good_product_ad"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="@dimen/sc_mm_250"
     android:minHeight="@dimen/sc_mm_300"
     android:scaleType="centerCrop"/>

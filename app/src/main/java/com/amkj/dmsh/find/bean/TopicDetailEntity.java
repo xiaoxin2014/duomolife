@@ -3,6 +3,9 @@ package com.amkj.dmsh.find.bean;
 import com.amkj.dmsh.base.BaseEntity;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * Created by xiaoxin on 2019/7/25
  * Version:v4.0.0
@@ -38,6 +41,9 @@ public class TopicDetailEntity extends BaseEntity {
     private String rewardTip;//奖励提示
     private String isProductTopic;//是否是商品晒单话题
     private String maxRewardTip;
+    private List<Map<Integer, String>> wordTipList;
+    private List<Map<Integer, String>> imgTipList;
+
 
     public String getMaxRewardTip() {
         return maxRewardTip;
@@ -154,5 +160,21 @@ public class TopicDetailEntity extends BaseEntity {
 
     public void setIsFocus(int isFocus) {
         this.isFocus = isFocus;
+    }
+
+    public List<Map<Integer, String>> getWordTipList() {
+        return wordTipList;
+    }
+
+    public void setWordTipList(List<Map<Integer, String>> wordTipList) {
+        this.wordTipList = wordTipList;
+    }
+
+    public List<Map<Integer, String>> getImgTipList() {
+        return imgTipList;
+    }
+
+    public void setImgTipList(List<Map<Integer, String>> imgTipList) {
+        this.imgTipList = imgTipList;
     }
 }

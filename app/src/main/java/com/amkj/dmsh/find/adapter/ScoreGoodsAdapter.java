@@ -2,8 +2,6 @@ package com.amkj.dmsh.find.adapter;
 
 import android.app.Activity;
 import android.content.Intent;
-import androidx.annotation.Nullable;
-import android.text.TextUtils;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.homepage.bean.ScoreGoodsEntity.ScoreGoodsBean;
@@ -13,6 +11,8 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
+
+import androidx.annotation.Nullable;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.isContextExisted;
@@ -37,9 +37,10 @@ public class ScoreGoodsAdapter extends BaseQuickAdapter<ScoreGoodsBean, BaseView
         if (item == null) return;
         GlideImageLoaderUtil.loadImage(activity, helper.getView(R.id.iv_cover), item.getCover());
         helper.setText(R.id.tv_goods_name, getStrings(item.getProductName()))
-                .setText(R.id.tv_max_reward, getStrings(rewardReminder))
-                .setGone(R.id.tv_max_reward, !TextUtils.isEmpty(rewardReminder))
-                .addOnClickListener(R.id.ll_write).setTag(R.id.ll_write, item);
+                .setText(R.id.tv_sku, item.getSkuValueText())
+//                .setText(R.id.tv_max_reward, getStrings(rewardReminder))
+//                .setGone(R.id.tv_max_reward, !TextUtils.isEmpty(rewardReminder))
+                .addOnClickListener(R.id.tv_write).setTag(R.id.tv_write, item);
 
         //跳转商品详情
         helper.itemView.setOnClickListener(v -> {

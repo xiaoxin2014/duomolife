@@ -10,12 +10,12 @@ import com.amkj.dmsh.base.BaseFragment;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.homepage.activity.VideoDetailActivity;
 import com.amkj.dmsh.homepage.adapter.VideoProductAdapter;
+import com.amkj.dmsh.homepage.bean.VideoDetailEntity.VideoDetailBean;
 import com.amkj.dmsh.homepage.bean.VideoProductEntity;
-import com.amkj.dmsh.homepage.bean.VideoProductEntity.VideoProductBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.gson.GsonUtils;
-import com.amkj.dmsh.utils.itemdecoration.NewGridItemDecoration;
+import com.amkj.dmsh.utils.itemdecoration.StaggeredDividerItemDecoration;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.melnykov.fab.FloatingActionButton;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -25,8 +25,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import butterknife.BindView;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
@@ -48,7 +49,7 @@ public class VideoListFragment extends BaseFragment {
     SmartRefreshLayout mSmartCommunalRefresh;
     @BindView(R.id.download_btn_communal)
     FloatingActionButton mDownloadBtnCommunal;
-    private List<VideoProductBean> videoList = new ArrayList<>();
+    private List<VideoDetailBean> videoList = new ArrayList<>();
     private VideoProductAdapter mVideoProductAdapter;
     private VideoProductEntity mVideoProductEntity;
     private int mPage = 1;
@@ -62,20 +63,27 @@ public class VideoListFragment extends BaseFragment {
 
     @Override
     protected void initViews() {
-        int radius = AutoSizeUtils.mm2px(mAppContext, 10);
         mCommunalRecycler.setBackgroundColor(getResources().getColor(R.color.light_gray_f));
-        mCommunalRecycler.setPadding(radius, radius, radius, radius);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2);
-        mCommunalRecycler.setLayoutManager(gridLayoutManager);
-        mCommunalRecycler.addItemDecoration(new NewGridItemDecoration.Builder()
-                // 设置分隔线资源ID
-                .setDividerId(R.drawable.item_divider_five_gray_f)
-                .create());
+        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        layoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
+        mCommunalRecycler.setLayoutManager(layoutManager);
+        mCommunalRecycler.setItemAnimator(null);
+        mCommunalRecycler.addItemDecoration(new StaggeredDividerItemDecoration(AutoSizeUtils.mm2px(mAppContext, 5), false));
+        mCommunalRecycler.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                int[] first = new int[layoutManager.getSpanCount()];
+                layoutManager.findFirstCompletelyVisibleItemPositions(first);
+                if (newState == RecyclerView.SCROLL_STATE_IDLE && (first[0] == 1 || first[1] == 1)) {
+                    layoutManager.invalidateSpanAssignments();
+                }
+            }
+        });
         mVideoProductAdapter = new VideoProductAdapter(getActivity(), videoList);
         mVideoProductAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                VideoProductBean productBean = (VideoProductBean) view.getTag();
+                VideoDetailBean productBean = (VideoDetailBean) view.getTag();
                 if (productBean != null) {
                     //如果有抽屉，先关闭抽屉再跳转
                     if (getActivity() instanceof VideoDetailActivity) {
@@ -115,11 +123,12 @@ public class VideoListFragment extends BaseFragment {
                 if (mPage == 1) {
                     videoList.clear();
                 }
+                int positionStart = videoList.size();
                 mVideoProductEntity = GsonUtils.fromJson(result, VideoProductEntity.class);
                 if (mVideoProductEntity != null) {
                     String code = mVideoProductEntity.getCode();
                     if (SUCCESS_CODE.equals(code)) {
-                        List<VideoProductBean> videoProductList = mVideoProductEntity.getResult();
+                        List<VideoDetailBean> videoProductList = mVideoProductEntity.getResult();
                         if (videoProductList != null) {
                             videoList.addAll(videoProductList);
                             mVideoProductAdapter.notifyDataSetChanged();
@@ -134,6 +143,12 @@ public class VideoListFragment extends BaseFragment {
                         mVideoProductAdapter.loadMoreEnd();
                         if (!EMPTY_CODE.equals(code)) showToast(mVideoProductEntity.getMsg());
                     }
+                }
+
+                if (mPage == 1) {
+                    mVideoProductAdapter.notifyItemRangeChanged(0, videoList.size());
+                } else {
+                    mVideoProductAdapter.notifyItemRangeInserted(positionStart, videoList.size());
                 }
 
                 NetLoadUtils.getNetInstance().showLoadSir(loadService, videoList, mVideoProductEntity);

@@ -2,19 +2,20 @@ package com.amkj.dmsh.dominant.activity;
 
 import android.content.Intent;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.bean.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.Url;
-import com.amkj.dmsh.find.view.PostGoodsView;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.adapter.DirectEvaluationAdapter;
 import com.amkj.dmsh.shopdetails.bean.GoodsCommentEntity;
 import com.amkj.dmsh.shopdetails.bean.GoodsCommentEntity.GoodsCommentBean;
-import com.amkj.dmsh.user.activity.UserPagerActivity;
+import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.luck.picture.lib.decoration.RecycleViewDivider;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -32,9 +33,11 @@ import butterknife.OnClick;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_TEN;
+import static com.amkj.dmsh.dao.OrderDao.addShopCarGetSku;
 
 
 /**
@@ -53,10 +56,14 @@ public class DirectProductEvaluationActivity extends BaseActivity {
     SmartRefreshLayout smart_communal_refresh;
     @BindView(R.id.communal_recycler)
     RecyclerView mRvComment;
-    @BindView(R.id.post_goods_view)
-    PostGoodsView mPostGoodsView;
+    @BindView(R.id.iv_cover)
+    ImageView mIvCover;
+    @BindView(R.id.tv_title)
+    TextView mTvTitle;
     private int page = 1;
     private String productId;
+    private String productName;
+    private String cover;
 
     private List<GoodsCommentBean> mGoodsComments = new ArrayList<>();
     private GoodsCommentEntity mPostEntity;
@@ -71,12 +78,15 @@ public class DirectProductEvaluationActivity extends BaseActivity {
     protected void initViews() {
         Intent intent = getIntent();
         productId = intent.getStringExtra("productId");
+        productName = intent.getStringExtra("productName");
+        cover = intent.getStringExtra("cover");
         tv_header_titleAll.setText("Ta们都在说");
         tl_normal_bar.setSelected(true);
         header_shared.setVisibility(View.INVISIBLE);
+        GlideImageLoaderUtil.loadCenterCrop(this, mIvCover, cover);
+        mTvTitle.setText(productName);
 
         //初始化评论列表
-        mPostGoodsView.findViewById(R.id.rl_goods).setBackgroundColor(getResources().getColor(R.color.white));
         mRvComment.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRvComment.addItemDecoration(new RecycleViewDivider(
                 this, LinearLayoutManager.VERTICAL, AutoSizeUtils.mm2px(this, 10), getResources().getColor(R.color.light_gray_f)));
@@ -85,16 +95,8 @@ public class DirectProductEvaluationActivity extends BaseActivity {
         mRvComment.setAdapter(directEvaluationAdapter);
         directEvaluationAdapter.setOnItemChildClickListener((adapter, view, position) -> {
             switch (view.getId()) {
-                case R.id.img_direct_avatar:
-                    GoodsCommentBean goodsCommentBean = (GoodsCommentBean) view.getTag(R.id.iv_avatar_tag);
-                    if (goodsCommentBean != null) {
-                        Intent intent1 = new Intent(getActivity(), UserPagerActivity.class);
-                        intent1.putExtra("userId", String.valueOf(goodsCommentBean.getUserId()));
-                        startActivity(intent1);
-                    }
-                    break;
                 case R.id.tv_eva_count:
-                    goodsCommentBean = (GoodsCommentBean) view.getTag();
+                    GoodsCommentBean goodsCommentBean = (GoodsCommentBean) view.getTag();
                     if (goodsCommentBean != null && !goodsCommentBean.isFavor()) {
                         if (userId > 0) {
                             setProductEvaLike(view);
@@ -145,10 +147,13 @@ public class DirectProductEvaluationActivity extends BaseActivity {
 
     private void getEvaluationData() {
         Map<String, Object> map = new HashMap<>();
-        map.put("showCount", TOTAL_COUNT_TEN);
         map.put("currentPage", page);
-        map.put("productId", productId);
-        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.GET_PRODUCT_POST, map, new NetLoadListenerHelper() {
+        map.put("showCount", TOTAL_COUNT_TEN);
+        map.put("id", productId);
+        if (userId > 0) {
+            map.put("uid", userId);
+        }
+        NetLoadUtils.getNetInstance().loadNetDataPost(getActivity(), Url.Q_SHOP_DETAILS_COMMENT, map, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
                 smart_communal_refresh.finishRefresh();
@@ -157,7 +162,6 @@ public class DirectProductEvaluationActivity extends BaseActivity {
                     mGoodsComments.clear();
                 }
                 if (mPostEntity != null) {
-                    mPostGoodsView.updateData(getActivity(), mPostEntity.getProductInfo());
                     String code = mPostEntity.getCode();
                     List<GoodsCommentBean> goodsComments = mPostEntity.getGoodsComments();
                     if (goodsComments != null && goodsComments.size() > 0) {
@@ -188,5 +192,21 @@ public class DirectProductEvaluationActivity extends BaseActivity {
     @OnClick(R.id.tv_life_back)
     void goBack() {
         finish();
+    }
+
+    @OnClick({R.id.tv_life_back, R.id.iv_add_car})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.tv_life_back:
+                finish();
+                break;
+            case R.id.iv_add_car:
+                BaseAddCarProInfoBean baseAddCarProInfoBean = new BaseAddCarProInfoBean();
+                baseAddCarProInfoBean.setProductId(getStringChangeIntegers(productId));
+                baseAddCarProInfoBean.setProName(productName);
+                baseAddCarProInfoBean.setProPic(cover);
+                addShopCarGetSku(this, baseAddCarProInfoBean);
+                break;
+        }
     }
 }

@@ -73,7 +73,6 @@ import com.amkj.dmsh.shopdetails.bean.ShopDetailsEntity.ShopPropertyBean.TagsBea
 import com.amkj.dmsh.shopdetails.bean.ShopRecommendHotTopicEntity;
 import com.amkj.dmsh.shopdetails.bean.ShopRecommendHotTopicEntity.ShopRecommendHotTopicBean;
 import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
-import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.user.bean.MarketLabelBean;
 import com.amkj.dmsh.utils.CountDownTimer;
 import com.amkj.dmsh.utils.DoubleUtil;
@@ -651,16 +650,8 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         communal_recycler_wrap.setAdapter(directEvaluationAdapter);
         directEvaluationAdapter.setOnItemChildClickListener((adapter, view, position) -> {
             switch (view.getId()) {
-                case R.id.img_direct_avatar:
-                    GoodsCommentBean goodsCommentBean = (GoodsCommentBean) view.getTag(R.id.iv_avatar_tag);
-                    if (goodsCommentBean != null) {
-                        Intent intent1 = new Intent(getActivity(), UserPagerActivity.class);
-                        intent1.putExtra("userId", String.valueOf(goodsCommentBean.getUserId()));
-                        startActivity(intent1);
-                    }
-                    break;
                 case R.id.tv_eva_count:
-                    goodsCommentBean = (GoodsCommentBean) view.getTag();
+                    GoodsCommentBean goodsCommentBean = (GoodsCommentBean) view.getTag();
                     if (goodsCommentBean != null && !goodsCommentBean.isFavor()) {
                         if (userId > 0) {
                             setProductEvaLike(view);
@@ -2061,6 +2052,8 @@ public class ShopScrollDetailsActivity extends BaseActivity {
     private void skipMoreEvaluate() {
         Intent intent = new Intent(getActivity(), DirectProductEvaluationActivity.class);
         intent.putExtra("productId", productId);
+        intent.putExtra("productName", shopPropertyBean.getName());
+        intent.putExtra("cover", shopPropertyBean.getPicUrl());
         startActivity(intent);
     }
 

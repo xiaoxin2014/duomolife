@@ -39,9 +39,9 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 import static com.amkj.dmsh.constant.ConstantMethod.dismissLoadhud;
-import static com.amkj.dmsh.constant.ConstantMethod.getIntegralFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.showLoadhud;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
@@ -200,7 +200,9 @@ public class QuestionDetailActivity extends BaseActivity {
                     }
                 }
                 mTvAllQuestion.setVisibility(mReplyList.size() > 0 ? View.VISIBLE : View.GONE);
-                mTvAllQuestion.setText(getIntegralFormat(getActivity(), R.string.all_answer, mReplyList.size()));
+                mTvAllQuestion.setText(getStringsFormat(getActivity(), R.string.all_answer, mResultBean.getCount()));
+                mEtAnswer.setEnabled(mResultBean.isReply());//未购买用户不可唤起键盘
+                mEtAnswer.setHint(mResultBean.isReply() ? "我来回答" : "只有购买过的用户才可以回答！");
                 mAnswerAdapter.notifyDataSetChanged();
                 NetLoadUtils.getNetInstance().showLoadSir(loadService, mQuestionsEntity);
             }
@@ -246,14 +248,14 @@ public class QuestionDetailActivity extends BaseActivity {
             //回答问题
             case R.id.tv_answer:
                 String question = mEtAnswer.getText().toString().trim();
-                if (TextUtils.isEmpty(question)) {
-                    showToast("请输入内容");
-                    return;
-                }
-                if (userId > 0) {
-                    answerQuestion(question);
-                } else {
+                if (userId == 0) {
                     getLoginStatus(this);
+                } else if (mResultBean != null && !mResultBean.isReply()) {
+                    showToast("只有购买过的用户才可以回答！");
+                } else if (TextUtils.isEmpty(question)) {
+                    showToast("请输入内容");
+                } else {
+                    answerQuestion(question);
                 }
                 break;
         }

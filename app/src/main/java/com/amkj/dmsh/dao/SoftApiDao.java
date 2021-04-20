@@ -12,7 +12,7 @@ import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.bean.PostCommentEntity;
 import com.amkj.dmsh.find.bean.PostEntity.PostBean;
-import com.amkj.dmsh.homepage.bean.VideoProductEntity;
+import com.amkj.dmsh.homepage.bean.VideoDetailEntity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.shopdetails.activity.QuestionsEntity.ResultBean.ReplyBean;
@@ -268,38 +268,19 @@ public class SoftApiDao {
         });
     }
 
-    //视频收藏
-    public static void collectVideo(Activity activity, VideoProductEntity.VideoProductBean videoProductBean, TextView tvCollect) {
-        showLoadhud(activity);
-        String url = Url.ADD_VIDEO_COLLECT;
-        Map<String, Object> params = new HashMap<>();
-        params.put("id", videoProductBean.getId());
-        NetLoadUtils.getNetInstance().loadNetDataPost(activity, url, params, new NetLoadListenerHelper() {
-            @Override
-            public void onSuccess(String result) {
-                dismissLoadhud(activity);
-                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
-                if (requestStatus != null) {
-                    if (requestStatus.getCode().equals(SUCCESS_CODE)) {
-                        tvCollect.setSelected(!tvCollect.isSelected());
-                        videoProductBean.setIsCollect(tvCollect.isSelected() ? "1" : "0");
-                        showToast(
-                                String.format(activity.getResources().getString(
-                                        tvCollect.isSelected() ? R.string.collect_success : R.string.cancel_done), "视频", "收藏"));
-                    }
-                }
-            }
-
-            @Override
-            public void onNotNetOrException() {
-                dismissLoadhud(activity);
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                showToast(R.string.collect_failed);
-            }
-        });
+    //视频点赞
+    public static void collectVideo(Activity activity, VideoDetailEntity.VideoDetailBean item, TextView tvFavor) {
+        if (userId > 0) {
+            item.setIsCollect(!tvFavor.isSelected());
+            item.setFavorNum(item.isCollect() ? item.getFavorNum() + 1 : item.getFavorNum() - 1);
+            tvFavor.setSelected(item.isCollect());
+            tvFavor.setText(item.getFavorNum() > 0 ? String.valueOf(item.getFavorNum()) : "赞");
+            Map<String, Object> params = new HashMap<>();
+            params.put("id", item.getId());
+            NetLoadUtils.getNetInstance().loadNetDataPost(activity, Url.ADD_VIDEO_COLLECT, params, null);
+        } else {
+            getLoginStatus(activity);
+        }
     }
 
     //文章评论点赞

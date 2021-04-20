@@ -22,7 +22,6 @@ import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.showLoadhud;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.userId;
-import static com.amkj.dmsh.constant.ConstantVariable.COMMENT_GROUP_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_POST_COMMENT;
 
 /**
@@ -37,14 +36,15 @@ public class TimePostEditextPw extends BottomPopupView {
     private int mPostId;
     private int mAuthoUid;
     private final PostCommentBean mPostCommentBean;
-    private CommentDao.OnSendCommentFinish mOnSendCommentFinish;
+    private String mPostType;
 
-    public TimePostEditextPw(@NonNull BaseActivity context, int postId, int authoUid, PostCommentBean postCommentBean) {
+    public TimePostEditextPw(@NonNull BaseActivity context, int postId, int authoUid, PostCommentBean postCommentBean, String postType) {
         super(context);
         mContext = context;
         mPostId = postId;
         mAuthoUid = authoUid;
         mPostCommentBean = postCommentBean;
+        mPostType = postType;
     }
 
     @Override
@@ -70,7 +70,7 @@ public class TimePostEditextPw extends BottomPopupView {
                 if (!TextUtils.isEmpty(comment)) {
                     comment = mEmojiEditComment.getText().toString();
                     CommunalComment communalComment = new CommunalComment();
-                    communalComment.setCommType(COMMENT_GROUP_TYPE);
+                    communalComment.setCommType(mPostType);
                     communalComment.setContent(comment);
                     if (mPostCommentBean != null) {
                         communalComment.setIsReply(1);
@@ -118,13 +118,7 @@ public class TimePostEditextPw extends BottomPopupView {
         }
     }
 
-
     public String getComment() {
         return mEmojiEditComment.getText().toString();
-    }
-
-    public void setOnCommentListener(CommentDao.OnSendCommentFinish onSendCommentFinish) {
-        mOnSendCommentFinish = onSendCommentFinish;
-
     }
 }

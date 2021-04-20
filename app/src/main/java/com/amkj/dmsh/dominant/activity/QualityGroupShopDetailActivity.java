@@ -53,7 +53,6 @@ import com.amkj.dmsh.shopdetails.bean.GoodsCommentEntity.GoodsCommentBean;
 import com.amkj.dmsh.shopdetails.bean.ShopRecommendHotTopicEntity;
 import com.amkj.dmsh.shopdetails.bean.ShopRecommendHotTopicEntity.ShopRecommendHotTopicBean;
 import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
-import com.amkj.dmsh.user.activity.UserPagerActivity;
 import com.amkj.dmsh.utils.CountDownTimer;
 import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.TimeUtils;
@@ -61,12 +60,12 @@ import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
 import com.amkj.dmsh.views.bottomdialog.SkuDialog;
-import com.amkj.dmsh.views.flycoTablayout.CommonTabLayout;
-import com.amkj.dmsh.views.flycoTablayout.listener.CustomTabEntity;
-import com.amkj.dmsh.views.flycoTablayout.listener.OnTabSelectListener;
 import com.amkj.dmsh.views.convenientbanner.ConvenientBanner;
 import com.amkj.dmsh.views.convenientbanner.holder.CBViewHolderCreator;
 import com.amkj.dmsh.views.convenientbanner.holder.Holder;
+import com.amkj.dmsh.views.flycoTablayout.CommonTabLayout;
+import com.amkj.dmsh.views.flycoTablayout.listener.CustomTabEntity;
+import com.amkj.dmsh.views.flycoTablayout.listener.OnTabSelectListener;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.flexbox.JustifyContent;
@@ -260,7 +259,6 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
     LinearLayout ll_pro_buy_before;
 
 
-
     //拼团列表
     private List<GroupShopJoinBean> groupShopJoinList = new ArrayList<>();
     //拼团规则
@@ -389,16 +387,8 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
                 switch (view.getId()) {
-                    case R.id.img_direct_avatar:
-                        GoodsCommentBean goodsCommentBean = (GoodsCommentBean) view.getTag(R.id.iv_avatar_tag);
-                        if (goodsCommentBean != null) {
-                            Intent intent = new Intent(QualityGroupShopDetailActivity.this, UserPagerActivity.class);
-                            intent.putExtra("userId", String.valueOf(goodsCommentBean.getUserId()));
-                            startActivity(intent);
-                        }
-                        break;
                     case R.id.tv_eva_count:
-                        goodsCommentBean = (GoodsCommentBean) view.getTag();
+                        GoodsCommentBean goodsCommentBean = (GoodsCommentBean) view.getTag();
                         if (goodsCommentBean != null && !goodsCommentBean.isFavor()) {
                             if (userId > 0) {
                                 setProductEvaLike(view);
@@ -1156,6 +1146,8 @@ public class QualityGroupShopDetailActivity extends BaseActivity {
     private void skipMoreEvaluate() {
         Intent intent = new Intent(getActivity(), DirectProductEvaluationActivity.class);
         intent.putExtra("productId", productId);
+        intent.putExtra("productName", mGroupShopDetailsBean.getProductName());
+        intent.putExtra("cover", mGroupShopDetailsBean.getCoverImage());
         startActivity(intent);
     }
 

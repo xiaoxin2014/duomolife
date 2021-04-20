@@ -1,63 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:background="@color/black"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/black">
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
     <TextView
         android:id="@+id/indicator"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp"
+        android:background="@android:color/transparent"
         android:gravity="center"
-        android:textSize="14sp"
-        android:textColor="@android:color/white"
         android:text="@string/viewpager_indicator"
-        android:background="@android:color/transparent" />
+        android:textColor="@android:color/white"
+        android:textSize="14sp" />
+
     <RelativeLayout
+        android:id="@+id/rel_shop_sku"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="@dimen/sc_mm_110"
-        android:visibility="gone"
-        android:id="@+id/rel_shop_sku"
         android:background="@color/transparent"
-        android:layout_height="wrap_content">
+        android:visibility="gone">
+
         <TextView
-            android:layout_width="match_parent"
             android:id="@+id/tv_sku_value_name"
-            android:textSize="@dimen/sc_mm_32"
-            android:textColor="@color/white"
-            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/sc_mm_30"
             android:layout_marginRight="@dimen/sc_mm_30"
-            android:paddingLeft="@dimen/sc_mm_20"
-            android:paddingRight="@dimen/sc_mm_20"
-            android:paddingTop="@dimen/sc_mm_7"
-            android:paddingBottom="@dimen/sc_mm_7"
             android:background="@drawable/border_cir_7_bg_tran_black"
+            android:gravity="center"
             android:lines="2"
-            android:layout_height="wrap_content" />
+            android:paddingLeft="@dimen/sc_mm_20"
+            android:paddingTop="@dimen/sc_mm_7"
+            android:paddingRight="@dimen/sc_mm_20"
+            android:paddingBottom="@dimen/sc_mm_7"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sc_mm_32" />
+
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_below="@+id/tv_sku_value_name"
             android:id="@+id/tv_sku_value_indicator"
-            android:layout_marginTop="@dimen/sc_mm_20"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_sku_value_name"
             android:layout_alignParentRight="true"
+            android:layout_marginTop="@dimen/sc_mm_20"
             android:layout_marginRight="@dimen/sc_mm_30"
+            android:background="@drawable/border_cir_7_bg_tran_black"
             android:gravity="center"
             android:paddingLeft="@dimen/sc_mm_20"
-            android:paddingRight="@dimen/sc_mm_20"
-            android:textColor="@color/white"
-            android:textSize="@dimen/sc_mm_28"
-            android:background="@drawable/border_cir_7_bg_tran_black"
             android:paddingTop="@dimen/sc_mm_7"
+            android:paddingRight="@dimen/sc_mm_20"
             android:paddingBottom="@dimen/sc_mm_7"
-            android:layout_height="wrap_content" />
+            android:textColor="@color/white"
+            android:textSize="@dimen/sc_mm_28" />
     </RelativeLayout>
 </RelativeLayout>

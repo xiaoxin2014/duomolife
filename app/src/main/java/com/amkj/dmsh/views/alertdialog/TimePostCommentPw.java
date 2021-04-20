@@ -40,7 +40,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getIntegralFormat;
-import static com.amkj.dmsh.constant.ConstantVariable.COMMENT_GROUP_TYPE;
+import static com.amkj.dmsh.constant.ConstantVariable.COMMENT_VIDEO_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_COMMENT_TOTAL_COUNT;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.UPDATE_POST_COMMENT;
@@ -62,12 +62,17 @@ public class TimePostCommentPw extends BottomPopupView {
     private TextView mTvLike;
     private PostEntity.PostBean mPostBean;
     private TimePostEditextPw mEditPopupView;
+    private String mPostType;
 
 
-    public TimePostCommentPw(@NonNull BaseActivity context, PostEntity.PostBean postBean) {
+    /**
+     * @param postType 内容类型
+     */
+    public TimePostCommentPw(@NonNull BaseActivity context, PostEntity.PostBean postBean, String postType) {
         super(context);
         mContext = context;
         mPostBean = postBean;
+        mPostType = postType;
     }
 
     public TimePostCommentPw(@NonNull Context context) {
@@ -86,12 +91,13 @@ public class TimePostCommentPw extends BottomPopupView {
         mTvNum = findViewById(R.id.tv_all_num);
         findViewById(R.id.tv_article_bottom_collect).setVisibility(GONE);
         mTvLike = findViewById(R.id.tv_article_bottom_like);
+        mTvLike.setVisibility(COMMENT_VIDEO_TYPE.equals(mPostType) ? GONE : VISIBLE);
         mTvLike.setText(mPostBean.getFavorNum() > 0 ? String.valueOf(mPostBean.getFavorNum()) : "赞");
         mTvLike.setSelected(mPostBean.isFavor());
         mTvLike.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                SoftApiDao.favorPost(mContext, mPostBean, mTvLike, COMMENT_GROUP_TYPE);
+                SoftApiDao.favorPost(mContext, mPostBean, mTvLike, mPostType);
             }
         });
         findViewById(R.id.tv_publish_comment).setOnClickListener(v -> {
@@ -101,7 +107,7 @@ public class TimePostCommentPw extends BottomPopupView {
         //初始化评论列表
         RecyclerView rvComment = findViewById(R.id.rv_comment);
         rvComment.setLayoutManager(new LinearLayoutManager(mContext));
-        mPostCommentAdapter = new PostCommentAdapter(mContext, mDatas, COMMENT_GROUP_TYPE);
+        mPostCommentAdapter = new PostCommentAdapter(mContext, mDatas, mPostType);
         rvComment.setAdapter(mPostCommentAdapter);
         mPostCommentAdapter.setOnLoadMoreListener(() -> {
             page++;
@@ -129,7 +135,7 @@ public class TimePostCommentPw extends BottomPopupView {
         mEditPopupView = (TimePostEditextPw) new XPopup.Builder(getContext())
                 .autoOpenSoftInput(true)
                 .autoDismiss(true)
-                .asCustom(new TimePostEditextPw(mContext, mPostBean.getId(), mPostBean.getAuthorUid(), postCommentBean));
+                .asCustom(new TimePostEditextPw(mContext, mPostBean.getId(), mPostBean.getAuthorUid(), postCommentBean, mPostType));
         mEditPopupView.show();
     }
 
@@ -142,7 +148,7 @@ public class TimePostCommentPw extends BottomPopupView {
         map.put("showCount", 20);
         map.put("replyCurrentPage", 1);
         map.put("replyShowCount", DEFAULT_COMMENT_TOTAL_COUNT);
-        map.put("comtype", COMMENT_GROUP_TYPE);
+        map.put("comtype", mPostType);
         NetLoadUtils.getNetInstance().loadNetDataPost(mContext, Url.Q_DML_SEARCH_COMMENT, map, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {

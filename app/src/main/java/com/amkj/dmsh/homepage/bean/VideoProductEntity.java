@@ -25,7 +25,7 @@ public class VideoProductEntity extends BaseEntity {
     private String sysTime;
     private int totalPage;
     private int totalResult;
-    private List<VideoProductBean> result;
+    private List<VideoDetailEntity.VideoDetailBean> result;
 
     public int getCurrentPage() {
         return currentPage;
@@ -67,77 +67,11 @@ public class VideoProductEntity extends BaseEntity {
         this.totalResult = totalResult;
     }
 
-    public List<VideoProductBean> getResult() {
+    public List<VideoDetailEntity.VideoDetailBean> getResult() {
         return result;
     }
 
-    public void setResult(List<VideoProductBean> result) {
+    public void setResult(List<VideoDetailEntity.VideoDetailBean> result) {
         this.result = result;
-    }
-
-    public static class VideoProductBean {
-        /**
-         * coverPath : string
-         * id : 0
-         * isCollect : string
-         * price : string
-         * title : string
-         * videoPath : string
-         */
-
-        private String coverPath;
-        private int id;
-        private String isCollect;
-        private String price;
-        private String title;
-        private String videoPath;
-
-        public String getCoverPath() {
-            return coverPath;
-        }
-
-        public void setCoverPath(String coverPath) {
-            this.coverPath = coverPath;
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public void setId(int id) {
-            this.id = id;
-        }
-
-        public String getIsCollect() {
-            return isCollect;
-        }
-
-        public void setIsCollect(String isCollect) {
-            this.isCollect = isCollect;
-        }
-
-        public String getPrice() {
-            return price;
-        }
-
-        public void setPrice(String price) {
-            this.price = price;
-        }
-
-        public String getTitle() {
-            return title;
-        }
-
-        public void setTitle(String title) {
-            this.title = title;
-        }
-
-        public String getVideoPath() {
-            return videoPath;
-        }
-
-        public void setVideoPath(String videoPath) {
-            this.videoPath = videoPath;
-        }
     }
 }

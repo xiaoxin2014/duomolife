@@ -35,7 +35,6 @@ public class VideoRelatedAdapter extends CommonPagerAdapter<ProductInfoListBean>
         if (item == null) return;
         GlideImageLoaderUtil.loadCenterCrop(mContext, helper.getView(R.id.iv_cover), item.getCoverPath());
         helper.setText(R.id.tv_title, getStrings(item.getTitle()));
-        helper.setText(R.id.tv_price, ConstantMethod.getRmbFormat(mContext, item.getPrice()) + "起");
         helper.setText(R.id.tv_price, ConstantMethod.getRmbFormat(mContext, item.getPrice()));
         helper.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

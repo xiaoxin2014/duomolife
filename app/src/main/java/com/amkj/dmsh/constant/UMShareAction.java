@@ -40,11 +40,13 @@ import com.umeng.socialize.UMShareListener;
 import com.umeng.socialize.bean.SHARE_MEDIA;
 import com.umeng.socialize.media.UMImage;
 import com.umeng.socialize.media.UMMin;
+import com.umeng.socialize.media.UMVideo;
 import com.umeng.socialize.media.UMWeb;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -336,11 +338,25 @@ public class UMShareAction {
                             .setPlatform(platformType)
                             .setCallback(umShareListener).share();
                 } else if (!TextUtils.isEmpty(urlLink)) {
-                    //分享普通h5链接
-                    new ShareAction(context).setPlatform(platformType)
-                            .withMedia(web)
-                            .setCallback(umShareListener)
-                            .share();
+                    String reg = "(mp4|flv|avi|rm|rmvb|wmv)";
+                    Pattern p = Pattern.compile(reg);
+                    boolean isVideo = p.matcher(urlLink).find();
+                    if (isVideo) {//分享视频链接
+                        UMVideo umVideo = new UMVideo(urlLink);
+                        umVideo.setTitle(title);//视频的标题
+                        umVideo.setThumb(umImage);//视频的缩略图
+                        umVideo.setDescription(!TextUtils.isEmpty(description) ? description : "有你更精彩");//视频的描述
+                        new ShareAction(context).setPlatform(platformType)
+                                .withMedia(umVideo)
+                                .setCallback(umShareListener)
+                                .share();
+                    } else {
+                        //分享普通h5链接
+                        new ShareAction(context).setPlatform(platformType)
+                                .withMedia(web)
+                                .setCallback(umShareListener)
+                                .share();
+                    }
                 } else {
                     //分享纯图片
                     new ShareAction(context).setPlatform(platformType)
@@ -617,6 +633,8 @@ public class UMShareAction {
                 return 12;
             case "QualityWeekOptimizedActivity"://每周优选
                 return 13;
+            case "VideoDetailActivity"://视频详情
+                return 16;
             default:
                 return -1;
         }

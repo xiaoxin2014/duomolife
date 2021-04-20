@@ -351,5 +351,7 @@
     <string name="reply_num">%d个回答</string>
     <string name="all_reply_num">全部%d个回答 ></string>
     <string name="question_num">问大家(%d)</string>
-    <string name="all_answer">全部%d个提问 ></string>
+    <string name="all_answer">全部%s个提问 ></string>
+    <string name="reward_tips">再评论%s个字即可获得%s</string>
+    <string name="reward_tips_img">再上传%s张图片即可获得%s</string>
 </resources>

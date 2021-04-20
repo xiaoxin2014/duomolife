@@ -78,16 +78,11 @@ public class TimePostDetailAdapter extends BaseQuickAdapter<PostBean, BaseViewHo
         helper.getView(R.id.tv_comment).setOnClickListener(v -> lookAllComment(item));
 
         //分享
-        helper.getView(R.id.iv_share).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new UMShareAction(context
-                        , item.getCover()
-                        , item.getTitle()
-                        , item.getContent()
-                        , Url.BASE_SHARE_PAGE_TWO + "limit_time_template/article_info.html?id=" + item.getId(), item.getId());
-            }
-        });
+        helper.getView(R.id.iv_share).setOnClickListener(v -> new UMShareAction(context
+                , item.getCover()
+                , item.getTitle()
+                , item.getContent()
+                , Url.BASE_SHARE_PAGE_TWO + "limit_time_template/article_info.html?id=" + item.getId(), item.getId()));
 
         //显示关联商品
         List<RelatedGoodsBean> productList = item.getProductList();
@@ -203,7 +198,7 @@ public class TimePostDetailAdapter extends BaseQuickAdapter<PostBean, BaseViewHo
                 .moveUpToKeyboard(false) //如果不加这个，评论弹窗会移动到软键盘上面
                 .enableDrag(true)
                 .isDestroyOnDismiss(true) //对于只使用一次的弹窗，推荐设置这个
-                .asCustom(new TimePostCommentPw(context, item))
+                .asCustom(new TimePostCommentPw(context, item, COMMENT_GROUP_TYPE))
                 .show();
     }
 }

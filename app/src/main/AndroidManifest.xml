@@ -1680,6 +1680,18 @@
             </intent-filter>
         </activity>
 
+        <!--评论详情-->
+        <activity
+            android:name=".find.activity.EvaluateDetailActivity"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="EvaluateDetailActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
         <!--图片浏览-->
         <activity
             android:name=".find.activity.ImagePagerActivity"

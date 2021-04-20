@@ -51,5 +51,6 @@ public class MyQuestionListActivity extends BaseActivity {
 
     @OnClick(R.id.tv_life_back)
     public void onViewClicked() {
+        finish();
     }
 }

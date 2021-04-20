@@ -9,6 +9,7 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -37,6 +38,8 @@ import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.utils.pictureselector.PictureSelectorUtils;
 import com.amkj.dmsh.views.alertdialog.AlertDialogHelper;
+import com.klinker.android.link_builder.Link;
+import com.klinker.android.link_builder.LinkBuilder;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfigC;
 import com.luck.picture.lib.entity.LocalMediaC;
@@ -64,6 +67,7 @@ import me.zhanghai.android.materialratingbar.MaterialRatingBar;
 
 import static com.amkj.dmsh.constant.ConstantMethod.getIntegralFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantVariable.DEFAULT_ADD_IMG;
@@ -104,6 +108,14 @@ public class JoinTopicActivity extends BaseActivity {
     LinearLayout mLlRatingbar;
     @BindView(R.id.tv_life_back)
     TextView mTvLifeBack;
+    @BindView(R.id.cb_cryptonym)
+    CheckBox mCbCryptonym;
+    @BindView(R.id.tv_title)
+    TextView mTvTitle;
+    @BindView(R.id.ll_editor)
+    LinearLayout mLlEditor;
+    @BindView(R.id.tv_award_rules)
+    TextView mTvAwardRules;
     // 获得存储图片的路径
     private String Img_PATH = null;
     private ImgGArticleRecyclerAdapter imgGArticleRecyclerAdapter;
@@ -120,6 +132,9 @@ public class JoinTopicActivity extends BaseActivity {
     private int maxSelImg = 9;
     private AlertDialogHelper alertDialogHelper;
     private String content = "";
+    private TopicDetailEntity mTopicDetailEntity;
+    private List<Map<Integer, String>> mImgTipList = new ArrayList<>();
+    private List<Map<Integer, String>> mWordTipList = new ArrayList<>();
 
     @Override
     protected int getContentView() {
@@ -152,10 +167,13 @@ public class JoinTopicActivity extends BaseActivity {
                 }
             } else if (scoreGoodsBean != null) {//商品晒单
                 //商品晒单（发布帖子并评价）
+                mTvTitle.setText("评价");
+                mEtInput.setHint("填写高质量的评价，即可参与抽奖哦～");
                 GlideImageLoaderUtil.loadImage(this, mIvCover, scoreGoodsBean.getCover());
                 mTvGoodsName.setText(getStrings(scoreGoodsBean.getProductName()));
                 mRlScoreGoods.setVisibility(View.VISIBLE);
                 mLlRatingbar.setVisibility(View.VISIBLE);
+                mCbCryptonym.setVisibility(View.VISIBLE);
             } else {
                 showToast("数据有误，请重试");
                 finish();
@@ -200,10 +218,67 @@ public class JoinTopicActivity extends BaseActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 content = s.toString();
+                if (mWordTipList != null && mWordTipList.size() > 0) {
+                    checkTextReward();
+                }
             }
         });
     }
 
+    //计算文本对应的奖励
+    private void checkTextReward() {
+        for (int i = 0; i < mWordTipList.size(); i++) {
+            boolean flag = false;
+            Map<Integer, String> map = mWordTipList.get(i);
+            for (Map.Entry<Integer, String> entry : map.entrySet()) {
+                Integer key = entry.getKey();
+                String value = entry.getValue();
+                if (key > content.length()) {
+                    int length = key - content.length();
+                    mTvScoreTips.setText(getLinkText(length, value, R.string.reward_tips));
+                    flag = true;
+                    break;
+                } else if (i == mWordTipList.size() - 1) {
+                    chekImgReward();
+                }
+            }
+            if (flag) break;
+        }
+    }
+
+    //计算图片对应的奖励
+    private void chekImgReward() {
+        for (int j = 0; j < mImgTipList.size(); j++) {
+            boolean imgFlag = false;
+            Map<Integer, String> map = mImgTipList.get(j);
+            for (Map.Entry<Integer, String> entry : map.entrySet()) {
+                Integer key = entry.getKey();
+                String value = entry.getValue();
+                if (key > getImageSize()) {
+                    int length = key - getImageSize();
+                    mTvScoreTips.setText(getLinkText(length, value, R.string.reward_tips_img));
+                    imgFlag = true;
+                    break;
+                }
+            }
+            if (imgFlag) break;
+        }
+    }
+
+    private CharSequence getLinkText(int num, String reward, int resId) {
+        String tips = getStringsFormat(getActivity(), resId, String.valueOf(num), reward);
+        Link link = new Link(String.valueOf(num));
+        link.setTextColor(getResources().getColor(R.color.text_normal_red))
+                .setUnderlined(false);
+        Link link1 = new Link(reward);
+        link1.setTextColor(getResources().getColor(R.color.text_normal_red))
+                .setUnderlined(false);
+        CharSequence charSequence = LinkBuilder.from(this, tips)
+                .addLink(link)
+                .addLink(link1)
+                .build();
+        return charSequence;
+    }
 
     private void createSaveImgFile() {
         File destDir = new File(Img_PATH);
@@ -257,7 +332,21 @@ public class JoinTopicActivity extends BaseActivity {
     private void setSelectImageData() {
         mSelectPath.clear();
         mSelectPath.addAll(getImageFormatInstance().formatStringPathRemoveDefault(imagePathBeans));
-        mTvScoreTips.setVisibility((imagePathBeans.size() < 1) || (imagePathBeans.size() < 2 && DEFAULT_ADD_IMG.equals(imagePathBeans.get(0).getPath())) ? View.VISIBLE : View.GONE);
+        chekImgReward();
+//        mTvScoreTips.setVisibility((imagePathBeans.size() < 1) || (imagePathBeans.size() < 2 && DEFAULT_ADD_IMG.equals(imagePathBeans.get(0).getPath())) ? View.VISIBLE : View.GONE);
+    }
+
+    //获取选中的图片数量
+    private int getImageSize() {
+        boolean flag = false;
+        for (int i = 0; i < imagePathBeans.size(); i++) {
+            ImagePathBean imagePathBean = imagePathBeans.get(i);
+            String path = imagePathBean.getPath();
+            if (DEFAULT_ADD_IMG.equals(path)) {
+                flag = true;
+            }
+        }
+        return flag ? imagePathBeans.size() - 1 : imagePathBeans.size();
     }
 
     @Override
@@ -298,19 +387,22 @@ public class JoinTopicActivity extends BaseActivity {
         //订单列表直接跳转到点评界面时，调用此接口获取编辑框提示和奖励提示
         if (TextUtils.isEmpty(topicId)) {
             Map<String, Object> params = new HashMap<>();
+            params.put("productId", scoreGoodsBean.getProductId());
             NetLoadUtils.getNetInstance().loadNetDataPost(this, GET_EVALUATE_TIP, params, new NetLoadListenerHelper() {
                 @Override
                 public void onSuccess(String result) {
-                    TopicDetailEntity topicDetailEntity = GsonUtils.fromJson(result, TopicDetailEntity.class);
-                    if (topicDetailEntity != null) {
-                        if (topicDetailEntity.getCode().equals(SUCCESS_CODE)) {
+                    mTopicDetailEntity = GsonUtils.fromJson(result, TopicDetailEntity.class);
+                    if (mTopicDetailEntity != null) {
+                        if (mTopicDetailEntity.getCode().equals(SUCCESS_CODE)) {
+                            mImgTipList = mTopicDetailEntity.getImgTipList();
+                            mWordTipList = mTopicDetailEntity.getWordTipList();
                             //编辑框提示
-                            mEtInput.setHint(getStrings(topicDetailEntity.getReminder()));
+                            mEtInput.setHint(getStrings(mTopicDetailEntity.getReminder()));
                             //奖励提示
-                            mTvScoreTips.setVisibility(!TextUtils.isEmpty(topicDetailEntity.getRewardTip()) ? View.VISIBLE : View.GONE);
-                            mTvScoreTips.setText(getStrings(topicDetailEntity.getRewardTip()));
-                            mTvMaxReward.setText(getStrings(topicDetailEntity.getMaxRewardTip()));
-                            mTvMaxReward.setVisibility(!TextUtils.isEmpty(topicDetailEntity.getMaxRewardTip()) ? View.VISIBLE : View.GONE);
+                            mTvScoreTips.setVisibility(!TextUtils.isEmpty(mTopicDetailEntity.getRewardTip()) ? View.VISIBLE : View.GONE);
+                            mTvScoreTips.setText(getStrings(mTopicDetailEntity.getRewardTip()));
+                            mTvMaxReward.setText(getStrings(mTopicDetailEntity.getMaxRewardTip()));
+                            mTvMaxReward.setVisibility(!TextUtils.isEmpty(mTopicDetailEntity.getMaxRewardTip()) ? View.VISIBLE : View.GONE);
                         }
                     }
                 }
@@ -355,6 +447,9 @@ public class JoinTopicActivity extends BaseActivity {
             params.put("orderNo", scoreGoodsBean.getOrderNo());
         }
 
+        //是否匿名
+        params.put("isCryptonym", mCbCryptonym.isChecked() ? "1" : "0");
+
         NetLoadUtils.getNetInstance().loadNetDataPost(this, !TextUtils.isEmpty(topicId) ? Url.JOIN_TOPIC : PUBLISH_POST_ANDE_VALUATE, params, new NetLoadListenerHelper() {
             @Override
             public void onSuccess(String result) {
@@ -386,6 +481,8 @@ public class JoinTopicActivity extends BaseActivity {
                             intent.putExtra("digest", requestStatus.getDigest());
                             intent.putExtra("coverPath", requestStatus.getCoverPath());
                             intent.putExtra("topicTitle", requestStatus.getTopicTitle());
+                            intent.putExtra("drawRuleId", requestStatus.getDrawRuleId());
+                            intent.putExtra("evaluateId", requestStatus.getEvaluateId());
                             startActivity(intent);
                             finish();
                         }

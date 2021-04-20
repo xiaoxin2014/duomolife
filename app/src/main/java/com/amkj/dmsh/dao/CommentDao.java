@@ -19,6 +19,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 import static com.amkj.dmsh.constant.ConstantMethod.showToastRequestMsg;
 import static com.amkj.dmsh.constant.ConstantVariable.COMMENT_DOC_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.COMMENT_GROUP_TYPE;
+import static com.amkj.dmsh.constant.ConstantVariable.COMMENT_VIDEO_TYPE;
 import static com.amkj.dmsh.constant.ConstantVariable.MES_ADVISE;
 import static com.amkj.dmsh.constant.ConstantVariable.MES_FEEDBACK;
 import static com.amkj.dmsh.constant.ConstantVariable.PRO_COMMENT;
@@ -40,6 +41,7 @@ public class CommentDao {
                 break;
             case COMMENT_DOC_TYPE:
             case COMMENT_GROUP_TYPE:
+            case COMMENT_VIDEO_TYPE:
             case PRO_TOPIC:
             case TYPE_C_WELFARE:
                 setDocComment(context, communalComment, onSendCommentFinish);

@@ -1,24 +1,31 @@
 package com.amkj.dmsh.find.activity;
 
+import android.content.Intent;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.base.BaseActivity;
+import com.amkj.dmsh.bean.RequestStatus;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.find.adapter.PostContentAdapter;
+import com.amkj.dmsh.find.adapter.ScoreGoodsAdapter;
 import com.amkj.dmsh.find.bean.PostEntity;
 import com.amkj.dmsh.find.bean.PostEntity.PostBean;
+import com.amkj.dmsh.homepage.bean.ScoreGoodsEntity;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
 import com.amkj.dmsh.utils.SharedPreUtils;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.StaggeredDividerItemDecoration;
+import com.amkj.dmsh.views.alertdialog.AlertDialogEvaluateImg;
+import com.amkj.dmsh.views.alertdialog.AlertDialogImage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,6 +34,7 @@ import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import butterknife.BindView;
@@ -35,7 +43,12 @@ import butterknife.OnClick;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
+import static com.amkj.dmsh.constant.ConstantMethod.dismissLoadhud;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.showLoadhud;
+import static com.amkj.dmsh.constant.ConstantMethod.showToast;
+import static com.amkj.dmsh.constant.ConstantMethod.skipJoinTopic;
+import static com.amkj.dmsh.constant.ConstantMethod.userId;
 import static com.amkj.dmsh.constant.ConstantVariable.ERROR_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.SUCCESS_CODE;
 import static com.amkj.dmsh.constant.ConstantVariable.TOTAL_COUNT_FORTY;
@@ -54,12 +67,22 @@ public class JoinSuccessActivity extends BaseActivity {
     RecyclerView mRvRecommend;
     List<PostBean> mPostList = new ArrayList<>();
     PostContentAdapter postAdapter;
+    @BindView(R.id.tv_header_title)
+    TextView mTvHeaderTitle;
+    @BindView(R.id.tv_life_back)
+    TextView mTvLifeBack;
     private PostEntity mPostEntity;
-    private JoinSuccessHeadView joinSuccessHeadView;
     private int mPostId;
     private String mDigest;
     private String mCoverPath;
     private String mTopicTitle;
+    private String mDrawRuleId;
+    private String mEvaluateId;
+    private AlertDialogEvaluateImg mAlertDialogImage;
+    private ScoreGoodsAdapter mScoreGoodsAdapter;
+    private List<ScoreGoodsEntity.ScoreGoodsBean> mGoodsList = new ArrayList<>();
+    private ScoreGoodsEntity mScoreGoodsEntity;
+    private JoinSuccessHeadView joinSuccessHeadView;
 
 
     @Override
@@ -69,7 +92,6 @@ public class JoinSuccessActivity extends BaseActivity {
 
     @Override
     protected void initViews() {
-        mTvHeaderShared.setVisibility(View.GONE);
         mTlNormalBar.setSelected(true);
 
         //初始化帖子详情
@@ -83,11 +105,22 @@ public class JoinSuccessActivity extends BaseActivity {
             mDigest = getIntent().getStringExtra("digest");
             mCoverPath = getIntent().getStringExtra("coverPath");
             mTopicTitle = getIntent().getStringExtra("topicTitle");
-
+            mDrawRuleId = getIntent().getStringExtra("drawRuleId");
+            mEvaluateId = getIntent().getStringExtra("evaluateId");
             joinSuccessHeadView.mTvScoreTips.setVisibility(score > 0 ? View.VISIBLE : View.GONE);
             joinSuccessHeadView.mTvScoreTips.setText(ConstantMethod.getIntegralFormat(this, R.string.post_pass_get_score, score));
             joinSuccessHeadView.mTvShareTips.setText(getStrings(reminder));
+            joinSuccessHeadView.mTvShareTips.setVisibility(!TextUtils.isEmpty(getStrings(reminder)) ? View.VISIBLE : View.GONE);
         }
+        //初始化评分商品
+        joinSuccessHeadView.mRvGoods.setLayoutManager(new LinearLayoutManager(this));
+        mScoreGoodsAdapter = new ScoreGoodsAdapter(this, mGoodsList);
+        joinSuccessHeadView.mRvGoods.setAdapter(mScoreGoodsAdapter);
+        mScoreGoodsAdapter.setOnItemChildClickListener((adapter, view1, position) -> {
+            ScoreGoodsEntity.ScoreGoodsBean scoreGoodsBean = (ScoreGoodsEntity.ScoreGoodsBean) view1.getTag();
+            //写点评
+            skipJoinTopic(getActivity(), scoreGoodsBean, null);
+        });
 
         //初始化推荐列表
         postAdapter = new PostContentAdapter(getActivity(), mPostList, false);
@@ -108,11 +141,50 @@ public class JoinSuccessActivity extends BaseActivity {
                 }
             }
         });
+
+        if (!TextUtils.isEmpty(mDrawRuleId)) {
+            if (mAlertDialogImage == null) {
+                mAlertDialogImage = new AlertDialogEvaluateImg(this);
+                mAlertDialogImage.setImageResource(R.drawable.evaluate_reward);
+                mAlertDialogImage.setAlertClickListener(new AlertDialogImage.AlertImageClickListener() {
+                    @Override
+                    public void imageClick() {
+                        drawEvaluatePrize();
+                    }
+                });
+            }
+            mAlertDialogImage.show();
+        }
+    }
+
+    class JoinSuccessHeadView {
+
+        @BindView(R.id.tv_score_tips)
+        TextView mTvScoreTips;
+        @BindView(R.id.tv_my_evaluate)
+        TextView mTvMyEvaluate;
+        @BindView(R.id.tv_share_tips)
+        TextView mTvShareTips;
+        @BindView(R.id.rv_goods)
+        RecyclerView mRvGoods;
+        @BindView(R.id.ll_goods)
+        LinearLayout mLlGoods;
+        @BindView(R.id.tv_speak)
+        TextView mTvSpeak;
+
+
+        @OnClick(R.id.tv_my_evaluate)
+        void MyEvaluate() {
+            Intent intent = new Intent(getActivity(), EvaluateDetailActivity.class);
+            intent.putExtra("evaluateId", mEvaluateId);
+            startActivity(intent);
+        }
     }
 
     @Override
     protected void loadData() {
         getRecommend();
+        getGoods();
     }
 
     //获取推荐帖子
@@ -133,7 +205,7 @@ public class JoinSuccessActivity extends BaseActivity {
                     if (SUCCESS_CODE.equals(code) && postList != null && postList.size() > 0) {
                         mPostList.addAll(postList);
                     } else if (ERROR_CODE.equals(code)) {
-                        ConstantMethod.showToast(mPostEntity.getMsg());
+                        showToast(mPostEntity.getMsg());
                     }
                 }
 
@@ -146,42 +218,81 @@ public class JoinSuccessActivity extends BaseActivity {
                 joinSuccessHeadView.mTvSpeak.setVisibility(mPostList.size() > 0 ? View.VISIBLE : View.GONE);
             }
         });
-
-
     }
 
-    @OnClick({R.id.tv_life_back})
+    //抽奖
+    private void drawEvaluatePrize() {
+        showLoadhud(this);
+        Map<String, String> map = new HashMap<>();
+        map.put("drawRuleId", mDrawRuleId);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.DRAW_EVALUATE_PRIZE, map, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                dismissLoadhud(getActivity());
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
+                if (requestStatus != null) {
+                    String msg = requestStatus.getMsg();
+                    showToast(msg);
+                }
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                dismissLoadhud(getActivity());
+            }
+        });
+    }
+
+    private void getGoods() {
+        if (userId < 0) return;
+        Map<String, Object> params = new HashMap<>();
+        params.put("currentPage", 1);
+        params.put("showCount", TOTAL_COUNT_FORTY);
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.GET_SCORE_PRODUCT, params, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                loadHud.dismiss();
+                mGoodsList.clear();
+                mScoreGoodsEntity = GsonUtils.fromJson(result, ScoreGoodsEntity.class);
+                if (mScoreGoodsEntity != null) {
+                    mScoreGoodsAdapter.setRewardReminder(mScoreGoodsEntity.getMaxRewardTip());
+                    List<ScoreGoodsEntity.ScoreGoodsBean> goodsList = mScoreGoodsEntity.getGoodsList();
+                    if (goodsList != null && goodsList.size() > 0) {
+                        mGoodsList.addAll(goodsList);
+                    } else if (ERROR_CODE.equals(mScoreGoodsEntity.getCode())) {
+                        showToast(mScoreGoodsEntity.getMsg());
+                    }
+                }
+                joinSuccessHeadView.mLlGoods.setVisibility(mGoodsList.size() > 0 ? View.VISIBLE : View.GONE);
+                mScoreGoodsAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                loadHud.dismiss();
+                joinSuccessHeadView.mLlGoods.setVisibility(mGoodsList.size() > 0 ? View.VISIBLE : View.GONE);
+            }
+        });
+    }
+
+
+    @OnClick({R.id.tv_life_back, R.id.tv_header_shared})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.tv_life_back:
                 finish();
                 break;
-        }
-    }
-
-
-    class JoinSuccessHeadView {
-
-        @BindView(R.id.tv_score_tips)
-        TextView mTvScoreTips;
-        @BindView(R.id.tv_share)
-        TextView mTvShare;
-        @BindView(R.id.tv_share_tips)
-        TextView mTvShareTips;
-        @BindView(R.id.tv_speak)
-        TextView mTvSpeak;
-
-        @OnClick(R.id.tv_share)
-        void share() {
-            if (mPostEntity != null) {
-                String nickName = (String) SharedPreUtils.getParam("nickName", "");
-                UMShareAction umShareAction = new UMShareAction(getActivity()
-                        , mCoverPath
-                        , mTopicTitle
-                        , "@" + nickName + ":" + (TextUtils.isEmpty(mDigest) ? "我刚刚完成了一个分享，去看看吧" : mDigest)
-                        , Url.BASE_SHARE_PAGE_TWO + "find_template/find_detail.html" + "?id=" + mPostId + "&isShare=1"
-                        , "pages/findDetail/findDetail?id=" + mPostId + "&isShare=1", mPostId);
-            }
+            case R.id.tv_header_shared:
+                if (mPostEntity != null) {
+                    String nickName = (String) SharedPreUtils.getParam("nickName", "");
+                    UMShareAction umShareAction = new UMShareAction(getActivity()
+                            , mCoverPath
+                            , mTopicTitle
+                            , "@" + nickName + ":" + (TextUtils.isEmpty(mDigest) ? "我刚刚完成了一个分享，去看看吧" : mDigest)
+                            , Url.BASE_SHARE_PAGE_TWO + "find_template/find_detail.html" + "?id=" + mPostId + "&isShare=1"
+                            , "pages/findDetail/findDetail?id=" + mPostId + "&isShare=1", mPostId);
+                }
+                break;
         }
     }
 }
