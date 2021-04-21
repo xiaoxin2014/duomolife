@@ -32,6 +32,7 @@ import com.amkj.dmsh.release.bean.ImagePathBean;
 import com.amkj.dmsh.release.tutu.CustomMultipleFragment;
 import com.amkj.dmsh.utils.CommonUtils;
 import com.amkj.dmsh.utils.ImgUrlHelp;
+import com.amkj.dmsh.utils.KeyboardUtils;
 import com.amkj.dmsh.utils.TextWatchListener;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.gson.GsonUtils;
@@ -94,6 +95,8 @@ public class JoinTopicActivity extends BaseActivity {
     TextView mTvTopicName;
     @BindView(R.id.tv_score_tips)
     TextView mTvScoreTips;     //获得积分提示
+    @BindView(R.id.tv_score_tips_bottom)
+    TextView mTvScoreTipsBottom;     //获得积分提示
     @BindView(R.id.iv_cover)
     ImageView mIvCover;
     @BindView(R.id.tv_goods_name)
@@ -148,15 +151,10 @@ public class JoinTopicActivity extends BaseActivity {
             topicId = intent.getStringExtra("topicId");
             scoreGoodsBean = intent.getParcelableExtra("scoreGoods");
             String reminder = intent.getStringExtra("reminder");
-            String rewardTip = intent.getStringExtra("rewardtip");
             //编辑框提示
             if (!TextUtils.isEmpty(reminder)) {
                 mEtInput.setHint(reminder);
             }
-
-            //奖励提示
-            mTvScoreTips.setVisibility(!TextUtils.isEmpty(rewardTip) ? View.VISIBLE : View.GONE);
-            mTvScoreTips.setText(getStrings(rewardTip));
 
             //参与话题
             if (!TextUtils.isEmpty(topicId)) {
@@ -223,6 +221,18 @@ public class JoinTopicActivity extends BaseActivity {
                 }
             }
         });
+
+        //监听软键盘
+        KeyboardUtils.registerSoftInputChangedListener(this, height -> {
+            if (height == 0) {
+                mTvScoreTips.setVisibility(View.VISIBLE);
+                mTvScoreTipsBottom.setVisibility(View.GONE);
+            } else {
+                //软键盘显示
+                mTvScoreTips.setVisibility(View.GONE);
+                mTvScoreTipsBottom.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     //计算文本对应的奖励
@@ -236,6 +246,7 @@ public class JoinTopicActivity extends BaseActivity {
                 if (key > content.length()) {
                     int length = key - content.length();
                     mTvScoreTips.setText(getLinkText(length, value, R.string.reward_tips));
+                    mTvScoreTipsBottom.setText(getLinkText(length, value, R.string.reward_tips));
                     flag = true;
                     break;
                 } else if (i == mWordTipList.size() - 1) {
@@ -257,6 +268,7 @@ public class JoinTopicActivity extends BaseActivity {
                 if (key > getImageSize()) {
                     int length = key - getImageSize();
                     mTvScoreTips.setText(getLinkText(length, value, R.string.reward_tips_img));
+                    mTvScoreTipsBottom.setText(getLinkText(length, value, R.string.reward_tips_img));
                     imgFlag = true;
                     break;
                 }
@@ -396,11 +408,10 @@ public class JoinTopicActivity extends BaseActivity {
                         if (mTopicDetailEntity.getCode().equals(SUCCESS_CODE)) {
                             mImgTipList = mTopicDetailEntity.getImgTipList();
                             mWordTipList = mTopicDetailEntity.getWordTipList();
+                            checkTextReward();
                             //编辑框提示
                             mEtInput.setHint(getStrings(mTopicDetailEntity.getReminder()));
                             //奖励提示
-                            mTvScoreTips.setVisibility(!TextUtils.isEmpty(mTopicDetailEntity.getRewardTip()) ? View.VISIBLE : View.GONE);
-                            mTvScoreTips.setText(getStrings(mTopicDetailEntity.getRewardTip()));
                             mTvMaxReward.setText(getStrings(mTopicDetailEntity.getMaxRewardTip()));
                             mTvMaxReward.setVisibility(!TextUtils.isEmpty(mTopicDetailEntity.getMaxRewardTip()) ? View.VISIBLE : View.GONE);
                         }

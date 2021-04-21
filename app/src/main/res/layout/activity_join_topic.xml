@@ -8,145 +8,163 @@
 
     <include layout="@layout/layout_join_topic_header" />
 
-    <androidx.core.widget.NestedScrollView
+    <FrameLayout
+        android:id="@+id/fl_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <RelativeLayout
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/sc_mm_20"
-            android:layout_marginRight="@dimen/sc_mm_20">
+            android:layout_height="match_parent">
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginBottom="@dimen/sc_mm_100"
-                android:orientation="vertical">
-
-                <include layout="@layout/layout_score_goods" />
-
-                <TextView
-                    android:id="@+id/tv_topic_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/sc_mm_20"
-                    android:background="@drawable/shap_topic_bg"
-                    android:gravity="center"
-                    android:padding="@dimen/sc_mm_32"
-                    android:text="@string/defaul"
-                    android:textColor="@color/text_black_t"
-                    android:textSize="@dimen/sc_mm_34"
-                    android:textStyle="bold"
-                    android:visibility="gone" />
+                android:layout_marginLeft="@dimen/sc_mm_20"
+                android:layout_marginRight="@dimen/sc_mm_20">
 
                 <LinearLayout
-                    android:id="@+id/ll_editor"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="@dimen/sc_mm_20"
-                    android:background="@drawable/shap_topic_bg"
+                    android:layout_marginBottom="@dimen/sc_mm_100"
                     android:orientation="vertical">
 
-                    <LinearLayout
-                        android:id="@+id/ll_ratingbar"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/sc_mm_30"
-                        android:background="@drawable/border_bottom_line"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:paddingLeft="@dimen/sc_mm_20"
-                        android:paddingBottom="@dimen/sc_mm_30"
-                        android:visibility="gone">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="商品评分"
-                            android:textColor="@color/text_login_gray_s"
-                            android:textSize="@dimen/sc_mm_30" />
-
-                        <me.zhanghai.android.materialratingbar.MaterialRatingBar
-                            android:id="@+id/rating_bar"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/sc_mm_33"
-                            android:clickable="false"
-                            android:maxHeight="@dimen/sc_mm_60"
-                            android:minHeight="@dimen/sc_mm_50"
-                            android:numStars="5"
-                            android:rating="5"
-                            android:stepSize="1"
-                            app:mrb_progressTint="@color/ratingBar_yellow"
-                            app:mrb_secondaryProgressTint="@color/text_gray_c" />
-                    </LinearLayout>
-
-                    <androidx.emoji.widget.EmojiEditText
-                        android:id="@+id/et_input"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@null"
-                        android:gravity="top"
-                        android:lineSpacingExtra="@dimen/sc_mm_10"
-                        android:minHeight="@dimen/sc_mm_300"
-                        android:padding="@dimen/sc_mm_20"
-                        android:textColor="@color/text_login_gray_s"
-                        android:textColorHint="@color/text_gray_c"
-                        android:textCursorDrawable="@null"
-                        android:textSize="@dimen/sc_mm_28" />
+                    <include layout="@layout/layout_score_goods" />
 
                     <TextView
-                        android:id="@+id/tv_score_tips"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/tv_topic_name"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/sc_mm_20"
-                        android:layout_marginBottom="@dimen/sc_mm_20"
+                        android:layout_marginTop="@dimen/sc_mm_20"
+                        android:background="@drawable/shap_topic_bg"
                         android:gravity="center"
-                        android:paddingLeft="@dimen/sc_mm_10"
-                        android:paddingRight="@dimen/sc_mm_10"
-                        android:paddingBottom="@dimen/sc_mm_10"
+                        android:padding="@dimen/sc_mm_32"
+                        android:text="@string/defaul"
                         android:textColor="@color/text_black_t"
-                        android:textSize="@dimen/sc_mm_24" />
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rv_img_article"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:nestedScrollingEnabled="false"
-                        android:padding="@dimen/sc_mm_20"
-                        android:scrollbars="none" />
-
-                    <CheckBox
-                        android:id="@+id/cb_cryptonym"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@color/white"
-                        android:button="@null"
-                        android:drawableLeft="@drawable/selector_cryptonym"
-                        android:drawablePadding="@dimen/sc_mm_10"
-                        android:gravity="center_vertical"
-                        android:paddingLeft="@dimen/sc_mm_30"
-                        android:paddingBottom="@dimen/sc_mm_20"
-                        android:text="匿名评价"
-                        android:textColor="@color/text_black_t"
-                        android:textSize="@dimen/sc_mm_22"
+                        android:textSize="@dimen/sc_mm_34"
+                        android:textStyle="bold"
                         android:visibility="gone" />
-                </LinearLayout>
-            </LinearLayout>
 
-            <TextView
-                android:id="@+id/tv_award_rules"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:layout_gravity="center_horizontal|bottom"
-                android:layout_marginBottom="@dimen/sc_mm_50"
-                android:text="@string/award_rules"
-                android:textColor="@color/text_black_t"
-                android:textSize="@dimen/sc_mm_32"
-                android:textStyle="bold" />
-        </RelativeLayout>
-    </androidx.core.widget.NestedScrollView>
+                    <LinearLayout
+                        android:id="@+id/ll_editor"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="@dimen/sc_mm_20"
+                        android:background="@drawable/shap_topic_bg"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:id="@+id/ll_ratingbar"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/sc_mm_30"
+                            android:background="@drawable/border_bottom_line"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingLeft="@dimen/sc_mm_20"
+                            android:paddingBottom="@dimen/sc_mm_30"
+                            android:visibility="gone">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="商品评分"
+                                android:textColor="@color/text_login_gray_s"
+                                android:textSize="@dimen/sc_mm_30" />
+
+                            <me.zhanghai.android.materialratingbar.MaterialRatingBar
+                                android:id="@+id/rating_bar"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/sc_mm_33"
+                                android:clickable="false"
+                                android:maxHeight="@dimen/sc_mm_60"
+                                android:minHeight="@dimen/sc_mm_50"
+                                android:numStars="5"
+                                android:rating="5"
+                                android:stepSize="1"
+                                app:mrb_progressTint="@color/ratingBar_yellow"
+                                app:mrb_secondaryProgressTint="@color/text_gray_c" />
+                        </LinearLayout>
+
+                        <androidx.emoji.widget.EmojiEditText
+                            android:id="@+id/et_input"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:gravity="top"
+                            android:lineSpacingExtra="@dimen/sc_mm_10"
+                            android:minHeight="@dimen/sc_mm_300"
+                            android:padding="@dimen/sc_mm_20"
+                            android:textColor="@color/text_login_gray_s"
+                            android:textColorHint="@color/text_gray_c"
+                            android:textCursorDrawable="@null"
+                            android:textSize="@dimen/sc_mm_28" />
+
+                        <TextView
+                            android:id="@+id/tv_score_tips"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/sc_mm_20"
+                            android:layout_marginBottom="@dimen/sc_mm_20"
+                            android:gravity="center"
+                            android:paddingLeft="@dimen/sc_mm_10"
+                            android:paddingRight="@dimen/sc_mm_10"
+                            android:paddingBottom="@dimen/sc_mm_10"
+                            android:textColor="@color/text_black_t"
+                            android:textSize="@dimen/sc_mm_24" />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rv_img_article"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:nestedScrollingEnabled="false"
+                            android:padding="@dimen/sc_mm_20"
+                            android:scrollbars="none" />
+
+                        <CheckBox
+                            android:id="@+id/cb_cryptonym"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/white"
+                            android:button="@null"
+                            android:drawableLeft="@drawable/selector_cryptonym"
+                            android:drawablePadding="@dimen/sc_mm_10"
+                            android:gravity="center_vertical"
+                            android:paddingLeft="@dimen/sc_mm_30"
+                            android:paddingBottom="@dimen/sc_mm_20"
+                            android:text="匿名评价"
+                            android:textColor="@color/text_black_t"
+                            android:textSize="@dimen/sc_mm_22"
+                            android:visibility="gone" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tv_award_rules"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center_horizontal|bottom"
+                    android:layout_marginBottom="@dimen/sc_mm_50"
+                    android:text="@string/award_rules"
+                    android:textColor="@color/text_black_t"
+                    android:textSize="@dimen/sc_mm_32"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+        </androidx.core.widget.NestedScrollView>
+
+        <TextView
+            android:id="@+id/tv_score_tips_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/sc_mm_70"
+            android:layout_gravity="bottom"
+            android:background="@color/white"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/sc_mm_20"
+            android:text="@string/defaul"
+            android:textColor="@color/text_black_t"
+            android:textSize="@dimen/sc_mm_24" />
+    </FrameLayout>
 </LinearLayout>
