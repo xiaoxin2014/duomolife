@@ -88,6 +88,17 @@ public class EditGoodsSkuEntity {
         //发货时间
         private String deliveryTime;
 
+        //选中的sku属性
+        private String selectedPropValues;
+
+        public String getSelectedPropValues() {
+            return selectedPropValues;
+        }
+
+        public void setSelectedPropValues(String selectedPropValues) {
+            this.selectedPropValues = selectedPropValues;
+        }
+
         public String getDeliveryTime() {
             return deliveryTime;
         }

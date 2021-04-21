@@ -120,6 +120,25 @@ public class ShopDetailsEntity extends BaseEntity {
         private String depositOrderEndTime;
 
 
+        //sku选中
+        private String showSkuText;//默认的sku属性
+        private int selectSkuId;//历史选中的sku
+
+        public String getShowSkuText() {
+            return showSkuText;
+        }
+
+        public void setShowSkuText(String showSkuText) {
+            this.showSkuText = showSkuText;
+        }
+
+        public int getSelectSkuId() {
+            return selectSkuId;
+        }
+
+        public void setSelectSkuId(int selectSkuId) {
+            this.selectSkuId = selectSkuId;
+        }
 
         public String getIsVipActivity() {
             return isVipActivity;

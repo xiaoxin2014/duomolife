@@ -367,7 +367,7 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
             ProductParameterTypeBean productParameterTypeBean = productParameterTypeBeanList.get(i);
             for (int j = 0; j < productParameterTypeBean.getValues().size(); j++) {
                 ProductParameterValueBean productParameterValueBean = productParameterTypeBean.getValues().get(j);
-                if (productParameterValueBean.isSelected()
+                if (productParameterValueBean.isSelected() && selectedSkuValueId.size() > 0
                         && productParameterValueBean.getPropId() == selectedSkuValueId.get(selectedSkuValueId.size() - 1).getPropId()) {
                     getSelectedSku(productParameterValueBean);
                 }
@@ -888,6 +888,7 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
         setSkuStatusViews(productParameterTypeBeanList);
     }
 
+
     /**
      * 属性取消选择
      *
@@ -1363,6 +1364,25 @@ public class SkuDialog implements KeywordContainer.OnClickKeywordListener {
         set.addAll(list2);
         canSelected.addAll(set);
         return canSelected;
+    }
+
+    //模拟历史选中sku
+    public void selectedHistorySku(String[] selectedPropValues) {
+        for (int k = 0; k < selectedPropValues.length; k++) {
+            String selectedPropValue = selectedPropValues[k];
+            abc:
+            for (int i = 0; i < productParameterTypeBeanList.size(); i++) {
+                ProductParameterTypeBean productParameterTypeBean = productParameterTypeBeanList.get(i);
+                ArrayList<ProductParameterValueBean> values = productParameterTypeBean.getValues();
+                for (int j = 0; j < values.size(); j++) {
+                    ProductParameterValueBean valueBean = values.get(j);
+                    if (selectedPropValue.equals(String.valueOf(valueBean.getPropId()))) {
+                        onClickKeyword(null, valueBean);
+                        break abc;
+                    }
+                }
+            }
+        }
     }
 
     public interface DataListener {

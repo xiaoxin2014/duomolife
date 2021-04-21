@@ -866,4 +866,6 @@ public class Url {
     public static final String DRAW_EVALUATE_PRIZE = "api/find/post/drawEvaluatePrize";
     //评论详情
     public static final String GET_EVALUATE_DETAIL = "api/find/post/getEvaluateDetail";
+    //记录选中的sku
+    public static final String SELECT_PRODUCT_SKU = "api/goods/userSelectProductSku";
 }
