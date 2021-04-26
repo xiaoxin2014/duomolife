@@ -46,7 +46,6 @@ import com.umeng.socialize.media.UMWeb;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -338,9 +337,7 @@ public class UMShareAction {
                             .setPlatform(platformType)
                             .setCallback(umShareListener).share();
                 } else if (!TextUtils.isEmpty(urlLink)) {
-                    String reg = "(mp4|flv|avi|rm|rmvb|wmv)";
-                    Pattern p = Pattern.compile(reg);
-                    boolean isVideo = p.matcher(urlLink).find();
+                    boolean isVideo = urlLink.endsWith("mp4") || urlLink.endsWith("flv") || urlLink.endsWith("avi") || urlLink.endsWith("rmvb") || urlLink.endsWith("wmv");
                     if (isVideo) {//分享视频链接
                         UMVideo umVideo = new UMVideo(urlLink);
                         umVideo.setTitle(title);//视频的标题

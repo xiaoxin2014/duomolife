@@ -14,185 +14,257 @@
         <include layout="@layout/layout_refresh_header_gif" />
 
         <ScrollView
-            android:background="@color/white"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@color/white">
 
-            <LinearLayout
+            <RelativeLayout
+                android:id="@+id/rl_share_gift"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_height="match_parent">
 
-                <LinearLayout
-                    android:id="@+id/ll_share_gift"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/shap_vip_ll_bg"
-                    android:orientation="vertical">
+                    android:layout_height="match_parent">
 
-                    <ImageView
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/sc_mm_24"
-                        android:layout_marginTop="@dimen/sc_mm_48"
-                        android:layout_marginRight="@dimen/sc_mm_24"
-                        android:adjustViewBounds="true"
-                        android:src="@drawable/share_gift_cover" />
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
 
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/sc_mm_720"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/shap_vip_ll_bg_top" />
 
-                    <TextView
-                        android:id="@+id/tv_invitee_day"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/sc_mm_30"
-                        android:gravity="center"
-                        android:text="@string/defaul"
-                        android:textColor="@color/text_black_t"
-                        android:textSize="@dimen/sc_mm_28" />
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="fitXY"
+                            android:src="@drawable/shap_vip_ll_bg_bottom" />
+                    </LinearLayout>
+
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/sc_mm_22"
-                        android:background="@drawable/share_invite_bg"
                         android:orientation="vertical">
 
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/sc_mm_20"
+                            android:layout_marginTop="@dimen/sc_mm_500"
+                            android:layout_marginRight="@dimen/sc_mm_20"
+                            android:layout_marginBottom="@dimen/sc_mm_20"
+                            android:background="@drawable/shape_invite_bg_orange"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/sc_mm_40"
+                                android:gravity="center_horizontal"
+                                android:text="邀请1人开通年卡"
+                                android:textColor="#FFA55C"
+                                android:textSize="@dimen/sc_mm_60" />
+
+                            <TextView
+                                android:id="@+id/tv_amount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:layout_marginTop="@dimen/sc_mm_20"
+                                android:text="获得50"
+                                android:textColor="#FFA55C"
+                                android:textSize="@dimen/sc_mm_60" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:layout_marginTop="@dimen/sc_mm_30"
+                                android:gravity="center"
+                                android:text="分享好友专属链接\n好友开通会员后可获得现金红包"
+                                android:textColor="@color/text_black_t"
+                                android:textSize="@dimen/sc_mm_24" />
+
+                            <ImageView
+                                android:id="@+id/iv_invite2"
+                                android:layout_width="@dimen/sc_mm_484"
+                                android:layout_height="@dimen/sc_mm_104"
+                                android:layout_gravity="center_horizontal"
+                                android:layout_marginTop="@dimen/sc_mm_20"
+                                android:layout_marginBottom="@dimen/sc_mm_40"
+                                android:src="@drawable/invite_vip_button" />
+                        </LinearLayout>
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
-                            android:layout_marginTop="@dimen/sc_mm_40"
-                            android:text="邀请好友成为会员"
+                            android:layout_marginTop="@dimen/sc_mm_20"
+                            android:text="向好友发送邀请 > 好友购买会员 > 奖励到账"
                             android:textColor="@color/text_black_t"
-                            android:textSize="@dimen/sc_mm_34"
-                            android:textStyle="bold" />
+                            android:textSize="@dimen/sc_mm_24" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/sc_mm_36"
-                            android:gravity="center"
-                            android:orientation="horizontal">
+                            android:layout_margin="@dimen/sc_mm_20"
+                            android:background="@drawable/shape_invite_bg_orange"
+                            android:orientation="vertical"
+                            android:padding="@dimen/sc_mm_40">
 
-                            <ImageView
-                                android:layout_width="@dimen/sc_mm_75"
-                                android:layout_height="@dimen/sc_mm_68"
-                                android:src="@drawable/vip_coupon" />
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:orientation="horizontal">
 
-                            <ImageView
-                                android:layout_width="@dimen/sc_mm_52"
-                                android:layout_height="@dimen/sc_mm_50"
-                                android:layout_marginLeft="@dimen/sc_mm_104"
-                                android:layout_marginRight="@dimen/sc_mm_104"
-                                android:src="@drawable/add_gray" />
+                                <View
+                                    android:layout_width="@dimen/sc_mm_160"
+                                    android:layout_height="@dimen/sc_mm_2"
+                                    android:background="#F6BF32" />
 
-                            <ImageView
-                                android:layout_width="@dimen/sc_mm_66"
-                                android:layout_height="@dimen/sc_mm_62"
-                                android:src="@drawable/vip_logo" />
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginLeft="@dimen/sc_mm_20"
+                                    android:layout_marginRight="@dimen/sc_mm_20"
+                                    android:text="我的成就"
+                                    android:textColor="@color/text_black_t"
+                                    android:textSize="@dimen/sc_mm_30" />
+
+                                <View
+                                    android:layout_width="@dimen/sc_mm_160"
+                                    android:layout_height="@dimen/sc_mm_2"
+                                    android:background="#F6BF32" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:id="@+id/tv_reward"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="@dimen/sc_mm_40"
+                                        android:gravity="center_horizontal"
+                                        android:text="@string/defaul"
+                                        android:textColor="@color/text_black_t"
+                                        android:textSize="@dimen/sc_mm_54" />
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="@dimen/sc_mm_30"
+                                        android:gravity="center"
+                                        android:text="已获得奖励"
+                                        android:textColor="@color/text_login_gray_s"
+                                        android:textSize="@dimen/sc_mm_28" />
+
+                                    <ImageView
+                                        android:id="@+id/iv_withdraw"
+                                        android:layout_width="@dimen/sc_mm_124"
+                                        android:layout_height="@dimen/sc_mm_50"
+                                        android:layout_gravity="center_horizontal"
+                                        android:layout_marginTop="@dimen/sc_mm_20"
+                                        android:src="@drawable/go_withdraw"
+                                        android:textColor="@color/text_black_t" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:id="@+id/tv_invite"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="@dimen/sc_mm_40"
+                                        android:gravity="center_horizontal"
+                                        android:text="@string/defaul"
+                                        android:textColor="@color/text_black_t"
+                                        android:textSize="@dimen/sc_mm_54" />
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="@dimen/sc_mm_30"
+                                        android:gravity="center"
+                                        android:text="已邀请好友"
+                                        android:textColor="@color/text_login_gray_s"
+                                        android:textSize="@dimen/sc_mm_28" />
+
+                                    <ImageView
+                                        android:id="@+id/iv_invite"
+                                        android:layout_width="@dimen/sc_mm_124"
+                                        android:layout_height="@dimen/sc_mm_50"
+                                        android:layout_gravity="center_horizontal"
+                                        android:layout_marginTop="@dimen/sc_mm_20"
+                                        android:src="@drawable/go_invite"
+                                        android:textColor="@color/text_black_t" />
+                                </LinearLayout>
+                            </LinearLayout>
                         </LinearLayout>
 
                         <LinearLayout
-                            android:layout_marginBottom="@dimen/sc_mm_70"
+                            android:id="@+id/ll_invite"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal">
+                            android:layout_marginLeft="@dimen/sc_mm_22"
+                            android:layout_marginTop="@dimen/sc_mm_45"
+                            android:layout_marginRight="@dimen/sc_mm_22"
+                            android:layout_marginBottom="@dimen/sc_mm_45"
+                            android:background="@drawable/shape_exclusive_coupon_bg"
+                            android:orientation="vertical">
 
                             <TextView
-                                android:id="@+id/tv_inviter_coupon_amount"
-                                android:layout_width="0dp"
+                                android:id="@+id/tv_invite_count"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:text="赠5元无门槛优惠券"
+                                android:layout_gravity="center_horizontal"
+                                android:layout_marginTop="@dimen/sc_mm_28"
+                                android:layout_marginBottom="@dimen/sc_mm_28"
+                                android:text="@string/vip_invite_num"
                                 android:textColor="@color/text_black_t"
-                                android:textSize="@dimen/sc_mm_28" />
+                                android:textSize="@dimen/sc_mm_32"
+                                android:textStyle="bold" />
 
-                            <TextView
-                                android:id="@+id/tv_inviter_day"
-                                android:layout_width="0dp"
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/rv_invite"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:text="延长15天会员时间"
-                                android:textColor="@color/text_black_t"
-                                android:textSize="@dimen/sc_mm_28" />
+                                android:layout_margin="@dimen/sc_mm_47"
+                                android:layout_marginLeft="@dimen/sc_mm_52"
+                                android:layout_marginTop="@dimen/sc_mm_42"
+                                android:layout_marginRight="@dimen/sc_mm_40"
+                                android:layout_marginBottom="@dimen/sc_mm_20"
+                                android:nestedScrollingEnabled="false" />
                         </LinearLayout>
-
-                        <TextView
-                            android:id="@+id/tv_open_vip"
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/sc_mm_80"
-                            android:layout_marginLeft="@dimen/sc_mm_74"
-                            android:layout_marginRight="@dimen/sc_mm_74"
-                            android:layout_marginBottom="@dimen/sc_mm_22"
-                            android:background="@drawable/share_be_vip_bg"
-                            android:gravity="center"
-                            android:text="不是会员，立刻成为会员"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/sc_mm_32" />
-
-                        <TextView
-                            android:id="@+id/tv_share"
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/sc_mm_80"
-                            android:layout_marginLeft="@dimen/sc_mm_74"
-                            android:layout_marginRight="@dimen/sc_mm_74"
-                            android:background="@drawable/yellow_bg"
-                            android:gravity="center"
-                            android:text="分享给好友"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/sc_mm_32" />
-
-                        <TextView
-                            android:id="@+id/tv_rule"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_marginTop="@dimen/sc_mm_10"
-                            android:layout_marginBottom="@dimen/sc_mm_30"
-                            android:text="更多规则说明>"
-                            android:textColor="@color/text_login_gray_s"
-                            android:textSize="@dimen/sc_mm_28" />
                     </LinearLayout>
-                </LinearLayout>
+                </RelativeLayout>
 
-                <LinearLayout
-                    android:id="@+id/ll_invite"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/sc_mm_22"
-                    android:layout_marginTop="@dimen/sc_mm_45"
-                    android:layout_marginRight="@dimen/sc_mm_22"
-                    android:layout_marginBottom="@dimen/sc_mm_45"
-                    android:background="@drawable/shape_exclusive_coupon_bg"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/tv_invite_count"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="@dimen/sc_mm_28"
-                        android:layout_marginBottom="@dimen/sc_mm_28"
-                        android:text="@string/vip_invite_num"
-                        android:textColor="@color/text_black_t"
-                        android:textSize="@dimen/sc_mm_32"
-                        android:textStyle="bold" />
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rv_invite"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/sc_mm_47"
-                        android:layout_marginLeft="@dimen/sc_mm_52"
-                        android:layout_marginTop="@dimen/sc_mm_42"
-                        android:layout_marginRight="@dimen/sc_mm_40"
-                        android:layout_marginBottom="@dimen/sc_mm_20"
-                        android:nestedScrollingEnabled="false" />
-                </LinearLayout>
-            </LinearLayout>
+                <ImageView
+                    android:id="@+id/iv_rule"
+                    android:layout_width="@dimen/sc_mm_93"
+                    android:layout_height="@dimen/sc_mm_46"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginTop="@dimen/sc_mm_66"
+                    android:src="@drawable/guize" />
+            </RelativeLayout>
         </ScrollView>
-
     </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 </LinearLayout>

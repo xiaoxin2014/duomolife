@@ -24,32 +24,39 @@ public class ShareGiftEntity extends BaseEntity {
     }
 
     public static class ShareGiftBean {
-        private String inviterCouponText;
-        private String inviterVipDaysText;
-        private String inviteeVipText;
 
-        public String getInviterCouponText() {
-            return inviterCouponText;
+        /**
+         * inviteCount : 78
+         * waitGetPrice : 0
+         * perCapitaPrice : 0
+         */
+
+        private String inviteCount;
+        private String waitGetPrice;
+        private String perCapitaPrice;
+
+        public String getInviteCount() {
+            return inviteCount;
         }
 
-        public void setInviterCouponText(String inviterCouponText) {
-            this.inviterCouponText = inviterCouponText;
+        public void setInviteCount(String inviteCount) {
+            this.inviteCount = inviteCount;
         }
 
-        public String getInviterVipDaysText() {
-            return inviterVipDaysText;
+        public String getWaitGetPrice() {
+            return waitGetPrice;
         }
 
-        public void setInviterVipDaysText(String inviterVipDaysText) {
-            this.inviterVipDaysText = inviterVipDaysText;
+        public void setWaitGetPrice(String waitGetPrice) {
+            this.waitGetPrice = waitGetPrice;
         }
 
-        public String getInviteeVipText() {
-            return inviteeVipText;
+        public String getPerCapitaPrice() {
+            return perCapitaPrice;
         }
 
-        public void setInviteeVipText(String inviteeVipText) {
-            this.inviteeVipText = inviteeVipText;
+        public void setPerCapitaPrice(String perCapitaPrice) {
+            this.perCapitaPrice = perCapitaPrice;
         }
     }
 }

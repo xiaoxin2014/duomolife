@@ -754,8 +754,8 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 smart_ql_sp_pro_details.finishRefresh();
-                shopDetailsEntity = GsonUtils.fromJson(result, ShopDetailsEntity.class);
-                if (shopDetailsEntity != null) {
+                    shopDetailsEntity = GsonUtils.fromJson(result, ShopDetailsEntity.class);
+                    if (shopDetailsEntity != null) {
                     if (shopDetailsEntity.getCode().equals(SUCCESS_CODE)) {
                         shopPropertyBean = shopDetailsEntity.getShopPropertyBean();
                         setProductData(shopPropertyBean);
@@ -1124,6 +1124,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     tv_product_activity_description.setVisibility(VISIBLE);
                     mLlScroolDetailPrice.setVisibility(VISIBLE);
                     mLlTimeHoursBottom.setVisibility(VISIBLE);
+                    mLlVipPrice.setVisibility(VISIBLE);
                     startActivityDownTime(mCtCountDownBottom, true);
                 } else if (activityCode.contains("YS")) {
                     rl_product_activity_description.setVisibility(GONE);
@@ -1160,6 +1161,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
                     tv_product_activity_description.setVisibility(VISIBLE);
                     mLlScroolDetailPrice.setVisibility(VISIBLE);
                     mLlTimeHoursBottom.setVisibility(GONE);
+                    mLlVipPrice.setVisibility(VISIBLE);
                     startActivityDownTime(cv_countdownTime_white_hours, false);
                 }
 

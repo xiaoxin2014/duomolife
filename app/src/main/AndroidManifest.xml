@@ -1557,11 +1557,11 @@
 
         <!--分享有礼-->
         <activity
-            android:name=".mine.activity.ShareGiftActivity"
+            android:name=".mine.activity.ShareGiftNewActivity"
             android:exported="false"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="ShareGiftActivity" />
+                <action android:name="ShareGiftNewActivity" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
