@@ -124,7 +124,7 @@ public class CommunalWebDetailUtils {
                         for (LikedProductBean likedProductBean : goodList) {
                             //图片:普通商品
                             boolean isPicture = type.contains("picture") || "picType".equals(likedProductBean.getStyleType());
-                            likedProductBean.setItemType(isPicture ? ConstantVariable.AD_COVER : ConstantVariable.PRODUCT);
+                            likedProductBean.setItemType(isPicture ? ConstantVariable.PICTURE : ConstantVariable.PRODUCT);
                         }
                         detailObjectBean.setGoodsList(goodList);
                     } else if ("picLinkx3".equals(descriptionBean.getType()) || ("goodsX3".equals(descriptionBean.getType()) || "pictureGoodsX3".equals(descriptionBean.getType()))) {
@@ -136,7 +136,7 @@ public class CommunalWebDetailUtils {
                         goodList = goodList.size() > 3 ? goodList.subList(0, 3) : goodList;
                         for (LikedProductBean likedProductBean : goodList) {
                             //图片:普通商品
-                            likedProductBean.setItemType(type.contains("picture") || "picType".equals(likedProductBean.getStyleType()) ? ConstantVariable.AD_COVER : ConstantVariable.PRODUCT);
+                            likedProductBean.setItemType(type.contains("picture") || "picType".equals(likedProductBean.getStyleType()) ? ConstantVariable.PICTURE : ConstantVariable.PRODUCT);
                         }
                         detailObjectBean.setGoodsList(goodList);
                     } else if (descriptionBean.getType().equals("coupon")) {

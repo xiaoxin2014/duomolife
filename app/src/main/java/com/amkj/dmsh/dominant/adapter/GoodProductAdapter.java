@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.base.BaseActivity;
 import com.amkj.dmsh.bean.BaseAddCarProInfoBean;
 import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.dao.AddClickDao;
@@ -28,6 +27,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.skipGroupDetail;
 import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
 import static com.amkj.dmsh.constant.ConstantVariable.AD_COVER;
+import static com.amkj.dmsh.constant.ConstantVariable.PICTURE;
 import static com.amkj.dmsh.constant.ConstantVariable.PRODUCT;
 import static com.amkj.dmsh.dao.OrderDao.addShopCarGetSku;
 
@@ -49,7 +49,8 @@ public class GoodProductAdapter extends BaseMultiItemQuickAdapter<LikedProductBe
     public GoodProductAdapter(Activity context, List<LikedProductBean> goodsProList, int type) {
         super(goodsProList);
         addItemType(PRODUCT, R.layout.item_commual_goods_2x);//普通商品
-        addItemType(AD_COVER, R.layout.item_commual_cover_pic_2x);//封面图片
+        addItemType(PICTURE, R.layout.item_commual_pic_2x);//普通图片
+        addItemType(AD_COVER, R.layout.item_commual_cover_2x);//封面图片
         this.context = context;
         this.type = type;
     }
@@ -59,6 +60,7 @@ public class GoodProductAdapter extends BaseMultiItemQuickAdapter<LikedProductBe
         if (likedProductBean == null) return;
         switch (likedProductBean.getItemType()) {
             //封面图片
+            case PICTURE:
             case AD_COVER:
                 ImageView iv_quality_good_product_ad = helper.getView(R.id.iv_quality_good_product_ad);
                 GlideImageLoaderUtil.loadCenterCrop(context, iv_quality_good_product_ad, getStrings(likedProductBean.getPicUrl()));

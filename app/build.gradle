@@ -18,8 +18,8 @@ android {
         applicationId "com.amkj.dmsh"
         minSdkVersion versions.minSdk
         targetSdkVersion versions.targetSdk
-        versionCode 253
-        versionName '5.1.0'
+        versionCode 254
+        versionName '5.1.1'
         multiDexEnabled true
         ndk {
             //选择要添加的对应cpu类型的.so库。
@@ -290,3 +290,4 @@ dependencies {
     implementation project(':FloatingActionButton')
     implementation(name: 'simplemarqueeviewlib-1.2.0', ext: 'aar')
 }
+

@@ -27,7 +27,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.skipGroupDetail;
 import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
-import static com.amkj.dmsh.constant.ConstantVariable.AD_COVER;
+import static com.amkj.dmsh.constant.ConstantVariable.PICTURE;
 import static com.amkj.dmsh.constant.ConstantVariable.PRODUCT;
 import static com.amkj.dmsh.constant.ConstantVariable.TITLE;
 
@@ -50,7 +50,7 @@ public class CatergoryGoodsAdapter extends BaseMultiItemQuickAdapter<LikedProduc
         super(data);
         addItemType(PRODUCT, R.layout.item_commual_goods_3x);//普通商品
         addItemType(TITLE, R.layout.adapter_new_user_header);//头部标题栏(新人专区)
-        addItemType(AD_COVER, R.layout.item_commual_cover_pic_3x);//封面图片或者图片商品
+        addItemType(PICTURE, R.layout.item_commual_cover_pic_3x);//封面图片或者图片商品
         this.context = context;
         this.isRichText = isRichText;
     }
@@ -96,7 +96,7 @@ public class CatergoryGoodsAdapter extends BaseMultiItemQuickAdapter<LikedProduc
                 ImageView imageView = helper.getView(R.id.iv_type);
                 imageView.setImageResource(likedProductBean.getTitleHead());
                 break;
-            case AD_COVER:
+            case PICTURE:
                 ImageView iv_quality_good_product_ad = helper.getView(R.id.iv_quality_good_product_ad);
                 GlideImageLoaderUtil.loadCenterCrop(context, iv_quality_good_product_ad, getStrings(likedProductBean.getPicUrl()));
                 helper.itemView.setTag(R.id.iv_tag, likedProductBean);

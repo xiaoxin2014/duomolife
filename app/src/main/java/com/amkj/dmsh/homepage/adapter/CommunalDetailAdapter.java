@@ -76,6 +76,7 @@ import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
 import static com.amkj.dmsh.constant.ConstantMethod.setSkipPath;
 import static com.amkj.dmsh.constant.ConstantMethod.showImageActivity;
 import static com.amkj.dmsh.constant.ConstantVariable.IMG_REGEX_TAG;
+import static com.amkj.dmsh.constant.ConstantVariable.PICTURE;
 import static com.amkj.dmsh.constant.ConstantVariable.PRODUCT;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_NUM;
 import static com.amkj.dmsh.constant.ConstantVariable.REGEX_TEXT;
@@ -271,7 +272,7 @@ public class CommunalDetailAdapter extends BaseMultiItemQuickAdapter<CommunalDet
 
                 BaseQuickAdapter communalGoodListAdapter = null;
                 if (holder.getItemViewType() == TYPE_GOODS_2X) {
-                    communalGoodListAdapter = new GoodProductAdapter(context, detailObjectBean.getGoodsList(), 1);
+                    communalGoodListAdapter = new GoodProductAdapter(context, detailObjectBean.getGoodsList(), PICTURE);
                     holder.communal_recycler_wrap.setAdapter(communalGoodListAdapter);
                 } else if (holder.getItemViewType() == TYPE_GOODS_3X) {
                     communalGoodListAdapter = new CatergoryGoodsAdapter((context), detailObjectBean.getGoodsList(), true);

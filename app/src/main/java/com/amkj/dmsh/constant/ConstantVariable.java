@@ -329,8 +329,9 @@ public class ConstantVariable {
      * 商品item类型
      */
     public static final int PRODUCT = 0;//普通商品
-    public static final int AD_COVER = 1;//好物封面
+    public static final int PICTURE = 1;//普通图片
     public static final int TITLE = 2;//标题
+    public static final int AD_COVER = 3;//广告封面
 
 
     /**
