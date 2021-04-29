@@ -3,13 +3,14 @@ package com.amkj.dmsh.views.alertdialog;
 import android.content.Context;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
+import com.amkj.dmsh.base.BaseAlertDialog;
 import com.amkj.dmsh.shopdetails.adapter.PurchaseCoverAdapter;
 import com.amkj.dmsh.shopdetails.bean.IndentWriteEntity.IndentWriteBean.PrerogativeActivityInfo;
 import com.amkj.dmsh.shopdetails.bean.IndentWriteEntity.IndentWriteBean.PrerogativeActivityInfo.GoodsListBean;
-import com.amkj.dmsh.base.BaseAlertDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,7 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getSpannableString;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
 
 /**
  * Created by xiaoxin on 2019/9/30
@@ -44,6 +46,8 @@ public class AlertDialogPurchase extends BaseAlertDialog {
     TextView mTvDicountPrice;
     @BindView(R.id.tv_discount_info)
     TextView mTvDiscountInfo;
+    @BindView(R.id.ll_content)
+    LinearLayout mLlContent;
     private AddOrderListener mAddOrderListener;
     private PurchaseCoverAdapter mPurchaseCoverAdapter;
     private List<GoodsListBean> goodList = new ArrayList<>();
@@ -115,7 +119,7 @@ public class AlertDialogPurchase extends BaseAlertDialog {
         this.mAddOrderListener = addOrderListener;
     }
 
-    @OnClick({R.id.iv_left, R.id.iv_right, R.id.tv_cancle, R.id.tv_add})
+    @OnClick({R.id.iv_left, R.id.iv_right, R.id.tv_cancle, R.id.tv_add, R.id.ll_content})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.iv_left:
@@ -136,6 +140,11 @@ public class AlertDialogPurchase extends BaseAlertDialog {
             case R.id.tv_add:
                 if (mAddOrderListener != null) {
                     mAddOrderListener.addOrderClick();
+                }
+                break;
+            case R.id.ll_content:
+                if (goodList.size() > 0) {
+                    skipProductUrl(context, 1, goodList.get(Math.min(getCurrentItem(), goodList.size() - 1)).getProductId());
                 }
                 break;
         }

@@ -29,5 +29,6 @@ public class PurchaseCoverAdapter extends CommonPagerAdapter<GoodsListBean> {
     public void convert(ViewHolder helper, int position, GoodsListBean item) {
         if (item == null) return;
         GlideImageLoaderUtil.loadImage(mContext, helper.getView(R.id.iv_cover), ConstantMethod.getStrings(item.getPicUrl()));
+        helper.itemView.setOnClickListener(v -> ConstantMethod.skipProductUrl(mContext, 1, item.getProductId()));
     }
 }

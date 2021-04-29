@@ -5,6 +5,7 @@
     android:gravity="center">
 
     <LinearLayout
+        android:id="@+id/ll_content"
         android:background="@drawable/shap_purchase_bg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
