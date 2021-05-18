@@ -191,6 +191,4 @@ public class GoodsCommentEntity extends BaseEntity{
             this.itemType = itemType;
         }
     }
-
-
 }

@@ -81,7 +81,6 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:lines="1"
-                        android:text="@string/defaul"
                         android:textColor="@color/sel_font_gray_s_yel_fsc"
                         android:textSize="@dimen/sc_mm_26" />
                 </LinearLayout>

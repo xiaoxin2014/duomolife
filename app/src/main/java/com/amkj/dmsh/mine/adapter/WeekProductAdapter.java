@@ -2,15 +2,12 @@ package com.amkj.dmsh.mine.adapter;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.view.View;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.user.bean.LikedProductBean;
-import com.amkj.dmsh.utils.ProductLabelCreateUtils;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-import com.google.android.flexbox.FlexboxLayout;
 
 import java.util.List;
 
@@ -40,7 +37,7 @@ public class WeekProductAdapter extends BaseQuickAdapter<LikedProductBean, BaseV
         helper.setText(R.id.tv_name, getStrings(item.getName()))
                 .setText(R.id.tv_quantity, getIntegralFormat(context, R.string.vip_stock, item.getQuantity()))
                 .setGone(R.id.iv_com_pro_tag_out, item.getQuantity() < 1)
-                .setText(R.id.tv_price, "¥" + item.getPrice())
+                .setText(R.id.tv_price, "¥" + ((!TextUtils.isEmpty(item.getVipPrice())) ? item.getVipPrice() : item.getPrice()))
                 .addOnClickListener(R.id.tv_buy_now).setTag(R.id.tv_buy_now, item);
         helper.itemView.setOnClickListener(v -> skipProductUrl(context, 1, item.getId()));
         helper.itemView.setTag(item);

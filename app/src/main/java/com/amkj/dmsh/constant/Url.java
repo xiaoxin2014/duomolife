@@ -870,5 +870,4 @@ public class Url {
     public static final String SELECT_PRODUCT_SKU = "api/goods/userSelectProductSku";
     //奖励提现
     public static final String SUB_CASH_APPLY = "api/vip/vipuser/subCashApply";
-
 }

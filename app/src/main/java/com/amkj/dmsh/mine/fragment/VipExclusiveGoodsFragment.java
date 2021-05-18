@@ -52,7 +52,7 @@ public class VipExclusiveGoodsFragment extends BaseFragment {
     protected void initViews() {
         //初始化会员专享自定义专区
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2);
-        qualityCustomTopicAdapter = new GoodProductAdapter(getActivity(), customProList);
+        qualityCustomTopicAdapter = new GoodProductAdapter(getActivity(), customProList, 2);
         communal_recycler.setLayoutManager(gridLayoutManager);
         communal_recycler.addItemDecoration(new NewGridItemDecoration.Builder()
                 // 设置分隔线资源ID

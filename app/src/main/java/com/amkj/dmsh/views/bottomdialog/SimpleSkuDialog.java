@@ -3,7 +3,6 @@ package com.amkj.dmsh.views.bottomdialog;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import androidx.core.widget.NestedScrollView;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -14,17 +13,20 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckedTextView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.bean.ImageBean;
+import com.amkj.dmsh.find.activity.ImagePagerActivity;
 import com.amkj.dmsh.shopdetails.bean.EditGoodsSkuEntity.EditGoodsSkuBean;
 import com.amkj.dmsh.shopdetails.bean.PropsBean;
 import com.amkj.dmsh.shopdetails.bean.PropvaluesBean;
 import com.amkj.dmsh.shopdetails.bean.ShopCarGoodsSku;
 import com.amkj.dmsh.shopdetails.bean.SkuSaleBean;
+import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.views.RectAddAndSubViewDirect;
 
 import java.util.ArrayList;
@@ -39,6 +41,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import androidx.core.widget.NestedScrollView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -48,9 +51,9 @@ import static android.view.View.inflate;
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeFloat;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.showToast;
 
-;
 
 /**
  * @author zwy
@@ -163,14 +166,17 @@ public class SimpleSkuDialog implements KeywordContainer.OnClickKeywordListener 
                     public void onGlobalLayout() {
                         scrollView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                         ViewGroup.LayoutParams layoutParams = scrollView.getLayoutParams();
-                        layoutParams.height = AutoSizeUtils.mm2px(mAppContext,600);
+                        layoutParams.height = AutoSizeUtils.mm2px(mAppContext, 600);
                         scrollView.setLayoutParams(layoutParams);
                     }
                 });
             }
         }
         final ProductSkuBean productSkuBean = getSkuShow(this.editGoodsSkuBean);
-        skuDialogView.ll_product_sku_header.setVisibility(View.GONE);
+        skuDialogView.rel_rect_count.setVisibility(View.GONE);
+        GlideImageLoaderUtil.loadCenterCrop(baseAct.getApplicationContext(), skuDialogView.rImg_direct_attribute_product, this.editGoodsSkuBean.getPicUrl());
+        skuDialogView.rImg_direct_attribute_product.setTag(R.id.iv_tag, getStrings(this.editGoodsSkuBean.getPicUrl()));
+        skuDialogView.tv_dir_indent_pro_name.setText(this.editGoodsSkuBean.getProductName());
         for (int i = 0; i < this.editGoodsSkuBean.getPropvalues().size(); i++) {
             PropvaluesBean propValuesBean = this.editGoodsSkuBean.getPropvalues().get(i);
             if (!TextUtils.isEmpty(propValuesBean.getPropValueUrl())
@@ -242,12 +248,13 @@ public class SimpleSkuDialog implements KeywordContainer.OnClickKeywordListener 
         }
         rel_rect_count.setVisibility(numCount < 1 ? View.GONE : View.VISIBLE);
         rectAddAndSubViewDirect.tv_direct_number_layout.setText("数量");
-        rectAddAndSubViewDirect.tv_direct_number_layout.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(mAppContext,28));
+        rectAddAndSubViewDirect.tv_direct_number_layout.setTextSize(TypedValue.COMPLEX_UNIT_PX, AutoSizeUtils.mm2px(mAppContext, 28));
         rectAddAndSubViewDirect.tv_direct_number_layout.setTextColor(baseAct.getResources().getColor(R.color.text_black_t));
         rectAddAndSubViewDirect.setNum(numCount == 0 ? 1 : numCount);
         rectAddAndSubViewDirect.setOnNumChangeListener(new RectAddAndSubViewDirect.OnNumChangeListener() {
             @Override
-            public void onNumChange(View view, int stype, int num) {}
+            public void onNumChange(View view, int stype, int num) {
+            }
 
             @Override
             public void onMaxQuantity(View view, int num) {
@@ -719,6 +726,10 @@ public class SimpleSkuDialog implements KeywordContainer.OnClickKeywordListener 
                             newValues.get(i).setSelected(true);
                             newValues.get(i).setNotice(0);
                         }
+                        if (!TextUtils.isEmpty(productParameterValueBean.getPropValueUrl())) {
+                            GlideImageLoaderUtil.loadCenterCrop(baseAct.getApplicationContext(), skuDialogView.rImg_direct_attribute_product, productParameterValueBean.getPropValueUrl());
+                            skuDialogView.rImg_direct_attribute_product.setTag(R.id.iv_tag, getStrings(productParameterValueBean.getPropValueUrl()));
+                        }
                     } else {
                         //                        是否已选择过该类型
                         if (newValues.get(i).isSelected()) {
@@ -858,7 +869,31 @@ public class SimpleSkuDialog implements KeywordContainer.OnClickKeywordListener 
             if (valuesAppend.length() > 0) {
                 valuesAppend.deleteCharAt(valuesAppend.length() - 1);
             }
-
+            for (int i = 0; i < skuSaleList.size(); i++) {
+                SkuSaleBean skuSaleBean = skuSaleList.get(i);
+                if (valuesAppend.toString().equals(skuSaleBean.getPropValues())) {
+                    if (numQuantity > skuSaleBean.getQuantity()) {
+                        rectAddAndSubViewDirect.setNum(skuSaleBean.getQuantity());
+                    }
+                    for (ProductParameterTypeBean pro : productParameterTypeBeanList) {
+                        for (ProductParameterValueBean productValue : pro.getValues()) {
+                            if (valuesAppend.toString().contains(String.valueOf(productValue.getPropId()))) {
+                                productValue.setNotice(skuSaleBean.getIsNotice());
+                            }
+                        }
+                    }
+                    if (skuSaleBean.getIsNotice() == 1 || skuSaleBean.getIsNotice() == 2) {
+                        skuDialogView.tv_dir_indent_pro_quality.setSelected(false);
+                        skuDialogView.tv_dir_indent_pro_quality.setText("缺货");
+                        skuDialogView.rel_rect_count.setVisibility(View.GONE);
+                    } else {
+                        skuDialogView.tv_dir_indent_pro_quality.setSelected(true);
+                        skuDialogView.tv_dir_indent_pro_quality.setText(skuSaleBean.getQuantity() > 0 ? ("库存：" + skuSaleBean.getQuantity()) : "");
+                    }
+                    skuDialogView.tv_dir_indent_pro_price.setText((getStringsFormat(baseAct, R.string.integral_product_and_price2, skuSaleBean.getPrice(), skuSaleBean.getMoneyPrice())));
+                    break;
+                }
+            }
         }
     }
 
@@ -902,12 +937,23 @@ public class SimpleSkuDialog implements KeywordContainer.OnClickKeywordListener 
     }
 
     class SkuDialogView {
+        @BindView(R.id.iv_dir_indent_pro)
+        ImageView rImg_direct_attribute_product;
+        @BindView(R.id.tv_dir_indent_pro_price)
+        TextView tv_dir_indent_pro_price;
+        @BindView(R.id.tv_dir_indent_pro_quality)
+        TextView tv_dir_indent_pro_quality;
+        @BindView(R.id.tv_dir_indent_pro_name)
+        TextView tv_dir_indent_pro_name;
         @BindView(R.id.ll_product_sku_header)
         LinearLayout ll_product_sku_header;
         @BindView(R.id.layout_parameter_slp)
         LinearLayout layout_parameter_slp;
         @BindView(R.id.bt_direct_attribute_buy)
         Button bt_direct_attribute_buy;
+        @BindView(R.id.rel_rect_count)
+        RelativeLayout rel_rect_count;
+
 
         //     确定
         @OnClick(R.id.bt_direct_attribute_buy)
@@ -918,6 +964,28 @@ public class SimpleSkuDialog implements KeywordContainer.OnClickKeywordListener 
         @OnClick(R.id.dialog_layout_slp)
         void closeDialog(View view) {
             getBackCloseKey();
+        }
+
+        /**
+         * 放大图片
+         *
+         * @param view
+         */
+        @OnClick(R.id.iv_dir_indent_pro)
+        void enlargePic(View view) {
+            String picUrl = (String) view.getTag(R.id.iv_tag);
+            int picPosition = 0;
+            if (!TextUtils.isEmpty(picUrl)) {
+                if (picValueList.size() > 0) {
+                    for (int i = 0; i < picValueList.size(); i++) {
+                        ImageBean imageBean = picValueList.get(i);
+                        if (picUrl.equals(imageBean.getPicUrl())) {
+                            picPosition = i;
+                        }
+                    }
+                    ImagePagerActivity.startImagePagerActivity(baseAct, ImagePagerActivity.IMAGE_PRO, picValueList, picPosition);
+                }
+            }
         }
     }
 

@@ -652,7 +652,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             switch (view.getId()) {
                 case R.id.tv_eva_count:
                     GoodsCommentBean goodsCommentBean = (GoodsCommentBean) view.getTag();
-                    if (goodsCommentBean != null && !goodsCommentBean.isFavor()) {
+                    if (goodsCommentBean != null) {
                         if (userId > 0) {
                             setProductEvaLike(view);
                         } else {
@@ -754,8 +754,8 @@ public class ShopScrollDetailsActivity extends BaseActivity {
             @Override
             public void onSuccess(String result) {
                 smart_ql_sp_pro_details.finishRefresh();
-                    shopDetailsEntity = GsonUtils.fromJson(result, ShopDetailsEntity.class);
-                    if (shopDetailsEntity != null) {
+                shopDetailsEntity = GsonUtils.fromJson(result, ShopDetailsEntity.class);
+                if (shopDetailsEntity != null) {
                     if (shopDetailsEntity.getCode().equals(SUCCESS_CODE)) {
                         shopPropertyBean = shopDetailsEntity.getShopPropertyBean();
                         setProductData(shopPropertyBean);
@@ -936,6 +936,7 @@ public class ShopScrollDetailsActivity extends BaseActivity {
         params.put("uid", userId);
         NetLoadUtils.getNetInstance().loadNetDataPost(this, url, params, null);
         goodsCommentBean.setFavor(!goodsCommentBean.isFavor());
+        goodsCommentBean.setLikeNum(goodsCommentBean.isFavor() ? goodsCommentBean.getLikeNum() + 1 : goodsCommentBean.getLikeNum() - 1);
         tv_eva_like.setSelected(!tv_eva_like.isSelected());
         tv_eva_like.setText(ConstantMethod.getNumCount(tv_eva_like.isSelected(), goodsCommentBean.isFavor(), goodsCommentBean.getLikeNum(), "赞"));
     }

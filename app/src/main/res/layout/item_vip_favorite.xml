@@ -32,31 +32,52 @@
         android:textSize="@dimen/sc_mm_24" />
 
     <LinearLayout
-        android:layout_marginBottom="@dimen/sc_mm_20"
+        android:id="@+id/ll_price"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/sc_mm_12"
-        android:layout_marginTop="@dimen/sc_mm_15"
-        android:layout_marginRight="@dimen/sc_mm_14"
-        android:gravity="bottom"
+        android:layout_marginLeft="@dimen/sc_mm_8"
+        android:layout_marginTop="@dimen/sc_mm_8"
         android:orientation="horizontal">
 
         <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="原价"
+            android:textColor="@color/color_blue_reply_com"
+            android:textSize="@dimen/sc_mm_20" />
+
+        <TextView
             android:id="@+id/tv_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/defaul"
+            android:textColor="@color/color_blue_reply_com"
+            android:textSize="@dimen/sc_mm_20" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/sc_mm_12"
+        android:layout_marginTop="@dimen/sc_mm_8"
+        android:layout_marginRight="@dimen/sc_mm_14"
+        android:layout_marginBottom="@dimen/sc_mm_20"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="@dimen/sc_mm_48"
+            android:layout_height="@dimen/sc_mm_28"
+            android:src="@drawable/vip_small" />
+
+        <TextView
+            android:id="@+id/tv_vip_price"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/sc_mm_10"
             android:layout_weight="1"
             android:text="价格"
             android:textColor="#FFFF0000"
-            android:textSize="@dimen/sc_mm_32"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/tv_market_price"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="市场价"
-            android:textColor="@color/color_blue_reply_com"
-            android:textSize="@dimen/sc_mm_24" />
+            android:textSize="@dimen/sc_mm_30" />
     </LinearLayout>
 </LinearLayout>

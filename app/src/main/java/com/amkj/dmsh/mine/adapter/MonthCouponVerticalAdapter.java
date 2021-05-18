@@ -32,12 +32,12 @@ public class MonthCouponVerticalAdapter extends BaseQuickAdapter<CouponListBean,
     @Override
     protected void convert(BaseViewHolder helper, CouponListBean item) {
         if (item == null) return;
-        double progress = DoubleUtil.div(item.getRobCount(), item.getTotalCount(), 2) * 100;
+        double progress = DoubleUtil.div(String.valueOf(item.getRobCount() * 100), String.valueOf(item.getTotalCount()), 2);
         helper.setText(R.id.tv_amount, getStrings(item.getAmount()))
                 .setText(R.id.tv_condition, getStrings(item.getCouponTitle()))
                 .setText(R.id.tv_range, getStrings(item.getCouponDesc()))
                 .setText(R.id.tv_time, getStrings(item.getTimeText()))
-                .setText(R.id.tv_get_coupon, item.isSoldOut() ? "已抢光" : "立即领取")
+                .setText(R.id.tv_get_coupon, item.isSoldOut() ? "已抢光" : (item.isDraw() ? "已领取" : "立即领取"))
                 .setTextColor(R.id.tv_get_coupon, context.getResources().getColor(item.isSoldOut() ? R.color.text_black_t : R.color.white))
                 .setEnabled(R.id.tv_get_coupon, !item.isSoldOut())
                 .setProgress(R.id.progress_coupon, ((int) progress))

@@ -92,10 +92,16 @@ public class DoubleUtil {
      * @return 两个参数的商
      */
     public static double div(double v1, double v2, int scale) {
+        return div(Double.toString(v1), Double.toString(v2), scale);
+    }
+
+    public static double div(String v1, String v2, int scale) {
         try {
-            BigDecimal b1 = new BigDecimal(Double.toString(v1));
-            BigDecimal b2 = new BigDecimal(Double.toString(v2));
-            return b1.divide(b2, scale, BigDecimal.ROUND_HALF_UP).doubleValue();
+            BigDecimal b1 = new BigDecimal(v1);
+            BigDecimal b2 = new BigDecimal(v2);
+            BigDecimal divide = b1.divide(b2, scale, BigDecimal.ROUND_HALF_UP);
+            double v = divide.doubleValue();
+            return v;
         } catch (Exception e) {
             return 0;
         }

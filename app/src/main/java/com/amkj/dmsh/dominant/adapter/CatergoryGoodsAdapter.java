@@ -4,9 +4,9 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.amkj.dmsh.R;
-import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.amkj.dmsh.user.bean.LikedProductBean;
 import com.amkj.dmsh.user.bean.MarketLabelBean;
@@ -22,9 +22,9 @@ import androidx.annotation.Nullable;
 import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
-import static com.amkj.dmsh.constant.ConstantMethod.getSpannableString;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
+import static com.amkj.dmsh.constant.ConstantMethod.isVip;
 import static com.amkj.dmsh.constant.ConstantMethod.skipGroupDetail;
 import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
 import static com.amkj.dmsh.constant.ConstantVariable.PICTURE;
@@ -60,13 +60,26 @@ public class CatergoryGoodsAdapter extends BaseMultiItemQuickAdapter<LikedProduc
         if (likedProductBean == null) return;
         switch (helper.getItemViewType()) {
             case PRODUCT:
-                String economizeNum = getStringsFormat(context, R.string.economize_money, getStrings(likedProductBean.getDecreasePrice()));
                 GlideImageLoaderUtil.loadSquareImg(context, helper.getView(R.id.iv_goods_pic), likedProductBean.getPicUrl(), likedProductBean.getWaterRemark(), AutoSizeUtils.mm2px(mAppContext, 236));
                 helper.setGone(R.id.iv_com_pro_tag_out, likedProductBean.getQuantity() < 1)
-                        .setText(R.id.tv_price, ConstantMethod.getRmbFormat(context, likedProductBean.getPrice()))
-                        .setText(R.id.tv_name, getStrings(likedProductBean.getName()))
-                        .setGone(R.id.tv_economize_money, !TextUtils.isEmpty(likedProductBean.getDecreasePrice()))
-                        .setText(R.id.tv_economize_money, getSpannableString(economizeNum, 1, economizeNum.length() - 1, 0, "#ff5e6b"));
+                        .setText(R.id.tv_name, getStrings(likedProductBean.getName()));
+
+                //商品价格
+                TextView tvPrice = helper.getView(R.id.tv_price);
+                ImageView ivLogoFront = helper.getView(R.id.iv_vip_logo_front);
+                String activityCode = likedProductBean.getActivityCode();
+                if (!TextUtils.isEmpty(activityCode) && activityCode.contains("XSG")) {
+                    tvPrice.setText(getStringsChNPrice(context, likedProductBean.getPrice()));
+                    ivLogoFront.setVisibility(View.GONE);
+                } else {
+                    if (isVip() && !TextUtils.isEmpty(likedProductBean.getVipPrice())) {
+                        tvPrice.setText(getStringsChNPrice(context, likedProductBean.getVipPrice()));
+                        ivLogoFront.setVisibility(View.VISIBLE);
+                    } else {
+                        tvPrice.setText(getStringsChNPrice(context, likedProductBean.getPrice()));
+                        ivLogoFront.setVisibility(View.GONE);
+                    }
+                }
 
                 FlexboxLayout fbl_market_label = helper.getView(R.id.fbl_market_label);
                 fbl_market_label.removeAllViews();

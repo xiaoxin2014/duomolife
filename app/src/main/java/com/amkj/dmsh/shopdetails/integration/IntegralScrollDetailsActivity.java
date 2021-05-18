@@ -500,6 +500,8 @@ public class IntegralScrollDetailsActivity extends BaseActivity {
         }
         if (productInfoBean.getSkuSale().size() > 1) {
             EditGoodsSkuBean editGoodsSkuBean = new EditGoodsSkuBean();
+            editGoodsSkuBean.setPicUrl(productInfoBean.getPicUrl());
+            editGoodsSkuBean.setProductName(productInfoBean.getName());
             editGoodsSkuBean.setQuantity(productInfoBean.getQuantity());
             editGoodsSkuBean.setId(productInfoBean.getId());
             editGoodsSkuBean.setProps(productInfoBean.getProps());

@@ -3,7 +3,6 @@ package com.amkj.dmsh.user.bean;
 import android.text.TextUtils;
 
 import com.amkj.dmsh.base.BaseRemoveExistProductBean;
-import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.ConstantVariable;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.google.gson.annotations.SerializedName;
@@ -59,7 +58,15 @@ public class LikedProductBean extends BaseRemoveExistProductBean implements Mult
     private String vipTag;
     private String marketPrice;
     private String vipReduce;
+    private String oldPrice;
 
+    public String getOldPrice() {
+        return oldPrice;
+    }
+
+    public void setOldPrice(String oldPrice) {
+        this.oldPrice = oldPrice;
+    }
 
     public String getVipReduce() {
         return vipReduce;
@@ -266,7 +273,7 @@ public class LikedProductBean extends BaseRemoveExistProductBean implements Mult
     }
 
     public String getPrice() {
-        return ConstantMethod.getStringChangeDouble(vipPrice) > 0 ? vipPrice : price;
+        return price;
     }
 
     public void setPrice(String price) {

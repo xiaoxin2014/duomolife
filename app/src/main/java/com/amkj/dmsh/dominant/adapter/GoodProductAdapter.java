@@ -1,13 +1,15 @@
 package com.amkj.dmsh.dominant.adapter;
 
 import android.app.Activity;
+import android.graphics.Paint;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.amkj.dmsh.R;
 import com.amkj.dmsh.bean.BaseAddCarProInfoBean;
-import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.dao.AddClickDao;
 import com.amkj.dmsh.user.bean.LikedProductBean;
 import com.amkj.dmsh.user.bean.MarketLabelBean;
@@ -23,7 +25,8 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 
 import static com.amkj.dmsh.base.TinkerBaseApplicationLike.mAppContext;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
-import static com.amkj.dmsh.constant.ConstantMethod.getStringsFormat;
+import static com.amkj.dmsh.constant.ConstantMethod.getStringsChNPrice;
+import static com.amkj.dmsh.constant.ConstantMethod.isVip;
 import static com.amkj.dmsh.constant.ConstantMethod.skipGroupDetail;
 import static com.amkj.dmsh.constant.ConstantMethod.skipProductUrl;
 import static com.amkj.dmsh.constant.ConstantVariable.AD_COVER;
@@ -40,7 +43,7 @@ import static com.amkj.dmsh.dao.OrderDao.addShopCarGetSku;
 
 public class GoodProductAdapter extends BaseMultiItemQuickAdapter<LikedProductBean, BaseViewHolder> {
     private Activity context;
-    private int type;//0默认类型 1富文本 2多么会员价
+    private int type;//0默认类型 1富文本 2多么会员专享价
 
     public GoodProductAdapter(Activity context, List<LikedProductBean> goodsProList) {
         this(context, goodsProList, 0);
@@ -74,11 +77,38 @@ public class GoodProductAdapter extends BaseMultiItemQuickAdapter<LikedProductBe
                         .setText(R.id.tv_qt_pro_descrip, getStrings(likedProductBean.getSubtitle()))
                         .setText(R.id.tv_qt_pro_name, !TextUtils.isEmpty(likedProductBean.getName()) ?
                                 getStrings(likedProductBean.getName()) : getStrings(likedProductBean.getTitle()))
-                        .setText(R.id.tv_qt_pro_price, ConstantMethod.getRmbFormat(context, likedProductBean.getPrice()))
-                        .addOnClickListener(R.id.iv_pro_add_car).setTag(R.id.iv_pro_add_car, likedProductBean)
-                        .setGone(R.id.iv_pro_add_car, type != 2)
-                        .setText(R.id.tv_save, getStringsFormat(context, R.string.vip_save_money, likedProductBean.getVipReduce()))
-                        .setGone(R.id.ll_save, type == 2 && !TextUtils.isEmpty(likedProductBean.getVipReduce()));
+                        .addOnClickListener(R.id.iv_pro_add_car).setTag(R.id.iv_pro_add_car, likedProductBean);
+
+                //商品价格
+                TextView tvPrice = helper.getView(R.id.tv_qt_pro_price);
+                ImageView ivLogoFront = helper.getView(R.id.iv_vip_logo_front);
+                TextView tvOldPrice = helper.getView(R.id.tv_old_price);
+                tvOldPrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG); //删除线
+                TextView tvVipPrice = helper.getView(R.id.tv_vip_price);
+                ImageView ivLogo = helper.getView(R.id.iv_vip_logo);
+                LinearLayout llVipPrice = helper.getView(R.id.ll_vip_price);
+                String activityCode = likedProductBean.getActivityCode();
+                if (!TextUtils.isEmpty(activityCode) && activityCode.contains("XSG")) {
+                    tvOldPrice.setVisibility(!TextUtils.isEmpty(likedProductBean.getOldPrice()) ? View.VISIBLE : View.GONE);
+                    llVipPrice.setVisibility(View.GONE);
+                    ivLogoFront.setVisibility(View.GONE);
+                    tvPrice.setText(getStringsChNPrice(context, likedProductBean.getPrice()));
+                    tvOldPrice.setText(getStringsChNPrice(context, likedProductBean.getOldPrice()));
+                } else {
+                    tvOldPrice.setVisibility(View.GONE);
+                    llVipPrice.setVisibility(!TextUtils.isEmpty(likedProductBean.getVipPrice()) && type != 2 ? View.VISIBLE : View.GONE);//多么会员专享价只要显示一个价格
+                    if (isVip() && !TextUtils.isEmpty(likedProductBean.getVipPrice())) {
+                        tvPrice.setText(getStringsChNPrice(context, likedProductBean.getVipPrice()));
+                        ivLogoFront.setVisibility(View.VISIBLE);
+                        tvVipPrice.setText(getStringsChNPrice(context, likedProductBean.getPrice()));
+                        ivLogo.setVisibility(View.GONE);
+                    } else {
+                        tvPrice.setText(getStringsChNPrice(context, likedProductBean.getPrice()));
+                        ivLogoFront.setVisibility(View.GONE);
+                        tvVipPrice.setText(getStringsChNPrice(context, likedProductBean.getVipPrice()));
+                        ivLogo.setVisibility(View.VISIBLE);
+                    }
+                }
 
                 //加入购物车
                 if (likedProductBean.getType_id() == 1) {//只有自营商品才能加入购物车

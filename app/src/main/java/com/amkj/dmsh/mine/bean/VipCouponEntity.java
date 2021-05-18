@@ -101,6 +101,15 @@ public class VipCouponEntity extends BaseEntity {
             private String totalCount;
             private String robCount;
             private String startFee;
+            private String isDraw;
+
+            public boolean isDraw() {
+                return "1".equals(isDraw);
+            }
+
+            public void setIsDraw(String isDraw) {
+                this.isDraw = isDraw;
+            }
 
             public int getStartFee() {
                 return ConstantMethod.getStringChangeIntegers(startFee);

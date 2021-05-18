@@ -19,7 +19,7 @@ import com.amkj.dmsh.constant.ConstantMethod;
 import com.amkj.dmsh.constant.UMShareAction;
 import com.amkj.dmsh.constant.Url;
 import com.amkj.dmsh.dominant.activity.QualityTypeHotSaleProActivity;
-import com.amkj.dmsh.dominant.adapter.GoodProductAdapter;
+import com.amkj.dmsh.dominant.adapter.VipPriceAdapter;
 import com.amkj.dmsh.mine.adapter.MonthCouponAdapter;
 import com.amkj.dmsh.mine.adapter.PowerBottomAdapter;
 import com.amkj.dmsh.mine.adapter.PowerTopAdapter;
@@ -240,7 +240,7 @@ public class DomolifeVipActivity extends BaseActivity {
     private CalculatorEntity mCalculatorEntity;
     private AlertDialogCalculator mAlertDialogCalculator;
     private WeekProductAdapter mWeekProductAdapter;
-    private GoodProductAdapter mVipPriceAdapter;
+    private VipPriceAdapter mVipPriceAdapter;
     private VipFavoriteAdapter mVipFavoriteAdapter;
     private ZeroInfoBean mZeroInfoBean;
     private String cardGiftCover;
@@ -312,7 +312,7 @@ public class DomolifeVipActivity extends BaseActivity {
         mRvVipPrice.addItemDecoration(new ItemDecoration.Builder()
                 .setDividerId(R.drawable.item_divider_ten_white)
                 .create());
-        mVipPriceAdapter = new GoodProductAdapter(this, mVipGoodsList, 2);
+        mVipPriceAdapter = new VipPriceAdapter(this, mVipGoodsList);
         mRvVipPrice.setAdapter(mVipPriceAdapter);
         //初始化会员最爱买商品列表
         GridLayoutManager favoriteLayoutManager = new GridLayoutManager(this, 3);

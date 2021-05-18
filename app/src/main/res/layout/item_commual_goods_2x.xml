@@ -56,38 +56,86 @@
         android:textColor="@color/text_gray_hint_n"
         android:textSize="@dimen/sc_mm_22" />
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/sc_mm_20"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
         android:paddingLeft="@dimen/sc_mm_12">
+
+        <ImageView
+            android:visibility="gone"
+            android:id="@+id/iv_vip_logo_front"
+            android:layout_width="@dimen/sc_mm_108"
+            android:layout_height="@dimen/sc_mm_30"
+            android:layout_centerVertical="true"
+            android:src="@drawable/vip_prive" />
 
         <TextView
             android:id="@+id/tv_qt_pro_price"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/sc_mm_8"
             android:layout_marginRight="@dimen/sc_mm_12"
-            android:layout_weight="1"
+            android:layout_toRightOf="@+id/iv_vip_logo_front"
             android:ellipsize="end"
             android:gravity="center_vertical"
             android:maxLines="1"
             android:text="@string/defaul"
-            android:textColor="@color/text_red_color"
-            android:textSize="@dimen/sc_mm_28" />
+            android:textColor="@color/red"
+            android:textSize="@dimen/sc_mm_30" />
 
-        <include
-            layout="@layout/layout_vip_save"
+
+        <TextView
+            android:id="@+id/tv_old_price"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/sc_mm_34" />
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/tv_qt_pro_price"
+            android:text="@string/defaul"
+            android:textColor="@color/color_blue_reply_com"
+            android:textSize="@dimen/sc_mm_22"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/ll_vip_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/tv_qt_pro_price"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/sc_mm_10"
+            android:paddingRight="@dimen/sc_mm_10">
+
+            <ImageView
+                android:id="@+id/iv_vip_logo"
+                android:layout_width="@dimen/sc_mm_87"
+                android:layout_height="@dimen/sc_mm_24"
+                android:src="@drawable/vip_prive" />
+
+            <TextView
+                android:id="@+id/tv_vip_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/sc_mm_7"
+                android:ellipsize="end"
+                android:gravity="bottom"
+                android:maxLines="1"
+                android:paddingRight="@dimen/sc_mm_4"
+                android:text="@string/defaul"
+                android:textColor="@color/text_black_t"
+                android:textSize="@dimen/sc_mm_22" />
+        </LinearLayout>
 
         <ImageView
             android:id="@+id/iv_pro_add_car"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:gravity="center_vertical"
             android:padding="@dimen/sc_mm_5"
             android:src="@drawable/sel_ql_shop_b_car"
             android:visibility="visible" />
-    </LinearLayout>
+    </RelativeLayout>
 </LinearLayout>
