@@ -1,5 +1,6 @@
 package com.amkj.dmsh.mine.activity;
 
+import android.content.Intent;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
@@ -13,6 +14,7 @@ import com.amkj.dmsh.mine.bean.VipCouponEntity;
 import com.amkj.dmsh.mine.bean.VipCouponEntity.VipCouponBean.CouponListBean;
 import com.amkj.dmsh.network.NetLoadListenerHelper;
 import com.amkj.dmsh.network.NetLoadUtils;
+import com.amkj.dmsh.shopdetails.activity.DirectMyCouponActivity;
 import com.amkj.dmsh.utils.glide.GlideImageLoaderUtil;
 import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.webformatdata.CommunalWebDetailUtils;
@@ -76,12 +78,19 @@ public class MonthCouponListActivity extends BaseActivity {
         mRvCoupon.setAdapter(mVipCouponAdapter);
         mVipCouponAdapter.setOnItemClickListener((adapter, view, position) -> {
             CouponListBean couponListBean = (CouponListBean) view.getTag();
-            if (couponListBean == null || couponListBean.isSoldOut()) return;
-            if (userId > 0) {
-                CommunalWebDetailUtils.getCommunalWebInstance().getDirectCoupon(getActivity(), couponListBean.getCouponId(), loadHud);
-            } else {
-                getLoginStatus(getActivity());
+            if (couponListBean != null) {
+                if (couponListBean.isDraw()) {
+                    Intent intent = new Intent(getActivity(), DirectMyCouponActivity.class);
+                    startActivity(intent);
+                } else if (!couponListBean.isSoldOut()) {
+                    if (userId > 0) {
+                        CommunalWebDetailUtils.getCommunalWebInstance().getDirectCoupon(getActivity(), couponListBean.getCouponId(), loadHud);
+                    } else {
+                        getLoginStatus(getActivity());
+                    }
+                }
             }
+
         });
         mSmartCommunalRefresh.setOnRefreshListener(refreshLayout -> loadData());
     }

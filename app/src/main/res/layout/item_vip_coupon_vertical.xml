@@ -95,11 +95,11 @@
             android:layout_width="@dimen/sc_mm_108"
             android:layout_height="@dimen/sc_mm_14"
             android:layout_marginTop="@dimen/sc_mm_12"
+            android:background="@drawable/shape_coupon_percent_bg"
             android:max="100"
             android:padding="0mm"
-            android:background="@drawable/shape_coupon_percent_bg"
-            android:progressDrawable="@drawable/shape_coupon_percent_progress"
             android:progress="50"
+            android:progressDrawable="@drawable/shape_coupon_percent_progress"
             android:thumb="@null" />
 
         <TextView
@@ -107,7 +107,7 @@
             android:layout_width="@dimen/sc_mm_130"
             android:layout_height="@dimen/sc_mm_44"
             android:layout_marginTop="@dimen/sc_mm_23"
-            android:background="@drawable/sel_get_coupon_bg"
+            android:background="@drawable/sel_vip_coupon_get"
             android:gravity="center"
             android:text="立即领取"
             android:textColor="@color/sel_get_coupon_color"

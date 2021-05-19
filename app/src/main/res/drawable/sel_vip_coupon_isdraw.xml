@@ -3,14 +3,8 @@
     <item android:state_enabled="false">
         <shape>
             <corners android:radius="@dimen/sc_mm_22" />
-            <solid android:color="#FFFFE08E" />
-        </shape>
-    </item>
-
-    <item>
-        <shape>
-            <corners android:radius="@dimen/sc_mm_22" />
-            <solid android:color="#FFFF8400" />
+            <solid android:color="@color/transparent" />
+            <stroke android:width="@dimen/sc_mm_1" android:color="@color/text_black_t" />
         </shape>
     </item>
 </selector>

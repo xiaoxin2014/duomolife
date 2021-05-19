@@ -37,11 +37,12 @@ public class MonthCouponVerticalAdapter extends BaseQuickAdapter<CouponListBean,
                 .setText(R.id.tv_condition, getStrings(item.getCouponTitle()))
                 .setText(R.id.tv_range, getStrings(item.getCouponDesc()))
                 .setText(R.id.tv_time, getStrings(item.getTimeText()))
-                .setText(R.id.tv_get_coupon, item.isSoldOut() ? "已抢光" : (item.isDraw() ? "已领取" : "立即领取"))
-                .setTextColor(R.id.tv_get_coupon, context.getResources().getColor(item.isSoldOut() ? R.color.text_black_t : R.color.white))
+                .setText(R.id.tv_get_coupon, item.isSoldOut() ? "已抢光" : (item.isDraw() ? "去使用" : "立即领取"))
+                .setTextColor(R.id.tv_get_coupon, context.getResources().getColor(item.isSoldOut() || item.isDraw() ? R.color.text_black_t : R.color.white))
                 .setEnabled(R.id.tv_get_coupon, !item.isSoldOut())
-                .setProgress(R.id.progress_coupon, ((int) progress))
-                .setText(R.id.tv_percent, "已抢" + stripTrailingZeros(String.valueOf(Math.min(progress, 100.0f))) + "%");
+                .setBackgroundRes(R.id.tv_get_coupon, item.isSoldOut() ? R.drawable.sel_vip_coupon_soldout : (item.isDraw() ? R.drawable.sel_vip_coupon_isdraw : R.drawable.sel_vip_coupon_get))
+                .setProgress(R.id.progress_coupon, item.isDraw() ? 100 : ((int) progress))
+                .setText(R.id.tv_percent, item.isDraw() ? "已领取" : "已抢" + stripTrailingZeros(String.valueOf(Math.min(progress, 100.0f))) + "%");
         ((ProgressBar) helper.getView(R.id.progress_coupon)).setProgressDrawable(context.getResources().getDrawable(
                 item.isSoldOut() ? R.drawable.shape_coupon_percent_progress_100 : R.drawable.shape_coupon_percent_progress));
         helper.itemView.setTag(item);
