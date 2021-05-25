@@ -53,12 +53,12 @@ public class TimePostAdapter extends BaseQuickAdapter<PostBean, BaseViewHolder> 
             link.setBgRadius(AutoSizeUtils.mm2px(context, 5));
             link.setUnderlined(false);
             link.setHighlightAlpha(0f);
-            CharSequence charSequence = LinkBuilder.from(context, link.getText() + " " + item.getContent())
+            CharSequence charSequence = LinkBuilder.from(context, link.getText() + " " + item.getTitle())
                     .addLink(link)
                     .build();
             tvContent.setText(charSequence);
         } else {
-            tvContent.setText(item.getContent());
+            tvContent.setText(item.getTitle());
         }
 
         tvContent.setMaxLines(!TextUtils.isEmpty(item.getCover()) ? 2 : 5);//纯文本最多显示5行，否则2行

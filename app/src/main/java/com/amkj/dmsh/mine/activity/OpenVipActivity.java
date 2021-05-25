@@ -33,7 +33,6 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 import static android.view.View.GONE;
-import static com.amkj.dmsh.constant.ConstantMethod.getIntegralFormat;
 import static com.amkj.dmsh.constant.ConstantMethod.getLoginStatus;
 import static com.amkj.dmsh.constant.ConstantMethod.getStringChangeIntegers;
 import static com.amkj.dmsh.constant.ConstantMethod.getStrings;
@@ -82,8 +81,8 @@ public class OpenVipActivity extends BaseActivity {
     FlexboxLayout mLlCardName;
     @BindView(R.id.ll_gift)
     LinearLayout mLlGift;
-    @BindView(R.id.tv_select_num)
-    TextView mTvSelectNum;
+    @BindView(R.id.tv_gift_tips)
+    TextView mTvGiftTips;
     @BindView(R.id.tv_coupon)
     TextView mTvCoupon;
     @BindView(R.id.tv_coupon_amount)
@@ -238,6 +237,8 @@ public class OpenVipActivity extends BaseActivity {
         } else {
             mLlCoupon.setVisibility(GONE);
         }
+        //礼品提示
+        mTvGiftTips.setText(getStrings(cardListBean.getGiftTip()));
         //开卡礼商品
         mGiftList.clear();
         giftProductIds.clear();
@@ -245,15 +246,12 @@ public class OpenVipActivity extends BaseActivity {
         List<GiftListBean> giftList = cardListBean.getGiftList();
         maxCountGift = getStringChangeIntegers(cardListBean.getMaxCountGift());
         if (giftList != null && giftList.size() > 0) {
-            mTvSelectNum.setVisibility(View.VISIBLE);
-            mTvSelectNum.setText(getIntegralFormat(this, R.string.gift_select_num, maxCountGift));
             mLlGift.setVisibility(View.VISIBLE);
             for (GiftListBean giftListBean : giftList) {
                 giftListBean.setSelected(false);//恢复未选中状态
             }
             mGiftList.addAll(giftList);
         } else {
-            mTvSelectNum.setVisibility(GONE);
             mLlGift.setVisibility(GONE);
         }
         mVipPresentAdapter.notifyDataSetChanged();

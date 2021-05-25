@@ -1,6 +1,7 @@
 package com.amkj.dmsh.mine.activity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -50,6 +51,7 @@ import com.amkj.dmsh.utils.gson.GsonUtils;
 import com.amkj.dmsh.utils.itemdecoration.ItemDecoration;
 import com.amkj.dmsh.utils.itemdecoration.NewGridItemDecoration;
 import com.amkj.dmsh.views.alertdialog.AlertDialogCalculator;
+import com.amkj.dmsh.views.alertdialog.AlertDialogImage;
 import com.amkj.dmsh.views.alertdialog.AlertDialogPower;
 import com.amkj.dmsh.views.alertdialog.VipHomeMenuPw;
 import com.amkj.dmsh.views.flycoTablayout.SlidingTabLayout;
@@ -253,6 +255,7 @@ public class DomolifeVipActivity extends BaseActivity {
     private VipHomeMenuPw mVipHomeMenuPw;
     private List<VipExclusiveInfoBean> mInfos = new ArrayList<>();
     private VipExclusivePagerAdapter mVipExclusivePagerAdapter;
+    private AlertDialogImage mAlertDialogAd;
 
     @Override
     protected int getContentView() {
@@ -885,6 +888,60 @@ public class DomolifeVipActivity extends BaseActivity {
             //登录成功和会员开通成功时更新会员首页
             loadData();
         }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        String paySuccess = getIntent().getStringExtra("vipPaySuccess");
+        if (!TextUtils.isEmpty(paySuccess)) {
+            getBuyCardAd();
+        }
+    }
+
+    private void getBuyCardAd() {
+        NetLoadUtils.getNetInstance().loadNetDataPost(this, Url.GET_BUY_CARD_AD, null, new NetLoadListenerHelper() {
+            @Override
+            public void onSuccess(String result) {
+                RequestStatus requestStatus = GsonUtils.fromJson(result, RequestStatus.class);
+                if (requestStatus != null && SUCCESS_CODE.equals(requestStatus.getCode())) {
+                    RequestStatus.Result statusResult = requestStatus.getResult();
+                    GlideImageLoaderUtil.setLoadImgFinishListener(getActivity(), statusResult.getPicUrl(), new GlideImageLoaderUtil.ImageLoaderFinishListener() {
+                        @Override
+                        public void onSuccess(Bitmap bitmap) {
+                            if (mAlertDialogAd == null) {
+                                mAlertDialogAd = new AlertDialogImage(getActivity());
+                            }
+                            mAlertDialogAd.setAlertClickListener(new AlertDialogImage.AlertImageClickListener() {
+                                @Override
+                                public void imageClick() {
+                                    ConstantMethod.setSkipPath(getActivity(), statusResult.getAndroidLink(), false);
+                                }
+                            });
+                            mAlertDialogAd.show();
+                            mAlertDialogAd.setImage(bitmap);
+                            //避免重复调用，手动清除标志
+                            getIntent().removeExtra("vipPaySuccess");
+                        }
+
+                        @Override
+                        public void onError() {
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onNotNetOrException() {
+                super.onNotNetOrException();
+            }
+        });
     }
 
     @Override

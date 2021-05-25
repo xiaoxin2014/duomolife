@@ -520,6 +520,7 @@ public class OpenVipWriteActivity extends BaseActivity {
         EventBus.getDefault().post(new EventMessage(OPEN_VIP_SUCCESS));
         //延时跳转到会员首页（因为线程问题，立即跳转可能会失效）
         Intent intent = new Intent(getActivity(), DomolifeVipActivity.class);
+        intent.putExtra("vipPaySuccess", "1");
         new LifecycleHandler(this).postDelayed(() -> {
             startActivity(intent);
             finish();

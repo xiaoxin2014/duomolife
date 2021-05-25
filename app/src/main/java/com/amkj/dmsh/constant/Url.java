@@ -758,6 +758,8 @@ public class Url {
     public static final String GET_VIP_EXCLUSIVE_GOODS_LIST = "api/vip/vipuser/getVipPriceExclusiveGoodsList";
     // 0元试用订单详情-查看物流
     public static final String GET_ZERO_ORDER_LOGISTICS = "api/vip/zeroActivity/getZeroOrderLogistics";
+    // 会员支付成功弹窗
+    public static final String GET_BUY_CARD_AD = "api/vip/vipuser/getBuyCardAd";
 
 
     /*

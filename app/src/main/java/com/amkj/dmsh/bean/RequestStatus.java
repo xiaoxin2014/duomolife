@@ -414,6 +414,7 @@ public class RequestStatus extends BaseTimeEntity {
         private boolean hadRemind;
         private int collectSize;
         private String imgUrl;
+        private String androidLink;
 
         /**
          * 退款去向字段
@@ -462,6 +463,14 @@ public class RequestStatus extends BaseTimeEntity {
         private String imgs;
         private String star;
         private String productId;
+
+        public String getAndroidLink() {
+            return androidLink;
+        }
+
+        public void setAndroidLink(String androidLink) {
+            this.androidLink = androidLink;
+        }
 
         public boolean isVip() {
             return "1".equals(isVip);

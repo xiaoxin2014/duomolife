@@ -75,8 +75,17 @@ public class VipSettleInfoEntity extends BaseEntity {
             private String priceMsg;
             private String payPrice;
             private String maxCountGift;
+            private String giftTip;
             private List<GiftListBean> giftList;
             private CouponInfoBean couponInfo;
+
+            public String getGiftTip() {
+                return giftTip;
+            }
+
+            public void setGiftTip(String giftTip) {
+                this.giftTip = giftTip;
+            }
 
             public CouponInfoBean getCouponInfo() {
                 return couponInfo;
