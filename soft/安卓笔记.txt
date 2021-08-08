@@ -1,0 +1,4809 @@
+单词：query查询 Cursor游标，指针 execSQL执行SQL  obtain获得 serializable序列化 inflate充气 loop循环 positive积极地，肯定的 negative消极的，否定的
+alert警告 dismiss解除 template模板 Extra附加物 broadcast广播 intent-filte意图过滤器（通过意图过滤器就能更明确的找到想启动的组件）argument参数
+translate平移 scale缩放 setRotate设置旋转 canvas画板 paint画笔，绘画 compress缓存 callback回调 invoke调用 fragment碎片 filed成员变量 ComponentName组件名称
+expand扩展 indicator指示器 param参数 interpolator 插入器 shortcut快捷方式，快捷键 generate生成 deployment部署 enqueue入队
+granted允许 denied拒绝
+
+
+day10
+1.获取外置sd卡路径
+    获取外部存储路径  没有sdcard也可以获取到外部路径
+    String path = Environment.getExternalStorageDirectory().getPath();
+2.读写Sd卡文件
+	2.1先判断sd卡是否挂载
+		String state = Environment.getExternalStorageState();
+    	"mounted" 挂载
+    	"unmounted" 卸载
+		if(!state.equals("mounted")){
+    	Toast.makeText(this, "sdcard不可用", 0).show();
+    	return;
+		}
+	2.2判断SD卡剩余多少可用空间
+	//1.获取Sd卡存储的属性
+    StatFs stat = new StatFs(path);
+    //2.获取每一块的内存大小
+    long blockSize = stat.getBlockSize();
+    //3.获取总块数
+    long totalBlocks = stat.getBlockCount();
+    //4.获取总容量大小
+    long totalsize = blockSize*totalBlocks;
+    //5.格式化存储大小
+    String formatFileSize = Formatter.formatFileSize(this,totalsize);
+	//6.可用块数
+    long availableBlocks = stat.getAvailableBlocks();
+	//7.可用容量
+	availableStorage=availableBlocks*blockSize;
+3.开启sd卡读写权限
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+day11
+1.SQLiteOpenHelper数据库帮助类是一个抽象类，它里面的getWritableDatabase()方法可以返回一个数据库对象
+所以创建MyOpenHelper类继承SQLiteOpenHelper数据库帮助类,就可以使用getWritableDatabase()方法了，
+调用该方法时，会自动调用MyOpenHelper类里面的onCreate方法(该方法里面创建了一张表)
+该方法只会执行一次，确保表不会重复创建
+	1.创建了一张名为studentIfo的表，id自增长
+	String sql = "create TABLE studentIfo (id integer primary key autoincrement,name varchar(20),num varchar(20),age varchar(20))";
+	db.execSQL(sql);
+	2.创建了一张名为black的表，id列自增长，number列文本类型并且唯一，type列为int类型
+	String sql = "CREATE TABLE black(_id INTEGER PRIMARY KEY AUTOINCREMENT, number TEXT UNIQUE, type INTEGER)";
+	db.execSQL(CREATE_SQL);
+
+
+2.CRUD-谷歌api
+* 增	
+	ContentValues values = new ContentValues();	
+	values.put("name", name);
+	values.put("money", money);			
+	 /**
+	 * 参数1	table	要插入表名
+	 * 参数2 	nullColumnHack 空列处理，一般null
+	 * 参数3 	values是一个map集合，key(列名)-value（列的值）
+	 */
+	long rowId = db.insert("account", null, values);
+
+* 删
+	 /**
+	 * 参数1 	表名
+	 * 参数2 	删除条件,带?占位符
+	 * 参数3 	删除条件中?对应数据
+	 */
+	int delete = db.delete("account", "name=?", new String[]{name});
+
+* 改
+	 /**
+	 * 参数1 	表名
+	 * 参数2 	代表想要更新的数据
+	 * 参数3 	修改条件,带?占位符
+	 * 参数4 	修改条件中?对应数据
+	 */
+	db.update(String table,ContentValues values,String whereClause,String[] whereArgs)；
+	db.update("account", values , "name=?", new String[]{name});
+
+* 查
+	/**
+	 * 参数1 	表名
+	 * 参数2	字符串数组保存要查出哪些列
+	 * 参数3	参数2查询的条件，只有满足这个条件的列的行才能被查询出来，要用占位符？
+	 * 参数4 	查询条件后面占位符?对应的数据
+	 * 参数5 	null
+	 * 参数6 	null
+	 * 参数7	null
+	 */
+	Cursor cursor = db.query(table, columns, selection, selectionArgs, groupBy, having, orderBy);
+	Cursor cursor = db.query("account", new String[]{"money","id"}, "name=?", new String[]{name}, null, null, null);
+
+3.Cursor游标的使用
+	SQLiteDataBase db;
+	Cursor cursor = db.query(各种参数);这个操作是表查询
+	注意：positon从上到下递增，从0开始
+	这里的cursor光标的意思就是查询到的符合条件的行的集合，通过getPosition方法可以获取光标的定位，默认为-1，也就是在第一行的上面
+	moveToFirst()就会移到第一个位置，moveToNext()表示下一个位置，如果是第一次调用的话，这两句话的意思是一样的
+	getCount()表示获取光标的长度，意思就是得到符合条件的信息数有多少条
+	getString()表示光标定位所在的行某个列属性所对应的值
+		String baenName = cursor.getString(0);
+		float money = cursor.getFloat(1);
+	如果你不知道你想要的属性具体是哪一列，你可以通过api获取结果中当前列的列号
+		String beanName = cursor.getString(cursor.getColumnIndex("name"));		
+		float money = cursor.getFloat(cursor.getColumnIndex("money"));
+		以上两种的效果是一样的
+
+	如何遍历光标里面的元素：
+		if(cursor!=null&&cursor.getCount()!=0{
+			while(cursor.moveToNext()){
+				String demo=cursor.getString(0);
+			}
+		}
+	游标每次使用完都要关闭，cursor.close();
+	
+4.ListView控件的使用及优化
+	4.1初始化ListView
+	4.2获取数据源
+		（必须在设置适配器之前，否则适配器加载数据时会因为获取不到数据源而空指针异常）
+	4.3设置适配器：
+		ListAdapter列表适配器是一个接口，要创建一个类去实现这个接口，
+		因为该接口抽象方法太多，而BaseAdapter实现了列表适配器的部分方法
+		所以我们可以创建一个类MyAdapter来继承（ListAdapter的实现类）BaseAdapter抽象类		
+	4.4ListView的优化
+		1.复用View对象：只需要创建列表第一页的条目控件对象，避免对象频繁创建，提高性能
+		2.创建静态ViewHold类：只有在创建View的时候需要findViewById,复用的时候不用
+	4.5列表刷新：
+		通知适配器数据发生改变需要重新加载，从而实时更新并显示，
+		如果数据源是集合，则必须先更新集合，因为刷新适配器需要重新读取数据源，如果数据源没有更新，列表刷新没有效果
+		mBaseAdapter.notifyDataSetChanged();
+
+	private void initView() {
+		//1.初始化ListView
+		mLv_setup_contact = (ListView) findViewById(R.id.lv_setup_contact);
+		//2.获取列表数据集合
+		mList = ContactDataUtils.getContacts(mContext);
+		//3.设置适配器
+		mLv_setup_contact.setAdapter(new myAdapter());
+	}
+
+	class myAdapter extends BaseAdapter {
+		@Override
+		public int getCount() {
+			// 条目的总个数
+			return mList.size();
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			//声明ViewHold
+			private ViewHolder mVHolder;
+			// 如果View对象没有被复用
+			if (convertView == null) {
+				//加载布局文件，并填充到View 参数2：条目布局 参数3：父容器，一般为null
+				convertView = View.inflate(mContext,
+						R.layout.item_setup_contact, null);
+				//创建ViewHold
+				mVHolder = new ViewHolder();
+				// 绑定控件
+				mVHolder.mPhoto = (ImageView) convertView
+						.findViewById(R.id.iv_contact_photo);
+				mVHolder.mName = (TextView) convertView
+						.findViewById(R.id.tv_contact_name);
+				mVHolder.mPhone = (TextView) convertView
+						.findViewById(R.id.tv_contact_phone);
+				//通过convertView设置标记，存储ViewHold对象
+				convertView.setTag(mVHolder);
+			}
+			//当条目被复用时
+			else {
+				//获取标记
+				mVHolder = (ViewHolder) convertView.getTag();
+			}
+			//从数据源读取当前条目的Bean类
+			ContactBean cBean = mList.get(position);
+			//设置条目数据
+			Bitmap bm = ContactDataUtils.getContactPhoto(mContext,
+					cBean.contactId);
+			mVHolder.mPhoto.setImageBitmap(bm);
+			mVHolder.mName.setText(cBean.name);
+			mVHolder.mPhone.setText(cBean.phone);
+			//返回convertView对象
+			return convertView;
+		}
+
+		@Override
+		public Object getItem(int position) {
+			// 条目对应的Bean类
+			return mList.get(position);
+		}
+
+		@Override
+		public long getItemId(int position) {
+			//条目的位置，从0开始
+			return position;
+		}
+	}
+	
+	//创建静态ViewHold类
+	static class ViewHolder {
+		ImageView mPhoto;
+		TextView mName;
+		TextView mPhone;
+	}
+}
+	
+
+day12
+主线程(UI线程)不能进行耗时操作，比如网络请求或者加载大量数据，新建一个子线程并启动即可解决
+不能在子线程中更新主线程已经显示好的UI，需要使用Handle实现与主线程通信，在主线程中完成UI的更新
+向服务器发起请求需要在清单文件中加入网络权限
+Toast不能在子线程中显示
+安卓app申请服务器地址时，不能用localhost，要用具体的计算机IP
+
+Android向服务器发起请求
+1.创建URL对象，并指定服务器的访问地址
+	String path = "http://192.168.47.64:8080/01.ImageServer/ImageServlet?type="+ mType;
+	URL url = new URL(path);
+2.给URL对象打开连接，返回值强转成(HttpURLConnection)
+	HttpURLConnection huc = (HttpURLConnection) url.openConnection();
+3.设置连接超时
+	huc.setConnectTimeout(5000);
+4.设置响应超时
+	huc.setReadTimeout(5000);
+5.在获取流之前先判断服务器响应的状态码 200表示正常
+	int code = huc.getResponseCode();
+6.获取服务器返回的输入流
+	如果是gson用Gson解析，Bean类可以使用GsonFormat自动转化)				
+	InputStream is = huc.getInputStream();
+7.1如果是json或者gson数据
+	通过ByteArrayOutputStream把输入流转成json字符串，再进行解析
+	mBos = new ByteArrayOutputStream();
+	int len = 0;
+	byte buffer[] = new byte[1024];
+	while ((len = mIs.read(buffer)) != -1) {
+		mBos.write(buffer, 0, len);
+	}
+	String json(xml) = mBos.toString();
+ (1)如果是xml数据，用Xstream解析
+	XStream xStream = new XStream(new DomDriver());
+	参数1：根节点，参数2：bean类
+	xStream.alias("result", PhoneBean.class);
+	PhoneBean pBean = (PhoneBean) xStream.fromXML(is);
+ (2)如果是json数据，用Gson解析（复杂的gson数据可以用GsonFormat快速生成对应的Bean类（面向对象编程））
+	格式化json字符串,如果根节点是[],则是Bean对象集合，如果是{}，就是Bean对象
+	2.1对象
+    Gson gson = new Gson();
+    ForcastBean fb = gson.fromJson(string, ForcastBean.class);
+	2.2集合
+    Gson gson = new Gson();
+	List<NewsBean> news=gson.fromJson(string,new TypeToken<List<NewsBean>>() {}.getType());
+7.2.如果返回的是一个图片时
+    用位图工厂解析输入流并返回一个位图对象
+    Bitmap bm = BitmapFactory.decodeStream(is);
+8.通过消息池获取消息包，消息包中有要传送的数据
+	Message msg = Message.obtain();
+9.obj属性表示包的内容
+	msg.obj = bm;
+10.给消息添加类型
+	msg.what="type";
+11.通过handle发送消息包
+(handle的作用是发送和处理消息，looper轮循器监听消息，MessageQueue消息队列，用来存放和删除消息)
+	handle.sendMessage(msg);
+12.在主线程中创建Handle对象，并用匿名内部类的方式重写handleMessage方法
+	private handler = new Handler() {	
+		//在handleMessage里面实现UI的更新
+		public void handleMessage(Message msg) {
+			final int type = msg.what;
+			// 判断消息的类型
+			switch (type) {
+			case UPDATEAPK:
+				mIV.setImageBitmap((Bitmap) msg.obj);
+				break;
+			}
+		}
+	};
+	
+
+day14
+1.为下载进度添加进度条
+	1 在布局中添加ProgressBar标签
+		<ProgressBar
+			android:id="@+id/pb"
+			style="?android:attr/progressBarStyleHorizontal"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="10dp" />
+	2 设置总进度setMax
+		2.1找到进度条控件
+			ProgressBar mPb = (ProgressBar) findViewById(R.id.p);
+		2.2设置进度条的总进度(在下载中表示下载文件的字节大小)
+			mpb.setMax(bytelen);
+	3 设置当前进度setProgress（在下载中表示文件下载了多少）
+		mTotal.setProgress(cunrrentlen);
+	4 更新进度可以在子线程中更新,因为底层已经实现了发送到主线程的操作
+
+------------------------------------------------------------------------------------
+2.ListView常用适配器_ArrayList的使用（两种使用方法）
+	2.1直接创建适配器对象,不用继承（适用于条目是单个textView纯文本）
+		1.创建一个字符串数组或者集合，里面包含的是每个条目的内容
+			String[] titles = {
+				"标题1",
+				"标题2",
+				"标题3",
+				"标题4",
+				"标题5",
+			};
+		2.找到ListView布局
+			listView = (ListView) findViewById(R.id.listView);
+		3.创建一个适配器，里面有四个参数
+			* 参数1 context
+			* 参数2 条目布局id
+			* 参数3 布局中textview的id（可以自己创建一个item.xml布局或者引用系统布局）
+			* 参数4 数据集合或者数组
+			ListAdapter adapter = new ArrayAdapter<String>(this, R.layout.item,
+					R.id.tv, titles);
+			ListAdapter adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, titles);
+		4.为ListView设置适配器
+			listView.setAdapter(adapter);
+	2.2创建一个类继承ArrayAdapter
+		1.创建一个类继承ArrayAdpter
+			class CacheAdapter extends ArrayAdapter<CacheBean> {
+				//生成构造方法，参数2：数据源集合
+				public CacheAdapter(Context context, List<CacheBean> list) {
+					super(context, 0, list);
+				}
+				
+				//重写getView方法
+				@Override
+				public View getView(int position, View convertView, ViewGroup parent) {
+		
+				}
+
+			}		
+		2.创建适配器对对象 参数2：数据源集合
+			ListAdapter adapter = new MyAdapter(mContext, mData);
+		3.设置适配器
+			mLv_cache.setAdapter(adapter);
+3.为ListView设置条目点击事件(当点击某一个条目时就会触发)
+	1.找到listview控件
+		mListView = (ListView) findViewById(R.id.lv_blacklist);	
+	2.给listview设置条目点击监听事件（这里用的是匿名内部类，也可以用Activity本身作为监听器，实现OnItemClickListener接口就可以了）
+		mListView.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+				int position, long id) {
+				position表示被点击的条目的定位
+				String item = mTempaltes[position];
+			}
+		});
+
+------------------------------------------------------------------------------------------
+
+4.帧动画的实现
+	1.在布局文件中添加ImageView
+	2.res/drawable文件夹下添加动画资源xml文件
+	3.res/drawable添加动画资源图片文件
+	4.找到ImageView的Id
+		ImageView mImg = (ImageView) findViewById(R.id.img);
+	5.设置ImageView的动画资源
+		mImg.setBackgroundResource(R.drawable.anim);
+	//动画资源xml格式
+	<?xml version="1.0" encoding="utf-8"?>
+		<animation-list android:oneshot="false"
+		xmlns:android="http://schemas.android.com/apk/res/android">
+			<item android:duration="50" android:drawable="@drawable/xiaolu_01" />
+			<item android:duration="50" android:drawable="@drawable/xiaolu_02" />
+			<item android:duration="50" android:drawable="@drawable/xiaolu_03" />
+	</animation-list>	
+	6.设置AnimationDrawable对象
+		AnimationDrawable mAd = (AnimationDrawable) mImg.getBackground();
+	7.启动动画
+		mAd.start();
+	8.结束动画
+		mAd.stop();
+	
+5.Xutil开源库HttpUtils模块实现多线程断点下载
+	1.在github官网搜索关键字下载点赞对多的
+	2.加载库文件android-async-http-1.4.8.jar 并且build path
+	3.添加网络和写sd卡权限
+		<uses-permission android:name="android.permission.INTERNET" />
+		<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	4.使用HttpUtils下载文件
+		//开始下载点击事件
+		public void download(View View) {
+			mBt.setText("正在下载");
+			//获取请求地址
+			String path = mEt.getText().toString().trim();
+			//本地存放路径
+			File file = new File(Environment.getExternalStorageDirectory()
+					.getPath(), path.substring(path.lastIndexOf('/')));
+			//判断请求地址是否为空
+			if (TextUtils.isEmpty(path)) {
+				return;
+			}
+			//创建HttpUtils模块类对象
+			HttpUtils hu = new HttpUtils();
+			//发送下载请求
+			HttpHandler mHandler = hu.download(path, file.getPath(), true, true,
+				new RequestCallBack<File>() {
+					@Override
+					//下载成功
+					public void onSuccess(ResponseInfo<File> arg0) {
+						mBt.setText("开始下载");
+						Toast.makeText(MainActivity.this, "下载成功", 0).show();
+					}
+					//下载失败
+					@Override
+					public void onFailure(HttpException arg0, String arg1) {
+						// TODO Auto-generated method stub
+						mBt.setText("开始下载");
+						Toast.makeText(MainActivity.this, "下载失败", 0).show();
+					}
+					//下载进度
+					@Override
+					public void onLoading(long total, long current,
+							boolean isUploading) {
+						super.onLoading(total, current, isUploading);
+						mPb.setMax((int) total);
+						mPb.setProgress((int) current);
+					}
+				});
+		}
+		//暂停下载点击事件
+		public void pause(View view) {
+			mHandler.cancel();
+			mBt.setText("继续下载");
+		}
+
+	
+	
+day15
+*****Activity的定义：四大组件之一，一个界面就相当于一个Activity,Acyivity之间可以通过意图进行跳转和传值
+1.样式和主题都在style中定义，样式在布局控件中使用，主题在清单文件中使用
+2.显示启动本程序Activity(如果被启动的action不是自己定义的，
+	最好用显示启动，因为隐式启动可能会匹配到很多activity,比如action是android.intent.action.MAIN的时候)
+	方式1：跳转到本程序的activity
+	Intent intent = new Intent(this,
+						MainActivity.class);
+	startActivity(intent);
+	方式2：跳转到其他程序的activity
+	Intent intent = new Intent();
+	intent.setClassName("com.android.mms","com.android.mms.ui.ConversationList");
+	startActivity(intent);
+3.隐式启动其他程序Activity（注意：隐式启动不能没有任何category设置，至少包含一个android.intent.category.DEFAULT）
+	Intent intent = new Intent();
+	参数表示所启动activity的action
+	intent.setAction("android.xiaoxin.action");
+	startActivity(intent);
+4.activity创建的条件
+    1.定义类继承Activity
+	2.复写oncreate方法
+	3.设置界面布局 在oncreate方法里面
+		setContentView(R.layout.activity_main);
+	4.在res-layout下写布局文件
+	5.需要在清单文件下申明activity标签 application标签下 
+		activity标签配置intent意图过滤
+		
+		<!-- 意图过滤器 -->
+			<intent-filter>
+			<!-- 把当前界面设置为应用第一个显示的界面 -->
+				<action android:name="android.intent.action.MAIN" />
+			<!-- 默认的，在应用列表中(LAUNCHER应用中)创建一个快捷方式 -->
+				<category android:name="android.intent.category.LAUNCHER" 	
+		</intent-filter>
+	
+5.Activity之间传递数据（基本类型和String）
+	发送方：
+	Intent intent = new Intent();
+	intent.setAction("android.xiaoxin.action");
+	第一个参数表示包裹的名字，可以任意指定一个字符串，第二个参数表示要传递的数据
+	intent.putExtra("data", sb.toString());
+	startActivity(intent);
+	接收方：
+	获取发送方传来的意图，在意图对象里面获取包裹数据
+	String data = getIntent().getStringExtra("data");
+6.Activity之间传递对象（传递的对象的Bean类要实现Parcelable接口，内存序列化(效率更高)，如果要永久序列化到本地，则实现Serializable接口（用法比较简单））
+	Student student = new Student("小新", "JB114007");
+	Intent intent = new Intent();
+	intent.setAction("android.intent.action.SECOND");
+	intent.putExtra("data", student);
+	startActivity(intent);
+	接收方：
+	获取发送方传来的意图，在意图对象里面获取包裹数据
+	Student stu = getIntent().getParcelableExtra("data");
+7.通过意图过滤器的data间接传值(常见系统应用的action和data慕课已经做了笔记)
+	案例：启动原生浏览器，并打开指定的网页
+	1.在布局中添加TextView，设置可点击
+		android:clickable="true"
+	2.给TextView添加点击事件
+		android:onClick="loadbrowse"
+	3.在点击事件里面
+	//创建意图
+		Intent intent = new Intent();
+	//指定过滤器的Action,在模拟器中打开浏览器，然后在LogCat里面查找ActivityManage,就可以找到浏览器当前界面所对应的activity
+		intent.setAction("android.intent.action.VIEW");
+	//先查找包含scheme为http的data，对应的Action就也能确定了
+		intent.setData(Uri.parse("http://" + url));
+	//启动意图跳转到浏览器
+		startActivity(intent);
+8.activity横竖屏切换
+	不做任何处理,activity会销毁重建  
+	- onPause-onStop-onDestory-onCreate-onStart-onResume
+	1.在清单文件下的activity标签指定configChanges
+	- android:configChanges="orientation|keyboard|screenSize"
+	2.在activity复写onConfigurationChanged	
+		@Override
+	    public void onConfigurationChanged(Configuration newConfig) {
+	    	// TODO Auto-generated method stub
+	    	super.onConfigurationChanged(newConfig);
+	    	int orientation = newConfig.orientation;//获取屏幕的方向
+	    	Toast.makeText(this, "屏幕切换了", 0).show();
+	    }
+
+9.Activity反向传递数据
+	应用场景：短信助手等
+	好处：如果使用普通的数据传递，就会启动一些多余的activity,反向传递也会启动activity，但是不会新创建已经存在的界面的activity对象
+	1.开启activity的界面
+		private int code_template = 1;
+		private int code_contact = 2;
+		创建意图，指定action，跳转到activity，并等待目标界面返回结果
+		Intent intent = new Intent();
+		intent.setAction("android.intent.action.template");
+		第一个参数是意图对象，第二参数表示requestCode请求码,当一个Activity向多个Activityforresult时，可以用此区分
+		因为这个案例里面短信主界面既向通讯录Activity等待返回联系人,也向模板Activity等待返回信息模板
+		startActivityForResult(intent, code_template);
+		startActivityForResult(intent, code_contact);
+		重写onActivityResult方法
+		参数1：请求码  参数2：结果码 RESULT_OK表示返回成功  参数3：返回的意图对象，里面包含返回的数据
+		protected void onActivityResult(int requestCode, int resultCode, Intent data) {	
+			注意：必须先判断请求码，再判断结果码。判断请求码是为了区分哪个activity返回的数据，结果码是为了判断是否有返回数据	
+			if (requestCode == 1) {
+				if(resultCode == RESULT_OK){
+					取出目标结果返回的数据，后面的参数要与目标Activity一致
+					String template = data.getStringExtra(getPackageName() + "data");
+					mEt_template.setText(template);
+				}
+				mEt_content.setText(template);
+			} else if (requestCode == 2) {
+				if(resultCode == RESULT_OK){
+					String contact = data.getStringExtra(getPackageName()+ "contact");
+					mEt_receive.setText(contact);
+				}
+			}
+		}
+	2.目标界面（被开启）
+		创建意图，指定向哪个activity返回数据
+		Intent intent = new Intent(this,
+				MainActivity.class);
+		第一个参数是包裹的名字，可以任意指定，第二个参数表示数据内容
+		intent.putExtra(getPackageName() + "data", item);
+		设置返回结果，第一个参数是结果码，一般用RESULT_OK，第二个参数是意图对象，包含返回的数据
+		setResult(RESULT_OK, intent);
+		先返回数据，再finish当前界面
+		finish();	
+
+day16
+***广播的定义：四大组件之一，可以实现进程之间的通信
+1.Activity的生命周期
+	Activity里面的方法：（可以根据自己的需要去重写这些方法）
+	oncreat创建 onstart界面可见 onresume获得焦点
+	按返回键后的变化：onpause失去焦点 onstop界面不可见 ondestory销毁
+	按Home键的变化：onpause失去焦点 onstop界面不可见界面不会被销毁   再称启动activity的变化：onrestart onstart界面可见 onresume获得焦点
+2.Activity的模式
+	在清单文件中添加，紧跟在activity的name后面android:launchMode="singleInstance"
+    任务:所有activity集合
+  	回退栈: 按照打开的顺序将activity存放在栈中（先进后出原则）
+    启动模式:研究activity怎么进栈以及怎么出栈
+		standard  标准模式  每一次启动activity都会创建实例添加到后退栈中  默认就是标准模式
+ 		singleTop 如果在栈顶不会再创建 只要不在栈顶都会创建 短信编辑界面  
+		singleTask 单一任务  如果栈中存在实例 就不会再创建,将上面的所有activity都出栈,到栈顶显示   浏览器 
+ 		singleInstance 单一实例  当前activity需要创建一个新的栈,只能存放自己  activity切换其实就是栈的切换  应用程序使用频率较大  打电话
+3.广播接收者的创建
+	广播接收者流程(3.0之后接收不到开机广播)
+    1.定义一个类继承BroadcastReceiver
+	2.重写onReceive方法  如果接收到广播就会调用代码这个方法
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			Log.d(TAG, "接收到开机广播");
+			Toast.makeText(context, "接收到开机广播了", 0).show();
+		}
+	3.在清单文件中注册广播接收者
+		<receiver android:name="com.itheima.bootcomplete.BootCompleteReceiver">
+	        <!-- 意图过滤器 -->
+	        <intent-filter>
+	            <!-- 开机广播 -->
+	            <action android:name="android.intent.action.BOOT_COMPLETED"/>
+	        </intent-filter>
+	    </receiver>
+		安装和卸载的广播必须添加这条过滤器：
+		<data android:scheme="package" />
+	4.当接收到广播接可以在onReceiver中执行操作即可
+4.有序广播和无序广播
+-----------------------------------------------------------------------------------------------------
+	无序广播的接收者不可以使用setResultData（）方法和abortBroadcast（）方法，如果使用了会报错。只能通过通过意图对象来获取action,data,extras等信息
+	无序广播不可以被拦截，不可以被终止，不可以被修改，无序广播任何接收者只要匹配条件都可以接收到，无优先级问题。
+	无序广播只能通过意图来传递数据给广播接收器，例如putExtras,setData
+	
+	有序广播的接收者可以使用getResultData（）,setResultData（）和abortBroadcast（）方法.当然也可以通过意图对象来获取action,data,extras等信息
+	有序广播可以被拦截，可以在较高优先级的接收器中通过abortBroadcast（）拦截广播，
+	这样就会导致较低优先级的接收器无法收到广播了，但是sendOrderedBroadcast第三个参数指定的广播接收器还是会收到广播的，而且能获得数据。
+	有序广播可以通过原始intent.putExtra这种方式传递数据给广播接收器，也能通过sendOrderedBroadcast方法的最后2个参数传递数据，
+	但是通过第一种方式传递的数据无法中途修改，通过第二种方式传递的可以通过上面参数说明中的方式进行修改。
+
+	1.有序广播的接收
+		1.定义广播接收者
+		2.注册广播者
+		需要加优先级android:priority="800"  从-1000到1000
+		3.有序广播数据的传递 必须发送时通过initialData发送
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			//获取有序广播发送的数据
+			String data = getResultData();
+			Log.d(TAG, "省里收到广播:"+data);
+			//向下传递 修改数据
+			setResultData("三胖奖励小崔7万元");
+		}
+		4.有序广播的中断 优先级高的接收者可以中断广播,广播不会继续向下传递
+		abortBroadcast();
+
+	2.有序广播的最终广播接收者
+		发送时设置最终广播接收者
+		sendOrderedBroadcast(intent ,
+    			null,//接收者的权限
+    			new FinalReceiver(), //最终的广播接收者  最后接收广播  即使广播被中断也可以接收到 不需要注册也可以接收到广播
+    			null, //最终的广播接收者在哪个线程执行
+    			RESULT_OK, 
+    			"三胖奖励小崔10万元",//数据的传递
+    			null);
+		class FinalReceiver extends BroadcastReceiver{
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				String data = getResultData();
+				Log.d(TAG, "最终广播接收者接收到广播:"+data);
+			} 	
+		}
+-------------------------------------------------------------------------------------------------------	
+5.广播接收者的动态注册
+- 静态注册：在清单文件中注册  第一次启动时会在系统中注册,如果程序不启动也可以接收到广播 保活 
+- 动态注册：在代码中动态注册 有一些频繁发送的广播是不能进行静态注册 只能采用动态注册方式进行注册
+- 1.定义广播接收者
+- 2.在activity或者服务创建时执行注册
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+		//创建广播接收者对象
+        receiver = new ScreenOnAndOffReceiver();
+		//意图过滤器
+        IntentFilter filter = new IntentFilter();
+		//添加动作
+        filter.addAction(Intent.ACTION_SCREEN_ON);
+        filter.addAction(Intent.ACTION_SCREEN_OFF);
+		//设置优先级
+		filter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
+		//注册广播，传入广播接收者对象和意图过滤器
+		registerReceiver(receiver, filter );
+    }
+- 3.在activity销毁时反注册广播接收者
+    protected void onDestroy() {
+    	//反注册广播接收者 如果没有反注册会造成内存泄漏
+    	unregisterReceiver(receiver);
+    }
+6.常用广播Action和权限：
+1.监听SD卡卸载  MEDIA_UNMOUNTED 需要data为 file
+2.监听开机广播  BOOT_COMPLETED  需要权限RECEIVE_BOOT_COMPLETED
+3.监听电话      NEW_OUTGOING_CALL 需要权限 PROCESS_OUTGOING_CALLS
+4.应用卸载和安装 PACKAGE_ADDED   PACKAGE_REMOVED  需要data  package
+5.短信监听  android.provider.Telephony.SMS_RECEIVED  需要权限  RECEIVE_SMS
+
+day17
+Service服务详解：http://blog.csdn.net/ryantang03/article/details/7770939
+*****服务的定义：四大组件之一，是后台运行的组件 没有界面,不能和用户进行交互，和界面没有关系,退出界面不影响服务的销毁 
+长期在后台运行 ,除非杀掉进程或者stopService(intent),stopService会执行Service里面的destory（）方法，从而销毁服务
+协助网络在后台下载或者音乐在后台播放，不能够自己启动，需要通过某一个Activity或者其他Context对象来调用
+1.进程的优先级
+	1.前台进程
+		- activity界面已经可见并且获取到焦点
+	2.可见进程
+		- actvity界面可见失去焦点  (透明主题遮盖住)
+	3.服务进程 
+		- 进程中有一个服务
+	4.后台进程
+		-  activity执行onStop不可见 ,按下home键 后台进程
+	5.空进程
+		-  activity执行onDestory  栈中没有任何activity   按下back按钮    
+	优先级越高,越不容易被杀死  
+2.开启服务的步骤（onstartCommand方法有个参数是意图对象，可以通过意图从activity传递数据到service，但是activity不能从service拿数据）
+	1.定义类继承Service
+	2.在清单文件中注册 
+		<service android:name="com.itheima.service.MyService"></service>
+	3.开启服务
+		Intent service = new Intent(this, MyService.class);
+		//开启服务
+    	startService(service );
+	4.停止服务
+		Intent intent = new Intent(this, MyService.class);
+	    //停止服务
+	    stopService(intent);
+3.开启服务的生命周期
+	开启服务
+	- oncreate  onStartCommand
+	多次开启服务
+	- 会执行多次onStartCommand
+	停止服务
+	- onDestory
+	多次停止服务只会执行一次onDestory    
+	完整的生命周期  onCreate-onStartCommand-onDestory
+4.返回按钮监听事件（弹出对话框，点击确定关闭界面，停止服务）
+	@override
+	public void onBackPressed() {
+		super.onBackPressed();
+		AlertDialog dialog = new AlertDialog.Builder(this);
+		//设置标题
+		dialog.setTitle("警告");
+		//设置内容
+		dialog.setMessage("你确定要退出音乐播放吗?");
+		//设置确定按钮
+		dialog.setPositiveButton("确定", new OnClickListener() {	
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				Intent intent = new Intent(MainActivity.this,MusicService.class);
+				//停止音乐播放
+				stopService(intent);
+				//关闭当前界面
+				finish();
+			}
+		});
+		//设置不可点击对话框以外
+		dialog.setCancelable(false);
+		//设置取消按钮
+		dialog.setNegativeButton("取消", null);
+		//显示对话框
+		dialog.show();
+		//让对话框消失
+		dialog.dismiss();
+
+	}
+5.绑定服务的步骤（service拿数据，假如这个数据是service里面的一个方法test()，我们就要去实现怎么在activity里调用这个方法）
+	1.创建一个类继承Service
+	2.重写onbind方法（）
+	为什么要重写这个方法？？？因为一旦绑定服务就会执行service的这个方法，而这个方法有一个返回值，就是通过它从服务里面拿数据的，
+	而这个方法的返回值IBinder是一个接口对象，所以要创建一个内部类去实现这个接口，或者继承这个接口的实现类，而内部类不能暴露在其他类里面，
+	所以我们要实现一个接口IService，并在这个接口里面添加一个抽象方法
+		class MyBinder extends Binder implements IService {
+			@Override
+			public void myBinder() {
+				test();
+			}
+		}
+	3.绑定服务
+		1.在activity里面创建一个意图，指向service
+		2.绑定服务
+		mSC = new MyserviceConnection();
+		第一个参数是意图，第二个参数是ServiceConnection接口对象（服务连接），第三个参数表示绑定服务时并自动创建服务，也就是执行service的onCreat方法
+		bindService(intent, mSC, BIND_AUTO_CREATE);
+		3.创建一个内部类类实现ServiceConnection接口对象
+			重写里面的onServiceConnected(ComponentName name, IBinder service)方法，当绑定好服务时，这个方法就会自动执行，并接收service
+			返回的数据，也就是IBinder service对象，我们可以通过这个对象调用test()方法了
+			@Override
+			//这个方法在连接服务时调用
+			public void onServiceConnected(ComponentName name, IBinder service) {
+				mIService = (IService) service;
+			}
+		4.调用service里面的方法
+			mIService.myBinder()
+6.绑定服务的生命周期
+	第一次bindService
+	- onCreate  - onBind
+	解绑
+	- onUnbind 	- onDestory
+	多次bindService只会执行一次onBind方法  
+	多次unBindService会出错,只能解绑一次
+	完成生命周期onCreate-onBind-onUnbind-onDestory
+7.开启服务和绑定服务的不同点
+	1.生命周期方法不同
+		- 开启服务 oncreate-onStartCommand-onDestory
+		- 绑定服务 onCreate-onBind-onUnbind-onDestory
+	2.退出界面
+		- 开启服务退出界面没有影响
+		- bindService方式 退出界面之后需要解绑服务
+			@Override
+			protected void onDestroy() {
+				// TODO Auto-generated method stub
+				super.onDestroy();
+				myUnbind();
+			} 
+			//自己的解绑服务方法
+			public void myUnbind() {
+				if(conn!=null){
+					unbindService(conn);
+					conn = null;
+				}
+			}
+	3.数据传递
+		- 开启只能通过activity传递数据给service  通过intent意图传递
+		- bindService可以通过intent意图传递数据给service  并且可以通过IBinder对象从service中获取数据
+
+	4.在设置中正在运行
+		- 开启服务会设置中正在运行出现
+		- bindService不会出现	
+8.远程服务的绑定 aidl
+	定义：绑定其他应用程序中的service，实现进程间的通信
+	1.将远程服务提供者的IService.java 后缀名改成.aidl
+	2.****注意：将IService.aidl中所有的权限修饰符去掉
+		interface IService {
+			void callSayHello();
+		}
+	3.在gen目录下自动生成IService.java类
+		- 主要用Stub代理类  继承Binder实现IService接口
+		- ****注意：asInterface方法,传入Binder返回IService(调用者需要将IBinder转换为IService使用)
+		- 定义好了在aidl中的函数callSayHello
+	4.创建和提供者aidl文件包名同名的包
+	5.将IService.aidl拷贝到当前创建的包下
+	6.****注意：绑定服务之后,在connection中需要将Binder对象转换为IService对象
+		 @Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			iService = IService.Stub.asInterface(service);
+		} 	
+day18
+发送通知
+	1.发送高版本通知,安卓4.1.2以上才能用
+		private void sendHighNotification() {
+			//跳转意图，意思是点击通知，会跳转到哪个activity,
+			Intent intent = new Intent(this, MainActivity.class);
+			//第一个参数是contex,第二个参数是requestCode,第三个是意图，第四个是flag
+			PendingIntent contentIntent = PendingIntent.getActivity(this, 100, intent , 0);	
+			Notification.Builder builder = new Notification.Builder(this);
+			// .build()：api 16以上，设置大图，小图，跳转、清空通知
+			Notification notification = builder
+				.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher))
+				.setSmallIcon(R.drawable.ic_launcher)
+				.setContentTitle("9555")
+				.setContentText("通知内容")
+				.setContentIntent(contentIntent)
+				.build();//使用高版本构建通知对象		
+			//设置点击删除通知
+			notification.flags = Notification.FLAG_AUTO_CANCEL;
+			//调用系统服务：通知管理器
+			NotificationManager notiMgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+			//notiMgr.notify(1, notification);
+			//延时发送
+			Handler mHandler = new Handler();
+			mHandler.postDelayed(new Runnable() {
+			
+				@Override
+				public void run() {
+					notiMgr.notify(1, notification);
+				}
+			}, 3000);
+		}
+	2.发送低版本，没有版本限制
+	private void sendLowNotification() {
+		// 1.如何发送一个通知，核心类：通知管理器
+		NotificationManager notiMgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		int id = 1;
+
+		//参数1：图标资源id，参数2：通知滚动文字，参数3：时间戳
+		Notification notification = new Notification(R.drawable.ic_launcher, "通知滚动文字", System.currentTimeMillis());// 通知对象
+		//点击消失
+		notification.flags = Notification.FLAG_AUTO_CANCEL;
+		Intent intent = new Intent(this, MainActivity.class);
+		//点击通知跳转意图
+		PendingIntent contentIntent = PendingIntent.getActivity(this, 100, intent , 0);
+		//设置通知标题、内容
+		notification.setLatestEventInfo(this, "通知标题", "通知内容", contentIntent);
+		// 2.发送通知核心代码:参数1-通知唯一标识
+		notiMgr.notify(id, notification);
+	}
+day19:
+1.计算位图图像大小
+	1.单色位图：一个像素占8分之一个字节
+	2.256色位图，一个像素占一个字节
+	3.24位位图一个像素点占3个字节
+	位图图像：由许多小方块一样的像素组成的图形 缺点：方法失真，锯齿状
+2.加载大图到内存
+	2.1获取屏幕分辨率
+		WindowManager windowMgr = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+		Display display = windowMgr.getDefaultDisplay();
+		Point outSize = new Point();
+		display.getSize(outSize );//api 13以上
+		int width = outSize.x;
+		int height = outSize.y;
+	2.2获取图片分辨率
+		创建位图对象，从对象可以拿到宽高
+		Bitmap bitmap =BitmapFactory.decodeFile("/mnt/sdcard/biger.jpg");
+		int with2 = bitmap.getWidth();
+		int height2 = bitmap.getHeight();		
+	3.计算采样率
+		位图设置采样率为n以后，所占内存大小为原来的n平方分之一
+		int SampleSize = (imgWidth / width) > (imgHeight / height) ? imgWidth
+					/ width
+					: imgHeight / height;
+		opts.inSampleSize = SampleSize;
+		Bitmap bm = BitmapFactory.decodeFile(pathName, opts);
+		mIv2.setImageBitmap(bm);
+3.拷贝位图并进行矩阵操作canvas.drawBitmap(画线：canvas.Line)
+	3.1得到原图，通过位图工厂解码File对象
+		Bitmap mBm = BitmapFactory.decodeFile("/mnt/sdcard/girl.jpg");
+	3.2拿一张白纸（创建空的位图，宽，高，配置等属性设置为原图一样的）
+		Bitmap bitmap = Bitmap.createBitmap(mBm.getWidth(), mBm.getHeight(),
+				mBm.getConfig());
+	3.3创建画板,把白纸放在画板
+		Canvas canvas = new Canvas(bitmap);
+	3.4设置矩阵(在原图上平移)
+		Matrix matrix = new Matrix();
+		matrix.setTranslate(100f, 100f);
+		在当前图片上平移
+		matrix.postTranslate(-100, -100);
+		在当前图片上旋转,后面两个参数表示以此坐标为原点旋转
+		matrix.postRotate(90, bitmap.getWidth() / 2, bitmap.getHeight() / 2);
+		在当前图片上缩放
+		matrix.setScale(0.5f, 0.5f);
+		镜面效果：y方向不变，x方向翻转
+		matrix.setScale(-1, 1);
+		倒影效果：y方向翻转，x方向不变
+		matrix.setScale(1, -1);
+	3.5创建画笔
+		Paint paint = new Paint();
+	3.6在画板上用画笔在白纸上照着原图画（如果画多次，就会显示多张图）
+		第一个参数原图，第二个参数矩阵，第三个参数画笔
+		canvas.drawBitmap(mBm, matrix, paint);
+	3.7设置位图
+		mIv_after.setImageBitmap(bitmap);
+		
+4.获取View视图的缓存Bitmap
+		view.setDrawingCacheEnabled(true);// 打开缓存开关
+		view.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);// 设置图片质量
+		Bitmap bitmap = mScanningContainer.getDrawingCache();//获取缓存Bitmap
+		iv.setImageBitmap(bitmap);//将位图设置到imagevie
+		//平移动画从当前位置往-x轴平移
+		ObjectAnimator trans = ObjectAnimator.ofFloat(iv,
+					"translationX", 0, -iv.getWidth());
+		//透明度动画从不透明到全透明
+		ObjectAnimator alpha = ObjectAnimator.ofFloat(iv,
+					"alpha", 1, 0);
+		// 动画集合
+		AnimatorSet set = new AnimatorSet();
+		set.setDuration(1500);
+		// 同时播放
+		set.playTogether(trans, alpha);
+		//顺序播放
+		set.playSequentially(trans, alpha);
+		// 开始播放
+		set.start();
+		
+
+4.滑动条SeekBar的使用	
+	4.1布局中添加SeekBar控件
+    <SeekBar
+		设置最大进度值
+        android:max="100"
+		设置默认进度
+        android:progress="10" />	
+	4.2设置监听事件
+		SeekBar mSeekbar = (SeekBar) findViewById(R.id.seekbar);
+		mSeekbar.setOnSeekBarChangeListener(this);
+	4.3实现接口OnSeekBarChangeListener，并重写方法
+		@Override
+		停止滑动时触发
+		public void onStopTrackingTouch(SeekBar seekBar) {
+			int progress = seekBar.getProgress();
+			mPaint.setStrokeWidth(progress);
+		}
+		
+5.缓存位图到本地
+	参数1.缓存格式 2.缓存质量0-100 3.缓存到file指定的路径
+	mBitmap.compress(CompressFormat.JPEG, 100, new FileOutputStream(file));
+	
+6.通知系统扫描
+	File file = new File("/mnt/sdcard/paint/"+ System.currentTimeMillis() + ".jpg");
+	Intent intent = new Intent();
+	全局扫描：耗性能（Android4.4以上禁用）
+	intent.setAction(Intent.ACTION_MEDIA_MOUNTED);
+	扫描单个文件
+	intent.setAction(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+	设置数据
+	intent.setData(Uri.fromFile(file));
+	//发送广播，通知系统扫描指定的文件，扫描后即可在图库显示
+	sendBroadcast(intent);
+7.添加menu
+	menu默认是不会显示出来的，只有按下Menu键，菜单才会在底部显示出来
+	7.1创建菜单布局res/menu/main.xml
+		<?xml version="1.0" encoding="utf-8"?>
+		<menu xmlns:android="http://schemas.android.com/apk/res/android">
+			//一个item代表一个菜单选项
+			<item
+				android:id="@+id/add_item"
+				android:title="Add" />
+			<item
+				android:id="@+id/remove_item"
+				android:title="Remove" />
+		</menu>
+	7.2创建菜单
+	打开Activity，重写onCreateOptionsMenu()方法
+		public boolean onCreateOptionsMenu(Menu menu){
+			//获取菜单打气筒，把布局转成具体对象
+			getMenuInflater().inflate(R.menu.main,menu);
+			//如果返回false，创建的菜单无法显示
+			return true;
+		}
+	7.3实现菜单功能，设置点击事件
+	在Activity中重写onOptionsItemSelected()方法
+    public boolean onOptionsItemSelected(MenuItem item){
+        //通过调用item.getItemId()来判断菜单项
+        switch (item.getItemId()){
+            case R.id.add_item:
+                Toast.makeText(this,"You Clicked Add",Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.remove_item:
+                Toast.makeText(this,"You clicked Remove",Toast.LENGTH_SHORT).show();
+                break;
+                default:
+        }
+        return true;
+    }
+8.图像-getX和getRawX
+	getX:是以组件左上角为坐标原点，获取X坐标轴上的值。
+	getRawX:以屏幕左上角为坐标原点，获取X坐标轴上的值。
+9.MediaPlayer播放网络音乐
+	9.1创建MediaPlayer对象
+	MediaPlayer mPlayer = new MediaPlayer();	
+	9.2设置数据源
+	mPlayer.setDataSource("http://192.168.47.27:8080/seve.mp3");
+	9.3异步准备
+	public void start(View v) {
+		mPlayer.prepareAsync();
+		//等待缓冲完成才能播放
+		mPlayer.setOnPreparedListener(new OnPreparedListener() {		
+			@Override
+			//准备完成回调方法
+			public void onPrepared(MediaPlayer mp) {
+				//判断之前音乐是否停止
+				if(isStop){
+					//需要重新准备
+					mPlayer.prepare();
+				}
+				//播放
+				mPlayer.start();
+				isStop = false;
+			}
+		});		
+	}	
+	//暂停
+	public void pause(View v) {
+		mPlayer.pause();
+	}
+	private boolean isStop;
+	//停止
+	public void stop(View v) {
+		mPlayer.stop();
+		isStop = true;
+	}	
+10.SurfaceView+MediaPlayer播放视频（参考老师详细笔记）
+11.调用系统相机拍照
+	1.创建意图
+		Intent intent = new Intent();
+	2.指定Action为系统相机拍照功能
+		intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
+		mFile = new File(Environment.getExternalStorageDirectory()
+			.getAbsolutePath(), System.currentTimeMillis() + ".jpg");
+		Uri uri = Uri.fromFile(mFile);
+	3.给系统相机传递数据，告诉相机拍照完成后把照片存放在uri对应的文件路径
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+	4.启动Activity并等待结果
+		参数1意图，参数2请求码（可自定义任何整型）
+		startActivityForResult(intent, 100);	
+		重写onActivityResult方法，如果系统相机有结果返回则调用此方法
+		@Override
+		protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+			// TODO Auto-generated method stub
+			super.onActivityResult(requestCode, resultCode, data);
+			//如果返回码正确
+			if (resultCode == RESULT_OK) {
+			//如果请求码一致
+				if (requestCode == 100) {
+					//把文件解析成位图并显示
+					Bitmap bitmap = BitmapFactory.decodeFile(mFile
+							.getAbsolutePath());
+					mIv.setImageBitmap(bitmap);
+
+				}
+
+			}
+		}	
+12.调用系统相机并录像
+	1.创建意图，指定Action系统相机录屏功能
+		Intent intent = new Intent();
+		intent.setAction(MediaStore.ACTION_VIDEO_CAPTURE);
+	2.设置视频的本地存放路径
+		mFile = new File(Environment.getExternalStorageDirectory()
+				.getAbsoluteFile(), System.currentTimeMillis() + ".3gp");
+		Uri uri = Uri.fromFile(mFile);
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+	3.设置视频质量，1表示高质量
+		intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
+	4.启动Activity并等待返回结果，参数2请求码
+		startActivityForResult(intent, 100);
+	}
+	5.重写onActivityResult，如果系统相机有结果返回则调用此方法
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (resultCode == RESULT_OK) {
+			if (requestCode == 100) {
+			//使用sufaceView和meidiaPlayer播放录制的视频
+				mSurface = (SurfaceView) findViewById(R.id.surface);
+				//获得控制器
+				SurfaceHolder mSurfaceHolder = mSurface.getHolder();
+				//给控制器添加监听回调
+				mSurfaceHolder.addCallback(new Callback() {
+					@Override
+					创建完成回调
+					public void surfaceCreated(SurfaceHolder holder) {
+						MediaPlayer mPlayer = new MediaPlayer();
+						mPlayer.setDisplay(mSurfaceHolder);
+						try {
+							mPlayer.setDataSource(mFile.getAbsolutePath());
+							mPlayer.prepare();
+							mPlayer.start();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				});
+			}
+		}
+day21
+Fragment:用于更新界面上的一部分内容，跟Activity的跳转是两个概念
+1.Fragment的使用步骤
+	1. 在activity布局中划分区域  （容器控件： FrameLayout）
+	2. 定义Fragment使用的布局（没有布局控件要求）
+	3. 定义SaveFragment,继承Fragment
+		//重写onCreateView方法
+			public View onCreateView(LayoutInflater inflater, ViewGroup container,
+				Bundle savedInstanceState)
+		//关联布局，并解析成View
+			View view = inflater.inflate(R.layout.fragment_msg, null);
+		//返回View控件
+			return view;
+		
+	4.在activity中添加Fragment
+		//获取碎片管理器
+			FragmentManager fm = getFragmentManager();
+		//通过碎片管理器开启事务
+			FragmentTransaction ft = fm.beginTransaction();
+		//构建fragment对象
+			Fragment fragment = new SaveFragment();
+		//替换容器中的内容
+			参数1：容器控件FrameLayout的id值，参数2：碎片对象
+			ft.replace(R.id.container, fragment);
+		//提交事务
+			ft.commit();
+	
+		简化：getFragmentManager().beginTransaction().replace(R.id.container, new SaveFragment()).commit();
+2.Fragment和Activity之间的通信
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		View view = inflater.inflate(R.layout.fragment_msg, null);
+		1.获取MsgFragment所对应的布局中的按钮
+		Button bt_msg = (Button) view.findViewById(R.id.bt_text);
+		2.设置监听事件
+		bt_msg.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				3.获取MsgFragment所属于的Activity对象
+				Activity activity = getActivity();
+				4.获取Activity的文本控件的内容
+				TextView et_text = (TextView) activity
+						.findViewById(R.id.et_text);
+				5.修改Activity文本框内容
+				et_text.setText("被修改了");
+				Toast.makeText(getActivity(), "Fragment成功修改Activity", 0).show();
+			}
+		});
+		return view;
+	}
+3.View动画和属性动画（参考老师详细笔记）
+	View动画特点：移动的是图像，不是控件ImageView
+	属性动画特点：图像移动，控件也跟着一起移动
+	
+	
+day23手机卫士第1天
+1.获取版本号和版本名称
+	//获取包管理器
+	PackageManager pm = getPackageManager();
+	//获取清单文件对象
+	String packageInfo = pm.getPackageInfo("com.xiaoxin.androidsafe", 0);
+	//获取版本名称3.0
+	String versionName = mPackageInfo.versionName;
+	//获取版本号3（检测更新对比的是版本号）
+	String versionCode = mPackageInfo.versionCode;
+	
+2.给app添加封面
+	作用：展示log,打广告，处理耗时操作，比如复制assert目录下的数据库文件并解压到sd卡
+	1.创建FlashActivity继承Activity（使用postDelayed延时跳转到主界面）
+	重写oncreate方法，添加如下：
+		Handler mHandler = new Handler();
+		mHandler.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				//创建意图
+				Intent intent = new Intent(FlashActivity.this,
+						MainActivity.class);
+				//跳转到指定的Activity
+				startActivity(intent);
+				//跳转之后关闭封面Activity
+				finish();
+			}
+		}, 3000);
+	}
+	2.这个activity对应的布局文件中添加一张图片，设置gravity="center"
+	3.全屏无标题显示：在清单设置该Activity的主题为
+	android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen" >
+	4.在清单文件中设置该Activity为应用启动项
+	    <action android:name="android.intent.action.MAIN" />
+	5.在清单文件中设置该Activity的category
+		<category android:name="android.intent.category.LAUNCHER" />
+		
+3.进度对话框（可用于下载进度的显示）
+	3.1创建ProgressDialog对象
+		ProgressDialog pDialog = new ProgressDialog(mContext);
+	3.2设置进度条的风格，有常量
+		pDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+	3.3设置进度条的总进度
+		pDialog.setMax(max);
+	3.4显示进度对话框
+		pDialog.show();
+	3.5设置实时进度
+		pDialog.setProgress(progress);
+	3.6隐藏对话框
+		pDialog.dismiss();
+		
+4.应用安装以及回调
+	private void installApk() {
+		//应用安装提示界面是一个Activity,所以可以设置意图进行跳转
+		Intent intent = new Intent();
+		intent.setAction("android.intent.action.VIEW");
+		intent.addCategory("android.intent.category.DEFAULT");
+		//设置uri,格式：file://要安装的应用的绝对路径
+		intent.setDataAndType(Uri.parse("file://" + mFile.getAbsolutePath()),
+				"application/vnd.android.package-archive");
+		// 安装完成打开应用
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		//
+		startActivityForResult(intent, REQUESTCODE);
+	}	
+	
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		//先判断请求码
+		if (requestCode == REQUESTCODE) {
+		//在判断结果码
+			if (resultCode == RESULT_OK) {
+				Log.v(Tag, "确定安装");
+			} else if (resultCode == RESULT_CANCELED) {
+				//取消安装，直接进入主页
+				loadMainActivity();
+			}
+		}
+	}
+day24.手机卫士第2天
+1.TextView跑马灯效果并强制获取焦点
+	1.1自定义类继承TextView
+		public class MarqueeTextView extends TextView{
+			在2个参数的构造方法里设置属性，初始化控件
+			public MarqueeTextView(Context context, AttributeSet attrs) {
+				super(context, attrs);	
+				setEllipsize(TruncateAt.MARQUEE);
+				setFocusable(true);
+				setFocusableInTouchMode(true);
+				setSingleLine(true);
+			}
+	
+			返回true强制申请焦点,第一次获取焦点
+			public boolean isFocused() {
+				boolean focused = super.isFocused();
+				System.out.println("isFocused="+focused);
+				return true;
+			}
+	
+			当焦点发生改变时，会把控件当前的焦点状态上传给父类方法，从而改变焦点的状态，
+				所以只要保证焦点状态为false时，不走父类方法，就会保持焦点在获取状态
+			protected void onFocusChanged(boolean focused, int direction,
+					Rect previouslyFocusedRect) {
+				if(focused){//true：有焦点，才走父类方法，false:失去焦点不执行
+					super.onFocusChanged(focused, direction, previouslyFocusedRect);
+				}
+			}
+	
+			窗体焦点发生改变
+			public void onWindowFocusChanged(boolean hasWindowFocus) {
+				if(hasWindowFocus){//true：有焦点，才走父类方法，false:失去焦点不执行
+					super.onWindowFocusChanged(hasWindowFocus);
+				}
+			}
+
+			调用2个参数的构造方法
+			public MarqueeTextView(Context context) {
+				this(context, null);
+			}
+		}		
+	1.2在布局中添加跑马灯控件
+         <com.itheima.mobilesafe.view.MarqueeTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="黑马程序员手机卫士，时刻保护您的手机。http://itheima.com"
+		/>
+		
+2.GridView的使用
+	1.在布局中添加GridView控件
+    <GridView
+        android:id="@+id/gv_main"
+		//设置列表的列数
+        android:numColumns="2"
+		//设置行列间距
+        android:horizontalSpacing="2dp"
+        android:verticalSpacing="2dp"
+	/>	
+	2.GridView条目的positon，从0开始，从左到右，再从上到下
+	3.其他的跟listview一样
+	
+3.Selector选择器的使用
+	作用：让TextView,Button或者ListView条目在不同状态下显示不同的背景，背景可以引用图片，颜色，或者Shape绘制图形
+	1.在布局控件中引用选择器
+	     <ImageButton
+            android:background="@drawable/btn_selector"
+		/>
+	2.在drawable目录下添加选择器btn_selector.xml
+		<selector xmlns:android="http://schemas.android.com/apk/res/android">
+			//控件被点击时
+			<item android:drawable="@drawable/btn_selected" android:state_pressed="true"/>
+			//控件没有被点击时
+			<item android:drawable="@drawable/btn_normal"/>
+		</selector>
+	3.Shape绘制btn_selected.xml
+		<shape xmlns:android="http://schemas.android.com/apk/res/android"
+			<!-- 设置形状 -->
+			android:shape="oval" >
+			<!-- 设置圆角，当圆角等于宽高一半时，为圆形-->
+			<corners android:radius="16dp" />
+			<!-- 设置大小 -->
+			<size android:height="32dp" android:width="32dp" />
+			<!-- 设置填充色 -->
+			<solid android:color="@color/white" />
+			<!-- 设置边缘厚度和颜色 -->
+			<stroke android:width="1dp" android:color="#FF0000"/>
+		</shape>	
+	4.btn_normal.xml同理
+	
+4.自定义控件-RelativeLayout
+	1.写好要被自定义的布局.xml
+	2.在values/attrs.xml中自定义属性（属性的作用是为了动态初始化控件）
+		每个自定义控件都有一个独立的declare-styleable标签
+		<declare-styleable name="SettingItemView">
+			<!-- 文本属性 -->
+			<attr name="sivText" format="string" />
+
+			<!-- 背景属性：3个，first、middle、last,超过三个类型使用枚举,value的Int值对应name的值-->
+			<attr name="sivBackground">
+				<enum name="first" value="0" />
+				<enum name="middle" value="1" />
+				<enum name="last" value="2" />
+			</attr>
+			
+			<!-- 开关状态 -->
+			<attr name="sivToggleEnable" format="boolean" />
+		</declare-styleable>	
+	2.创建一个类继承RelativeLayout
+		public class SettingItemView extends RelativeLayout {
+			//2.1初始化控件属性
+			public SettingItemView(Context context, AttributeSet attrs) {
+				super(context, attrs);
+				//2.2关联布局文件，item布局,this:当前Relativelayout作为父容器
+				View.inflate(context, R.layout.view_setting, this);
+				//2.3获取自定义控件的属性集合对象(参数2与attrts.xml中declare-styleable标签的name保持一致)
+				TypedArray ta = context.obtainStyledAttributes(attrs,
+						R.styleable.SettingItemView);
+				//2.4获取布局xml中控件设定的值（参数2，与与attrts.xml中attr标签的name保持一致）
+				String title = ta.getString(R.styleable.SettingItemView_isText);//字符串类型
+				//枚举类型，第二个参数表示，如果布局xml中没有设置属性，会返回一个默认值
+				int background = ta.getInt(R.styleable.SettingItemView_isBackground, 0);
+				switch (background) {
+				case 0:
+					mResid = R.drawable.first_selector;
+					break;
+				case 1:
+					mResid = R.drawable.middle_selector;
+					break;
+				case 2:
+					mResid = R.drawable.last_selector;
+					break;
+				mToggleEnable = ta.getBoolean(R.styleable.SettingItemView_isToggleEnable, false);//布尔类型
+			}
+			
+			2.5在类里面添加一些方法供外部调用
+		}
+			//在一个参数的构造方法里调用两个参数的构造，保证初始化一定会完成
+			public SettingItemView(Context context) {
+				this(context, null);
+			}
+		}
+	3.在布局xml中添加命名空间
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		参照Android默认的命名空间，第一个android改成app，第二个android改成com.xiaoxin.androidsafe，然后添加在默认命名空间下一行
+		xmlns:app="http://schemas.android.com/apk/res/com.xiaoxin.androidsafe"
+	4.在布局xml中使用控件
+		<com.xiaoxin.androidsafe.view.SettingItemView
+			//设置背景
+			app:isBackground="first"
+			//设置文字
+			app:isText="自动更新设置" 
+			//设置开关默认关闭
+			app:sivToggleEnable="false">
+		</com.xiaoxin.androidsafe.view.SettingItemView>
+		
+5.使用sharePerferce持久化开关状态（使用时自己最好封装在工具类里面，用静态方法，传入参数）
+	5.1点击开关时，获取存储的状态
+		参数1：SharedPreferences文件的名字，参数2：模式，Context.MODE_PRIVATE只能在本应用中被读写
+		//1.如果没有文件，则会自动创建，如果本地已经有同名文件，则不再创建
+			SharedPreferences mSp = context.getSharedPreferences("androidsafe",
+					Context.MODE_PRIVATE);
+		//2.获取key:autuoUpdateToggle的值，如果没有存储过，返回false
+			Boolean mToggleStatus=mSp.getBoolean("autuoUpdateToggle",false);
+		//3.根据开关状态改变开关的样式
+			mIv_toggle.setImageResource(!mToggleStatus ? R.drawable.on: R.drawable.off);
+		//4.持久化存储开关状态
+			mSp.edit().putBoolean("autuoUpdateToggle",!mToggleStatus);
+	5.2	在界面可见时回显开关状态
+		protected void onStart() {
+			super.onStart();
+			//5.获取开关状态
+			Boolean mToggleStatus=mSp.getBoolean("autuoUpdateToggle",false);
+			//6.设置开关状态
+			mSiv_autoupdate.setToggle(mToggleStatus, this);
+		}	
+		
+6.自定义AlertDialog（适用于仅仅修改对话框内容，不修改窗体布局参数）
+	6.1代码部分
+		final AlertDialog dialog = new AlertDialog.Builder(mContext).create();
+		// 关联布局文件
+		View view = View.inflate(mContext, R.layout.dialog_pwd_input, null);
+		//通过view对控件
+		final EditText etPwdEnter = (EditText) view.findViewById(R.id.et_pwd_setting);
+		//设置AlertDialog的视图对象
+		dialog.setView(view);
+		// 设置确定、取消按钮的点击监听事件
+		view.findViewById(R.id.btn_ok).setOnClickListener(this);
+		view.findViewById(R.id.btn_cancel).setOnClickListener(this);
+		//显示AlertDialog
+		dialog.show();	
+	6.2布局部分
+		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			android:orientation="vertical" >
+			<TextView
+				android:text="密码验证" />
+
+			<EditText
+				android:id="@+id/et_pwd_setting"
+				android:hint="请输入密码"
+				android:inputType="textPassword" />
+
+			<LinearLayout
+				android:orientation="horizontal" >
+		
+				<Button
+					android:id="@+id/btn_ok"
+					android:text="确定" />
+
+				<Button
+					android:id="@+id/btn_cancel"
+					android:text="取消" />
+			</LinearLayout>
+		</LinearLayout>
+		
+7.Activity跳转过渡动画
+	//1.跳转到指定意图Activity
+		startActivity(intent);
+	//2.执行切换动画 参数1：当前Activity进入时动画 参数2：当前Activity退出动画
+		overridePendingTransition(R.anim.next_enter_anim, R.anim.next_exit_anim);
+	//3.res/anim目录创建动画
+		next_enter_anim.xml
+		平移动画
+		<translate xmlns:android="http://schemas.android.com/apk/res/android"
+			//持续时间
+			android:duration="400" 
+			//从父容器的右下角
+			android:fromXDelta="100%p"
+			//平移至左下角
+			android:toXDelta="0"/>
+
+8.手势识别器
+	//1.在Activity的Oncreate方法创建手势识别器
+		参数1：上下文 参数2：OnGestureDetector手势监听接口对象，GestureDetector的内部类SimpleOnGestureListener实现了OnGestureDetector接口
+		所以创建GestureDetector.SimpleOnGestureListener对象作为参数2
+		GestureDetector mGd = new GestureDetector(mContex,
+				new GestureDetector.SimpleOnGestureListener() {
+					@Override
+					//重写OnFling方法 参数1：手势起始坐标 参数2：手势终止的坐标
+					public boolean onFling(MotionEvent e1, MotionEvent e2,
+							float velocityX, float velocityY) {
+						float rawXStart = e1.getRawX();
+						float rawXEnd = e2.getRawX();
+						//手势终止时，如果x的终止坐标大于起始坐标，则表示向右滑动，返回上一页，否则进入下一页
+						if (rawXEnd > rawXStart) {
+							startActivity(intent);
+							overridePendingTransition(R.anim.pre_enter_anim, R.anim.pre_exit_anim);
+						} else {
+							startActivity(intent);
+							overridePendingTransition(R.anim.next_enter_anim, R.anim.next_exit_anim);
+						}
+						return super.onFling(e1, e2, velocityX, velocityY);
+					}
+
+				});
+	2.重写onTouchEvent方法，屏幕触摸时会执行此方法，相当于触摸监听
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		//把触摸动作传递给手势识别器
+		mGd.onTouchEvent(event);
+		return super.onTouchEvent(event);
+	}
+
+9.获取sim卡序列号
+	//通过系统服务获取电话管理器
+		TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+	//通过电话管理器获取当前Sim卡序列号
+		String sim = tm.getSimSerialNumber();
+		
+day25手机卫士第3天
+1.获取系统联系人
+	//1.2创建联系人数据Bean类
+	//1.2创建联系人工具类，内部使用内容解析者获取联系人内容提供者的数据，返回联系人数据集合
+
+2.判断复选框是否被选中
+	//1.初始化控件
+	CheckBox cb_protect = (CheckBox) findViewById(R.id.cb_protect);
+	//2.返回true，被选中 false，没有被选中
+	boolean checked = mCb_protect.isChecked();
+		
+day26手机卫士第4天
+1.激活设备管理员步骤：
+	1.1创建一个类BaseDeviceReceiver继承DeviceAdminReceiver，不同重写任何方法
+	1.2权限申请：通过一个xml文件申请（保存在res/xml/device_admin.xml目录下）
+	<device-admin xmlns:android="http://schemas.android.com/apk/res/android">
+		<uses-policies>
+			<!-- 强制锁屏 -->
+			<force-lock />
+			<!-- 擦除数据 -->
+			<wipe-data />
+            <!-- 更改屏幕解锁密码 -->
+            <reset-password />
+		</uses-policies>
+	</device-admin>	
+	1.3在清单文件中注册
+        <receiver
+            android:name=".receiver.BaseDeviceReceiver"//广播接收者名称
+            android:description="@string/device_admin_description" //开始黑马设备管理器
+            android:label="@string/device_admin"   //时刻保护您的手机安全！！！
+            android:permission="android.permission.BIND_DEVICE_ADMIN" >
+            <meta-data
+                android:name="android.app.device_admin"
+                android:resource="@xml/device_admin" />//权限申请文件
+            <intent-filter>
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+            </intent-filter>
+        </receiver>	
+	1.4Activity初始化数据时
+		//获取设备管理员
+		DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
+		//申请权限 参数1：上下文 参数2：广播接收者
+		ComponentName who = new ComponentName(mContext, BaseDeviceReceiver.class);	
+	1.5按钮点击监听启动时
+	private void activeAdmin() {
+		// 1.判断设备管理器是否开启（所以不用持久化存储）
+		boolean active = dpm.isAdminActive(who);
+		// 2.未激活，激活
+		if(!active){
+			//创建意图
+			Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+			intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, who);
+			intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION,getString(R.string.device_admin_description));
+			//开启意图后会跳转至系统自带的设备管理器激活界面
+			//并等待结果返回（因为用户可以点击激活或者取消）
+			startActivityForResult(intent, REQUEST_CODE_ENABLE_ADMIN);
+		}else{
+			// 3.激活过，取消激活
+			dpm.removeActiveAdmin(who);
+			mIvStatus.setImageResource(R.drawable.admin_inactivated);
+		}
+	}
+	// 4.处理激活回调
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if(requestCode == REQUEST_CODE_ENABLE_ADMIN && resultCode == Activity.RESULT_OK){
+			mIvStatus.setImageResource(R.drawable.admin_activated);
+		}
+	}	
+
+day27手机卫士第5天	
+1.异步加载数据，显示进度圈
+	案例：通过查询数据库返回数据源，并通过适配器加载数据源到ListView列表进行显示
+		  大量的数据库查询是耗时操作，为了避免让用户等待数据的加载，所以在进度圈显示的同时，查询数据库并加载数据，提升用户体验
+	分析：显示进度圈的同时查询数据库，所以显示进度圈和查询数库属于异步，两者互不影响
+		  先查询数据库获取到数据源，才能设置适配器进行数据加载，所以查询数据库和设置适配器属于同步，有先后关系
+	具体实现步骤：
+	2.1在布局xml中加入进度圈控件
+         <ProgressBar
+            android:id="@+id/pb_blakmanege_progressBar"
+			//引用系统样式
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+			//设置动画
+            android:indeterminateDrawable="@drawable/progress_large" >
+        </ProgressBar>
+	2.2自定义动画效果
+		<rotate xmlns:android="http://schemas.android.com/apk/res/android"
+			//显示的图片
+			android:drawable="@drawable/loading"
+			android:fromDegrees="0"
+			android:pivotX="50%"
+			android:pivotY="50%"
+			//规定时间内旋转360°
+			android:toDegrees="360" />
+	2.3初始化控件
+		ProgressBar pb = (ProgressBar) findViewById(R.id.pb_blakmanege_progressBar);
+	2.4异步加载数据，显示进度圈
+	//1.显示进度圈
+		pb.setVisibility(View.VISIBLE);
+	//2.隐藏列表控件
+		mListView.setVisibility(View.GONE);
+	//3.因为数据库查询是耗时操作，所以开启新线程
+		new Thread(new Runnable() {	
+			@Override
+			public void run() {
+				BlackListDao dao = new BlackListDao(mContext);
+				mList = dao.query();
+				//子线程不能更新UI，所以发送至主线程
+				runOnUiThread(new Runnable() {
+					public void run() {
+						mAdapter = new ProcessAdapter();
+						mListView.setAdapter(mAdapter);	
+						//数据加载完隐藏进度条,显示列表
+						pb.setVisibility(View.GONE);
+						mListView.setVisibility(View.VISIBLE);
+					}
+				});
+			}
+		}).start();
+
+2.列表为空，友好提示
+作用：当列表数据为空时，显示一张图片，而不是空白，提升用户体验
+* adapter数据改变，每次都触发getCount方法，在该方法处理ImageView显示隐藏最合适
+* 布局
+
+		  <ImageView
+            android:id="@+id/css_iv_empty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:src="@drawable/empty"
+            android:visibility="gone" />
+
+* adapter代码：
+
+		@Override
+		public int getCount() {
+			if(mListData != null){
+				//根据数据条数显示/隐藏 图片
+				mIvEmpty.setVisibility(mListData.size() == 0 ? View.VISIBLE : View.GONE);
+				return mListData.size();
+			}
+			mIvEmpty.setVisibility(View.VISIBLE);//显示自定义图片
+			return 0;
+		}	
+
+3.列表滚动监听事件
+	//1.初始化ListView
+		ListView lv = (ListView) findViewById(R.id.lv_traffic);		
+	//2.给ListView设置滚动监听事件
+		lv.setOnScrollListener(this);
+	//3.重写回调方法
+		@Override
+		//ListView滚动状态发生改变时触发
+		public void onScrollStateChanged(AbsListView view, int scrollState) {	
+		
+			scrollState：滚动状态，有三种	
+			1.静止状态，SCROLL_STATE_IDLE
+			2.手指滚动状态，SCROLL_STATE_TOUCH_SCROLL
+			3.是手指不动了，但是屏幕还在滚动状态SCROLL_STATE_FLING
+		}
+
+		@Override
+		//ListView正在滚动时触发（注意：第一次进入列表时，自动触发两次该方法）
+		public void onScroll(AbsListView view, int firstVisibleItem,
+					int visibleItemCount, int totalItemCount) {
+			
+			    参数2：第一个Item的位置 
+				参数3: 可见的Item的数量 
+				参数4：Item的总数 		
+		}
+4.下拉加载更多
+
+
+5.监听短信接收并实现拦截
+需求：当开启短信拦截服务时，自动对黑名单号码发送的短信进行屏蔽
+分析：使用服务的好处是在退出应用时，拦截服务依然有效。在服务开启时，动态注册短信接收者，服务关闭时反注册，这样就可以动态控制拦截服务的开启和关闭了
+
+	5.1.注册服务并添加权限  
+		<uses-permission android:name="android.permission.SEND_SMS" />   
+		<uses-permission android:name="android.permission.RECEIVE_SMS" /> 
+	5.2.创建服务和广播接收者	
+	public class SaoRaoLJService extends Service {
+		private MmsBroadCast mMmsBroadCast;
+
+		@Override
+		public void onCreate() {
+			// 服务开启时注册广播，开启拦截服务
+			super.onCreate();
+			// 创建短信广播接收者
+			mMmsBroadCast = new MmsBroadCast();
+			//创建广播意图过滤器
+			IntentFilter filter = new IntentFilter();
+			// 设置我们自己创建的短信广播接收者的优先级为最大，因为较高优先级的接收者可以中途拦截对象
+			filter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
+			// 设置广播动作
+			filter.addAction("android.provider.Telephony.SMS_RECEIVED");
+			//动态注册短信广播接收者
+			registerReceiver(mMmsBroadCast, filter);
+		}
+
+		// 创建短信广播接者（获取短信发送者，如果发送者是黑名单数据库，拦截类型短信）
+		class MmsBroadCast extends BroadcastReceiver {
+			//收到短信广播时调用onreceive方法
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				// 获取短信内容，集合里面每一个元素都是一条短信
+				Object[] objs = (Object[]) intent.getExtras().get("pdus");
+				// 遍历短信内容
+				for (Object obj : objs) {
+					// 短信消息对象
+					SmsMessage sms = SmsMessage.createFromPdu((byte[]) obj);
+					//获取短信内容
+					String body = sms.getMessageBody();
+					// 获取发送者号码
+					String phone = sms.getOriginatingAddress();
+					// 通过Dao类获取号码的类型(如果此号码设置过黑名单，就可以获取到类型)
+					BlackListDao dao = new BlackListDao(context);
+					int type = dao.getType(phone);
+					// 如果类型是短信或者全部
+					if (type == 1 || type == 2) {
+						// 在其他接收者收到短信广播之前中途终止广播，实现短信拦截
+						abortBroadcast();
+					}
+				}
+			}
+		}
+
+		@Override
+		public void onDestroy() {
+			// 服务销毁时反注册短信广播，关闭拦截服务
+			super.onDestroy();
+			unregisterReceiver(mMmsBroadCast);
+		}
+	}
+
+6.使用动画插入器实现EditText抖动效果
+	功能：EditText判断内容为空时，输入来回抖动
+	//1.AnimationUtils加载xml动画	
+			String number = mEtNumber.getText().toString().trim();
+			if(TextUtils.isEmpty(number)){
+				// 加载xml动画
+				Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
+				// 开始动画
+				mEtNumber.startAnimation(shake);
+				return;
+			}
+	//2.添加动画xml到res/anim
+		xml平移动画
+		<translate xmlns:android="http://schemas.android.com/apk/res/android"
+			android:duration="1000"
+			android:fromXDelta="0"
+			//动画插入器
+			android:interpolator="@anim/cycle_7"
+			android:toXDelta="10" />
+			
+		抖动效果动画插入器		
+		<cycleInterpolator xmlns:android="http://schemas.android.com/apk/res/android"
+			android:cycles="7" />	
+			
+	使用代码实现：
+	//1.创建View平移动画
+		TranslateAnimation anim = new TranslateAnimation(0, 10, 0, 0);
+	//2.设置播放时间
+		anim.setDuration(1000);
+	//3.设置插入器
+		anim.setInterpolator(new CycleInterpolator(10));
+	//4.开始动画
+		mEtNumber.startAnimation(anim);
+	
+day28手机卫士第6天
+1.复制Asserts目录文件到私有目录files下
+	//1.获取Asserts目录文件输入流
+		mIs = getAssets().open("commonnum.db");
+	//2.创建File对象，在私有目录file下生成commonnum.db文件
+		File file = new File(mContext.getFilesDir(), "commonnum.db");
+	//3.读取输入流，写入目标文件
+		byte[] buffer = new byte[1024];
+		int len = 0;
+		mFos = new FileOutputStream(file);
+		while ((len = mIs.read(buffer)) != -1) {
+			mFos.write(buffer, 0, len);
+		}	
+		
+2.解压Asserts目录Gzip压缩包到私有目录files下
+	//1.获取Asserts目录文件输入流
+		InputStreams is= getAssets().open("commonnum.gzip");
+	//2.创建File对象，在私有目录file下生成commonnum.db文件
+		File targetFile = new File(mContext.getFilesDir(), "commonnum.db");
+	//3.创建GZIPInputStream包装流,通过包装流可以读取gzip格式文件内容
+		GZIPInputStream gis = new GZIPInputStream(is);
+	//4.读取包装流，写入到目标文件
+		FileOutputStream fis = new FileOutputStream(targetFile);
+		byte buffer[] = new byte[1024];
+		int len = 0;
+		while ((len = gis.read(buffer)) != -1) {
+			fis.write(buffer, 0, len);	
+
+3.获取私有目录Files下数据库文件对象
+	//1.目标文件File对象
+		File file = new File(mContext.getFilesDir(), "address.db");
+	//2.通过SQLiteDatabase类调用openDatabase方法返回数据库文件对象
+		参数1：File绝对路径 参数2：数据库文件读写权限
+		SQLiteDatabase db = SQLiteDatabase.openDatabase(
+				file.getAbsolutePath(), null, SQLiteDatabase.OPEN_READONLY);	
+				
+4.正则匹配
+	//1.要匹配的数据源
+		String number;
+	//2.匹配规则
+		String regular = "^1[34578]\\d{9}$";
+	//3.匹配结果，true表示规则匹配通过
+		boolean isPhoneNumber = number.matches(regular);
+		
+5.EditText监听事件
+	当EditText输入时，动态监听输入的内容
+	//1.初始化控件
+		EditText mEt_phone = (EditText) findViewById(R.id.et_location_phone);
+	//2.设置监听事件
+		mEt_phone.addTextChangedListener(this);
+	//3.重写回调方法
+	@Override
+	//当输入框内容发生改变时调用该方法
+	public void onTextChanged(CharSequence s, int start, int before, int count) {
+		String result = HomeLocationDao.query(mContext, s.toString().trim());
+
+		mTv_result.setText("归属地：" + result);
+	}
+
+6.ExpandListView可折叠列表控件的使用
+分析：一个父条目对应一个GroupBean类，一个子条目对应一个ChildBean类，而一个父条目包含多个ChildBean，
+所以一个GroupBean包含（自身和一个泛型为ChildBean的集合），而父条目有多个，这些GroupBean全部添加到一个集合中
+	//GroupBean
+	public class CommNumGroupBean {
+		public String GroupName;
+		public List<CommNumChildBean> listChild;
+	}
+	
+	//ChildBean
+	public class CommNumChildBean {
+		public String number;
+		public String name;
+	}	
+//6.1在布局xml添加ExpandListView控件
+	<ExpandableListView
+		android:id="@+id/elv_common_number"
+		//去掉父条目指示器
+		android:groupIndicator="@null" >
+	</ExpandableListView>
+//6.2初始化控件
+	ExpandableListView elv_num) = (ExpandableListView) findViewById(R.id.elv_num);
+//6.3通过Dao类获取数据源（泛型为GroupBean的集合）
+	List<GroupBean> mListGroup = CommonNumDao.query(mContext);
+//6.4创建适配器
+	CommonNumberAdapter cNumberAdapter = new CommonNumberAdapter();
+//6.5设置适配器
+	mElv_number.setAdapter(cNumberAdapter);	
+//6.6适配器的具体细节
+	class CommonNumberAdapter extends BaseExpandableListAdapter {
+
+		@Override
+		public int getGroupCount() {
+			// 返回父条目的个数
+			return mListGroup.size();
+		}
+
+		@Override
+		public int getChildrenCount(int groupPosition) {
+			// 返回子条目的个数
+			return mListGroup.get(groupPosition).listChild.size();
+		}
+
+		@Override
+		public Object getGroup(int groupPosition) {
+			// 返回父条目的Bean类
+			return mListGroup.get(groupPosition);
+		}
+
+		@Override
+		public Object getChild(int groupPosition, int childPosition) {
+			// 返回子条目的Bean类
+			return mListGroup.get(groupPosition).listChild.get(childPosition);
+		}
+
+		@Override
+		public long getGroupId(int groupPosition) {
+			// 返回父条目的Id
+			return groupPosition;
+		}
+
+		@Override
+		public long getChildId(int groupPosition, int childPosition) {
+			// 返回子条目的Id
+			return childPosition;
+		}
+
+		@Override
+		public View getGroupView(int groupPosition, boolean isExpanded,
+				View convertView, ViewGroup parent) {
+			// 创建父条目View对象并加载数据
+			if (convertView == null) {
+				convertView = View.inflate(mContext,
+						R.layout.item_commnum_group, null);
+			}
+			TextView tv_name = (TextView) convertView
+					.findViewById(R.id.tv_commnum_group);
+			String groupName = mListGroup.get(groupPosition).GroupName;
+			tv_name.setText(groupName);
+			return convertView;
+		}
+
+		@Override
+		public View getChildView(int groupPosition, int childPosition,
+				boolean isLastChild, View convertView, ViewGroup parent) {
+			// 创建子条目View对象并加载数据
+			if (convertView == null) {
+				convertView = View.inflate(mContext,
+						R.layout.item_commnum_child, null);
+			}
+			TextView tv_title = (TextView) convertView
+					.findViewById(R.id.tv_commnum_title);
+			TextView tv_desc = (TextView) convertView
+					.findViewById(R.id.tv_commnum_desc);
+			tv_title.setText(mListGroup.get(groupPosition).listChild
+					.get(childPosition).name);
+			tv_desc.setText(mListGroup.get(groupPosition).listChild
+					.get(childPosition).number);
+			return convertView;
+		}
+
+		@Override
+		public boolean isChildSelectable(int groupPosition, int childPosition) {
+			// 设置子条目是否可以被点击
+			return true;
+		}
+	}
+
+//6.7设置条目的点击事件
+		mElv_number.setOnGroupClickListener(this);父条目
+		mElv_number.setOnChildClickListener(this);子条目
+		
+	//点击子条目监听事件
+	@Override
+	public boolean onChildClick(ExpandableListView parent, View v,
+			int groupPosition, int childPosition, long id) {
+		return true;
+	}
+
+	// 点击父条目监听事件
+	@Override
+	public boolean onGroupClick(ExpandableListView parent, View v,
+			int groupPosition, long id) {
+			
+		// 判断是否是第一次点击条目
+		// 如果是第一次点击条目，直接展开，记录位置preposition=position(加一个flag标记判断是否是第一次)
+		if (flag) {
+			mElv_number.expandGroup(groupPosition);
+			prePosition = groupPosition;
+			flag = false;
+		}
+		// 再次点击，判断是否是记录的preposition
+		// 如果是，折叠当前positon，并设置preposition=-1;
+		else if (groupPosition == prePosition) {
+			mElv_number.collapseGroup(groupPosition);
+			prePosition = -1;
+		}
+		// 如果不是，折叠记录的preposition条目，并展开当前条目，并设置preposition=positon
+		else {
+			mElv_number.expandGroup(groupPosition);
+			mElv_number.collapseGroup(prePosition);
+			// 置顶指定父条目
+			mElv_number.setSelection(groupPosition);
+			prePosition = groupPosition;
+		}
+		// 返回true表示消耗并处理该事件
+		return true;
+	}
+
+7.监听电话拨入
+分析：服务开启时设置电话拨入监听，服务关闭时取消电话监听
+public class HomeLocationService extends Service {
+
+	@Override
+	public void onCreate() {
+		super.onCreate();
+		mContext = this;
+		// 创建归属地Toast对象
+		LocationToast mLToast = new LocationToast(mContext);
+		// 通过系统服务获取电话管理器
+		TelephonyManager mTM = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+		// 创建监听器对象
+		PhoneStateListener mListener = new PhoneListener();
+		// 给电话管理器设置监听事件
+		mTM.listen(mListener, PhoneStateListener.LISTEN_CALL_STATE);// 监听电话状态
+	}
+
+	private class PhoneListener extends PhoneStateListener {
+		@Override
+		// 电话状态回调，参数1：电话拨入状态 参数2：来电号码
+		public void onCallStateChanged(int state, final String incomingNumber) {
+			super.onCallStateChanged(state, incomingNumber);
+			switch (state) {
+			// 空闲状态
+			case TelephonyManager.CALL_STATE_IDLE:
+				mLToast.hide();
+				break;
+			// 响铃状态
+			case TelephonyManager.CALL_STATE_RINGING:
+				String location = HomeLocationDao.query(mContext,
+						incomingNumber);
+				// 响铃时弹出归属地Toast
+				mLToast.show(location);
+				break;
+			// 接听状态
+			case TelephonyManager.CALL_STATE_OFFHOOK:
+				// 接听时隐藏归属地Toast
+				mLToast.hide();
+				break;
+			}
+
+		}
+	}
+
+	@Override
+	public void onDestroy() {
+		// 取消电话监听事件
+		super.onDestroy();
+		mTM.listen(mListener, PhoneStateListener.LISTEN_NONE);
+	}
+}
+
+8.监听电话外拨
+分析：服务开启时动态注册电话拨入广播，服务关闭时反注册电话拨入广播
+		public class NumberAddressService extends Service{
+		
+			private Context mContext;
+		
+			@Override
+			public void onCreate() {
+				super.onCreate();
+				mContext = this;
+				//创建电话外拨广播接收者对象
+				CallOutReceiver mReceiver = new CallOutReceiver();
+				//创建意图过滤器
+				IntentFilter filter = new IntentFilter();
+				//监听动作：拨出,需要权限：android.permission.PROCESS_OUTGOING_CALLS
+				filter.addAction(Intent.ACTION_NEW_OUTGOING_CALL);
+				//动态注册电话外拨广播接收者
+				registerReceiver(mReceiver, filter );
+			}
+			
+			
+			private class CallOutReceiver extends BroadcastReceiver{
+				@Override
+				public void onReceive(Context context, Intent intent) {
+					//获取外拨号码
+					String number = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
+					String address = NumberAddressDao.findAddress(mContext, number);
+					//弹出归属地Toast
+					ToastUtils.showToast(mContext, "拨出号码：" + address);
+				}
+				
+			}
+			
+			@Override
+			public void onDestroy() {
+				super.onDestroy();
+				unregisterReceiver(mReceiver);
+			}
+		}
+
+day29手机卫士第7天		
+1.自定义Toast
+权限：    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+public class LocationToast implements OnTouchListener {
+
+	private static final String TAG = "LocationToast";
+	private View mView;// 最终通过布局文件生成的view对象
+	private WindowManager mWM;// 窗体管理器
+	private WindowManager.LayoutParams mParams;// 控制显示
+	private TextView mTvLocation;
+
+	public LocationToast(Context context) {
+		mContext = context;
+		// 使用填充器加载布局到View控件
+		mView = View.inflate(context, R.layout.toast_location, null);
+		// 获取归属地信息
+		mTvLocation = (TextView) mView.findViewById(R.id.tv_location_toast);
+		// 获取窗体管理器(这里的窗体就相当于给控件嵌套了一层布局)
+		mWM = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+		// 创建布局参数对象
+		mParams = new WindowManager.LayoutParams();
+		// 设置窗体的宽高，如果是包裹内容，则窗体和控件的坐标保持一致
+		// WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE:不可触摸
+		mParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+		mParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
+		mParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+				| WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
+		// 设置窗体背景透明度
+		mParams.format = PixelFormat.TRANSLUCENT;
+		// 占据前端，和来电效果一样,SYSTEM_ALERT_WINDOW
+		mParams.type = WindowManager.LayoutParams.TYPE_PRIORITY_PHONE;
+		//设置此属性会占据前端，但是Toast不能点击(吐司类型天生不响应点击事件)
+		//mParams.type = WindowManager.LayoutParams.TYPE_TOAST;
+		// 设置控件起始点为屏幕左上角(不包含状态栏)
+		//如果控件设置了触摸事件，需要更新位置，最好设置起始点为左上角，方便坐标位置的处理
+		mParams.gravity = Gravity.LEFT | Gravity.TOP;
+		// 处理控件触摸监听事件
+		mView.setOnTouchListener(this);
+	}
+
+	//显示Toast
+	public void show(String location) {
+		//如果当前窗体不为空
+		if (mView.getParent() != null) {
+			//从窗体移除控件
+			mWM.removeView(mView);
+		}
+		// 添加控件到窗体管理器
+		mWM.addView(mView, mParams);
+	}
+
+	//移除Toast
+	public void hide() {
+		// 从窗体管理器移除
+		if (mView != null) {
+			if (mView.getParent() != null) {
+				mWM.removeView(mView);
+			}
+		}
+	}
+}
+
+2.自定义Dialog
+步骤：1.创建类继承Dialog
+		1.1生成两个构造函数，并在一个参数的构造方法里调用两个参数的构造方法，保证初始化完成
+		1.2在两个参数的构造方法里初始化自定义dialog的样式和动画
+		1.3创建布局xml文件
+		1.4重写onCreate方法，关联布局文件（类似于Activity），并初始化控件，数据，设置监听事件等
+		1.5重写show()方法，是为了设置自定义Dialog的布局参数（在show方法里面设置，相比在构造方法里初始化更好）
+
+public class LocationStyleDialog extends Dialog {
+	public Context mContext;
+
+	// 构造函数是为了初始化Dialog样式和动画
+	public LocationStyleDialog(Context context, int theme) {
+		// 引用自定义主题
+		super(context, R.style.BtmDialogStyle);
+		mContext = context;
+	}
+
+	@Override
+	// 关联布局文件，类似于Activity
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.dialog_location_style);
+	}
+
+	// 一个参数调用两个参数，保证两个参数的构造方法会执行
+	public LocationStyleDialog(Context context) {
+		this(context, 0);
+	}
+
+	// 必须重写show方法
+	@Override
+	public void show() {
+		super.show();
+		// 获取自定义的Dialog所在的窗体的属性参数
+		LayoutParams layoutParams = getWindow().getAttributes();
+		// 设置窗体沉在底部
+		layoutParams.gravity = Gravity.BOTTOM;
+		// 设置窗体宽度全屏
+		layoutParams.width = android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+		// 获取窗体顶层View对象，并设置内边距为0（保证顶层视图宽度全屏）
+		getWindow().getDecorView().setPadding(0, 0, 0, 0);
+		// 提交窗体属性参数
+		getWindow().setAttributes(layoutParams);
+	}
+
+}
+
+day30手机卫士第8天	
+1.PopupWindow的使用
+	// 1.使用填充器加载布局到控件
+	View popview = View.inflate(mContext, R.layout.popup_appmanage,
+			null);
+	// 2.初始化popwindow对象（关联布局，设置气泡宽高）
+	final PopupWindow pw = new PopupWindow(popview,
+			ViewGroup.LayoutParams.WRAP_CONTENT,
+			ViewGroup.LayoutParams.WRAP_CONTENT);
+	//也可以通过以下方式关联布局
+			final PopupWindow pw = new PopupWindow(
+					ViewGroup.LayoutParams.WRAP_CONTENT,
+					ViewGroup.LayoutParams.WRAP_CONTENT);
+	        mPw.setContentView(popview);
+	// 3.只弹窗一个
+	pw.setFocusable(true);// 焦点(如果是监听EditText，弹出popwindow,会因为互相抢占焦点造成卡顿，所以需要改为false)
+	pw.setOutsideTouchable(true);// 点击外围，消失
+	pw.setBackgroundDrawable(new ColorDrawable());// 添加默认背景(这样才能响应back返回键)
+	// 4.设置popwindow显示的位置
+	showAsDropDown方法表示显示在哪个控件下面，参数1：相对的控件 参数2：相对控件左下角x轴偏移距离，y轴偏移距离
+	pw.showAsDropDown(view, 120, -view.getHeight() - 36);
+	// 5.设置popwindow的动画
+	pw.setAnimationStyle(R.style.PopupWindowAnim);
+		5.1定义动画style
+		<style name="PopupWindowAnim">
+			<item name="android:windowEnterAnimation">@anim/pop_enter</item>
+			<item name="android:windowExitAnimation">@anim/pop_exit</item>
+		</style>
+		5.2定义popoWindow弹出动画
+			<?xml version="1.0" encoding="utf-8"?>
+			<translate xmlns:android="http://schemas.android.com/apk/res/android"
+				android:duration="400"
+				android:fromXDelta="100%p"
+				android:interpolator="@interpolator/overshoot"
+				android:toXDelta="0" >
+				<!-- Interpolator 被用来修饰动画效果，定义动画的变化率，可以使存在的动画效果accelerated(加速)，decelerated(减速),repeated(重复),bounced(弹跳)等。 -->
+			</translate>
+		5.3定义popWindow隐藏动画
+			<?xml version="1.0" encoding="utf-8"?>
+			<translate xmlns:android="http://schemas.android.com/apk/res/android"
+				android:duration="400" 
+				android:fromXDelta="0"
+				android:interpolator="@interpolator/anticipate_overshoot"
+				android:toXDelta="100%p">
+			</translate>	
+	// 6.隐藏气泡（PopupWindow没有show方法，只有showAsDropDown）
+	pw.dismiss();
+	//7.为了防止窗体泄露，在popwindow依赖的activity销毁之前，需要先销毁popwindow
+		if (mPopupWindow != null) {
+			mPopupWindow.dismiss();
+			mPopupWindow = null;
+        }
+2.应用卸载的监听回调
+	2.1隐式启动应用卸载界面
+		Intent intent = new Intent();
+		intent.setAction("android.intent.action.VIEW");
+		intent.setAction("android.intent.action.DELETE");
+		intent.addCategory("android.intent.category.DEFAULT");
+		//指定要卸载的应用的包名
+		intent.setData(Uri.parse("package:"
+				+ mAppList.get(position).packageName));
+		startActivity(intent);
+	2.2创建应用卸载广播
+	class UninstallReceiver extends BroadcastReceiver {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			// 当启动了应用卸载界面，收到应用卸载广播时，就会执行这个方法里面的代码
+			String data = intent.getDataString();
+			// 接收到的数据是完整的Uri,要去掉协议package:
+			String packageName = data.replace("package:", "");
+		}
+	}
+	2.3在Activity创建时动态注册广播
+		mUReceiver = new UninstallReceiver();
+		IntentFilter filter = new IntentFilter();
+		filter.addAction(Intent.ACTION_PACKAGE_REMOVED);
+		filter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
+		filter.addDataScheme("package");
+		registerReceiver(mUReceiver, filter);
+	2.4在Activity被销毁时反注册
+		unregisterReceiver(mUReceiver);
+	
+3.通过迭代器遍历集合并修改集合数据
+引入原因：通过foreach可以遍历集合但是无法在遍历时删除元素，因为删除元素会打乱集合的序列
+	Iterator<AppInfoBean> iterator = mAppList.iterator();
+	while (iterator.hasNext()) {
+		AppInfoBean bean = iterator.next();
+		if (bean.packageName.equals(packageName)) {
+			// 从集合中移除
+			iterator.remove();
+			mDataCount--;
+			break;
+		}
+	}
+
+4.通过包名获取应用的启动项
+	Intent launchIntent = mPm.getLaunchIntentForPackage("包名");
+	startActivity(launchIntent);
+
+day31手机卫士第9天
+1.列表滚动显示字母索引
+	1.1自定义Toast
+		public class FirstLetterToast {
+			private View mView;// 最终通过布局文件生成的view对象
+			private WindowManager mWM;// 窗体管理器
+			private WindowManager.LayoutParams mParams;// 控制显示
+			private TextView mFirstLetter;
+			Handler handler = new Handler();
+
+			public FirstLetterToast(Context context) {
+				// 使用填充器加载布局到View控件
+				mView = View.inflate(context, R.layout.toast_fisrtletter, null);
+				mFirstLetter = (TextView) mView.findViewById(R.id.tv_firstletter);
+				// 获取窗体管理器
+				mWM = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+				// 创建布局参数对象
+				mParams = new WindowManager.LayoutParams();
+				// 设置显示位置、大小
+				// WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE:不可触摸
+				mParams.height = LayoutParams.WRAP_CONTENT;
+				mParams.width = LayoutParams.WRAP_CONTENT;
+				mParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+						| WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+						| WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
+				// 设置窗体背景透明度
+				mParams.format = PixelFormat.TRANSPARENT;
+				mParams.type = WindowManager.LayoutParams.TYPE_TOAST;
+				mParams.gravity = Gravity.CENTER;
+
+		}
+	
+		//显示控件
+		public void show(String firstLetter, boolean flag) {
+			if (flag) {
+				if (mView.getParent() == null) {
+					//第一次滚动时，添加控件到窗体
+					mWM.addView(mView, mParams);
+					// Activity每次进入时，都会自动调用列表滚动回调，并且显示字母，所以延时500毫秒自动隐藏字母
+					handler.postDelayed(new Runnable() {
+						@Override
+						public void run() {
+							mView.setVisibility(View.GONE);
+						}
+					}, 500);
+				}
+			} else {
+				//修改字母并显示
+				mFirstLetter.setText(firstLetter);
+				mView.setVisibility(View.VISIBLE);
+			}
+		}
+	
+		//隐藏控件
+		public void hide() {
+			if (mView != null) {
+				if (mView.getParent() != null) {
+				//隐藏窗体上的Toast，但是控件并没有真正移除
+					mView.setVisibility(View.GONE);
+				}
+			}
+		}
+	
+		//Activity失去焦点时调用此方法	
+		public void remove() {
+			if (mView != null) {
+				if (mView.getParent() != null) {
+					// 从窗体管理器移除控件
+					mWM.removeView(mView);
+				}
+			}
+			mView = null;
+		}
+	}	
+	1.2给ListVIew添加滚动监听事件
+		ListView lv = (ListView) findViewById(R.id.lv_traffic);
+		lv.setOnScrollListener(this);
+		@Override
+		public void onScrollStateChanged(AbsListView view, int scrollState) {
+			//当滚动停止时，隐藏Toast
+			if (scrollState == SCROLL_STATE_IDLE) {
+				mFlToast.hide();
+			}
+		}
+		@Override
+		public void onScroll(AbsListView view, int firstVisibleItem,
+					int visibleItemCount, int totalItemCount) {
+			//滚动时动态获取第一个可见条目的名字的首字母，并实时修改Toast并显示
+			String appName = mData.get(firstVisibleItem).name;
+			String firstLetter = ChineseToEnglishUtils.getPinYinHeadChar(appName)
+					.substring(0, 1).toUpperCase();
+			mFlToast.show(firstLetter, flag);
+			flag = false;
+		}	
+		
+	1.3重写Activity的onpause方法
+		@Override
+		protected void onPause() {
+			// Activity失去焦点时从窗体移除控件，可以防止窗体泄露
+			super.onPause();
+			mFlToast.remove();
+		}
+	
+	
+	
+day33手机卫士第11天
+1.AsyncTask异步执行多任务
+	> onPreExecute:最先执行，主线程，做准备工作
+	> doInBackground:准备完成后调用，做耗时操作，子线程执行
+	> doProgressUpdate:频繁调用，依赖doInBackground调用publishProgress
+	> onPostExecute:耗时操作执行后调用，主线程
+
+	* 构造方法3个参数说明
+	* Params:控制doInBackground方法的参数，控制execute传入参数
+	* Progress：控制onProgressUpdate方法的参数控制publishProgress的参数
+	* Result：控制doInBackground返回值，控制onPostExecute方法参数
+	
+使用步骤：
+	1.创建类继承AsyncTask，参数类型先全部写Void 	  
+	2.重写抽象方法 
+	3.创建类对象，并执行异步任务 
+	private String url = "http://10.0.2.2:8080/MobileSafe.apk";
+	DownloadTask task = new DownloadTask();
+	task.execute(url);
+	
+	
+	private class DownloadTask extends AsyncTask<String, Integer, Boolean>{	
+	//1.在doInBackground方法前执行，在主线程执行
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			//显示下载进度条（显示下载进度的同时下载文件，属于异步任务）
+			mDialog.show();
+		}
+
+	// 2.后台，子线程执行耗时操作
+		@Override
+		protected Boolean doInBackground(String... params) {
+			String netUrl = params[0];
+			InputStream is = null;
+			FileOutputStream fos = null;
+			try {
+				URL url = new URL(netUrl);
+				HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+				//返回的流程-> 写入sdk文件
+				is = connection.getInputStream();
+				
+				//获取文件大小
+				int max = connection.getContentLength();
+				int progress = 0;
+				
+				//下载文件到本地
+				File file = new File(Environment.getExternalStorageDirectory(), "MobileSafe37.apk");
+				fos = new FileOutputStream(file);
+				byte[] buffer = new byte[1024];
+				int len = 0;
+				while((len = is.read(buffer)) != -1){
+					fos.write(buffer, 0, len);
+					//获取进度
+					progress += len;
+					//发布进度	
+					publishProgress(progress, max);
+				}		
+			}
+			//下载完毕，返回结果,这里返回什么参数onPostExecute方法就接收什么参数
+			return true;
+		}
+		
+	//3.进度条更新，主线程执行，只有调用publishProgress方法才能触发该方法
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+			super.onProgressUpdate(values);
+			int progress = values[0];
+			int max = values[1];
+			//更新进度条
+			mDialog.setMax(max);
+			mDialog.setProgress(progress);
+		}
+
+	//4.在doInBackground执行完毕调用，在主线程执行
+		@Override
+		protected void onPostExecute(Boolean result) {
+			super.onPostExecute(result);
+			mDialog.dismiss();
+			if(result){
+				Toast.makeText(MainActivity.this, "下载完成", 0).show();
+			}
+		}	
+	}
+}
+
+day34手机卫士第12天
+1.短信备份
+	1.1使用内容解析者读取系统短信,每一条短信对应一个Bean类，把查询到的所有短信添加到集合里
+		ContentResolver cr = mContext.getContentResolver();
+		List<SmsBean> list = new ArrayList<SmsBean>();
+		String[] projection = { "address", "date", "read", "type",
+				"body" };
+		Uri uri = Uri.parse("content://sms");
+		Cursor cursor = cr.query(uri, projection, null, null, null);
+		if (cursor != null) {
+			while (cursor.moveToNext()) {
+			String address = cursor.getString(0);
+			long date = cursor.getLong(1);
+			int read = cursor.getInt(2);
+			int type = cursor.getInt(3);
+			String body = cursor.getString(4);
+			SmsBean bean = new SmsBean(address, date, read, type,
+					body);
+			list.add(bean);
+			int max = cursor.getCount();
+			progress++;
+			publishProgress(max, progress);
+			}
+			cursor.close();
+		}
+	1.2通过Gson将集合序列化成Json字符串
+		Gson gson = new Gson();
+		String json = gson.toJson(list);
+		File mFile = new File(Environment.getExternalStorageDirectory(),"sms.json");
+	1.3通过字符包装流将Json数据写入本地（这里的write是把Json直接一行写入到文件）
+		BufferedWriter bw = new BufferedWriter(new FileWriter(mFile));
+		bw.write(json);	
+		
+2.短信还原
+	2.1读取本地Json文件为字符串
+		File mFile = new File(
+		Environment.getExternalStorageDirectory(),
+				"sms.json");
+		br = new BufferedReader(new FileReader(mFile));
+		String line = br.readLine();
+	2.2使用Gson解析Json数据
+		Gson gson = new Gson();
+		List<SmsBean> list = gson.fromJson(line,new TypeToken<List<SmsBean>>() {}.getType());
+		ContentResolver cr = mContext.getContentResolver();
+		Uri url = Uri.parse("content://sms");
+	2.3使用内容解析者修改读取系统短信
+		for (int i = 0; i < list.size(); i++) {
+			ContentValues values = new ContentValues();
+			values.put("address", list.get(i).address);
+			values.put("date", list.get(i).date);
+			values.put("read", list.get(i).read);
+			values.put("type", list.get(i).type);
+			values.put("body", list.get(i).body);
+			cr.insert(url, values);
+		}
+
+day43自定义控件第三天（自定义侧滑菜单和自动轮播图）
+	1.滚动的处理(ScrollTo和ScrollBy)
+		滚动的不是View本身的位置，而是View里面的内容,并且与背景无关（也就是背景不会跟着一起滚动），如果是ViewGroup,不管这个父容器包含几个子控件，都会一起滚动
+		
+		1.1View的scrollTo(x, y)
+		//绝对位置，也就是当前位置相对于最开始位置的偏移量，最开始的位置为0
+		//滚动偏移量 = 开始位置 - 最终位置
+		mScrollX = x;
+		mScrollY = y;
+
+		
+		1.2View的scrollBy(x, y)
+		相对位置，在原有的滚动偏移量的基础上，在发生增量的滚动
+		x正数表示往左边移动，负数往右边移动
+		
+	2.平滑滚动的实现
+		1.调用自己封装的方法
+		smoothScrollTo(endx);//endx表示最终位置的滚动偏移量
+	
+		2.封装方法
+		private void smoothScrollTo(int endX) {
+			int startX = getScrollX();
+			int startY = getScrollY();
+			int dx = endX - startX;
+			int dy = 0;
+			int duration = 250;//动画时长
+			mScroller.startScroll(startX, startY, dx, dy, duration);
+			invalidate();//触发重新绘制
+		}
+
+		3.触发重新绘制会调用computeScroll方法，递归调用，每次移动一点，直到滚动到终点
+		@Override
+		public void computeScroll() {
+			//计算新的滚动偏移量，动画结束computeScrollOffset返回false，跳出死循环
+			if (mScroller.computeScrollOffset()) {
+				scrollTo(mScroller.getCurrX(), 0);//滚动一次
+				invalidate();//触发重新绘制
+			}
+		}	
+
+	3.getScrollX和getScrollY
+	获取控件当前已经滚动的偏移量，如果当前位置相对于起始位置的右边，则该值一定为负数，如果相对于起始位置的左边，则一定为正数
+	
+	4.onFinishInflate
+	这个方法属于ViewGroup，当孩子的视图都解析完成时调用，可以用来设置监听事件等(防止孩子未解析完成，出现空指针异常)
+	
+	5.inflate参数解析
+		5.1参数1为关联的布局，参数2为将该布局解析然后加入指定父容器中（组合式自定义控件会用到）
+			View.inflate(R.layout.view_spinner, this);
+		5.2当参数2为空时，返回的是该布局的根标签（只要有return view；父容器参数统一为null）
+			View root=View.inflate(R.layout.view_spinner, null);
+	
+	6.Butterknife绑定参数解析
+		参数1：绑定到哪个类		参数2：要绑定的视图View
+		ButterKnife.bind(target, view);
+		 
+	7.invalidate和postInvalidate
+		invalidate();//触发view重新绘制 --》 onDraw重新调用
+		//内部使用handler发送message到主线程，在主线程里面触发invalidate
+		postInvalidate();//触发在主线程重新绘制 --》在主线程调用onDraw
+		
+	8.接口回调
+		//监听事件的内部并不关心谁来监听自己，只提供设置监听的方法，谁需要监听谁就调用监听的方法
+		7.1提供设置监听器的方法，并传入一个接口对象作为参数，将接口对象抽成成员变量
+			public void setOnSwitchListener(OnSwitchListener listener) {
+				mOnSwitchListener = listener;
+			}
+		7.2定义一个监听器接口
+			public interface OnSwitchListener {
+				//定义一个开关事件
+				void onSwitch(boolean isClose);
+			}
+		7.3需要通知外部什么事件，就在该事件发生时去通知
+			if (mOnSwitchListener != null) {
+				mOnSwitchListener.onSwitch(isClose);
+			}
+		7.4在外部设置监听器监听
+	
+	9.ViewPager的基本使用
+		9.1在布局xml中添加ViewPager
+			<android.support.v4.view.ViewPager
+				android:id="@+id/viewpager"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent">
+			</android.support.v4.view.ViewPager>
+		9.2设置适配器
+		        MyAdapter myAdapter = new MyAdapter();
+		        mViewpager.setAdapter(myAdapter);
+		9.3创建适配器
+			class MyAdapter extends PagerAdapter {
+				//返回ViewPager条目数量（一个页面就相当于一个条目）
+				@Override
+				public int getCount() {
+					return mResImgs.length;
+				}
+				
+				//判断ViewPager里面的孩子view是否有对应标记
+				//参数1：viewPager里面的孩子 参数2：viewPager里面的孩子标记
+				//返回true表示这个view已经被标记过了
+				@Override
+				public boolean isViewFromObject(View view, Object object) {
+					return view == object;
+				}
+				
+				//初始化对应下标位置的页面
+				//参数1：就是ViewPager 参数2：对应页面的下标 参数3：返回对应页面的标记
+				//这个方法在ViewPager第一次加载时会默认调用两次
+				@Override
+				public Object instantiateItem(ViewGroup container, int position) {
+					ImageView imageView = new ImageView(MainActivity.this);
+					imageView.setImageResource(mResImgs[position]);
+					imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+					container.addView(imageView);
+					return imageView;
+				}
+				
+				//销毁对应位置的页面(当Viewpager的条目不可见时，就需要被回收)
+				@Override
+				public void destroyItem(ViewGroup container, int position, Object object) {
+					container.removeView((View) object);
+				}
+			}	
+
+day48新闻客户端第5天
+	1.开源框架EventBus
+		作用：当需要在Activity，Fragment,自定义控件之间进行多级事件传递时，大大简化传递过程，省去连环回调监听的麻烦
+		1. 在Module的build.gradle添加依赖
+		开源地址：https://github.com/uncleleonfan/EventBusDemo#
+		compile 'org.greenrobot:eventbus:3.0.0'
+		2. 创建事件类
+			如果只是通知一个事件发生了，而不需要传递任何参数数据，则可以创建一个空类
+			public class MyEvent {
+				public String msg;
+				public MyEvent(String msg) {
+					this.msg = msg;
+				}
+			}
+		3. 在订阅者中进行注册和反注册EventBus
+			Activity:在OnCreat中注册，OnDestory中反注册
+				@Override
+				protected void onCreate(@Nullable Bundle savedInstanceState) {
+					super.onCreate(savedInstanceState);
+					setContentView(R.layout.activity_main);
+					//注册事件总线
+					EventBus.getDefault().register(this);
+				}
+
+				@Override
+				protected void onDestroy() {
+					super.onDestroy();
+					//反注册事件总线
+					EventBus.getDefault().unregister(this);
+				}
+				
+			自定义控件：在onAttachToWindow中注册，在onDetachFromWindow中反注册
+			
+			普通类：在类中创建注册方法和反注册方法，在合适的时机调用	
+
+		4. 在订阅者中设置监听事件（只要事件发布了，这里就会回调）
+
+			/**
+			* POSTING线程模型：一共有四种
+			* onPostingEvent模型表示在哪个线程发布事件，就在哪个线程执行onPostingEvent方法
+			*/
+			@Subscribe(threadMode = ThreadMode.POSTING)
+			public void onPostingEvent(MyEvent event) {
+				Log.d(TAG, "onPostingEvent: " + Thread.currentThread().getName());		
+			}
+			
+			* MAIN线程模型：不管是哪个线程发布事件，都在主线程执行onMainEvent方法
+			@Subscribe(threadMode = ThreadMode.MAIN)
+			public void onMainEvent(MyEvent event) {
+				Log.d(TAG, "onMainEvent: " + Thread.currentThread().getName());
+			}
+			
+		5. 发布者中发布事件（发布时机：在被监听的事件发生时发布，比如点击某一个按钮，就发布该事件，然后订阅者就可以收到事件并作出响应）
+				MyEvent event = new MyEvent("msg from publisher main thread");
+				EventBus.getDefault().post(event);
+
+	2.Contex上下文的获取
+		//一个Activity就是一个上下文Context
+        1.Activity内部 this
+        2.Fragment getActivity
+        3.自定义控件 (Activity)getContext()
+		4.Application中 getApplicationContext()
+		
+		
+day50谷歌市场第1天
+	1.DrawerLayout抽屉布局
+		1.1在MainActivity的布局用DrawerLaout作为根布局
+		1.2第一个子布局作为主内容，第二个子布局作为抽屉
+			<!--左侧菜单 有官方提供的控件 NavigationView 标准导航菜单-->
+			<android.support.design.widget.NavigationView
+			    android:id="@+id/nv_menu"
+				android:layout_width="300dp"
+				android:layout_height="match_parent"
+				android:layout_gravity="start"
+				app:headerLayout="@layout/drawer_header" //抽屉头部布局
+				app:menu="@menu/drawer_main">	//抽屉菜单
+			</android.support.design.widget.NavigationView>
+		1.3抽屉菜单条目
+			<menu xmlns:android="http://schemas.android.com/apk/res/android">
+				<group android:checkableBehavior="single">
+					<item
+						android:id="@+id/menu_home"
+						android:icon="@drawable/ic_home"
+						android:checked="true" //默认选中
+						android:title="@string/home" />
+					<item
+						android:id="@+id/menu_setting"
+						android:icon="@drawable/ic_setting"
+						android:title="@string/setting" />
+					</group>
+			</menu>
+		1.4菜单条目设置点击监听
+        mNvMenu.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+				//点击条目时关闭，关闭侧滑菜单
+                mDrawlayout.closeDrawer(Gravity.START);
+                return true;
+            }
+        });
+		1.5适配侧滑菜单的宽度为屏幕的4分之3
+			mMenu = mDrawlayout.getChildAt(1);
+			ViewGroup.LayoutParams params = mMenu.getLayoutParams();
+			params.width = new ScreenUtils(mContext).mWidth * 3 / 4;
+			mMenu.setLayoutParams(params);
+		1.6设置菜单打开时，主内容的阴影效果
+			mDrawlayout.setScrimColor(Color.parseColor("#33000000"));	
+		1.7划出菜单时，主内容跟着移动
+			//设置抽屉的监听
+			mDrawlayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+				@Override  	// 菜单切换状态变化时回调的方法  
+				public void onDrawerStateChanged(int arg0) {  
+     
+				}  
+              
+				@Override  // 菜单滑动过程中不断回调 参数1：抽屉控件 参数2：抽屉划出的偏移量
+				public void onDrawerSlide(View drawerView, float slideOffset) {  
+					//给内容区域设置X轴平移动画 参数1：内容区域 参数2：平移的距离（与菜单划出的偏移量保持一致）
+					//需要导入动画库库nineoldandroids-2.4.0.jar（适用于变化比较频繁的动作）
+					ViewHelper.setTranslationX(mContent, drawerView.getMeasuredWidth()
+							* slideOffset);					                 
+				}  
+              
+				@Override  // 菜单关闭时回调
+				public void onDrawerOpened(View arg0) {  					
+                  
+				}  
+              
+				@Override  // 菜单关闭时回调
+				public void onDrawerClosed(View arg0) {  
+
+				}  
+			});	
+
+	2.ToolBar+DrawerLayout的使用（取代ActionBar）
+		1.1在布局中添加Toolbar    
+			<android.support.v7.widget.Toolbar
+				android:id="@+id/toolbar_main"
+				android:layout_width="match_parent"
+				//获取当前主题下actionbar 的高度
+				android:layout_height="?attr/actionBarSize"
+				android:background="@color/colorPrimary"
+				app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+			</android.support.v7.widget.Toolbar>
+		1.2在Activity中初始化ToolBar
+			//将Toolbar替换actionbar，对actionbar操作就转换成对Toolbar
+			setSupportActionBar(mToolbar);
+			//获取当前Activity的ActionBar
+			ActionBar supportActionBar = getSupportActionBar();
+			//设置标题
+			supportActionBar.setTitle("黑马");
+			//显示返回图片（需要打开开关才显示抽屉图片）
+			supportActionBar.setDisplayHomeAsUpEnabled(true);
+			//创建抽屉开关
+			mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close);
+			//设置DrawerLayout监听器为toggle，toggle监听drawerlayout的开关状态，来设置图片
+			mDrawerLayout.addDrawerListener(mToggle);
+			//同步抽屉开关的状态，通过绑定的Activity来设置Actionbar图片,如果是关闭的则是抽屉图片，如果是打开的，则显示返回的图片
+			mToggle.syncState();
+		1.3设置ToolBar条目点击事件（点击ToolBar菜单条目，打开抽屉菜单）
+			@Override
+			public boolean onOptionsItemSelected(MenuItem item) {
+				switch (item.getItemId()) {
+					case android.R.id.home:
+						//onOptionsItemSelected内部菜单打开或者关闭的逻辑
+						mToggle.onOptionsItemSelected(item);
+						break;
+				}
+				return super.onOptionsItemSelected(item);
+			}
+		1.4添加Toolbar条目
+			@Override
+			public boolean onCreateOptionsMenu(Menu menu) {
+				getMenuInflater().inflate(R.menu.main,menu);
+				return super.onCreateOptionsMenu(menu);
+			}
+		
+	3.TabLayout+ViewPager的使用(TabLayout选项卡布局)
+		3.1添加design依赖（因为TabLayout是design包里面的新控件）
+			compile 'com.android.support:design:25.3.0'
+		3.2在布局xml中添加TabLayout
+			<android.support.design.widget.TabLayout
+				android:id="@+id/tab_layout"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				app:tabBackground="@color/colorPrimary"
+				app:tabTextColor="@android:color/darker_gray"
+				app:tabSelectedTextColor="@android:color/white"
+				app:tabIndicatorColor="@android:color/white"
+				app:tabIndicatorHeight="3dp"
+				//当tab比较多时可滚动
+				app:tabMode="scrollable">
+			</android.support.design.widget.TabLayout>
+		3.3设置适配器
+			mViewPager.setAdapter(new MainAdapter(getSupportFragmentManager(), titles));
+		3.4在代码中关联ViewPager
+			mTabLayout.setupWithViewPager(mViewPager);
+		3.4创建ViewPager适配器继承FragmentPagerAdapter 
+			public class MainAdapter extends FragmentPagerAdapter {
+				//定义字符串数组，存放标题
+				private String[] mTitles = {"标题1", "标题2", "标题3", "标题4"};
+				//重载构造方法，传入FragmentManager参数(getSupportFragmentManager())
+				public MainAdapter(FragmentManager fm) {
+					super(fm);
+				}
+
+				//返回对应位置的Fragment，每一个页面就是一个Fragment
+				@Override
+				public Fragment getItem(int position) {
+					return FragmentFactory.getFragment(position);
+				}
+				
+				//返回页面个数
+				@Override
+				public int getCount() {
+					return mTitles.length;
+				}
+
+				//返回TabLayout的标题
+				@Override
+				public CharSequence getPageTitle(int position) {
+					return mTitles[position];
+				}
+			}
+day53谷歌市场第4天
+	1.流布局FlowLayout的使用
+		1.1在布局xml中加入FlowLayout
+			<com.xiaoxin.jdmall.ui.view.FlowLayout
+				android:id="@+id/flowlayout"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:padding="8dp">
+			</com.xiaoxin.jdmall.ui.view.FlowLayout>	
+		1.2添加View到FlowLayout中（FlowLayout内部已经实现了排列的算法）
+			//mData表示数据源集合
+			for (int i = 0; i < mData.size(); i++) {
+				TextView textView = new TextView(this);
+				String Keywords = mData.get(i);
+				textView.setText(Keywords);
+				textView.setTextSize(18);
+				textView.setPadding(4, 4, 4, 4);
+				textView.setGravity(Gravity.CENTER);
+				//将TextView添加到FlowLayout中
+				mFlowlayout.addView(textView);
+			}	
+	2.恒星图StellarMap的使用
+		2.1添加依赖
+			compile 'com.github.uncleleonfan:StellarMap:v1.0.0'
+		2.2StellarMap初始化StellarMap
+			StellarMap stellarMap = new StellarMap(getContext());
+			//设置内边距
+			int padding = getResources().getDimensionPixelSize(R.dimen.padding);
+			stellarMap.setInnerPadding(padding, padding, padding, padding);
+			//设置适配器
+			stellarMap.setAdapter(new RecommendAdapter(getContext());
+			//设置分布规则, 数值越大分布越均匀
+			stellarMap.setRegularity(10, 15);//10 * 15小方格
+			//初始化显示第几组
+			stellarMap.setGroup(0);
+		2.3创建适配器
+			public class RecommendAdapter implements StellarMap.Adapter {
+
+				private static final int PAGE_SIZE = 15;//默认一页包含文本的个数
+
+				private Context mContext;
+				//字符串数据源
+				private List<String> mDataList;
+
+				public RecommendAdapter(Context context, List<String> dataList) {
+					mContext = context;
+					mDataList = dataList;
+				}
+
+				//获取页的个数
+				@Override
+				public int getGroupCount() {
+					int count = mDataList.size() / PAGE_SIZE;//30 / 15= 2
+					//是否有余数，就增加一页
+					if (mDataList.size() % PAGE_SIZE != 0) {
+						count = count + 1;
+					}
+					return count;
+				}
+
+				//返回对应位置的页面有多少条文本 参数i表示页面的下标
+				@Override
+				public int getCount(int i) {
+					//如果是最后一页，有余数，返回余数
+					if (i == getGroupCount() - 1) {
+						if (mDataList.size() % PAGE_SIZE != 0) {
+							return mDataList.size() % PAGE_SIZE;
+						}
+					}
+					return PAGE_SIZE;
+				}
+
+				//返回一个对应页面对应位置的view
+				//参数1：页面的下标 参数2：在页面group对应的位置 参数3：回收的view
+				@Override
+				public View getView(int group, int position, View convertView) {
+					if (convertView == null) {
+						convertView = new TextView(mContext);
+					}
+					TextView textView = (TextView) convertView;
+					//设置随机大小
+					textView.setTextSize(14 + new Random().nextInt(4));
+					//设置随机颜色
+					textView.setTextColor(getRandomColor());
+
+					//获取显示的文本
+					int pos = group * PAGE_SIZE + position;//找到在数据集合中的位置
+					textView.setText(mDataList.get(pos));
+					return convertView;
+				}
+
+				//返回下一组页面的下标
+				//参数1：当前页面组的下标 参数2：是否为放大
+				@Override
+				public int getNextGroupOnZoom(int group, boolean isZoomIn) {
+					int next = 0;
+					if (isZoomIn) {
+						// 0 1 2
+						//如果是放大动画，下一组的下标就是当前组的下标加1
+						next = (group + 1) % getGroupCount();// 0 --> 1, 1--> 2, 2--> 0
+					} else {
+						//如果是放大动画，下一组的下标就是当前组的下标减1
+						next = (group - 1 + getGroupCount()) % getGroupCount(); // 0 --> 2, 1 - >0, 2 - > 1
+					}
+						return next;
+					}
+				}		
+		
+day54谷歌市场第5天
+	1.Retrofit封装以及使用
+		1.1添加Retrofit依赖
+			compile 'com.squareup.retrofit2:retrofit:2.1.0'
+			compile 'com.squareup.retrofit2:converter-gson:2.1.0'
+		1.2封装工具类
+			public class NetworkManager {
+
+				private static Api sApi;//全局网络接口
+				private static final int DEFAULT_CACHE_SIZE = 35 * 1024 * 1024;//缓存空间大小
+				//处理畸形Json
+				private static Gson mGson = new GsonBuilder()
+					.setLenient()
+					.create();
+
+				public static void init(Context context) {
+					//指定缓存路径
+					String directoryPath = context.getCacheDir().getAbsolutePath() + "/responses";
+					File directory = new File(directoryPath);
+					
+					//配置OkhttpClient
+					OkHttpClient okHttpClient = new OkHttpClient.Builder()
+							.cache(new Cache(directory, DEFAULT_CACHE_SIZE))//指定缓存目录和大小
+							.addNetworkInterceptor(REWRITE_CACHE_CONTROL_INTERCEPTOR)//添加网络拦截器,拦截网络请求，写响应头，配置Cache-Control，然后交给Okhttp解析
+							.build();
+
+					Retrofit retrofit = new Retrofit.Builder()
+							.baseUrl("http://10.0.2.2:8080/GooglePlayServer/")//URL_HOST
+							.client(okHttpClient)//配置OkhttpClient
+							.addConverterFactory(GsonConverterFactory.create(mGson))//添加gson的转换
+							.build();
+							
+					//使用retrofit实现api接口方法
+					sApi = retrofit.create(Api.class);
+			}
+			
+			//提供方法供外部获取网络接口对象
+			public static Api getApi() {
+					return sApi;
+			}
+			
+			//网络拦截器
+			private static final Interceptor REWRITE_CACHE_CONTROL_INTERCEPTOR = new Interceptor() {
+					@Override
+					public Response intercept(Chain chain) throws IOException {
+					Response originalResponse = chain.proceed(chain.request());
+					CacheControl.Builder builder = new CacheControl.Builder().maxAge(3, TimeUnit.MINUTES);//缓存有效时间
+					return originalResponse.newBuilder()
+							.header("Cache-Control", builder.build().toString())
+							.build();
+					}
+				};
+			}
+		1.3提供网络接口
+			public interface Api {
+				//hot表示BaseUrl之后拼接的内容
+				@GET("hot")
+				//Call<T>泛型表示Json的数据结构，接口方法由自己命名
+				Call<List<String>> listHot();
+    
+				//http://localhost:8080/GooglePlayServer/subject?index=20
+				@GET("subject")
+				Call<List<SubjectItemBean>> listSubject(@Query("index") int index);
+			}	
+
+		1.4初始化全局网接口
+			public class GooglePlayApplication extends Application{
+
+				@Override
+				public void onCreate() {
+					super.onCreate();
+					//初始化全局的网络接口
+					NetworkManager.init(getApplicationContext());
+				}
+			}
+			
+		1.5在清单文件中注册Application
+			android:name=".app.GooglePlayApplication"
+			
+		1.6发起网络请求
+			//调用Retrofit实现的接口方法
+			Call<AppDetailBean> call = NetworkManager.getApi().getAppDetail(packageName);
+			//加入请求队列
+			appDetail.enqueue(new Callback<AppDetailBean>() {
+					//成功回调
+					@Override
+					public void onResponse(Call<AppDetailBean> call, Response<AppDetailBean> response) {
+						//获取返回的数据
+						mAppDetailData = response.body();
+						onDataLoadedSuccess();
+					}
+					//失败回调
+					@Override
+					public void onFailure(Call<AppDetailBean> call, Throwable t) {
+						onDataLoadedFailed();
+					}
+			});
+       
+		1.7添加权限
+			<uses-permission android:name="android.permission.INTERNET"/>
+			<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+			<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>	
+
+	2.Android6.0动态申请运行时权限
+		在Android6.0及以上，SD卡读写，拍照等是敏感权限，使用时我们需要动态申请这些权限
+		例如：在SD卡创建文件夹存放下载的Apk
+		2.1判断当前系统版本
+			如果是6.0以下版本，则不需要动态申请权限
+			if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M){  
+				return true;  
+			} 
+		2.2首先检测应用是否具备该权限（由于checkSelfPermission和requestPermissions从API 23才加入，所以使用兼容包中提供的方法）
+			int result = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+		2.3如果不具备该权限，则动态申请
+			if (result == PackageManager.PERMISSION_DENIED) {
+				//数组表示可以申请多个权限
+				String permissions[] ={Manifest.permission.WRITE_EXTERNAL_STORAGE};
+				//参数1：上下文 参数2：需要申请的权限 参数3：请求码(在哪个activity请求，就在哪个activity回调)
+				ActivityCompat.requestPermissions(this, permissions, 0);
+			}			
+		2.4申请权限时，界面会弹出对话框，供用户选择是允许还是拒绝，触发以下回调
+			//参数3：权限申请的结果
+			public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+					switch (requestCode) {
+						case 0:
+							//权限被拒绝
+							if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+								Toast.makeText(this, "权限被拒绝，无法下载应用", Toast.LENGTH_SHORT).show();
+							} else {
+								//权限被允许，创建下载目录
+								DownloadManager.getInstance().createDownloadDir();
+							}
+							break;
+					}
+			}			
+		
+day55百度外卖第1天
+	1.RecycleView的使用	
+		1.1在布局xml中添加 
+			<android.support.v7.widget.RecyclerView
+				android:id="@+id/recyclerview"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"/>			
+		1.2初始化排列格式（可以线性，GridView,九宫格或者瀑布流）        
+			recyclerview.setLayoutManager(new LinearLayoutManager(getActivity()));
+		1.3设置适配器
+			CatergoryAdapter = new CatergoryAdapter(getActivity());
+			recyclerview.setAdapter(mHomeRvAdapter);
+		1.4创建适配器
+			public class CatergoryAdapter extends RecyclerView.Adapter {
+				//创建数据源
+				List<CatergoryInfoBean> mData;
+				//提供数据源的set方法，当获取到网络数据时，传入数据并刷新适配器
+				public void setData(List<CatergoryInfoBean> data) {
+					mData = data;
+					notifyDataSetChanged();
+				}
+				//声明Context
+				private Context mContext;
+				//创建适配器对象时传入Context上下文
+				public CatergorAdapter(Context context) {
+					mContext = context;
+				}
+				//绑定条目View到ViewHolder
+				@Override
+				public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+					//右键item_catergory自动生成ViewHolder并绑定控件Id
+					View view = LayoutInflater.from(mContext).inflate(R.layout.item_catergory, null);
+					ViewHolder viewHolder = new ViewHolder(view);
+					return viewHolder;
+				}
+				//刷新条目数据
+				@Override
+				public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+					ViewHolder viewHolder = (ViewHolder) holder;
+					CatergoryBean bean = mData.get(position);
+					viewHolder.updateData(bean);
+				}
+				//返回条目数量
+				@Override
+				public int getItemCount() {
+				//保证有数据时才刷新适配器，避免空指针异常
+					if (mData != null) {
+						return mData.size();
+					}
+					return 0;
+				}
+
+				//创建ViewHolder继承RecyclerView.ViewHolder
+				class ViewHolder extends RecyclerView.ViewHolder {
+					@BindView(R.id.tv_left)
+					TextView mTvLeft;
+
+					ViewHolder(View view) {
+						super(view);
+						ButterKnife.bind(this, view);
+					}
+					//提供方法刷新条目数据
+					public void updateData(CatergoryBean bean) {
+						
+					}
+				}
+				
+				//如果条目有多个类型（1.需要返回相应的条目类型 2.需要绑定对应的ViewHolder）
+				@Override
+				public int getItemViewType(int position) {
+					if (position == 0) {
+						return Const.HOMERV_HEAD;
+				} else {
+						return Const.HOMERV_NORMAL;
+					}
+				}
+			}		
+		
+	2.倒计时60秒
+		应用场景：点击获取验证码后，60秒以内不能重复点击
+		方法1：
+            handler.postDelayed(mRunnable, 999);
+			private int min = 60;
+			Runnable mRunnable = new Runnable() {
+				@Override
+				public void run() {
+					min--;
+					mTvUserCode.setText("剩余时间" + min + "秒");
+					if (min <= 0) {
+						mTvUserCode.setEnabled(true);
+						mTvUserCode.setText("重新发送");
+						min = 60;
+						return;
+					}	
+					handler.postDelayed(mRunnable, 999);
+				}
+			};
+			
+		方法2：
+		public static void codeWait(final TextView tvGetCode, int miCnt) {
+			tvGetCode.setEnabled(false);
+			new CountDownTimer(miCnt * 1000, 1000) {
+
+				@Override
+				public void onTick(long millisUntilFinished) {
+					tvGetCode.setText(millisUntilFinished / 1000 + "s");
+				}
+
+				@Override
+				public void onFinish() {
+					tvGetCode.setEnabled(true);
+					tvGetCode.setText(R.string.get_code);
+				}
+			}.start();
+		}
+			
+
+			
+
+day56百度外卖第2天
+	1.短信验证码SDK的使用（官网：http://www.mob.com/）
+		1.将下载好的SDK导入项目libs
+			http://www.mob.com/downloadDetail/SMS/android
+		2.添加Module依赖
+			compile name:'SMSSDK-3.0.0',ext:'aar'
+			compile name:'SMSSDKGUI-3.0.0',ext:'aar'
+		3.在Module的build.gradle里面将libs加入仓库（repositories）：
+			repositories{
+				flatDir{
+					dirs 'libs'
+				}
+			}
+		4.配置清单文件
+			<uses-permission android:name="android.permission.READ_CONTACTS" />
+			<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+			<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+			<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+			<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+			<uses-permission android:name="android.permission.INTERNET" />
+			<uses-permission android:name="android.permission.RECEIVE_SMS" />
+			<uses-permission android:name="android.permission.READ_SMS" />
+			<uses-permission android:name="android.permission.GET_TASKS" />
+			<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+		5.添加以下Activity：
+			<activity
+				android:name="com.mob.tools.MobUIShell"
+				android:theme="@android:style/Theme.Translucent.NoTitleBar"
+				android:configChanges="keyboardHidden|orientation|screenSize"
+				android:windowSoftInputMode="stateHidden|adjustResize"/>
+		6.在Application节点下添加以下meta-data：
+			<!-- 通过AndroidManifest配置AppKey和AppSecret，如果你选择通过代码配置，则不需要配置以下meta-data -->
+			<meta-data android:name="Mob-AppKey" android:value="你的AppKey"/>
+			<meta-data android:name="Mob-AppSecret" android:value="你的AppSecret"/>
+		7.在Application类下全局初始化（在清单文件Application节点下注册）
+		    protected String a() {
+				return null;
+			}
+			protected String b() {
+				return null;
+			}
+			public void onCreate() {
+				super.onCreate();
+				MobSDK.init(this, this.a(), this.b());
+			}
+		8.在Activity创建时注册事件回调
+			SMSSDK.registerEventHandler(eventHandler);
+		9.创建EventHandler对象
+			EventHandler eventHandler = new EventHandler() {
+				public void afterEvent(int event, int result, Object data) {
+					//未能成功获取或者提交验证码时回调这里
+					if (data instanceof Throwable) {
+						Throwable throwable = (Throwable) data;
+						String msg = throwable.getMessage();
+						Log.v(TAG, "错误日志：" + msg);
+					} else if (result == SMSSDK.RESULT_COMPLETE) {
+						switch (event) {
+							//成功获取验证码时回调
+							case SMSSDK.EVENT_GET_VERIFICATION_CODE:
+								Log.v(TAG, "成功获取验证码");
+								break;
+							//成功提交验证码时回调
+							case SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE:
+								Log.v(TAG, "成功提交验证码");
+								break;
+						}
+					}
+				}
+			};
+		10.在Activity销毁时反注册事件回调
+		    SMSSDK.unregisterEventHandler(eventHandler);
+		11.获取验证码
+			SMSSDK.getVerificationCode("86", mPhone);
+		12.提交验证码(参数1：国家 参数2：手机号 参数3：验证码 )
+			SMSSDK.submitVerificationCode("86", mPhone, code);
+
+day57百度外卖第3天
+	1.极光推送SDK的使用
+		1.1官网下载SDK
+			http://docs.jiguang.cn/jpush/resources/#android-sdk
+		1.2手动集成SDK
+			复制所有jar包到Module的libs下，并右键add as libray
+			复制所有平台底层so文件到Module的libs下
+			复制 res/ 中drawable-hdpi, layout, values文件夹中的资源文件到自己的Module中
+		1.3在module/gradle/android节点下添加配置
+			sourceSets {
+				main {
+					jniLibs.srcDirs = ['libs']
+				}
+			}
+		1.4全局初始化极光推送接口
+			JPushInterface.setDebugMode(true);
+			JPushInterface.init(getApplicationContext());
+		1.5配置清单文件(替换"您应用的包名"为PackageName,替换"您应用的Appkey"为平台获取的AppKey)
+        <!-- Required -->
+			<permission
+				android:name="您应用的包名.permission.JPUSH_MESSAGE"
+				android:protectionLevel="signature" />
+  
+		<!-- Required  一些系统要求的权限，如访问网络等-->
+			<uses-permission android:name="您应用的包名.permission.JPUSH_MESSAGE" />
+			<uses-permission android:name="android.permission.RECEIVE_USER_PRESENT" />
+			<uses-permission android:name="android.permission.INTERNET" />
+			<uses-permission android:name="android.permission.WAKE_LOCK" />
+			<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+			<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+			<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+			<uses-permission android:name="android.permission.WRITE_SETTINGS" />
+			<uses-permission android:name="android.permission.VIBRATE" />
+			<uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+			<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+			<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+	
+		<!-- Required SDK核心功能-->
+			<activity
+				android:name="cn.jpush.android.ui.PushActivity"
+				android:configChanges="orientation|keyboardHidden"
+				android:theme="@android:style/Theme.NoTitleBar"
+				android:exported="false">
+				<intent-filter>
+					<action android:name="cn.jpush.android.ui.PushActivity" />
+					<category android:name="android.intent.category.DEFAULT" />
+					<category android:name="您应用的包名" />
+				</intent-filter>
+			</activity>
+
+        <!-- Required SDK 核心功能-->
+        <!-- 可配置android:process参数将PushService放在其他进程中 -->
+			<service
+				android:name="cn.jpush.android.service.PushService"
+				android:process=":mult"
+				android:exported="false">
+				<intent-filter>
+					<action android:name="cn.jpush.android.intent.REGISTER" />
+					<action android:name="cn.jpush.android.intent.REPORT" />
+					<action android:name="cn.jpush.android.intent.PushService" />
+					<action android:name="cn.jpush.android.intent.PUSH_TIME" />
+				</intent-filter>
+			</service>		
+		<!-- Required SDK核心功能-->
+			<receiver
+				android:name="cn.jpush.android.service.PushReceiver"
+				android:enabled="true"
+				android:exported="false">
+				<intent-filter android:priority="1000">
+					<action android:name="cn.jpush.android.intent.NOTIFICATION_RECEIVED_PROXY" />   <!--Required  显示通知栏 -->
+					<category android:name="您应用的包名" />
+				</intent-filter>
+				<intent-filter>
+					<action android:name="android.intent.action.USER_PRESENT" />
+					<action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+				</intent-filter>
+				<!-- Optional -->
+				<intent-filter>
+					<action android:name="android.intent.action.PACKAGE_ADDED" />
+					<action android:name="android.intent.action.PACKAGE_REMOVED" />
+					<data android:scheme="package" />
+				</intent-filter>
+			</receiver>
+
+        <!-- Required SDK核心功能-->
+			<receiver android:name="cn.jpush.android.service.AlarmReceiver" android:exported="false"/>	
+			
+        <!-- Required  . Enable it you can get statistics data with channel -->
+			<meta-data android:name="JPUSH_CHANNEL" android:value="developer-default"/>
+			<meta-data android:name="JPUSH_APPKEY" android:value="您应用的Appkey" /> <!--  </>值来自开发者平台取得的AppKey-->
+
+		1.6接收自定义消息（如果只是发送通知，不用注册该广播接收者）
+			1.注册一个自定义广播
+			<receiver
+				android:name="com.example.jpushdemo.MyJpushReceiver"
+				android:exported="false"
+				android:enabled="true">
+				<intent-filter>
+					<action android:name="cn.jpush.android.intent.REGISTRATION" /> <!--Required  用户注册SDK的intent-->
+					<action android:name="cn.jpush.android.intent.MESSAGE_RECEIVED" /> <!--Required  用户接收SDK消息的intent-->
+					<action android:name="cn.jpush.android.intent.NOTIFICATION_RECEIVED" /> <!--Required  用户接收SDK通知栏信息的intent-->
+					<action android:name="cn.jpush.android.intent.NOTIFICATION_OPENED" /> <!--Required  用户打开自定义通知栏的intent-->
+					<action android:name="cn.jpush.android.intent.CONNECTION" /><!-- 接收网络变化 连接/断开 since 1.6.3 -->
+					<category android:name="您应用的包名" />
+				</intent-filter>
+			</receiver>		
+			2.创建广播接收者
+			public class MyJpushReceiver extends BroadcastReceiver {
+				private static final String TAG = "MyJpushReceiver";
+				//当成功收到推送的自定义消息时。回调这里
+				@Override
+				public void onReceive(Context context, Intent intent) {
+					Log.v(TAG, "收到推送的消息了");
+					//获取消息包
+					Bundle bundle = intent.getExtras();
+					//获取标题
+					String title = bundle.getString(JPushInterface.EXTRA_TITLE);
+					//获取推送的额内容
+					String message = bundle.getString(JPushInterface.EXTRA_MESSAGE);
+					//获取添加的字段（返回的字段是Json形式的字符串）
+					String field = bundle.getString(JPushInterface.EXTRA_EXTRA);
+					Log.v(TAG, "字段：" + field);
+				}
+			}			
+
+day58百度外卖第4天
+	1.观察者模式
+		应用场景：监听当极光推送有自定义消息时，广播接收者回调onreceiver,被观察者发生改变，通知观察者数据刷新，适配器收到
+		1.创建被观察者（谁动态改变谁就是被观察者）
+			//单例模式
+			public class JpushObservable extends Observable {
+
+				private static JpushObservable sJpushObservable;
+				
+				private JpushObservable() {
+				}
+				
+				public static JpushObservable getInstance() {
+					if (sJpushObservable == null) {
+						sJpushObservable = new JpushObservable();
+					}
+					return sJpushObservable;
+				}
+			}
+		2.创建观察者
+			1.实现Observer接口
+			2.重写update方法（当观察者收到被观察者的通知时回调）
+			public void update(Observable o, Object arg) {
+				Log.v(TAG, "观察者回调");
+				//解析被观察者传过来的参数，被观察者传什么类型，这里就强转成什么类型
+				String json = (String) arg;
+			}
+			3.绑定被观察者(给被观察者添加观察者)
+				JpushObservable.getInstance().addObserver(this);
+		3.通知观察者（需要监听什么事件，就在该事件发生时调用被观察者的方法）
+		public void msgComming(String filed) {
+			Log.v(TAG,"被观察者发生动态改变");
+			setChanged();
+			notifyObservers(filed);
+		}
+		
+	2.底部弹出控件BottomSheet的使用（购物车）
+		2.1添加依赖
+			compile 'com.flipboard:bottomsheet-core:1.5.3'
+			compile 'com.flipboard:bottomsheet-commons:1.5.3' 
+			
+		2.2在布局xml中添加
+			<com.flipboard.bottomsheet.BottomSheetLayout
+				android:id="@+id/bottomSheetLayout"
+				android:layout_width="match_parent"
+				android:layout_height="0dp"
+				android:layout_weight="1">			
+			 </com.flipboard.bottomsheet.BottomSheetLayout>	
+			 
+		2.3点击购物车按钮时调用以下方法
+			public void show() {
+				//判断购物车控件内容是否为空，如果为空，则填充布局
+				if (bottomSheet == null) {
+					//加载要显示的布局
+					bottomSheet = LayoutInflater.from(this).inflate(R.layout.cart_list, (ViewGroup) getWindow().getDecorView(), false);
+					//初始化购物车recycleView
+					RecyclerView rvCart = (RecyclerView) bottomSheet.findViewById(R.id.rvCart);
+					rvCart.setLayoutManager(new LinearLayoutManager(this));
+					mCartAdapter = new CartAdapter(this);
+					rvCart.setAdapter(mCartAdapter);
+					tvClear.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                 
+                }
+            });
+        }
+        //判断BottomSheetLayout内容是否显示（判断控件当前状态，智能选择打开或者关闭）
+        if (mBottomSheetLayout.isSheetShowing()) {
+            //关闭内容显示
+            mBottomSheetLayout.dismissSheet();
+        } else {
+            //显示BottomSheetLayout里面的内容
+            mBottomSheetLayout.showWithSheetView(bottomSheet);
+        }
+    }
+
+京东商城：
+	1.ViewFlipper实现文字轮播
+		1.1在布局xml中添加ViewFlipper
+		<ViewFlipper
+			android:id="@+id/viewflipper"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="10dp"/>
+	1.2在代码中添加
+        //给ViewFlipper设置内容
+        for (int i = 0; i < mList.size(); i++) {
+            viewFlipper.addView(mList.get(i));
+        }
+        //给ViewFlipper设置in/out的动画效果
+        viewFlipper.setInAnimation(getContext(), R.anim.push_up_in);
+        viewFlipper.setOutAnimation(getContext(), R.anim.push_up_out);
+------------------------------------------------------------------------------------
+		//push_up_in进入动画
+		<?xml version="1.0" encoding="utf-8"?>
+		<set xmlns:android="http://schemas.android.com/apk/res/android">
+			<translate
+				android:duration="500"
+				android:fromYDelta="50%p"
+				android:toYDelta="0"/>
+			<alpha
+				android:duration="500"
+				android:fromAlpha="0.0"
+				android:toAlpha="1.0"/>
+		</set>
+		//push_up_out退出动画
+		<?xml version="1.0" encoding="utf-8"?>
+		<set xmlns:android="http://schemas.android.com/apk/res/android">
+			<translate
+				android:duration="500"
+				android:fromYDelta="0"
+				android:toYDelta="-50%p"/>
+			<alpha
+				android:duration="500"
+				android:fromAlpha="1.0"
+				android:toAlpha="0.0"/>
+		</set>
+-------------------------------------------------------------------------------
+        viewFlipper.setFilpInterval(500);设置View之间切换的时间间隔
+		viewFlipper.startFlipping();开始文字轮播
+        //viewFlipper.stopFlipping: 停止View切换
+        //isFlipping： 用来判断View切换是否正在进行
+		
+2.RecycleView/GridLayoutManager 设置一个条目占几行
+	应用场景：给Recycleview(GridLayoutManager类型)增加一个轮播图作为头部，并且让轮播图占两列
+	//创建GridLayoutManager，并设置一行包含两个条目
+	GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2);
+    //设置gridLayoutManager的属性
+    gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+        @Override
+        public int getSpanSize(int position) {
+            return setSpanSize(position);
+        }
+    });
+	//设置RecycleView的布局方式为GridView
+    mHomeRv.setLayoutManager(gridLayoutManager);
+	//设置每个条目所占得列数
+    private int setSpanSize(int position) {
+        int count;
+        //如果是头部的话，占两列，相当于头部宽度占满屏幕
+        if (position == 0) {
+            count = 2;
+        } else {
+            //如果不是头部的话，占一列，相当于占屏幕一半
+            count = 1;
+        }
+        return count;
+    }	
+	
+我是微商：
+	1.文字高亮
+		在Sting.xml中用如下格式新建字符串，font标签里面为高亮的内容
+		<Data><![CDATA[只要您的好友通过您的链接购买此商品，您就可以赚到<font color="#ff2741">%s</font>元的收益哦]]></Data>
+		用法：setText(Html.fromHtml(String.format(R.string.share_content, bean.getEarn())))
+	
+	2.设置tablayout的文字
+		tabsLayout.getTabAt(0).setText(str);
+		
+	3.适配7.0文件共享
+		1.清单文件
+			<provider
+				android:name="android.support.v4.content.FileProvider"
+				android:authorities="com.wdhhr.wswsvipnew.fileprovider"
+				android:exported="false"
+				android:grantUriPermissions="true">
+				<meta-data
+					android:name="android.support.FILE_PROVIDER_PATHS"
+					android:resource="@xml/file_provider_paths"/>
+			</provider>
+		2.新建xml文件file_provider_paths
+			<?xml version="1.0" encoding="utf-8"?>
+			<resources>
+				<paths>
+					<external-path
+						name="camera_photos"
+						path="."/>
+					<external-path
+						name="files_root"
+						path="com.wdhhr.wswsvipnew/"/>
+					<external-path
+						name="external_storage_root"
+						path="."/>
+				</paths>
+			</resources>
+		3.URI用这个方法生成
+			public static Uri getUriForFile(Context context, File file) {
+				if (context == null || file == null) {
+					throw new NullPointerException();
+				}
+				Uri uri;
+				if (Build.VERSION.SDK_INT >= 24) {
+					uri = FileProvider.getUriForFile(context.getApplicationContext(), "com.wdhhr.wswsvipnew.fileprovider", file);
+				} else {
+					uri = Uri.fromFile(file);
+				}
+				return uri;
+			}
+		4.所有的com.wdhhr.wswsvipnew改成你的包名
+		5.调用相机之前要动态申请sd和相机
+
+	4.WebView加载远程地址
+		mWebView = (WebView) findViewById(R.id.webview_shop);
+        //对WebView进行配置和管理
+        WebSettings webSettings = mWebView.getSettings();
+        //加载网页
+        mWebView.loadUrl("http://www.baidu.com");
+        //如果访问的页面中要与Javascript交互，则webview必须设置支持Javascript
+        webSettings.setJavaScriptEnabled(true);
+
+        //5.1以上默认禁止了https和http混用 这是开启
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mWebView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
+
+        //设置自适应屏幕，两者合用
+        webSettings.setUseWideViewPort(true); //将图片调整到适合webview的大小
+        webSettings.setLoadWithOverviewMode(true); // 缩放至屏幕的大小
+
+        //缩放操作
+        webSettings.setSupportZoom(true); //支持缩放，默认为true。是下面那个的前提。
+        webSettings.setBuiltInZoomControls(true); //设置内置的缩放控件。若为false，则该WebView不可缩放
+        webSettings.setDisplayZoomControls(false); //隐藏原生的缩放控件
+
+        //其他细节操作
+        webSettings.setAllowFileAccess(true); //设置可以访问文件
+        webSettings.setJavaScriptCanOpenWindowsAutomatically(true); //支持通过JS打开新窗口
+        webSettings.setLoadsImagesAutomatically(true); //支持自动加载图片
+        webSettings.setDefaultTextEncodingName("utf-8");//设置编码格式
+
+
+        //开启离线缓存
+        if (NetworkUtils.isOnline()) {
+            webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);//根据cache-control决定是否从网络上取数据。
+        } else {
+            webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);//没网，则从本地获取，即离线加载
+        }
+        webSettings.setDomStorageEnabled(true); // 开启 DOM storage API 功能
+        webSettings.setDatabaseEnabled(true);   //开启 database storage API 功能
+        webSettings.setAppCacheEnabled(true);//开启 Application Caches 功能
+        String cacheDirPath = this.getCacheDir().getAbsolutePath() + "/webViewCache";
+        webSettings.setAppCachePath(cacheDirPath); //设置  Application Caches 缓存目录
+
+        //设置下载监听,当点击下载文件时自动跳转到浏览器下载
+        mWebView.setDownloadListener(new DownloadListener() {
+            @Override
+            public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
+                Log.v("ldm", url);
+                Uri uri = Uri.parse(url);
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+            }
+        });
+
+        //打开网页时不调用系统浏览器， 而是在本WebView中显示
+        mWebView.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                if (url == null) {
+                    return false;
+                }
+                if (url.startsWith("http:") || url.startsWith("https:")) {
+                    view.loadUrl(url);
+                    return false;
+                } else {
+                    try {
+                        //可以在这里判断url是以什么开头，并引导用户安装该应用
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                        startActivity(intent);
+                        return true;
+                    } catch (ActivityNotFoundException e) {
+                        //防止crash (如果手机上没有安装处理某个scheme开头的url的APP, 会导致crash)
+                        e.printStackTrace();
+                        //没有安装该app时，返回true，表示拦截自定义链接，但不跳转，避免弹出上面的错误页面
+                        return true;
+                    }
+                }
+            }
+
+            //网页加载异常时回调
+            @Override
+            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+                super.onReceivedError(view, request, error);
+            }
+
+            //webView默认是不处理https请求的，页面显示空白
+            @Override
+            public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+                handler.proceed();  //接受所有证书
+            }
+        });
+    }
+
+
+    //问题：不做任何处理时，点击返回键直接退出整个webview,而不是返回上一页
+    //解决方案：在当前Activity中处理并消费掉该 Back 事件
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if ((keyCode == KEYCODE_BACK) && mWebView.canGoBack()) {
+            mWebView.goBack();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+
+    //防止内存泄漏，销毁Webview
+    @Override
+    protected void onDestroy() {
+        if (mWebView != null) {
+            mWebView.loadDataWithBaseURL(null, "", "text/html", "utf-8", null);
+            mWebView.clearHistory();
+            ((ViewGroup) mWebView.getParent()).removeView(mWebView);
+            mWebView.destroy();
+            mWebView = null;
+        }
+        super.onDestroy();
+    }
+
+
+个人笔记	
+1.去掉标题栏
+	1.1在setContentView之前加入
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+	1.2在清单文件中修改主题
+		Theme.Holo.Light.NoActionBar
+	1.3在引用的样式中加入
+	    <item name="android:windowNoTitle">true</item>
+	
+2.全屏显示
+	2.1在setContentView之前加入
+		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);	
+	2.2在引用的样式中加入
+        <item name="android:windowFullscreen">true</item>
+		
+2.强制竖屏显示
+在清单文件activity标签里面加入
+        android:screenOrientation="portrait" >
+		
+3.创建SharedPreferences文件(注意这里的Context)
+		SharedPreferences spf=getSharedPreferences("config", Context.MODE_PRIVATE);
+
+4.Context.getFilesDir()获取data/data/files的File对象 
+  getFilesDir().getPath()获取data/data/files路径
+  
+5.去除文本输入框底框：background="#00000000" 
+
+6.
+创建输入流时，指定一个File对象，该对象指向的文件必须存在，如果为空会抛出fileNotFoundException异常
+所以可以给File对象一个if判断，如果为空则创建
+创建输出流时，指定一个File对象，该对象指向的文件如果不存在，则会自动创建，如果存在,则可以根据参数选择覆盖还是追加
+
+普通的输入流读完之后，流里面的数据就没有了，要想重复读取可以先把流读出来，可以先写到ByteArrayOutputStream中
+该流对象可以直接toString生成字符串，或者toByteArray()生成字符数组，然后
+InputStream bis = new ByteArrayInputStream(bos.toByteArray());
+每次调用之前bis.reset();这样就可以生成一个可重复读取的流了
+
+
+7.ScrollView滚动控件 只能包含一个子控件
+
+8.捕获异常并关闭流
+	try {
+
+	} catch (IOException e) {
+		e.printStackTrace();
+	} finally {
+		if (liu != null) {
+			try {
+				liu.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+9.回调方法个人理解
+回调方法就是一个事件的附带方法，只有前提事件被执行了，附带方法才会被执行，我们并不会主动去执行这个附带方法
+
+10.四大组件都是在主线程中运行，都不能进行耗时操作，四大组件都是通过intent传递数据
+
+11.添加删除短信的步骤：
+	1.找到短信的内容提供者的包名
+	2.打开清单查找短信的主机名
+	3.通过provider的name所在的类去找Urimatch,然后找到对应的表
+
+12.延时执行的三种方法（都是发送至主线程进行UI的更新）
+	1.postDelayed
+		Handler mHandler = new Handler();
+		.pmi
+		mHandler.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				loadMainActivity();
+			}
+		}, 3000);
+	2.sendMessageDelayed
+	//通过消息池创建消息
+	Message msg = Message.obtain();
+	//指定消息类型（值是整型常量）
+	msg.what = LOADMAINACTIVITY;
+	//延时发送消息，参数2：延时时间
+	handler.sendMessageDelayed(msg, 1500);
+	//创建Handle对象，并重写
+	Handler handler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			final int f = msg.what;
+			//判断消息类型
+			switch (f) {
+			case LOADMAINACTIVITY:
+				loadMainActivity();
+				break;
+			}
+		}
+	};	
+	3.runOnUiThread处理子线程不能更新UI的问题
+
+13.开启模拟器Sd卡读写权限
+	cmd命令：1.adb shell 2.ls 3.cd sdcard 4.chmod 077
+
+14.获取RadioGroup哪个按钮被选中
+	假如布局中有一个RadioGroup，包含两个单选按钮
+		<RadioGroup
+			android:id="@+id/rg"
+			<RadioButton 
+				android:id="@+id/catong"
+			<RadioButton 
+				android:id="@+id/qingxin"
+		</RadioGroup>
+	先获取被选中的按钮的id，再判断一下(如果返回值为-1则没有按钮被选中)
+		int id = rg.getCheckedRadioButtonId();	
+		if(id==R.id.catong){
+			//逻辑代码;
+		}else if(id==R.id.qingxin){
+			//逻辑代码;
+		}
+
+
+15.设置整型颜色(参数是颜色字符串)
+	Color.parseColor("#FFFFFF");返回的是int类型
+	
+16.GsonFormat快速实现Javabean
+	打开AndroidStudio,创建一个Javabean类后，Alt+Insert生成GsonFormat	
+	
+17.debug调试快捷键
+	f7:进入方法	f8:下一行 f9:跳转下一个断点
+	
+18.短信拦截笔记
+	短信拦截需要使用广播接收者，如果在清单文件中注册，就算不开启服务，也会拦截短信，所以需要在服务里动态注册的话，这样就可以控制短信拦截的
+	
+19.获取模拟器或者设备当前应用包名
+adb shell dumpsys window w |findstr \/ |findstr name=	
+
+20在自定义Toast或者Dialog，按返回键出现窗体泄露异常，解决办法：
+分析：虽然窗体上的控件隐藏了，但是并没有在真正从窗体上移除，当Activity关闭时，这个窗体没有了依赖，就会出现窗体泄露
+在Toast中添加方法：
+	public void remove() {
+		if (mView != null) {
+			if (mView.getParent() != null) {
+				mWM.removeView(mView);
+			}
+		}
+		mView = null;
+	}
+在Activity失去焦点时调用remove方法
+	@Override
+	protected void onPause() {
+		super.onPause();
+		mFlToast.remove();
+	}
+
+24.获取当前Activity的名字
+	ActivityManager activityManager=(ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE); 
+	//完整类名
+	String runningActivity=activityManager.getRunningTasks(1).get(0).topActivity.getClassName(); 
+	String ActivityName = runningActivity.substring(runningActivity.lastIndexOf(".")+1);
+
+25.关于事件的传递
+	父容器先拿到事件，然后走拦截方法，默认不拦截，看孩子有没有消费，如果孩子不消费，再看父容器消不消费，如果父容器不消费，继续往上抛
+																 如果孩子消费，则必须是在down的时候消费
+									如果拦截，则在down,或者move,up的时候拦截都会有拦截效果,并且不会给孩子传递事件
+	不管是父容器还是孩子，只要down按下时消耗了事件，就必须走完down,move,up,因为在拿到事件时，这三个动作是一套的，不按下up，其他的控件就抢不到事件
+
+26.dp转px
+	int padding = getResources().getDimensionPixelSize(R.dimen.vertical_margin);
+	
+27.TextView添加删除线
+	textview.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG); 
+	
+29.ListView修改分割线
+        
+		颜色：android:divider="#f5f5f5"
+        宽度：android:dividerHeight="1px"
+				
+29.配置5.0沉浸式状态栏
+	创建values-v21文件夹，复制values下的styles.xml,在AppTheme主题下添加以下属性
+        <item name="android:windowTranslucentNavigation">true</item>
+        <!--Android 5.x开始需要把颜色设置透明，否则导航栏会呈现系统默认的浅灰色-->
+        <item name="android:statusBarColor">#33000000</item>
+
+30.Drawerlayout和ToolBar配置沉浸状态栏
+
+	1. 给DrawerLayout配置fitsSystemWindows
+		android:fitsSystemWindows="true"
+		
+	2. 创建v21样式
+		在v21版本及以上可以配置状态栏颜色，所以
+		<!-- Base application theme. -->
+		<style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+		<!-- Customize your theme here. -->
+		<item name="colorPrimary">@color/colorPrimary</item>
+		<item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+		<item name="colorAccent">@color/colorAccent</item>
+		<item name="android:windowDrawsSystemBarBackgrounds">true</item>
+		<item name="android:statusBarColor">@android:color/transparent</item>
+
+	3. 配置状态栏颜色与Toolbar背景色一致
+		<item name="colorPrimaryDark">@color/colorPrimary</item>
+
+31.代码动态修改状态栏颜色
+		SystemBarTintManager tintManager = new SystemBarTintManager(this);
+		tintManager.setStatusBarTintEnabled(true);
+		tintManager.setStatusBarTintResource(R.color.statusbar_bg);
+
+32.ListView条目添加动画
+		//缩放动画
+        ScaleAnimation scaleAnimation = new ScaleAnimation(0.7f, 1, 0.7f, 1, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+		//插入器
+        scaleAnimation.setInterpolator(new OvershootInterpolator());
+        scaleAnimation.setDuration(300);
+        convertView.startAnimation(scaleAnimation);		
+		
+33.EditText光标移动到末尾
+		et.setSelection(et.getText().length());
+
+34.glide加载默认图片
+		RequestOptions options = new RequestOptions()
+                    .centerCrop()
+                    .placeholder(R.mipmap.icon_head)
+                    .error(R.mipmap.icon_head)
+                    .priority(Priority.HIGH);
+        Glide.with(this).load(userInfo.getUserPhoto()).apply(options).into(mRivHeader);
+		
+34.将集合中某个元素设置为第一个
+	Integer temp = list.get(3);
+	list.remove(3);
+	list.add(0, temp);
+
+35.给listview设置空view
+	1.在布局xml的listview控件下面添加
+		<include layout="@layout/layout_empty"/>
+	2.空view的布局
+		<?xml version="1.0" encoding="utf-8"?>
+		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			android:id="@+id/layout_empty"
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			android:layout_weight="1"
+			android:gravity="center"
+			android:orientation="vertical"
+			android:visibility="gone">
+
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:drawablePadding="15dp"
+				android:drawableTop="@mipmap/empty_nodata"
+				android:gravity="center"
+				android:text="@string/no_data" />
+		</LinearLayout>	
+	3.给listview设置空view      
+		mLvSingleProduct.setEmptyView(mEmpty);
+		
+	
+36.View动画
+// 平移
+	private void translate() {
+		TranslateAnimation tAnimation = new TranslateAnimation(0, 200, 0, 0);
+		tAnimation.setDuration(800);
+		tAnimation.setRepeatCount(tAnimation.INFINITE);
+		tAnimation.setRepeatMode(tAnimation.REVERSE);
+		mIv.setAnimation(tAnimation);
+		tAnimation.start();
+	}
+
+	// 旋转
+	private void Rotate() {
+		RotateAnimation rAnimation = new RotateAnimation(0, 90);
+		rAnimation.setDuration(800);
+		rAnimation.setRepeatCount(rAnimation.INFINITE);
+		rAnimation.setRepeatMode(rAnimation.REVERSE);
+		mIv.setAnimation(rAnimation);
+		rAnimation.start();
+
+	}
+
+	// 缩放
+	private void scale() {
+		ScaleAnimation sAnimation = new ScaleAnimation(1f, 2f, 1f, 2f,
+				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+				0.5f);
+		sAnimation.setDuration(800);
+		sAnimation.setRepeatCount(sAnimation.INFINITE);
+		sAnimation.setRepeatMode(sAnimation.REVERSE);
+		mIv.setAnimation(sAnimation);
+		sAnimation.start();
+
+	}
+
+	// 透明
+	private void alpha() {
+		AlphaAnimation aAnimation = new AlphaAnimation(1, 0.2f);
+		aAnimation.setDuration(800);
+		aAnimation.setRepeatCount(aAnimation.INFINITE);
+		aAnimation.setRepeatMode(aAnimation.REVERSE);
+		mIv.setAnimation(aAnimation);
+		aAnimation.start();
+	}
+
+	// 集合动画
+	private void set() {
+		Log.v(Tag, "set");
+		TranslateAnimation tAnimation = new TranslateAnimation(0, 200, 0, 0);
+		ScaleAnimation sAnimation = new ScaleAnimation(1f, 2f, 1f, 2f,
+				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+				0.5f);
+		AlphaAnimation aAnimation = new AlphaAnimation(1, 0.2f);
+		AnimationSet setAnim = new AnimationSet(false);
+		setAnim.setDuration(3000);
+		setAnim.addAnimation(tAnimation);
+		setAnim.addAnimation(sAnimation);
+		setAnim.addAnimation(aAnimation);
+		mIv.setAnimation(setAnim);
+		setAnim.start();
+
+	}
+
+	// xml定义动画
+	private void xml() {
+		Animation animation = AnimationUtils.loadAnimation(this,
+				R.anim.translate_anim);
+		mIv.startAnimation(animation);
+	}
+	
+37.全面解析ViewPager-Fragment懒加载
+	1.问题：不做任何处理时，因为ViewPager会默认加载下一页的Fragment，可能会导致网络阻塞，给服务器和应用性能造成压力，所以考虑懒加载方式
+	2.解决方案：在Fragment可见时才去加载数据，ViewPager切换Fragment会调用一个特有的生命周期setUserVisible（），也就是在isVisibleToUser=true时加载数据，并且为了保证加载后view不为空，需要在界面初始化完成后再去加载数据
+			另外为了保证数据不会重复加载，加载数据时要判断当前Fragment是否是第一次加载数据，所以加载数据的条件是
+			isVisibleToUser && isViewInitiated && !isDataInitiated && isLazy
+	3.具体实现：假如ViewPager有1,2,3共三个页面
+		点击进入页面1时，生命周期方法调用先后顺序为：
+			页面1：onCreatView-setUserVisible(此时isVisibleToUser=true，页面可见)-onActivityCreat(界面初始化完成)     -----此时条件达成，加载页面1的数据
+			页面2：onCreatView-setUserVisible(此时isVisibleToUser=false，页面不可见)-onActivityCreat(界面初始化完成)
+		继续点击进入页面2时，生命周期方法调用先后顺序为：
+			页面1：setUserVisible(此时isVisibleToUser=false，页面不可见)
+			页面2：setUserVisible(此时isVisibleToUser=true，页面可见)      ---------此时条件达成，加载页面2数据
+		继续点击进入页面3时，生命周期方法调用先后顺序为：
+			页面2：setUserVisible(此时isVisibleToUser=false，页面不可见)
+			页面3：onCreatView-setUserVisible(此时isVisibleToUser=true，页面可见)-onActivityCreat(界面初始化完成)     -----此时条件达成，加载页面3的数据
+		继续点击返回页面2时，生命周期方法调用先后顺序为：	
+			页面3：setUserVisible(此时isVisibleToUser=false，页面不可见)
+			页面2：setUserVisible(此时isVisibleToUser=true，页面可见）    页面2已经加载过数据，不会再加载，除非手动刷新	
+			
+			
+	4.代码：
+		protected boolean isViewInitiated; //是否初始化过布局
+		protected boolean isVisibleToUser; //当前界面对用户是否可见
+		protected boolean isDataInitiated; //是否已经加载过数据（保证数据只会加载一次）
+		protected boolean isLazy;          //当前Fragment是否需要使用懒加载方式
+		
+		@Override
+		public void setUserVisibleHint(boolean isVisibleToUser) {
+			super.setUserVisibleHint(isVisibleToUser);
+			this.isVisibleToUser = isVisibleToUser;
+			if (isVisibleToUser) {
+				prepareFetchData();
+			}
+		}
+	
+		@Override
+		public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+			super.onActivityCreated(savedInstanceState);
+			isViewInitiated = true;
+			init();
+			initEvent();
+			if (!isLazy) {
+				loadData();
+			}
+			prepareFetchData();
+		}
+	
+		//判断懒加载条件
+		public void prepareFetchData() {
+			if (isVisibleToUser && isViewInitiated && isLazy && !isDataInitiated) {
+				loadData();
+				isDataInitiated = true;
+			}
+		}
+	
+		//懒加载所需要加载的数据
+		public void loadData() {}
+		
+38.Gradle插件版本和Gradle版本对照表（https://developer.android.google.cn/studio/releases/gradle-plugin.html#updating-plugin）
+	官方Gradle版本下载地址：https://services.gradle.org/distributions/
+	
+	Gradle插件版本	Gradle版本
+	1.0.0 - 1.1.3	2.2.1 - 2.3
+	1.2.0 - 1.3.1	2.2.1 - 2.9
+	1.5.0	2.2.1 - 2.13
+	2.0.0 - 2.1.2	2.10 - 2.13
+	2.1.3 - 2.2.3	2.14.1+
+	2.3.0+	3.3+
+	3.0.0+	4.1+
+	3.1.0+	4.4+
+	3.2.0 - 3.2.1	4.6+
+	3.3.0 - 3.3.2	4.10.1+
+	3.4.0 - 3.4.1	5.1.1+
+	3.5.0	5.4.1+
+	3.6.0 - 3.6.4	5.6.4+
+	4.0.0+	6.1.1+
+	4.1.0+	6.5+
+	
+	修改方法1：Ctrl+Shift+Alt+S,打开工程结构图，再选Project,即可修改对应版本
+		方法2：打开项目build就可修改Gradle插件版本（插件版本通常和As版本一致），打开项目名/gradle/wrapper/gradle-wrapper,即可修改Gradle版本
+		
+	gradle本地路径：C:\Users\Administrator\.gradle\wrapper\dists
+	
+39.全面解析Fragment重叠问题（虽然保存了Fragment状态，但是Activity的fragment对象都是空的）
+	1.问题：当内存不足或者应用长时间处于后台状态时，Activity就会被系统回收，并会执行onSaveInstanceState()方法，
+			把当前Activity的状态保存起来，重新进入界面时因为重新走了生命周期方法，所以反复创建了Fragment，导致
+			当前页面的Fragment会重叠显示
+	2.解决方案：
+		2.1重写onSaveInstanceState()方法，不保存Activity的状态（不建议这种方法，因为又要重新加载数据）
+		2.2重写onSaveInstanceState()方法，然后把Fragment对象添加到FragmentManager,在Activity的OnCreat()方法里面，判断是否有缓存，
+		如果有的话取出来，如果没有直接创建
+		
+40.屏幕适配总结
+	概念：1.屏幕尺寸 指的是屏幕对角线的长度 单位英寸 每英寸=2.54cm
+		  2.分辨率 指的是整个屏幕具有多少个像素点 单位px 分辨率=横向像素*纵向像素
+		  3.像素密度 指的是每英寸具有多少个像素点 单位dpi 像素密度=（√横向像素2+纵向像素2）/屏幕尺寸
+		  4.屏幕密度 指的是基准像素密度的倍数（基准像素密度160） 单位
+		  
+41.复制文本到剪切板
+    ClipboardManager cmb = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+    cmb.setText(priKey);
+	
+42.沉浸式状态栏
+	getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+	android:fitsSystemWindows="false"
+	
+
+多么生活笔记		  
+1.shape 矩形上边一条线（shape中的padding无效，padding只对item生效）
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape
+            android:shape="rectangle">
+            <solid android:color="@color/light_gray_f" />
+        </shape>
+    </item>
+
+    <item android:top="1dp">
+        <shape
+            android:shape="rectangle">
+            <solid android:color="@color/white" />
+        </shape>
+    </item>
+</layer-list>	
+
+2.recycleview系列问题
+	1.recycleview嵌套滑动卡顿
+	    子列表设置setNestedScrollingEnabled(false);
+		子列表父容器设置
+		    android:focusable="true"
+			android:focusableInTouchMode="true"
+	2.recycleview添加头部后刷新item崩溃（因为头部占了位置，所以要+1）
+		mAdapter.notifyItemChanged(position + 1)
+	3.recycleview数据不显示的问题
+		没有设置layoutManage
+	4.recycleview数据显示不全
+		item布局宽高不能match_parent
+	5.设置分割线
+        mRecycleView.addItemDecoration(new RecycleViewDivider(
+                this, LinearLayoutManager.VERTICAL, 20, getResources().getColor(R.color.white)));	
+	6.NestedScrollView嵌套recycleview
+		 问题：在切换Fragment时会自动滚动recycleview的底部  原因：recycleview抢占了焦点
+		 解决方案：
+		 NestedScrollView唯一的子布局添加属性：android:descendantFocusability="blocksDescendants"
+		 禁止recycleview获取焦点   android:focusable="false"
+	7.BaseRecyclerViewAdapter适配器无限加载更多
+		1.加载下一页没有数据时调用了loadMoreComplete，表示下一页还有数据，会自动触发OnLoadMoreListener回调，继续加载下一页，应该调用loadMoreEnd
+		2.NestedScrollView嵌套recycleview的情况下使用分页加载，NestedScrollView会自动触发OnLoadMoreListener回调，所以建议使用其他方式代替
+		3.BaseRecyclerViewAdapter默认滑到最后一个item时会自动触发OnLoadMoreListener回调加载下一页，
+			如果每一页只有一个数据时，就会无限回调，直到没有数据返回(可以使用samrtLayout代替，因为可以取消自动加载更多)
+	8.recycleview嵌套，子recycleview的分割线会重复叠加
+		//设置分割线前先判断是否已经添加过
+		if (rvTopicGoods.getTag() == null) {
+            ItemDecoration itemDecoration = new ItemDecoration.Builder()
+                    // 设置分隔线资源ID
+                    .setDividerId(R.drawable.item_divider_five_dp)
+                    .create();
+            rvTopicGoods.addItemDecoration(itemDecoration);
+			//给子列表设置tag
+            rvTopicGoods.setTag(item);
+        }
+	9.recycleview嵌套，在列表滚动时item会跳动
+		使用NestedScrollView嵌套recycleview，将滚动事件完全交给NestedScrollView（不推荐这种方式，因为一级列表如果有加载更多，
+		会无限加载直至没有数据，可以使用samrtLayout实现加载更多）
+	10.瀑布流问题解决方案
+		10.1解决当滑到底部的时候，最后一个item等待一段时间才显示出来
+			StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+			layoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
+			recycleview.setItemAnimator(null);
+			recycleview.setLayoutManager(layoutManager);
+			recycleview.setAdapter(postAdapter);
+			recycleview.addOnScrollListener(new RecyclerView.OnScrollListener() {
+				@Override
+				public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+					int[] first = new int[layoutManager.getSpanCount()];
+					layoutManager.findFirstCompletelyVisibleItemPositions(first);
+					if (newState == RecyclerView.SCROLL_STATE_IDLE && (first[0] == 1 || first[1] == 1)) {
+						layoutManager.invalidateSpanAssignments();
+					}
+				}
+			});
+		
+		10.2解决滑动时顶部有一大片空白
+			int positionStart = mPostList.size();
+			if (page == 1) {
+				postAdapter.notifyItemRangeChanged(0, mPostList.size());
+			} else {
+				postAdapter.notifyItemRangeInserted(positionStart, mPostList.size());
+			}
+			
+		10.3解决滑动时图片位置错乱（图片异步加载高度发生变化导致）
+			根据接口返回的宽高计算图片的尺寸
+			
+		10.4NestedScrollView嵌套recycleview时最后一个显示不全
+			不要使用NestedScrollView嵌套瀑布流形式的列表，使用添加头部的形式代替
+		
+	
+		
+3.ViewPager系列问题
+	1.页面缓存（ViewPager默认最多只会缓存两页）
+		mVpHome.setOffscreenPageLimit(list.size() - 1)
+	2.NestedScrollView嵌套时ViewPager不显示
+		高度不能使用wrap_content，要给一个固定值，或者使用协调者布局实现
+	3.一屏显示多个Item
+		android:clipChildren="false"
+        android:clipToPadding="false"
+        android:paddingLeft="@dimen/sc_mm_20"
+        android:paddingRight="@dimen/sc_mm_130"		
+		
+		
+4.后台返回2x图标，根据不同分辨率适配（imageview宽高用wrap_content）
+		 Glide.with(mContext)
+                .asBitmap()
+                .load(homeCommonBean.getIcon())
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                        int width = resource.getWidth();
+                        int height = resource.getHeight();
+                        //获取mm和px之间的转化率
+                        float ratio = (float) (AutoSizeUtils.mm2px(mContext, 150)) / (150 * 1.0f);
+                        int newWidth = (int) (width * ratio);
+                        int newHeight = (int) (height * ratio);
+                        if (isContextExisted(mContext)) {
+                        //给图片重新设置一个合适的尺寸
+                            Glide.with(mContext).load(homeCommonBean.getIcon())
+                                .apply(new RequestOptions().override(newWidth, newHeight)//
+                                .error(R.drawable.load_loading_image)
+                                .diskCacheStrategy(DiskCacheStrategy.DATA))
+                                .into(iv_tab_title);
+                        }
+                    }
+        });
+		
+5.详情页加载超长图问题分析
+	1.问题：显示很模糊
+	2.分析：后台返回750*10240尺寸的图片，因为安卓位图大小最大限制是4096，所以在加载到内存之前修改图片的大小，转化后尺寸为300*4096，
+			imageview设置scaleType属性为fitxy，自动拉伸填充屏幕，这时候如果屏幕宽度为1080，图片就会放大3倍多，所以就会很模糊
+	3.解决方案
+
+6.Base64转Bitmap并压缩（bitmap的五种压缩方式：https://www.jianshu.com/p/e907eca48334）
+    public static Bitmap base64ToBitmap(String base64String) {
+        try {
+            //不占用内存的情况下获取bitmap宽高
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            byte[] decode1 = Base64.decode(base64String.replaceAll("data:image/png;base64,", ""), Base64.DEFAULT);
+            BitmapFactory.decodeByteArray(decode1, 0, decode1.length, options);
+            int imgWidth = options.outWidth;
+
+            //采样率压缩
+            int screenWidth = ((TinkerBaseApplicationLike) TinkerManager.getTinkerApplicationLike()).getScreenWidth();
+            if (imgWidth > screenWidth) {//如果图片宽度超出屏幕
+                double inSampleSize = imgWidth * 1.0f / screenWidth;
+                options.inSampleSize = (int) Math.round(inSampleSize);//采样率只支持整数，所以这里采取4舍5入
+            }
+
+            //质量压缩
+            options.inJustDecodeBounds = false;
+            options.inPreferredConfig = Bitmap.Config.RGB_565;
+            //如果有前缀解码时会抛异常java.lang.IllegalArgumentException: bad base-64
+            byte[] decode = Base64.decode(base64String.replaceAll("data:image/png;base64,", ""), Base64.DEFAULT);
+            return BitmapFactory.decodeByteArray(decode, 0, decode.length, options);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+	
+7.java.lang.RuntimeException: android.os.TransactionTooLargeException: data parcel size 520536 bytes
+	Activity跳转时，如果Intent传递数据过大时就会抛出这个异常（大概是1024kb，根据机型配置有所差异）
+	解决方案：
+	1.用静态变量做中转，跳到目标Activity时取这个静态变量
+	2.用SQLite保存在本地，跳到目标Activity时读取
+	
+8.java.lang.NullPointerException: Attempt to invoke virtual method 'void android.widget.Editor$SelectionModifierCursorController.initDrawables()'
+	小米android10.0在popwindow中编辑EditText时报错，改用Alertdialog解决
+	
+9.AlertDialog中的EditText无法编辑
+	在show之前调用imageAlertDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);	
+
+10.Fragment中的ViewperPager页面无法显示（深入理解FragmentManager： https://blog.csdn.net/azurelaker/article/details/84310053）
+	创建FragmentPagerAdapter对象时，getActivity().getSupportFragmentManager()作为入参，ViewperPager的页面无法显示
+	解决方案：Fragment中通过getChildFragmentManager接口获取其私有的FragmentManager对象时, 才会创建该FragmentManager对象,并调用attach方法
+		  
+11.ViewPager的FragmentPagerAdapter刷新无效分析
+	应用场景：整点秒杀活动（每个时间段有不同的商品进行秒杀活动）TabLayout+ViewPager+FragmentPagerAdapter
+	分析：FragmentPagerAdapter调用instantiateItem创建Fragment时，会判断FragmentManager中是否已经存在该Fragment,
+			如果已经存在，直接返回该对象，并且重新走生命周期。
+			如果不存在才会调用抽象方法getItem，这个方法由开发者实现用来创建Fragment,如果创建时设置了参数，
+			刷新时因为没有走getItem方法，所以该参数不会更新，也就导致Viewpager刷新无效
+	解决方案：创建的Fragment统一由FragmentManager管理，所以刷新时清除fargment缓存即可
+	public static void clearFragmentCache(FragmentManager fragmentManager) {
+        try {
+			//开启事务，移除所有的fragment
+            FragmentTransaction mCurTransaction = fragmentManager.beginTransaction();
+            List<Fragment> fragments = fragmentManager.getFragments();
+            Iterator<Fragment> iterator = fragments.iterator();
+            while (iterator.hasNext()) {
+                mCurTransaction.remove(iterator.next());
+            }
+            mCurTransaction.commitNowAllowingStateLoss();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+12.阿里百川相关
+	1.查看pid   登录淘宝联盟/推广管理/推广资源管理/推广位管理/app推广位
+	2.查看淘宝客实时数据 登录淘宝联盟/效果报表/订单明细报表/所有订单
+	3.查看appKey 登录淘宝联盟/推广管理/推广资源管理/媒体管理/app管理/查看权限
+	4.电商功能详解 https://baichuan.taobao.com/doc2/detail.htm?spm=a3c0d.7629140.0.0.8Pmo2l&treeId=129&articleId=104306&docType=1
+	
+13.自定义Dialog(通过继承AlertDialog的方式)
+	public abstract class BaseAlertDialog extends AlertDialog {
+
+    protected AppCompatActivity context;
+
+    protected BaseAlertDialog(@NonNull Context context) {
+        super(context);
+    }
+
+    protected BaseAlertDialog(@NonNull AppCompatActivity context, int themeResId) {
+        super(context, themeResId);
+        this.context = context;
+        setCancelable(true);
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(getLayoutId());
+        ButterKnife.bind(this);
+        initViews();
+    }
+
+
+    protected abstract int getLayoutId();
+
+    protected abstract void initViews();
+
+    //调用了show方法才会执行onCreat对控件进行实例化，所以一定要先调用show方法才能对控件进行赋值，否则会报null异常
+    public void show(int gravity) {
+        if (!isShowing() && isContextExisted(context)) {
+            AutoSize.autoConvertDensityOfGlobal(context);
+            show();
+        }
+        Window window = getWindow();
+        if (window != null) {
+            window.setBackgroundDrawableResource(android.R.color.transparent);
+            if (gravity > 0) {
+                // 获取自定义的Dialog所在的窗体的属性参数
+                WindowManager.LayoutParams layoutParams = window.getAttributes();
+                // 设置窗体沉在底部
+                layoutParams.gravity = Gravity.BOTTOM;
+                // 设置窗体宽度全屏
+                layoutParams.width = android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+                // 获取窗体顶层View对象，并设置内边距为0（保证顶层视图宽度全屏）
+                window.getDecorView().setPadding(0, 0, 0, 0);
+                // 提交窗体属性参数
+                window.setAttributes(layoutParams);
+            }
+        }
+    }
+
+    public void dismiss() {
+        if (isShowing() && isContextExisted(context)) {
+            super.dismiss();
+        }
+    }
+}
+
+14.自定义Dialog(通过构建对象的方式)
+	public abstract class BaseAlertDialogHelper implements LifecycleObserver {
+		protected Context context;
+		private AlertDialog defaultAlertDialog;
+		protected View dialogView;
+
+		public BaseAlertDialogHelper(Context context) {
+			this(context, 0);
+		}
+
+		protected BaseAlertDialogHelper(Context context, int layoutId) {
+			this.context = context;
+			if (context instanceof LifecycleOwner) {
+					((LifecycleOwner) context).getLifecycle().addObserver(this);
+			}
+			AlertDialog.Builder builder = new AlertDialog.Builder(context,getThemeResId());
+			dialogView = LayoutInflater.from(context).inflate(layoutId == 0 ? getLayoutId() : layoutId, null, false);
+			ButterKnife.bind(this, dialogView);
+			builder.setCancelable(true);
+			defaultAlertDialog = builder.create();
+		}
+
+		protected abstract int getLayoutId();
+
+		protected int getLayoutWith() {
+			return MATCH_PARENT;
+		}
+
+		protected int getThemeResId() {
+			return R.style.service_dialog_theme;
+		}
+
+		@OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+		private void onDestroy() {
+			if (context instanceof LifecycleOwner) {
+				((LifecycleOwner) context).getLifecycle().removeObserver(this);
+				if (isShowing()) dismiss();
+			}
+		}
+
+		public AlertDialog getAlertDialog() {
+			return defaultAlertDialog;
+		}
+
+		/**
+		* 展示dialog
+		*/
+		public void show() {
+			show(NO_GRAVITY);
+		}
+
+		/**
+		* @param gravity 显示的位置
+		*/
+		public void show(int gravity) {
+			if (!defaultAlertDialog.isShowing()
+					&& isContextExisted(context)) {
+				AutoSize.autoConvertDensityOfGlobal((Activity) context);
+				defaultAlertDialog.show();
+			}
+			Window window = defaultAlertDialog.getWindow();
+			if (window != null) {
+				window.setBackgroundDrawableResource(android.R.color.transparent);
+				// 获取自定义的Dialog所在的窗体的属性参数
+				WindowManager.LayoutParams layoutParams = window.getAttributes();
+				// 设置窗体沉在底部
+				layoutParams.gravity = (gravity != NO_GRAVITY ? gravity : CENTER);
+				// 设置窗体宽度全屏
+				layoutParams.width = getLayoutWith();
+				// 获取窗体顶层View对象，并设置内边距为0（保证顶层视图宽度全屏）
+				window.getDecorView().setPadding(0, 0, 0, 0);
+				// 提交窗体属性参数
+				window.setAttributes(layoutParams);
+				window.setContentView(dialogView);
+			}
+		}
+
+
+		/**
+		* 关闭dialog
+		*/
+		public void dismiss() {
+			if (isShowing()) {
+				defaultAlertDialog.dismiss();
+			}
+		}
+
+		//dialog 是否在展示
+		public boolean isShowing() {
+			return defaultAlertDialog != null
+					&& isContextExisted(context) && defaultAlertDialog.isShowing();
+		}
+
+		public View getDialogView() {
+			return dialogView;
+		}
+	}
+	
+15.内存泄漏记录
+	1.在页面销毁时没有释放sdk  ImmersionBar以及SMSSDK等等
+	2.Handler相关（页面销毁时还有未发送的message）
+	3.在用RxJava的时候当被观察者(Observable)和观察者(Observer)产生订阅关系后没有及时释放这种订阅关系
+	4.dialog没有及时dismiss
+	
+16.Glide加载图片报错 You cannot start a load for a destroyed activity
+	分析：Glide加载图片时会传入Context,自动绑定生命周期，页面销毁时如果图片还在加载会自动取消，那为什么还会报上面的错呢？
+			那是因为加载图片之前，页面就已经销毁了，比如一个接口请求未完成时销毁页面，接口请求完成时加载图片，这个时候就会报上面的错误
+	解决方案：有两种 1.接口请求绑定声明周期，页面销毁时自动解绑  2.在加载图片之前判断传入的context是否被销毁
+
+	
+17.Glide加载图片报错Cannot obtain size for recycled Bitmap
+	解决方案：使用 .into(new CustomTarget<GifDrawable>)代替.listener，bitmap被回收时会回调onLoadCleared（bitmap会自动回收，切记不要手动回收）
+	
+18.JetPack导航组件Navigation
+	应用场景：使用radioGroup+Navigation替代radioGroup+FrameLayout
+	(BottomNavigationView可以和Navigation进行绑定，但是BottomNavigationView很多属性都不支持，所以还是推荐radioGroup实现底部按钮)
+	分析:radioGroup+FrameLayout实现首页时，每添加一个Fragment到容器时，都要判断容器是否有这个fragment
+			1.1如果没有，需要创建，然后隐藏正在显示的fragment，并添加新创建的fragment到事务中
+			1.2如果已经存在，直接隐藏正在显示的fragment，再显示该fragment
+	Navigation的优势：不需要自己处理事务
+	
+19.签名以及打包
+	
+
+GitHub开源库依赖：
+	1.butterknife
+	使用方法：
+		1.安装注解插件Android Butterknife Zelezny
+		2.添加依赖
+		compile 'com.jakewharton:butterknife:8.4.0'
+		annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
+		3.选中要绑定view的布局，右键 generate,选择Genarate Butterknife Injections
+		
+	2.网络请求OKHttp（OkHttp相比HttpURLConnection和HttpClient功能更加强大）
+		compile 'com.squareup.okhttp3:okhttp:3.7.0'
+		
+	3.网络图片请求Glide
+		compile 'com.github.bumptech.glide:glide:4.0.0-RC1'
+		compile 'com.github.bumptech.glide:glide:3.7.0'
+		
+	4.图片效果变换
+		compile 'jp.wasabeef:glide-transformations:2.0.2'
+		
+	5.ViewPageIndicator 指示器
+		代码仓库：maven { url 'https://jitpack.io' }
+		compile 'com.github.uncleleonfan:ViewPagerIndicator:1.0.0'
+		
+	6.SlidingMenu 侧滑菜单
+		代码仓库：maven { url 'https://jitpack.io' }
+		compile 'com.github.uncleleonfan:SlidingMenu:1.0.0'	
+		
+	7.PullToRefresh下拉刷新
+		代码仓库：maven { url 'https://jitpack.io' }
+		compile 'com.github.open-android:PullToRefresh:v1.0'
+		
+	8.FunBanner 轮播图（切记，此依赖不要跟glide一起使用，因为FunBanner默认绑定了glide）
+		代码仓库：maven { url 'https://jitpack.io' }
+		compile 'com.github.uncleleonfan:FunBanner:1.2.0'
+		
+	10.Gson
+		compile 'com.google.code.gson:gson:2.8.0'
+		
+	11.Material Design（与Android Support Library兼容库版本保持一致）
+		compile 'com.android.support:design:25.3.0'
+		
+	12.retrofit（二次封装okhttp,增加数据解析和线程切换）
+		implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+		implementation 'io.reactivex.rxjava2:rxjava:2.0.1'
+		implementation 'com.squareup.retrofit2:retrofit:2.2.0'
+		implementation 'com.squareup.retrofit2:converter-gson:2.2.0'
+		implementation 'com.jakewharton.retrofit:retrofit2-rxjava2-adapter:1.0.0'
+		
+	13.恒星图
+		代码仓库：maven { url 'https://jitpack.io' }
+		compile 'com.github.uncleleonfan:StellarMap:v1.0.0'
+		
+	14.Dagger2 依赖注入（跟ButterKnief一起使用有冲突，把ButterKnief的依赖annotationProcessor改成apt）
+		Module：    添加依赖classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
+		project：	添加依赖compile 'com.google.dagger:dagger:2.6'
+							apt 'com.google.dagger:dagger-compiler:2.6'
+					最上面添加：apply plugin: 'com.neenbedankt.android-apt'
+
+`	15.BottomSheet 底部弹出控件（开源地址：https://github.com/Flipboard/bottomsheet）
+		compile 'com.flipboard:bottomsheet-core:1.5.3'
+		compile 'com.flipboard:bottomsheet-commons:1.5.3' 
+	
+	17.pulltorefresh 下拉刷新，上拉加载（适用于ListView,ScrollView,WebView,GridView,RecycleView）
+		依赖：compile 'com.jwenfeng.pulltorefresh:library:1.0.3'
+		简书介绍：http://www.jianshu.com/p/0f5d0991efdc
+		
+		1.在布局中添加PullToRefreshLayout
+		<com.jwenfeng.library.pulltorefresh.PullToRefreshLayout
+			android:id="@+id/pulltorefreshlayout"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent">
+			
+			//在此处添加ListView,GridView或者RecycleView
+		</com.jwenfeng.library.pulltorefresh.PullToRefreshLayout>
+		
+		/*------------------------ 下拉刷新 ----------------------------------*/
+		mPulltorefreshlayout.setRefreshListener(new BaseRefreshListener() {
+			@Override
+			public void refresh() {
+				new Handler().postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						loadData();
+						// 结束刷新
+						mPulltorefreshlayout.finishRefresh();
+					}
+				}, 500);
+			}
+
+			/*------------------------ 加载更多 ----------------------------------*/
+			@Override
+			public void loadMore() {
+				new Handler().postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						loadMoredata();
+						// 结束加载更多
+						mPulltorefreshlayout.finishLoadMore();
+					
+				}, 500);
+			}
+		});
+	}
+	
+	
+	18.androidEventbus
+		依赖：compile 'org.simple:androideventbus:1.0.5.1'
+		1.Activity或者fragment的Oncreat方法
+			// 注册eventbus
+			EventBus.getDefault().register(this);
+
+		2.Activity或者fragment的OnDestory方法
+			// 注销eventbus
+			EventBus.getDefault().unregister(this);
+	
+		3.发送消息（参数1：要传的对象，如果没有对象要传，随便传个int值 参数2：tag标志，只有该标志的订阅者才能收到消息）
+			EventBus.getDefault().post(0, EventConstants.UPDATE_SHOP_INFO);
+
+		4.订阅消息    
+			@Subscriber(tag = EventConstants.UPDATE_SHOP_INFO)
+			//这里的参数类型要跟发送消息时的类型一致，否则可能收不到消息
+			private void UpdateBusinessInfo(int num) {
+				loadData();
+			}	
+		
+	19.As将库模块打包成jar
+		1.新建项目，新建module,选Android Library
+		2.在主module的build.gradle里依赖库模块
+		3.在库module的build.gradle里添加
+			task makeJar(type: Copy){
+				delete 'build/libs/httpUtils.jar' //删除之前生成的jar包
+				from('build/intermediates/intermediate-jars/release/')  //生成的jar在这里
+				into('build/libs/')	//复制到该路径下
+				include('classes.jar')
+				rename('classes.jar','httpUtils.jar') //重命名
+			}
+			makeJar.dependsOn(build)
+		4.在控制台执行gradlew makeJar命令
+		
+	20.chrome浏览器翻墙无法上网
+		1.控制面板\系统和安全\Windows 防火墙\允许的程序  将chrome浏览器添加到列表
+		2.打开chrome浏览器\设置\高级\打开代理设置\链接\局域网设置\取消勾选局域网lan
+		
+	21.androidStudio依赖包下载失败
+		21.1打开蓝灯，设置，高级设置，记录host和port
+		21.2在gradle.properties里面添加
+			systemProp.http.proxyHost=127.0.0.1
+			systemProp.http.proxyPort=49650
+			systemProp.https.proxyHost=127.0.0.1
+			systemProp.https.proxyPort=49650
+		21.3Ctrl+Alt+S 选择HTTP Proxy,配置http
+			修改hostname和portnum的值
+		21.4修改缓存（D:\.gradle\gradle.properties）
+		如果之前有设置代理，gradle.properties会缓存下来，无论是否选择过代理，都会选择代理，感觉这是AS的bug,彻底清除代理缓存
+		21.5在项目build配置代码仓库
+		buildscript和allprojects节点下添加
+		 repositories {
+			maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
+			jcenter()
+			google()
+		}
+		
+	22.使用adb wifi插件实现android studio无线调式
+		1.手机打开usb调试，并连接数据线，手机和电脑连接同一个网络
+		2.adb tcpip 5555 开始连接
+		3.adb connect 192.168.1.18  连接手机ip
+		4.adb disconnect  多个设备连接时，先断开
+		5.ping 192.168.1.192 
+		
+	23.项目导入module报错Unable to resolve dependency for ':app@debugAndroidTest/compileClasspath'
+		保证module中的build.gradle除了dependencies以外和app中的build.gradle完全一致,然后重新编译就ok了
+		
+	24.git提交代码报错error setting certificate verify locations
+		原因：提交的账号和项目缓存的账号不一致，需要清除缓存的账号信息
+		解决：cmd进入git所在的目录，然后输入命令git config --system http.sslverify false
+		
+	25.git提交代码报错HTTP Basic: Access denied fatal: Authentication failed for
+		打开控制面板-用户账户-凭据管理器，找到git相关凭据删除
+		
+	26.git提交代码报错Push rejected pushto origin/master was rejected
+		依次执行以下命令
+		git pull
+		git pull origin master
+		git pull origin master --allow-unrelated-histories
+		
+	27.项目已经提交到一个git地址，重新提交到一个新的地址
+		右键项目目录-Git-Repository-remote,输入git地址保存，然后vcs-git-push，切换git地址进行提交
+		如果报错（Unable to access : OpenSSL SSL_read: SSL_ERROR_SYSCALL, errno 10054）输入命令可解决git config --system http.sslverify false
+		
+		
+	
+		
+	
+		
+	
